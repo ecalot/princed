@@ -39,29 +39,48 @@ disk.c: Princed Resources : Disk Access & File handling functions
 /* Defines */
 #include "memory.h"
 #include <string.h>
-#include "pr.h"
 #include "disk.h"
-#include "xmlparse.h" /* equalsIgnoreCase */
+#ifndef WIN32
+#define UNIX
+#endif
 
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#define DISK_DIR_SCANING
+#define DISK_TERM_MANIPULATION
+/* #define DISK_ALLWAYS_FORCE   */
+
+#ifndef DISK_ALLWAYS_FORCE
+#include "pr.h" /* language texts */
+#include "xmlparse.h" /* equalsIgnoreCase */
+#endif
+
 #ifndef WIN32
-	#define defmkdir(a) mkdir (a,(mode_t)0755)
-	#include <dirent.h>
-	#include <termios.h>
-	#include <unistd.h>
-	#include <fcntl.h>
+  #define defmkdir(a) mkdir (a,(mode_t)0755)
+	/* Recursive directory scanning needs <dirent> for posix or "direntwin" for windows */
+	#ifdef DISK_DIR_SCANING
+		#include <dirent.h>
+	#endif
+	/* Terminal manipulation for unix (to avoid the enter after selecting an option) */
+	#ifdef DISK_TERM_MANIPULATION
+		#include <termios.h>
+		#include <unistd.h>
+		#include <fcntl.h>
+	#endif
 	#define osIndepGetCharacter() getchar()
 #else
-	#include <direct.h>
-	#include "direntwin.h"
-	#define defmkdir(a) mkdir (a)
-	#include <conio.h>
+	#include <direct.h> /* mkdir */ 
+  #define defmkdir(a) mkdir (a)
+	#ifdef DISK_DIR_SCANING
+		#include "direntwin.h"
+	#endif
 	#define osIndepGetCharacter() getche()
 #endif
 
+#ifndef DISK_ALLWAYS_FORCE
 extern FILE* outputStream;
+#endif
 
 /***************************************************************\
 |              Disk Access & File handling functions            |
@@ -71,7 +90,6 @@ extern FILE* outputStream;
 const char *repairFolders(const char* a) {
 	int i,k;
 	static char result[MAX_FILENAME_SIZE];
-
 
 	for (i=0,k=0;(k<MAX_FILENAME_SIZE)&&a[i];) {
 		if (isDirSep(a,i)) {
@@ -84,9 +102,7 @@ const char *repairFolders(const char* a) {
 		}
 		k++;
 	}
-
 	result[k]=0;
-
 	return result;
 }
 
@@ -124,6 +140,7 @@ int makebase(const char* p) {
 	return a;
 }
 
+#ifndef DISK_ALLWAYS_FORCE
 static tOpenFiles* openFilesList=NULL;
 
 void addFileToOpenFilesList(const char* fileName,int hasBackup) {
@@ -244,7 +261,7 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 	int result;
 
 #ifdef UNIX
-#ifndef IGNORE_TERM_CHANGE
+#ifdef DISK_TERM_MANIPULATION
 	/* This will eliminate the enter after the input */
 	struct termios term;
 	struct termios termOld;
@@ -255,7 +272,6 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 	tcsetattr (STDIN_FILENO, TCSANOW, &term);
 #endif
 #endif
-
 
 	/* Create base directory and save file */
 	file=repairFolders(vFileext);
@@ -281,7 +297,7 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 
 
 #ifdef UNIX
-#ifndef IGNORE_TERM_CHANGE
+#ifdef DISK_TERM_MANIPULATION
 	/* restoring previous terminal options */
 	term=termOld;
 	tcsetattr (STDIN_FILENO, TCSANOW, &termOld);
@@ -299,7 +315,61 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 
 	return result;
 }
+#else
+int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension) {
+	unsigned long int size=0;
 
+		if (dontSave) {
+			fclose(fp);
+			if (size) {
+				fp=fopen(/*fileName*/"/dev/null","wb");
+				if (fp==NULL) return -1;
+			}
+	}
+
+	return fclose(fp);
+}
+
+int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
+	/*
+		Opens vFileext for write access
+		 if the path doesn't exist it is created
+		 if the file doesn't exist it is created
+		 if the file does exist it is overwritten
+
+		Sets the file pointer and returns 1 if Ok or 0 if error
+
+		Returns
+		 0 if error
+		 1 if ok
+	*/
+	const char* file;
+	whatIs fileType;
+	int result;
+
+	/* Create base directory and save file */
+	file=repairFolders(vFileext);
+
+	/* Verify if file already exists. */
+	fileType=isDir(vFileext);
+	if (fileType==eDirectory) return 0;
+
+	if (fileType==eFile) {
+		/* File exists. We need to ask */
+	} else {
+		makebase(file);
+	}
+
+	/*
+		If the file exists, we need to remember the old content in memory
+		if not, we need to know the name in case we need to delete it
+	*/
+
+/*	addFileToOpenFilesList(file,hasFlag(backup_flag));*/
+	result=((*fp=fopen(file,"wb"))!=NULL);/* addPointerToOpenFilesList(*fp);*/
+	return result;
+}
+#endif
 
 int writeData(const unsigned char* data, int ignoreChars, char* vFileext, int size, int optionflag,const char* backupExtension) {
 	/*
@@ -337,8 +407,6 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 		Using the string in vFile, it opens the file and returns the
 		number of bytes	in it and the content of the file in array.
 		In case the file couldn't be open or memory allocated returns 0.
-		It will alloc an extra NULL byte at the end of the array so
-		the file may be treated as a string too.
 	*/
 
 	/* declare variables */
@@ -352,14 +420,13 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 		/* get file size */
 		fseek(fp,0,SEEK_END);
 		aux=ftell(fp);
-		if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(unsigned char*)malloc(aux+1))==NULL) ) ) {
+		if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(unsigned char*)malloc(sizeof(char)*aux))==NULL) ) ) {
 			/* if the file was null or bigger than the max size or couldn't allocate the file in memory */
 			fclose(fp);
 			return 0;
 		} else {
 			/* if the file was successfully open */
 			fseek(fp,0,SEEK_SET);
-			(*array)[aux]=0;
 			aux=fread (*array,1,aux,fp);
 			fclose(fp);
 			return aux;
@@ -392,8 +459,10 @@ whatIs isDir(const char *path) {
 	struct stat buf;
 
 	if(stat(path,&buf)==-1) return eNotFound;
-	return (S_IFDIR&buf.st_mode)?eDirectory:eFile;
+	return (S_ISDIR(buf.st_mode))?eDirectory:eFile;
 }
+
+#ifdef DISK_DIR_SCANING
 
 int recurseDirectory(const char* path,int recursive, void* pass, void (*function)(const char*,void*)) {
 	/*
@@ -443,6 +512,8 @@ int recurseDirectory(const char* path,int recursive, void* pass, void (*function
 	closedir(dir);
 	return 0;
 }
+
+#endif
 
 #ifdef MACOS
 int macfreads (void* bigEndian,FILE* file) {

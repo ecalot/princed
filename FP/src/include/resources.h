@@ -37,7 +37,6 @@ resources.h: Free Prince : Resource Handler
 
 typedef enum {eImages=2,eWave,eMidi,eLevels}tDataType;
 
-#define MAX_FILENAME_SIZE        260
 #define MAX_RES_COUNT            25000
 
 /* Item Types */
