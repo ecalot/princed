@@ -125,6 +125,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 #define chopperGetFrame(a) (((tDanger*)a.moreInfo)->frame)
 #define gateGetFrame(a)    (((tGate*)a.moreInfo)->frame)
 #define spikeGetFrame(a)   (((tDanger*)a.moreInfo)->frame)
+#define looseGetFrame(a)   (((tDanger*)a.moreInfo)->frame)
 #define wallGetInfo(a)     (wallGet(env,cases,(a),seed))
 
 /* door drawing */
