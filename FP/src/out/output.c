@@ -112,7 +112,7 @@ outputLoadBitmap(const unsigned char* data, int size,
 	loadedSurface->bottom=bottom;
 	
 	
-	loadedSurface->surface = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_HWPALETTE, w, h, 8, 0, 0, 0, 0);
+	loadedSurface->surface = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_HWPALETTE, w, h, 8, 0, 0, 0, 0); /* TODO: bugfix: w is un bytes not in pixels */
 	SDL_SetColorKey(loadedSurface->surface, SDL_SRCCOLORKEY, 0);
 	if (!loadedSurface->surface) {
 		fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
@@ -121,30 +121,49 @@ outputLoadBitmap(const unsigned char* data, int size,
 	}
 	SDL_SetPalette(loadedSurface->surface, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, palette.colors);
 
-	w = (w + 1) / 2;
-
-	/* Lock the screen for direct access to the pixels */
+	/* Lock the surface for direct access to the pixels */
 	if (SDL_MUSTLOCK(loadedSurface->surface)) {
 		if (SDL_LockSurface(loadedSurface->surface) < 0) {
 			fprintf(stderr, "Can't lock surface: %s\n", SDL_GetError());
 			exit(1);
 		}
 	}
-	if (!invert) {
-		for (i = 0; i < w; i++) {
-			for (j = 0; j < loadedSurface->surface->h; j++) {
-				putpixel(loadedSurface->surface, i<<1, j, (data[i+j*w])>>4);
-				putpixel(loadedSurface->surface, (i<<1)+1, j, (data[i+j*w])&0x0f);
+	
+	/* Write pixels */
+	if (palette.colors==16) {
+		w = (w + 1) / 2;
+		if (!invert) {
+			for (i = 0; i < w; i++) {
+				for (j = 0; j < loadedSurface->surface->h; j++) {
+					putpixel(loadedSurface->surface, i<<1, j, (data[i+j*w])>>4);
+					putpixel(loadedSurface->surface, (i<<1)+1, j, (data[i+j*w])&0x0f);
+				}
+			}
+		} else {
+			int serialized=loadedSurface->surface->w&1;
+			for (i = 0; i < w; i++) {
+				for (j = 0; j < loadedSurface->surface->h; j++) {
+					if (i) putpixel(loadedSurface->surface, (i<<1)-serialized, j, (data[w-1-i+j*w])&0x0f);
+					putpixel(loadedSurface->surface, (i<<1)+1-serialized, j, (data[w-1-i+j*w])>>4);
+				}
 			}
 		}
 	} else {
-		int serialized=loadedSurface->surface->w&1;
-		for (i = 0; i < w; i++) {
-			for (j = 0; j < loadedSurface->surface->h; j++) {
-				if (i) putpixel(loadedSurface->surface, (i<<1)-serialized, j, (data[w-1-i+j*w])&0x0f);
-				putpixel(loadedSurface->surface, (i<<1)+1-serialized, j, (data[w-1-i+j*w])>>4);
+		w = (w + 7) / 8;
+		if (!invert) {
+			for (i = 0; i < w; i++) {
+				for (j = 0; j < loadedSurface->surface->h; j++) {
+					putpixel(loadedSurface->surface, (i<<3)  , j, (data[i+j*w]>>7)&1);
+					putpixel(loadedSurface->surface, (i<<3)+1, j, (data[i+j*w]>>6)&1);
+					putpixel(loadedSurface->surface, (i<<3)+2, j, (data[i+j*w]>>5)&1);
+					putpixel(loadedSurface->surface, (i<<3)+3, j, (data[i+j*w]>>4)&1);
+					putpixel(loadedSurface->surface, (i<<3)+4, j, (data[i+j*w]>>3)&1);
+					putpixel(loadedSurface->surface, (i<<3)+5, j, (data[i+j*w]>>2)&1);
+					putpixel(loadedSurface->surface, (i<<3)+6, j, (data[i+j*w]>>1)&1);
+					putpixel(loadedSurface->surface, (i<<3)+7, j, (data[i+j*w]   )&1);
+				}
 			}
-		}
+		} /* monochrome+inversible are not coded (for the moment there is no need) */
 	}
 	
 	if (SDL_MUSTLOCK(loadedSurface->surface)) {
