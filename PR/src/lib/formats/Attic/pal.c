@@ -38,13 +38,28 @@ pal.c: Princed Resources : JASC PAL files support
 #include "pal.h"
 #include "memory.h"
 #include "disk.h"
-#include "parser.h"
 #include "resources.h"
 
 /***************************************************************\
 |                 Jasc Palette handling functions               |
 \***************************************************************/
 
+//Private function taken from the parser
+
+#define chgnum(n) ((0x30<(n))&&((n)<0x3A))?((n)-(0x30)):0
+
+//Tokenizer simple
+//Sintaxis: getNumberToken(string texto,var int token,char caracterSeparador,
+//                   var int startPosition, int deprecated)
+int getNumberToken(char texto[],unsigned short int *token,char tokenizer,int* i,int k) {
+	char a;
+	//Copiar el string hasta que se encuentre el token o se termine la linea.
+	//En caso de que no entre el texto en el token, lo deja truncado pero avanza i hasta el final
+	for (*token=0;(((a=texto[(*i)++])!=tokenizer)&&a);(*token)=(*token)*10+chgnum(a));
+	return (a);
+}
+
+//Public functions
 char mFormatExtractPal(unsigned char** data, char *vFileext,unsigned long int size) {
 	//Convert palette from POP format to JASC format
 	mExportPalette(data,&size);
@@ -110,8 +125,7 @@ void mExportPalette(unsigned char** data, unsigned long int *size) {
 	*size=i-1;
 }
 
+//TODO: use a macro
 void mLoadPalette(char* array,tImage *image) {
-	int k=0;
-	int i;
-	for (i=5;i<(5+16*3);i++) (*image).pal[k++]=array[i];
+	memcpy(image->pal,array+5,16*3);
 }
