@@ -144,7 +144,7 @@ int wallGetCase(tTile left, tTile tile, tTile right) {
  * Drawing functions
  */
 
-#define e(a,x,y) outputDrawBitmap(roomGfx.environment->pFrames[a],(x),(y))
+#define e(x,y,a) outputDrawBitmap(roomGfx.environment->pFrames[a],(x),(y))
 
 /*#define isIn(a,TILES_UNPRESSED)  (((tPressable*)a.moreInfo)->action==eNormal)*/
 #define chopperGetFrame(a) (((tDanger*)a.moreInfo)->frame)
@@ -189,13 +189,13 @@ void drawLoose(int x, int y, int frame,tLooseLayer layer) {
 		}
 		switch(layer) {
 			case layTritop:
-				e(tritop-3,x,y);
+				e(x,y,tritop-3);
 				break;
 			case layTribot:
-				e(tribot-3,x,y);
+				e(x,y,tribot-3);
 				break;
 			case layBase:
-				e(base-3,x,y);
+				e(x,y,base-3);
 				break;
 		}
 	}
@@ -208,18 +208,18 @@ void drawUnlinkedLoose(int x, int y/*, int frame,tLooseLayer layer*/) {
 	tribot=40;
 /*	switch(layer) {
 		case layTritop:
-			e(tritop-3,x,y);
+			e(x,y,tritop-3);
 			break;
 		case layTribot:
-			e(tribot-3,x,y);
+			e(x,y,tribot-3);
 			break;
 		case layBase:
-			e(base-3,x,y);
+			e(x,y,base-3);
 			break;
 	}*/
-	e(tritop-3,x+TILE_W,y+2);
-	e(tribot-3,x,y);
-	e(base-3,x,y+3);
+	e(x+TILE_W,y+2,tritop-3);
+	e(x,y,tribot-3);
+	e(x,y+3,base-3);
 }
 
 
@@ -228,20 +228,20 @@ void drawGate(int x, int y, int frame) {
 	register int i;
 	register const int mod=frame&7;
 	
-	e(27-mod,x,y+mod);
+	e(x,y+mod,27-mod);
 	for (i=8;i<=frame;i+=8)
-		e(20,x,y+i+mod);
-	e(18,x,y+i+mod+4);
+		e(x,y+i+mod,20);
+	e(x,y+i+mod+4,18);
 }
 
 void drawExit(int x, int y, int frame) {
 	/* Frame defined from 0 (open) to 50 (close) */
 	register int i;
-	if (frame<47) e(55,x,y+47);
-	e(50,x,y+51);
+	if (frame<47) e(x,y+47,55);
+	e(x,y+51,50);
 	for (i=0;i<=frame;i+=4)
-		e(1,x,y+i+(frame&3));
-	e(2,x,y);
+		e(x,y+i+(frame&3),1);
+	e(x,y,2);
 }
 
 typedef enum {layFore=113,layRight=108,layBack=102}tSpikeLayer;
@@ -259,7 +259,7 @@ void drawSpike(int x, int y, int frame, tSpikeLayer layer) {
 				y-=2;
 				break;
 		}
-		e((int)layer+((frame>4)?(6-frame):frame),x,y);
+		e(x,y,(int)layer+((frame>4)?(6-frame):frame));
 	}
 }	
 
@@ -273,12 +273,12 @@ void drawChopper(int x, int y, int frame, tChopperLayer layer) {
 	}
 	switch (layer) { /* TODO: use relative offsets in resources */
 		case layCFore:
-			e(97-frame,x,y);
+			e(x,y,97-frame);
 			break;
 		case layCBack:
-			e(92-frame,x,y);
+			e(x,y,92-frame);
 			if (frame<3)
-				e(100-frame,x,y-60+outputGetHeight(roomGfx.environment->pFrames[100-frame]));
+				e(x,y-60+outputGetHeight(roomGfx.environment->pFrames[100-frame]),100-frame);
 			break;
 	}
 }
