@@ -68,7 +68,8 @@ GENERATEDSTAHEADERS = include/states_conf_static.h \
 #include/states_conf_properties.h
 GENERATEDTILHEADERS = include/tiles_conf_types.h include/tiles_conf_groups.h
 
-GENERATEDOTHHEADERS = include/walls_conf.h include/anims_conf.h include/text_conf.h
+GENERATEDOTHHEADERS = include/walls_conf.h include/anims_conf.h include/text_conf.h\
+                      include/room_conf.h
 
 #Use this to temporary remove an option
 OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
@@ -170,7 +171,7 @@ kernel.o: ker/kernel.c include/kernel.h include/resources.h\
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
 room.o: ker/room.c include/room.h include/resources.h include/res_conf.h\
-        include/walls_conf.h $(GENERATEDTILHEADERS)
+        include/walls_conf.h $(GENERATEDTILHEADERS) include/room_conf.h
 	$(INFO) Compiling kernel room object...
 	$(CC) -c ker/room.c $(OPTIONS)
 
@@ -297,3 +298,6 @@ include/text_conf.h: conf/alphabet.conf conf/awk/text_conf.awk
 	$(INFO) Generating font alphabet...
 	$(AWK) -f conf/awk/text_conf.awk conf/alphabet.conf>include/text_conf.h
 
+include/room_conf.h: conf/room.conf conf/awk/room_conf.awk
+	$(INFO) Generating room drawing code...
+	$(AWK) -f conf/awk/room_conf.awk conf/room.conf>include/room_conf.h

@@ -10,3 +10,4 @@ tiles_conf_groups.h
 walls_conf.h
 anims_conf.h
 text_conf.h
+room_conf.h

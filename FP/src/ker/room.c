@@ -144,7 +144,7 @@ int wallGetCase(tTile left, tTile tile, tTile right) {
  * Drawing functions
  */
 
-#define e(x,y,a) outputDrawBitmap(roomGfx.environment->pFrames[a],(x),(y))
+#define drawAll(x,y,a) outputDrawBitmap(roomGfx.environment->pFrames[a],(x),(y))
 
 /*#define isIn(a,TILES_UNPRESSED)  (((tPressable*)a.moreInfo)->action==eNormal)*/
 #define chopperGetFrame(a) (((tDanger*)a.moreInfo)->frame)
@@ -189,13 +189,13 @@ void drawLoose(int x, int y, int frame,tLooseLayer layer) {
 		}
 		switch(layer) {
 			case layTritop:
-				e(x,y,tritop-3);
+				drawAll(x,y,tritop-3);
 				break;
 			case layTribot:
-				e(x,y,tribot-3);
+				drawAll(x,y,tribot-3);
 				break;
 			case layBase:
-				e(x,y,base-3);
+				drawAll(x,y,base-3);
 				break;
 		}
 	}
@@ -208,18 +208,18 @@ void drawUnlinkedLoose(int x, int y/*, int frame,tLooseLayer layer*/) {
 	tribot=40;
 /*	switch(layer) {
 		case layTritop:
-			e(x,y,tritop-3);
+			drawAll(x,y,tritop-3);
 			break;
 		case layTribot:
-			e(x,y,tribot-3);
+			drawAll(x,y,tribot-3);
 			break;
 		case layBase:
-			e(x,y,base-3);
+			drawAll(x,y,base-3);
 			break;
 	}*/
-	e(x+TILE_W,y+2,tritop-3);
-	e(x,y,tribot-3);
-	e(x,y+3,base-3);
+	drawAll(x+TILE_W,y+2,tritop-3);
+	drawAll(x,y,tribot-3);
+	drawAll(x,y+3,base-3);
 }
 
 
@@ -228,20 +228,20 @@ void drawGate(int x, int y, int frame) {
 	register int i;
 	register const int mod=frame&7;
 	
-	e(x,y+mod,27-mod);
+	drawAll(x,y+mod,27-mod);
 	for (i=8;i<=frame;i+=8)
-		e(x,y+i+mod,20);
-	e(x,y+i+mod+4,18);
+		drawAll(x,y+i+mod,20);
+	drawAll(x,y+i+mod+4,18);
 }
 
 void drawExit(int x, int y, int frame) {
 	/* Frame defined from 0 (open) to 50 (close) */
 	register int i;
-	if (frame<47) e(x,y+47,55);
-	e(x,y+51,50);
+	if (frame<47) drawAll(x,y+47,55);
+	drawAll(x,y+51,50);
 	for (i=0;i<=frame;i+=4)
-		e(x,y+i+(frame&3),1);
-	e(x,y,2);
+		drawAll(x,y+i+(frame&3),1);
+	drawAll(x,y,2);
 }
 
 typedef enum {layFore=113,layRight=108,layBack=102}tSpikeLayer;
@@ -259,7 +259,7 @@ void drawSpike(int x, int y, int frame, tSpikeLayer layer) {
 				y-=2;
 				break;
 		}
-		e(x,y,(int)layer+((frame>4)?(6-frame):frame));
+		drawAll(x,y,(int)layer+((frame>4)?(6-frame):frame));
 	}
 }	
 
@@ -273,12 +273,12 @@ void drawChopper(int x, int y, int frame, tChopperLayer layer) {
 	}
 	switch (layer) { /* TODO: use relative offsets in resources */
 		case layCFore:
-			e(x,y,97-frame);
+			drawAll(x,y,97-frame);
 			break;
 		case layCBack:
-			e(x,y,92-frame);
+			drawAll(x,y,92-frame);
 			if (frame<3)
-				e(x,y-60+outputGetHeight(roomGfx.environment->pFrames[100-frame]),100-frame);
+				drawAll(x,y-60+outputGetHeight(roomGfx.environment->pFrames[100-frame]),100-frame);
 			break;
 	}
 }
@@ -289,8 +289,8 @@ void drawChopper(int x, int y, int frame, tChopperLayer layer) {
 void drawBackPanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
 	tTile left=roomGetTile(room,x-1,y);
-	drawAllLeft((x-1)*TILE_W,y*TILE_H,left,tile);
-	drawAllTile((x-1)*TILE_W,y*TILE_H,left,tile);
+	drawAllLeft((x-1)*TILE_W,y*TILE_H,left,tile,dummy,dummy);
+	drawAllTile((x-1)*TILE_W,y*TILE_H,left,tile,dummy,dummy);
 }
 
 /* bottom panel block at background */
@@ -311,7 +311,7 @@ void drawForePanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
 	tTile right=roomGetTile(room,x+1,y);
 	int cases=wallGetCase(left,tile,right);
-	drawAllFore((x-1)*TILE_W,y*TILE_H,left,tile,right);
+	drawAllFore((x-1)*TILE_W,y*TILE_H,left,tile,right,dummy);
 }	
 
 /*
