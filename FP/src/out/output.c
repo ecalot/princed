@@ -38,7 +38,8 @@ resources.h: Free Prince : Output Devices Handler
 #ifndef _OUTPUT_H_
 #define _OUTPUT_H_
 
-#include "resources.h"
+#include "resources.h" /* tMemory structure */
+#include <stdlib.h> /* malloc */
 
 /* Text Primitives*/
 void outputDrawText(const char* text, int x, int y) {}
@@ -50,23 +51,29 @@ void outputPlayMid(tMemory music) {} /* Starts the music reproduction and return
 
 /* Graph */
 
+/* Define a dummy private structure */
+typedef struct {
+	char* picture;
+	unsigned char palette[3*16];
+	int h,w;
+}SDL_very_cool_structure;
+
+
  /* Graph: Primitives for resources module */
-void* outputLoadBitmap(unsigned char* data, int size, unsigned char* palette, int h,int w,int invert, int firstColorTransparent) {
+void* outputLoadBitmap(const unsigned char* data, int size, const unsigned char* palette, int h,int w,int invert, int firstColorTransparent) {
  /* Returns an abstract object allocated in memory using the data information ti build it
 	* invert is 0 when no invertion is needed and non-zero when an inversion is performed
 	*/
 
 	/* Dummy function */
-	void* result;
+	SDL_very_cool_structure* result;
+	static char printed[]=" *+@#$%&=|SVHG/OP";
 	int i,j;
-	char printed[]=" *+@#$%&=|SVHG/OP";
+	
+	result=(SDL_very_cool_structure*)malloc(sizeof(SDL_very_cool_structure));
 	
 	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
 	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n",invert,firstColorTransparent,size);
-
-	for (i=0;i<16;i++) {
-		printf("rgb[%d]=(%d,%d,%d) #%02x%02x%02x\n",i+1,palette[3*i],palette[3*i+1],palette[3*i+2],palette[3*i]<<2,palette[3*i+1]<<2,palette[3*i+2]<<2);
-	}
 
 	/* Notes:
 	 * - the image is serialized
@@ -75,24 +82,26 @@ void* outputLoadBitmap(unsigned char* data, int size, unsigned char* palette, in
 	 *    1 bit/pixel (b/w)
 	 *    4 bit/pixel (16 cols)
 	 * - for the moment only 4bpp will be supported
-	 * - weight is in pixels
-	 * - weight in bytes is (w+1)/2
+	 * - width is in pixels
+	 * - width in bytes is (w+1)/2
 	 *    we have to add 1 because of the serialization
 	 *    division by 2 is because 4bpp are 2 pixel/byte (0.5 byte/pixel)
 	 */
 	w=(w+1)/2;
-	
-	for (i=0;i<h;i++) {
-		for (j=0;j<w;j++) {
-			printf("%c%c%c%c",printed[data[i*w+j]>>4],printed[data[i*w+j]>>4],printed[data[i*w+j]&0x0f],printed[data[i*w+j]&0x0f]);
-		}
-		printf("\n");
+	result->picture=malloc(h*w*4+10);
+	result->w=w;
+	result->h=h;
+					
+	for (i=0,j=0;i<h*w;i++) { /* transform a 4 bpp array into an ASCII draw 16 bpp*/
+		result->picture[j++]=printed[data[i]>>4];
+		result->picture[j++]=printed[data[i]>>4];
+		result->picture[j++]=printed[data[i]&0x0f];
+		result->picture[j++]=printed[data[i]&0x0f];
 	}
 	
-	result=(void*)malloc(size);
-	memcpy(result,data,size);
+	memcpy(result->palette,palette,3*16); /* copy palette */
 
-	return result;
+	return (void*)result;
 }
 
 void outputFreeBitmap(void* image) {}
@@ -100,9 +109,42 @@ void outputFreeBitmap(void* image) {}
 	*/
 
  /* Graph: Primitives for the kernel */
-void outputDrawBitmap(void* image,int x, int y) {}
+void outputDrawBitmap(void* image,int x, int y) {
  /* Draws an abstract image
 	*/
+
+#define myImage ((SDL_very_cool_structure*)image)
+				
+	int h,w,i,j;		
+	w=myImage->w*4;
+	h=myImage->h;
+	
+	/* Draw image */
+	for (i=0;i<y;i++) printf("\n");
+	for (i=0;i<h;i++) {
+		for (j=0;j<x;j++) printf(" ");
+		for (j=0;j<w;j++) {
+			printf("%c",
+				myImage->picture[i*w+j]
+			);
+		}
+		printf("\n");
+	}
+	
+	/* show palette */
+	for (i=0;i<16;i++) {
+		printf("rgb[%d]=(%d,%d,%d) #%02x%02x%02x\n",
+			i+1,
+			myImage->palette[3*i],
+			myImage->palette[3*i+1],
+			myImage->palette[3*i+2],
+			(myImage->palette[3*i])<<2,
+			(myImage->palette[3*i+1])<<2,
+			(myImage->palette[3*i+2])<<2
+		);
+	}
+
+}
 
 void outputClearScreen() {}
  /* Crears the screen
