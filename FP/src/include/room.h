@@ -46,11 +46,11 @@ void roomLoadGfx(long environment); /* Only to initialize environment by mapStar
 int roomPress(tRoom* room, tObject* obj);
 void roomKidChangedFloor(tRoom* room, tObject* kid);
 
-#define drawAllLeft(left,tile) \
+#define drawAllLeft(x,y,left,tile) \
 	/* Gate/left */\
 	if (isIn(left,TILES_DOOR)) {\
 		e(15,(x-1)*TILE_W+0,y*TILE_H+2);\
-		drawGate((x-1)*TILE_W+0,(y-1)*TILE_H+3,gateGetFrame(left));\
+		drawGate((x-1)*TILE_W+0,y*TILE_H-TILE_H+3,gateGetFrame(left));\
 	}\
 	/* normal/left */\
 	if (isIn(left,TILES_FLOOR)) \
@@ -105,31 +105,31 @@ void roomKidChangedFloor(tRoom* room, tObject* kid);
 	if (isIn(left,TILES_BLUEPOTION))\
 		drawPotionBlueBubbles((x-1)*TILE_W+3-15,y*TILE_H-15,isIn(left,TILES_BIGPOTION));
 
-#define drawAllTile(left,tile) \
+#define drawAllTile(x,y,left,tile) \
 	/* Wall/left */\
 	if ((!isIn(tile,TILES_WALL))&&(isIn(left,TILES_WALL))) \
 		e(63,(x-1)*TILE_W+0,y*TILE_H+2);\
 	/* torch/this */\
 	if (isIn(tile,TILES_TORCH)) { /* animation */\
-		drawTorchFire(x*TILE_W+11,y*TILE_H-39); \
+		drawTorchFire((x-1)*TILE_W+11+TILE_W,y*TILE_H-39); \
 		/* base */\
-		e(56,x*TILE_W+3,y*TILE_H-24);\
+		e(56,(x-1)*TILE_W+3+TILE_W,y*TILE_H-24);\
 	}\
 	/* chopper/this */\
 	if (isIn(tile,TILE_CHOPPER)) \
 		drawChopper((x-1)*TILE_W+0,y*TILE_H,chopperGetFrame(tile),layCBack);\
 	/* empty_bricks/this */\
 	if (isIn(tile,TILES_BRICKE1)) \
-		e(52,x*TILE_W+0,y*TILE_H-18);\
+		e(52,(x-1)*TILE_W+TILE_W+0,y*TILE_H-18);\
 	if (isIn(tile,TILES_BRICKE2)) \
-		e(53,x*TILE_W+0,y*TILE_H-18);\
+		e(53,(x-1)*TILE_W+TILE_W+0,y*TILE_H-18);\
 	if (isIn(tile,TILES_WINDOW)) \
-		e(54,x*TILE_W+0,y*TILE_H-18);\
+		e(54,(x-1)*TILE_W+TILE_W+0,y*TILE_H-18);\
 	/* floor_bricks/this */\
 	if (isIn(tile,TILES_BRICKF1)) \
-		e(12,x*TILE_W+0,y*TILE_H-18);\
+		e(12,(x-1)*TILE_W+TILE_W+0,y*TILE_H-18);\
 	if (isIn(tile,TILES_BRICKF2)) \
-		e(13,x*TILE_W+0,y*TILE_H-18);\
+		e(13,(x-1)*TILE_W+TILE_W+0,y*TILE_H-18);\
 	/* gate/this */\
 	if (isIn(tile,TILES_DOOR)) \
 		e(14,(x-1)*TILE_W+0,y*TILE_H+0);\
@@ -179,7 +179,7 @@ void roomKidChangedFloor(tRoom* room, tObject* kid);
 	if (isIn(tile,TILES_SKELETON)) \
 		e(80,(x-1)*TILE_W+0,y*TILE_H+0);
 
-#define drawAllBack(left,tile,right,dleft) \
+#define drawAllBack(x,y,left,tile,right,dleft) \
 	/* loose moving */\
 	if (isIn(tile,TILES_LOOSEMOVING)) \
 		drawLoose((x-1)*TILE_W+0,y*TILE_H+3,looseGetFrame(tile),layBase);\
@@ -221,12 +221,12 @@ void roomKidChangedFloor(tRoom* room, tObject* kid);
 \
 	/* upper objects */\
 	if (isIn(tile,TILE_EXIT_LEFT)) \
-		e(6,x*TILE_W+0,(y-1)*TILE_H+3);\
+		e(6,(x-1)*TILE_W+0+TILE_W,y*TILE_H-TILE_H+3);\
 	if (isIn(tile,TILE_EXIT_RIGHT)) \
-		e(8,x*TILE_W+0,(y-1)*TILE_H+3);
+		e(8,(x-1)*TILE_W+0+TILE_W,y*TILE_H-TILE_H+3);
 
 
-#define drawAllFore(left,tile,right) \
+#define drawAllFore(x,y,left,tile,right) \
 	/* pillar */\
 	if (isIn(tile,TILES_PILLAR)) \
 		e(46,x*TILE_W-24,y*TILE_H+0);\
