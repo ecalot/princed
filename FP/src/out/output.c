@@ -37,7 +37,9 @@ output.c: Free Prince : Output Devices Handler
 
 #include <SDL/SDL.h>
 #include <stdlib.h>    /* malloc */
-#include <stdarg.h>
+#include <stdio.h>     /* fprintf NULL */
+#include <string.h>    /* memset */
+#include <stdarg.h>    /* var arg support. vsnprintf */
 #include "resources.h" /* tMemory structure */
 #include "output.h"
 #include "kernel.h"    /* FP_VERSION */
@@ -51,9 +53,9 @@ SDL_Surface *screen;
 #define CHAR_SIZE 12
 
 typedef struct _valid_chars {
-	char is_valid; // Is character valid ?
-	unsigned int x;         // X pos in font image
-	unsigned int w;         // Width of letter
+	char is_valid;      /* Is character valid ? */
+	unsigned short x;   /* X pos in font image */
+	unsigned short w;   /* Width of character */
 } vChar;
 
 vChar valid_chars[255];
@@ -79,16 +81,16 @@ void initText ()
 
 	i = 0;
 	while (chars[i] != '\0') {
-		valid_chars[chars[i]].is_valid = 1;
-		valid_chars[chars[i]].x = pos_x[i];
-		valid_chars[chars[i]].w = pos_x[i+1] - pos_x[i];
+		valid_chars[(unsigned char)chars[i]].is_valid = 1;
+		valid_chars[(unsigned char)chars[i]].x = pos_x[i];
+		valid_chars[(unsigned char)chars[i]].w = pos_x[i+1] - pos_x[i];
 		i++;
 	}
 
 	/* Load Texture */
 	font = SDL_LoadBMP (FONT_FILE);
 	if (!font) {
-		fprintf (stderr, "CAN'T LOAD font.bmp!!!\n");
+		fprintf (stderr, "CAN'T LOAD " FONT_FILE "!\n");
 		exit(1);
 	}
 	font_init = 1;
@@ -97,10 +99,10 @@ void initText ()
 /* Use vararg's too?? */
 unsigned int outputGetTextWidth (const char *txt)
 {
-	const char *s;
+	const unsigned char *s;
 	unsigned int l = 0;
 
-	s = txt;
+	s = (unsigned char*)txt;
 	while ((*s) != '\0') {
 		if (valid_chars[*s].is_valid) {
 			l += valid_chars[*s].w;
@@ -123,7 +125,7 @@ void outputDrawText(int x, int y, const char *fmt, ...)
 {
 	va_list ap;
 	char buffer[1024];
-	char *s;
+	unsigned char *s;
 	SDL_Rect from, to;
 	int current_x;
 
@@ -135,10 +137,18 @@ void outputDrawText(int x, int y, const char *fmt, ...)
 	if (fmt == NULL) return;
 	memset (buffer, 0, sizeof(buffer));
 	va_start (ap, fmt);
+	
+	/* If vsnprintf is allowed in the standard use it */													
+#if defined __USE_BSD || defined __USE_ISOC99 || defined __USE_UNIX98
+	/* ISO/IEC 9899:1999 */
 	vsnprintf (buffer, sizeof(buffer), fmt, ap);
+#else
+	/* ANSI X3.159-1989 (`ANSI C') and ISO/IEC 9899:1999 (`ISO C99') */
+	vsprintf (buffer, fmt, ap);
+#endif
 	va_end (ap);
 
-	s = buffer;
+	s = (unsigned char*)buffer;
 	current_x = x;
 	while ((*s) != '\0') {
 		if (valid_chars[*s].is_valid) {
