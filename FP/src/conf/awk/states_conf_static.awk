@@ -30,7 +30,7 @@
 
 BEGIN {
 	currentCondition=-1
-	currentAction=0
+	currentAction=-1
 	printf("#define STATES_MOVETYPES_RELATIVE 0\n")
 	printf("#define STATES_MOVETYPES_ABSOLUTEFORWARD 1\n\n")
 	printf("#define STATES_MOVETYPES_RELATIVETURN 2\n\n")
@@ -151,12 +151,12 @@ BEGIN {
 		actionArray[currentAction,"moveType"]=moveType
 		actionArray[currentAction,"moveOffset"]=moveOffset
 		actionArray[currentAction,"lastComma"]=","
-		currentAction++
 		currentState=""
 	} else {
 		first=1
 	}
 
+	currentAction++
 	startAnimation=currentAnimation
 	listType=""
 	conditions=0
@@ -176,7 +176,7 @@ BEGIN {
 		} else {
 			currentState=tolower($1)
 		}
-		stateList[tolower($1)]=currentAction
+		stateList[tolower($1)]=currentAction+1
 }
 
 END {
