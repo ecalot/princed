@@ -44,8 +44,8 @@ extract.c: Princed Resources : DAT Extractor
 \***************************************************************/
 
 char writeData(unsigned char* data, int ignoreChars, char* vFileext, int size) {
-	FILE*              target;
-	char ok;
+	FILE* target;
+	char  ok;
 
 	ok=((target=fopen(vFileext,"wb"))!=NULL);
 	ok=ok&&fwrite(data+ignoreChars,size-ignoreChars,1,target);
@@ -86,13 +86,11 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 		unsigned short int id;
 		unsigned long int  size,offset;
 		unsigned char*     data;
-//		FILE*              target;
 		char               type=0;
 		char               recordSize;
 		char               aux[260];
 		tImage             image; //this is used to make a persistent palette
 		char               isntImageSet=1;
-	////printf("kkkkkkkkkkk: %x\n",task);
 
 		//verify dat format
 		ok    = fread(&indexOffset,4,1,fp);
@@ -104,7 +102,6 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 		if (!pop1) { //verify if pop2
 			ofk=numberOfItems*6+2+(numberOfItems-2)*13;
 			numberOfItems=((indexSize-6-(numberOfItems*6)-((numberOfItems-2)*13))/11);
-////printf("verificando pop2: numberOfItems=%d, indexSize=%d\r\n",numberOfItems,indexSize);
 		}
 		recordSize=pop1?8:11;
 		if (!ok) {
@@ -127,16 +124,11 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 			offset=index[ofk+k*recordSize+2]+256*index[ofk+k*recordSize+3]+256*256*index[ofk+k*recordSize+4]+256*256*256*index[ofk+k*recordSize+5];
 			size=index[ofk+k*recordSize+6]+256*index[ofk+k*recordSize+7]+1;
 			if (!pop1) {
-				//printf("jajaA %d\r\n",ok);
 				ok=ok&&(index[ofk+k*recordSize+8]==0x40)&&(!index[ofk+k*recordSize+9])&&(!index[ofk+k*recordSize+10]);
-				//printf("jajaB %d\r\n",ok);
 			}
 			ok=ok&&((data=getMemory(size))!=NULL);
-				//printf("jajaC %d offset=%d\r\n",ok,offset);
 			ok=ok&&(!fseek(fp,offset,SEEK_SET));
-				//printf("jajaD %d\r\n",ok);
 			ok=ok&&fread(data,size,1,fp);
-				//printf("jajaEd %d\r\n",ok);
 			if (!ok) return -3;
 
 			//For the moment rebuilt option will be mandatory:
@@ -147,6 +139,7 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 				if ((*(r[id])).coms!=NULL) free ((*(r[id])).coms);
 				if ((*(r[id])).desc!=NULL) free ((*(r[id])).desc);
 				free(r[id]);
+				r[id]=NULL;
 			}
 
 			//set resource information on this index entry
@@ -192,10 +185,8 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 				}
 			}
 			if (data!=NULL) free(data);
-			//printf("libere data que no era nula\n");
 		}
 		fclose(fp);
-		//printf("termine A %d\n",ok);
 		return ok;
 	} else {
 		return -1; //file could not be open
