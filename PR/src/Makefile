@@ -52,9 +52,9 @@ endif
 
 OBJFILES = compile.o compress.o extract.o resources.o tasks.o disk.o\
            xmlparse.o xmlsearch.o dat.o bmp.o mid.o pal.o wav.o plv.o\
-           memory.o $(SRC2) pr.o
+           memory.o $(SRC2) pr.o 
 
-SRC3     = prlib.o
+SRC3     = main.o filedir.o
 
 EXEFILE  = bin/pr
 XMLFILE  = bin/resources.xml
@@ -65,10 +65,10 @@ LINKEROPTIONS = $(LINKERRELEASE)
 
 #main file
 
-$(EXEFILE): $(OBJFILES) $(XMLFILE)
+$(EXEFILE): $(OBJFILES) $(XMLFILE) $(SRC3)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
-	$(CC) $(OPTIONS) -o bin/pr $(OBJFILES) 
+	$(CC) $(OPTIONS) -o bin/pr $(OBJFILES) $(SRC3) 
 	$(INFO) Program successfully compiled
 	$(INFO)
 	$(INFO) Please read readme.txt for syntax information
@@ -78,7 +78,7 @@ $(EXEFILE): $(OBJFILES) $(XMLFILE)
 
 clean:
 	$(INFO) Erasing temporary object files...
-	$(REMOVER) $(OBJFILES) $(SRC3) $(EXEFILE)
+	$(REMOVER) $(OBJFILES) $(EXEFILE) $(SRC3)
 
 cleanxml:
 	$(INFO) Erasing xml file...
@@ -88,10 +88,10 @@ build: clean bin/pr
 
 all: $(EXEFILE)
 
-lib: clean $(OBJFILES) $(SRC3)
+lib: $(OBJFILES) $(SRC3)
 	$(MAKEDIR) bin
 	$(INFO) Making dynamic library...
-	$(CC) $(OPTIONS) -o bin/pr.so $(OBJFILES) $(SRC3) -Llibc -shared -dynamic
+	$(CC) $(OPTIONS) -o bin/pr.so $(OBJFILES) -Llibc -shared -dynamic
 	$(INFO) Library successfully compiled
 	$(INFO)
 	$(INFO) Please read readme.coders.txt and pr.h for interfaces
@@ -120,13 +120,17 @@ compress.o: compress.c
 	$(INFO) Compiling compression module...
 	$(CC) -c compress.c $(OPTIONS)
 
-pr.o: pr.c
-	$(INFO) Compiling main module in standard mode...
-	$(CC) -c pr.c $(OPTIONS)
+main.o: main.c
+	$(INFO) Compiling command parsing module for standard mode...
+	$(CC) -c main.c $(OPTIONS)
 
-prlib.o: pr.c
-	$(INFO) Compiling main module in library mode...
-	$(CC) -c pr.c $(OPTIONS) -DDLL -o prlib.o
+pr.o: pr.c
+	$(INFO) Compiling main library primitives for both modes...
+	$(CC) -c pr.c $(OPTIONS)
+	
+filedir.o: filedir.c
+	$(INFO) Compiling directory and recursive file reading module for standard mode...
+	$(CC) -c filedir.c $(OPTIONS)
 
 resources.o: resources.c
 	$(INFO) Compiling resource manager module...

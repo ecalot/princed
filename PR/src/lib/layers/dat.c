@@ -34,10 +34,10 @@ dat.c: Princed Resources : DAT library
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pr.h"
 
 #include "disk.h"
 #include "dat.h"
+#include "pr.h"
 
 /***************************************************************\
 |                     DAT reading primitives                    |
@@ -70,8 +70,17 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 
 	/* Open file */
 	readDatFileSize=mLoadFileArray(vFiledat,&readDatFile);
-	if (!readDatFileSize) return 0;
-	if (readDatFileSize<=6) {free(readDatFile);return 0;}
+	if (!readDatFileSize) 
+	{
+		fprintf(stderr, "mReadBeginDatFile: %s not found\n", vFiledat);
+		return 0;
+	}
+	if (readDatFileSize<=6)
+	{
+		fprintf(stderr, "mReadBeginDatFile: File too short\n");
+		free(readDatFile);
+		return 0;
+	}
 
 	readDatFilePoint=readDatFile;
 
@@ -81,6 +90,7 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	indexSize=array2short(readDatFilePoint);
 
 	if ((indexOffset>readDatFileSize)&&((indexOffset+indexSize)!=readDatFileSize)) {
+		fprintf(stderr, "mReadBeginDatFile: Invalid format\n");
 		free(readDatFile);
 		return 0; /* this is not a valid prince dat file */
 	}
@@ -102,13 +112,14 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 }
 
 int mReadFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
-	int ok=1;
+	int ok=1; /* TODO: rename mRead* for mRead* and mWrite for mWrite */
 	unsigned short int id;
 
 	/* for each archived file the index is read */
-	id=    array2short(indexPointer+ofk+k*recordSize);/*(indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8);*/
-	offset=array2long(indexPointer+ofk+k*recordSize+2);/*indexPointer[ofk+k*recordSize+2])+(indexPointer[ofk+k*recordSize+3]<<8)+(indexPointer[ofk+k*recordSize+4]<<16)+(indexPointer[ofk+k*recordSize+5]<<24);*/
-	*size= array2short(indexPointer+ofk+k*recordSize+6)+1;/*indexPointer[ofk+k*recordSize+6])+(indexPointer[ofk+k*recordSize+7]<<8)+1;*/
+	id=array2short(indexPointer+ofk+k*recordSize);
+	
+	offset=array2long(indexPointer+ofk+k*recordSize+2);
+	*size= array2short(indexPointer+ofk+k*recordSize+6);
 	if ((!pop1)&&(!(indexPointer[ofk+k*recordSize+8]==0x40)&&(!indexPointer[ofk+k*recordSize+9])&&(!indexPointer[ofk+k*recordSize+10]))) return -1;
 	if (offset+indexSize>readDatFileSize) return -1;
 	*data=readDatFile+offset;
@@ -126,10 +137,10 @@ int mReadInitResource(tResource** res,const unsigned char* data,long size) {
 		(*res)->palette=0;
 		(*res)->number=0;
 		(*res)->size=(unsigned short int)size;
-		/* (*res)->offset=(unsigned short)offset; TODO delete this line */
-		(*res)->type=verifyHeader(data,(unsigned short int)size);
+		(*res)->offset=(unsigned short)offset; /* TODO delete this line */
+		/* (*res)->type=verifyHeader(data,(unsigned short int)size); */
 	} else { /* If resource type is invalid or 0, the type will be decided by PR */
-		if (!((*res)->type)) (*res)->type=verifyHeader(data,(unsigned short int)size);
+		if (!((*res)->type)) (*res)->type=0; /*verifyHeader(data,(unsigned short int)size);*/
 	}
 	return 0;
 }
@@ -152,7 +163,7 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 			 0 File couldn't be open
 
 	*/
-	if (writeOpen(vFile,&writeDatFile,optionflag|backup_flag)) {
+	if (writeOpen(vFile,&writeDatFile,optionflag)) {
 		fseek(writeDatFile,6,SEEK_SET);
 		return 1;
 	} else {
@@ -174,7 +185,7 @@ void mWriteInitResource(tResource** res) {
 void mWriteFileInDatFile(const unsigned char* data, int size) {
 	/*
 		Adds a data resource to a dat file keeping
-		abstractly the checksum verifications
+		abstractly the checksum ver	ifications
 	*/
 
 	/* Declare variables */

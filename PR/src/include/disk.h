@@ -69,7 +69,7 @@ int  mLoadFileArray(const char* vFile,unsigned char** array);
 int  makebase      (const char* p);
 const char* repairFolders(const char* a);
 const char* getFileNameFromPath(const char* path);
-int recurseDirectory(const char* path,int optionflag, const char* extension,const char* dirName,const char* resFile, const char* datfilename,const char* datAuthor,FILE* output);
+int recurseDirectory(const char* path,int recursive, void* pass, void (*function)(const char*,void*));
 whatIs isDir(const char *nombre);
 int mCopy(const char* strSource, const char* strTarget);
 #define mRemoveFile(a) remove(repairFolders(a))

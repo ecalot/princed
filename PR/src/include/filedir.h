@@ -35,46 +35,26 @@ xmlparse.h: Princed Resources : xml handling functions header file
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
 
-#ifndef _XMLSEARCH_H_
-#define _XMLSEARCH_H_
+#ifndef _FILEDIR_H_
+#define _FILEDIR_H_
 
-/* Includes */
-#include "xmlparse.h"
-#include "resources.h"
+/* types */
+typedef struct tFileDir {
+        char* file;
+        struct tFileDir* next;
+}tFileDir;
 
-/****************************************************************\
-|                   Tag Tree Searching Functions                 |
-\****************************************************************/
+typedef struct {
+        tFileDir filenames;
+        tFileDir options;
+}tFileDir2;
 
-const tTag* searchTree(const tTag* t,const char* datFile, const char* id);
-void workTag(const tTag* t,void* pass);
+/* prototypes */
 
-/* Abstract function that runs all the tree and executes "function(tag,pass)" for each tag */
-void workTree(const tTag* t,void* pass, void (*function)(const tTag*,void*));
-
-void compareXmlFile(tTag* modified,tTag* original);
-
-/* Searching Structures */
-
-/* File List Structure */
-typedef struct tListNode {
- char* file;
- struct tListNode* next;
-}tListNode;
-
-/* File List Functions */
-void addFileToList(const tTag* t,void* junk);
-char* getFileFromList();
-
-/* Abstract passing structures */
-typedef struct tPassWork {
-	const char* datFile;
-	tResource** r;
-}tPassWork;
-
-typedef struct tPassCompare {
-	const tTag* tag;
-}tPassCompare;
+void  fileDirClearOptions(tFileDir2* list1);
+void  fileDirAddOption(tFileDir2* list1, const char* option);
+int   fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notHasRecursiveFlag,const char* vResFile);
+char* fileDirGetFile(tFileDir2* files,char** datfile);
 
 #endif
 

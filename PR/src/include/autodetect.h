@@ -128,16 +128,8 @@ void getUpperFolder(char* aux, char* vFiledat);
 
 const char* getExtDesc(int type);
 
-/* parse file and free parsed structure */
+/* parse xml file */
 int parseFile(const char* vFile, const char* datFile, tResource* r[]);
-void freeParsedStructure();
-#ifdef DLL
-int parseStructure(const char* vFile);
-tTag* resourceTreeGetChild(tTag* whereAmI);
-tTag* resourceTreeGetNext (tTag* whereAmI);
-tTag* resourceTreeGetRoot ();
-int   resourceTreeGetInfo (tTag* whereAmI, char** tag, char** desc, char** path, char** file, char** itemtype, char** name, char** palette, char** type, char** value, char** version, char** number);
-#endif
 
 /* In case there are unknown resources it closes the unknown XML output */
 void endUnknownXml();

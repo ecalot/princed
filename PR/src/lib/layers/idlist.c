@@ -244,47 +244,26 @@ void emptyTable(tResource* r[]) {
 	while (i--) *(r++)=NULL;
 }
 
-/* Resources input xml tree. Private+abstract variable */
-static tTag* xmlStructure=NULL; /* Keeping the parsed file structure in memory will save a lot of time */
 
-int parseStructure(const char* vFile) {
-	static const char defaultXmlFile[]=RES_XML_RESOURC_XML;
-	int error=0;
-
-	/* Generate xml structure if doesn't exist */
-	if (xmlStructure==NULL)	{
-		/* Set default values */
-		if (vFile==NULL) vFile=defaultXmlFile;
-		xmlStructure=parseXmlFile(vFile,&error);
-	}
-	if (error) xmlStructure=NULL;
-	return error;
-}
 
 /* parse file */
 int parseFile(const char* vFile, const char* datFile, tResource* r[]) {
 	/* Declare error variable */
 	int error;
 	tPassWork pass;
+	tTag* structure;
 
 	/* Generate xml structure if doesn't exist */
-	if ((error=(parseStructure(vFile)))) return error;
+	if ((error=parseStructure(vFile,&structure))) return error;
 
 	/* Use the xml structure to Generate the resource structure of the file */
 	emptyTable(r);
 	pass.datFile=datFile;
 	pass.r=r;
-	workTree(xmlStructure,&pass,workTag);
+	workTree(structure,&pass,workTag);
 
 	/* All done */
 	return 0;
-}
-
-void freeParsedStructure() {
-	/* Free if exist */
-	if (xmlStructure!=NULL) freeTagStructure(xmlStructure);
-	/* Reinitializes the variable */
-	xmlStructure=NULL;
 }
 
 /***************************************************************\
@@ -348,106 +327,3 @@ void getFileName(char* vFileext,const char* vDirExt,tResource* r,unsigned short 
 		sprintf(vFileext,"%s/%s",vDirExt,r->path);
 	}
 }
-
-/* Search files for the Import feature */
-int importDir(const char* directory, const char* vResFile, int pOption, const char* backupExtension,const char* vDatDirectory, FILE* output) {
-	/* Declare error variable */
-	int error=0;
-	char* datfile;
-	char* recursive;
-	int sizeOfPath;
-	int sizeOfFile;
-	int result;
-
-	/* Generate xml structure if doesn't exist */
-	if ((error=(parseStructure(vResFile)))) return error;
-
-	/* Use the xml structure to Generate the file list */
-	workTree(xmlStructure,NULL,addFileToList);
-
-	while((datfile=getFileFromList())) {
-		sizeOfPath=strlen(vDatDirectory);
-		sizeOfFile=strlen(datfile);
-
-		/* Generate full vDatDirectory/datfile path */
-		recursive=(char*)malloc(sizeOfPath+sizeOfFile+2);
-		memcpy(recursive,vDatDirectory,sizeOfPath);
-		recursive[sizeOfPath]=DIR_SEPARATOR;
-		memcpy(recursive+sizeOfPath+1,datfile,sizeOfFile+1);
-
-		/* Run program */
-		result=prMain(pOption, backupExtension,directory,vResFile,recursive,datfile,NULL,output);
-		/* Free memory */
-		free(datfile);
-		free(recursive);
-	}
-
-	/* All done */
-	return result;
-}
-
-int isntADatFile(const char* testFile, const char* vResFile) {
-	/*
-		Results:
-			0  Is a dat file
-			1  It isn't a dat file
-			-1 Parse error
-			-2 No memory
-			-3 Attribute not recognized
-			-4 File not found
-	*/
-
-	/* Declare result variable */
-	int result;
-	char* gottenFile;
-
-	/* Generate xml structure if doesn't exist */
-	if ((result=(parseStructure(vResFile)))) return result;
-
-	/* Use the xml structure to Generate the file list */
-	workTree(xmlStructure,NULL,addFileToList);
-	while((gottenFile=(getFileFromList()))) {
-		result=result||equalsIgnoreCase(gottenFile,testFile);
-		free(gottenFile);
-	}
-
-	/* All done */
-	return !result;
-}
-
-/***************************************************************\
-|                Resource tree browsing for DLL                 |
-\***************************************************************/
-
-#ifdef DLL
-
-tTag* resourceTreeGetRoot () {
-	return xmlStructure;
-}
-
-tTag* resourceTreeGetNext (tTag* whereAmI) {
-	return whereAmI->next;
-}
-
-tTag* resourceTreeGetChild(tTag* whereAmI) {
-	return whereAmI->child;
-}
-
-int   resourceTreeGetInfo (tTag* whereAmI,	char** tag, char** desc, char** path, char** file, char** itemtype, char** name, char** palette, char** type, char** value, char** version, char** number) {
-	if (whereAmI==NULL) return 0;
-	*tag=whereAmI->tag;
-	*desc=whereAmI->desc;
-	*path=whereAmI->path;
-	*file=whereAmI->file;
-	*itemtype=whereAmI->itemtype;
-	*name=whereAmI->name;
-	*palette=whereAmI->palette;
-	*type=whereAmI->type;
-	*value=whereAmI->value;
-	*version=whereAmI->version;
-	*number=whereAmI->number;
-	return 1;
-}
-
-#endif
-

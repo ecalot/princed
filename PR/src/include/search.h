@@ -54,16 +54,8 @@ void workTree(const tTag* t,void* pass, void (*function)(const tTag*,void*));
 
 void compareXmlFile(tTag* modified,tTag* original);
 
-/* Searching Structures */
-
-/* File List Structure */
-typedef struct tListNode {
- char* file;
- struct tListNode* next;
-}tListNode;
 
 /* File List Functions */
-void addFileToList(const tTag* t,void* junk);
 char* getFileFromList();
 
 /* Abstract passing structures */

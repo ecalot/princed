@@ -59,4 +59,14 @@ typedef struct tTag {
 void  freeTagStructure (tTag* structure);
 tTag* parseXmlFile     (const char* vFile,int* error);
 
+int parseStructure(const char* vFile, tTag** structure);
+void freeParsedStructure(tTag** structure);
+void freeParsingCache();
+
+#ifdef DLL
+tTag* resourceTreeGetChild(tTag* whereAmI);
+tTag* resourceTreeGetNext (tTag* whereAmI);
+int   resourceTreeGetInfo (tTag* whereAmI, char** tag, char** desc, char** path, char** file, char** itemtype, char** name, char** palette, char** type, char** value, char** version, char** number);
+#endif
+
 #endif

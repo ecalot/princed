@@ -112,54 +112,6 @@ void workTree(const tTag* t,void* pass, void (*function)(const tTag*,void*)) {
 }
 
 /****************************************************************\
-|                       File List Primitives                     |
-\****************************************************************/
-
-static tListNode* list=NULL;
-
-void addFileToList(const tTag* t,void* junk) {
-	/*
-		Adds the file to the list only once
-	*/
-	tListNode* node=list;
-
-	/* Verify if the file exists */
-	while (node) {
-		if (equalsIgnoreCase(node->file,t->file)) /* If file was in the list, do nothing */
-			return;
-		node=node->next;
-	}
-	/* Add new node */
-	node=(tListNode*)malloc(sizeof(tListNode));
-
-	/* Use LIFO because its more probable to get a file with the same name */
-	node->file=strallocandcopy(t->file);
-	node->next=list;
-	list=node;
-}
-
-char* getFileFromList() {
-	/*
-		Returns and removes one random file from the list
-	*/
-	char* result;
-	tListNode* aux;
-	if (list) {
-		/* Remember node values */
-		aux=list;
-		result=list->file;
-		/* move one position */
-		list=list->next;
-		/* free node */
-		free(aux);
-
-		return result;
-	} else {
-		return NULL;
-	}
-}
-
-/****************************************************************\
 |                       Compare two XML files                    |
 \****************************************************************/
 

@@ -96,7 +96,7 @@ pr.h: Princed Resources : English language strings
 "Valid DAT file with undefined content",\
 "Graphic DAT file",\
 "Internal PC Speaker dat file",\
-"","","",\
+NULL,NULL,NULL,\
 "Pop2 dat file"}
 
 #define PR_TEXT_IMPORT_ARRAY {\

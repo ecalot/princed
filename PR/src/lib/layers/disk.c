@@ -73,7 +73,7 @@ const char *repairFolders(const char* a) {
 	static char result[MAX_FILENAME_SIZE];
 
 
-	for (i=0,k=0;a[i]&&(k<MAX_FILENAME_SIZE);) {
+	for (i=0,k=0;(k<MAX_FILENAME_SIZE)&&a[i];) {
 		if (isDirSep(a,i)) {
 			result[k]=DIR_SEPARATOR;
 			i++;
@@ -197,6 +197,7 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 				fp=fopen(fileName,"wb");
 				if (fp==NULL) return -1;
 				fwrite(content,1,size,fp);
+				fclose(fp);
 			} else {
 				remove(fileName);
 			}
@@ -213,6 +214,7 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 				fp=fopen(aux,"wb");
 				if (fp==NULL) return -2;
 				fwrite(content,1,size,fp);
+				fclose(fp);
 			}
 		}
 
@@ -220,7 +222,7 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 		if (size) free(content);
 	}
 
-	return fclose(fp);
+	return 0;
 }
 
 int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
@@ -365,39 +367,6 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 	}
 }
 
-#ifdef PR_FUTURE_CODE
-int mDiskVealidateFileHeader(unsigned char* text, int size, FILE* fp) {
-	/*
-		Validates if the file contains the following text in the stream.
-		1 if it does
-		0 if error or doesn't
-
-		Moves the file pointer to the next position
-	*/
-
-	/* Declare variables */
-	int i;
-	unsigned char* readText;
-
-	/* Reserves memory to allocate the read bytes */
-	readText=getMemory(size);
-	if (readText==NULL) return 0; /* memory error, abort */
-
-	/* Read the file and move the file pointer */
-	if (!fread(readText,size,1,fp)) {
-		free(readText);
-		return 0;
-	}
-
-	/* Make the binary compare */
-	for (i=0;(i<size)&&(readText[i]==text[i]);i++);
-
-	/* Frees memory and returns the result */
-	free(readText);
-	return (i==size); /* 0 if the compare for was stopped before end reached */
-}
-#endif
-
 const char* getFileNameFromPath(const char* path) {
 	/*
 		If you give a path you get the filename,
@@ -426,9 +395,7 @@ whatIs isDir(const char *path) {
 	return (S_IFDIR&buf.st_mode)?eDirectory:eFile;
 }
 
-#ifndef IGNORERECURSIVEFUNCTIONS
-
-int recurseDirectory(const char* path,int optionflag, const char* extension,const char* dirName,const char* resFile, const char* datfilename,const char* datAuthor,FILE* output) {
+int recurseDirectory(const char* path,int recursive, void* pass, void (*function)(const char*,void*)) {
 	/*
 		Search for all .dat files in the directory
 		if recursive flag is set search over the subdirectories
@@ -437,18 +404,13 @@ int recurseDirectory(const char* path,int optionflag, const char* extension,cons
 	*/
 
 	/* Declare variables */
-	char*          recursive;
+	char*          recursivePath;
 	struct dirent* directoryStructure;
 	DIR*           dir;
 
 	/* Opens directory */
 	if ((dir = opendir(path))==NULL) {
-		return 0;
-	}
-
-	/* Shows some messages */
-	if ((hasFlag(recursive_flag))&&(hasFlag(verbose_flag))) { /* Only recourse if recursive and verbose flags are set */
-		fprintf(outputStream,PR_TEXT_DISK_PROCESSING,path);
+		return -1;
 	}
 
 	/* Main loop: while there are still more files left */
@@ -463,34 +425,23 @@ int recurseDirectory(const char* path,int optionflag, const char* extension,cons
 			int sizeOfFile=strlen(directoryStructure->d_name);
 
 			/* Generate recursive path */
-			recursive=(char*)malloc(sizeOfPath+2+sizeOfFile);
-			memcpy(recursive,path,sizeOfPath);
-			recursive[sizeOfPath]=DIR_SEPARATOR;
-			memcpy(recursive+sizeOfPath+1,directoryStructure->d_name,sizeOfFile+1);
+			recursivePath=(char*)malloc(sizeOfPath+2+sizeOfFile);
+			memcpy(recursivePath,path,sizeOfPath);
+			recursivePath[sizeOfPath]=DIR_SEPARATOR;
+			memcpy(recursivePath+sizeOfPath+1,directoryStructure->d_name,sizeOfFile+1);
 
-			/*
-				If recursive path is a directory and recursive flag is set recourse into it
-				if recursive path is a directory and recursive flag wasn't set, just ignore
-				if recursive path is not a directory and is a dat file, do prMain
-				if recursive path is not a directory and is not a dat file, ignore
-			*/
-			if (isDir(recursive)==eDirectory) {
-				if (hasFlag(recursive_flag)) { /* Only recurse if recursive flag is set */
-					recurseDirectory(recursive,optionflag,extension,dirName,resFile,datfilename,datAuthor,output);
-				}
+			if (isDir(recursivePath)==eDirectory&&recursive) {
+				/* Only recurse if we are in a directory and recursive is true */
+				recurseDirectory(recursivePath,recursive,pass,function);
 			} else {
-				if (sizeOfFile>4) {
-					if (equalsIgnoreCase(".dat",directoryStructure->d_name+sizeOfFile-4)) {
-						prMain(optionflag,extension,dirName,resFile,recursive,directoryStructure->d_name,datAuthor,output);
-					}
-				}
+				function(recursivePath,pass);
 			}
 			/* Free all allocated memory */
-			free(recursive);
+			free(recursivePath);
 		}
 	}
 	closedir(dir);
-	return 1;
+	return 0;
 }
 
 #ifdef MACOS
@@ -536,6 +487,5 @@ int macfwritel(const void* var,FILE* file) {
 	return fwrite(lit_e,4,1,file);
 }
 
-#endif
 #endif
 

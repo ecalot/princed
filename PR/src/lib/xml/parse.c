@@ -503,3 +503,72 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 		return NULL;
 	}
 }
+
+static tTag* xmlStructure=NULL; /* Keeping the parsed file structure in memory will save a lot of time */
+static char lastFile[256]="";
+
+/* cache parsed structure. If null is passed the default name will be used */
+int parseStructure(const char* vFile,tTag** structure) {
+	/* Resources input xml tree. Private+abstract variable */
+	static const char defaultXmlFile[]=RES_XML_RESOURC_XML;
+	int error=0;
+
+	if (vFile==NULL) vFile=defaultXmlFile;
+	
+	/* Generate xml structure if doesn't exist */
+	if (strcmp(lastFile,vFile)) {
+		/* if the file is different than the cached file */
+		freeParsedStructure(&xmlStructure);
+		xmlStructure=parseXmlFile(vFile,&error);
+		strncpy(lastFile,vFile,256); /* remember the new cached filename */
+	}
+
+	if (error) xmlStructure=NULL;
+	*structure=xmlStructure;
+	return error;
+}
+
+void freeParsingCache() {
+	freeParsedStructure(&xmlStructure);
+	lastFile[0]=0;
+}
+
+void freeParsedStructure(tTag** structure) {
+	/* Free it only if exists */
+	if (*structure!=NULL) freeTagStructure(*structure);
+	/* Reinitializes the variable */
+	*structure=NULL;
+}
+
+/***************************************************************\
+|                Resource tree browsing for DLL                 |
+\***************************************************************/
+
+#ifdef DLL
+
+tTag* resourceTreeGetNext (tTag* whereAmI) {
+	return whereAmI->next;
+}
+
+tTag* resourceTreeGetChild(tTag* whereAmI) {
+	return whereAmI->child;
+}
+
+int   resourceTreeGetInfo (tTag* whereAmI,	char** tag, char** desc, char** path, char** file, char** itemtype, char** name, char** palette, char** type, char** value, char** version, char** number) {
+	if (whereAmI==NULL) return 0;
+	*tag=whereAmI->tag;
+	*desc=whereAmI->desc;
+	*path=whereAmI->path;
+	*file=whereAmI->file;
+	*itemtype=whereAmI->itemtype;
+	*name=whereAmI->name;
+	*palette=whereAmI->palette;
+	*type=whereAmI->type;
+	*value=whereAmI->value;
+	*version=whereAmI->version;
+	*number=whereAmI->number;
+	return 1;
+}
+
+#endif
+
