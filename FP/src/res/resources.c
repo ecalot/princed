@@ -154,11 +154,11 @@ tData* resLoad(long id) {
 				printf("Fatal Error: resLoad: level not found!\n");
 				return NULL;
 			}
-			mReadCloseDatFile();
 			result=(tData*)malloc(sizeof(tData));
 			result->frames=1; /* drop filename and palette */
 			result->type=eLevels;
 			result->pFrames=(void**)mapLoadLevel(raw);
+			mReadCloseDatFile();
 			return result; /* transform from raw to a loaded map */
 		case RES_TYPE_IMG: {
 			tMemory palette;
