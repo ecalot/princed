@@ -110,7 +110,6 @@ void prSetOutput(FILE* output);
 #define DEFAULT_BACKUP_EXTENSION "bak"
 
 /* Define max & min's */
-#define MAX_RES_COUNT            25000
 #define MAX_FILENAME_SIZE        260
 
 /* Path defines */

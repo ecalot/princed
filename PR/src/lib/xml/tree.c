@@ -45,6 +45,7 @@ resources.c: Princed Resources : Resource Handler
 #include "disk.h"
 #include "memory.h"
 #include "resources.h"
+#include "dat.h" /* MAX_RES_COUNT */
 #include "compress.h"
 
 extern FILE* outputStream;

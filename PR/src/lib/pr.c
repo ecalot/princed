@@ -54,6 +54,7 @@ pr.c: Main source file for Princed Resources library
 #include "pr.h"
 
 #include "compress.h"
+#include "dat.h" /* MAX_RES_COUNT */
 
 #include "extract.h"
 #include "compile.h"

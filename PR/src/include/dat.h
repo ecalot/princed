@@ -36,6 +36,8 @@ dat.h: Princed Resources : DAT library headers
 
 #include "resources.h"
 
+#define MAX_RES_COUNT            25000
+
 #define PR_DAT_INCLUDE_DATREAD
 #define PR_DAT_INCLUDE_DATWRITE
 

@@ -37,7 +37,6 @@ dat.c: Princed Resources : DAT library
 
 #include "disk.h"
 #include "dat.h"
-#include "pr.h"
 
 /***************************************************************\
 |                     DAT reading primitives                    |
