@@ -92,7 +92,8 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasPillar=(result.code==T_PILLAR);
 		result.hasBigPillar=(result.code==T_BP_BOTTOM);
 		result.isGate=(result.code==T_GATE);
-		result.gateStatus=(!back)*47; /* only important if tile is gate*/
+		/* only important if tile is gate*/
+		result.gateStatus=(result.code==T_GATE)?((!back)*47):15;
 		result.walkable=1;
 		result.hasChopper=(result.code==T_CHOPPER);
 		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);
@@ -166,13 +167,22 @@ void drawGate(int x, int y, int frame) {
 	 */
 	register int i;
 	register const int mod=frame&7;
-	/* Upper part */
+	
 	outputDrawBitmap(roomGfx.environment->pFrames[27-mod],x,y+mod);
 	for (i=8;i<=frame;i+=8)
 		outputDrawBitmap(roomGfx.environment->pFrames[20],x,y+i+mod);
 	outputDrawBitmap(roomGfx.environment->pFrames[18],x,y+i+mod+4);
 }
 
+void drawExit(int x, int y, int frame) {
+	register int i;
+	if (frame<47) outputDrawBitmap(roomGfx.environment->pFrames[55],x,y+47);
+	outputDrawBitmap(roomGfx.environment->pFrames[50],x,y+51);
+	for (i=0;i<=frame;i+=4)
+		outputDrawBitmap(roomGfx.environment->pFrames[1],x,y+i+(frame&3));
+	outputDrawBitmap(roomGfx.environment->pFrames[2],x,y);
+}
+		
 /* main panel block */
 void drawBackPanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
@@ -212,6 +222,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			(x-1)*TILE_W,
 			y*TILE_H+2
 		);
+		drawExit((x-2)*TILE_W+8,(y-1)*TILE_H-1,/*left.gateStatus*/((tMap*)(room->level))->time%52);
 	}
 	/* pillar/left */
 	if (left.hasPillar) {
