@@ -50,7 +50,7 @@ This program is open source under the GNU General Public License terms
   - Solved palette import bug
  * PR 0.7
   x Solved corrupted images on compression bug
-  x Source changed to ANSI C compatible
+  - Source ported to several compilers and platforms
   - Moved PG module to compress.c and bmp.c
   - Moved midi support to mid.c
   - Added Makefile
@@ -60,6 +60,20 @@ This program is open source under the GNU General Public License terms
  i)   Code the compression algorithms (B0, B1, B2) to optimize the bitmap compiled dat files
  ii)  Add full pop2 support
  iii) Add resources tree in xml. See the sample resources.xml and folder.xml
+parsing:
+
+typedef struct {
+ short int id;
+ char* field1;
+ char* field2;
+}tTag;
+
+tTag* getTagStructure(); //initializes
+freeTagStruct
+int (0 if end) parseNext(char** pString, tTag* tag);
+
+
+
  iv)  Code the compression algorithms (B3, B4) to optimize the bitmap compiled dat files
  v)   Add a C++ class to use PR
 
