@@ -141,9 +141,9 @@ void search_best_pattern(unsigned char *input, int inputSize,
 
 /* Insert the specified bit in the current maskByte. If the maskByte is full,
  * start a new one. */
+static int maskBit=8;
 void pushMaskBit(int b, unsigned char *output, int *outputPos)
 {
-	static int maskBit=8;
 	static unsigned char* maskByte;
 	if ( maskBit == 8 ) /* first time or maskBit is full */
 	{
@@ -152,7 +152,6 @@ void pushMaskBit(int b, unsigned char *output, int *outputPos)
 		(*outputPos)++;
 		*maskByte = 0;
 		maskBit = 0;
-printf("maskbyte i=%d\n", *outputPos - 1);
 	}
 
 	*maskByte |= b<<maskBit;
@@ -165,7 +164,6 @@ void addPattern(unsigned char *input, int inputPos,
                 unsigned char *pattern, int pattern_len)
 {
 	int loc = (pattern - input) + 1024 - 66;
-printf("pattern i=%d o=%d rep=%d loc=%d\n", outputPos, inputPos, pattern_len, inputPos-(pattern-input));
 	output[outputPos] = 
 		(((pattern_len - 3) << 2) & 0xfc) + ((loc & 0x0300) >> 8);
 	output[outputPos + 1] = (loc & 0x00FF);
@@ -178,9 +176,8 @@ void compressLzg(const unsigned char* input2, int inputSize,
 {
 	int inputPos = 0, outputPos = 0;
 	int i;
-
 	unsigned char* input=malloc(inputSize+WIN_SIZE);
-	
+
 	/* Create ghost window filled with zeros before input data: */
 	/* memset */
 	for (i = 0; i < WIN_SIZE; i++)
@@ -215,7 +212,9 @@ void compressLzg(const unsigned char* input2, int inputSize,
 			outputPos += 2;
 		}
 	}
-	
+
+	maskBit=8; /* reinitialize maskBit*/
+
 	free(input-WIN_SIZE);
 	*outputSize = outputPos;
 }
