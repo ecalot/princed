@@ -1,4 +1,4 @@
-Princed Resources Editor V0.7
+Princed Resources Editor V0.8 beta
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -18,7 +18,8 @@ Resource Types:
  04 Midis
  05 Undefined
  06 Palette
- 07 to 10 reserved
+ 07 PC Speaker Sounds
+ 08 to 10 reserved
 
 Type 01:
  We decided to give Level files the extension ".pet".  These files can be  edited Princed V3.  PV3 can also edit the whole levels.dat file.
@@ -60,6 +61,10 @@ Type 05:
 Type 06:
  For the bitmaps palettes we are using the Jasc Pal format (Not Microsoft pal format)
  Recommended editor: Paint Shop Pro.
+
+Type 07:
+ For the PC Speaker sounf we are using binary data saved in pcs format
+ Recommended editor: xvi32 or any other hex editor.
 
 2) Bugs:
  This is the first stable release, we hadn't tested enough as to say it has no bugs,

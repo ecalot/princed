@@ -1,4 +1,4 @@
-Princed Resources Editor V0.7
+Princed Resources Editor V0.8 beta
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -54,22 +54,29 @@ This program is open source under the GNU General Public License terms
   - Moved midi support to mid.c
   - Solved corrupted images on compression bug
   - Source ported to several compilers and platforms
-
+ * PR 0.8 beta
+  - Abstracted disk functions into one module
+  - Added PC Speaker sound clasification
+  - Added compression algorithms B0 and B2. Before that it was only working B1.
+  - Coded a base directory creator for files
+  - Coded a parser and the resources tree in xml. 
+  - Coded inheritance of owner's attribures to tag childs
+  - Coded linking from an id to a palette
+  - Coded the compression algorithm selector to optimize the bitmap compiled dat files
+  - Coded unknown extracted files saved in unknown.xml
+ 
 
 2) ToDo List
- i)   Code the compression algorithms (B0, B1, B2) to optimize the bitmap compiled dat files
- ii)  Add full pop2 support
- iii) Add resources tree in xml. See the sample resources.xml and folder.xml
-parsing
- iv)  Code the compression algorithms (B3, B4) to optimize the bitmap compiled dat files
- v)   Add a C++ class to use PR
+ i)   Add full pop2 support
+ ii)  Code the compression algorithms (B3, B4) to optimize the bitmap compiled dat files
+ iii) Add a C++ class to use PR
+ iv)  Abstract output
 
 3) Future Versions:
-  PR v0.8 beta: added i,iii
   PR v0.9:      tested and stable
   PR v1.0:      First optimized & stable version for win32 and unix based systems
-  PR v1.1:      added v
-  PR v1.5:      added iv
-  PR v2.0 beta: added ii
+  PR v1.1:      added iii
+  PR v1.5:      added ii
+  PR v2.0 beta: added i
   PR v2.0:      Optimized & stable version for win32 and unix based systems
 

@@ -1,4 +1,4 @@
-Princed Resources Handler V0.7
+Princed Resources Handler V0.8 beta
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -9,7 +9,7 @@ GCC with the C99 standard will work:
 
 -shell-2.05b$ gcc -std=c99 pr.c -o pr
 -shell-2.05b$ ./pr
-Princed resources (PR) V0.7
+Princed resources (PR) V0.8 beta
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 
