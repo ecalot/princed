@@ -27,14 +27,16 @@ disk.c: Princed Resources : Disk Access & File handling functions
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
   Version: 1.00 (2003-Oct-29)
 
+  Modified by: Enrique Calot <ecalot.cod@princed.com.ar>
+  Version: 1.10 (2003-Dec-03)
+
  Note:
   DO NOT remove this copyright notice
 */
 
 //Defines
-#include <stdlib.h>
+#include "memory.h"
 #include <string.h>
-#include <stdio.h>
 #include "pr.h"
 #include "disk.h"
 #ifdef UNIX
@@ -100,6 +102,28 @@ int makebase(const char* p) {
 	return a;
 }
 
+char writeOpen(char* vFileext, FILE* *fp) {
+	/*
+		Opens vFileext for write access
+		 if the path does't exist it is created
+		 if the file doesn't exist it is created
+		 if the file does exist it is overwriten
+
+		Sets the file pointer and returns 1 if Ok or 0 if error
+
+		Returns
+		 0 if error
+		 1 if ok
+	*/
+
+	//Create base dir and save file
+	repairFolders(vFileext);
+	if (makebase(vFileext)) return 0;
+
+	return ((*fp=fopen(vFileext,"wb"))!=NULL);
+}
+
+
 char writeData(const unsigned char* data, int ignoreChars, char* vFileext, int size) {
 	/*
 		Creates vFileext and saves data in it. In case the directory doesn't
@@ -123,11 +147,8 @@ char writeData(const unsigned char* data, int ignoreChars, char* vFileext, int s
 	size-=ignoreChars;
 	if (size<=0) return 0;
 
-	//Create base dir and save file
-	repairFolders(vFileext);
-	makebase(vFileext);
-
-	ok=((target=fopen(vFileext,"wb"))!=NULL);
+	//Save file
+	ok=writeOpen(vFileext,&target);
 	ok=ok&&fwrite(data+ignoreChars,size,1,target);
 	ok=ok&&(!fclose(target));
 	return ok;
@@ -165,14 +186,15 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 	}
 }
 
-//TODO make a #define mSaveRaw(f,d,s) writeData(d,0,f,s)
+#define mSaveRaw(f,d,s) writeData(d,0,f,s)
+/*
 char mSaveRaw(const char* vFile,const unsigned char* output, int size) {
 	/*
 		Using the given string in vFile, it opens the file and saves the
 		first "size" bytes from the "output" in it.
 		In case the file couldn't be open or there was no size returns 0,
 		otherways returns 1.
-	*/
+	/
 
   FILE * pFile;
 
@@ -183,3 +205,38 @@ char mSaveRaw(const char* vFile,const unsigned char* output, int size) {
   fclose (pFile);
   return 1;
 }
+*/
+
+char mDiskVealidateFileHeader(unsigned char* text, int size, FILE* fp) {
+	/*
+		Validates if the file contains the following text in the stream.
+		1 if it does
+		0 if error or doesn't
+
+		Moves the file pointer to the next position
+	*/
+
+	//Declare vars
+	int i;
+	unsigned char* readText;
+
+	//Reserves memory to allocate the read bytes
+	readText=getMemory(size);
+	if (readText==NULL) return 0; //memory error, abort
+
+	//Read the file and move the file pointer
+	if (!fread(readText,size,1,fp)) {
+		free(readText);
+		return 0;
+	}
+
+	//Make the binary compare
+	for (i=0;(i<size)&&(readText[i]==text[i]);i++);
+
+	//Frees memory and returns the result
+	free(readText);
+	return (i==size); //0 if the compare for was stopped before end reached
+}
+
+
+
