@@ -32,7 +32,7 @@ tasks.c: Princed Resources : Classify a DAT file
 */
 
 #include <stdio.h>
-#include "tasks.h" /* TODO: rename tasks to classify */
+#include "tasks.h" 
 #include "memory.h"
 #include "resources.h"
 #include "dat.h"
@@ -61,7 +61,7 @@ int prVerifyDatType(const char* vFiledat) {
 	if (error=mReadBeginDatFile(&numberOfItems,vFiledat)) return error;
 
 	/* main loop */
-	for (indexNumber=0;(indexNumber<numberOfItems)&&type!=RES_TYPE_BINARY;indexNumber++) {
+	for (indexNumber=0;(indexNumber<numberOfItems)&&(type==RES_TYPE_BINARY);indexNumber++) {
 		id=mReadGetFileInDatFile(indexNumber,&data,&size);
 		if (id<0) return 0; /* Read error */
 		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */

@@ -85,7 +85,6 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	/* declare variables */
 	int a;
 	int x;
-//	unsigned char carry;
 	unsigned char* b;
 	unsigned char* g;
 	unsigned char* r;
@@ -159,7 +158,6 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 
 int mReadBitMap(tImage* image,unsigned char* data, int size) {
 	char lineSerialization;
-//	int image->widthInBytes;
 	int ok;
 	int serializedWidth;
 	int x=0;

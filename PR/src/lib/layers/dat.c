@@ -58,6 +58,15 @@ void mReadCloseDatFile() {
 }
 
 int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
+	/* 
+		Return Values:
+			-1 Wrong format
+	 *
+	 *
+	 *
+	 *
+	*/
+
 	int ok;
 	unsigned char* readDatFilePoint;
 
@@ -74,9 +83,8 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	indexSize=array2short(readDatFilePoint);
 
 	if ((indexOffset>readDatFileSize)&&((indexOffset+indexSize)!=readDatFileSize)) {
-		printf("a\n");
 		free(readDatFile);
-		return -3; /* this is not a valid prince dat file */
+		return -1; /* this is not a valid prince dat file */
 	}
 
 	indexPointer=readDatFile+indexOffset;

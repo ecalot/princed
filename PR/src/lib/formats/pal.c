@@ -55,8 +55,8 @@ int mFormatExportPal(const unsigned char* data, char *vFileext,unsigned long int
 	int i;
 
 	/* Export extra palette information */
-	sprintf(aux,"%s.more",vFileext);
-	writeData(data,1,aux,size,optionflag,backupExtension);
+	sprintf((char*)aux,"%s.more",vFileext);
+	writeData(data,1,(char*)aux,size,optionflag,backupExtension);
 
 	/* Convert palette from POP format to JASC format */
 	strcpy((char*)pal,PAL_HEADER);
