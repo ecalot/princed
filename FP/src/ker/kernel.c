@@ -118,7 +118,7 @@ int control(int optionflag,int level) {
 		} else {
 			location-=3;
 		}
-		printf("up=%d\n",upIsPressed);
+		/*printf("up=%d\n",upIsPressed);*/
 		if (i>animation->frames-1) i =6;
 	}
 

@@ -34,7 +34,7 @@ titles.h: FreePrince : Titles, animation and presentation
 #ifndef _TITLES_H_
 #define _TITLES_H_
 
-typedef enum {sQuit=0,sLoad=1,sStart}tMenuOption;
+typedef enum {sQuit=0,sLoad=1,sStart,sNone}tMenuOption;
 
 tMenuOption showTitles();
 /* Show the titles animation

@@ -35,66 +35,94 @@ input.c: FreePrince : Input interface
 #include "input.h"
 #include <stdio.h> /* only for the printf debug */
 
-void inputInitKey(tKey* key) {
-	key->shiftPressed=0;
-	key->controlPressed=0;
-	key->upPressed=0;
-	key->leftPressed=0;
-	key->rightPressed=0;
-	key->actionPerformed=none;
+tKey inputCreateKey() {
+	tKey key;
+/*	inputSetshift(key->status,0);
+	inputSetcontrol(key->status,0);
+	inputSetup(key->status,0);
+	inputSetleft(key->status,0);
+	inputSetright(key->status,0);*/
+	key.status=0;
+	key.actionPerformed=none;
+	return key;
 }
 
-void editKey(tKey* key,SDLKey sdlkey,int status) {
+int editAction(tKey* key,SDLKey k) {
+	key->actionPerformed=other;
+	/* Control actions */
+	if (inputGetCtrl(key->status)) {
+		switch (k) {
+			case SDLK_l:
+				key->actionPerformed=load;
+				break;
+			case SDLK_q:	
+				key->actionPerformed=quit;
+				break;
+			default:
+				break;
+		}
+	}
+	/* Shift actions */
+	if (inputGetShift(key->status)) {
+	}
+	/* Normal actions */
+	if (!(key->status)) {
+	}
+	return key->actionPerformed;
+}
+
+int editKey(tKey* key, SDLKey sdlkey, int status) {
 	switch (sdlkey) {
 		/* keys */
 		case SDLK_UP:
-			key->upPressed=status;
-			key->downPressed=!status;
+			inputSetUp(key->status,status);
+			inputSetDown(key->status,0);
 			break;
 		case SDLK_DOWN:
-			key->downPressed=status;
-			key->upPressed=!status;
+			inputSetDown(key->status,status);
+			inputSetUp(key->status,0);
 			break;					
 		case SDLK_RIGHT:
-			key->rightPressed=status;
-			key->leftPressed=!status;
+			inputSetRight(key->status,status);
+			inputSetLeft(key->status,0);
 			break;					
 		case SDLK_LEFT:
-			key->leftPressed=status;
-			key->rightPressed=!status;
+			inputSetLeft(key->status,status);
+			inputSetRight(key->status,0);
 			break;					
 		case SDLK_HOME:
-			key->upPressed=status;
-			key->leftPressed=status;
-			key->rightPressed=!status;
+			inputSetUp(key->status,status);
+			inputSetLeft(key->status,status);
+			inputSetRight(key->status,0);
 			break;					
 		case SDLK_END:
-			key->downPressed=status;
-			key->leftPressed=status;
-			key->rightPressed=!status;
+			inputSetDown(key->status,status);
+			inputSetLeft(key->status,status);
+			inputSetRight(key->status,0);
 			break;					
 		case SDLK_PAGEUP:
-			key->upPressed=status;
-			key->leftPressed=!status;
-			key->rightPressed=status;
+			inputSetUp(key->status,status);
+			inputSetLeft(key->status,0);
+			inputSetRight(key->status,status);
 			break;					
 		case SDLK_PAGEDOWN:
-			key->downPressed=status;
-			key->leftPressed=!status;
-			key->rightPressed=status;
+			inputSetDown(key->status,status);
+			inputSetLeft(key->status,0);
+			inputSetRight(key->status,status);
 			break;					
 		/* mods*/
 		case SDLK_RSHIFT:
 		case SDLK_LSHIFT:
-			key->shiftPressed=status;
+			inputSetShift(key->status,status);
 			break;					
 		case SDLK_RCTRL:
 		case SDLK_LCTRL:
-			key->controlPressed=status;
+			inputSetCtrl(key->status,status);
 			break;
 		default:
-			break;
-	}	
+			return 0;
+	}
+	return 1;
 }
 
 int inputGetEvent(tKey* key) {
@@ -102,11 +130,15 @@ int inputGetEvent(tKey* key) {
 	
 	while(SDL_WaitEvent(&event))
 	{
+		printf("Event dropped: key status=%x action=%d\n",key->status,key->actionPerformed);
+		key->actionPerformed=none;
 		switch (event.type) {
 		case SDL_KEYDOWN:
-			/* if (editAction(key,event.key.keysym.sym)) return 0;  */
+			editKey(key,event.key.keysym.sym,1);
+			if (editAction(key,event.key.keysym.sym)) return 0;
+			break;
 		case SDL_KEYUP:
-			editKey(key,event.key.keysym.sym,event.type==SDL_KEYDOWN);
+			editKey(key,event.key.keysym.sym,0);
 			break;
 		case SDL_USEREVENT:
 			return 1; /* A new time cicle has started! */
@@ -144,3 +176,13 @@ void inputStopTimer()
 {
 	SDL_RemoveTimer(timer);
 }
+
+
+int inputDelay(tKey* key,int ticks) {
+	while(ticks&&inputGetEvent(key)) {
+		ticks--;
+	}
+	return ticks;
+}
+
+

@@ -33,7 +33,37 @@ titles.c: FreePrince : Titles, animation and presentation
 
 #include "output.h"
 #include "titles.h"
-#include <SDL/SDL.h>
+#include "input.h"
+#include <stdio.h> /* debug printf */
+
+tMenuOption getAction(tKey key) {
+	switch(key.actionPerformed) {
+	case quit:
+		return sQuit;
+	case load:
+		return sLoad;
+	default:
+		return sStart;
+	}
+}
+
+tMenuOption sleep(int ticks) {
+	/* Wait ticks or a key is pressed if an action is thrown process it */
+	tKey key=inputCreateKey();
+	while (ticks) {
+		ticks=inputDelay(&key,ticks);
+		if (
+			/* there are ticks remaining (a non-temporal action was thrown) */
+			ticks &&
+	 		/* there is an action */
+			key.actionPerformed!=none &&
+			/* the action wasn't control key */
+			!(inputGetCtrl(key.status) && key.actionPerformed==other)
+			) 
+			return getAction(key); /* return the results of this action */ 
+	}
+	return sNone;
+}
 
 tMenuOption showTitles() {
 /* Show the titles animation
@@ -43,47 +73,64 @@ tMenuOption showTitles() {
  */
 
 	tData *main_title;
-	tData *main_text;
-	
+	/*tData *main_text;*/
+	tMenuOption result;
+
 	main_title = resLoad(RES_IMG_MAIN_BACKGROUND);
 	if (! main_title) {
 		printf("The resource couldn't be loaded!\n");
 		return 1;
 	}
 	outputClearScreen();
+	inputInitTimer();
 	/* The main background */
 	outputDrawBitmap(main_title->pFrames[0], 0, 0);
 	outputUpdateScreen();
-	SDL_Delay(1000);
+	result=sleep(12);
+	if (result!=sNone) return result;
 	/* The presents */
 	outputDrawBitmap(main_title->pFrames[1], 100, 100);
 	outputUpdateScreen();
-	SDL_Delay(1050);
+	result=sleep(12);
+	if (result!=sNone) return result;
 	/* The author*/
 	outputClearScreen();
 	outputDrawBitmap(main_title->pFrames[0], 0, 0);
 	outputDrawBitmap(main_title->pFrames[2], 100, 100);
 	outputUpdateScreen();
-	SDL_Delay(1050);
+	result=sleep(12);
+	if (result!=sNone) return result;
 	/* The game name*/
 	outputClearScreen();
 	outputDrawBitmap(main_title->pFrames[0], 0, 0);
 	outputDrawBitmap(main_title->pFrames[3], 30, 70);
 	outputDrawBitmap(main_title->pFrames[4], 30, 190);
 	outputUpdateScreen();
-	SDL_Delay(1050);
+	/*SDL_Delay(1050);*/
+	result=sleep(12);
+	if (result!=sNone) return result;
 
+	/*
+	 * The outputDraw doesn't support the text files yet
+	 * 
 	main_text = resLoad(RES_IMG_TEXT_BACKGROUND);
 	if (! main_text) {
 		printf("The resource couldn't be loaded!\n");
-		return 1;
+		exit(1);
 	}
+	*/
 	/* The presents */
+	/*
 	outputDrawBitmap(main_text->pFrames[0], 0, 0);
 	outputDrawBitmap(main_text->pFrames[1], 0, 0);
 	outputUpdateScreen();
-	SDL_Delay(1050);
-	getchar();
-	return sStart;	
+	*/
+	while (1) {
+		result=sleep(1000);
+		if (result!=sNone) return result;
+	}
+	/*inputStopTimer();
+	return sStart;
+	*/
 }	
 
