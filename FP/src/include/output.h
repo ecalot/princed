@@ -39,21 +39,42 @@ resources.h: Free Prince : Output Devices Handler
 #define _OUTPUT_H_
 
 /* Text Primitives*/
-drawText(const char* text, int x, int y);
-drawMessage(const char* text); 
+void outputDrawText(const char* text, int x, int y);
+void outputDrawMessage(const char* text); 
 
 /* Sound */
-playWav(tWave sound); /* Starts the reproduction of the sample and returns */
-playMid(tMidi music); /* Starts the music reproduction and returns */
+void outputPlayWav(tWave sound); /* Starts the reproduction of the sample and returns */
+void outputPlayMid(tMidi music); /* Starts the music reproduction and returns */
 
 /* Graph */
-void* loadBitmap(unsigned char* data, unsigned char* palette, int h,int w,int invert); /* invert is 0 when no invertion is needed and non-zero when an inversion is performed */
-void freeBitmap(void* image);
-void drawBitmap(void* image,int x, int y);
-clearScreen();
+
+ /* Graph: Primitives for resources module */
+void* outputLoadBitmap(unsigned char* data, unsigned char* palette, int h,int w,int invert);
+ /* Returns an abstract object allocated in memory using the data information ti build it
+	* invert is 0 when no invertion is needed and non-zero when an inversion is performed
+	*/
+
+void outputFreeBitmap(void* image);
+ /* Frees the abstract object created by the loadBitmap function
+	*/
+
+ /* Graph: Primitives for the kernel */
+void outputDrawBitmap(void* image,int x, int y);
+ /* Draws an abstract image
+	*/
+
+void outputClearScreen();
+ /* Crears the screen
+	*/
 
 /* Initialization */
-startGraphicMode();
-stopGraphicMode();
+void outputInit();
+/* This function must be called before starting using the output functions
+ * it will initialize the screen and the output module
+ */
+
+void outputStop();
+/* Finish all output modes, including the screen mode
+ */
 
 #endif

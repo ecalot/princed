@@ -67,6 +67,7 @@ void resFree(tData* resource);
 /* This function frees all the memory allocated by the resLoad function
  */
 
-
+void resInit();
+void resStop();
 
 #endif
