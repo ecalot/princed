@@ -1,4 +1,39 @@
+/*  Princed V3 - Prince of Persia Level Editor for PC Version
+    Copyright (C) 2003 Princed Development Team
 
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+    The authors of this program may be contacted at http://forum.princed.com.ar
+*/
+
+/*
+compress.c: Princed Resources : Image Compressor
+¯¯¯¯¯¯¯¯¯¯
+ Copyright 2003 Princed Development Team
+  Created: 24 Aug 2003
+
+  Author: Enrique Calot <ecalot.cod@princed.com.ar>
+  Version: 1.01 (2003-Oct-23)
+
+ Note:
+  DO NOT remove this copyright notice
+*/
+
+/***************************************************************\
+|                  I M P L E M E N T A T I O N                  |
+\***************************************************************/
 
 //Includes
 #include <stdio.h>
@@ -131,14 +166,14 @@ char parseFile(char* vFile,tResource* r[]) {
 //generate file
 char generateFile(char* vFile,tResource* r[]) {
 	//declare variables
-	char parsing=0;
-	char line[MAX_LINE_SIZE];
-	char coms[MAX_LINE_SIZE];
-	char B[]=BEGIN_TABLE;
-	char E[]=END_TABLE;
-	char none[]="";
 	FILE* fp;
 	FILE* source;
+	char B[]=BEGIN_TABLE;
+	char E[]=END_TABLE;
+	char coms[MAX_LINE_SIZE];
+	char line[MAX_LINE_SIZE];
+	char none[]="";
+	char parsing=0;
 	int id=0;
 
 //printf("hola vengo a generar el archivo\n");
@@ -161,26 +196,19 @@ char generateFile(char* vFile,tResource* r[]) {
 			}
 		}
 
-//printf("se abrio res.tmp y se parseó el principio\n");
-
 		//insert main body file
 		fputs(B,fp);
 		fputs("\n",fp);
-////printf("r -> A\n");
 
 		for (;id<65536;id++) {
-////printf("r -> B %d %p\n",id,r[id]);
-
 			if (r[id]!=NULL) {
 				if (1||((*(r[id])).desc==NULL)) { //todo see this line
-////printf("r -> G %d %p\n",id,r[id]);
 					if ((*(r[id])).coms==NULL) {
 						sprintf(coms,none);
 					} else {
 						sprintf(coms," #",(*(r[id])).coms);
 					}
 				} else {
-////printf("r -> E %d %p\n",id,r[id]);
 					if ((*(r[id])).coms==NULL) {
 						sprintf(coms," %s",(*(r[id])).desc);
 					} else {
@@ -199,8 +227,6 @@ char generateFile(char* vFile,tResource* r[]) {
 		}
 		fputs("\n",fp);
 		fputs(E,fp);
-
-//printf("se inserto el cuerpo de los recursos\n");
 
 		//insert footers
 		if (source!=NULL) {
@@ -221,14 +247,14 @@ char generateFile(char* vFile,tResource* r[]) {
 //Resources extras
 
 void getFileName(char* vFileext,char* vDirExt,char type, unsigned short int id) {
-	char    extMidi[]   = "mid";
-	char    extWave[]   = "wav";
 	char    extBmp[]    = "bmp";
-	char    extLevel[]  = "pet";
 	char    extExtra[]  = "ext";
-	char    extRaw[]    = "raw";
+	char    extLevel[]  = "pet";
+	char    extMidi[]   = "mid";
 	char    extPal[]    = "pal";
-	char* ext;
+	char    extRaw[]    = "raw";
+	char    extWave[]   = "wav";
+	char*   ext;
 
 	switch (type) {
 		case 0:
@@ -264,19 +290,20 @@ void getUpperFolder(char* aux, char* vFiledat) {
 	aux[12]=0;
 }
 
-
-
-
-
-//File handling functions
-
-
-
+/***************************************************************\
+|                     File handling functions                   |
+\***************************************************************/
 
 int mLoadFileArray(char* vFile,unsigned char** array) {
+	/*
+		Using the string in vFile, it opens the file and returns the
+		number of bytes	in it and the content of the file in array.
+		In case the file couldn't be open or memory allocated returns 0.
+	*/
+
 	//declare variables
 	FILE *fp;
-	int aux;
+	int  aux;
 
 	//Open the file
 	if ((fp=fopen(vFile,"rb"))==NULL) {
@@ -293,7 +320,6 @@ int mLoadFileArray(char* vFile,unsigned char** array) {
 			//if the filewas succesfully open
 			fseek(fp,0,SEEK_SET);
 			aux=fread (*array,1,aux,fp);
-			//printf("que me decis a mi, yo devolvi %d\n",aux);
 			fclose(fp);
 			return aux;
 		}
@@ -301,11 +327,19 @@ int mLoadFileArray(char* vFile,unsigned char** array) {
 }
 
 char mSaveRaw(char* vFile,unsigned char* output, int size) {
+	/*
+		Using the given string in vFile, it opens the file and saves the
+		first "size" bytes from the "output" in it.
+		In case the file couldn't be open or there was no size returns 0,
+		otherways returns 1.
+	*/
+
   FILE * pFile;
-  if ((pFile = fopen (vFile , "wb"))==NULL) {
+
+	if (!size) {
 		return 0;
 	}
-	if (!size) {
+  if ((pFile = fopen (vFile , "wb"))==NULL) {
 		return 0;
 	}
   fwrite (output, 1, size, pFile);

@@ -1,3 +1,35 @@
+/*  Princed V3 - Prince of Persia Level Editor for PC Version
+    Copyright (C) 2003 Princed Development Team
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+    The authors of this program may be contacted at http://forum.princed.com.ar
+*/
+
+/*
+compress.c: Princed Resources : Other DAT file handling tasks
+¯¯¯¯¯¯¯¯¯¯
+ Copyright 2003 Princed Development Team
+  Created: 24 Aug 2003
+
+  Author: Enrique Calot <ecalot.cod@princed.com.ar>
+  Version: 1.01 (2003-Oct-23)
+
+ Note:
+  DO NOT remove this copyright notice
+*/
 
 #include <stdio.h>
 #include "tasks.h"
@@ -34,13 +66,13 @@ int prVerifyDatType(char* vFiledat) {
 		ok=ok&& fread(&indexSize,2,1,fp);
 		ok=ok&& !fseek(fp,indexOffset,SEEK_SET);
 		ok=ok&& fread(&numberOfItems,2,1,fp);
-		printf("jaaaj %d",ok);
+//		printf("jaaaj %d",ok);
 		if (!ok) {
 			fclose(fp);
 			return 0; //this is not a valid prince dat file
 		}
 		if ((numberOfItems*8+2)!=indexSize) {
-			printf("jajaj %d %d\r\n",indexOffset,indexSize);
+//			printf("jajaj %d %d\r\n",indexOffset,indexSize);
 			indexOffset+=indexSize;
 			fseek(fp,0,SEEK_END);
 			printf("jaaaj %d %d\r\n",indexOffset,ftell(fp));
