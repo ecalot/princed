@@ -1,0 +1,15 @@
+Versions
+
+* 0.1
+ - Gfx libraries
+ - Dummy Kernel
+
+* 0.2
+ - Room drawing
+ - Rebuilt kernel
+ - Hard Coded Movements support
+ - Tested OS X and Windows ports
+
+* 0.3
+ - Window Caption
+
