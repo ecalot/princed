@@ -47,7 +47,7 @@ LINKERRELEASE =
 
 #Binary code files
 OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
-                output.o maps.o config.o drawscreen.o titles.o
+                output.o maps.o config.o drawscreen.o titles.o input.o
 EXEFILE       = bin/freeprince
 
 #Use this to temporary remove an option

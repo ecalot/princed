@@ -42,8 +42,9 @@ typedef struct {
 	int upPressed;
 	int leftPressed;
 	int rightPressed;
+	int downPressed;
 	tAction actionPerformed;
-} tKey
+} tKey;
 
 void inputInitKey(tKey* key);
 int inputGetEvent(tKey* key);

@@ -33,6 +33,7 @@ input.c: FreePrince : Input interface
 
 #include <SDL/SDL.h>
 #include "input.h"
+#include <stdio.h> /* only for the printf debug */
 
 void inputInitKey(tKey* key) {
 	key->shiftPressed=0;
@@ -44,46 +45,48 @@ void inputInitKey(tKey* key) {
 }
 
 void editKey(tKey* key,SDLKey sdlkey,int status) {
-	switch (sdlkey):
-				/* keys */
-				case SDLK_UP:
-					key->upPressed=status;
-					break;
-				case SDLK_DOWN:
-					key->downPressed=status;
-					break;					
-				case SDLK_RIGHT:
-					key->rightPressed=status;
-					break;					
-				case SDLK_LEFT:
-					key->leftPressed=status;
-					break;					
-				case SDLK_HOME:
-					key->upPressed=status;
-					key->leftPressed=status;
-					break;					
-				case SDLK_END:
-					key->downPressed=status;
-					key->leftPressed=status;
-					break;					
-				case SDLK_PAGEUP:
-					key->upPressed=status;
-					key->rightPressed=status;
-					break;					
-				case SDLK_PAGEDOWN:
-					key->downPressed=status;
-					key->rightPressed=status;
-					break;					
-				/* mods*/
-				case SDLK_RSHIFT:
-				case SDLK_LSHIFT:
-					key->ShiftPressed=status;
-					break;					
-				case SDLK_RCTRL:
-				case SDLK_LCTRL:
-					key->controlPressed=status;
-					break;					
-			}	
+	switch (sdlkey) {
+		/* keys */
+		case SDLK_UP:
+			key->upPressed=status;
+			break;
+		case SDLK_DOWN:
+			key->downPressed=status;
+			break;					
+		case SDLK_RIGHT:
+			key->rightPressed=status;
+			break;					
+		case SDLK_LEFT:
+			key->leftPressed=status;
+			break;					
+		case SDLK_HOME:
+			key->upPressed=status;
+			key->leftPressed=status;
+			break;					
+		case SDLK_END:
+			key->downPressed=status;
+			key->leftPressed=status;
+			break;					
+		case SDLK_PAGEUP:
+			key->upPressed=status;
+			key->rightPressed=status;
+			break;					
+		case SDLK_PAGEDOWN:
+			key->downPressed=status;
+			key->rightPressed=status;
+			break;					
+		/* mods*/
+		case SDLK_RSHIFT:
+		case SDLK_LSHIFT:
+			key->shiftPressed=status;
+			break;					
+		case SDLK_RCTRL:
+		case SDLK_LCTRL:
+			key->controlPressed=status;
+			break;
+		default:
+			break;
+	}	
 }
 
 int inputGetEvent(tKey* key) {
@@ -104,7 +107,8 @@ int inputGetEvent(tKey* key) {
 			return 0;
 		}
 	}
-	
+	printf("inputGetEvent: unreachable code\n");
+	return 0;	
 }
 
 static SDL_TimerID timer;
