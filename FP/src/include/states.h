@@ -54,7 +54,9 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room);
 
 /* Create a State depending on the level */
 int stateKidInLevel(int level);
-tState createState(short stateId);
+tState stateCreate(short stateId);
+void stateInterrupt(tState* state, short stateId);
+void stateFree(tState* state);
 
 #include "states_conf.h"
 

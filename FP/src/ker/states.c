@@ -53,7 +53,7 @@ static tsAction statesActionList[]=STATES_ACTIONS;
 static short statesAnimationList[]=STATES_ANIMATIONS;
 static tsCondition statesConditionList[]=STATES_CONDITIONS;
 
-void stateGetAnimation(int action,tState *state/*short *frames,short** flags,float* offsets*/) {
+void state_GetAnimation(int action,tState *state/*short *frames,short** flags,float* offsets*/) {
 	tsAction* a=statesActionList+action;
 	short i=a->animSize;
 	short* j=statesAnimationList+(a->animStart*4);
@@ -82,11 +82,23 @@ int stateKidInLevel(int level) {
 	return statesLevelList[level];
 }
 
-tState createState(short stateId) {
+tState stateCreate(short stateId) {
 	tState start;
-	stateGetAnimation(stateId,&start);
+	state_GetAnimation(stateId,&start);
 	start.currentState=statesActionList[stateId].nextStateId;
 	return start;
+}
+
+void stateFree(tState* state) {
+	free(state->animation);
+	free(state->flags);
+	free(state->steps);
+	free(state->offsx);
+}
+
+void stateInterrupt(tState* state, short stateId) {
+	stateFree(state);
+	*state=stateCreate(stateId);
 }
 
 /* private functions */
@@ -224,7 +236,7 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 
 		/* Performs the events called by this action */
 			/* Remember the animation and flags for the next current->frame frames */
-		stateGetAnimation(action,current);
+		state_GetAnimation(action,current);
 			/* Remember the state where we are now */
 		current->currentState=statesActionList[action].nextStateId;
 #ifdef DEBUGSTATES

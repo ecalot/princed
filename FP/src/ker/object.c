@@ -50,6 +50,7 @@ void loadGfx(int storeMirrored, tData** gfxCache, unsigned long resId) {
 void objectFree(tObject obj) {
 	resFree(obj.gfxCache[DIR_LEFT]);
 	if (obj.gfxCache[DIR_RIGHT]) resFree(obj.gfxCache[DIR_RIGHT]);
+	stateFree(&obj.action);
 }
 
 /* TODO: make a function in maps.c that calls this one for the kid */
@@ -62,7 +63,7 @@ tObject objectCreate(int location, int floor, int direction, int stateId, unsign
 	object.floor=floor;
 	object.type=type;
 	object.direction=direction;
-	object.action=createState(stateId);
+	object.action=stateCreate(stateId);
 
 	/* Default lives */
 	object.lives=3;
