@@ -351,16 +351,16 @@ Table of Contents
   96     1952    links
   64     2048    unknown I
   3      2112    start_position
-  3      2115    unknown III
-  1      2116    unknown IV
+  3      2115    unknown II
+  1      2116    unknown III
   24     2119    guard_location
   24     2143    guard_direction
-  24     2167    unknown II
-  24     2191    unknown II
+  24     2167    unknown VI (a)
+  24     2191    unknown VI (b)
   24     2215    guard_skill
-  24     2239    unknown II
+  24     2239    unknown VI (c)
   24     2263    guard_color
-  16     2287    unknown II
+  16     2287    unknown VI (d)
   2      2303    0F 09 (2319)
 
  All levels has a size of 2305, except in the original game, that the
@@ -369,19 +369,20 @@ Table of Contents
 4.4.1 Unknown blocks
  Blocks described in this section are: Unknown from I to IV.
 
- Unknown III and II blocks doesn't affect the level if changed, if you find
+ Unknown III and VI blocks doesn't affect the level if changed, if you find
  out what they are used to we will welcome your specification text.
 
  Unknown I may corrupt the level if edited.
 
- We believe unknown IV has something to do with the start position, but we
+ We believe unknown II has something to do with the start position, but we
  don't know about it.
 
- As unknown III were all zeros for each level in the original set, it was a
+ As unknown II were all zeros for each level in the original set, it was a
  team decision to use those bytes for format extension. If one of them is
  not the default 00 00 00 hex then the level was extended by the team.
  Those extensions are only supported by RoomShaker at this  moment. To see
  how those extensions were defined read the appendix I'll write some day.
+ For the moment you may contact us if you need to know that.
 
 4.4.2 Room mapping
  This section explains how the main walls and objects are stored. The
