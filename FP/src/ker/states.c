@@ -154,6 +154,7 @@ short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 		stateGetAnimation(action,current);
 			/* Remember the state where we are now */
 		current->currentState=statesActionList[action].nextStateId;
+		printf("NEW STATE: action=%d next=%d\n",action,current->currentState);
 			/* Move the kid (turn+traslate) */
 		if (kid->direction==DIR_LEFT) {
 			current->step=-current->step;

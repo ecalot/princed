@@ -153,9 +153,10 @@ BEGIN {
 #no tabs (states)
 /^[^\t# ].*$/ {
 		listType=""
+		if ($1 ~ /:$/ ) $1=substr($1,1,length($1)-1)
 		priorState=currentState #TODO fix that!!!
 		currentState=tolower($1)
-		stateList[currentState]=currentAction
+		stateList[currentState]=currentAction+1
 }
 
 END {
