@@ -43,8 +43,8 @@ resources.h: Princed Resources : Resource Handler headers
 #define hasFlag(a) (optionflag&(a))
 #define setFlag(a) optionflag|=(a)
 
-int kernel(int optionflag,int levels);
-/* levels=-1 is default
+int kernel(int optionflag,int level);
+/* level=-1 is default
  * levels from 0 to n is the level number
  *  
  * optionflag may be read using hasFlag(name_flag); Note that the variable must be called optionflag

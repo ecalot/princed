@@ -32,7 +32,7 @@ resources.h: Princed Resources : Resource Handler headers
 
 #include "kernel.h"
 
-int kernel(int optionflag,int levels) {
+int kernel(int optionflag,int level) {
 /* levels=-1 is default
  * levels from 0 to n is the level number
  *  
