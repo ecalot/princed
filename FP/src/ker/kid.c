@@ -54,19 +54,20 @@ void objectFree(tObject obj) {
 }
 
 /* TODO: make a function in maps.c that calls this one for the kid */
-tObject objectCreate(int location, int floor, int direction, int stateId, unsigned long resId,int cacheMirror) {
+tObject objectCreate(int location, int floor, int direction, int stateId, unsigned long resId, int cacheMirror, tObjectType type) {
 	tObject object;
 
 	loadGfx(cacheMirror,object.gfxCache,resId);
 
 	object.location=location;
 	object.floor=floor;
+	object.type=type;
 	object.direction=direction;
 	object.action=createState(stateId);
 	return object;
 }
 
-int objectVerifyRoom(tObject *kid,tRoom *room) {
+int kidVerifyRoom(tObject *kid,tRoom *room) {
 	/* if the kid is out of the screen we need to change the screen and put
 	 * the kid back again on it
 	 * PRE: tObject *kid is a kid
@@ -106,29 +107,23 @@ int objectVerifyRoom(tObject *kid,tRoom *room) {
 	return refresh;
 }
 	
-#define kid_getLocation(kid,image) ((kid).location-(outputGetWidth(image)>>1))
+#define object_getLocation(object,image) ((object).location/*-(outputGetWidth(image)>>1)*/)
 
-void objectDraw(tObject kid) {
-	void* image=kid.gfxCache[kid.direction]->pFrames[stateGetImage(kid)-1];
+void objectDraw(tObject object) {
+	void* image=object.gfxCache[object.direction]->pFrames[stateGetImage(object)-1];
 	/* TODO: move this -1 to each script frame */
 	outputDrawBitmap(
 		image, 
-		kid_getLocation(kid,image),
-		58+kid.floor*TILE_H
+		object_getLocation(object,image),
+		58+object.floor*TILE_H
 	);
 }
 
-int objectMove(tObject* kid,tKey key,tRoom* room) {
-	/* advance state and get the flag, then interpret the flag and do the events */
-	short flags;
+int kidMove(tObject* kid,short flags,tRoom* room) {
 	int refresh=0;
 	int x;
 	
-	flags=stateUpdate(&key,kid,room);
-
-	if (room==NULL) return flags; /* exits if it is not associated to a room */
-	
-	x=kid_getLocation(*kid,kid->gfxCache[kid->direction]->pFrames[stateGetImage(*kid)-1])/TILE_W;
+	x=object_getLocation(*kid,kid->gfxCache[kid->direction]->pFrames[stateGetImage(*kid)-1])/TILE_W;
 	
 	if (flags&STATES_FLAG_P)
 		refresh=mapPressedTile(
@@ -144,7 +139,29 @@ printf("f era %d. ",kid->floor);
 	if (flags&STATES_FLAG_U)
 		kid->floor--;
 printf("f pasa a ser %d\n",kid->floor);
-	refresh=objectVerifyRoom(kid,room)||refresh;
+	return kidVerifyRoom(kid,room)||refresh;
+}
+	
+int objectMove(tObject* object,tKey key,tRoom* room) {
+	/* advance state and get the flag, then interpret the flag and do the events */
+	short flags;
+	int refresh;
+	
+	flags=stateUpdate(&key,object,room);
+
+	if (room==NULL) return flags; /* exits if it is not associated to a room */
+
+/* a static variable type in the tObject determinates what objet is it about. This is to simulate polymorphism.
+ * call a function that performs all the actions knowing the room, the object and the flags. Returns refresh. After that, kid.c can be renamed to object.c */	
+	switch (object->type) {
+		case oKid:
+			refresh=kidMove(object,flags,room);
+			break;
+		case oGeneric:
+		default:
+			refresh=0;
+			break;
+	}
 	
 	if (refresh) { /* room map was changed and needs to be refreshed */
 		*room=mapGetRoom(room->level,room->id);

@@ -110,7 +110,7 @@ tMenuOption playAnimation(int id) {
 				imgsActive++;
 			}
 			for (i=0;i<objCount;i++) { /*objects*/
-				objArray[objsActive].obj=objectCreate(obj[i].location,obj[i].floor,DIR_LEFT,obj[i].state,obj[i].res,obj[i].cacheMirror);
+				objArray[objsActive].obj=objectCreate(obj[i].location,obj[i].floor,DIR_LEFT,obj[i].state,obj[i].res,obj[i].cacheMirror,oGeneric);
 				objArray[objsActive].active=1;
 				objArray[objsActive].duration=obj[i].duration;
 				objsActive++;

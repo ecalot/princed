@@ -58,7 +58,7 @@ int playgame(int optionflag,int level) {
 	tRoomId roomId;
 	
 	/*TODO: use a map.c function that reads this information and creates the kid*/
-	kid=objectCreate(30,1,DIR_RIGHT,stateKidInLevel(/*level*/1),RES_IMG_ALL_KID,1);
+	kid=objectCreate(30,1,DIR_RIGHT,stateKidInLevel(/*level*/1),RES_IMG_ALL_KID,1,oKid);
 
 	/* Game loop here */
 	

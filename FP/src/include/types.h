@@ -76,6 +76,7 @@ typedef struct {
 
 typedef struct {
 	int frame;
+	enum {eChoMoving,eChoWaiting,eChoClosed,eSpiDown,eSpiStuck} action;
 } tDanger;
 
 typedef struct {
@@ -119,12 +120,15 @@ typedef struct {
 	unsigned char code;
 } tTile;
 
+typedef	enum {oGeneric,oKid,oGuard,oTorch,oFallingTile} tObjectType;
+
 typedef struct {
 	int location;
 	int floor;
 	int direction;
 	tData* gfxCache[2];
 	tState action;
+	tObjectType type;
 } tObject;
 
 typedef enum {eLeft=0,eRight=1,eUp=2,eDown=3}tDirection;

@@ -42,7 +42,7 @@ kid.h: Free Prince : Kid and other object
 
 #include "types.h"
 
-tObject objectCreate(int location, int floor, int direction, int stateId, unsigned long resId,int cacheMirror);
+tObject objectCreate(int location, int floor, int direction, int stateId, unsigned long resId, int cacheMirror, tObjectType type);
 void objectDraw(tObject obj);
 int  objectMove(tObject* obj,tKey key,tRoom* room);
 void objectFree(tObject obj);

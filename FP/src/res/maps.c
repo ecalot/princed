@@ -129,13 +129,12 @@ void* mapLoadLevel(tMemory level) {
 				pressableInRoom++;
 			} else if (isInGroup(map->fore[i*30+j],0,TILES_CHOPPER_SPIKE)) {
 				tDanger newDanger;
-/*			TODO: initialize the tDanger object
- * 			newDanger.frame=;
-				newDanger.action=eNormal;
-				newDanger.type=((map->fore[i*30+j]&0x1f)==TILE_CHOPPER)?eChopper:eSpikes;*/
+				/* initialize the tDanger object*/
+	 			newDanger.frame=0;
+				newDanger.action=((map->fore[i*30+j]&0x1f)==TILE_CHOPPER)?eChoWaiting:eSpiDown;
 				map->back[i*30+j]=dangerInRoom;
 				map->screenDangers[i][dangerInRoom]=map->dangers+dangers;
-				fprintf(stderr,"mapLoadLevel: Creating button: indexed=%d,%d btn pointer=%p\n",i,dangerInRoom,(void*)(map->dangers+dangers));
+				fprintf(stderr,"mapLoadLevel: Creating danger tile: indexed=%d,%d btn pointer=%p\n",i,dangerInRoom,(void*)(map->dangers+dangers));
 				map->dangers[dangers++]=newDanger;
 				dangerInRoom++;
 			}
@@ -316,6 +315,7 @@ void  mapStart(tMap* map, tObject* kid, tRoomId *roomId, int level) {
 	roomLoadGfx(/*environments[level]?RES_IMG_ENV_PALACE:*/RES_IMG_ENV_DUNGEON);
 }
 
+/* TODO: This is part of the kernel, it needs to be moved */
 void  mapMove(tMap* map) {
 	int i;
 	slevel(time)++;
