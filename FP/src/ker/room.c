@@ -244,7 +244,9 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	}
 	/* normal/left */
 	if (isIn(left,TILES_FLOOR)) 
-		/*e(10,(x-1)*TILE_W+0,y*TILE_H+2);*/
+		e(10,(x-1)*TILE_W+0,y*TILE_H+2);
+	/* loose moving/left */
+	if (isIn(left,TILES_LOOSEMOVING)) 
 		drawLoose((x-1)*TILE_W+0,y*TILE_H+2,(room->level->time)%11,layTritop);
 	/* exit_left/left */
 	if (isIn(left,TILE_EXIT_RIGHT)) 
@@ -302,8 +304,10 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		e(17,(x-1)*TILE_W+24,y*TILE_H+0);
 	/* normal/this */
 	if (isIn(tile,TILES_FLOOR)) 
+		e(9,(x-1)*TILE_W+0,y*TILE_H+0);
+	/* loose moving/this */
+	if (isIn(tile,TILES_LOOSEMOVING)) 
 		drawLoose((x-1)*TILE_W+0,y*TILE_H+0,(room->level->time)%11,layTribot);
-		/*e(9,(x-1)*TILE_W+0,y*TILE_H+0);*/
 	/* exit_left/this */
 	if (isIn(tile,TILE_EXIT_RIGHT)) 
 		e(5,(x-1)*TILE_W+0,y*TILE_H+0);
@@ -353,14 +357,17 @@ void drawBackPanel(tRoom* room,int x, int y) {
 void drawBackBottomTile(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
 	
+	/* loose moving */
+	if (isIn(tile,TILES_LOOSEMOVING)) {
+		drawLoose((x-1)*TILE_W+0,y*TILE_H+3,(room->level->time)%11,layBase);
+	
 	/* normal */
-	if (isIn(tile,TILES_WALKABLE)) {
+	} else if (isIn(tile,TILES_WALKABLE)) {
 		if (isIn(tile,TILES_PRESSABLE)) {
 			/* TODO: drop has resource 59 for unpressed/raise 47? checkgame */
 			e(59,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(tile)?3:4));
 		} else {
-			drawLoose((x-1)*TILE_W+0,y*TILE_H+3,(room->level->time)%11,layBase);
-			/*e(11,(x-1)*TILE_W+0,y*TILE_H+3);*/
+			e(11,(x-1)*TILE_W+0,y*TILE_H+3);
 		}
 	} else {
 	/* wall */
