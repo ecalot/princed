@@ -66,19 +66,17 @@ This program is open source under the GNU General Public License terms
   - Coded unknown extracted files saved in unknown.xml
  * PR v0.9
   - Abstracted output
+  - Added pr.so dynamic library for unix versions
+  - Code full extractor that looks into directories and extract dat files
   - Coded detector of dat file in relative path (e.g. pr dat/dungeon.dat -x l)
+  - Coded new UNIX-style command line parsing and options
+  - Defined and supported .plv format for RoomShaker & Princed. 
   - Dropped old code (txt parser and directory parsing functions)
-  x Improved B1/B2 compressor
+  - Improved B1/B2 compressor (4% gained in big files, 1% in small files)
   x Improved resources.xml
   x Tested and stable
   x Works in all dat files
   x Set, if applicable, POP2 in the father folder of the unknown.xml file
-  x Code full extractor (looks for all files in a speficied tag and children 
-    and makes a list calling to addIfNotRepeated, then calls PR extract
-    fucntion for each file in the list)
-  - Defined and supported .plv format for RoomShaker & Princed. 
-  - Added pr.so dynamic library for unix versions
-  - Coded new UNIX-style command line parsing and options
 
 2) ToDo List
  i)   Add full pop2 support
