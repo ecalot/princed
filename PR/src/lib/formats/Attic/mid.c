@@ -47,7 +47,7 @@ char mFormatCompileMid(unsigned char* data, FILE* fp, tResource *res) {
 	unsigned char* file;
 
 	file=getMemory((*res).size);
-	file[0]=(res->type==4)?2:0; //Now should be 0x02 //First character must be a 0x01 (wav type in dat)
+	file[0]=(unsigned char)((res->type==4)?2:0); //Now should be 0x02 //First character must be a 0x01 (wav type in dat)
 	memcpy(file+1,data,(*res).size);
 	(*res).size++;
 	mAddFileToDatFile(fp,file,(*res).size);

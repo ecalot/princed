@@ -77,19 +77,20 @@ char* getDate() {
 }
 
 
-char mFormatExtractPlv(unsigned char* data, const char *vFileext,unsigned long int size,unsigned char level, const char* filename, const char* desc, const char* title) {
+char mFormatExtractPlv(unsigned char* data, const char *vFileext,unsigned long int size,unsigned char level, const char* filename, const char* desc, const char* title, const char* vDatAuthor) {
 	//Plv files are saved as raw except you must ignore the checksum and add the plv constant file header
 
 	//Variables
 	FILE* target;
-	char ok;
-	char sizeOfNow;
+	int ok;
+	unsigned char sizeOfNow;
 	char* now;
 	const char* nullString="";
+	static const char* author="PR user";
 
 	//Get current time
 	now=getDate();
-	sizeOfNow=strlen(now)+1;
+	sizeOfNow=(unsigned char)(strlen(now)+1);
 
 	//Ignore checksum
 	size--;
@@ -97,6 +98,7 @@ char mFormatExtractPlv(unsigned char* data, const char *vFileext,unsigned long i
 	//Validate null strings when no description is set
 	if (desc==NULL) desc=nullString;
 	if (title==NULL) title=nullString;
+	if (vDatAuthor==NULL) vDatAuthor=author;
 
 	/* Writing file */
 
@@ -113,7 +115,9 @@ char mFormatExtractPlv(unsigned char* data, const char *vFileext,unsigned long i
 	ok=ok&&fwrite(data+1,size,1,target);
 
 	//Write footers
-	ok=ok&&fwrite(PLV_FOOT,sizeof(PLV_FOOT),1,target);
+	ok=ok&&fwrite(PLV_FOOT_EDITOR,sizeof(PLV_FOOT_EDITOR),1,target);
+	ok=ok&&fwrite(vDatAuthor,strlen(vDatAuthor)+1,1,target);
+	ok=ok&&fwrite(PLV_FOOT_TITLE,sizeof(PLV_FOOT_TITLE),1,target);
 	ok=ok&&fwrite(title,strlen(title)+1,1,target);
 	ok=ok&&fwrite(PLV_FOOT_DESC,sizeof(PLV_FOOT_DESC),1,target);
 	ok=ok&&fwrite(desc,strlen(desc)+1,1,target);
@@ -126,18 +130,17 @@ char mFormatExtractPlv(unsigned char* data, const char *vFileext,unsigned long i
 
 	//Close file and return
 	ok=ok&&(!fclose(target));
-	return ok;
+	return (char)ok;
 }
 
 char mFormatCompilePlv(unsigned char* data, FILE* fp, tResource *res) {
 
-//	unsigned char* file;
 	unsigned long int size;
 	//This is ignoring all kind of verifications and assuming (res->size)>PLV_HEADER_SIZE !!!
 	//TODO: must verify the plv format version, if not 1, then PR is too old!
 
-	memcpy(&size,data+PLV_HEADER_SIZE_OFFSET,4); //Only when longs are 4 bytes
-	mAddFileToDatFile(fp,data+PLV_HEADER_A_SIZE+PLV_HEADER_B_SIZE+1+4,size);
+	//memcpy(&size,data+PLV_HEADER_SIZE_OFFSET,4); //Only when longs are 4 bytes
+//	mAddFileToDatFile(fp,data+PLV_HEADER_A_SIZE+PLV_HEADER_B_SIZE+1+4,size);
 //	free(file);
 	return 1;
 }

@@ -59,7 +59,7 @@ char mImportPalette(unsigned char** data, unsigned short *size) {
 	unsigned char pals[]=PAL_SAMPLE;
 	unsigned char* pal;
 	unsigned char* pal2;
-	unsigned char* data2;
+	char* data2;
 	//unsigned short int parsed;
 	unsigned char r,g,b;
 	int i=0;
@@ -79,12 +79,12 @@ char mImportPalette(unsigned char** data, unsigned short *size) {
 	if (i!=sizeof(palh)) return 0; //pallete differs with headers
 
 	//set current values
-	data2=strtok(*data+sizeof(palh),"\r\n");
+	data2=strtok((char*)(*data)+sizeof(palh),"\r\n");
 	while (k--) {
 		if (!sscanf(data2,"%d %d %d",&r,&g,&b)) return 0;
-		*(pal2++)=(r+2)>>2;
-		*(pal2++)=(g+2)>>2;
-		*(pal2++)=(b+2)>>2;
+		*(pal2++)=(unsigned char)((r+2)>>2);
+		*(pal2++)=(unsigned char)((g+2)>>2);
+		*(pal2++)=(unsigned char)((b+2)>>2);
 		data2=strtok(NULL,"\r\n");
 	}
 
@@ -100,11 +100,11 @@ void mExportPalette(unsigned char** data, unsigned long int *size) {
 	unsigned char* aux=getMemory(240);
 	unsigned char i;
 
-	sprintf(pal,PAL_HEADER);
+	strcpy((char*)pal,PAL_HEADER);
 
 	for (i=0;i<16;i++) {
-		sprintf(aux,pal);
-		sprintf(pal,"%s%d %d %d\r\n",aux,(*data)[(i*3)+5]<<2,(*data)[(i*3)+6]<<2,(*data)[(i*3)+7]<<2);
+		strcpy((char*)aux,(char*)pal);
+		sprintf((char*)pal,"%s%d %d %d\r\n",aux,(*data)[(i*3)+5]<<2,(*data)[(i*3)+6]<<2,(*data)[(i*3)+7]<<2);
 	}
 	for (i=0;pal[i];i++);
 	free(*data);
@@ -114,6 +114,6 @@ void mExportPalette(unsigned char** data, unsigned long int *size) {
 }
 
 //TODO: use a macro
-void mLoadPalette(char* array,tImage *image) {
+void mLoadPalette(unsigned char* array,tImage *image) {
 	memcpy(image->pal,array+5,16*3);
 }

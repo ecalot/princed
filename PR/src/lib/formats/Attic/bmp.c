@@ -63,7 +63,7 @@ char mFormatExtractBmp(unsigned char* data, const char *vFileext,unsigned long i
 char mFormatCompileBmp(unsigned char* data, FILE* fp, tResource *res) {
 	int size;
 	tImage img;
-	unsigned char aux[10000];
+	unsigned char aux[32700];
 
 	if (!mReadBitMap(&img,data,res->size)) return 0;
 	mCompressGraphic(aux,&img,&size);
@@ -71,7 +71,7 @@ char mFormatCompileBmp(unsigned char* data, FILE* fp, tResource *res) {
 	free(img.pix);
 
 	mAddFileToDatFile(fp,aux,size);
-	res->size=size; //this was a bug (added to debug ;) ironic, don't you think?
+	res->size=(unsigned short)size; //this was a bug (added to debug ;) ironic, don't you think?
 	/* Note: after the debugging we realized this line was missing so this is not a bug anymore*/
 	return 1;
 }
@@ -79,8 +79,6 @@ char mFormatCompileBmp(unsigned char* data, FILE* fp, tResource *res) {
 char mWriteBitMap(tImage img,const char* vFile) {
 
 	//declare variables
-	unsigned char i=0;
-	unsigned char j=0;
 	char b;
 	char c;
 	char a;
@@ -149,11 +147,11 @@ char mWriteBitMap(tImage img,const char* vFile) {
 	//BEGIN of format writing
 	//Write ColorTable
 	for (a=0;a<16;a++) {
-		b=a*3;
-		c=a<<2;
-		header[54+c]=(img.pal[b+2])*4;  //Red
-		header[55+c]=(img.pal[b+1])*4;  //Green
-		header[56+c]=(img.pal[b])*4;    //Blue
+		b=(char)(a*3);
+		c=(char)(a<<2);
+		header[54+c]=(unsigned char)(img.pal[b+2]*4);  //Red
+		header[55+c]=(unsigned char)(img.pal[b+1]*4);  //Green
+		header[56+c]=(unsigned char)(img.pal[b]*4);    //Blue
 	}
 	//Write header
 	fwrite(header,118,1,bitmap);
@@ -170,8 +168,8 @@ char mWriteBitMap(tImage img,const char* vFile) {
 }
 
 
-char mReadBitMap(tImage* img,char* data, int size) {
-	char ok;
+char mReadBitMap(tImage* img,unsigned char* data, int size) {
+	int ok;
 	unsigned short int width;
 	unsigned short int height;
 	int width2;
@@ -182,8 +180,8 @@ char mReadBitMap(tImage* img,char* data, int size) {
 	ok=ok&& data[0]=='B' && data[1]=='M';
 
 	//Read sizes from header
-	width=data[18]+(data[19]<<8);
-	height=data[22]+(data[23]<<8);
+	width=(unsigned short)(data[18]+(data[19]<<8));
+	height=(unsigned short)(data[22]+(data[23]<<8));
 
 	//Save sizes into image
 	(*img).width=width;            //width in pixels
@@ -191,11 +189,11 @@ char mReadBitMap(tImage* img,char* data, int size) {
 	(*img).size=height*width;      //total of pixels
 
 	//Calculate serialized widths
-	width=(width+1)>>1;            //raw serialized width
-	width2=width+((-width)&3);     //bmp serialized width
+	width=(unsigned short)((width+1)>>1); //raw serialized width
+	width2=width+((-width)&3);            //bmp serialized width
 
 	//Validate image and file size; get memory to allocate the image
-	ok=ok&& ( ((*img).height*width2)                == (size-118));
+	ok=ok&& ((img->height*width2)==(size-118));
 	ok=ok&& (	((*img).pix=getMemory((*img).size/2)) != NULL	);
 
 	//if validations==wrong

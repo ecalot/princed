@@ -34,14 +34,15 @@ wav.c: Princed Resources : WAV files support
 //Includes
 #include "wav.h"
 #include "compile.h"
+#include "disk.h"
 
-char mFormatExtractWav(unsigned char* data, char *vFileext,unsigned long int size) {
+int mFormatExtractWav(unsigned char* data, char *vFileext,unsigned long int size) {
 	FILE*         target;
-	char ok;
+	int ok;
 	unsigned char wav[]=WAVE_HEADER;
 
 	size-=2;
-	ok=((target=fopen(vFileext,"wb"))!=NULL);
+	ok=writeOpen(vFileext,&target);
 
 	wav[4]=(unsigned char)((size+36)&0xFF);
 	wav[5]=(unsigned char)(((size+36)>>8)&0xFF);
@@ -60,12 +61,12 @@ char mFormatExtractWav(unsigned char* data, char *vFileext,unsigned long int siz
 	return ok;
 }
 
-char mFormatCompileWav(unsigned char* data, FILE* fp, tResource *res) {
+int mFormatCompileWav(unsigned char* data, FILE* fp, tResource *res) {
 	unsigned char wav[]=WAVE_HEADER;
 	int i=sizeof(wav);
 
 	if ((*res).size<=i) return 0;
-	(*res).size-=(--i);
+	res->size-=(--i);
 	while ((i==4||i==5||i==6||i==7||i==40||i==41||i==42||i==43||(data[i]==wav[i]))&&(i--));
 	data[sizeof(wav)-1]=1; //First character must be a 0x01 (wav type in dat)
 	if (i==-1) mAddFileToDatFile(fp,data+sizeof(wav)-1,(*res).size);
