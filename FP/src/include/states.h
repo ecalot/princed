@@ -14,7 +14,7 @@ typedef enum {esRelative,esForwardTile}tsMoveType; /*  */
 
 typedef struct {
 	tsConditionType type;
-	char	argument;
+	short           argument;
 } tsCondition;
 
 typedef struct {
