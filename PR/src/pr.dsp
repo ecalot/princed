@@ -225,6 +225,22 @@ DEP_CPP_WAV_C=\
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\ports\dirent.c
+DEP_CPP_DIREN=\
+	".\include\dirent.h"\
+	
+
+!IF  "$(CFG)" == "tasks - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\ports\getopt.c
 DEP_CPP_GETOP=\
 	".\include\getopt.h"\
@@ -301,6 +317,7 @@ DEP_CPP_COMPR=\
 
 SOURCE=.\disk.c
 DEP_CPP_DISK_=\
+	".\include\dirent.h"\
 	".\include\disk.h"\
 	".\include\pr.h"\
 	
@@ -342,8 +359,7 @@ DEP_CPP_EXTRA=\
 # Begin Source File
 
 SOURCE=.\pr.c
-DEP_CPP_PR_C16=\
-	".\include\bmp.h"\
+DEP_CPP_PR_C18=\
 	".\include\compile.h"\
 	".\include\compress.h"\
 	".\include\disk.h"\
@@ -441,10 +457,42 @@ DEP_CPP_XMLSE=\
 # Begin Group "include"
 
 # PROP Default_Filter ""
+# Begin Group "include formats"
+
+# PROP Default_Filter ""
 # Begin Source File
 
 SOURCE=.\include\bmp.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\include\mid.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\include\pal.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\include\plv.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\include\wav.h
+# End Source File
+# End Group
+# Begin Group "include ports"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\include\dirent.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\include\getopt.h
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\include\compile.h
@@ -463,23 +511,7 @@ SOURCE=.\include\extract.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\getopt.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\include\memory.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\mid.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\pal.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\plv.h
 # End Source File
 # Begin Source File
 
@@ -492,10 +524,6 @@ SOURCE=.\include\resources.h
 # Begin Source File
 
 SOURCE=.\include\tasks.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\include\wav.h
 # End Source File
 # Begin Source File
 
