@@ -1,0 +1,75 @@
+
+<?xml version="1.0" ?>
+ <itemtypes version="0.5">
+  <folder name="Prince of Persia 1" type="game">
+   <folder name="Sounds">
+    <folder name="Wave" itemtype="wave">
+     <item value="10058" file="digisnd1.dat">Door close</item>
+    </folder>
+    <folder name="Midi" itemtype="midi">
+    </folder>
+    <folder name="Speaker" itemtype="speaker">
+    </folder>
+   </folder>
+   <folder name="Images">
+    <folder name="Palettes" itemtype="palette">
+     <item value="11022" file="title.dat" external="pal1.bmp">Palette 1</item>
+    </folder>
+    <folder name="Animations" itemtype="image">
+     <folder name="Jaffar walking to princess" palette="11022">
+      <item value="11023" file="title.dat" external="walk1.bmp">Frame 1</item>
+      <item value="11024" file="title.dat" external="walk2.bmp">Frame 2</item>
+      <item value="11025" file="title.dat" external="walk3.bmp">Frame 3</item>
+      <item value="11026" file="title.dat" external="walk4.bmp">Frame 4</item>
+     </folder>
+    </folder>
+    <folder name="Titles" itemtype="image" palette="200">
+     <item value="203" file="title.dat" external="palace.bmp">Outside palace presentation</item>
+    </folder>
+
+    <folder name="Eviornment" itemtype="image">
+     <folder name="Dungeon"></folder>
+     <folder name="Palace"></folder>
+    </folder>
+    <folder name="Others" itemtype="image">
+    </folder>
+   </folder>
+   <folder name="Prince of Persia 2" type="game">
+   </folder>
+  </folder>
+ </itemtypes>
+
+<!--
+Attributes:
+ itemtypes:
+  o version: the version of the file (mandatory)
+ folder:
+  o type: the type of the folder
+    * game
+    * none
+  o itemtype: the type of the items below (if not specified)
+    * image
+    * palette
+    * level
+    * wave: digital audio
+    * midi: midi audio
+    * (...): extensible
+  o palette: the palette ID associated to the images in this folder if applicable
+  o name: the name of the folder (mandatory)
+  o desc: a description
+ item:
+  o value: the item ID (mandatory)
+  o file: the file where the item is located (mandatory)
+  o itemtype: see folder itemtype
+  o desc: a description
+  o external: the name of the file it will be extracted
+
+Notes:
+ - type images need a palette
+ - items need an itemtype (no matter if it is in folder or item)
+   in case it isn't set, PR will try to detect it.
+ - items need an external file name
+   in case it isn't set, PR will use (filename).(item id).(type extension)
+ - Distributed versions are read only and MUST have the GPL header
+ 
+-->
