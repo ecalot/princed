@@ -19,8 +19,8 @@
 */
 
 /*
-compress.c: Princed Resources : Other DAT file handling tasks
-¯¯¯¯¯¯¯¯¯¯
+tasks.c: Princed Resources : Other DAT file handling tasks
+¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 
@@ -66,13 +66,11 @@ int prVerifyDatType(char* vFiledat) {
 		ok=ok&& fread(&indexSize,2,1,fp);
 		ok=ok&& !fseek(fp,indexOffset,SEEK_SET);
 		ok=ok&& fread(&numberOfItems,2,1,fp);
-//		printf("jaaaj %d",ok);
 		if (!ok) {
 			fclose(fp);
 			return 0; //this is not a valid prince dat file
 		}
 		if ((numberOfItems*8+2)!=indexSize) {
-//			printf("jajaj %d %d\r\n",indexOffset,indexSize);
 			indexOffset+=indexSize;
 			fseek(fp,0,SEEK_END);
 			printf("jaaaj %d %d\r\n",indexOffset,ftell(fp));

@@ -43,6 +43,7 @@ compile.c: Princed Resources : DAT Compiler
 #include "wav.h"
 #include "pal.h"
 #include "parser.h"
+#include "disk.h"
 
 /***************************************************************\
 |                  Dat compiling primitives                     |
@@ -65,7 +66,7 @@ void mAddFileToDatFile(FILE* fp, char* data, int size) {
 	int k;
 	for (k=0;k<size;k++) checksum+=data[k];
 	checksum=~checksum;
-	//writes the header and the midi sound
+	//writes the checksum and the data content
 	fwrite(&checksum,1,1,fp);
 	fwrite(data,size,1,fp);
 }
@@ -83,7 +84,7 @@ void mSetEndFile(FILE* fp,int sizeOfIndex) {
 	fclose(fp);
 }
 
-int mCreateIndexInDatFile(FILE* fp, tResource* r[], char* vUpperFile) {
+int mCreateIndexInDatFile(FILE* fp, tResource* r[]) {
 	//Add extra text at the end of the file
 	unsigned short int i=0;
 	unsigned short int junk=0;
@@ -92,9 +93,9 @@ int mCreateIndexInDatFile(FILE* fp, tResource* r[], char* vUpperFile) {
 	int pos=ftell(fp);
 
 	fwrite(&tot,2,1,fp);
-	for (;i!=65535;i++) {
+	for (;i!=65000;i++) { //TODO: add define 65000
 		if (r[i]!=NULL) {
-			if (equals((*r[i]).file,vUpperFile)) {
+//			if (equals((*r[i]).file,vUpperFile)) {
 				//the file is in the archive, so I'll add it to the index
 				k+=8;
 				tot++;
@@ -102,7 +103,7 @@ int mCreateIndexInDatFile(FILE* fp, tResource* r[], char* vUpperFile) {
 				fwrite(&((*r[i]).offset),2,1,fp);
 				fwrite(&junk,2,1,fp);
 				fwrite(&((*r[i]).size),2,1,fp);
-			}
+//			}
 		}
 	}
 	fseek(fp,pos,SEEK_SET);
@@ -136,20 +137,7 @@ char mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
 /***************************************************************\
 |                    M A I N   F U N C T I O N                  |
 \***************************************************************/
-//TODO: delete this function
-/*
-char mSaveFile(char* vFile,unsigned char *d, int s) {
-	FILE *fp;
 
-	if ((fp=fopen(vFile,"wb"))==NULL) {
-		return 0;
-	} else {
-		fwrite (d,s,1,fp);
-		fclose(fp);
-		return 1;
-	}
-}
-*/
 int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
 	/*
 		Return values:
@@ -160,22 +148,21 @@ int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
 
 	FILE* fp;
 	char vFileext[200];
-	char vUpperFile[200];
+//	char vUpperFile[200];
 	int ok=0;
 	unsigned char* data;
 	unsigned short int i=0;
 
 	if (!mBeginDatFile(&fp,vFiledat)) {
-//		printf("Error opening the file.\r\n");
-		return -1;
+		return -1; //File couldn't be open
 	}
 
-	getUpperFolder(vUpperFile,vFiledat);
+	//getUpperFolder(vUpperFile,vFiledat);
 
-	for (;i!=65535;i++) {
+	for (;i!=65000;i++) {
 		if (r[i]!=NULL) {
-			if (equals((*r[i]).file,vUpperFile)) {
-				getFileName(vFileext,vDirExt,(char)((opt&1)?((*(r[i])).type):0),i);
+//			if (equals((*r[i]).file,vUpperFile)) {
+				getFileName(vFileext,vDirExt,r[i],i,vFiledat);
 				//the file is in the archive, so I'll add it to the main dat body
 				if ((*r[i]).size=mLoadFileArray(vFileext,&data)) {
 					(*r[i]).offset=(unsigned short)ftell(fp);
@@ -186,9 +173,9 @@ int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
 				} else {
 					ok++;
 				}
-			}
+//			}
 		}
 	}
-	mSetEndFile(fp,mCreateIndexInDatFile(fp,r,vUpperFile));
+	mSetEndFile(fp,mCreateIndexInDatFile(fp,r));
 	return ok;
 }

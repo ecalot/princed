@@ -56,6 +56,7 @@ pr.c: Main source file for Princed Resources
 
 #include "bmp.h"
 #include "memory.h"
+#include "disk.h"
 
 //functions
 
@@ -76,17 +77,21 @@ int prExportDatOpt(char* vDatFile, char* vDirName, char* vResFile,char opt) {
 
 		Return values:
 			00 Ok
-			-1 Error accesing the file
-			-2 Memory error
+			-1 Error accesing the file DAT
+			-2 Memory error in extraction
 			-3 Invalid DAT file
+			-4 XML Parse error
+			-5 Memory error in parsing
+			-6 XML Attribute not recognized
+			-7 XML File not found
 	*/
 	tResource* r[65536];
 	int a;
-	parseFile (vResFile,r);
+
+	a=parseFile     (vResFile,vDatFile,r);
+	if (a<0) return a-3;
 	a=extract(vDatFile, vDirName,r,opt);
-	printf("termine B %d\n",a);
-	if (!(opt&8)) generateFile(vResFile,r);
-	printf("termine C %d\n",a);
+	//if (!(opt&8)) generateFile(vResFile,r);
 	return a;
 }
 
@@ -101,13 +106,18 @@ int prImportDatOpt(char* vDatFile, char* vDirName, char* vResFile,char opt) {
 			1 - read data type
 
 		Return values:
-			-1 File couldn't be open for writing
+			-1 DAT File couldn't be open for writing
+			-2 XML Parse error
+			-3 No memory
+			-4 XML Attribute not recognized
+			-5 XML File not found
 			00 File succesfully compiled
 			positive number: number of missing files
 	*/
 	tResource*    r[65536];
 	int a;
-	parseFile     (vResFile,r);
+	a=parseFile     (vResFile,vDatFile,r);
+	if (a<0) return a-1;
 	a=compile (vDatFile, vDirName,r,opt);
 	generateFile  (vResFile,r);
 	return a;
@@ -129,7 +139,7 @@ int prClearRes(char* vResFile) {
 //Main program
 #ifndef DLL
 void syntax() {
-	printf("Syntax:\r\n pr datfile option [extract dir]\r\n\r\nValid options:\r\n -x[rnus] for extract\r\n  r: raw extraction\r\n  n: don't extract\r\n  u: update res file in case there were records\r\n  s: don't save res file\r\n -c[r] for compile\r\n  r: raw compiling\r\n -d for type\r\n -t to clear the resource file.\r\n");
+	printf("Syntax:\r\n pr datfile option [extract dir]\r\n\r\nValid options:\r\n -x[rn] for extract\r\n  r: raw extraction\r\n  n: don't extract\r\n -c[r] for compile\r\n  r: raw compiling\r\n -d for type\r\n");
 }
 
 int main(int argc, char* argv[]) {
@@ -139,13 +149,6 @@ int main(int argc, char* argv[]) {
 	int returnValue=1;
 	int option;
 	int i;
-
-	//bmp vars
-	char vFileraw[100];
-	char vFilebmp[100];
-	unsigned char* data;
-	tImage img;
-	int size;
 
 #ifdef UNIX
 	if (argc==2) {
@@ -169,26 +172,54 @@ int main(int argc, char* argv[]) {
 	//do selected taskbars
 	switch (argv[2][1]) {
 		case 'e':
-		case 'x': // file.dat --> files.ext + resource.txt
+		case 'x': {// file.dat --> extracted files + resource.xml
+			char array[8][29]={
+				"Ok",
+				"Error accesing the file DAT", /* DAT or extracted */
+				"Memory error in extraction",
+				"Invalid DAT file",
+				"XML Parse error",
+				"Memory error in parsing",
+				"XML Attribute not recognized",
+				"XML File not found"};
 			option=1;
 			for (i=2;argv[2][i];i++) {
 				switch (argv[2][i]) {
 					case 'n':option&=0xFE;break;
 					case 'r':option|=0x04;break;
-					case 'u':option|=0x02;break;
-					case 's':option|=0x08;break;
 					default:printf("Found invalid option '%c', skiping . . .\r\n",argv[2][i]);break;
 				}
 			}
 			printf("Extracting '%s' to '%s' with %d\r\n",argv[1],dir,option);
-			printf("Result: %d\r\n",returnValue=prExportDatOpt(argv[1],dir,"resources.txt",(char)option));
-			break;
-		case 'd': // get type of file.dat
+			returnValue=prExportDatOpt(argv[1],dir,"resources.xml",(char)option);
+			printf("Result: %s (%d)\r\n",array[-returnValue],returnValue);
+		}	break;
+		case 'd': {// get type of file.dat
+			char array[14][65]={
+				"Memory error",
+				"File not found or no access error",
+				"Not a valid POP1 DAT file",
+				"Levels file",
+				"Graphic file with an image in the first valid entry (not common)",
+				"Waves/Digital sound file",
+				"Midis file",
+				"Valid DAT file with Undefined content",
+				"Graphic file with a palette in the first valid entry (common)",
+				"PC Speaker dat file",
+				"\0","\0","\0",
+				"Pop2 dat files"};
 			printf("Classifing '%s'\r\n",argv[1]);
-			printf("Result: %d type\r\n",returnValue=prVerifyDatType(argv[1]));
-			break;
-		case 'i':
-		case 'c': // files.ext + resource.txt --> files.dat
+			returnValue=prVerifyDatType(argv[1]);
+			printf("Result: %s (%d)\r\n",array[2+returnValue],returnValue);
+		}	break;
+		case 'c': { // extracted files + resource.xml --> files.dat
+			char array[6][39]={
+				"File succesfully compiled",
+				"DAT File couldn't be open for writing",
+				"XML Parse error",
+				"No memory",
+				"XML Attribute not recognized",
+				"XML File not found"};
 			option=1;
 				for (i=2;argv[2][i];i++) {
 					switch (argv[2][i]) {
@@ -197,29 +228,13 @@ int main(int argc, char* argv[]) {
 					}
 				}
 			printf("Compiling '%s' from '%s' with %d\r\n",argv[1],dir,option);
-			printf("Result: %d\r\n",returnValue=prImportDatOpt(argv[1],dir,"resources.txt",(char)option));
-			break;
-		case 't': // none --> resource.txt (destroy resource table)
-			printf("Clearing 'resources.txt'\r\n");
-			printf("Result: %d\r\n",returnValue=prClearRes("resources.txt"));
-			break;
-		case 'b': // img.bmp --> img.ext
-			sprintf(vFileraw,"%s%cres%s.raw",dir,DIR_SEPARATOR,argv[1]);
-			sprintf(vFilebmp,"%s%cres%s.bmp",dir,DIR_SEPARATOR,argv[1]);
-
-			printf("Converting '%s' into '%s'\r\n",vFilebmp,vFileraw);
-			size=mLoadFileArray(vFilebmp,&data);
-			if (size && mReadBitMap(&img,data,size)) {
-				free(data);
-				mCompressGraphic(data,img,&size);
-				free(img.pix);
-				mSaveRaw(vFileraw,data,size);
-				free(data);
+			returnValue=prImportDatOpt(argv[1],dir,"resources.xml",(char)option);
+			if (returnValue>=0) {
+				printf("Result: %s (%d)\r\n",array[-returnValue],returnValue);
 			} else {
-				printf("No access to the file\r\n");
-				break;
+				printf("Result: %d files with errors\r\n",returnValue);
 			}
-			break;
+		} break;
 		default:
 			syntax();
 			return -1;

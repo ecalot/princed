@@ -1,7 +1,8 @@
-bin/pr: compile.o compress.o extract.o parser.o pr.o resources.o tasks.o bmp.o mid.o pal.o wav.o
+bin/pr: compile.o compress.o extract.o parser.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o
 	
 	@echo Linking files...
-	@gcc -o bin/pr compile.o compress.o extract.o parser.o pr.o resources.o tasks.o bmp.o mid.o pal.o wav.o -s
+	@mkdir -p bin
+	@gcc -o bin/pr compile.o compress.o extract.o parser.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o -s
 	@echo Program succesfully compiled
 	@echo
 	@echo Please read readme.txt for syntax information
@@ -34,6 +35,18 @@ resources.o: resources.c
 tasks.o: tasks.c
 	@echo Compiling extra tasks module...
 	@gcc -c tasks.c -Iinclude/
+
+xml.o: xml.c
+	@echo Compiling xml parsing module...
+	@gcc -c xml.c -Iinclude/
+
+xmlsearch.o: xmlsearch.c
+	@echo Compiling xml search features...
+	@gcc -c xmlsearch.c -Iinclude/
+
+disk.o: disk.c
+	@echo Compiling disk access functions...
+	@gcc -c disk.c -Iinclude/
 
 bmp.o: formats/bmp.c
 	@echo Compiling bitmap files support \(bmp\)...

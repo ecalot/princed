@@ -19,8 +19,8 @@
 */
 
 /*
-compress.c: Princed Resources : Image Compressor
-¯¯¯¯¯¯¯¯¯¯
+resources.c: Princed Resources : Resource Handler
+¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 
@@ -39,7 +39,10 @@ compress.c: Princed Resources : Image Compressor
 #include <stdio.h>
 #include <stdlib.h>
 #include "pr.h"
+#include "xml.h"
+#include "xmlsearch.h"
 #include "parser.h"
+#include "disk.h"
 #include "memory.h"
 #include "resources.h"
 #include "compress.h"
@@ -79,12 +82,19 @@ char verifyWaveHeader(char* array, int size) {
 	;
 }
 
+char verifySpeakerHeader(char* array, int size) {
+	return
+		(size>1)&&(array[1]==0x00)
+	;
+}
+
 char verifyHeader(char* array, int size) {
 	if (verifyLevelHeader(array,size)) return 1;
 	if (verifyMidiHeader(array,size)) return 4;
 	if (verifyImageHeader(array,size)) return 2;
 	if (verifyPaletteHeader(array,size)) return 6;
 	if (verifyWaveHeader(array,size)) return 3;
+	if (verifySpeakerHeader(array,size)) return 7;
 	return 05;
 }
 
@@ -93,7 +103,7 @@ char verifyHeader(char* array, int size) {
 |                      Parsing resource file                    |
 \***************************************************************/
 
-
+#if 0
 //Parse line
 void parseResource(tResource* r[], char* line) {
 	//declare variables
@@ -125,6 +135,7 @@ void parseResource(tResource* r[], char* line) {
 		(*(r[id])).type=(char)ty;
 	}
 }
+#endif
 
 void emptyTable(tResource* r[]) {
 	int i=0;
@@ -132,7 +143,21 @@ void emptyTable(tResource* r[]) {
 }
 
 //parse file
-char parseFile(char* vFile,tResource* r[]) {
+char parseFile(char* vFile, char* datFile, tResource* r[]) {
+
+	tTag* tree;
+	int error;
+
+	tree=parseXmlFile(vFile,&error);
+	if (error) return error;
+	emptyTable(r);
+	workTree(tree,datFile,r);
+	freeTagStructure(tree);
+
+	return 0;
+
+//Old code (will be removed soon)
+#if 0
 	//declare variables
 	char parsing=0;
 	char line[MAX_LINE_SIZE];
@@ -161,10 +186,14 @@ char parseFile(char* vFile,tResource* r[]) {
 	} else {
 		return 0;
 	}
+#endif
 }
 
 //generate file
 char generateFile(char* vFile,tResource* r[]) {
+
+//Old code (will be removed soon)
+#if 0
 	//declare variables
 	FILE* fp;
 	FILE* source;
@@ -175,8 +204,6 @@ char generateFile(char* vFile,tResource* r[]) {
 	char none[]="";
 	char parsing=0;
 	int id=0;
-
-//printf("hola vengo a generar el archivo\n");
 
 	if ((fp=fopen("res.tmp","wt"))!=NULL) {
 		//insert headers
@@ -215,13 +242,16 @@ char generateFile(char* vFile,tResource* r[]) {
 						sprintf(coms," %s#%s",(*(r[id])).desc,(*(r[id])).coms);
 					}
 				}
-				sprintf(line,"%05d %05d %05d %s %02d%s\n",
-				id,
-				(*(r[id])).size,
-				(*(r[id])).offset,
+				sprintf(line,"<item itemtype=\"%d\" value=\"%d\" file=\"%s\" external=\"res%05d.bmp\">Res %d</item>\n",
+					(*(r[id])).type,
+					id,
+				//(*(r[id])).size,
+				//(*(r[id])).offset,
 				(*(r[id])).file,
-				(*(r[id])).type,
-				coms);
+				id,id
+				//,
+				//coms
+				);
 				fputs(line,fp);
 			}
 		}
@@ -242,107 +272,56 @@ char generateFile(char* vFile,tResource* r[]) {
 	} else {
 		return 0;
 	}
+#else
+	//New code ignores this function (resources.xml is read only)
+	return 1;
+#endif
 }
 
-//Resources extras
+//Resources output to xml functions
+static FILE* unknownXmlFile=NULL;
 
-void getFileName(char* vFileext,char* vDirExt,char type, unsigned short int id) {
-	char    extBmp[]    = "bmp";
-	char    extExtra[]  = "ext";
-	char    extLevel[]  = "pet";
-	char    extMidi[]   = "mid";
-	char    extPal[]    = "pal";
-	char    extRaw[]    = "raw";
-	char    extWave[]   = "wav";
-	char*   ext;
+void AddToUnknownXml(const char* vFiledat,unsigned short id,const char* ext,char type,const char* vDirExt,unsigned short pal) {
+	if (unknownXmlFile==NULL) {
+		char xmlFile[260];
+		sprintf(xmlFile,RES_XML_UNKNOWN_PATH""RES_XML_UNKNOWN_XML,vDirExt,vFiledat);
+		//Create base dir
+		repairFolders(xmlFile);
+		makebase(xmlFile);
 
-	switch (type) {
-		case 0:
-			ext=extRaw;
-			break;
-		case 1:
-			ext=extLevel;
-			break;
-		case 2:
-			ext=extBmp;
-			break;
-		case 4:
-			ext=extMidi;
-			break;
-		case 3:
-			ext=extWave;
-			break;
-		case 6:
-			ext=extPal;
-			break;
-		default:
-			ext=extExtra;
-			break;
+		//Open file
+		if ((unknownXmlFile=fopen(xmlFile,"wt"))==NULL) return;
+
+		//Save headers
+		if (type==6) pal=id;
+		fprintf(unknownXmlFile,RES_XML_UNKNOWN_START,
+			vFiledat,vFiledat,pal
+		);
 	}
-
-	//set filename
-	sprintf(vFileext,"%s%cres%05d.%s",vDirExt,DIR_SEPARATOR,id,ext);
+	//TODO: set itemtype in words
+	fprintf(unknownXmlFile,RES_XML_UNKNOWN_ITEM,
+		id,id,ext,type,id
+	); //To the xml output
 }
 
-void getUpperFolder(char* aux, char* vFiledat) {
-	int i=0;
-	while (getUpperToken(vFiledat,aux,DIR_SEPARATOR,&i,260));
-	aux[12]=0;
+void endUnknownXml() {
+	if (unknownXmlFile!=NULL) {
+		fprintf(unknownXmlFile,RES_XML_UNKNOWN_END);
+		fclose(unknownXmlFile);
+	}
 }
 
-/***************************************************************\
-|                     File handling functions                   |
-\***************************************************************/
-
-int mLoadFileArray(char* vFile,unsigned char** array) {
-	/*
-		Using the string in vFile, it opens the file and returns the
-		number of bytes	in it and the content of the file in array.
-		In case the file couldn't be open or memory allocated returns 0.
-	*/
-
-	//declare variables
-	FILE *fp;
-	int  aux;
-
-	//Open the file
-	if ((fp=fopen(vFile,"rb"))==NULL) {
-		return 0;
+//Resources extra functions
+void getFileName(char* vFileext,char* vDirExt,tResource* r,short id,char* vFiledat) {
+	static const char extarray[8][4]={"raw","pet","bmp","wav","mid","ext","pal","pcs"};
+	const char* ext;
+	ext=extarray[((r->type<=7)&&(r->type>=0))?r->type:5];
+	if (r->path==NULL) {
+		//set filename
+		sprintf(vFileext,RES_XML_UNKNOWN_PATH""RES_XML_UNKNOWN_FILES,vDirExt,vFiledat,id,ext);
+		AddToUnknownXml(vFiledat,id,ext,r->type,vDirExt,r->palette);
 	} else {
-		//get file size
-		fseek(fp,0,SEEK_END);
-		aux=ftell(fp);
-		if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(char*)malloc(sizeof(char)*aux))==NULL) ) ) {
-			//if the file was null or bigger than the max size or couldn't allocate the file in memory
-			fclose(fp);
-			return 0;
-		} else {
-			//if the filewas succesfully open
-			fseek(fp,0,SEEK_SET);
-			aux=fread (*array,1,aux,fp);
-			fclose(fp);
-			return aux;
-		}
+		//set filename
+		sprintf(vFileext,"%s/%s",vDirExt,r->path);
 	}
-}
-
-char mSaveRaw(char* vFile,unsigned char* output, int size) {
-	/*
-		Using the given string in vFile, it opens the file and saves the
-		first "size" bytes from the "output" in it.
-		In case the file couldn't be open or there was no size returns 0,
-		otherways returns 1.
-	*/
-
-  FILE * pFile;
-
-	if (!size) {
-		return 0;
-	}
-  if ((pFile = fopen (vFile , "wb"))==NULL) {
-		return 0;
-	}
-  fwrite (output, 1, size, pFile);
-  fclose (pFile);
-  return 1;
 }

@@ -36,6 +36,7 @@ compress.c: Princed Resources : Image Compressor
 \***************************************************************/
 
 #include <stdio.h>
+#include <string.h>
 #include "compress.h"
 #include "memory.h"
 
@@ -65,7 +66,6 @@ void expandLzx(char* array,tImage* img, int *i,int cursor, int virtualSize) {
 	char k;
 	int pos,h;
 	unsigned char maskbyte,rep;
-//printf("expandLzx %d %d \n",virtualSize,cursor);
 
 	for(pos=0;pos<MAX_MXD_SIZE_IN_LZX;(*img).pix[pos]=0,pos++); //clean output garbage
 	while (cursor<virtualSize) {
@@ -91,9 +91,7 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
   char* cursorData  = data;
   char* counter;
   char* cursorPix   = (*img).pix;
-  char* imgEnd      = (*img).pix+(
-		(((*img).width+1)>>1)*(img->height)
-	);
+  char* imgEnd      = (*img).pix+(*dataSize);
 
   while (cursorPix<imgEnd) {
 		//Step 1: Create counter
@@ -113,7 +111,7 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
 				cursorPix++;
 				(*counter)--;
 			}
-			
+
 			*(cursorData)=*(cursorPix); //Print repeated char
 			cursorPix++;
 			cursorData++;
@@ -121,7 +119,7 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
 	}
 	*(cursorData++)=0;
 	*(cursorData++)=*(cursorPix);
-	*dataSize=(int)cursorData-(int)data; //Note: data loss in 64 bits architectures
+	*dataSize=(int)((long int)cursorData-(long int)data); //Note: casted to long for portability with 64 bits architectures
 }
 
 //Expands an array into an image
@@ -204,50 +202,72 @@ int mExpandGraphic(char* array,tImage *image, int virtualSize) {
 	return i;
 }
 
-//Compress an image into an array in the most quick & dirty way
-int mCompressGraphic(unsigned char* data,tImage i, int* size) {
-	int dataSize;
-	//unsigned char* a;
-/*
+#define COMPRESS_WORKING_ALGORITHMS 3
 
-	*size=(i.size/2)+6;
-	a=getMemory(*size);
-	//height - 00 - width - 00 - 00 - compression type
-	a[2]=i.width;
-	a[3]=i.width>>8;
+//Compress an image into an array
+int mCompressGraphic(unsigned char* data,tImage* i, int* size) {
+	//Declare variables
+	int            compressedSize [COMPRESS_WORKING_ALGORITHMS];
+	int            algorithm;
+	int            cursor;
+	int            virtualsize;
+	unsigned char* compressed     [COMPRESS_WORKING_ALGORITHMS];
+	unsigned char* outputaux;
 
-	a[0]=i.height;
-	a[1]=i.height>>8;
+	//Initialize variables
+	virtualsize=(((i->width)+1)>>1)*i->height;
+	outputaux=getMemory(virtualsize);
+	for (cursor=0;cursor<COMPRESS_WORKING_ALGORITHMS;cursor++) compressedSize[cursor]=virtualsize;
+	cursor=0;
 
-	a[4]=0;
-	a[5]=0xB0; // how q&d I am :)
+	//B0
+	compressed[0]=getMemory(compressedSize[0]);
+	memcpy(compressed[0],i->pix,compressedSize[0]);
 
-	memcpy(a+6,i.pix,*size); //TODO it should be a+6,i.pix
-	*/
-////printf("llega 3\n");
-	//=getMemory(10*i.size+50); //This will reserve 10*2*(image size)+50 bytes, to allocate the compressed file
-////printf("llega 3.3\n");
-#if 1
-	compressRle(data+6,&i,&dataSize);
-//printf("mCompressGraphic: size=%d\n",dataSize);
-	//a=getMemory(*size=(dataSize+6));
-////printf("llega 4\n");
-	/*
-		Header Settings:
-		height - 00 - width - 00 - 00 - compression type
-	*/
-	data[2]=i.width;
-	data[3]=i.width>>8;
+	//B1
+	compressed[1]=getMemory(10*virtualsize+50); //This will reserve 10*(image size)+50 bytes, to allocate the compressed file
+	compressRle(compressed[1],i,&(compressedSize[1]));
 
-	data[0]=i.height;
-	data[1]=i.height>>8;
+	//B2
+	compressed[2]=getMemory(10*virtualsize+50); //This will reserve 10*(image size)+50 bytes, to allocate the compressed file
+	//Transpose
+  while (cursor<=virtualsize) {
+		outputaux[cursor]=i->pix[transpose(cursor,i->width,i->height)];
+		cursor++;
+	}
+	free(i->pix);
+	i->pix=outputaux;
+	compressRle(compressed[2],i,&(compressedSize[2]));
 
+	/*Process results*/
+
+	//Select the best compression (find minimum)
+	*size=compressedSize[0];
+	algorithm=0;
+	for (cursor=1;cursor<3;cursor++) {
+		if ((*size)>compressedSize[cursor]) {
+			(*size)=compressedSize[cursor];
+			algorithm=cursor;
+		}
+	}
+
+	//Copy the best algorithm in the compressed data
+	memcpy(data+6,compressed[algorithm],*size);
+	(*size)+=6;
+
+	//Write header
+	//(16 bits)height (Intel short int format)
+	data[0]=i->height;
+	data[1]=i->height>>8;
+	//(16 bits)width (Intel short int format)
+	data[2]=i->width;
+	data[3]=i->width>>8;
+	//(12 bits)000000001011+(4 bits)algorithm
 	data[4]=0;
-	data[5]=0xB1;
+	data[5]=0xB0+algorithm;
 
-*size=(dataSize+6);
-////printf("Tize: %d %02x %02x %02x %02x %02x %02x %02x\n",*size,a[0],a[1],a[2],a[3],a[4],a[5],a[6]);
+	//Free all compression attempts
+	for (cursor=0;cursor<COMPRESS_WORKING_ALGORITHMS;cursor++) free(compressed[cursor]);
 
-#endif
 	return 1;
 }

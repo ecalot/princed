@@ -19,6 +19,7 @@ CFG=tasks - Win32 Debug
 !MESSAGE 
 !MESSAGE "tasks - Win32 Release" (based on "Win32 (x86) Console Application")
 !MESSAGE "tasks - Win32 Debug" (based on "Win32 (x86) Console Application")
+!MESSAGE "tasks - Win32 Dynamic Link Library" (based on "Win32 (x86) Console Application")
 !MESSAGE 
 
 # Begin Project
@@ -42,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "include\\" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /YX /c
+# ADD CPP /nologo /W3 /GX /O2 /I "include\\" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /FR /YX /c
 # ADD BASE RSC /l 0x2c0a /d "NDEBUG"
 # ADD RSC /l 0x2c0a /d "NDEBUG"
 BSC32=bscmake.exe
@@ -51,6 +52,10 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386 /out:"bin/pr.exe"
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Cmds=del winbins\pr.exe	copy bin\pr.exe winbins\pr.exe >nul	scripts\upx.exe winbins\pr.exe
+# End Special Build Tool
 
 !ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
 
@@ -76,12 +81,43 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept
 
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
+
+# PROP BASE Use_MFC 0
+# PROP BASE Use_Debug_Libraries 0
+# PROP BASE Output_Dir "tasks___Win32_Dynamic_Link_Library"
+# PROP BASE Intermediate_Dir "tasks___Win32_Dynamic_Link_Library"
+# PROP BASE Ignore_Export_Lib 0
+# PROP BASE Target_Dir ""
+# PROP Use_MFC 0
+# PROP Use_Debug_Libraries 0
+# PROP Output_Dir "Dll"
+# PROP Intermediate_Dir "Dll"
+# PROP Ignore_Export_Lib 0
+# PROP Target_Dir ""
+# ADD BASE CPP /nologo /W3 /GX /O2 /I "include\\" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /FR /YX /c
+# ADD CPP /nologo /W3 /GX /O2 /I "include\\" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "DLL" /FR /YX /c
+# ADD BASE RSC /l 0x2c0a /d "NDEBUG"
+# ADD RSC /l 0x2c0a /d "NDEBUG"
+BSC32=bscmake.exe
+# ADD BASE BSC32 /nologo
+# ADD BSC32 /nologo
+LINK32=link.exe
+# ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386 /out:"bin/pr.exe"
+# ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /dll /machine:I386 /def:"winbins/pr.def" /out:"winbins/pr.dll" /implib:"winbins/pr.lib"
+# SUBTRACT LINK32 /pdb:none
+# Begin Special Build Tool
+SOURCE="$(InputPath)"
+PostBuild_Cmds=scripts\upx.exe winbins\pr.dll
+# End Special Build Tool
+
 !ENDIF 
 
 # Begin Target
 
 # Name "tasks - Win32 Release"
 # Name "tasks - Win32 Debug"
+# Name "tasks - Win32 Dynamic Link Library"
 # Begin Group "src"
 
 # PROP Default_Filter ""
@@ -91,10 +127,19 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=.\formats\bmp.c
+DEP_CPP_BMP_C=\
+	".\include\bmp.h"\
+	".\include\compile.h"\
+	".\include\compress.h"\
+	".\include\disk.h"\
+	".\include\resources.h"\
+	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
 
 !ENDIF 
 
@@ -102,10 +147,18 @@ SOURCE=.\formats\bmp.c
 # Begin Source File
 
 SOURCE=.\formats\mid.c
+DEP_CPP_MID_C=\
+	".\include\compile.h"\
+	".\include\disk.h"\
+	".\include\mid.h"\
+	".\include\resources.h"\
+	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
 
 !ENDIF 
 
@@ -113,10 +166,18 @@ SOURCE=.\formats\mid.c
 # Begin Source File
 
 SOURCE=.\formats\pal.c
+DEP_CPP_PAL_C=\
+	".\include\compress.h"\
+	".\include\disk.h"\
+	".\include\pal.h"\
+	".\include\resources.h"\
+	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
 
 !ENDIF 
 
@@ -124,10 +185,17 @@ SOURCE=.\formats\pal.c
 # Begin Source File
 
 SOURCE=.\formats\wav.c
+DEP_CPP_WAV_C=\
+	".\include\compile.h"\
+	".\include\resources.h"\
+	".\include\wav.h"\
+	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
 
 !ENDIF 
 
@@ -136,10 +204,22 @@ SOURCE=.\formats\wav.c
 # Begin Source File
 
 SOURCE=.\compile.c
+DEP_CPP_COMPI=\
+	".\include\bmp.h"\
+	".\include\compile.h"\
+	".\include\compress.h"\
+	".\include\disk.h"\
+	".\include\mid.h"\
+	".\include\pal.h"\
+	".\include\resources.h"\
+	".\include\wav.h"\
+	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
 
 !ENDIF 
 
@@ -147,10 +227,32 @@ SOURCE=.\compile.c
 # Begin Source File
 
 SOURCE=.\compress.c
+DEP_CPP_COMPR=\
+	".\include\compress.h"\
+	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\disk.c
+DEP_CPP_DISK_=\
+	".\include\disk.h"\
+	".\include\pr.h"\
+	
+
+!IF  "$(CFG)" == "tasks - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
 
 !ENDIF 
 
@@ -158,10 +260,22 @@ SOURCE=.\compress.c
 # Begin Source File
 
 SOURCE=.\extract.c
+DEP_CPP_EXTRA=\
+	".\include\bmp.h"\
+	".\include\compress.h"\
+	".\include\disk.h"\
+	".\include\extract.h"\
+	".\include\mid.h"\
+	".\include\pal.h"\
+	".\include\resources.h"\
+	".\include\wav.h"\
+	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
 
 !ENDIF 
 
@@ -174,16 +288,30 @@ SOURCE=.\parser.c
 
 !ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
 
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
+
 !ENDIF 
 
 # End Source File
 # Begin Source File
 
 SOURCE=.\pr.c
+DEP_CPP_PR_C10=\
+	".\include\bmp.h"\
+	".\include\compile.h"\
+	".\include\compress.h"\
+	".\include\disk.h"\
+	".\include\extract.h"\
+	".\include\pr.h"\
+	".\include\resources.h"\
+	".\include\tasks.h"\
+	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
 
 !ENDIF 
 
@@ -191,10 +319,19 @@ SOURCE=.\pr.c
 # Begin Source File
 
 SOURCE=.\resources.c
+DEP_CPP_RESOU=\
+	".\include\compress.h"\
+	".\include\pr.h"\
+	".\include\resources.h"\
+	".\include\xml.h"\
+	".\include\xmlsearch.h"\
+	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
 
 !ENDIF 
 
@@ -202,10 +339,52 @@ SOURCE=.\resources.c
 # Begin Source File
 
 SOURCE=.\tasks.c
+DEP_CPP_TASKS=\
+	".\include\resources.h"\
+	".\include\tasks.h"\
+	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
 !ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\xml.c
+DEP_CPP_XML_C=\
+	".\include\disk.h"\
+	".\include\pr.h"\
+	".\include\xml.h"\
+	
+
+!IF  "$(CFG)" == "tasks - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\xmlsearch.c
+DEP_CPP_XMLSE=\
+	".\include\resources.h"\
+	".\include\xml.h"\
+	".\include\xmlsearch.h"\
+	
+
+!IF  "$(CFG)" == "tasks - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
 
 !ENDIF 
 
@@ -225,6 +404,10 @@ SOURCE=.\include\compile.h
 # Begin Source File
 
 SOURCE=.\include\compress.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\include\disk.h
 # End Source File
 # Begin Source File
 
@@ -261,6 +444,14 @@ SOURCE=.\include\tasks.h
 # Begin Source File
 
 SOURCE=.\include\wav.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\include\xml.h
+# End Source File
+# Begin Source File
+
+SOURCE=include\xmlsearch.h
 # End Source File
 # End Group
 # End Target
