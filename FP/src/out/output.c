@@ -69,7 +69,7 @@ typedef struct _valid_chars {
 } vChar;
 
 static vChar        valid_chars[256];
-static SDL_Surface* font     = NULL;
+static SDL_Surface* font      = NULL;
 static int          font_init = 0;
 
 /* #define FONT_FILE "../fonts.bmp" */
