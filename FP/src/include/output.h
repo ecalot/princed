@@ -101,6 +101,7 @@ void outputStop();
 
 int outputGetHeight(void* image);
 int outputGetWidth(void* image);
+void outputRaiseBitmap(void* image, int h);
 
 
 #endif

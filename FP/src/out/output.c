@@ -334,6 +334,11 @@ void outputDrawBitmap(void* image, int x, int y) {
 	if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
 }
 
+void outputRaiseBitmap(void* image, int h) {
+	register tSurface* img=(tSurface*)image;
+	img->bottom+=h;
+}
+
 void outputClearScreen()
 {
 	SDL_FillRect(screen, NULL, 0);

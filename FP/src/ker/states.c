@@ -56,13 +56,14 @@ static tsCondition statesConditionList[]=STATES_CONDITIONS;
 void stateGetAnimation(int action,tState *state/*short *frames,short** flags,float* offsets*/) {
 	tsAction* a=statesActionList+action;
 	short i=a->animSize;
-	short* j=statesAnimationList+(a->animStart*3);
+	short* j=statesAnimationList+(a->animStart*4);
 	short totaloffset=a->moveOffset;
-	/* TODO: depending on relative and absolute crop the middle frames */
+
 	state->frame=i;
 	state->animation=(short*)malloc(sizeof(short)*i);
 	state->steps=(short*)malloc(sizeof(short)*i);
 	state->flags=(short*)malloc(sizeof(short)*i);
+	state->offsx=(short*)malloc(sizeof(short)*i);
 #ifdef DEBUGSTATES
 	printf("* Animsize=%d Animstart=%d. (new animation allocated) Next:\n",i,a->animStart);
 #endif
@@ -71,6 +72,7 @@ void stateGetAnimation(int action,tState *state/*short *frames,short** flags,flo
 		(state->animation)[i]=*(j++); /* the first short is the frame */
 		((state->flags)[i])=*(j++); /* the second short is the flag */
 		((state->steps)[i])=*(j++); /* the third short is the frame step */
+		((state->offsx)[i])=*(j++); /* the fourth short is the height */
 	}
 }
 
@@ -198,6 +200,7 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 	current->image=current->animation[current->frame];
 	flags         =current->flags    [current->frame];
 	steps         =current->steps    [current->frame];
+	current->imgoffx=current->offsx    [current->frame];
 	
 	/* BEGIN DEBUGSTATES */
 #ifdef DEBUGSTATES
@@ -211,6 +214,7 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 		free(current->animation);
 		free(current->flags);
 		free(current->steps);
+		free(current->offsx);
 		/* Find matching action */
 		action=evaluateState(current->currentState,key,kid,room);
 

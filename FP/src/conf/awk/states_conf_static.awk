@@ -261,7 +261,7 @@ END {
 		flags=arrayAnimation[i,"flags"]
 		
 		b=match(flags,/\$[ ]*([+-]?[0-9]+)/)
-		steps=substr(flags,b+1,RLENGTH)
+		steps=substr(flags,b+1,RLENGTH)/1
 		c=match(flags,/\@[ ]*([+-]?[0-9]+)/)
 		offxs=substr(flags,c+1,RLENGTH)/1
 		
@@ -280,8 +280,7 @@ END {
 			flagmask=""
 		}
 		if (offxs) flagmask=sprintf("%sSTATES_FLAG_HEIGHTOFFSET|",flagmask)
-		printf "%s%d,%s0,%d",coma,arrayAnimation[i,"frame"],flagmask,steps
-#		if (offxs) printf ",/* h= */%d",offxs
+		printf "%s%d,%s0,%d,/* h= */%d",coma,arrayAnimation[i,"frame"],flagmask,steps,offxs
 		if (i%10==9) printf("\\\n\t")
 		coma=","
 	}
