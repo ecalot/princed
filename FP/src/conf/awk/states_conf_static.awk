@@ -104,14 +104,14 @@ BEGIN {
 			split($1,a,"-")
 			for (g=a[1];g<=a[2];g++) {
 				arrayAnimation[currentAnimation,"frame"]=g
-				arrayAnimation[currentAnimation,"flags"]=$2
-				arrayAnimation[currentAnimation,"steps"]=$2+$3
+				$1=""
+				arrayAnimation[currentAnimation,"flags"]=$0
 				currentAnimation++
 			}
 		} else {
 			arrayAnimation[currentAnimation,"frame"]=$1
-			arrayAnimation[currentAnimation,"flags"]=$2
-			arrayAnimation[currentAnimation,"steps"]=$2+$3
+			$1=""
+			arrayAnimation[currentAnimation,"flags"]=$0
 			currentAnimation++
 		}
 # level option
@@ -259,13 +259,16 @@ END {
 	coma=""
 	for (i=0;i<currentAnimation;i++) {
 		flags=arrayAnimation[i,"flags"]
-		steps=arrayAnimation[i,"steps"]
-		if (flags ~ /[a-z]+/) {
+		match(flags,/([^0-9 +-])/,a)
+		match(flags,/\+[ ]*([^0-9]+)/,b)
+		match(flags,/\-[ ]*([^0-9]+)/,c)
+		steps=b[1]/1
+		offxs=c[1]/1
+		if (a[1]) {
 			coma2=""
 			flagmask=""
-			for (j=1;j<=length(flags);j++) {
-				c=substr(flags,j,1)
-				flagmask=sprintf("%s%sSTATES_FLAG_%s",flagmask,coma2,toupper(c))
+			for (j=1;a[j];j++) {
+				flagmask=sprintf("%s%sSTATES_FLAG_%s",flagmask,coma2,toupper(a[j]))
 				coma2="|"
 			}
 		} else {
