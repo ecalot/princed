@@ -1,1 +1,15 @@
-ls cmp|sed -e 's/\([0-9]*\).cmp/\1/'|while read i; do ./uncompress cmp/$i.cmp roo/$i.roo>/dev/null; diff raw/$i.raw roo/$i.roo;done
+#!/bin/bash
+
+# test compress & uncompress functions
+
+[ -d samples ] || { echo "samples dir not found!"; exit 1; }
+
+if [ "x$1" = "xuncompress" ]; then
+	[ -d raw ] || mkdir raw
+
+	ls samples/*cmp | sed -e 's/[^0-9]*\([0-9]*\).cmp/\1/' | while read i; do ./lzg -x samples/$i.cmp raw/$i.raw >/dev/null; diff samples/$i.raw raw/$i.raw;done
+else
+	[ -d cmp ] || mkdir cmp
+
+	ls samples/*raw | sed -e 's/[^0-9]*\([0-9]*\).raw/\1/' | while read i; do ./lzg samples/$i.raw cmp/$i.cmp >/dev/null; ./lzg -x cmp/$i.cmp cmp/$i.raw >/dev/null; diff samples/$i.raw cmp/$i.raw;done
+fi
