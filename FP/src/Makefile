@@ -31,6 +31,8 @@ endif
 #Libraries: include path and linked libs
 INCLUDE       = -Iinclude/
 LIBS          = $(shell sdl-config --libs --cflags)
+#but if you have problems porting to BSD use:
+#LIBS         = -L/usr/local/lib -lSDL-1.1 -pthread 
 
 #Defines
 DEFINES       = -DOS=\"$(OS)\" $(LINUX) 
@@ -43,11 +45,11 @@ TYPE          = Debug
 # LINKERRELEASE may be:
 #  -s                              for release
 ifeq ($(TYPE),Debug)
-	RELEASE       = -g -Wall -ansi -pedantic 
-	LINKERRELEASE =
+  RELEASE       = -g -Wall -ansi -pedantic 
+  LINKERRELEASE =
 else
-	RELEASE       = -O2 
-	LINKERRELEASE = -s
+  RELEASE       = -O2 
+  LINKERRELEASE = -s
 endif
 
 #Binary code files
