@@ -157,7 +157,7 @@ dat.o: res/dat.c include/disk.h include/dat.h
 
 kernel.o: ker/kernel.c include/kernel.h include/resources.h\
           include/res_conf.h include/output.h include/object.h\
-          $(GENERATEDSTAHEADERS)
+          $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
@@ -224,7 +224,8 @@ walls.o: res/walls.c include/walls.h include/walls_conf.h
 	$(CC) -c res/walls.c $(OPTIONS)
 
 anims.o: res/anims.c include/anims.h include/anims_conf.h\
-         $(GENERATEDRESHEADERS) $(GENERATEDSTAHEADERS)
+         $(GENERATEDRESHEADERS) $(GENERATEDSTAHEADERS)\
+         $(GENERATEDTILHEADERS)
 	$(INFO) Compiling animation loader module...
 	$(CC) -c res/anims.c $(OPTIONS)
 	

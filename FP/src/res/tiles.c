@@ -36,6 +36,7 @@ tiles.c: FreePrince : Tile functions
 int evaluate(tTile tile,int type) { /* type is the number in the modifier */
 	if (!tile.moreInfo) {
 		printf("Tile Error: trying to use a tile that hasn't extra information\n");
+		printf("code=%d back=%d\n",tile.code-1,tile.back);
 		return 0;
 	}
 	TILES_MACROS_CASE(type,tile)
