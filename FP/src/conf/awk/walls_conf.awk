@@ -40,12 +40,12 @@ BEGIN {
 ##########################
 
 #comments
-/^[[:space:]]*#/ {
-	halt
+/^[\t ]*#/ {
+
 }
 
 #environtment cathegories
-/^[[:space:]]*WALL[[:space:]]/ {
+/^[\t ]*WALL[\t ]/ {
 	$2=toupper($2)
 	$3=toupper($3)
 	currentenvironment=$2
@@ -66,11 +66,10 @@ BEGIN {
 	}
 	tots[ $2 "-" $3 ]=$4/1
 	
-	halt
 }
 
 #tables
-/^[[:space:]]*TABLE[[:space:]]/ {
+/^[\t ]*TABLE[\t ]/ {
 	$2=toupper($2)
 	if (total>tots[ currentenvironment "-" currentlocation ]) tots[ currentenvironment "-" currentlocation ]=total
 	currenttable=$2
@@ -78,7 +77,6 @@ BEGIN {
 		tables[$2]=1
 	}
 	total=0
-	halt
 }
 
 
@@ -101,7 +99,7 @@ function additem(base) {
 }
 
 #parse items 
-/^[[:space:]]*LINE[[:space:]]/ {
+/^[\t ]*LINE[\t ]/ {
 	if (currentenvironment && currenttable) {
 		for (i=2;i<=NF;i++) {
 			if ($i ~ /\*/) {
@@ -123,7 +121,7 @@ function additem(base) {
 	}
 }
 
-/^[[:space:]]*PLACE[[:space:]]/ {
+/^[\t ]*PLACE[\t ]/ {
 	if (currentenvironment && currenttable) {
 		maxtt=0
 		for (i=2;i<=NF;i++) {

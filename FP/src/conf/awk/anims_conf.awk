@@ -37,12 +37,12 @@ BEGIN {
 ###########################
 
 #comments
-/^[[:space:]]*#/ {
+/^[\t ]*#/ {
 	halt
 }
 
 #animation cathegories
-/^[[:space:]]*ANIMATION[[:space:]]/ {
+/^[\t ]*ANIMATION[\t ]/ {
 	$2=toupper($2)
 	animcount++
 	animation["name" animcount]=$2
@@ -55,7 +55,7 @@ BEGIN {
 
 #tables
 #static images
-/^[[:space:]]*[[:digit:]]+[[:space:]]+IMAGE[[:space:]]/ {
+/^[\t ]*[0-9]+[\t ]+IMAGE[\t ]/ {
 	totalimage++
 	f["frame" totalimage]=$1/1
 	f["res" totalimage]=toupper($3)
@@ -73,7 +73,7 @@ BEGIN {
 }
 
 #objects
-/^[[:space:]]*[[:digit:]]+[[:space:]]+OBJECT[[:space:]]/ {
+/^[\t ]*[0-9]+[\t ]+OBJECT[\t ]/ {
 	totalobject++
 	$4=tolower($4)
 	$7=tolower($7)
@@ -101,7 +101,7 @@ BEGIN {
 }
 
 #sounds
-/^[[:space:]]*[[:digit:]]+[[:space:]]+(MIDI|WAV|SPEAKER)[[:space:]]/ {
+/^[\t ]*[0-9]+[\t ]+(MIDI|WAV|SPEAKER)[\t ]/ {
 	totalsound++
 	o["frame" totalsound]=$1/1
 	o["res" totalsound]=toupper($3)
