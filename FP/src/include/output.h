@@ -19,8 +19,8 @@
 */
 
 /*
-resources.h: Free Prince : Output Devices Handler
-¯¯¯¯¯¯¯¯¯¯¯
+output.h: Free Prince : Output Devices Handler
+¯¯¯¯¯¯¯¯
 
  Description: 
  	Platform and device independent functions for handling output
@@ -29,7 +29,7 @@ resources.h: Free Prince : Output Devices Handler
  Copyright 2004 Princed Development Team
   Created: 23 Mar 2004
 
-  Author: vhgh <fhdht.cod@princed.com.ar>
+  Author: Ricardo Markiewicz <rmarkie.cod@princed.com.ar>
 
  Note:
   DO NOT remove this copyright notice

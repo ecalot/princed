@@ -30,6 +30,7 @@ input.h: Free Prince : Input devices handling
   DO NOT remove this copyright notice
 */
 
+/* Deprecated file! */
 #ifndef _INPUT_H_
 #define _INPUT_H_
 

@@ -19,12 +19,12 @@
 */
 
 /*
-resources.h: Princed Resources : Resource Handler headers
-¯¯¯¯¯¯¯¯¯¯¯
+main.h: Princed Resources : Main function and parser headers
+¯¯¯¯¯¯
  Copyright 2003, 2004 Princed Development Team
   Created: 16 Jun 2004
 
-  Author: Endfhgfhgfhg <efghgfdht.cod@princed.com.ar>
+  Author: Enrique Calot <ecalot.cod@princed.com.ar>
 
  Note:
   DO NOT remove this copyright notice
@@ -60,3 +60,4 @@ resources.h: Princed Resources : Resource Handler headers
 #define PARSING_CHARS    "mtl::?"
 
 #endif
+
