@@ -39,6 +39,7 @@ output.c: Free Prince : Output Devices Handler
 #include <stdlib.h>    /* malloc */
 #include "resources.h" /* tMemory structure */
 #include "output.h"
+#include "kernel.h"    /* FP_VERSION */
 
 #define DEF_SCREEN_WIDTH 320
 #define DEF_SCREEN_HEIGHT 200
@@ -93,7 +94,6 @@ outputLoadBitmap(const unsigned char* data, int size,
   * information ti build it invert is 0 when no invertion is needed and 
   * non-zero when an inversion is performed	*/
 
-	/*SDL_Surface* result;*/
 	tSurface* loadedSurface;
 	int i,j;
 	SDL_Color* colors;
@@ -213,6 +213,7 @@ int outputInit()
 	int i;
 	SDL_Color colors[256];
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
+	SDL_WM_SetCaption("FreePrince " FP_VERSION,NULL);
 	atexit(outputStop);
 
 	/* Fill colors with color information */
