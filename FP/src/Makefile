@@ -166,7 +166,7 @@ dat.o: res/dat.c include/disk.h include/dat.h
 
 kernel.o: ker/kernel.c include/kernel.h include/resources.h\
           include/res_conf.h include/output.h include/object.h\
-          $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) 
+          $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) $(GENERATEDOTHHEADERS)
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
@@ -176,7 +176,7 @@ room.o: ker/room.c include/room.h include/resources.h include/res_conf.h\
 	$(CC) -c ker/room.c $(OPTIONS)
 
 kid.o: ker/kid.c include/kid.h include/states.h $(GENERATEDSTAHEADERS) \
-       $(GENERATEDTILHEADERS) include/res_conf.h\
+       $(GENERATEDTILHEADERS) include/res_conf.h $(GENERATEDOTHHEADERS)\
        include/types.h include/tiles.h include/tiles_conf.h
 	$(INFO) Compiling kernel object support...
 	$(CC) -c ker/kid.c $(OPTIONS)
@@ -185,13 +185,13 @@ object.o: ker/object.c include/object.h include/resources.h include/res_conf.h\
        include/states.h $(GENERATEDRESHEADERS)\
        $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) include/res_conf.h\
        include/types.h include/tiles.h include/tiles_conf.h include/output.h\
-       include/kid.h
+       include/kid.h $(GENERATEDOTHHEADERS)
 	$(INFO) Compiling kernel kid object support...
 	$(CC) -c ker/object.c $(OPTIONS)
 
 titles.o: ker/titles.c include/resources.h include/res_conf.h\
           include/anims_conf.h $(GENERATEDSTAHEADERS) $(GENERATEDRESHEADERS)\
-          include/object.h
+          include/object.h $(GENERATEDOTHHEADERS)
 	$(INFO) Compiling kernel titles module...
 	$(CC) -c ker/titles.c $(OPTIONS)
 
