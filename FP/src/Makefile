@@ -88,6 +88,8 @@ $(EXEFILE): $(OBJFILES)
 # program checks  #
 ###################
 
+.PHONY: checks checkcompiler checkawk clean build it run vg install download downloadmore all headers
+
 checks: checkcompiler checksdl checkawk
 
 checkcompiler:
