@@ -156,7 +156,7 @@ Table of Contents
   - Offset 4, size 2, type US: IndexSize
            (the number of bytes the index has)
            Note that IndexSize is 8*numberOfItems+2
-					 Note that IndexOffset+IndexSize=file size
+           Note that IndexOffset+IndexSize=file size
 
  The DAT index: Size = IndexSize bytes
   - Offset IndexOffset,   size 2, type US: NumberOfItems
@@ -173,18 +173,18 @@ Table of Contents
 
  Note:
   POP1 doesn't validate a DAT file checking:
-	 IndexOffset+IndexSize=FileSize
+  IndexOffset+IndexSize=FileSize
   this means you can append data at the end of the file.
 
   PR validates that IndexOffset+IndexSize<=FileSize.
-	It also compares IndexSize with 8*numberOfItems+2 to determine if a file
+ It also compares IndexSize with 8*numberOfItems+2 to determine if a file
   is a valid POP1 DAT file.
 
  Checksum byte:
  There is a checksum byte for each item (resource), this is the first byte
  of the item, the rest of the bytes are the item data. The item type is not
  stored and may only be determined by reading the data and applying some
- filters, unfortunetely this method may fail. When you extract an item you
+ filters, unfortunately this method may fail. When you extract an item you
  should know what kind of item you are extracting.
 
  If you add (sum) the whole item data including checksum and take the less
@@ -211,11 +211,11 @@ Table of Contents
  Information is a set of bits where:
   the first 8 are zeros
   the next 4 are the resolution:
-   if it is 1011 (B in hex) then the image has 16 colors
-   if it is 0000 (0 in hex) then the image has 2 colors
+   if it is 1011 (B in hex) then the image has 16 colours
+   if it is 0000 (0 in hex) then the image has 2 colours
    so to calculate the bits per pixel there are in the image, just take the
-   last 2 bits and add 1. e. g. 11 is 4 (2^4=16 colors) and
-	 00 is 1 (2^1=2 colors).
+   last 2 bits and add 1. e. g. 11 is 4 (2^4=16 colours) and
+  00 is 1 (2^1=2 colours).
   the last 4 bits are the 5 compression types:
    from 0 to 4:
    0 RAW_LR (0000)
@@ -229,16 +229,16 @@ Table of Contents
 
 4.2.2 Algorithms
  RAW_LR means that the data wasn't compressed, it is used for small images.
-        The format is saved from left to right (LR) serializing a line to
+        The format is saved from left to right (LR) serialising a line to
         the next integer byte if necessary. In case the image was 16
-        colors, two pixels per byte (4bpp) will be used. In case the image
-        was 2 colors, 8 pixels per byte (1bpp) will be used.
+        colours, two pixels per byte (4bpp) will be used. In case the image
+        was 2 colours, 8 pixels per byte (1bpp) will be used.
  RLE_LR has a Run length encoding (RLE) algorithm, after uncompressed the
         image can be read as a RAW_LR.
  RLE_UD is the same as RLE_LR except that after uncompressed the bytes in
- 				the image must be drawn from up to down and then from left to right.
+     the image must be drawn from up to down and then from left to right.
  LZG_LR has some kind of variant of the LZ77 algorithm (the sliding windows
-        algorithm), here we named it LZG in honor of Lance Groody, the
+        algorithm), here we named it LZG in honour of Lance Groody, the
         original coder.
         After uncompressed it may be handled as RAW_LR.
  LZG_UD Uses LZG compression but is drawn from top to bottom as RLE_UD
@@ -258,7 +258,7 @@ Table of Contents
 4.2.2.2 LZ variant (LZG)
  This is a simplified algorithm explanation:
 
- There is a slide window initialized with zeros.
+ There is a slide window initialised with zeros.
  The first byte is a maskbyte.
  For each of the 8 bits in the maskbyte the next actions must be performed:
   If the bit is 1 print the next unread byte to the slide window
@@ -313,9 +313,9 @@ Table of Contents
          img[cursor++]=array[pos++];
        } else {
          /*
-				  * location:
+          * location:
           *  10 bits for the slide position (S). Add 66 to this number.
-					* rep:
+          * rep:
           *  6 bits for the repetition number (R). Add 3 to this number.
           */
          location=66+(((rep=array[pos])&3)<<8)+(unsigned char)array[pos+1];
@@ -326,10 +326,10 @@ Table of Contents
          while (rep--) {
            h=cursor/MAX_MXD_SIZE_IN_LZG-
              ((location%MAX_MXD_SIZE_IN_LZG)>(cursor%MAX_MXD_SIZE_IN_LZG));
-					 /*
+           /*
             * if the image is stored in an array of 1024 x n bytes
-					  * h is the height and location is the width
-					  */
+       * h is the height and location is the width
+       */
            img[cursor++]=img[
              ((h<0)?0:h)*MAX_MXD_SIZE_IN_LZG+
              (location++)%MAX_MXD_SIZE_IN_LZG
@@ -344,9 +344,9 @@ Table of Contents
 
 4.3. Palettes
  Palettes have 100 bytes allways, after 4 bytes from the beginning the
- first 16 records of 3 bytes are the VGA colors stored in the RGB-18 bits
- format (6 bits for each color). Each color is a number from 0 to 63.
- Remember to shift the color bytes by two to get the color number from 0
+ first 16 records of 3 bytes are the VGA colours stored in the RGB-18 bits
+ format (6 bits for each colour). Each colour is a number from 0 to 63.
+ Remember to shift the colour bytes by two to get the colour number from 0
  to 256.
 
 4.4. Levels
@@ -373,7 +373,7 @@ Table of Contents
   24     2191    unknown VI (b)
   24     2215    guard_skill
   24     2239    unknown VI (c)
-  24     2263    guard_color
+  24     2263    guard_colour
   16     2287    unknown VI (d)
   2      2303    0F 09 (2319)
 
@@ -437,7 +437,7 @@ Table of Contents
                    Table 4.2: Foreground Walls
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  Hexa Binary Group  Description
+  Hex  Binary Group  Description
   ~~~~ ~~~~~~ ~~~~~  ~~~~~~~~~~~
   0x00 00000  free   Empty
   0x01 00001  free   Floor
@@ -538,7 +538,7 @@ Table of Contents
 4.4.2.1 Wall drawing algorithm
  This section doesn't have a direct relation with the format because it
  describes how the walls must be drawn on the screen. However, as this
- information should be util to recreate a cloned screen read from the
+ information should be usefull to recreate a cloned screen read from the
  format we decided to include this section to the document.
 
  Wall drawing depends on what is in the right panel. If the right panel
@@ -568,7 +568,7 @@ Table of Contents
                    Table 4.4: Stone modifiers on seed position
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Modifier       Seed Positions
-	~~~~~~~~       ~~~~ ~~~~~~~~~
+  ~~~~~~~~       ~~~~ ~~~~~~~~~
      (First row modifiers)
   Gray stone     2, 5, 14, 17, 26, 32, 35, 50
   Left, bottom   2, 11, 36, 45
@@ -593,12 +593,12 @@ Table of Contents
  Another modifiers are saved in the seed too. Those modifiers are not
  boolean values, they are offsets and sizes. As each stone has a different
  size the stone separation offset is saved in the seed.
- For the first row, the sones are all the same size and the seed is not
+ For the first row, the stones are all the same size and the seed is not
  needed.
  For the second row we've got the first 20 values, ordered from 1 to 20. 
  position        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
  offsets:        5,4,3,3,1,5,4,2,1, 1, 5, 3, 2, 1, 5, 4, 3, 2, 5, 4
- separatos size: 0,1,1,0,0,0,1,1,0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0
+ separator size: 0,1,1,0,0,0,1,1,0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0
 
  We'll be adding the next values as soon as we count the pixels ;)
  This information can be found in walls.conf file from FreePrince.
@@ -621,7 +621,7 @@ Table of Contents
 
 4.4.4 Guard handling
  This section specifies the blocks: guard_location, guard_direction,
- guard_skill and guard_color.
+ guard_skill and guard_colour.
 
  Each guard section has 24 bytes, each byte of them corresponds to a screen
  so byte 0 is related to screen 1 and byte 13 is related to screen 24.
@@ -644,10 +644,10 @@ Table of Contents
 
  TODO: add a skill table
 
- The guard_color is the palette the guard has (see 4.8).
- The default colors are in this table:
+ The guard_colour is the palette the guard has (see 4.8).
+ The default colours are in this table:
 
-                   Table 4.4: Default Guard colors
+                   Table 4.4: Default Guard colours
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Code Pants     Cape
@@ -660,9 +660,9 @@ Table of Contents
   0x05 Purple    Beige
   0x06 Yellow    Orange
 
- Other codes may generate random colors because the game is reading
+ Other codes may generate random colours because the game is reading
  the palette from trashed memory. This may also cause a game crash.
- It should (never tested) be possible to add new colors in the guard
+ It should (never tested) be possible to add new colours in the guard
  palette resource (see 4.8) avoiding the crash due to this reason.
 
 
@@ -752,8 +752,8 @@ Table of Contents
 4.8. Binary files
  Some binary files contains relevant information
  The resource number 10 in prince.dat has the VGA guard palettes in it
- saving n records of a 16-color-palette of 3 bytes in the specified palette
- format.
+ saving n records of a 16-colour-palette of 3 bytes in the specified
+ palette format.
 
 
 5. PLV v1.0 Format Specifications
