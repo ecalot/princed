@@ -45,25 +45,10 @@ kernel.c: FreePrince : Main Kernel
  * Main game control function
  */
 
-int control(int optionflag,int level) {
-	/*SDL_Event e;*/
-/*	tData* runningAnimation[4];
-	tData* fondo;*/
+int playgame(int optionflag,int level) {
 	tKey   key=inputCreateKey();
 	tKid   kid=kidCreate();
 
-	/* TODO: send to kid and load static */
-/*	runningAnimation[0]=resLoad(RES_ANIM_RUN);
-	runningAnimation[1]=resLoad(RES_ANIM_RUN|RES_MOD_RIGHT);
-	runningAnimation[2]=resLoad(RES_ANIM_JUMPRUN);
-	runningAnimation[3]=resLoad(RES_ANIM_JUMPRUN|RES_MOD_RIGHT);
-
-	fondo=resLoad(RES_IMG_BACKGROUND);
-	if (!fondo) {
-		printf("The resource couldn't be loaded!\n");
-		return 1;
-	}
-*/
 /* Game loop here */
 	drawScreen(4);
 /* Level loop here */
@@ -122,6 +107,7 @@ int kernel(int optionflag,int level) {
 		fprintf(stderr, "Unable to initialize screen\n");
 		exit(1);
 	}
+	inputInitTimer();
 
 	/*
 	 * Start main menu loop (story and titles)
@@ -130,23 +116,25 @@ int kernel(int optionflag,int level) {
 		if (level==-1) {
 			menuOption=showTitles();
 			switch (menuOption) {
-				case sLoad:
+				case menuLoad:
 					level=8; /* TODO: make read level function */
 					break;
-				case sStart:
+				case menuStart:
 					level=1;
 					break;
-				case sQuit:
+				case menuQuit:
 					quit=1;
 					break;
 			}
 		}
 		if (!quit) {
-			quit=control(optionflag,level);
+			quit=playgame(optionflag,level);
+			level = -1;
 		}
 	} while(!quit);
 
 	kidFree();
+	inputStopTimer();
 	outputStop();
 	return 0;
 }

@@ -30,6 +30,9 @@ maps.c: Freeprince : Map handling library
   DO NOT remove this copyright notice
 */
 
+#ifndef _MAPS_H_
+#define _MAPS_H_
+
 #include "map_defs.h"
 
 typedef enum {eLeft=0,eRight=1,eUp=2,eDown=3}tDirection;
@@ -79,4 +82,6 @@ int levelGetStarPosition(int* screen, int* position); /* TODO: define
 
 int levelGetInformation(int *thisScreen, unsigned char* LRUDscreens, unsigned char* cornerScreens);
 /* TODO: define the format of cornerscreens */
+
+#endif
 

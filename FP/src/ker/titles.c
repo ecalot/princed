@@ -39,11 +39,11 @@ titles.c: FreePrince : Titles, animation and presentation
 tMenuOption getAction(tKey key) {
 	switch(key.actionPerformed) {
 	case quit:
-		return sQuit;
+		return menuQuit;
 	case load:
-		return sLoad;
+		return menuLoad;
 	default:
-		return sStart;
+		return menuStart;
 	}
 }
 
@@ -62,7 +62,7 @@ tMenuOption sleep(int ticks) {
 			) 
 			return getAction(key); /* return the results of this action */ 
 	}
-	return sNone;
+	return menuNone;
 }
 
 tMenuOption showTitles() {
@@ -79,27 +79,26 @@ tMenuOption showTitles() {
 	main_title = resLoad(RES_IMG_MAIN_BACKGROUND);
 	if (! main_title) {
 		printf("The resource couldn't be loaded!\n");
-		return sQuit;
+		return menuQuit;
 	}
 	outputClearScreen();
-	inputInitTimer();
 	/* The main background */
 	outputDrawBitmap(main_title->pFrames[0], 0, 0);
 	outputUpdateScreen();
 	result=sleep(12);
-	if (result!=sNone) return result;
+	if (result!=menuNone) return result;
 	/* The presents */
 	outputDrawBitmap(main_title->pFrames[1], 100, 100);
 	outputUpdateScreen();
 	result=sleep(12);
-	if (result!=sNone) return result;
+	if (result!=menuNone) return result;
 	/* The author*/
 	outputClearScreen();
 	outputDrawBitmap(main_title->pFrames[0], 0, 0);
 	outputDrawBitmap(main_title->pFrames[2], 100, 100);
 	outputUpdateScreen();
 	result=sleep(12);
-	if (result!=sNone) return result;
+	if (result!=menuNone) return result;
 	/* The game name*/
 	outputClearScreen();
 	outputDrawBitmap(main_title->pFrames[0], 0, 0);
@@ -108,7 +107,7 @@ tMenuOption showTitles() {
 	outputUpdateScreen();
 	/*SDL_Delay(1050);*/
 	result=sleep(12);
-	if (result!=sNone) return result;
+	if (result!=menuNone) return result;
 
 	/*
 	 * The outputDraw doesn't support the text files yet
@@ -116,7 +115,7 @@ tMenuOption showTitles() {
 	main_text = resLoad(RES_IMG_TEXT_BACKGROUND);
 	if (! main_text) {
 		printf("The resource couldn't be loaded!\n");
-		return sQuit;
+		return menuQuit;
 	}
 	*/
 	/* The presents */
@@ -127,9 +126,8 @@ tMenuOption showTitles() {
 	*/
 	do {
 		result=sleep(1000);
-	} while (result==sNone);
+	} while (result==menuNone);
 	
-	inputStopTimer();
 	resFree(main_title);
 	return result;
 }	

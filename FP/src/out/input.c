@@ -52,14 +52,18 @@ int editAction(tKey* key,SDLKey k) {
 	/* Control actions */
 	if (inputGetCtrl(key->status)) {
 		switch (k) {
-			case SDLK_l:
-				key->actionPerformed=load;
-				break;
-			case SDLK_q:	
-				key->actionPerformed=quit;
-				break;
-			default:
-				break;
+		case SDLK_l:
+			key->actionPerformed=load;
+			break;
+		case SDLK_q:	
+			key->actionPerformed=quit;
+			break;
+		case SDLK_r:	
+			key->actionPerformed=gotoTitles;
+			break;
+		
+		default:
+			break;
 		}
 	}
 	/* Shift actions */

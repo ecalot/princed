@@ -83,7 +83,6 @@ Len	Offs	BlockName & Description
 #define MAPS_BLOCK_SIZEOF_FILE              37031
 
 
-
 /* Constantes copadas */
 #define MAPS_sUp			2
 #define MAPS_sDown		3
@@ -147,5 +146,10 @@ Len	Offs	BlockName & Description
 #define MAPS_BCK_PIN_2 0x01
 #define MAPS_BCK_PIN_3 0x02
 #define MAPS_BCK_PIN_4 0x03
+
+
+#define MAP_B_NONE 0
+#define MAP_F_WALL 0
+#define MAP_F_FREE 0
 
 #endif

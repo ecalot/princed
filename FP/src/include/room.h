@@ -36,9 +36,12 @@ room.h: FreePrince : Draw Screen
 
 #include "maps.h"
 
+typedef char tRoomId;
+
 typedef struct {
-	int id;
-	tDirection     links[4];
+	tRoomId        id;
+	tRoomId        links[4];
+	tRoomId        corners[4];
 	unsigned char  fore [60];	
 	unsigned char  back [60];
 	/* TODO: add guards */
