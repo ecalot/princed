@@ -225,21 +225,21 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		);
 	}
 	/* empty_bricks/this */
-	if ((0<tile.bricks)&&(tile.bricks<4)) {
+	if ((0<tile.bricks)&&(tile.bricks<4)&&(tile.code==T_EMPTY)) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[51+tile.bricks],
 			x*TILE_W,
 			y*TILE_H-18
 		);
 	}	
-	/* floor_bricks/this *
-	if ((0<tile.bricks)&&(tile.bricks<4)) {
+	/* floor_bricks/this */
+	if ((0<tile.bricks)&&(tile.bricks<3)&&(tile.code==T_FLOOR)) {
 		outputDrawBitmap(
-			roomGfx.environment->pFrames[51+tile.bricks],
+			roomGfx.environment->pFrames[11+tile.bricks],
 			x*TILE_W,
 			y*TILE_H-18
 		);
-	}	*/
+	}
 	/* normal/this */
 	if (tile.hasFloor) {
 		outputDrawBitmap(
