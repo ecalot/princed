@@ -82,9 +82,7 @@ int prExportDat(const char* vDatFile, const char* vDirName, const char* vResFile
 int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char* vDatFileName,const char* datAuthor, const char* backupExtension) {
 	/*
 		Arguments:
-			char* vDatFile        - full Path to the dat file;
-			                        if file use it, if directory, perform it for
-			                        all files
+			char* vDatFile        - full Path to the dat file
 			char* vDirName        - full Path to the extracting folder
 			                        (doesn't need to exist)
 			char* vResFile        - full Path to the resources XML file
@@ -128,14 +126,14 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	char* currentDatFileName;
 	char* currentDatFile;
 
-	currentDatFile=strallocandcopy(vDatFileName);
+	currentDatFile=strallocandcopy(vDatFile);
 
 	parseGivenPath(currentDatFile);
 
 	if (vDatFileName==NULL) { /* if no special dat file was specified, a path parsed will be used */
-		aux=getFileNameFromPath(vDatFile);
+		aux=getFileNameFromPath(currentDatFile);
 	} else {
-		aux=currentDatFile;
+		aux=vDatFileName;
 	}
 	currentDatFileName=strallocandcopy(aux);
 
@@ -146,7 +144,7 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 		a-=3;
 	} else {
 		/* exporting errors/no errors */
-		a=extract(vDatFile,vDirName,r,opt,currentDatFileName,datAuthor,backupExtension);
+		a=extract(currentDatFile,vDirName,r,opt,currentDatFileName,datAuthor,backupExtension);
 	}
 	free(currentDatFileName);
 	free(currentDatFile);

@@ -118,16 +118,16 @@ NULL,NULL,NULL,\
 #define PARSING_RAW ""
 #endif
 #define PARSING_HELP_BEGIN "Usage: \n\
-  pr [OPTIONS] [-x[EXPORTDIR]|-i[IMPORTDIR]|-d] [DATFILEPATH]...\n\
+  pr [OPTIONS] [-x[EXPORTDIR]|-m[IMPORTDIR]|-c] [DATFILEPATH[@resource1[,resource2...]]]...\n\
   pr --help\n\
   pr --version\n\
 \n\
   Mandatory arguments to long options are mandatory for short options too.\n\
 \n"
 #define PARSING_HELP_PART1 "\
-   -i, -c, --import[=DIRNAME] imports from DIRNAME into given dat file\n\
-   -d, --classify             returns the dat file type\n\
-   -x, -e, --export[=DIRNAME] exports given dat file into DIRNAME\n\
+   -i, -m, --import[=DIRNAME] imports from DIRNAME into given dat file\n\
+   -c, --classify             returns the dat file type\n\
+   -e, -x, --export[=DIRNAME] exports given dat file into DIRNAME\n\
 \n"
 #define PARSING_HELP_PART2 "\
    -a, --setauthor=NAME       sets your name in extracted plv files\n\
@@ -136,7 +136,7 @@ NULL,NULL,NULL,\
    -g, --cgi                  run as CGI and output mime headers\n\
    -h, -?, --help             display this help and exit\n\
    -s, --resource=RESFILE     uses an user-specific resource xml file\n\
-"PARSING_RAW
+"PARSING_SHOWRAW(PARSING_RAW)
 
 #define PARSING_HELP_PART3 "\
    -R, --recursive            searches for all dat files (only if DATFILEPATH\n\

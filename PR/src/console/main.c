@@ -79,7 +79,7 @@ int main (int argc, char **argv) {
 
 		c = getopt_long(argc,argv,PARSING_CHARS,long_options,&junk);
 		switch (c) {
-				case 'c':
+				case 'm':
 				case 'i':
 					if (hasFlag(classify_flag|export_flag)) setFlag(help_flag);
 					setFlag(import_flag);
@@ -87,7 +87,7 @@ int main (int argc, char **argv) {
 					break;
 				case 'g':
 					setFlag(cgi_flag); /* if cgi, a classify must be performed */
-				case 'd':
+				case 'c':
 					if (hasFlag(import_flag|export_flag)) setFlag(help_flag);
 					setFlag(classify_flag);
 					break;

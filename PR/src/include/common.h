@@ -127,13 +127,15 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 #ifndef PR_IGNORE_RAW_OPTION
 #define PARSING_OPTRAW ,{"raw",         no_argument,       0,'r'},
 #define PARSING_CHRRAW "r"
+#define PARSING_SHOWRAW(a) a
 #else
 #define PARSING_OPTRAW ,
 #define PARSING_CHRRAW ""
+#define PARSING_SHOWRAW(a) "" 
 #endif
 #define PARSING_OPTIONS {\
-{"import",      optional_argument, 0,'c'},\
-{"classify",    no_argument,       0,'d'},\
+{"import",      optional_argument, 0,'m'},\
+{"classify",    no_argument,       0,'c'},\
 {"export",      optional_argument, 0,'x'},\
 \
 {"setauthor",   required_argument, 0,'a'},\
@@ -152,7 +154,7 @@ PARSING_OPTRAW\
 {0, 0, 0, 0}\
 }
 
-#define PARSING_CHARS    "z::i::c::dx::e::b::a::fgs::t::Rvh?"PARSING_CHRRAW
+#define PARSING_CHARS    "z::i::m::cx::e::b::a::fgs::t::Rvh?"PARSING_CHRRAW
 
 /* Flags */
 #define import_flag      0x0001
