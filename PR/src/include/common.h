@@ -97,6 +97,7 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
    "PR_TXT_GFX_COMP"\n\
     Tammo Jan Dijkema\n\
     Enrique Calot\n\
+    Diego Essaya\n\
 \n\
    "PR_TXT_GFX_DEV"\n\
     Tammo Jan Dijkema\n\
