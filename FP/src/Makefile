@@ -114,11 +114,13 @@ install: download build
 
 download:
 	$(MAKEDIR) bin
-	wget http://fp.princed.com.ar/freeprince.script -O - -nv 2>/dev/null|tar xjC bin
+	$(INFO) Downloading data art files...
+	@wget http://fp.princed.com.ar/freeprince.script -O - -nv 2>/dev/null|tar xjC bin
 
 downloadmore:
 	$(MAKEDIR) bin
-	wget http://fp.princed.com.ar/freeprince2.script -O - -nv 2>/dev/null|tar xjC bin
+	$(INFO) Downloading extra files...
+	@wget http://fp.princed.com.ar/freeprince2.script -O - -nv 2>/dev/null|tar xjC bin
 
 ################
 # Source files #
