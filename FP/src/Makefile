@@ -180,6 +180,10 @@ config.o: res/config.c include/resources.h include/res_conf.h
 	$(INFO) Compiling resource configuration module...
 	$(CC) -c res/config.c $(OPTIONS)
 
+states.o: ker/states.c include/states.h include/states_conf.h
+	$(INFO) Compiling kernel states module...
+	$(CC) -c ker/states.c $(OPTIONS)
+
 #AWK scripts: header generation
 include/res_conf.h: $(GENERATEDRESHEADERS)
 

@@ -1,9 +1,5 @@
 #include "states.h"
 
-void setNewState(tState* current,tsAction action) {
-
-}
-
 /* public functions interface */
 tState createState(int level) {
 	tState start;

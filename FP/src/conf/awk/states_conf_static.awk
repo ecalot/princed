@@ -1,7 +1,7 @@
 BEGIN {
 	currentCondition=-1
 	currentAction=0
-	printf("#define STATES_CONDITIONS={\\\n");
+	printf("#define STATES_CONDITIONS {\\\n");
 	tmp="conf/statesproperties.conf"
 	while ((getline line < tmp) > 0) {
 		gsub(/[	 ]+/, "-",line)
@@ -107,7 +107,7 @@ function addLine(coma) {
 }
 
 END {
-	printf("\t{esTrue,0} /* the end */\\\n};\n\n#define STATES_ACTIONS={\\\n");
+	printf("\t{esTrue,0} /* the end */\\\n};\n\n#define STATES_ACTIONS {\\\n");
 	linkedState=currentState
 	addLine("")
 	for (i=0;i<=currentAction;i++) {
@@ -119,7 +119,7 @@ END {
 		if (!stateNumber) stateNumber=0
 		printf "%s%d /* %s */%s", substr(stateArray[i],0,replaceStart),stateNumber,line,substr(stateArray[i],11+replaceEnd+replaceStart)
 	}
-	printf("};\n\n#define STATES_ANIMATIONS={\\\n\t");
+	printf("};\n\n#define STATES_ANIMATIONS {\\\n\t");
 	coma=""
 	for (i=0;i<currentAnimation;i++) {
 		printf "%s%d",coma,arrayAnimation[i]
