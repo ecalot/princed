@@ -22,8 +22,11 @@ The CVS code isn't a binary distribution and it needs to be compiled,
 some packets are required in both cases (coders and anonymous).
 
 The requiered packages are:
- bash bzip2 sed awk wget gcc make libsdl1.2-dev
+ bzip2 sed wget gcc make libsdl1.2-dev
 
+Recomended
+ make gcc gqview libsdl1.2-dev bash vim cvs mawk wget tar bzip2 dosbox
+ 
 The first seven packages are installed by default.
 For the moment the only supported platform is x86. This is because of the
 endian registers in the processors. We are working to finish porting the
