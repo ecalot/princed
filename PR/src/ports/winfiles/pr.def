@@ -1,7 +1,14 @@
 EXPORTS
- prExportDat
- prImportDat
- prVerifyDatType
- prExportDatOpt
- prImportDatOpt
- prMain
+prExportDat
+prExportDatOpt
+prImportDat
+prImportDatOpt
+prVerifyDatType
+prSetOutput
+parseFile
+parseStructure
+resourceTreeGetChild
+resourceTreeGetInfo
+resourceTreeGetNext
+resourceTreeGetRoot
+freeParsedStructure
