@@ -47,10 +47,9 @@ int kernel(int optionflag,int level) {
 	
 	SDL_Surface *screen /* , *test */;
 	SDL_Event e;
-	int i,location,direction;
-	tData* runningAnimationLeft;
-	tData* runningAnimationRight;
-	tData* runningAnimation;
+	int i,location,direction,upIsPressed;
+	tData* runningAnimation[4];
+	tData* animation;
 	tData* fondo;
 
 	screen = outputInit();
@@ -60,11 +59,13 @@ int kernel(int optionflag,int level) {
 		exit(1);
 	}
 
-	runningAnimationLeft=resLoad(RES_ANIM_RUN_LEFT);
-	runningAnimationRight=resLoad(RES_ANIM_RUN_RIGHT);
+	runningAnimation[0]=resLoad(RES_ANIM_RUN_LEFT);
+	runningAnimation[1]=resLoad(RES_ANIM_RUN_RIGHT);
+	runningAnimation[2]=resLoad(RES_ANIM_JUMPRUN_LEFT);
+	runningAnimation[3]=resLoad(RES_ANIM_JUMPRUN_RIGHT);
 	fondo=resLoad(RES_IMG_BACKGROUND);
-	if ((!runningAnimation) || (!fondo)) {
-		printf("The resource couldn't be loaded! %p %p\n",runningAnimation,fondo);
+	if (!fondo) {
+		printf("The resource couldn't be loaded!\n");
 		exit(1);
 	}
 /*
@@ -75,9 +76,10 @@ int kernel(int optionflag,int level) {
 	);
 */
 	i=0;
-	location=380;
-	direction=1;
-	runningAnimation=runningAnimationLeft;
+	location=160;
+	direction=0;
+	animation=runningAnimation[0];
+	upIsPressed=0;
 	while (1) {
 		if (SDL_PollEvent(&e)) {
 			switch (e.type) {
@@ -88,10 +90,17 @@ int kernel(int optionflag,int level) {
 					SDL_GetKeyName(e.key.keysym.sym),e.key.keysym.sym);*/
 					switch (e.key.keysym.sym) {
 						case SDLK_LEFT:
-							direction=1;
+							direction=0;
 							break;
 						case SDLK_RIGHT:
-							direction=0;
+							direction=1;
+							break;
+						case SDLK_UP:
+							i=0;
+							upIsPressed=1;
+							break;
+						case SDLK_DOWN:
+							i=0;
 							break;
 						case SDLK_q:
 							exit(1);
@@ -100,22 +109,30 @@ int kernel(int optionflag,int level) {
 							break;
 					}
 					break;
+				case SDL_KEYUP:
+					switch (e.key.keysym.sym) {
+						case SDLK_UP:
+								upIsPressed=0;
+								break;
+						default:
+								break;
+					}
 			}
 		}
 		outputClearScreen(screen);
 		outputDrawBitmap(screen, fondo->pFrames[0], 0, 0);
-		outputDrawBitmap(screen, runningAnimation->pFrames[i], location, 141);
+		outputDrawBitmap(screen, animation->pFrames[i], location, 141);
 		outputUpdateScreen(screen);
 		i++;
 		SDL_Delay(50);
+		animation=runningAnimation[(upIsPressed<<1)|(direction)];
 		if (direction) {
-			runningAnimation=runningAnimationLeft;
-			location--;
+			location+=3;
 		} else {
-			runningAnimation=runningAnimationRight;
-			location++;
+			location-=3;
 		}
-		if (i>10) i =0;
+		printf("up=%d\n",upIsPressed);
+		if (i>animation->frames-1) i =6;
 	}
 
 	outputStop();
