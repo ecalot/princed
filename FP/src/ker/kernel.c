@@ -105,6 +105,15 @@ int playgame(int optionflag,int level) {
 				if ((roomId=room.links[eRight]))
 					room=mapGetRoom(map,roomId);
 				break;
+			case passLevel:
+				resFree(map);
+				level++;
+				level%=16;
+				map=resLoad(RES_MAP|level);
+				mapStart(map,&kid,&roomId);
+				room=mapGetRoom(map,roomId);
+				printf("Kernel/playgame: cheat: Pass to level %d\n",level);
+				break;
 			case showVersion:
 				fprintf(stderr,"FreePrince v"FP_VERSION"\n");
 				break;
