@@ -130,7 +130,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 
 #define e(a,x,y) outputDrawBitmap(roomGfx.environment->pFrames[a],(x),(y))
 
-#define buttonIsNormal(a)  (((tPressable*)a.moreInfo)->action==eNormal)
+/*#define isIn(a,TILES_UNPRESSED)  (((tPressable*)a.moreInfo)->action==eNormal)*/
 #define chopperGetFrame(a) (((tDanger*)a.moreInfo)->frame)
 #define gateGetFrame(a)    (((tGate*)a.moreInfo)->frame)
 #define spikeGetFrame(a)   (((tDanger*)a.moreInfo)->frame)
@@ -370,14 +370,16 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	if (isIn(tile,TILE_BP_TOP)) 
 		e(87,(x-1)*TILE_W+8,y*TILE_H+3);
 	/* pressable/this */
+	/* TODO: use boolean algebra to simplify this */
 	if (isIn(tile,TILES_RAISE_UNPRESSED)&&isIn(left,TILES_WALKABLE)&&(!isIn(left,TILES_RAISE)))
 		e(57,(x-1)*TILE_W+0,y*TILE_H);
-	if (isIn(tile,TILES_RAISE) && (  ( !buttonIsNormal(tile) )||( !isIn(left,TILES_WALKABLE) )|| isIn(left,TILES_RAISE) )  )
-		e(58,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(tile)?0:1));
+	if ((isIn(tile,TILES_RAISE)&&((!isIn(tile,TILES_UNPRESSED))||(!isIn(left,TILES_WALKABLE))||isIn(left,TILES_RAISE)))&&(isIn(tile,TILES_UNPRESSED))) 
+		e(58,(x-1)*TILE_W+0,y*TILE_H);
+	if (((isIn(tile,TILES_RAISE)&&((!isIn(tile,TILES_UNPRESSED))||(!isIn(left,TILES_WALKABLE))||isIn(left,TILES_RAISE)))&&(!isIn(tile,TILES_UNPRESSED)))||isIn(tile,TILES_DROP_UNPRESSED))
+		e(58,(x-1)*TILE_W+0,y*TILE_H+1);
+						
 	if (isIn(tile,TILES_DROP_PRESSED)) 
 		e(58,(x-1)*TILE_W+0,y*TILE_H+2);
-	if (isIn(tile,TILES_DROP_UNPRESSED)) 
-		e(58,(x-1)*TILE_W+0,y*TILE_H+1);
 	/* debris/this */
 	if (isIn(tile,TILES_BROKENTILE)) 
 		e(48,(x-1)*TILE_W+0,y*TILE_H+0);
@@ -419,7 +421,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 	} else if (isIn(tile,TILES_WALKABLE)) {
 		if (isIn(tile,TILES_PRESSABLE)) {
 			/* TODO: drop has resource 59 for unpressed/raise 47? checkgame */
-			e(59,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(tile)?3:4));
+			e(59,(x-1)*TILE_W+0,y*TILE_H+(isIn(tile,TILES_UNPRESSED)?3:4));
 		} else {
 			e(11,(x-1)*TILE_W+0,y*TILE_H+3);
 		}
