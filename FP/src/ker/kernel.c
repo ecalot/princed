@@ -58,8 +58,9 @@ int playgame(int optionflag,int level) {
 	tRoomId roomId;
 	
 	/*TODO: use a map.c function that reads this information and creates the kid*/
-	kid=objectCreate(30,1,DIR_RIGHT,stateKidInLevel(/*level*/1),RES_IMG_ALL_KID,1,oKid);
-
+	kid=objectCreate(30,1,DIR_RIGHT,stateKidInLevel(level),RES_IMG_ALL_KID,1,oKid);
+	outputDrawMessage(24,"LEVEL %d\n",level);
+	
 	/* Game loop here */
 	
 	/* Initialize kid and room in the map */
@@ -119,7 +120,7 @@ int playgame(int optionflag,int level) {
 				map=(tMap*)resMap->pFrames;
 				mapStart(map,&kid,&roomId,level);
 				room=mapGetRoom(map,roomId);
-				printf("Kernel/playgame: cheat: Pass to level %d\n",level);
+				outputDrawMessage(24,"Cheat: Pass to level %d\n",level);
 				break;
 			case showVersion:
 				outputDrawMessage(24,"FreePrince v"FP_VERSION"\n");
