@@ -76,7 +76,6 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 	*p = pixel;
 }
 
-
 /* Graphics: Primitives for resources module */
 void*
 outputLoadBitmap(const unsigned char* data, int size, 
@@ -149,7 +148,9 @@ outputLoadBitmap(const unsigned char* data, int size,
 
 /* Frees the abstract object created by the loadBitmap function */
 void outputFreeBitmap(void* image) {
-	free(image); /* TODO: I think some SDL stuff should be here */
+	if (image) {
+		SDL_FreeSurface((SDL_Surface *)image);
+	}
 }
 
 /* Graphics: Primitives for the kernel */
