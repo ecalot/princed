@@ -193,15 +193,17 @@ int main (int argc, char **argv) {
 				else
 					dat=datfile;
 				/* Call PR */
-
 				if (hasFlag(import_flag)) {
 					/* import */
+					fprintf(outputStream,PR_TEXT_TASK_COMPILE,file,dirName);
 					result=prImportDatOpt(file,dirName,resFile,optionflag,dat,extension);
 				} else if (hasFlag(export_flag)) {
 					/* export */
+					fprintf(outputStream,PR_TEXT_TASK_EXTRACT,file,dirName);
 					result=prExportDatOpt(file,dirName,resFile,optionflag,dat,datAuthor,extension);
 				} else {
 					/* classify */
+					fprintf(outputStream,PR_TEXT_TASK_CLASSIFY,file);
 					result=prVerifyDatType(file);
 				}
 				printf("file: %s '%s' result=%d\n",file,dat,result);
