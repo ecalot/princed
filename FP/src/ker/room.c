@@ -262,7 +262,7 @@ void drawChopper(int x, int y, int frame, tChopperLayer layer) {
 	switch (layer) { /* TODO: use relative offsets in resources */
 		case layCFore:
 			outputDrawBitmap(
-				roomGfx.environment->pFrames[91],x,y
+				roomGfx.environment->pFrames[97-frame],x,y
 			);
 			break;
 		case layCBack:
