@@ -5,7 +5,7 @@ short* stateGetAnimation(int action,short* frames);
 
 static tsAction statesActionList[]=STATES_ACTIONS;
 static short statesAnimationList[]=STATES_ANIMATIONS;
-static short statesConditionList[]=STATES_CONDITIONS;
+static tsCondition statesConditionList[]=STATES_CONDITIONS;
 
 /* public functions interface */
 tState createState(int level) {
@@ -26,7 +26,7 @@ int evaluateCondition(int condition,tKey* key,tMap* map) {
 	case esKeyDown:
 	case esKeyForward:
 	case esKeyBack:
-	case esShift:
+	case esKeyShift:
 	case esMapUp:
 	case esMapDown:
 	case esMapForward:

@@ -6,7 +6,7 @@
 #include "types.h" /* tMap */
 #include "input.h" /* tKey */
 
-typedef enum {esKeyUp,esKeyDown,esKeyForward,esKeyBack,esShift,esMapUp,esMapDown,esMapForward,esMapBack,esMapOn,esForwardTileNearerThan,esForwardTileFartherThan,esInScreen,esInLevel,esForwardChangeToScreen,esLast=0}tsConditionType;
+typedef enum {esLast=0,esKeyUp,esKeyDown,esKeyForward,esKeyBack,esKeyShift,esMapUp,esMapDown,esMapForward,esMapBack,esMapOn,esForwardTileNearerThan,esForwardTileFartherThan,esInScreen,esInLevel,esForwardChangeToScreen}tsConditionType;
 
 
 typedef enum {esDangerous,esNone,esWalk,esPotion,esSword,esMirror,esNotApplicable=0}tsTileType;
@@ -37,10 +37,11 @@ typedef struct { /* The state object: only struct that is not static to the stat
 /*void updateState(tState* current,tKid* kid,tMap* map,tKey* key); * This function should return the image frame
 																													and actions to be performed by this call */
 
-/* privates */
-
 #include "states_conf.h"
 
+#define STATES_CONDRESULT_FALSE 2
+#define STATES_CONDRESULT_END 1
+#define STATES_CONDRESULT_TRUE 0
 
 #endif
 

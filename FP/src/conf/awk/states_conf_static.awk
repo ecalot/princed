@@ -32,7 +32,7 @@ BEGIN {
 					if (oldType != listType ) {
 						oldType=listType
 						currentCondition++
-						printf("\t{esTrue,0}, /* condition number %d */\\\n",currentCondition)
+						printf("\t{esLast,0}, /* condition number %d */\\\n",currentCondition)
 						conditions=currentCondition+1
 					}
 					currentCondition++
@@ -120,7 +120,7 @@ END {
 	actionArray[currentAction,"moveType"]=moveType
 	actionArray[currentAction,"moveOffset"]=moveOffset
 	actionArray[currentAction,"lastComma"]=""
-	printf("\t{esTrue,0} /* the end */\\\n}\n\n#define STATES_ACTIONS {\\\n")
+	printf("\t{esLast,0} /* the end */\\\n}\n\n#define STATES_ACTIONS {\\\n")
 
 	for (i=0;i<=currentAction;i++) {
 		nextStateId=stateList[actionArray[i,"nextState"]]
