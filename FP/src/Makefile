@@ -47,7 +47,7 @@ LINKERRELEASE =
 
 #Binary code files
 OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
-                output.o maps.o config.o drawscreen.o titles.o \
+                output.o maps.o config.o room.o titles.o \
 								input.o kid.o
 EXEFILE       = bin/freeprince
 
@@ -115,8 +115,8 @@ kernel.o: ker/kernel.c include/kernel.h include/resources.h include/output.h
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
-drawscreen.o: ker/drawscreen.c
-	$(INFO) Compiling kernel screen draw module...
+room.o: ker/drawscreen.c
+	$(INFO) Compiling kernel room object...
 	$(CC) -c ker/drawscreen.c $(OPTIONS)
 
 kid.o: ker/kid.c
