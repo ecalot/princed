@@ -118,6 +118,11 @@ downloadmore:
 	$(INFO) Downloading extra files...
 	@wget http://fp.princed.com.ar/freeprince2.script -O - -nv 2>/dev/null|tar xjC bin
 
+run:
+	@cd bin;./freeprince;cd ..
+
+it: $(EXEFILE) run
+
 ################
 # Source files #
 ################

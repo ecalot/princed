@@ -12,7 +12,7 @@ void debugShowFlag(short optionflag) {
 	printf("\n");
 }
 
-#define STATES_STEPS_PER_TILE 32 
+#define STATES_STEPS_PER_TILE 10 
 /* Private static state graph */
 static tsAction statesActionList[]=STATES_ACTIONS;
 static short statesAnimationList[]=STATES_ANIMATIONS;
