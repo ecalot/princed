@@ -144,11 +144,13 @@ Versions:
   - Solved bug in palette buffer initialization for autodetected images
   - Stable version for win32 and unix based systems
   - Using new macros to use an endian-independent layer.
+ * PR v1.1:
+  - Coded file type detection to detect dat subtypes, sav, hof and exe
+    subtypes.
+  x Finish python interface
 
 2) ToDo List & Future Plans:
 
- * PR v1.1:
-  x Finish python interface
  * PR v2.0 beta:
   x Add full pop2 support
  * PR v2.0:

@@ -211,8 +211,10 @@ int main (int argc, char **argv) {
 				} else {
 					/* classify */
 					fprintf(outputStream,PR_TEXT_TASK_CLASSIFY,file);
-					result=prClassifyDat(file);
-					fprintf(outputStream,PR_TEXT_RESULT,classifyErrors[result+2],result);
+					/*result=prClassifyDat(file);
+					fprintf(outputStream,PR_TEXT_RESULT,classifyErrors[result+2],result);*/
+					result=prClassify(file);
+					fprintf(outputStream,"clasificacion: %d\n",result);
 				}
 				free(file);
 				free(datfile);

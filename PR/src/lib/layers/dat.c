@@ -62,16 +62,17 @@ void mReadCloseDatFile() {
 int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	/*
 		Return Values:
-			0 Wrong Format or file not found
-			1 Ok
+			-1 Wrong Format
+			-2 File not found or empty
+			0 Ok
 	*/
 
 	unsigned char* readDatFilePoint;
 
 	/* Open file */
 	readDatFileSize=mLoadFileArray(vFiledat,&readDatFile);
-	if (!readDatFileSize) return 0;
-	if (readDatFileSize<=6) {free(readDatFile);return 0;}
+	if (!readDatFileSize) return -2;
+	if (readDatFileSize<=6) {free(readDatFile);return -1;}
 
 	readDatFilePoint=readDatFile;
 
@@ -82,7 +83,7 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 
 	if ((indexOffset>readDatFileSize)&&((indexOffset+indexSize)!=readDatFileSize)) {
 		free(readDatFile);
-		return 0; /* this is not a valid prince dat file */
+		return -1; /* this is not a valid prince dat file */
 	}
 
 	indexPointer=readDatFile+indexOffset;
@@ -98,7 +99,7 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	}
 	recordSize=pop1?8:11;
 
-	return 1;
+	return 0;
 }
 
 int mReadFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
@@ -238,7 +239,7 @@ void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const char* 
 #ifdef PR_DAT_INCLUDE_DATREAD
 #ifdef PR_DAT_INCLUDE_DATWRITE
 int mRWBeginDatFile(const char* vFile, unsigned short int *numberOfItems, int optionflag) {
-	if (!mReadBeginDatFile(numberOfItems,vFile)) return -2;
+	if (mReadBeginDatFile(numberOfItems,vFile)) return -2;
 	if (!mWriteBeginDatFile(vFile,optionflag)) {
 		mReadCloseDatFile();
 		return -1;

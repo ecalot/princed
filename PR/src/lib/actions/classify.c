@@ -36,6 +36,7 @@ tasks.c: Princed Resources : Classify a DAT file
 #include "memory.h"
 #include "resources.h"
 #include "dat.h"
+#include "disk.h" /* mLoadFileArray */
 #include "common.h"
 
 /***************************************************************\
@@ -55,10 +56,10 @@ int prClassifyDat(const char* vFiledat) {
 	unsigned short int numberOfItems;
 
 	/* Initialize abstract variables to read this new DAT file */
-	if (!mReadBeginDatFile(&numberOfItems,vFiledat)) return -1;
+	if ((id=mReadBeginDatFile(&numberOfItems,vFiledat))) return id+1; /* -1 if not found or empty, 0 if invalid */
 
 	/* main loop */
-	for (indexNumber=0;(indexNumber<numberOfItems)&&(type==RES_TYPE_BINARY);indexNumber++) {
+	for (id=0,indexNumber=0;(indexNumber<numberOfItems)&&(type==RES_TYPE_BINARY);indexNumber++) {
 		id=mReadFileInDatFile(indexNumber,&data,&size);
 		if (id<0) READ_ERROR; /* Read error */
 		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
@@ -70,3 +71,77 @@ int prClassifyDat(const char* vFiledat) {
 	return pop1?type:(type+10);
 }
 
+typedef struct {
+	unsigned long int checkSum;
+	long size;
+}tExeClassification;
+
+int prClassify(const char* fileName) {
+	int result;
+
+	/* 1) check if it is a dat file */
+	result=prClassifyDat(fileName);
+
+	if (!result) { /* it's not a dat file*/
+		long int fileSize;
+		unsigned char* fileData;
+		
+		/* let's get it's content and see what it is */
+		fileSize=mLoadFileArray(fileName,&fileData);
+		
+		/* 2) let's compare the size with a .sav size */
+		if (fileSize==8) {
+			int framesLeft;
+			/* check that the frames (seconds/12) are in the range [0*12,60*12) */
+			framesLeft=fileData[2]|fileData[3]<<8;
+			if (framesLeft<60*12)
+				result=30; /* sav file */
+		}
+		
+		/* 3) let's compare the size with a .hof size */
+		if (fileSize==176) {
+			int records;
+			/* check that the number of stored records are 6 or less */
+			records=fileData[0]|fileData[1]<<8;
+			if (records<=6) {
+				result=31; /* hof file */
+				while (records) {
+					int framesLeft;
+					/* wrong seconds left format for this record will invalidate the whole file */
+					framesLeft=fileData[29*records-2]|fileData[29*records-1]<<8;
+					if (framesLeft>=60*12) result=0; 
+					records--;
+				}
+			}
+		}
+
+		/* 4) as the last resource, check if it is an exe file */
+		if (!result && fileSize>2 && fileData[0]=='M' && fileData[1]=='Z') {
+			static tExeClassification x[]={
+				/* install.pdm         : 41 */ {717181985,4233},
+				/* prince.exe v1.0 THG : 42 */ {622612442,123335},
+				{0,0}
+			};
+			unsigned long checkSum;
+			int i;
+			result=40; /* generic exe file */
+			/* Now I'll try to recognize some known exe files */
+			/* calculate checksum */
+			for (i=0;i<fileSize;i++) {
+				checkSum+=fileData[i]<<((3-(i%4))*8);
+			}
+			/* printf("{%lu,%ld},\n",checkSum,fileSize); */
+
+			/* compare checksum*/
+			for (i=0;x[i].size;i++)
+				if ((x[i].checkSum==checkSum) && (x[i].size==fileSize)) {
+					result=41+i;
+					break;
+				}
+		}
+		
+		free(fileData);
+	}
+	
+	return result;
+}

@@ -83,7 +83,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int option
 	signed long    int bufferedPalette=0;
 
 	/* Initialize abstract variables to read this new DAT file */
-	if (!mReadBeginDatFile(&numberOfItems,vFiledat)) return -1;
+	if (mReadBeginDatFile(&numberOfItems,vFiledat)) return -1;
 
 	/* Initializes the palette list */
 	initializePaletteList;
