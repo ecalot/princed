@@ -24,5 +24,5 @@
 #DEFAULT (echo ""; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog
 # or
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
-FP $CVSROOT/CVSROOT/syncmail -u %{sVv} freeprince-cvs-tracker@poirot.com.ar
+FP echo "holamail -v -s hola ecalot@poirot.com.ar" |mail -v -s hola ecalot@poirot.com.ar
 DEFAULT $CVSROOT/CVSROOT/syncmail -u %{sVv} freeprince-cvs-tracker@poirot.com.ar
