@@ -157,7 +157,7 @@ dat.o: res/dat.c include/disk.h include/dat.h
 
 kernel.o: ker/kernel.c include/kernel.h include/resources.h\
           include/res_conf.h include/output.h include/object.h\
-          $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)
+          $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) include/text_conf.h
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
