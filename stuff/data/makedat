@@ -10,7 +10,7 @@ SOK="[$LGREEN  OK $NO_COLOR ]"
 SFAIL="[$LRED Fail$NO_COLOR ]"
 
 #setup
-numberstart=50
+numberstart=1
 VARDEFINE="#define"
 VARDEFSTART="DATA_START_ITEMS"
 VARDEFEND="DATA_END_ITEMS"
