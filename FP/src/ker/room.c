@@ -78,6 +78,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case T_BTN_RAISE:
 	case T_BTN_DROP:
 	case T_GATE:
+	case T_TORCH_DEBRIS:
 	case T_EXIT_LEFT:
 	case T_EXIT_RIGHT:
 	case T_SKELETON:
@@ -93,9 +94,9 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.isPressable=(result.code==T_BTN_RAISE);
 		result.hasSkeleton=(result.code==T_SKELETON);
 		result.hasSpikes=(result.code==T_SPIKES);
-		result.hasTorch=(result.code==T_TORCH);
+		result.hasTorch=(result.code==T_TORCH)|(result.code==T_TORCH_DEBRIS);
 		result.hasFloor=((result.code==T_FLOOR)|(result.code==T_TORCH)|(result.code==T_LOOSE)|(result.code==T_POTION)|(result.code==T_BTN_DROP)|(result.code==T_SWORD));
-		result.hasBrokenTile=(result.code==T_DEBRIS);
+		result.hasBrokenTile=(result.code==T_DEBRIS)|(result.code==T_TORCH_DEBRIS);
 		result.isWall=0;
 		result.hasSword=(result.code==T_SWORD);
 		break;
@@ -116,6 +117,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasSword=0;
 		break;
 	case T_EMPTY:
+	case T_TAPESTRY_TOP:
 	default:
 		result.bricks=back;
 		result.hasPillar=0;

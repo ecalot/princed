@@ -225,7 +225,7 @@ void  mapStart(tData* map, tKid* kid, tRoomId *roomId, int level) {
 	static char environments[]=MAP_ENVIRONMENTS;
 	*roomId=slevel(start)[0];
 	printf("mapStart: binding kid to map in room %d using the %d environment\n",*roomId,environments[level]);
-	roomLoadGfx(RES_IMG_ENV_DUNGEON);
+	roomLoadGfx(/*environments[level]?RES_IMG_ENV_PALACE:*/RES_IMG_ENV_DUNGEON);
 }
 
 void  mapMove(tData* map) {
