@@ -1,8 +1,31 @@
+/*
 #if DIR_SEPARATOR=='/'
 #include "bmp.h"
 #else
 #include "formats/bmp.h"
 #endif
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "bmp.h"
+#include "memory.h"
+#include "compile.h"
+
+char mFormatExtractBmp(unsigned char* data, char *vFileext,unsigned long int size,tImage image) {
+printf("hola, vengo a colgarme\n");
+	if ((mExpandGraphic(data,&image,size))>0) {
+printf("ya expandi\n");
+		mWriteBitMap(image,vFileext);
+printf("Escribi el bitmap\n");
+		free(image.pix);
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 
 char mFormatCompileBmp(unsigned char* data, FILE* fp, tResource *res) {
 	int size;
@@ -22,15 +45,18 @@ char mFormatCompileBmp(unsigned char* data, FILE* fp, tResource *res) {
 }
 
 char mWriteBitMap(tImage img,char* vFile) {
+
 	//declare variables
 	unsigned char i=0;
 	unsigned char j=0;
+	char b;
+	char c;
+	char a;
 	FILE* bitmap;
-	if ((bitmap = fopen (vFile,"wb"))==NULL) return 0;
-
-	unsigned long int filesize=((img.size+1)/2+118);
-	unsigned long int width=img.width;
-	unsigned long int height=img.height;
+	unsigned long int filesize;
+	unsigned long int width;
+	unsigned long int height;
+	char junk[3]={0,0,0};
 
 	unsigned char header[]={
 		'B','M',
@@ -68,6 +94,14 @@ char mWriteBitMap(tImage img,char* vFile) {
 		0x22,0x22,0x22,0
 	};
 
+
+	if ((bitmap = fopen (vFile,"wb"))==NULL) return 0;
+
+	filesize=((img.size+1)/2+118);
+	width=img.width;
+	height=img.height;
+
+
 	//TODO: avoid using header array andwrite everithing in one run
 
 	header[2]=filesize;
@@ -83,9 +117,7 @@ char mWriteBitMap(tImage img,char* vFile) {
 
 //BEGIN of format writing
 	//Write ColorTable
-	char b;
-	char c;
-	for (char a=0;a<16;a++) {
+	for (a=0;a<16;a++) {
 		b=a*3;
 		c=a<<2;
 		header[54+c]=(img.pal[b+2])*4;  //Red
@@ -95,7 +127,6 @@ char mWriteBitMap(tImage img,char* vFile) {
 	//Write header
 	fwrite(header,118,1,bitmap);
 	//Write data
-	char junk[3]={0,0,0};
 	img.width=(img.width+1)>>1;
 	while (img.height--) {
 		fwrite(img.pix+img.height*img.width,img.width,1,bitmap);
@@ -112,6 +143,8 @@ char mReadBitMap(tImage* img,char* data, int size) {
 	char ok;
 	unsigned short int width;
 	unsigned short int height;
+	int width2;
+	int x=0;
 
 	//Validate if there is header and if it starts in BM
 	ok    = size>118;
@@ -128,7 +161,7 @@ char mReadBitMap(tImage* img,char* data, int size) {
 
 	//Calculate serialized widths
 	width=(width+1)>>1;            //raw serialized width
-	int width2=width+((-width)&3); //bmp serialized width
+	width2=width+((-width)&3); //bmp serialized width
 
 	//Validate image and file size; get memory to allocate the image
 	ok=ok&& ( ((*img).height*width2)                == (size-118));
@@ -141,7 +174,6 @@ char mReadBitMap(tImage* img,char* data, int size) {
 	}
 
 	//Serialize bitmap-->raw array
-	int x=0;
 	while (height--) memcpy((*img).pix+(x++)*width,data+118+height*width2,width);
 
 	return 1;

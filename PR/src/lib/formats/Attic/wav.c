@@ -1,3 +1,4 @@
+/*
 #if DIR_SEPARATOR=='/'
 #include "wav.h"
 #include "../compile.h"
@@ -5,6 +6,11 @@
 #include "formats/wav.h"
 #include "compile.h"
 #endif
+*/
+
+#include "wav.h"
+#include "compile.h"
+
 
 char mFormatExtractWav(unsigned char* data, char *vFileext,unsigned long int size) {
 

@@ -1,4 +1,4 @@
-Princed Resources Editor V0.6 beta
+Princed Resources Editor V0.7
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -126,9 +126,5 @@ Type 06:
  
 4) New versions
  It's strongly recommended that you download a newer stable version of this  program as soon as it comes available in the official url (http://www.princed.com.ar)
-
-5) Platforms
- Binary files are compiled in DOS/Win32 console (v0.5) and in Unix/Alpha versions (v0.5). The DOS executable is pr.exe and the Unix executable is prunix. The Unix version will be used to automate the classification of server uploaded files in our unix-based web server.
-
 
 Please enjoy using Princed Resource Editor!

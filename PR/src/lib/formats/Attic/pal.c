@@ -1,13 +1,30 @@
-
+/*
 #if DIR_SEPARATOR=='/'
 #include "pal.h"
 #else
 #include "formats/pal.h"
 #endif
+*/
+
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include "pal.h"
+#include "memory.h"
+#include "extract.h"
+#include "parser.h"
+#include "resources.h"
 
 /***************************************************************\
 |                 Jasc Palette handling functions               |
 \***************************************************************/
+
+char mFormatExtractPal(unsigned char** data, char *vFileext,unsigned long int size) {
+	//Convert palette from POP format to JASC format
+	mExportPalette(data,&size);
+	//save JASC palette
+	return writeData(*data,0,vFileext,size);
+}
 
 char mImportPalette(unsigned char** data, unsigned short *size) {
 	//check size
@@ -19,6 +36,7 @@ char mImportPalette(unsigned char** data, unsigned short *size) {
 	unsigned char* pal=getMemory(100);
 	unsigned short int parsed;
 	int i=0;
+	int k=0;
 
 	//set palette with sample
 	memcpy(pal,pals,100);
@@ -28,7 +46,7 @@ char mImportPalette(unsigned char** data, unsigned short *size) {
 	if (i!=sizeof(palh)) return 0;
 
 	//set current values
-	for (int k=0;k<16;k++) {
+	for (;k<16;k++) {
 		getNumberToken((*data),&parsed,' ',&i,4);
 		pal[(k*3)+4]=(parsed+2)>>2;
 		getNumberToken((*data),&parsed,' ',&i,4);
@@ -65,8 +83,8 @@ void mExportPalette(unsigned char** data, unsigned long int *size) {
 
 void mLoadPalette(char* array,tImage *image) {
 	int k=0;
-	for (int i=5;i<5+16*3;i++) {
+	int i;
+	for (i=5;i<5+16*3;i++) {
 		(*image).pal[k++]=array[i];
 	}
 }
-

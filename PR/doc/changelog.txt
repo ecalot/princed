@@ -1,4 +1,4 @@
-Princed Resources Editor V0.6 beta
+Princed Resources Editor V0.7
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -13,54 +13,62 @@ This program is open source under the GNU General Public License terms
   - Added support to indexed dat files
  * PR 0.1 Alpha
   - Merged PS and PG into one extractor.
-  - Added resource.txt parser.
-  - Solved several bugs.
-  - Coded type header verification
   - Added dynamic palette extraction
-  - Added support to export JASC palette for .pal files.
+  - Added resource.txt parser.
   - Added support to .wav files.
+  - Added support to export JASC palette for .pal files.
+  - Coded type header verification
+  - Solved several bugs.
  * PR 0.2 Alpha
-  - Added support to import .bmp files
-  - Source files were abstracted
   - Added classifing dat type feature
+  - Added support to import .bmp files
   - Implemented CGI output support for UNIX versions
+  - Source files were abstracted
  * PR 0.3 beta
-  - Added pr.dll compiling
   - Added modifiers -x[rnu] -c[r]
-  - Solved bugs in bitmap format
-  - Solved segmentation fault in title.dat
+  - Added pr.dll compiling
+  - Bitmaps aren't upside down anymore 
   - Images bigger than 256 pixels lenght or width now are recognized
   - Improved decompression algorithm in bigger images
   - Optimized bitmap handling
-  - Bitmaps aren't upside down anymore 
+  - Solved bugs in bitmap format
+  - Solved segmentation fault in title.dat
  * PR 0.4 beta
   - Fixed a memory bug since v0.3
   - Pop2 DAT files detected (file type 11)
  * PR 0.5 beta
-  - Optimized bmp saving algorithm
   - Abstracted format handling
+  - Optimized bmp saving algorithm
   - Solved and optimized decompression for big images
   - Some Pop2 graphics are extracted (palettes aren't supported yet)
  * PR 0.6 alpha
-  - Optimized PG algorithms and reserved memory sizes
-  - Completed and tested bmp reading algorithm
   - Coded full import/export bmp (in separate files not included in this distribution)
+  - Completed and tested bmp reading algorithm
+  - Optimized PG algorithms and reserved memory sizes
  * PR 0.6 beta
   - Added full import bmp support
+  - Solved palette import bug
+ * PR 0.7
+  x Solved corrupted images on compression bug
+  x Source changed to ANSI C compatible
+  - Moved PG module to compress.c and bmp.c
+  - Moved midi support to mid.c
+  - Added Makefile
+
 
 2) ToDo List
- i)   Fix bug in palette compiling
- ii)  Improve support of bitmap compiling
- iii) Codify the compression algorithms (B1 to B4) to optimize the bitmap compiled dat files
- iv)  Move PG to bmp.c (only when all bitmaps are Ok)
- v)   Add full pop2 support
- vi)  Add resources tree. See the sample resources.xml
- vii) Change the code to ANSI C
+ i)   Code the compression algorithms (B0, B1, B2) to optimize the bitmap compiled dat files
+ ii)  Add full pop2 support
+ iii) Add resources tree in xml. See the sample resources.xml and folder.xml
+ iv)  Code the compression algorithms (B3, B4) to optimize the bitmap compiled dat files
+ v)   Add a C++ class to use PR
 
-3) Versions:
-  PR v0.6 beta: unestable, added ii, iv, first full working version
-  PR v0.7:      vii, tested & stable
-  PR v0.8 beta: added i,iii,vi
+3) Future Versions:
+  PR v0.8 beta: added i,iii
   PR v0.9:      tested and stable
-  PR v1.0:      First optimized & stable version for win32 and linux
+  PR v1.0:      First optimized & stable version for win32 and unix based systems
+  PR v1.1:      added v
+  PR v1.5:      added iv
+  PR v2.0 beta: added ii
+  PR v2.0:      Optimized & stable version for win32 and unix based systems
 
