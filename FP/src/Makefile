@@ -3,7 +3,7 @@
 ############
 
 CC         = @gcc
-LINKER     = @ld
+LINKER     = @gcc
 INFO       = @echo
 MAKEDIR    = @mkdir -p
 INDEXER    = @cd ..;./install; cd src
@@ -62,7 +62,7 @@ LINKEROPTIONS = $(LINKERRELEASE)
 $(EXEFILE): $(OBJFILES)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
-	$(CC) $(OPTIONS) -o $(EXEFILE) $(OBJFILES) $(LIBS) $(LINKEROPTIONS)
+	$(LINKER) $(LINKEROPTIONS) -o $(EXEFILE) $(OBJFILES) $(LIBS) $(LINKEROPTIONS)
 	$(INFO) Program successfully compiled
 
 

@@ -41,7 +41,9 @@ disk.c: Princed Resources : Disk Access & File handling functions
 #include <string.h>
 #include "disk.h"
 #define IGNORERECURSIVEFUNCTIONS
+#ifndef NOLINUX
 #define UNIX
+#endif
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -51,6 +53,7 @@ disk.c: Princed Resources : Disk Access & File handling functions
 #ifdef UNIX
   #define defmkdir(a) mkdir (a,(mode_t)0755)
 #else
+	#include <direct.h>
   #define defmkdir(a) mkdir (a)
 #endif
 
@@ -170,19 +173,19 @@ int getFromOpenFilesList(FILE* fp, char** fileName, unsigned char** content, uns
 
 #endif
 int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension) {
-	unsigned char* content;
-	char* fileName;
-	unsigned long int size;
+	/*unsigned char* content;*/
+	/*char* fileName;*/
+	unsigned long int size=0;
 
 	/*if (getFromOpenFilesList(fp,&fileName,&content,&size)) {*/
 		if (dontSave) {
 			fclose(fp);
 			if (size) {
-				fp=fopen(fileName,"wb");
+				fp=fopen(/*fileName*/"/dev/null","wb");
 				if (fp==NULL) return -1;
-				fwrite(content,1,size,fp);
+				/*fwrite(content,1,size,fp);*/
 			} else {
-				remove(fileName);
+				/*remove(fileName);*/
 			}
 		/*}*/
 #if 0
@@ -202,8 +205,8 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 			}
 		}
 #endif
-		free(fileName);
-		if (size) free(content);
+		/*free(fileName);*/
+		/*if (size) free(content);*/
 	}
 
 	return fclose(fp);
