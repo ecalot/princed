@@ -132,17 +132,22 @@ Versions:
   - Stable version for win32 and unix based systems
   - Use defines write8i(char,fp),write16i,write32i,read8i...
   - Checksum verification in PLV files
-  x Set, if applicable, POP2 in the parent folder of the
-    unknown.xml file
   - Fixed some memory leaks in xml parser
   - Solved bug in palette buffer initialization for autodetected images
-  x Code the compression algorithms Lzg to optimize compiled
+  - Coded the compression algorithms Lzg to optimize compiled
     bitmap dat files
-
+	- Added the -z option to set the compression level
+	- Changed console program interface (-c for classify and -m for import)
+	- PLV checksum corruption is now a warning
+	- Fixed palette saving in OS X
+	- Added a python module addon
+ * PR v2.0
+  x Set, if applicable, POP2 in the parent folder of the
+    unknown.xml file
 2) ToDo List & Future Plans:
 
-* PR v1.1:
-  x Add a C++ class to use PR
+ * PR v1.1:
+  x Finish python interface
  * PR v2.0 beta:
   x Add full pop2 support
  * PR v2.0:
