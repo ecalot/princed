@@ -40,21 +40,22 @@ anims.h: FreePrince : Animation functions
 /* table types */
 typedef struct {
 	unsigned short frame;
-	unsigned long res;
+	unsigned long  res;
 	unsigned short duration;
-	unsigned char layer;
+	unsigned char  layer;
 	unsigned short x;
 	unsigned short y;
-} animFixedimg;
+} animImage;
 
 typedef struct {
 	unsigned short frame;
-	unsigned long res;
+	unsigned long  res;
+	unsigned short duration;
 	unsigned short state;
 	unsigned short location;
-	unsigned char floor;
-	unsigned char cacheMirror;
-} animState;
+	unsigned char  floor;
+	unsigned char  cacheMirror;
+} animObject;
 
 typedef struct {
 	unsigned short frame;
@@ -63,7 +64,7 @@ typedef struct {
 } animSound;
 
 void animStart(int animId,int *qt,int *qf,int *qo);
-int animGetFrame(int* qf,int* qt,int* qo, animFixedimg** f,animState** t, animSound** o);
+int animGetFrame(int* qf,int* qt,int* qo, animImage** f,animObject** t, animSound** o);
 
 #endif
 

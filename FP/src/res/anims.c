@@ -46,8 +46,8 @@ typedef struct {
 	unsigned short animSize;
 } animTable;
 
-static animFixedimg fixedimg[]=ANIMS_FIXEDIMG;
-static animState state[]=ANIMS_STATE;
+static animImage fixedimg[]=ANIMS_IMAGE;
+static animObject state[]=ANIMS_OBJECT;
 static animSound sound[]=ANIMS_SOUND;
 static animTable table[]=ANIMS_TABLE;
 
@@ -62,7 +62,7 @@ void animStart(int animId,int *qf,int *qt,int *qo) {
 	*qo=rec.soundSize;
 }
 
-int animGetFrame(int* qf,int* qt,int* qo, animFixedimg** f,animState** t, animSound** o) {
+int animGetFrame(int* qf,int* qt,int* qo, animImage** f,animObject** t, animSound** o) {
 	*qf=0;
 	*qt=0;
 	*qo=0;

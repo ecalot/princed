@@ -196,7 +196,7 @@ int kernel(int optionflag,int level) {
 		}
 	} while(!quit);
 
-	objectFree(kid);
+	objectFree(kid); /*TODO: exiting from the story will cause a game crash because this object wasn't allocated*/
 	inputStopTimer();
 	outputStop();
 	return 0;
