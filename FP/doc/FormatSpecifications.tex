@@ -35,8 +35,8 @@ Table of Contents
 5.2. Allowed Date format ............................................... 659
 6. The SAV v1.0 format ................................................. 673
 7. The HOF v1.0 format ................................................. 718
-8. Credits ............................................................. 724
-9. License ............................................................. 741
+8. Credits ............................................................. 741
+9. License ............................................................. 758
 
 
 1. Preamble
@@ -717,8 +717,25 @@ Table of Contents
 
 7. The HOF v1.0 format
    ~~~ ~~~ ~~~~ ~~~~~~
- HOF files are used to save the Hall of Fame information. For the moment
- just read hof.c to know the format.
+ HOF files are used to save the Hall of Fame information.
+
+ All HOF v1.0 files have a size of 176 bytes. The first 2 bytes belongs to
+ the record count. The format is LE. The maximum number of records allowed
+ is 6, so the second byte is allways 0x00.
+ Following those bytes there is an array of records. This array has a full
+ size of 29 bytes distributed according to the following table.
+ 
+                   Table 7.1: HOF blocks
+                   ~~~~~~~~~~~~~~~~~~~~~
+
+   Size Offset Description                  Type
+   ~~~~ ~~~~~~ ~~~~~~~~~~~                  ~~~~
+     25      0 Player name                  text
+      2     25 Remaining minutes            LE (similar to SAV format)
+      2     27 Remaining ticks              LE (similar to SAV format)
+
+ In case there is no record, the 29 bytes spaces must be filled with zeros
+ in order to complete the whole file and give it the size of 2+29*6 = 176.
 
 
 8. Credits
