@@ -1,9 +1,9 @@
 " Vim syntax file
 " Language:	FreePrince states description files (main.conf, titles.conf)
 " Maintainer:	Diego Essaya <dessaya@fi.uba.ar>
-" Last Change:	$Date: 2005-03-10 14:47:46 $
+" Last Change:	$Date: 2005-03-10 14:53:18 $
 " URL: http://www.fp.princed.com.ar/
-" $Revision: 1.4 $
+" $Revision: 1.5 $
 
 " For version 5.x: Clear all syntax items
 " For version 6.x: Quit when a syntax file was already loaded
@@ -40,7 +40,7 @@ syntax match fpAnimRange /\<\d\+-\d\+\>/ contained contains=fpNumber,fpOp
 syntax match fpAnimVMove /\s[@]-\=\d\+\>/ contained contains=fpNumber,fpOp
 syntax match fpAnimHMove /\s[$]-\=\d\+\>/ contained contains=fpNumber,fpOp
 syntax match fpAnimHMove /\s[$]-\=\d\+\>/ contained contains=fpNumber,fpOp
-syntax match fpAnimFlags /\<[xdpsufh]\+\>/ contained contains=fpNumber,fpOp
+syntax match fpAnimFlags /\<[pcsgfutmxdh]\+\>/ contained contains=fpNumber,fpOp
 highlight link fpAnimFlags  Operator
 syntax match fpAnimLine /^\t\t\t.*/ contained nextgroup=fpEndLine contains=fpAnimNumber,fpAnimRange,fpAnimVMove,fpAnimHMove,fpAnimFlags,fpError
 syntax match fpAnim /^\t\tanimation/ contained nextgroup=fpEndLine
