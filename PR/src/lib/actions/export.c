@@ -87,8 +87,6 @@ int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int option
 
 	/* Initializes the palette list */
 	initializePaletteList;
-	
-
 
 	/* main loop */
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {

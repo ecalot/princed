@@ -167,20 +167,18 @@ int mFormatImportPlv(unsigned char* data, tResource *res) {
 
 	/* integrity check 1 */
 	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE) return 0;
-	/* if (memcmp(data,PLV_HEADER_A,PLV_HEADER_A_SIZE)) return 0; */
-
+	if (memcmp(data,PLV_HEADER_A,PLV_HEADER_A_SIZE)) return 0;
 
 	/* jump to size */
 	pos=data+PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE;
+
 	/* read size and jump to data */
 	res->size=array2long(pos);pos+=4;
 
 	/* integrity check 2 */
 	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE+res->size) return 0;
 
-	/* verify checksum */
-
-/* TODO: uncomment this line and validate checksums in plvs */
+	/* validate checksum */
 	if (!checkSum(pos,res->size)) return 0;
 
 	/* save data */

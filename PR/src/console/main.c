@@ -459,16 +459,7 @@ int main (int argc, char **argv) {
 		}
 	} while (c!=-1);
 
-	if (optind < argc) {
-		int size;
-		datFilePath=strallocandcopy(argv[optind]);
-		/* Erase the last "/" if exists. TODO: send to parseGivenPath  */
-		size=strlen(datFilePath);
-		if (size>0) {
-			size--;
-			if (isDirSep(datFilePath,size)) datFilePath[size]=0;
-		}
-	}
+	if (optind < argc) datFilePath=strallocandcopy(argv[optind]);
 
 	/* At least one of these options must be selected, if not, the user needs help! */
 	if (!(hasFlag(import_flag|export_flag|classify_flag))) setFlag(help_flag);
@@ -501,6 +492,4 @@ int main (int argc, char **argv) {
 /* When compiling in Unix SO libraries */
 void start() {}
 #endif
-
-
 

@@ -127,7 +127,7 @@ int mReadInitResource(tResource** res,const unsigned char* data,long size) {
 		(*res)->palette=0;
 		(*res)->number=0;
 		(*res)->size=(unsigned short int)size;
-		(*res)->offset=(unsigned short)offset; /* TODO delete this line */
+		/* (*res)->offset=(unsigned short)offset; TODO delete this line */
 		(*res)->type=verifyHeader(data,(unsigned short int)size);
 	} else { /* If resource type is invalid or 0, the type will be decided by PR */
 		if (!((*res)->type)) (*res)->type=verifyHeader(data,(unsigned short int)size);

@@ -164,9 +164,17 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResource* r[], in
 	/* main loop */
 	for (indexNumber=0;(indexNumber<numberOfItems);indexNumber++) {
 		id=mReadFileInDatFile(indexNumber,&data,&size);
-		if (id<0) RW_ERROR; /* Read error */ /* TODO BUG: return doesn't close file */
+		
+		/* Validations */
+		if (id<0) {
+			mRWCloseDatFile(0);
+			RW_ERROR; /* Read error */
+		}
 		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
-		if (id>=MAX_RES_COUNT) RW_ERROR; /* A file with an ID out of range will be treated as invalid */
+		if (id>=MAX_RES_COUNT) { 
+			mRWCloseDatFile(0);
+			RW_ERROR; /* A file with an ID out of range will be treated as invalid */
+		}
 
 		mWriteInitResource(r+id);
 		if (r[id]&&isInThePartialList(r[id]->path,id)) { /* If the resource was specified */

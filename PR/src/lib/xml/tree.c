@@ -129,6 +129,7 @@ void parseGivenPath(char* path) {
 	int resourceValue;
 	int j=0;
 	unsigned char n;
+	int size;
 
 	/* Check if the variable wasn't initialized before */
 	if (partialList.count!=0) return;
@@ -137,6 +138,15 @@ void parseGivenPath(char* path) {
 	/* Validates the NULL path */
 	if (path==NULL) return;
 
+	/* Erase the last "/" if exists. */
+	if (path) {
+		size=strlen(path);
+		if (size>0) {
+			size--;
+			if (isDirSep(path,size)) path[size]=0;
+		}
+	}
+	
 	/* Locate the string separation */
 	while (path[separator]&&path[separator]!='@') separator++;
 
@@ -311,7 +321,7 @@ static unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
 void endUnknownXml(int optionflag, const char* backupExtension) {
 	if (unknownXmlFile!=NULL) {
 		int i;
-		fprintf(unknownXmlFile,RES_XML_UNKNOWN_END); /* TODO: use fwrite instead */
+		fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);
 		writeCloseOk(unknownXmlFile,optionflag,backupExtension);
 		unknownXmlFile=NULL;
 		for (i=0;i<RES_TYPECOUNT;i++) typeCount[i]=0;
