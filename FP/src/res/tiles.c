@@ -34,9 +34,12 @@ tiles.c: FreePrince : Tile functions
 
 int isInGroup(unsigned char tile,unsigned char backtile,short group) {
 	static unsigned char tileList[]=TILE_GROUP_LIST;
-	unsigned char* i=tileList+group;
+	unsigned char* i;
 	int docontinue;
+
 	tile=tile&0x1F; /* get the last 5 bits and clear the beginning */
+	if (group<32) return (tile==group);
+	i=tileList+(group-32);
 	tile++;
 	do {
 		docontinue=0;

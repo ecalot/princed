@@ -362,7 +362,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		);
 	}
 	/* chopper/this */
-	if (isIn(tile,TILES_CHOPPER)) {
+	if (isIn(tile,TILE_CHOPPER)) {
 		drawChopper((x-1)*TILE_W,y*TILE_H,room->level->time%8,layCBack);
 	}
 	/* empty_bricks/this */
@@ -471,7 +471,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		);
 	}
 	/* chopper/this /
-	if (isIn(tile,TILES_CHOPPER)) {
+	if (isIn(tile,TILE_CHOPPER)) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[9],
 			(x-1)*TILE_W,

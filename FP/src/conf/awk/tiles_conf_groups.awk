@@ -73,7 +73,7 @@ END {
 	}
 	printf "}\n"
 	for (group in offsets) {
-		printf "#define TILES_%s %d\n",group,offsets[group]
+		printf "#define TILES_%s %d\n",group,offsets[group]+32
 	}
 }
 

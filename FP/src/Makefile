@@ -163,7 +163,7 @@ kid.o: ker/kid.c include/kid.h include/resources.h include/res_conf.h\
        include/states.h $(GENERATEDRESHEADERS)\
 			 $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) include/res_conf.h\
        include/types.h include/tiles.h include/tiles_conf.h
-	$(INFO) Compiling kernel kid object...
+	$(INFO) Compiling kernel object support...
 	$(CC) -c ker/kid.c $(OPTIONS)
 
 titles.o: ker/titles.c include/resources.h include/res_conf.h\
