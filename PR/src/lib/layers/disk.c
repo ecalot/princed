@@ -503,7 +503,7 @@ int macfreads (void* bigEndian,FILE* file) {
 	big_e[1]=lit_e[0];
 	return result;
 }
-int macfreadl (void* var,FILE* file) {
+int macfreadl (void* bigEndian,FILE* file) {
 	unsigned short int littleEndian;
 	unsigned char* lit_e=(unsigned char*)&littleEndian;
 	unsigned char* big_e=(unsigned char*)&bigEndian;
@@ -514,9 +514,9 @@ int macfreadl (void* var,FILE* file) {
 	big_e[3]=lit_e[0];
 	return result;
 }
-int macfwrites(void* var,FILE* file) {
+int macfwrites(const void* var,FILE* file) {
 	unsigned short int littleEndian;
-	unsigned short int bigEndian=(unsigned short int*)(&var);
+	unsigned short int bigEndian=*(unsigned short int*)(&var);
 	unsigned char* lit_e=(unsigned char*)&littleEndian;
 	unsigned char* big_e=(unsigned char*)&bigEndian;
 	lit_e[0]=big_e[1];
@@ -524,9 +524,9 @@ int macfwrites(void* var,FILE* file) {
 	return fwrite(lit_e,2,1,file);
 }
 
-int macfwritel(void* var,FILE* file) {
+int macfwritel(const void* var,FILE* file) {
 	unsigned short int littleEndian;
-	unsigned short int bigEndian=(unsigned short int*)(&var);
+	unsigned short int bigEndian=*(unsigned short int*)(&var);
 	unsigned char* lit_e=(unsigned char*)&littleEndian;
 	unsigned char* big_e=(unsigned char*)&bigEndian;
 	lit_e[0]=big_e[3];

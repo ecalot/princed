@@ -87,8 +87,8 @@ int mCopy(const char* strSource, const char* strTarget);
 #define fwritechar(var,file)  fwrite((var),1,1,file)
 int macfreads (void* bigEndian,FILE* file);
 int macfreadl (void* var,FILE* file);
-int macfwrites(void* var,FILE* file);
-int macfwritel(void* var,FILE* file);
+int macfwrites(const void* var,FILE* file);
+int macfwritel(const void* var,FILE* file);
 #else
 #define freadshort(var,file)  fread ((var),2,1,file)
 #define freadlong(var,file)   fread ((var),4,1,file)
