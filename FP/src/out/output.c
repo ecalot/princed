@@ -122,7 +122,7 @@ outputLoadBitmap(const unsigned char* data, int size,
 			exit(1);
 		}
 	}
-	if (!invert) { /* TODO: serialized lines bugfix */
+	if (!invert) {
 		for (i = 0; i < w; i++) {
 			for (j = 0; j < result->h; j++) {
 				putpixel(result, i<<1, j, (data[i+j*w])>>4);
@@ -194,14 +194,24 @@ int outputInit()
 	return 0;
 }
 
-int getHeight()
+int outputGetScreenHeight()
 {
 	return DEF_SCREEN_HEIGHT;
 }
 
-int getWidth()
+int outputGetScreenWidth()
 {
 	return DEF_SCREEN_WIDTH;
+}
+
+int outputGetHeight(void* image)
+{
+	return ((SDL_Surface*)image)->h;
+}
+
+int outputGetWidth(void* image)
+{
+	return ((SDL_Surface*)image)->w;
 }
 
 /* Finish all output modes, including the screen mode */
