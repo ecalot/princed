@@ -54,10 +54,12 @@ static animTable table[]=ANIMS_TABLE;
 static animTable rec;
 static int frame;
 
-int animStart(int animId) {
+void animStart(int animId,int *qf,int *qt,int *qo) {
 	rec=table[animId];
 	frame=0;
-	return rec.stateSize;
+	*qf=rec.fixedimgSize;
+	*qt=rec.stateSize;
+	*qo=rec.soundSize;
 }
 
 int animGetFrame(int* qf,int* qt,int* qo, animFixedimg* f,animState* t, animSound* o) {

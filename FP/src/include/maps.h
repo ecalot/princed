@@ -36,7 +36,7 @@ maps.c: Freeprince : Map handling library
 #include "map_defs.h"
 #include "room.h"
 #include "resources.h" /* tMemory */
-#include "kid.h" /* tKid */
+#include "kid.h" /* tObject */
 
 #define MAP_ENVIRONMENTS {0,0,0,0,1,1,1,0,0,0,1,1,0,0,1,0}
 
@@ -48,7 +48,7 @@ void  mapFreeLevel(tMap* map);
 
 /* called from the kernel */
 tRoom mapGetRoom(tMap* map, tRoomId roomId);
-void  mapStart(tMap* map, tKid* kid, tRoomId* roomId, int level);
+void  mapStart(tMap* map, tObject* kid, tRoomId* roomId, int level);
 
 /* events */
 int  mapPressedTile(tMap* map, tTile tile, int s, int x, int y);

@@ -71,9 +71,22 @@ BEGIN {
 #states
 /^[[:space:]]*[[:digit:]]+[[:space:]]+STATE[[:space:]]/ {
 	totalstate++
+	$6=tolower($6)
+	$7=tolower($7)
+	
 	t["frame" totalstate]=$1/1
 	t["res" totalstate]=toupper($3)
 	t["state" totalstate]=toupper($4)
+	t["location" totalstate]=$5/1
+	if ($6=="up") $6=1
+	if ($6=="middle") $6=2
+	if ($6=="center") $6=2
+	if ($6=="down") $6=3
+	t["floor" totalstate]=$6/1
+	if ($7=="no") $7=0
+	if ($7=="yes") $7=1
+	if ($7=="mirror") $7=1
+	t["cacheMirror" totalstate]=$7/1
 	animation["sizet" animcount]++
 	halt
 }
@@ -126,7 +139,7 @@ END {
 	coma=""
 	printf("#define ANIMS_STATE {")
 	for (i=1;i<=totalstate;i++) {
-		printf("%s\\\n\t{/*frame*/ %d,/*res*/ (unsigned long)RES_%s, /*state*/ STATE_MARKS_%s}",coma,t["frame" i],t["res" i],t["state" i])
+		printf("%s\\\n\t{/*frame*/ %d, /*res*/ (unsigned long)RES_%s, /*state*/ STATE_MARKS_%s, /*loc*/ %d, /*floor*/%d, /*mirror*/ %d}",coma,t["frame" i],t["res" i],t["state" i],t["location" i],t["floor" i],t["cacheMirror" i])
 		coma=","
 	}
 	printf("\\\n}\n\n")

@@ -40,29 +40,94 @@ titles.c: FreePrince : Titles, animation and presentation
 #include "anims.h"
 #include "kid.h"
 
-/* New source */
+typedef struct {
+	tData*        img;
+	unsigned char layer;
+	unsigned short duration;
+	unsigned short x;
+	unsigned short y;
+} titleFixedimg;
 
+/* New source */
 tMenuOption playAnimation(int id) {
-	int totalStates=animStart(id);
 	int qf,qt,qo,i;
 	animFixedimg* f;
 	animState* t;
 	animSound* o;
+	titleFixedimg* fa;
+	tObject* ta;
+	animSound* oa;
 	tKey key=inputCreateKey();
 	tKey nullKey=inputCreateKey();
-
-	tKid* object=(tKid*)malloc(totalStates*sizeof(tKid));
-	for (i=0;i<totalStates;i++) object[i]=kidCreate();
+	int activef=0;
+	int activet=0;
+	/*int activeo=0;*/
+	int totalf,totalt,totalo;
+	tObject* object;
+	
+	animStart(id,&totalf,&totalt,&totalo);
+	fa=(titleFixedimg*)malloc(totalf*sizeof(titleFixedimg));
+	ta=(tObject*)malloc(totalt*sizeof(tObject));
+	oa=(animSound*)malloc(totalo*sizeof(animSound));
+	
 	while (animGetFrame(&qf,&qt,&qo,f,t,o)) {
 		if (inputGetEvent(&key)) {
 			/* key pressed */
 			printf("key pressed\n");
 		} else {
-  		kidMove(object+1,nullKey,NULL);
+			/* create new images/objects/sounds */
+			for (i=0;i<qf;i++) { /*images*/
+				fa[activef].img=resLoad(f[i].res);
+				fa[activef].y=f[i].y;
+				fa[activef].x=f[i].x;
+				fa[activef].layer=f[i].layer;
+				fa[activef].duration=f[i].duration;
+				activef++;
+			}
+			for (i=0;i<qt;i++) { /*objects*/
+				ta[activet]=objectCreate(t[i].location,t[i].floor,DIR_LEFT,t[i].state,t[i].res,t[i].cacheMirror);
+				activet++;
+			}
+/*		TODO: code sounds	
+ *		for (i=0;i<qo;i++) {
+				fa[activeo]=o[i];
+				activeo++;
+			}*/
+
+			outputClearScreen();
+			/* The bottom layer */
+			for (i=0;i<activef;i++) {
+				if (fa[i].layer==ANIMS_LAYERTYPE_BOTTOM)
+					outputDrawBitmap(fa[i].img->pFrames[0], fa[i].x, fa[i].y);
+			}
+			/* move objects */
+			for (i=0;i<activet;i++) {
+				/*TODO: detect exits */
+	  		objectMove(ta+i,nullKey,NULL);
+	  		/*objectDraw(ta+i);*/
+			}
+			/* The top layer */
+			for (i=0;i<activef;i++) {
+				if (fa[i].layer==ANIMS_LAYERTYPE_TOP)
+					outputDrawBitmap(fa[i].img->pFrames[0], fa[i].x, fa[i].y);
+			}
+			outputUpdateScreen();
+
+			/* exited states and caducied backgrounds destruction */
+			for (i=0;i<activef;i++) {
+				if (fa[i].duration) { /* if not 0 (infinite) */
+					fa[i].duration--;
+					if (!fa[i].duration) { /* time is over for this images */
+						activef--;
+						resFree(fa[i].img);
+						fa[i]=fa[activef];
+					}
+				}
+			}	
 		}
 	}
-	/*void kidDraw(tKid kid);*/
-	for (i=0;i<totalStates;i++) kidFree(object[i]);
+	/*void objectDraw(tObject kid);*/
+	for (i=0;i<activef;i++) objectFree(object[i]);
 	free(object);
 	return menuQuit;
 }

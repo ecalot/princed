@@ -38,6 +38,7 @@ kernel.c: FreePrince : Main Kernel
 #include "output.h"
 #include "input.h"
 #include "titles.h"
+#include "states.h" /* stateKidInLevel */
 #include "kid.h"
 #include "room.h"
 #include "maps.h"
@@ -49,7 +50,8 @@ kernel.c: FreePrince : Main Kernel
 int playgame(int optionflag,int level) {
 	/* Create objects */
 	tKey    key=inputCreateKey();
-	tKid    kid=kidCreate();
+	/*TODO: use a map.c function that reads this information and creates the kid*/
+	tObject kid=objectCreate(30,1,DIR_RIGHT,stateKidInLevel(/*level*/1),RES_IMG_ALL_KID,1);
 	tData*  resMap=resLoad(RES_MAP|level);
 	tMap*   map=(tMap*)resMap->pFrames;
 	tRoom   room;
@@ -71,12 +73,12 @@ int playgame(int optionflag,int level) {
 			 * TODO: send to the real place where
 			 * the key is interpreted in kid object
 			 */
-			kidMove(&kid,key,&room);
+			objectMove(&kid,key,&room);
 			mapMove(map);
 			/* Drawing functions */
 			outputClearScreen(); /* TODO: send to drawBackground() */
 			roomDrawBackground(&room);
-			kidDraw(kid);
+			objectDraw(kid);
 			roomDrawForeground(&room);
 			outputUpdateScreen();
 		} else {
@@ -190,7 +192,7 @@ int kernel(int optionflag,int level) {
 		}
 	} while(!quit);
 
-	kidFree();
+	objectFree();
 	inputStopTimer();
 	outputStop();
 	return 0;

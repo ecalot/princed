@@ -51,6 +51,9 @@ typedef struct {
 	unsigned short frame;
 	unsigned long res;
 	unsigned short state;
+	unsigned short location;
+	unsigned char floor;
+	unsigned char cacheMirror;
 } animState;
 
 typedef struct {
@@ -59,7 +62,7 @@ typedef struct {
 	enum {anims_enum_midi,anims_enum_wav,anims_enum_speaker} type;
 } animSound;
 
-int animStart(int animId);
+void animStart(int animId,int *qt,int *qf,int *qo);
 int animGetFrame(int* qf,int* qt,int* qo, animFixedimg* f,animState* t, animSound* o);
 
 #endif

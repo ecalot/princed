@@ -133,8 +133,9 @@ typedef struct {
 	int location;
 	int floor;
 	int direction;
+	tData* gfxCache[2];
 	tState action;
-} tKid;
+} tObject;
 
 typedef enum {eLeft=0,eRight=1,eUp=2,eDown=3}tDirection;
 

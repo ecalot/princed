@@ -35,7 +35,7 @@ typedef struct {
  * and actions to be performed by this call
  *
  * Usage:
- *  stateUpdate(tKey* key, tKid* kid,tRoom* room);
+ *  stateUpdate(tKey* key, tObject* kid,tRoom* room);
  *  where key is a tKey* with the current key state (read from a file,
  *  keyboard or joystick) or NULL in case there is no need to interpretate
  *  key events to manipulate states
@@ -48,7 +48,7 @@ typedef struct {
  *  be performed.
  */
 
-short stateUpdate(tKey* key, tKid* kid,tRoom* room);
+short stateUpdate(tKey* key, tObject* kid,tRoom* room);
 
 /* Create a State depending on the level */
 int stateKidInLevel(int level);

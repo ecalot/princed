@@ -87,7 +87,7 @@ tState createState(short stateId) {
 /* Evaluates a condition indexed in the condition table */
 #define DefaultTrue(pointer) if (!pointer) return STATES_CONDRESULT_TRUE
 #define DefaultFalse(pointer) if (!pointer) return STATES_CONDRESULT_TRUE
-int evaluateCondition(int condition,tKey* key, tKid* kid, tRoom* room) {
+int evaluateCondition(int condition,tKey* key, tObject* kid, tRoom* room) {
 	tsCondition c=statesConditionList[condition];
 #define thisTile (kid->location/STATES_STEPS_PER_TILE+13+12*kid->floor)
 #define whereInTile ((kid->direction==DIR_LEFT)?(kid->location%STATES_STEPS_PER_TILE):STATES_STEPS_PER_TILE-(kid->location%STATES_STEPS_PER_TILE))
@@ -168,7 +168,7 @@ int evaluateCondition(int condition,tKey* key, tKid* kid, tRoom* room) {
 }
 
 /* Evaluates all conditions needed for an action and returns true or false */
-int evaluateAction(int currentAction,tKey* key, tKid* kid,tRoom* room) {
+int evaluateAction(int currentAction,tKey* key, tObject* kid,tRoom* room) {
 	int i=statesActionList[currentAction].conditionId;
 	int result;
 	while ((result=evaluateCondition(i,key,kid,room))==STATES_CONDRESULT_TRUE) i++;
@@ -177,7 +177,7 @@ int evaluateAction(int currentAction,tKey* key, tKid* kid,tRoom* room) {
 }
 
 /* Evaluates a state: all conditions for all actions until a true is found and returns the next state id*/
-int evaluateState(int state, tKey* key, tKid* kid, tRoom* room) {
+int evaluateState(int state, tKey* key, tObject* kid, tRoom* room) {
 	int i=state;
 	while (!evaluateAction(i,key,kid,room)) i++;
 	return i;
@@ -187,7 +187,7 @@ int evaluateState(int state, tKey* key, tKid* kid, tRoom* room) {
 
 /* This function should return the image frame and actions to be performed by this call
  * returns the animation number corresponding to this frame */
-short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
+short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 	tState* current=&(kid->action);
 	/*static float step;
 	static float acumLocation;*/

@@ -19,7 +19,7 @@
 */
 
 /*
-kid.h: Free Prince : Kid object
+kid.h: Free Prince : Kid and other object
 ¯¯¯¯¯
  Copyright 2004 Princed Development Team
   Created: 19 Jul 2004
@@ -42,10 +42,10 @@ kid.h: Free Prince : Kid object
 
 #include "types.h"
 
-tKid kidCreate();
-void kidDraw(tKid kid);
-int  kidMove(tKid* kid,tKey key,tRoom* room);
-void kidFree();
+tObject objectCreate(int location, int floor, int direction, int stateId, unsigned long resId,int cacheMirror);
+void objectDraw(tObject kid);
+int  objectMove(tObject* kid,tKey key,tRoom* room);
+void objectFree();
 
 #endif
 

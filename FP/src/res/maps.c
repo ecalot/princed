@@ -273,7 +273,7 @@ tRoom mapGetRoom(tMap* map, tRoomId roomAux) {
 	return result;
 }
 
-void  mapStart(tMap* map, tKid* kid, tRoomId *roomId, int level) {
+void  mapStart(tMap* map, tObject* kid, tRoomId *roomId, int level) {
 	/* kid->x,y */
 	static char environments[]=MAP_ENVIRONMENTS;
 	*roomId=slevel(start)[0];

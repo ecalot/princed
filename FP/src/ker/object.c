@@ -19,7 +19,7 @@
 */
 
 /*
-kid.h: Free Prince : Kid object
+kid.h: Free Prince : Kid and other objects
 ¯¯¯¯¯
  Copyright 2004 Princed Development Team
   Created: 19 Jul 2004
@@ -40,37 +40,36 @@ kid.h: Free Prince : Kid object
 
 #define NEW_KERNEL
 
-static struct {
-	tData* kid[2];
-} kidGfx;
-
-void loadGfx(int storeMirrored) {
-	kidGfx.kid[DIR_LEFT]=resLoad(RES_IMG_ALL_KID);
+void loadGfx(int storeMirrored, tData** gfxCache, unsigned long resId) {
+	gfxCache[DIR_LEFT]=resLoad(resId);
 	if (storeMirrored)
-		kidGfx.kid[DIR_RIGHT]=resLoad(RES_IMG_ALL_KID|RES_MODS_INVERT);
+		gfxCache[DIR_RIGHT]=resLoad(resId|RES_MODS_INVERT);
+	else
+		gfxCache[DIR_RIGHT]=NULL;
 }
 
-void kidFree() {
-	resFree(kidGfx.kid[DIR_LEFT]);
-	resFree(kidGfx.kid[DIR_RIGHT]);
+void objectFree(tData** gfxCache) {
+	resFree(gfxCache[DIR_LEFT]);
+	if (gfxCache[DIR_RIGHT]) resFree(gfxCache[DIR_RIGHT]);
 }
 
-/* TODO: send this function to maps.c */
-tKid kidCreate() {
-	tKid kid;
+/* TODO: make a function in maps.c that calls this one */
+tObject objectCreate(int location, int floor, int direction, int stateId, unsigned long resId,int cacheMirror) {
+	tObject object;
 
-	if (kidGfx.kid[0]==NULL) loadGfx(1);
+	loadGfx(cacheMirror,object.gfxCache,resId);
 
-	kid.location=30;
-	kid.floor=1;
-	kid.direction=DIR_RIGHT;
-	kid.action=createState(stateKidInLevel(1)); /* level 1 */
-	return kid;
+	object.location=location;
+	object.floor=floor;
+	object.direction=direction;
+	object.action=createState(stateId);
+	return object;
 }
 
-int kidVerifyRoom(tKid *kid,tRoom *room) {
+int objectVerifyRoom(tObject *kid,tRoom *room) {
 	/* if the kid is out of the screen we need to change the screen and put
 	 * the kid back again on it
+	 * PRE: tObject *kid is a kid
 	 */
 	
 	int refresh=0;
@@ -109,8 +108,8 @@ int kidVerifyRoom(tKid *kid,tRoom *room) {
 	
 #define kid_getLocation(kid,image) ((kid).location-(outputGetWidth(image)>>1))
 
-void kidDraw(tKid kid) {
-	void* image=kidGfx.kid[kid.direction]->pFrames[stateGetImage(kid)-1];
+void objectDraw(tObject kid) {
+	void* image=kid.gfxCache[kid.direction]->pFrames[stateGetImage(kid)-1];
 	/* TODO: move this -1 to each script frame */
 	outputDrawBitmap(
 		image, 
@@ -119,7 +118,7 @@ void kidDraw(tKid kid) {
 	);
 }
 
-int kidMove(tKid* kid,tKey key,tRoom* room) {
+int objectMove(tObject* kid,tKey key,tRoom* room) {
 	/* advance state and get the flag, then interpret the flag and do the events */
 	short flags;
 	int refresh=0;
@@ -127,9 +126,9 @@ int kidMove(tKid* kid,tKey key,tRoom* room) {
 	
 	flags=stateUpdate(&key,kid,room);
 
-	if (room==NULL) return flags;
+	if (room==NULL) return flags; /* exits if it is not associated to a room */
 	
-	x=kid_getLocation(*kid,kidGfx.kid[kid->direction]->pFrames[stateGetImage(*kid)-1])/TILE_W;
+	x=kid_getLocation(*kid,kid->gfxCache[kid->direction]->pFrames[stateGetImage(*kid)-1])/TILE_W;
 	
 	if (flags&STATES_FLAG_P)
 		refresh=mapPressedTile(
@@ -145,7 +144,7 @@ printf("f era %d. ",kid->floor);
 	if (flags&STATES_FLAG_U)
 		kid->floor--;
 printf("f pasa a ser %d\n",kid->floor);
-	refresh=kidVerifyRoom(kid,room)||refresh;
+	refresh=objectVerifyRoom(kid,room)||refresh;
 	
 	if (refresh) { /* room map was changed and needs to be refreshed */
 		*room=mapGetRoom(room->level,room->id);
