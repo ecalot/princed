@@ -219,7 +219,6 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 	data+=2;
 	image->width =array2short(data);/*((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;*/
 	data+=2;
-
 	if (*(data++)) return COMPRESS_RESULT_FATAL; /* Verify format */
 	image->type=(unsigned char)(*(data++));
 	dataSizeInBytes-=7;

@@ -70,6 +70,28 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	result.code=fore&0x1F;
 	
 	switch (result.code) { /* TODO: use arrays and a better algorithm */
+	case T_GATE:
+	case T_EXIT_LEFT:
+		result.hasGateFrame=(result.code==T_GATE);
+		result.bricks=0;
+		result.hasPillar=0;
+		result.hasBigPillar=0;
+		result.isGate=(result.code==T_GATE);
+		printf("getting details on gate at %d,%d\n",x,y);
+		result.gateInfo=NULL/*room->level->screenGates[room->id][back]*/;
+		result.walkable=1;
+		result.hasChopper=0;
+		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);
+		result.block=0;
+		result.isPressable=0;
+		result.hasSkeleton=0;
+		result.hasSpikes=0;
+		result.hasTorch=0;
+		result.hasFloor=0;
+		result.hasBrokenTile=0;
+		result.isWall=0;
+		result.hasSword=0;
+		break;
 	case T_FLOOR:
 	case T_TORCH:
 	case T_SWORD:
@@ -79,9 +101,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case T_BP_BOTTOM:
 	case T_BTN_RAISE:
 	case T_BTN_DROP:
-	case T_GATE:
 	case T_TORCH_DEBRIS:
-	case T_EXIT_LEFT:
 	case T_EXIT_RIGHT:
 	case T_SKELETON:
 	case T_LOOSE:
@@ -91,9 +111,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.bricks=(result.code==T_FLOOR)?back:0;
 		result.hasPillar=(result.code==T_PILLAR);
 		result.hasBigPillar=(result.code==T_BP_BOTTOM);
-		result.isGate=(result.code==T_GATE);
-		/* only important if tile is gate*/
-		result.gateStatus=(result.code==T_GATE)?((!back)*47):15;
+		result.isGate=0;
 		result.walkable=1;
 		result.hasChopper=(result.code==T_CHOPPER);
 		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);
@@ -203,7 +221,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			(x-1)*TILE_W,
 			y*TILE_H+2
 		);
-		drawGate((x-1)*TILE_W,(y-1)*TILE_H+3,tile.gateStatus);
+/*		drawGate((x-1)*TILE_W,(y-1)*TILE_H+3,tile.gateInfo->status);*/
 	}
 	/* normal/left */
 	if (left.hasFloor) {
@@ -475,7 +493,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 					(x-1)*TILE_W,
 					y*TILE_H+3
 				);
-		drawGateTop(x*TILE_W,(y-1)*TILE_H+3,tile.gateStatus);
+/*				drawGateTop(x*TILE_W,(y-1)*TILE_H+3,tile.gateInfo->status);*/
 			}
 			/* big_pillar/left */
 			if (dleft.hasBigPillar==2) {

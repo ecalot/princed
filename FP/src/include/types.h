@@ -35,7 +35,7 @@ types.h: FreePrince : Kernel types
 
 #include "resources.h"
 
-typedef char tRoomId;
+typedef unsigned char tRoomId;
 typedef unsigned char tTileId;
 typedef unsigned char tModId;
 
@@ -83,7 +83,7 @@ typedef struct {
 	int hasBigPillar;
 	int isExit;
 	int isGate;
-	int gateStatus;
+	tGate* gateInfo;
 	int bricks;
 	int isPressable;
 	int hasSpikes;

@@ -162,8 +162,8 @@ tData* resLoad(long id) {
 			return result; /* transform from raw to a loaded map */
 		case RES_TYPE_IMG: {
 			tMemory palette;
-      tImage image;
-      tPalette pal;
+			tImage image;
+			tPalette pal;
 			int has_D=((mask&RES_MODS_HAS_D)?1:0);
 			int has_L=((mask&RES_MODS_HAS_L)?1:0);
 			int has_R=((mask&RES_MODS_HAS_R)?1:0);

@@ -124,13 +124,14 @@ void* mapLoadLevel(tMemory level) {
 		unsigned char byte1=level.array[MAPS_BLOCK_OFFSET_GATE_1+i];
 		unsigned char byte2=level.array[MAPS_BLOCK_OFFSET_GATE_2+i];
 		int S,L,T;
-		S=((byte1>>5)&3)|((byte2>>3)&7);
+		S=((byte1>>5)&3)|((byte2>>3)&28);
 		L=byte1&31;
 		T=(byte1>>7)&1;
+		fprintf(stderr,"mapLoadLevel: Loading event: S=%d L=%d T=%d\n",S,L,T);
 		map->events[i].triggerNext=T;
 		map->events[i].gate=auxGates[(S-1)*30+L]; /* in case of error null is assigned */
 	}
-	free(auxGates);	
+	free(auxGates);
 	return (void*)map;
 }
 
@@ -283,6 +284,7 @@ void  mapStart(tMap* map, tKid* kid, tRoomId *roomId, int level) {
 	static char environments[]=MAP_ENVIRONMENTS;
 	*roomId=slevel(start)[0];
 	printf("mapStart: binding kid to map in room %d using the %d environment\n",*roomId,environments[level]);
+	slevel(time)=0;
 	roomLoadGfx(/*environments[level]?RES_IMG_ENV_PALACE:*/RES_IMG_ENV_DUNGEON);
 }
 
