@@ -43,7 +43,7 @@ int isInGroup(unsigned char tile,unsigned char backtile,short group) {
 	tile++;
 	do {
 		docontinue=0;
-		while ((*i)&&(((*i)&0x7f)!=tile)) i++;
+		while ((*i)&&(((*i)&0x7f)!=tile)) i+=((*i)&0x80)?2:1;
 		if ((*i)&0x80) {
 			i++;
 			if ((*i)==(backtile+1)) return 1;

@@ -56,8 +56,8 @@ END {
 	for (group in total) {
 		offsets[group]=offset
 		for (i=0;i<total[group];i++) {
-			if (backs[group,total[group]]) { #if there is a back selected add them
-				printf "%s%s+1,%d",coma,groups[group,i]+128,backs[group,total[group]]
+			if (backs[group,i]) { #if there is a back selected add them
+				printf "%s(unsigned char)(%s+129),%d",coma,groups[group,i],backs[group,i]-1
 				coma=","
 				offset+=2
 			} else {
