@@ -31,95 +31,74 @@ kernel.c: FreePrince : Main Kernel
   DO NOT remove this copyright notice
 */
 
-#include <SDL/SDL.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "kernel.h"
 #include "resources.h"
 #include "output.h"
 #include "input.h"
 #include "titles.h"
+#include "kid.h"
+#include "room.h"
+
+/*
+ * Main game control function
+ */
 
 int control(int optionflag,int level) {
-	int i,location,direction,upIsPressed;
-	SDL_Event e;
-	tData* runningAnimation[4];
-	tData* animation;
-	tData* fondo;
-	
-	runningAnimation[0]=resLoad(RES_ANIM_RUN);
+	/*SDL_Event e;*/
+/*	tData* runningAnimation[4];
+	tData* fondo;*/
+	tKey   key=inputCreateKey();
+	tKid   kid=kidCreate();
+
+	/* TODO: send to kid and load static */
+/*	runningAnimation[0]=resLoad(RES_ANIM_RUN);
 	runningAnimation[1]=resLoad(RES_ANIM_RUN|RES_MOD_RIGHT);
 	runningAnimation[2]=resLoad(RES_ANIM_JUMPRUN);
 	runningAnimation[3]=resLoad(RES_ANIM_JUMPRUN|RES_MOD_RIGHT);
+
 	fondo=resLoad(RES_IMG_BACKGROUND);
 	if (!fondo) {
 		printf("The resource couldn't be loaded!\n");
 		return 1;
 	}
-	/*
-	printf("Resource number: %d. Frames: %d. Type: %d.\n",
-		RES_ANIM_RUN_LEFT,
-		runningAnimation->frames,
-		runningAnimation->type
-	);
-	*/
-	i=0;
-	location=160;
-	direction=0;
-	animation=runningAnimation[0];
-	upIsPressed=0;
+*/
+/* Game loop here */
+	drawScreen(4);
+/* Level loop here */
+	outputClearScreen(); /* TODO: send to drawScreen(0) */
+	/*drawScreen(0); TODO: try to optimize what to draw */
 	while (1) {
-		if (SDL_PollEvent(&e)) {
-			switch (e.type) {
-				case SDL_QUIT:
-					return 1;
-				case SDL_KEYDOWN:
-					/*fprintf(stderr, "The %s key was pressed! %d\n",
-					SDL_GetKeyName(e.key.keysym.sym),e.key.keysym.sym);*/
-					switch (e.key.keysym.sym) {
-						case SDLK_LEFT:
-							direction=0;
-							break;
-						case SDLK_RIGHT:
-							direction=1;
-							break;
-						case SDLK_UP:
-							i=0;
-							upIsPressed=1;
-							break;
-						case SDLK_DOWN:
-							i=0;
-							break;
-						case SDLK_q:
-							return 1;
-							break;
-						default:
-							break;
-					}
-					break;
-				case SDL_KEYUP:
-					switch (e.key.keysym.sym) {
-						case SDLK_UP:
-								upIsPressed=0;
-								break;
-						default:
-								break;
-					}
+		if (inputGetEvent(&key)) {
+			/* Time event */
+
+			/* Moving objects */
+			/* keylogIntercept(&key);
+			 * TODO: send to the real place where
+			 * the key is interpreted in kid object
+			 */
+			kidMove(&kid,key);
+			
+			/* Drawing functions */
+			outputClearScreen(); /* TODO: send to drawScreen(0) */
+			drawScreen(0);
+			drawScreen(1);
+			drawScreen(2);
+			kidDraw(kid);
+			drawScreen(3);
+			outputUpdateScreen();
+		} else {
+			/* Action event */
+			switch (key.actionPerformed) {
+			case quit:
+				return 1;
+			case gotoTitles:
+				return 0;
+			default:
+				break;
 			}
 		}
-		outputClearScreen();
-		outputDrawBitmap(fondo->pFrames[0], 0, 0);
-		outputDrawBitmap(animation->pFrames[i], location, 141);
-		outputUpdateScreen();
-		i++;
-		SDL_Delay(50);
-		animation=runningAnimation[(upIsPressed<<1)|(direction)];
-		if (direction) {
-			location+=3;
-		} else {
-			location-=3;
-		}
-		/*printf("up=%d\n",upIsPressed);*/
-		if (i>animation->frames-1) i =6;
 	}
 
 	return 0;
@@ -140,7 +119,7 @@ int kernel(int optionflag,int level) {
 	int menuOption;
 	int quit=0;
 	if (outputInit()) {
-		fprintf(stderr, "Unable to initialize screen: %s\n", SDL_GetError());
+		fprintf(stderr, "Unable to initialize screen\n");
 		exit(1);
 	}
 

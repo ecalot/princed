@@ -37,13 +37,21 @@ typedef enum {none=0,quit,load,reload,passLevel,showUp,showLeft,showRight,showDo
 
 /*#define inputIgnoreCtrl(a)  (a&( ~(1<<1) ))*/
 /* TODO: use inputIgnore* for each Set* */
+#define K_Shift (1<<0)
+#define K_Ctrl  (1<<1)
+#define K_Up    (1<<2)
+#define K_Down  (1<<3)
+#define K_Left  (1<<4)
+#define K_Right (1<<5)
+
+#define inputPressed(a,b)  (((a)&(b))==(b))
+
 #define inputSetShift(a,b) a=(a&( ~(1<<0) )) | ((b)<<0)
 #define inputSetCtrl(a,b)  a=(a&( ~(1<<1) )) | ((b)<<1)
 #define inputSetUp(a,b)    a=(a&( ~(1<<2) )) | ((b)<<2)
 #define inputSetDown(a,b)  a=(a&( ~(1<<3) )) | ((b)<<3)
 #define inputSetLeft(a,b)  a=(a&( ~(1<<4) )) | ((b)<<4)
 #define inputSetRight(a,b) a=(a&( ~(1<<5) )) | ((b)<<5)
-
 
 #define inputGetShift(a) ((a)&( (1<<0) )) 
 #define inputGetCtrl(a)  ((a)&( (1<<1) )) 

@@ -130,7 +130,7 @@ int inputGetEvent(tKey* key) {
 	
 	while(SDL_WaitEvent(&event))
 	{
-		printf("Event dropped: key status=%x action=%d\n",key->status,key->actionPerformed);
+		/*printf("Event dropped: key status=%x action=%d\n",key->status,key->actionPerformed);*/
 		key->actionPerformed=none;
 		switch (event.type) {
 		case SDL_KEYDOWN:

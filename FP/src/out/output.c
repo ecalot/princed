@@ -100,12 +100,12 @@ outputLoadBitmap(const unsigned char* data, int size,
 		colors[i].b=palette.color[i].b<<2;
 	}
 
-	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
-	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n", invert, firstColorTransparent, size);
+/*	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
+	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n", invert, firstColorTransparent, size);*/
 
 	result = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0, 0, 0, 0);
 	SDL_SetColorKey(result, SDL_SRCCOLORKEY, 0);
-	printf("%d\n",firstColorTransparent);
+/*	printf("%d\n",firstColorTransparent);*/
 	if (!result) {
 		fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
 		free(colors);

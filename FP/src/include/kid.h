@@ -41,14 +41,17 @@ typedef struct {
 	int floor;
 	int direction;
 	int frame;
-	int velX;
-	int velY;
+	int velocity;
+	enum {stay,run}nextAction;
 	tData* action;
 } tKid;
 
-void kidInit(tKid* kid);
-void kidDraw(tKid* kid);
-void kidMove(tKid* kid,tKey* key/*,tRoom room*/);
+#define DIR_LEFT  1
+#define DIR_RIGHT 0
+
+tKid kidCreate();
+void kidDraw(tKid kid);
+int  kidMove(tKid* kid,tKey key/*,tRoom room*/);
 
 #endif
 
