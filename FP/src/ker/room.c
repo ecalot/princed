@@ -228,13 +228,13 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			roomGfx.torch->pFrames[
 				(((tMap*)(room->level))->time+2*x+y)%(roomGfx.torch->frames)
 			],
-			x*TILE_W+16,
-			y*TILE_H-38
+			x*TILE_W+11,
+			y*TILE_H-39
 		);
 		outputDrawBitmap( /* base */
 			roomGfx.environment->pFrames[56],
-			x*TILE_W+8,
-			y*TILE_H-23
+			x*TILE_W+3,
+			y*TILE_H-24
 		);
 	}
 	/* empty_bricks/this */
@@ -442,13 +442,13 @@ void drawForePanel(tRoom* room,int x, int y) {
 				(x-1)*TILE_W,
 				y*TILE_H-54
 			);
-			/* second row */
+			/* Second row */
 			outputDrawBitmap(
 				roomGfx.environment->pFrames[73+w2_sep(seed)],
 				(x-1)*TILE_W+11+w2_offset(seed),
-				y*TILE_H-17
+				y*TILE_H-18
 			);
-			/* third row */
+			/* Third row TODO: send to BottomTile */
 			outputDrawBitmap(
 				roomGfx.environment->pFrames[73+w3_sep(seed)],
 				(x-1)*TILE_W+3+w3_offset(seed),

@@ -84,6 +84,9 @@ int editAction(tKey* key,SDLKey k) {
 		case SDLK_j:	
 			key->actionPerformed=showRight;
 			break;
+		case SDLK_c:	
+			key->actionPerformed=showScreens;
+			break;
 		default:
 			break;
 		}		

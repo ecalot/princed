@@ -105,6 +105,15 @@ int playgame(int optionflag,int level) {
 				if ((roomId=room.links[eRight]))
 					room=mapGetRoom(map,roomId);
 				break;
+			case showScreens:
+				fprintf(stderr,"S%d L%d R%d A%d B%d\n",
+					room.id,
+					room.links[eLeft],
+					room.links[eRight],
+					room.links[eUp],
+					room.links[eDown]
+				);
+				break;				
 		default:
 				break;
 			}
