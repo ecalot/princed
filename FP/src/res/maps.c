@@ -305,7 +305,7 @@ void  mapPressedTile(tMap* map, tTile tile, int s, int x, int y) {
 		/* drop or raise button */
 		fprintf(stderr,"mapPressedTile: throw event %d\n",tile.back);
 		do {
-			map->events[tile.back].gate->action=eOpening;
+			map->events[tile.back].gate->action=tile.isRaise?eOpening:eClosingFast;
 		} while	(0&&map->events[tile.back++].triggerNext);
 	}
 

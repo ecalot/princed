@@ -86,6 +86,7 @@ typedef struct {
 	int hasChopper;
 	int hasBigPillar;
 	int isExit;
+	int isRaise;
 	int isGate;
 	tGate* gateInfo;
 	int bricks;

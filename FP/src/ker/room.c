@@ -90,6 +90,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.block=0;
 		result.isPressable=0;
 		result.hasSkeleton=0;
+		result.isRaise=0;
 		result.hasSpikes=0;
 		result.hasTorch=0;
 		result.hasFloor=0;
@@ -121,6 +122,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasChopper=(result.code==T_CHOPPER);
 		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);
 		result.block=0;
+		result.isRaise=(result.code==T_BTN_RAISE);
 		result.isPressable=(result.code==T_BTN_RAISE)|(result.code==T_BTN_DROP);
 		result.hasSkeleton=(result.code==T_SKELETON);
 		result.hasSpikes=(result.code==T_SPIKES);
@@ -134,6 +136,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasGateFrame=0;
 		result.bricks=0;
 		result.hasPillar=0;
+		result.isRaise=0;
 		result.hasBigPillar=0;
 		result.walkable=0;
 		result.hasChopper=0;
@@ -161,6 +164,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.isExit=0;
 		result.isGate=0;
 		result.hasChopper=0;
+		result.isRaise=0;
 		result.isPressable=0;
 		result.hasSkeleton=0;
 		result.hasSpikes=0;
@@ -270,7 +274,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		}
 	}
 	/* pressable/left */
-	if (left.isPressable) {
+	if (left.isRaise) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[10],
 			(x-1)*TILE_W,
@@ -405,9 +409,9 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		}
 	}
 	/* pressable/this */
-	if (tile.isPressable) {
+	if (tile.isRaise) {
 		outputDrawBitmap(
-			roomGfx.environment->pFrames[58-((left.walkable)&&(!left.isPressable))],
+			roomGfx.environment->pFrames[58-((left.walkable)&&(!left.isRaise))],
 			(x-1)*TILE_W,
 			y*TILE_H
 		);
@@ -453,7 +457,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 	/* normal */
 	if (tile.walkable) {
 		outputDrawBitmap(
-			roomGfx.environment->pFrames[(tile.code==T_BTN_DROP||tile.code==T_BTN_RAISE)?47:11],
+			roomGfx.environment->pFrames[(tile.isPressable)?47:11],
 			(x-1)*TILE_W,
 			y*TILE_H+3
 		);
