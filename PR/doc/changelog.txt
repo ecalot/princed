@@ -1,5 +1,5 @@
 Princed Resources v1.0
-(c) Copyright 2003 - Princed Development Team
+(c) Copyright 2003-2005, Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
 
@@ -127,23 +127,24 @@ Versions:
   - Lower memory allocation (getmemory & image compress size bugs fixed)
   - Optimizations
   - Other versions of POP 1 tested
- * PR v1.0
-  - Optimization
-  - Stable version for win32 and unix based systems
-  - Use defines write8i(char,fp),write16i,write32i,read8i...
+ * PR v1.0 (2005-03-26)
+  - Added a python module addon
+  - Added the -z option to set the compression level
+  - Changed console program interface (-c for classify and -m for import)
   - Checksum verification in PLV files
-  - Fixed some memory leaks in xml parser
-  - Solved bug in palette buffer initialization for autodetected images
-  - Coded the compression algorithms Lzg to optimize compiled
+  + Coded the compression algorithms Lzg to optimize compiled
     bitmap dat files
-	- Added the -z option to set the compression level
-	- Changed console program interface (-c for classify and -m for import)
-	- PLV checksum corruption is now a warning
-	- Fixed palette saving in OS X
-	- Added a python module addon
- * PR v2.0
-  x Set, if applicable, POP2 in the parent folder of the
-    unknown.xml file
+  - Fixed palette saving in OS X
+  - Fixed some memory leaks in xml parser
+  - Optimization
+  - PLV checksum corruption is now a warning
+  - Renamed the classify interface to prClassifyDat
+  - Restructured repository. Renamed action files to import.c, export.c
+    and classify.c. Forked compress.c to a file for each algorithm.
+  - Solved bug in palette buffer initialization for autodetected images
+  - Stable version for win32 and unix based systems
+  - Using new macros to use an endian-independent layer.
+
 2) ToDo List & Future Plans:
 
  * PR v1.1:
@@ -152,4 +153,5 @@ Versions:
   x Add full pop2 support
  * PR v2.0:
   x Optimized & stable version for win32 and unix based systems
+  x Set, if applicable, POP2 in the parent folder of the unknown.xml file
 

@@ -1,26 +1,35 @@
 Princed Resources V1.0
-(c) Copyright 2003, 2004 - Princed Development Team
+(c) Copyright 2003, 2004, 2005 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
 
 1) Unix-based OS compiling:
 
-GCC will work:
+GCC will work this way:
 
 -shell-2.05b$ make
 Compiling import module...
-Compiling compression module...
 Compiling export module...
-Compiling main module...
 Compiling resource manager module...
-Compiling extra tasks module...
-Compiling disk access functions...
-Compiling xml parsing module...
-Compiling xml search features...
+Compiling classification module...
+Compiling disk access library...
+Compiling DAT editing library...
 Compiling bitmap files support (bmp)...
-Compiling midi audio files support (mid)...
+Compiling MIDI audio files support (mid)...
 Compiling JASC palette support (pal)...
 Compiling digital wave audio support (wav)...
+Compiling prince level files support (plv)...
+Compiling memory manager...
+Compiling main library primitives for both modes...
+Compiling XML parsing module...
+Compiling XML search features...
+Compiling compression module...
+Compiling LZG compression module...
+Compiling LZG uncompression module...
+Compiling RLE compression module...
+Compiling RLE uncompression module...
+Compiling command parsing module for standard mode...
+Compiling directory and recursive file reading module for standard mode...
 Linking files...
 Program successfully compiled
 
@@ -44,36 +53,39 @@ Usage:
 
 -shell-2.05b$
 
-2) Dos/Win32 Console compiling
+2) Win32 Console compiling
 
 You can use the VC workspace file: pr.dsw and build the project (selecting
 Build/Set active configuration...), setting up Dll or Release compilation
 modes and pressing F7.
 
-If you are using LCC, rename Makefile.lcc to Makefile and compile. Make sure
-you have added the lcc path in the system. For further information read the
-shell information in the program documentation at www.princed.com.ar
+If you are using LCC, use Makefile.lcc to compile:
+ make -f Makefile.lcc build
+Make sure you have added the lcc path in the system. For further
+information read the shell information in the program documentation
+at www.princed.com.ar
 
 3) CVS download
 
 Anonymous CVS access to SourceForge.net will work. Just type:
 
- cvs -d:pserver:anonymous@cvs.princed.com.ar:/cvsroot/princed login
+ cvs -d:pserver:anonymous@cvs.fp.princed.com.ar:/cvsroot/freeprince login
 Hit enter when prompted for password
- cvs -d:pserver:anonymous@cvs.princed.com.ar:/cvsroot/princed co PR
+ cvs -d:pserver:anonymous@cvs.fp.princed.com.ar:/cvsroot/freeprince co PR
 
 Sample:
 
--shell-2.05b$ cvs -d:pserver:anonymous@cvs.princed.com.ar:/cvsroot/princed login
-Logging in to :pserver:anonymous@cvs.princed.com.ar:2401/cvsroot/princed
+-shell-2.05b$ cvs -d:pserver:anonymous@cvs.fp.princed.com.ar:/cvsroot/freeprince login
+Logging in to :pserver:anonymous@cvs.fp.princed.com.ar:2401/cvsroot/freeprince
 CVS password:
--shell-2.05b$ cvs -d:pserver:anonymous@cvs.princed.com.ar:/cvsroot/princed co PR
+-shell-2.05b$ cvs -d:pserver:anonymous@cvs.fp.princed.com.ar:/cvsroot/freeprince co PR
 cvs server: Updating PR
-U PR/compile.bat
+cvs server: Updating PR/doc
+U PR/doc/changelog.txt
+U PR/doc/editionfaq.htm
 (..)
-U PR/zip/pr06.zip
-U PR/zip/prlib.zip
-U PR/zip/prvbdll.zip
+U PR/winbins/pr.ico
+U PR/winbins/pr.lib
 -shell-2.05b$
 
 4) Need assistance?
@@ -89,7 +101,7 @@ U PR/zip/prvbdll.zip
 7) SourceForge project home page
  http://project.princed.com.ar
 
-8) UNIX Install HowTo sample
+8) UNIX source build HowTo sample
 
 -shell-2.05b$ ls -l
 total 64
@@ -97,7 +109,7 @@ total 64
 -shell-2.05b$ bunzip2 pr.09-dev3.tar.bz2
 -shell-2.05b$ ls
 pr.09-dev3.tar
--shell-2.05b$ tar -xvf pr.09-dev3.tar
+-shell-2.05b$ tar -xjvf pr.10.tar.bz2
 src/
 src/extract.c
 src/include/
@@ -148,35 +160,56 @@ total 76
 -rwxr-xr-x    1 ecalot   users       32656 dic  9 10:02 pr
 -rwxr-xr-x    1 ecalot   users       42941 dic  9 10:02 pr.so
 -shell-2.05b$ ./pr
-Princed resources (PR) V1.0 GNU/Linux
-(c) Copyright 2003 - Princed Development Team
+Princed resources (PR) v1.0 GNU/Linux
+(c) Copyright 2003 - 2005 Princed Development Team
 http://www.princed.com.ar
 
-Usage: 
-  pr [-x[EXTRACTDIR]|-c[COMPILEDIR]|-d] [DATFILEPATH]
-  pr [OPTIONS] [DATFILEPATH]
+Usage:
+  pr [OPTIONS] [-x[EXPORTDIR]|-m[IMPORTDIR]|-c] [DATFILEPATH[@resource1[,resource2...]]]...
+  pr --help
+  pr --version
 
   Mandatory arguments to long options are mandatory for short options too.
 
-   -c, --import[=DIRNAME]     imports from DIRNAME into given dat file
-   -d, --classify             returns the DAT file type
-   -x, -e, --export[=DIRNAME] extracts given dat file into DIRNAME
+   -i, -m, --import[=DIRNAME] imports from DIRNAME into given dat file
+   -c, --classify             returns the dat file type
+   -e, -x, --export[=DIRNAME] exports given dat file into DIRNAME
 
-   -a, --setauthor=NAME       sets your name in extracted PLV files
+   -a, --setauthor=NAME       sets your name in extracted plv files
    -b, --backup[=EXTENSION]   backup your files
-   -f, --force                default option, you cannot disable it,
-                              so please make a backup of your files
+   -f, --force                rewrites your files without prompting
    -g, --cgi                  run as CGI and output mime headers
    -h, -?, --help             display this help and exit
-   -m, --resource=RESFILE     uses an user-specific resource xml file
-   -r, --raw                  uses raw format
+   -s, --resource=RESFILE     uses an user-specific resource xml file
    -R, --recursive            searches for all dat files (only if DATFILEPATH
                               is not a dat file)
    -t, --datfile=DATFILE      specifies a dat file to read resources
-                              different that the original file
+                              different than the original file
+   -z, --compression-level=N  a number from 1 to 7 specifying how hard has PR
+                              to try to reduce the generated dat files.
+                              1 is high speed, low compression, 7 is high
+                              compression but low speed.
        --unknown              generate the unknown file without performing
                               any extraction
    -v, --verbose              explain what is being done
        --version              output version information and exit
 
 -shell-2.05b$
+
+9) Make rules
+
+To clean the object files type
+ make clean
+
+To build all the sources
+ make build
+
+To make only the touched sources
+ make
+
+To make the libraries
+ make lib
+
+To make the python module
+ make pylib
+
