@@ -29,19 +29,20 @@
 #
 
 
-/[\t ]*XX .*/ {
+/^[\t ]*XX .*/ {
 	if (inIf) printf("}\n");
 	printf("\n#define draw%s(x,y,left,tile,right,dleft) \\\n",$2)
 	inIf=0
 }
 
-/[\t ]*if / {
+/^[\t ]*cond / {
 	if (inIf) printf("}\\\n");
-	printf("%s {\\\n",$0)
+	$1=""
+	printf("if (%s) {\\\n",$0)
 	inIf=1
 }
 
-/[\t ]*draw/ {
+/^[\t ]*draw/ {
 	f=$1
 	x=$2
 	y=$3
