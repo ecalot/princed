@@ -37,6 +37,7 @@ object.h: Free Prince : Objects
 #include <stdio.h> /* NULL */
 #include "states.h"
 #include "object.h"
+#include "room.h" /* roomGetTile */
 
 void loadGfx(int storeMirrored, tData** gfxCache, unsigned long resId) {
 	gfxCache[DIR_LEFT]=resLoad(resId);
@@ -98,6 +99,11 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 					/* the kid has died! */
 					flags=STATE_EXIT_CODE_SPLASH;
 				}
+			}
+			if (flags&STATES_FLAG_D) {
+				tTile tile=roomGetTile(room,object->location/TILE_W,object->floor);
+				/*kidDrinkPotion(object,tile);*/
+				/* TODO: transform the tile into floor */
 			}
 			break;
 		case oGeneric:
