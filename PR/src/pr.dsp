@@ -8,12 +8,12 @@ CFG=tasks - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "tasks.mak".
+!MESSAGE NMAKE /f "pr.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "tasks.mak" CFG="tasks - Win32 Debug"
+!MESSAGE NMAKE /f "pr.mak" CFG="tasks - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -91,12 +91,6 @@ LINK32=link.exe
 # Begin Source File
 
 SOURCE=.\formats\bmp.c
-DEP_CPP_BMP_C=\
-	".\include\bmp.h"\
-	".\include\compile.h"\
-	".\include\compress.h"\
-	".\include\resources.h"\
-	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
@@ -108,11 +102,6 @@ DEP_CPP_BMP_C=\
 # Begin Source File
 
 SOURCE=.\formats\mid.c
-DEP_CPP_MID_C=\
-	".\include\extract.h"\
-	".\include\mid.h"\
-	".\include\resources.h"\
-	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
@@ -124,12 +113,6 @@ DEP_CPP_MID_C=\
 # Begin Source File
 
 SOURCE=.\formats\pal.c
-DEP_CPP_PAL_C=\
-	".\include\compress.h"\
-	".\include\extract.h"\
-	".\include\pal.h"\
-	".\include\resources.h"\
-	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
@@ -141,11 +124,6 @@ DEP_CPP_PAL_C=\
 # Begin Source File
 
 SOURCE=.\formats\wav.c
-DEP_CPP_WAV_C=\
-	".\include\compile.h"\
-	".\include\resources.h"\
-	".\include\wav.h"\
-	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
@@ -158,14 +136,6 @@ DEP_CPP_WAV_C=\
 # Begin Source File
 
 SOURCE=.\compile.c
-DEP_CPP_COMPI=\
-	".\include\bmp.h"\
-	".\include\compile.h"\
-	".\include\compress.h"\
-	".\include\pal.h"\
-	".\include\resources.h"\
-	".\include\wav.h"\
-	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
@@ -177,9 +147,6 @@ DEP_CPP_COMPI=\
 # Begin Source File
 
 SOURCE=.\compress.c
-DEP_CPP_COMPR=\
-	".\include\compress.h"\
-	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
@@ -191,15 +158,6 @@ DEP_CPP_COMPR=\
 # Begin Source File
 
 SOURCE=.\extract.c
-DEP_CPP_EXTRA=\
-	".\include\bmp.h"\
-	".\include\compress.h"\
-	".\include\extract.h"\
-	".\include\mid.h"\
-	".\include\pal.h"\
-	".\include\resources.h"\
-	".\include\wav.h"\
-	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
@@ -222,15 +180,6 @@ SOURCE=.\parser.c
 # Begin Source File
 
 SOURCE=.\pr.c
-DEP_CPP_PR_Ce=\
-	".\include\bmp.h"\
-	".\include\compile.h"\
-	".\include\compress.h"\
-	".\include\extract.h"\
-	".\include\pr.h"\
-	".\include\resources.h"\
-	".\include\tasks.h"\
-	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
@@ -242,11 +191,6 @@ DEP_CPP_PR_Ce=\
 # Begin Source File
 
 SOURCE=.\resources.c
-DEP_CPP_RESOU=\
-	".\include\compress.h"\
-	".\include\pr.h"\
-	".\include\resources.h"\
-	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
@@ -258,10 +202,6 @@ DEP_CPP_RESOU=\
 # Begin Source File
 
 SOURCE=.\tasks.c
-DEP_CPP_TASKS=\
-	".\include\resources.h"\
-	".\include\tasks.h"\
-	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
