@@ -64,6 +64,8 @@ LIBOBJ   = $(FILES) $(XML) $(COMPRESS) $(PORTS)
 EXEFILE  = bin/pr
 XMLFILE  = bin/resources.xml
 
+ADDONS   = python.o
+
 #Use this to temporary remove an option
 OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
 LINKEROPTIONS = $(LINKERRELEASE)
@@ -84,7 +86,7 @@ $(EXEFILE): $(EXEOBJ)
 
 clean:
 	$(INFO) Erasing temporary object files...
-	$(REMOVER) $(EXEOBJ) $(EXEFILE)
+	$(REMOVER) $(EXEOBJ) $(EXEFILE) $(ADDONS)
 
 cleanxml:
 	$(INFO) Erasing xml file...
@@ -211,13 +213,12 @@ getopt1.o: ports/getopt1.c
 	$(CC) $(OPTIONS) -c ports/getopt1.c
 
 #python
-python.o: addons/python.c
+python.o: addons/python/python.c
 	$(INFO) Building the python interfaces
-	$(CC) -pthread -fno-strict-aliasing -DNDEBUG -g -O3 -Wall -fPIC -I/usr/include/python2.3 -c addons/python.c $(INCLUDE)
+	$(CC) -pthread -fno-strict-aliasing -DNDEBUG -g -O3 -Wall -fPIC -I/usr/include/python2.3 -c addons/python/python.c $(INCLUDE)
 	
 pylib: python.o $(LIBOBJ)
 	$(INFO) Building the python module
-	$(MAKEDIR) addons/python
-	$(CC) -pthread -shared python.o $(LIBOBJ) -o addons/python/pr.so
-
+	$(MAKEDIR) addons/python/bin
+	$(CC) -pthread -shared python.o $(LIBOBJ) -o addons/python/bin/pr.so
 
