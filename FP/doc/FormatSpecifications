@@ -3,30 +3,30 @@ Table of Contents
 1. Preamble .......................................................... 31
 2. Introduction ...................................................... 35
 3. Primitives ........................................................ 54 
-3.1. DAT reading and writing primitives
-3.2. DAT reading primitives
-3.3. DAT writing primitives
+3.1. DAT reading and writing primitives .............................. 58
+3.2. DAT reading primitives .......................................... 70
+3.3. DAT writing primitives .......................................... 77
 4. File Specifications ............................................... 85 
-4.1. General file specs, index and checksums
+4.1. General file specs, index and checksums ......................... 87
 4.2. Images ......................................................... 152
-4.2.1 Headers
-4.2.2 Algorithms
-4.2.2.1 Run length encoding (RLE)
-4.2.2.2 Custom LZ
-4.3. Palettes
+4.2.1 Headers ....................................................... 155
+4.2.2 Algorithms .................................................... 178
+4.2.2.1 Run length encoding (RLE) ................................... 194
+4.2.2.2 Custom LZ ................................................... 205
+4.3. Palettes ....................................................... 208
 4.4. Levels ......................................................... 215
-4.4.1 Unknown blocks
-4.4.2 Room mapping
-4.4.3 Room linking
-4.4.4 Guard handling
-4.4.5 Starting Position
-4.4.6 Door events 
-4.5. Digital Waves .................................................. 464
-4.6. Midi music
-4.7. Internal PC Speaker
-4.8. Binary files
-5. Credits .......................................................... 488
-6. License .......................................................... 500
+4.4.1 Unknown blocks ................................................ 243
+4.4.2 Room mapping .................................................. 260
+4.4.3 Room linking .................................................. 366
+4.4.4 Guard handling ................................................ 382
+4.4.5 Starting Position ............................................. 409
+4.4.6 Door events ................................................... 423 
+4.5. Digital Waves .................................................. 467
+4.6. Midi music ..................................................... 477
+4.7. Internal PC Speaker ............................................ 480
+4.8. Binary files ................................................... 485
+5. Credits .......................................................... 491
+6. License .......................................................... 503
 
 1. Preamble
  This file was written thanks to the reverse engineering made by several
@@ -420,7 +420,7 @@ Table of Contents
  The third byte is the direction, see 4.4.4 for the direction format
  specifications.
 
-4.4.6 Door events 
+4.4.6 Door events
  This section explains how the doors are handled and specifies the blocks
  door I and II.
 
