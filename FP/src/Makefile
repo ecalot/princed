@@ -30,7 +30,7 @@ endif
 
 #Libraries: include path and linked libs
 INCLUDE       = -Iinclude/
-LIBS          = $(shell sdl-config --libs)
+LIBS          = $(shell sdl-config --libs --cflags)
 
 #Defines
 DEFINES       = -DOS=\"$(OS)\" $(LINUX) 
@@ -281,7 +281,7 @@ include/walls_conf.h: conf/walls.conf conf/awk/walls_conf.awk
 	$(AWK) -f conf/awk/walls_conf.awk conf/walls.conf>include/walls_conf.h
 
 include/anims_conf.h: conf/anims.conf conf/awk/anims_conf.awk
-	$(INFO) Linking animation indexes to the source...
+	$(INFO) Binding animation indexes to the source...
 	$(AWK) -f conf/awk/anims_conf.awk conf/anims.conf>include/anims_conf.h
 
 
