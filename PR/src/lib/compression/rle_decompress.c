@@ -39,28 +39,28 @@ compress.c: Princed Resources : Image Compression Library
 /* Expands RLE algorithm */
 int expandRle(const unsigned char* input, int inputSize, 
                unsigned char** output, int *outputSize) {
-	int cursor=0;
 	register signed char rep=1;
-	int pos=0;
+	int oCursor=0;
+	int iCursor=0;
 
 	/* reserve memory */
 	if ((*output=malloc(40000))==NULL) return COMPRESS_RESULT_FATAL; 
 
 	/* main loop */
-	while (pos<inputSize) {
-		rep=(signed char)(input[pos++]);
+	while (iCursor<inputSize) {
+		rep=(signed char)(input[iCursor++]);
 		if (rep<0) {
 			/* Negative */
-			while (rep++) (*output)[cursor++]=input[pos];
-			pos++;
+			while (rep++) (*output)[oCursor++]=input[iCursor];
+			iCursor++;
 		} else {
 			/* Positive */
 			rep=~rep;
-			while ((rep++)&&(pos<inputSize)) (*output)[cursor++]=input[pos++];
+			while ((rep++)&&(iCursor<inputSize)) (*output)[oCursor++]=input[iCursor++];
 		}
 	}
 
-	*outputSize=cursor;
+	*outputSize=oCursor;
 	return (rep==1)?COMPRESS_RESULT_SUCCESS:COMPRESS_RESULT_WARNING;
 }
 

@@ -47,9 +47,11 @@ unsigned char popBit(unsigned char *byte) {
 int expandLzg(const unsigned char* input, int inputSize, 
                unsigned char** output2, int *outputSize) {
 
-	int           loc, oCursor=0, iCursor=0;
-	unsigned char maskbyte=0, rep, k;
-	unsigned char output[65000];
+	int                    oCursor=0, iCursor=0;
+	unsigned char          maskbyte=0;
+	unsigned char          output[65000];
+	register int           loc;
+	register unsigned char rep, k;
 
 	/* initialize the first 1024 bytes of the window with zeros */
 	for(oCursor=0;oCursor<LZG_WINDOW_SIZE;output[oCursor++]=0);
