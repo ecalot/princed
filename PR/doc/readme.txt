@@ -1,4 +1,4 @@
-Princed Resources v1.0 beta
+Princed Resources v1.0 beta-2
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -136,5 +136,10 @@ Type "pcspeaker":
 
  Resources.xml edition
   Steven Fayers
+
+To see Translation Credits type pr --version for the version you want to see the credits
+Pr is also using some GPL compatible and GPL components made by «Kevlin Henney» (dirent
+stucture port for windows) and «the Free Software Foundation, Inc.» (getopt parsing
+functions ports).
 
 Please enjoy using Princed Resource Editor!
