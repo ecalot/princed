@@ -258,90 +258,114 @@ Table of Contents
 4.2.2.2 LZ variant (LZG)
  This is a simplified algorithm explanation:
 
- There is a slide window initialised with zeros.
- The first byte is a maskbyte.
+ Definition: "print" means to commit a byte into the current location
+             of the output stream.
+
+ The output stream is a slide window initialised with zeros.
+ The first byte of the input stream is a maskbyte.
  For each of the 8 bits in the maskbyte the next actions must be performed:
   If the bit is 1 print the next unread byte to the slide window
   If the bit is a zero read the next two bytes as control bytes with the
-  following format:
+  following format (RRRRRRSS SSSSSSSS):
+   - 6  bits for the copy size number (R). Add 3 to this number.
+	      Range: 2 to 66
    - 10 bits for the slide position (S). Add 66 to this number.
-   - 6 bits for the copy size number (R). Add 3 to this number.
-   Then print the next R bytes starting with the S'th byte of the slide
-   window.
- After all the maskbyte is read and processed, the next byte is another
- maskbyte. Use the same procedure to finish uncompressing the file.
+        Range: 66 to 1090
+   Then print in the slide window the next R bytes that are the same slide
+   window starting with the S'th byte.
+
+ After all the maskbyte is read and processed, the following input byte is
+ another maskbyte. Use the same procedure to finish uncompressing the file.
 
  This version of the algorithm is limited to 1024 bytes due to the slide
  window size. In case you want to know the full algorithm and see how it
  works for bigger images you should use the source, Luke.
 
- This is the uncompression function source:
- (note that this is part of PR that is under the GPL license)
+ This is the full uncompression function source. Note that this is part of
+ PR that is under the GPL license. The variables «R» and «S» are «rep» and
+ «loc» respectively. The array output is the output stream and oCursor is
+ the current location. The input array and iCursor variable had the same
+ meaning for the input stream. The algorithm ends when the full input has
+ been processed. The maskbyte must remain with 0 for the unexistent bytes,
+ so if you find the maskbyte not null, it is possible that the input array
+ wasn't a LZG compressed stream. In that case that non-zero value is going
+ to be returned. This is the only internal way to detect an error in the
+ compression layer. All the data that has the latest maskbyte without this
+ issue will be detected as valid and unpacked normally.
 
                    Algorithm 4.1: LZG
                    ~~~~~~~~~~~~~~~~~~
-
- /* A big number */
- #define MAX_MOD_SIZE_IN_LZG    32001
-
- /* modulus to be used in the 10 bits of the algorithm */
- #define MAX_MXD_SIZE_IN_LZG    0x400 /* 1024 */
-
- /* LZG expansion algorithm sub function */
- unsigned char popBit(unsigned char *byte) {
-   unsigned char bit=(unsigned char)((*byte)&1);
-   (*byte)>>=1;
-   return bit;
- }
-
- /* Expands LZ Groody algorithm. This is the core of PR */
- int expandLzg(const unsigned char* array, int arraySize,
-               unsigned char* image, int imageSize) {
-   char k;
-   int location,h,cursor=0,pos=0;
-   unsigned char maskbyte,rep;
-
-   /* img is an unsigned char[] sized 0x400 */
-   /* clean output garbage */
-   for(location=0;location<MAX_MOD_SIZE_IN_LZG;img[location]=0,location++);
-
-   /* main loop */
-   while (cursor<imageSize) {
-     maskbyte=array[pos++];
-     for (k=8;k&&(cursor<imageSize);k--) {
-       if (popBit(&maskbyte)) {
-         img[cursor++]=array[pos++];
-       } else {
-         /*
-          * location:
-          *  10 bits for the slide position (S). Add 66 to this number.
-          * rep:
-          *  6 bits for the repetition number (R). Add 3 to this number.
-          */
-         location=66+(((rep=array[pos])&3)<<8)+(unsigned char)array[pos+1];
-         pos+=2;
-         rep=(unsigned char)((rep>>2)+3);
-
-         /* Here is the difference between big and small images */
-         while (rep--) {
-           h=cursor/MAX_MXD_SIZE_IN_LZG-
-             ((location%MAX_MXD_SIZE_IN_LZG)>(cursor%MAX_MXD_SIZE_IN_LZG));
-           /*
-            * if the image is stored in an array of 1024 x n bytes
-       * h is the height and location is the width
-       */
-           img[cursor++]=img[
-             ((h<0)?0:h)*MAX_MXD_SIZE_IN_LZG+
-             (location++)%MAX_MXD_SIZE_IN_LZG
-           ];
-         }
-       }
-     }
-   }
-   return ((pos==arraySize)&(cursor==imageSize));
-   /* 0 is ERROR, 1 is SUCCESS */
- }
-
+  
+  /* A big number (the output must be less that that) */
+  #define LZG_MAX_MEMSIZE    32001
+  
+  /* modulus to be used in the 10 bits of the algorithm */
+  #define LZG_WINDOW_SIZE    0x400 /* =1024=1<<10 */
+  
+  /* LZG expansion algorithm sub function */
+  unsigned char popBit(unsigned char *byte) {
+  	register unsigned char bit=(*byte)&1;
+  	(*byte)>>=1;
+  	return bit;
+  }
+  
+  /* Expands LZ Groody algorithm. This is the core of PR.
+   * returns 0 on success, non-zero on possible data corruption
+   */
+  int expandLzg(const unsigned char* input, int inputSize, 
+                unsigned char* output, int *outputSize) {
+  
+  	int           loc, oCursor=0, iCursor=0;
+  	unsigned char maskbyte=0, rep, k;
+  
+  	/* clean output garbage */
+  	for(loc=LZG_MAX_MEMSIZE;loc--;output[loc]=0);
+  
+  	/* main loop */
+  	while (iCursor<inputSize) {
+  		maskbyte=input[iCursor++];
+  		for (k=8;k&&(iCursor<inputSize);k--) {
+  			if (popBit(&maskbyte)) {
+  				output[oCursor++]=input[iCursor++]; /* copy input to output */
+  			} else {
+  				/*
+  				 * loc:
+  				 *  10 bits for the slide iCursorition (S). Add 66 to this number.
+  				 * rep:
+  				 *  6 bits for the repetition number (R). Add 3 to this number.
+  				 */
+  				loc= 66 + ((input[iCursor] & 0x03 /*00000011*/) <<8) + input[iCursor+1];
+  				rep= 3  + ((input[iCursor] & 0xfc /*11111100*/) >>2);
+  				
+  				iCursor+=2;
+  				
+  				while (rep--) { /* repeat pattern in output */
+  					loc=loc%LZG_WINDOW_SIZE; /* loc is in range 0-1023 */
+  
+  					/*
+  					 * delta is ((loc-oCursor)%LZG_WINDOW_SIZE)
+  					 * this is the offset where the bytes will be looked for
+  					 * in the simple algorithm it is allways negative
+  					 * in bigger images it can be iCursoritive
+  					 * 
+  					 * this value is inside the range -1023 to 1023.
+  					 * if loc>oCursor the result is iCursoritive
+  					 * if loc<oCursor the result is negative
+  					 */
+  					
+  					output[oCursor]=output[oCursor+((loc-oCursor)%LZG_WINDOW_SIZE)];
+  
+  					oCursor++;
+  					loc++;
+  				}
+  			}
+  		}
+  	}
+  	
+  	*outputSize=oCursor;
+  	return maskbyte;
+  }
+  
 4.3. Palettes
  Palettes have 100 bytes allways, after 4 bytes from the beginning the
  first 16 records of 3 bytes are the VGA colours stored in the RGB-18 bits
