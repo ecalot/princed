@@ -150,20 +150,23 @@ void drawExit(int x, int y, int frame) {
 	e(2,x,y);
 }
 
-typedef enum {layBack=113,layRight=108,layFore=102}tSpikeLayer;
+typedef enum {layFore=113,layRight=108,layBack=102}tSpikeLayer;
 void drawSpike(int x, int y, int frame, tSpikeLayer layer) {
-	/* Frame defined from 0 (none) to 5 (near none). 3 is out normal. */
-	switch (layer) { /* TODO: use relative offsets in resources */
-		case layRight:
-			x+=32;
-			y-=7;
-			break;				
-		case layFore:
-		case layBack:
-			y-=2;
-			break;
+	if (frame) {
+		frame--;
+		/* Frame defined from 0 (none) to 5 (near none). 3 is out normal. */
+		switch (layer) { /* TODO: use relative offsets in resources */
+			case layRight:
+				x+=32;
+				y-=7;
+				break;				
+			case layFore:
+			case layBack:
+				y-=2;
+				break;
+		}
+		e((int)layer+((frame>4)?(6-frame):frame),x,y);
 	}
-	e((int)layer+((frame>4)?(6-frame):frame),x,y);
 }	
 
 typedef enum {layCBack=1,layCFore=2}tChopperLayer;
@@ -238,7 +241,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	}
 	/* chopper/this */
 	if (isIn(tile,TILE_CHOPPER)) 
-		drawChopper((x-1)*TILE_W+0,y*TILE_H,room->level->time%8,layCBack);
+		drawChopper((x-1)*TILE_W+0,y*TILE_H,chopperGetFrame(tile),layCBack);
 	/* empty_bricks/this */
 	if (isIn(tile,TILES_BRICKE1)) 
 		e(51,x*TILE_W+0,y*TILE_H-18);
@@ -292,7 +295,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	/* spikes/this */
 	if (isIn(tile,TILES_SPIKES)) {
 		e(101,(x-1)*TILE_W+0,y*TILE_H+0);
-		drawSpike((x-1)*TILE_W+0,y*TILE_H,spikeGetFrame(tile),layFore);
+		drawSpike((x-1)*TILE_W+0,y*TILE_H,spikeGetFrame(tile),layBack);
 	}
 	/* skeleton/this */
 	if (isIn(tile,TILES_SKELETON)) 
@@ -354,7 +357,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 			/* pillar/left */
 			if (isIn(dleft,TILES_PILLAR)) 
 				e(45,(x-1)*TILE_W+0,y*TILE_H+3);
-			/* pillar/left */
+			/* wall/left */
 			if (isIn(dleft,TILES_WALL)) 
 				e(64,(x-1)*TILE_W+0,y*TILE_H+3);
 		}
@@ -434,6 +437,9 @@ void drawForePanel(tRoom* room,int x, int y) {
 	/* debris/this foreground layer */
 	if (isIn(tile,TILES_BROKENTILE)) 
 		e(51,(x-1)*TILE_W+0,y*TILE_H+0);
+	/* spikes/this foreground layer */
+	if (isIn(tile,TILES_SPIKES)) 
+		drawSpike((x-1)*TILE_W+0,y*TILE_H+0,spikeGetFrame(tile),layFore);
 }	
 
 /*
@@ -502,8 +508,8 @@ int roomPress(tRoom* room, tObject* obj) {
 
 	/* spikes */
 	/* there are 7 possibilities to be */
-#define WHERE_NEAR 3
-#define WHERE_IN 1
+#define WHERE_NEAR 6
+#define WHERE_IN 3
 	where=border;i=1;
 	if (((obj->location%TILE_W)<(TILE_W-WHERE_IN))&&obj->direction==DIR_LEFT){
 		where=nearborder;i=1;}
@@ -520,23 +526,40 @@ int roomPress(tRoom* room, tObject* obj) {
 
 	if (where!=middle) { /* TODO: the first case is different.
 	                      * try to make it as similar as possible */
-		if (isIn(aux=roomGetTile(room,x+i,y),TILES_CHOPPER_SPIKE)) {
+		if (isIn(aux=roomGetTile(room,x+i,y),TILES_SPIKES)) {
 			/* spikes left in this floor */
 			tDanger* danger=aux.moreInfo;
-			/*danger->action=eSpiUp;*/
-		} else if ((y<3)&&isIn(roomGetTile(room,x+i,y),TILE_EMPTY)&&isIn(aux=roomGetTile(room,x+i,y+1),TILES_CHOPPER_SPIKE)) {
+			danger->action=eSpiUp;
+		} else if ((y<3)&&isIn(roomGetTile(room,x+i,y),TILE_EMPTY)&&isIn(aux=roomGetTile(room,x+i,y+1),TILES_SPIKES)) {
 			/* spikes left in the lower floor, there is
 			 * a space so you can fall down */
 			tDanger* danger=aux.moreInfo;
-			/*danger->action=eSpiUp;*/
-		} else if ((y<2)&&isIn(roomGetTile(room,x+i,y),TILE_EMPTY)&&isIn(roomGetTile(room,x+i,y+1),TILE_EMPTY)&&isIn(aux=roomGetTile(room,x+i,y+2),TILES_CHOPPER_SPIKE)) {
+			danger->action=eSpiUp;
+		} else if ((y<2)&&isIn(roomGetTile(room,x+i,y),TILE_EMPTY)&&isIn(roomGetTile(room,x+i,y+1),TILE_EMPTY)&&isIn(aux=roomGetTile(room,x+i,y+2),TILES_SPIKES)) {
 			/* spikes left in the 2 level lower floor, there are
 			 * spaces so you can fall down */
 			tDanger* danger=aux.moreInfo;
-			/*danger->action=eSpiUp;*/
+			danger->action=eSpiUp;
 		}
 	}	
+
 	return refresh;
 
+}
+
+void roomKidChangedFloor(tRoom* room, tObject* kid) {
+	/* Choppers */
+	tTile aux;
+	int i,j;
+
+	printf("kid had changed the floor. Guards and choppers may be allerted.\n");
+	for (j=1;j<4;j++) {
+		for (i=1;i<10;i++) {
+			if (isIn((aux=roomGetTile(room,i,j)),TILE_CHOPPER)) {
+				tDanger* chopper=aux.moreInfo;
+				chopper->action=((j-1)==kid->floor)?eChoActive:eChoInactive;
+			}
+		}
+	}
 }
 

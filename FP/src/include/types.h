@@ -76,7 +76,7 @@ typedef struct {
 
 typedef struct {
 	int frame;
-	enum {eChoMoving,eChoWaiting,eChoClosed,eSpiUp,eSpiWaitUp,eSpiDown,eSpiStuck} action;
+	enum {eChoActive,eChoInactive,eSpiUp,eSpiWaitUp,eSpiDown,eSpiStuck} action;
 	int time;
 } tDanger;
 

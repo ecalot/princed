@@ -34,44 +34,43 @@ kid.c: Free Prince : Kid object
 #include "room.h"
 #include <stdio.h> /* DEBUG printf */
 #include "states.h"
-/* #include "maps.h" * mapPressedTile */
+#include "maps.h" /* mapGetRoom */
 
 
-int kidVerifyRoom(tObject *kid,tRoom *room) {
+int kidVerifyRoom(tObject *kid,tRoom *room,int refresh) {
 	/* if the kid is out of the screen we need to change the screen and put
 	 * the kid back again on it
 	 * PRE: tObject *kid is a kid
 	 */
 	
-	int refresh=0;
-	
 	/* The kid is down */
-	if (kid->floor==4) {
+	if (kid->floor==3) {
 		kid->floor=0;
-		room->id=room->links[eDown];
-		refresh=1;
+		*room=mapGetRoom(room->level,room->links[eDown]);
+		refresh=0;
 	}
 	
 	/* The kid is up */
 	if (kid->floor==-1) {
-		printf("pasó: kf=0 ahora es 3, cambio el id del room y refresco\n");
 		kid->floor=2;
-		room->id=room->links[eUp];
-		refresh=1;
+		*room=mapGetRoom(room->level,room->links[eUp]);
+		refresh=0;
 	}
 
 	/* The kid is left */
 	if (kid->location<0) {
 		kid->location+=TILE_W*10;
-		room->id=room->links[eLeft];
-		refresh=1;
+		refresh=0;
+		*room=mapGetRoom(room->level,room->links[eLeft]);
+		roomKidChangedFloor(room,kid);
 	}
 
 	/* The kid is right */
 	if (kid->location>TILE_W*10) {
 		kid->location-=TILE_W*10;
-		room->id=room->links[eRight];
-		refresh=1;
+		refresh=0;
+		*room=mapGetRoom(room->level,room->links[eRight]);
+		roomKidChangedFloor(room,kid);
 	}
 
 	return refresh;
@@ -83,20 +82,17 @@ int kidMove(tObject* kid,short flags,tRoom* room) {
 /*	x=object_getLocation(*kid,kid->gfxCache[kid->direction]->pFrames[stateGetImage(*kid)-1])/TILE_W;*/
 	
 	if (flags&STATES_FLAG_P)
-/*		refresh=mapPressedTile(
-			room->level,
-			roomGetTile(room,x+1,kid->floor+1),
-			room->id,
-			x+1,
-			kid->floor+1
-		);*/
 		refresh=roomPress(room,kid);
 printf("f era %d. ",kid->floor);
-	if (flags&STATES_FLAG_F)
+	if (flags&STATES_FLAG_F) {
 		kid->floor++;
-	if (flags&STATES_FLAG_U)
+		roomKidChangedFloor(room,kid);
+	}
+	if (flags&STATES_FLAG_U) {
 		kid->floor--;
+		roomKidChangedFloor(room,kid);
+	}
 printf("f pasa a ser %d\n",kid->floor);
-	return kidVerifyRoom(kid,room)||refresh;
+	return kidVerifyRoom(kid,room,refresh);
 }
-	
+

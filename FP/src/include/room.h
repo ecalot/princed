@@ -44,6 +44,6 @@ void roomDrawBackground(tRoom* room);
 void roomDrawForeground(tRoom* room);
 void roomLoadGfx(long environment); /* Only to initialize environment by mapStart */
 int roomPress(tRoom* room, tObject* obj);
-
+void roomKidChangedFloor(tRoom* room, tObject* kid);
 #endif
 

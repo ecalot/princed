@@ -131,7 +131,8 @@ void* mapLoadLevel(tMemory level) {
 				tDanger newDanger;
 				/* initialize the tDanger object*/
 	 			newDanger.frame=0;
-				newDanger.action=((map->fore[i*30+j]&0x1f)==TILE_CHOPPER)?eChoWaiting:eSpiDown;
+	 			newDanger.time=1;
+				newDanger.action=((map->fore[i*30+j]&0x1f)==TILE_CHOPPER)?eChoInactive:eSpiDown;
 				map->back[i*30+j]=dangerInRoom;
 				map->screenDangers[i][dangerInRoom]=map->dangers+dangers;
 				fprintf(stderr,"mapLoadLevel: Creating danger tile: indexed=%d,%d btn pointer=%p\n",i,dangerInRoom,(void*)(map->dangers+dangers));
@@ -380,15 +381,14 @@ void  mapMove(tMap* map) {
 		}
 	}
 
-	/* check out and update all the spikes and choppers *
-	printf("updating\n");
-	for (i=0;i<slevel(totalDangers);i++) {
-		printf("updating Spikes: action: %d frame=%d time=%d\n",map->dangers[i].action,map->dangers[i].frame,map->dangers[i].time);
+	/* check out and update all the spikes and choppers */
+	printf("chopper act=%d tim=%d fra=%d\n",map->dangers[i].time,map->dangers[i].action,map->dangers[i].frame);
+	for (i=0;i<slevel(totalDangers);i++) { 
 		switch (map->dangers[i].action) {
 		case eSpiUp:
 			map->dangers[i].frame++;
-			if (map->dangers[i].frame>3) {
-				map->dangers[i].frame=3;
+			if (map->dangers[i].frame>4) {
+				map->dangers[i].frame=4;
 				map->dangers[i].action=eSpiWaitUp;
 				map->dangers[i].time=30;
 			}
@@ -401,12 +401,29 @@ void  mapMove(tMap* map) {
 			break;
 		case eSpiDown:
 			if (map->dangers[i].frame) map->dangers[i].frame++;
+			if (map->dangers[i].frame==7) map->dangers[i].frame=0;
+			break;
+		case eChoInactive:
+			if (map->dangers[i].frame) map->dangers[i].frame++;
 			if (map->dangers[i].frame==6) map->dangers[i].frame=0;
+			map->dangers[i].time=1;
+			break;
+		case eChoActive:
+			if (map->dangers[i].frame) {
+				map->dangers[i].frame++;
+			} else {
+				map->dangers[i].time--;
+			}
+			if (map->dangers[i].frame==6) {
+				map->dangers[i].frame=0;
+				map->dangers[i].time=10;
+			}
+			if (!map->dangers[i].time) map->dangers[i].frame++;
 			break;
 		default:
 			break;
 		}
-	}*/
+	}
 }
 
 void  mapFreeLevel(tMap* map) {
