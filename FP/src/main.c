@@ -78,15 +78,20 @@ int main (int argc, char **argv) {
 	} while (c!=-1);
 
 	/* TODO: traditional parsing: megahit (level) */
-	/* Check syntax, help and version screens */
-	
+
+	/* Check syntax, help and version screens */	
 	if (hasFlag(help_flag)) {
-		fprintf(stderr,"This is a help screen\n");
+		fprintf(stderr,"Allowed options are:\n -t, --megahit\n "\
+		               "-l[level], --level=[level]\n-m\n--version\n--help\n\n");
 		exit(1);
 	}
 
-	if (hasFlag(version_flag)) {
-		fprintf(stderr,"This is a version screen\n");
+	if (hasFlag(version_flag)) { /* TODO: send version to headers */
+		fprintf(stderr,"FreePrince " FP_VERSION "\nWritten by FreePrince Development Team\n\n");
+		fprintf(stderr,"Check http://www.princed.com.ar for updates.\n");
+		fprintf(stderr,"This is free software; see the source for copying conditions.  "\
+		               "There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS "\
+		               "FOR A PARTICULAR PURPOSE.\n");
 		exit(1);
 	}
 
