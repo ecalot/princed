@@ -43,7 +43,7 @@ kernel.h: Princed Resources : Resource Handler headers
 #define hasFlag(a) (optionflag&(a))
 #define setFlag(a) optionflag|=(a)
 
-#define FP_VERSION "0.3-pre-alpha-ushuaia"
+#define FP_VERSION "0.3-pre-alpha-enmbasso"
 
 int kernel(int optionflag,int level);
 /* level=-1 is default

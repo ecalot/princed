@@ -150,7 +150,17 @@ int playgame(int optionflag,int level) {
 			}
 		}
 	}
-	outputDrawMessage(1,"You are dead! Press a key\n");
+	switch (death) {
+/*	case STATE_EXIT_CODE_SPIKED:
+		outputDrawMessage(1,"You are spiked! Press a key\n");
+		break;*/
+	case STATE_EXIT_CODE_SPLASH:
+		outputDrawMessage(1,"Splashh! You are dead! Press a key\n");
+		break;
+/*	case STATE_EXIT_CODE_CHOMPED:
+		outputDrawMessage(1,"You are dead! Press a key\n");
+		break;*/
+	}	
 	outputUpdateScreen();
 	inputPause();
 	return playgame(optionflag,level); /* TODO: fix this recursivity */
