@@ -75,7 +75,7 @@ typedef struct {
 } tBlink;
 
 /* Main screen object */
-static SDL_Surface* screen;
+SDL_Surface* screen; /* Only files in this layer must import this struct */
 
 /* Text functions */
 
@@ -88,8 +88,6 @@ typedef struct _valid_chars {
 static vChar        valid_chars[256];
 static SDL_Surface* font      = NULL;
 static int          font_init = 0;
-
-/* #define FONT_FILE "../fonts.bmp" */
 
 void initText ()
 {
