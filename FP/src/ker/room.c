@@ -75,6 +75,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case T_SWORD:
 	case T_POTION:
 	case T_SPIKES:
+	case T_BP_BOTTOM:
 	case T_BTN_RAISE:
 	case T_BTN_DROP:
 	case T_GATE:
@@ -88,6 +89,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasGateFrame=0;
 		result.bricks=(result.code==T_FLOOR)?back:0;
 		result.hasPillar=(result.code==T_PILLAR);
+		result.hasBigPillar=(result.code==T_BP_BOTTOM);
 		result.isGate=(result.code==T_GATE);
 		result.walkable=1;
 		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);
@@ -105,6 +107,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasGateFrame=0;
 		result.bricks=0;
 		result.hasPillar=0;
+		result.hasBigPillar=0;
 		result.walkable=0;
 		result.isExit=0;
 		result.isGate=0;
@@ -120,8 +123,10 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		break;
 	case T_EMPTY:
 	case T_TAPESTRY_TOP:
+	case T_BP_TOP:
 	default:
 		result.hasGateFrame=(result.code==T_TAPESTRY_TOP);
+		result.hasBigPillar=(result.code==T_BP_TOP)*2;
 		result.bricks=back;
 		result.hasPillar=0;
 		result.walkable=0;
@@ -194,6 +199,22 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			(x-1)*TILE_W,
 			y*TILE_H+2
 		);
+	}
+	/* pillar_big_up/left */
+	if (left.hasBigPillar) {
+		if (left.hasBigPillar==1) {
+			outputDrawBitmap(
+				roomGfx.environment->pFrames[83],
+				(x-1)*TILE_W,
+				y*TILE_H+2
+			);
+		} else {
+			outputDrawBitmap(
+				roomGfx.environment->pFrames[85],
+				(x-1)*TILE_W,
+				y*TILE_H+3
+			);
+		}
 	}
 	/* pressable/left */
 	if (left.isPressable) {
@@ -306,6 +327,22 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			y*TILE_H
 		);
 	}
+	/* big_pillar/this */
+	if (tile.hasBigPillar) {
+		if (tile.hasBigPillar==1) {
+			outputDrawBitmap(
+				roomGfx.environment->pFrames[82],
+				(x-1)*TILE_W,
+				y*TILE_H
+			);
+		} else {
+			outputDrawBitmap(
+				roomGfx.environment->pFrames[87],
+				(x-1)*TILE_W+8,
+				y*TILE_H+3
+			);
+		}
+	}
 	/* pressable/this */
 	if (tile.isPressable) {
 		outputDrawBitmap(
@@ -375,8 +412,9 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 				y*TILE_H+3
 			);
 		} else {
+	/* empty */
 			tTile dleft=roomGetTile(room,x-1,y+1);
-	/* gate_frame/this */
+			/* gate_frame/this */
 			if (tile.hasGateFrame) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[42],
@@ -384,7 +422,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 					y*TILE_H+3
 				);
 			}
-	/* gate/left */
+			/* gate/left */
 			if (dleft.isGate) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[16],
@@ -392,8 +430,15 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 					y*TILE_H+3
 				);
 			}
-
-	/* empty */
+			/* big_pillar/left */
+			if (dleft.hasBigPillar==2) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[86],
+					(x-1)*TILE_W,
+					y*TILE_H+3
+				);
+			}
+			/* pillar/left */
 			if (dleft.hasPillar) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[45],
@@ -401,6 +446,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 					y*TILE_H+3
 				);
 			}
+			/* pillar/left */
 			if (dleft.isWall) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[64],
@@ -428,6 +474,14 @@ void drawForePanel(tRoom* room,int x, int y) {
 	if (tile.hasPillar) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[46],
+			x*TILE_W-24,
+			y*TILE_H
+		);
+	}
+	/* big pillar */
+	if (tile.hasBigPillar==1) {
+		outputDrawBitmap(
+			roomGfx.environment->pFrames[84],
 			x*TILE_W-24,
 			y*TILE_H
 		);

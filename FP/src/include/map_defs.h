@@ -97,8 +97,8 @@ Len	Offs	BlockName & Description
 #define T_BTN_STUCK 0x05       /* 00101 none    */
 #define T_BTN_DROP 0x06        /* 00110 event   */
 #define T_TAPESTRY 0x07        /* 00111 tapest  */
-#define T_BP_TOP 0x08          /* 01000 none    */
-#define T_BP_BOTTOM 0x09       /* 01001  none   */
+#define T_BP_BOTTOM 0x08       /* 01000 none    */
+#define T_BP_TOP 0x09          /* 01001  none   */
 #define T_POTION 0x0A          /* 01010 potion  */
 #define T_LOOSE 0x0B           /* 01011 none    */
 #define T_TAPESTRY_TOP 0x0C    /* 01100 ttop    */
