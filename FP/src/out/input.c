@@ -67,6 +67,11 @@ int editAction(tKey* key,SDLKey k) {
 	}
 	/* Shift actions */
 	if (inputGetShift(key->status)) {
+		switch (k) {
+		case SDLK_l:
+			key->actionPerformed=passLevel;
+			break;
+		}
 	}
 	/* Normal actions */
 	if (!(key->status)) {
