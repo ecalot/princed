@@ -68,7 +68,7 @@ typedef struct _valid_chars {
 	unsigned short w;   /* Width of character */
 } vChar;
 
-vChar valid_chars[255];
+vChar valid_chars[256];
 
 static SDL_Surface *font = NULL;
 int font_init = 0;
