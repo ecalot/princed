@@ -79,11 +79,23 @@ int mCopy(const char* strSource, const char* strTarget);
 #define array2short(a) ((*(a)))+((*((a)+1))<<8)
 #define array2long(a)  ((*(a)))+((*((a)+1))<<8)+((*((a)+2))<<16)+((*((a)+3))<<24)
 
+#ifdef MACOS
+#define freadshort(var,file)  macfreads ((var),file)
+#define freadlong(var,file)   macfreadl ((var),file)
+#define fwriteshort(var,file) macfwrites((var),file)
+#define fwritelong(var,file)  macfwritel((var),file)
+#define fwritechar(var,file)  fwrite((var),1,1,file)
+int macfreads (void* bigEndian,FILE* file);
+int macfreadl (void* var,FILE* file);
+int macfwrites(void* var,FILE* file);
+int macfwritel(void* var,FILE* file);
+#else
 #define freadshort(var,file)  fread ((var),2,1,file)
 #define freadlong(var,file)   fread ((var),4,1,file)
 #define fwriteshort(var,file) fwrite((var),2,1,file)
 #define fwritelong(var,file)  fwrite((var),4,1,file)
 #define fwritechar(var,file)  fwrite((var),1,1,file)
+#endif
 
 #endif
 
