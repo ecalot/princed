@@ -98,7 +98,7 @@ void res_createFrames(tMemory data,int type,void** returnValue,int number) {
 					printf("Fatal error: res_createFrames: invalid palette\n");
 					exit(1);
 				}
-				memcpy(image.pal,data.array+1,16);
+				memcpy(image.pal,data.array+5,16*3);
 				printf("res_createFrames: Remembering palette\n",number,type);
 				return;
 			} else {
