@@ -260,12 +260,12 @@ END {
 	for (i=0;i<currentAnimation;i++) {
 		flags=arrayAnimation[i,"flags"]
 		
-		b=match(flags,/[+][ ]*([0-9]+)/)
-		steps=substr(flags,b,RLENGTH)/1
-		c=match(flags,/[-][ ]*([0-9]+)/)
-		offxs=substr(flags,c,RLENGTH)/1
+		b=match(flags,/\$[ ]*([+-]?[0-9]+)/)
+		steps=substr(flags,b+1,RLENGTH)
+		c=match(flags,/\@[ ]*([+-]?[0-9]+)/)
+		offxs=substr(flags,c+1,RLENGTH)/1
 		
-		s=match(flags,/([^0-9 +-])/)
+		s=match(flags,/([^0-9 +@\$-])/)
 		if (s) d=substr(flags,s,1)
 		if (s&&(d!="#")) {
 			coma2=""
@@ -273,7 +273,7 @@ END {
 			while (s) {
 				flagmask=sprintf("%s%sSTATES_FLAG_%s",flagmask,coma2,toupper(d))
 				flags=substr(flags,s+1,length(flags)-s)
-				s=match(flags,/([^0-9 +-])/)
+				s=match(flags,/([^0-9 +@\$-])/)
 				if (s) d=substr(flags,s,1)
 				if (d=="#") s=0
 				coma2="|"
