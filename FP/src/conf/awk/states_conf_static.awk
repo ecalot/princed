@@ -35,17 +35,17 @@ BEGIN {
 	printf("#define STATES_MOVETYPES_ABSOLUTEFORWARD 1\n\n")
 	printf("#define STATES_MOVETYPES_RELATIVETURN 2\n\n")
 	printf("#define STATES_CONDITIONS {\\\n")
-	tmp="conf/statesproperties.conf"
-	while ((getline line < tmp) > 0) {
-		gsub(/[	 ]+/, "-",line)
-		m=index(line,"-")
-		if (m) {
-			word=substr(line,0,m)
-			number=substr(line,m+1)
-			defines[word]=number
-		}
-	}
-	close(tmp)
+#	tmp="conf/statesproperties.conf"
+#	while ((getline line < tmp) > 0) {
+#		gsub(/[	 ]+/, "-",line)
+#		m=index(line,"-")
+#		if (m) {
+#			word=substr(line,0,m)
+#			number=substr(line,m+1)
+#			defines[word]=number
+#		}
+#	}
+#	close(tmp)
 	currentAnimation=0
 	greatestLevel=-1
 	first=0
@@ -74,8 +74,8 @@ BEGIN {
 		}
 		currentCondition++
 		if ($2!=sprintf("%d",$2)) {
-			if (defines[$2]) {
-				result=sprintf("STATES_COND_%s /* %d */",$2,defines[$2])
+			if (1) {      #defines[$2]) {
+				result=sprintf("STATES_COND_%s /* %d */",$2,0) #defines[$2])
 			} else {
 				if ($2) {
 					printf("Parsing error in states.conf: Condition modifier '%s' not recognized on uncommented line %d.\n",$2,NR)>"/dev/stderr"
