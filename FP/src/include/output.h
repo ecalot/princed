@@ -91,9 +91,8 @@ void outputStop();
 /* Finish all output modes, including the screen mode
  */
 
-int getHeight();
-
-int getWidth();
+int outputGetHeight(void* image);
+int outputGetWidth(void* image);
 
 
 #endif

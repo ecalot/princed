@@ -239,7 +239,8 @@ int outputGetScreenWidth()
 
 int outputGetHeight(void* image)
 {
-	return ((SDL_Surface*)image)->h;
+	register tSurface* img=(tSurface*)image;
+	return img->surface->h+img->bottom;
 }
 
 int outputGetWidth(void* image)

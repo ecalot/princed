@@ -237,7 +237,7 @@ void drawExit(int x, int y, int frame) {
 
 typedef enum {layBack=113,layRight=108,layFore=102}tSpikeLayer;
 void drawSpike(int x, int y, int frame, tSpikeLayer layer) {
-	/* Frame defined from 0 (none) to 7 (near none). 4 is out. */
+	/* Frame defined from 0 (none) to 5 (near none). 3 is out normal. */
 	switch (layer) { /* TODO: use relative offsets in resources */
 		case layRight:
 			x+=32;
@@ -250,6 +250,34 @@ void drawSpike(int x, int y, int frame, tSpikeLayer layer) {
 	}
 	outputDrawBitmap(roomGfx.environment->pFrames[(int)layer+((frame>4)?(6-frame):frame)],x,y);
 }	
+
+typedef enum {layCBack=1,layCFore=2}tChopperLayer;
+void drawChopper(int x, int y, int frame, tChopperLayer layer) {
+	/* Frame defined from 0 (normal) to 7 (near normal). 3 is close. */
+	if (frame<4) {
+		frame++;
+	} else {
+		frame=7-frame;
+	}
+	switch (layer) { /* TODO: use relative offsets in resources */
+		case layCFore:
+			outputDrawBitmap(
+				roomGfx.environment->pFrames[91],x,y
+			);
+			break;
+		case layCBack:
+			outputDrawBitmap(
+				roomGfx.environment->pFrames[92-frame],x,y
+			);
+			if (frame<3)
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[100-frame],
+					x,
+					y-60+outputGetHeight(roomGfx.environment->pFrames[100-frame])
+				);
+			break;
+	}
+}
 
 /* main panel block */
 void drawBackPanel(tRoom* room,int x, int y) {
@@ -373,11 +401,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	}
 	/* chopper/this */
 	if (tile.hasChopper) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[91],
-			(x-1)*TILE_W,
-			y*TILE_H
-		);
+		drawChopper((x-1)*TILE_W,y*TILE_H,room->level->time%8,layCBack);
 	}
 	/* empty_bricks/this */
 	if ((0<tile.bricks)&&(tile.bricks<4)&&(tile.code==T_EMPTY)) {
