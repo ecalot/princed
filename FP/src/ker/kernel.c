@@ -36,6 +36,7 @@ kernel.c: FreePrince : Main Kernel
 #include "kernel.h"
 #include "resources.h"
 #include "output.h"
+#include "input.h"
 #include "titles.h"
 
 int control(int optionflag,int level) {
@@ -169,104 +170,3 @@ int kernel(int optionflag,int level) {
 	return 0;
 }
 
-
-
-#if 0
-#include <stdio.h>
-#include <SDL/SDL.h>
-
-void quit()
-{
-	SDL_Quit();
-	exit(0);
-}
-
-/* Initialize SDL: */
-void init()
-{
-	if (SDL_Init(SDL_INIT_TIMER) == -1)
-	{
-		fprintf(stderr, "Unable to initialize SDL.");
-		exit(1);
-	}
-}
-
-/* Initialize screen: */
-void start_screen()
-{
-	SDL_Surface *screen;
-
-	screen = SDL_SetVideoMode(640, 480, 8, SDL_SWSURFACE);
-	if ( screen == NULL ) {
-		fprintf(stderr, "Unable to set 640x480 video: %s\n", SDL_GetError());
-		quit();
-	}
-}
-
-/* Event loop: */	
-void event_loop()
-{
-	SDL_Event event;
-	
-	while(SDL_WaitEvent(&event))
-	{
-		switch (event.type) {
-		case SDL_KEYDOWN:
-			fprintf(stderr, "The %s key was pressed! %d\n",
-			SDL_GetKeyName(event.key.keysym.sym),event.key.keysym.sym);
-			
-			break;
-		case SDL_KEYUP:
-			fprintf(stderr, "The %s key was unpressed!\n",
-			SDL_GetKeyName(event.key.keysym.sym));
-			break;	
-		case SDL_USEREVENT:
-			fprintf(stderr, "Timer event!\n");
-			break;
-		case SDL_QUIT:
-			fprintf(stderr, "Program exited normally.");
-			return;
-		}
-	}
-	fprintf(stderr, "Abnormal termination.");
-}
-
-Uint32 timer_callback(Uint32 interval, void *param)
-{
-	SDL_Event event;
-
-	/* Push a user-defined event on the event queue: */
-	event.type = SDL_USEREVENT;
-	event.user.code = 0;
-	event.user.data1 = NULL;
-	event.user.data2 = NULL;
-	SDL_PushEvent(&event);
-
-	return interval; /* Timer must raise an alarm again after 'interval' ms. */
-}
-
-SDL_TimerID start_timer()
-{
-	return SDL_AddTimer(83, timer_callback, NULL);
-}
-
-void stop_timer(SDL_TimerID id)
-{
-	SDL_RemoveTimer(id);
-}
-
-int main(int argc, char argv[])
-{
-	SDL_TimerID id;
-
-	init();
-	start_screen();
-	id = start_timer();
-
-	/* Main loop: */
-	event_loop();
-
-	stop_timer(id);
-	quit();
-}
-#endif

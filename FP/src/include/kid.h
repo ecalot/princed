@@ -40,12 +40,15 @@ typedef struct {
 	int location;
 	int floor;
 	int direction;
-	int framesLeft;
+	int frame;
+	int velX;
+	int velY;
 	tData* action;
 } tKid;
 
 void kidInit(tKid* kid);
 void kidDraw(tKid* kid);
-void kidMove(tKid* kid,tKey* key);
+void kidMove(tKid* kid,tKey* key/*,tRoom room*/);
 
 #endif
+

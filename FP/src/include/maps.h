@@ -42,6 +42,7 @@ int levelUse(void* level);
  */
 
 int levelGetScreenWalls(unsigned char* data,unsigned char* borders);
+/* nt levelGetRoom (tRoom* room); */
 /* This will save a screen map into data.
  * 
  * data is a pre-allocated array with 10x3=30 bytes with the screen map
