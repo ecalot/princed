@@ -1,5 +1,5 @@
 Princed Resources v1.0-dev1
-(c) Copyright 2003 - Princed Development Team
+(c) Copyright 2003, 2004 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
 
@@ -75,7 +75,7 @@ Binary:
  * Type "pcspeaker":
  For the internal PC Speaker sound we are using binary data saved in pcs
  format.
- The formas is saved this way:
+ The format is saved this way:
   2 unique bytes for headers
   3 bytes per note (2 for frequency and 1 for duration)
  Format supported by: not supported yet, use xvi32 or any other hex editor.
