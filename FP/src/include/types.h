@@ -103,7 +103,6 @@ typedef struct {
 typedef struct {
 	/* Graphical arributes */
 	void* moreInfo;
-	int bricks;
 
 	tModId back;
 	unsigned char code;

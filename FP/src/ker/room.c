@@ -75,69 +75,45 @@ void roomFree() {
 /* room */
 tTile roomGetTile(tRoom* room,int x, int y) {
 	tTile   result;
-	tTileId fore;
 	tRoomId roomId;
 	
-	fore=room->fore[x+12*y];
 	result.back=room->back[x+12*y];
-	result.code=fore&0x1F;
+	result.code=room->fore[x+12*y]&0x1F;
 	
-	switch (result.code) { /* TODO: use the tiles library */
-	case TILE_GATE:
-	case TILE_EXIT_LEFT:
+	/* TODO: use a tile group: special, with GATES, PRESSABLE, SPIKES,
+	 * CHOPPER.
+	 * Code SPIKES and CHOPPER as memory structures */
+
+	if (isIn(result,TILES_GATES)) { 
 		roomId=room->id;
 		if (y==0)	roomId=room->links[eUp];
 		if (x==0) roomId=room->links[eLeft];
 		if (y==4) roomId=room->links[eDown];
 		if (x==11)roomId=room->links[eRight];
-		result.bricks=0;
 		if (roomId<24)
 			result.moreInfo=room->level->screenGates[roomId-1][result.back];
-		break;
-	case TILE_BTN_RAISE:
-	case TILE_BTN_DROP:
+	} else if (isIn(result,TILES_PRESSABLE)) {
 		roomId=room->id;
 		if (y==0)	roomId=room->links[eUp]; /*TODO: validate corners */
 		if (x==0) roomId=room->links[eLeft];
 		if (y==4) roomId=room->links[eDown];
 		if (x==11)roomId=room->links[eRight];
-		result.bricks=0;
 		/* the case that a button is in tile 0 should never happen, but we'll care about it just in case */
 		if (roomId<24)
 			result.moreInfo=room->level->screenPressables[roomId-1][result.back];
-		break;
-	case TILE_FLOOR:
-	case TILE_TORCH:
-	case TILE_SWORD:
-	case TILE_CHOPPER:
-	case TILE_POTION:
-	case TILE_SPIKES:
-	case TILE_BP_BOTTOM:
-	case TILE_TORCH_DEBRIS:
-	case TILE_EXIT_RIGHT:
-	case TILE_SKELETON:
-	case TILE_LOOSE:
-	case TILE_PILLAR:
-	case TILE_DEBRIS:
-		result.bricks=(result.code==TILE_FLOOR)?result.back:0;
-		break;
-	case TILE_WALL:
-		result.bricks=0;
-		break;
-	case TILE_EMPTY:
-	case TILE_TAPESTRY_TOP:
-	case TILE_BP_TOP:
-	default:
-		result.bricks=result.back;
-		break;
 	}
 	return result;
 }
 
-
 /*
  * Drawing functions
  */
+
+#define e(a,x,y) outputDrawBitmap(roomGfx.environment->pFrames[a],(x),(y))
+			
+#define buttonIsNormal(a) (((tPressable*)a.moreInfo)->action==eNormal)
+#define gateGetFrame(a)   (((tGate*)a.moreInfo)->frame)
+#define wallGetInfo(a)    wallGet(env,cases,(a),seed)
 
 /* door drawing */
 #define drawGateTop(x,y,frame) outputDrawBitmap(roomGfx.environment->pFrames[35-((frame)&7)],x,y)
@@ -147,20 +123,20 @@ void drawGate(int x, int y, int frame) {
 	register int i;
 	register const int mod=frame&7;
 	
-	outputDrawBitmap(roomGfx.environment->pFrames[27-mod],x,y+mod);
+	e(27-mod,x,y+mod);
 	for (i=8;i<=frame;i+=8)
-		outputDrawBitmap(roomGfx.environment->pFrames[20],x,y+i+mod);
-	outputDrawBitmap(roomGfx.environment->pFrames[18],x,y+i+mod+4);
+		e(20,x,y+i+mod);
+	e(18,x,y+i+mod+4);
 }
 
 void drawExit(int x, int y, int frame) {
 	/* Frame defined from 0 (open) to 50 (close) */
 	register int i;
-	if (frame<47) outputDrawBitmap(roomGfx.environment->pFrames[55],x,y+47);
-	outputDrawBitmap(roomGfx.environment->pFrames[50],x,y+51);
+	if (frame<47) e(55,x,y+47);
+	e(50,x,y+51);
 	for (i=0;i<=frame;i+=4)
-		outputDrawBitmap(roomGfx.environment->pFrames[1],x,y+i+(frame&3));
-	outputDrawBitmap(roomGfx.environment->pFrames[2],x,y);
+		e(1,x,y+i+(frame&3));
+	e(2,x,y);
 }
 
 typedef enum {layBack=113,layRight=108,layFore=102}tSpikeLayer;
@@ -176,7 +152,7 @@ void drawSpike(int x, int y, int frame, tSpikeLayer layer) {
 			y-=2;
 			break;
 	}
-	outputDrawBitmap(roomGfx.environment->pFrames[(int)layer+((frame>4)?(6-frame):frame)],x,y);
+	e((int)layer+((frame>4)?(6-frame):frame),x,y);
 }	
 
 typedef enum {layCBack=1,layCFore=2}tChopperLayer;
@@ -189,20 +165,12 @@ void drawChopper(int x, int y, int frame, tChopperLayer layer) {
 	}
 	switch (layer) { /* TODO: use relative offsets in resources */
 		case layCFore:
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[97-frame],x,y
-			);
+			e(97-frame,x,y);
 			break;
 		case layCBack:
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[92-frame],x,y
-			);
+			e(92-frame,x,y);
 			if (frame<3)
-				outputDrawBitmap(
-					roomGfx.environment->pFrames[100-frame],
-					x,
-					y-60+outputGetHeight(roomGfx.environment->pFrames[100-frame])
-				);
+				e(100-frame,x,y-60+outputGetHeight(roomGfx.environment->pFrames[100-frame]));
 			break;
 	}
 }
@@ -211,267 +179,118 @@ void drawChopper(int x, int y, int frame, tChopperLayer layer) {
 void drawBackPanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
 	tTile left=roomGetTile(room,x-1,y);
+	/* LEFT (left,tile) */
 	
 	/* Wall/left */
-	if (!isIn(tile,TILES_WALL)) {
-		if (isIn(left,TILES_WALL)) {
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[63],
-				(x-1)*TILE_W,
-				y*TILE_H+2
-			);
-		}
-	}
+	if ((!isIn(tile,TILES_WALL))&&(isIn(left,TILES_WALL))) 
+		e(63,(x-1)*TILE_W+0,y*TILE_H+2);
 	/* Gate/left */
 	if (isIn(left,TILES_DOOR)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[15],
-			(x-1)*TILE_W,
-			y*TILE_H+2
-		);
-		drawGate((x-1)*TILE_W,(y-1)*TILE_H+3,((tGate*)left.moreInfo)->frame);
+		e(15,(x-1)*TILE_W+0,y*TILE_H+2);
+		drawGate((x-1)*TILE_W+0,(y-1)*TILE_H+3,gateGetFrame(left));
 	}
 	/* normal/left */
-	if (isIn(left,TILES_FLOOR)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[10],
-			(x-1)*TILE_W,
-			y*TILE_H+2
-		);
-	}
+	if (isIn(left,TILES_FLOOR)) 
+		e(10,(x-1)*TILE_W+0,y*TILE_H+2);
 	/* exit_left/left */
-	if (isIn(left,TILE_EXIT_RIGHT)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[7],
-			(x-1)*TILE_W,
-			y*TILE_H+2
-		);
-	}
+	if (isIn(left,TILE_EXIT_RIGHT)) 
+		e(7,(x-1)*TILE_W+0,y*TILE_H+2);
 	/* pillar/left */
-	if (isIn(left,TILES_PILLAR)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[44],
-			(x-1)*TILE_W,
-			y*TILE_H+2
-		);
-	}
+	if (isIn(left,TILES_PILLAR)) 
+		e(44,(x-1)*TILE_W+0,y*TILE_H+2);
 	/* pillar_big_up/left */
-	if (isIn(left,TILE_BP_BOTTOM)) {
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[83],
-				(x-1)*TILE_W,
-				y*TILE_H+2
-			);
-	}
-	if (isIn(left,TILE_BP_TOP)) {
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[85],
-				(x-1)*TILE_W,
-				y*TILE_H+3
-			);
-	}
+	if (isIn(left,TILE_BP_BOTTOM)) 
+		e(83,(x-1)*TILE_W+0,y*TILE_H+2);
+	if (isIn(left,TILE_BP_TOP)) 
+		e(85,(x-1)*TILE_W+0,y*TILE_H+3);
 	/* pressable/left */
-	if (isIn(left,TILES_PRESSABLE)) {
-		if (isIn(left,TILES_RAISE)) {
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[10],
-				(x-1)*TILE_W,
-				y*TILE_H+((((tPressable*)left.moreInfo)->action==eNormal)?1:2)
-			);
-		} else {
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[10],
-				(x-1)*TILE_W,
-				y*TILE_H+((((tPressable*)left.moreInfo)->action==eNormal)?2:3)
-			);
-		}
-	}
+	if (isIn(left,TILE_BTN_RAISE)) 
+		e(10,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(left)?1:2));
+	if (isIn(left,TILE_BTN_DROP)) 
+		e(10,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(left)?2:3));
 	/* debris/left */
-	if (isIn(left,TILES_BROKENTILE)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[49],
-			(x-1)*TILE_W,
-			y*TILE_H+2
-		);
-	}
+	if (isIn(left,TILES_BROKENTILE)) 
+		e(49,(x-1)*TILE_W+0,y*TILE_H+2);
 	/* spikes/left */
 	if (isIn(left,TILES_SPIKES)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[107],
-			(x-1)*TILE_W,
-			y*TILE_H+2
-		);
-		drawSpike((x-2)*TILE_W,y*TILE_H,room->level->time%6,layRight);
+		e(107,(x-1)*TILE_W+0,y*TILE_H+2);
+		drawSpike((x-2)*TILE_W+0,y*TILE_H,room->level->time%6,layRight);
 	}
 	/* skeleton/left */
-	if (isIn(left,TILES_SKELETON)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[81],
-			(x-1)*TILE_W,
-			y*TILE_H+2
-		);
-	}
+	if (isIn(left,TILES_SKELETON)) 
+		e(81,(x-1)*TILE_W+0,y*TILE_H+2);
 	/* torch/this */
 	if (isIn(tile,TILES_TORCH)) { /* animation */
-		outputDrawBitmap(
-			roomGfx.torch->pFrames[
-				((room->level->time)+2*x+y)%(roomGfx.torch->frames)
-			],
-			x*TILE_W+11,
-			y*TILE_H-39
-		);
-		outputDrawBitmap( /* base */
-			roomGfx.environment->pFrames[56],
-			x*TILE_W+3,
-			y*TILE_H-24
-		);
+		outputDrawBitmap(roomGfx.torch->pFrames[((room->level->time)+2*x+y)%(roomGfx.torch->frames)],x*TILE_W+11,y*TILE_H-39);
+		/* base */
+		e(56,x*TILE_W+3,y*TILE_H-24);
 	}
 	/* chopper/this */
-	if (isIn(tile,TILE_CHOPPER)) {
-		drawChopper((x-1)*TILE_W,y*TILE_H,room->level->time%8,layCBack);
-	}
+	if (isIn(tile,TILE_CHOPPER)) 
+		drawChopper((x-1)*TILE_W+0,y*TILE_H,room->level->time%8,layCBack);
 	/* empty_bricks/this */
-	if ((0<tile.bricks)&&(tile.bricks<4)&&(tile.code==TILE_EMPTY)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[51+tile.bricks],
-			x*TILE_W,
-			y*TILE_H-18
-		);
-	}	
+	if (isIn(tile,TILES_BRICKE1)) 
+		e(51,x*TILE_W+0,y*TILE_H-18);
+	if (isIn(tile,TILES_BRICKE2)) 
+		e(52,x*TILE_W+0,y*TILE_H-18);
+	if (isIn(tile,TILES_BRICKE3)) 
+		e(53,x*TILE_W+0,y*TILE_H-18);
 	/* floor_bricks/this */
-	if ((0<tile.bricks)&&(tile.bricks<3)&&(tile.code==TILE_FLOOR)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[11+tile.bricks],
-			x*TILE_W,
-			y*TILE_H-18
-		);
-	}
+	if (isIn(tile,TILES_BRICKF1)) 
+		e(12,x*TILE_W+0,y*TILE_H-18);
+	if (isIn(tile,TILES_BRICKF2)) 
+		e(13,x*TILE_W+0,y*TILE_H-18);
 	/* gate/this */
-	if (isIn(tile,TILES_DOOR)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[14],
-			(x-1)*TILE_W,
-			y*TILE_H
-		);
-	}
+	if (isIn(tile,TILES_DOOR)) 
+		e(14,(x-1)*TILE_W+0,y*TILE_H+0);
 	/* gate_frame/this */
-	if (isIn(tile,TILES_GATEFRAME)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[17],
-			(x-1)*TILE_W+24,
-			y*TILE_H
-		);
-	}
+	if (isIn(tile,TILES_GATEFRAME)) 
+		e(17,(x-1)*TILE_W+24,y*TILE_H+0);
 	/* normal/this */
-	if (isIn(tile,TILES_FLOOR)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[9],
-			(x-1)*TILE_W,
-			y*TILE_H
-		);
-	}
+	if (isIn(tile,TILES_FLOOR)) 
+		e(9,(x-1)*TILE_W+0,y*TILE_H+0);
 	/* exit_left/this */
-	if (isIn(tile,TILE_EXIT_RIGHT)) {
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[5],
-				(x-1)*TILE_W,
-				y*TILE_H
-			);
-	}
+	if (isIn(tile,TILE_EXIT_RIGHT)) 
+		e(5,(x-1)*TILE_W+0,y*TILE_H+0);
 	if (isIn(tile,TILE_EXIT_LEFT)) {
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[9],
-				(x-1)*TILE_W,
-				y*TILE_H
-			);
-			drawExit(x*TILE_W+8,(y-1)*TILE_H-1,((tGate*)tile.moreInfo)->frame);
+		e(9,(x-1)*TILE_W+0,y*TILE_H+0);
+		drawExit(x*TILE_W+8,(y-1)*TILE_H-1,gateGetFrame(tile));
 	}
 	/* pillar/this */
-	if (isIn(tile,TILES_PILLAR)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[43],
-			(x-1)*TILE_W,
-			y*TILE_H
-		);
-	}
+	if (isIn(tile,TILES_PILLAR)) 
+		e(43,(x-1)*TILE_W+0,y*TILE_H+0);
 	/* big_pillar/this */
-	if (isIn(tile,TILE_BP_BOTTOM)) {
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[82],
-				(x-1)*TILE_W,
-				y*TILE_H
-			);
-	}
-	if (isIn(tile,TILE_BP_TOP)) {
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[87],
-				(x-1)*TILE_W+8,
-				y*TILE_H+3
-			);
-	}
+	if (isIn(tile,TILE_BP_BOTTOM)) 
+		e(82,(x-1)*TILE_W+0,y*TILE_H+0);
+	if (isIn(tile,TILE_BP_TOP)) 
+		e(87,(x-1)*TILE_W+8,y*TILE_H+3);
 	/* pressable/this */
-	if (isIn(tile,TILES_PRESSABLE)) {
-		if (isIn(tile,TILES_RAISE)) {
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[(((tPressable*)tile.moreInfo)->action==eNormal)?(58-((isIn(left,TILES_WALKABLE))&&(!isIn(left,TILES_RAISE)))):58],
-				(x-1)*TILE_W,
-				y*TILE_H+((((tPressable*)tile.moreInfo)->action==eNormal)?0:1)
-			);
-		} else {
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[58],
-				(x-1)*TILE_W,
-				y*TILE_H+((((tPressable*)tile.moreInfo)->action==eNormal)?1:2)
-			);
-		}
-	}
+	if (isIn(tile,TILE_BTN_RAISE) && buttonIsNormal(tile) && isIn(left,TILES_WALKABLE) && ( !isIn(left,TILES_RAISE )) )
+		e(57,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(tile)?0:1));
+	if (isIn(tile,TILE_BTN_RAISE) && (  ( !buttonIsNormal(tile) )||( !isIn(left,TILES_WALKABLE) )|| isIn(left,TILES_RAISE) )  )
+		e(58,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(tile)?0:1));
+	if (isIn(tile,TILE_BTN_DROP)) 
+		e(58,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(tile)?1:2));
 	/* debris/this */
-	if (isIn(tile,TILES_BROKENTILE)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[48],
-			(x-1)*TILE_W,
-			y*TILE_H
-		);
-	}
+	if (isIn(tile,TILES_BROKENTILE)) 
+		e(48,(x-1)*TILE_W+0,y*TILE_H+0);
 	/* chopper/this /
-	if (isIn(tile,TILE_CHOPPER)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[9],
-			(x-1)*TILE_W,
-			y*TILE_H
-		);
-	}*/
+	if (isIn(tile,TILE_CHOPPER)) 
+		e(9,(x-1)*TILE_W+0,y*TILE_H+0);
+	*/
 	/* spikes/this */
 	if (isIn(tile,TILES_SPIKES)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[101],
-			(x-1)*TILE_W,
-			y*TILE_H
-		);
-		drawSpike((x-1)*TILE_W,y*TILE_H,room->level->time%6,layFore);
+		e(101,(x-1)*TILE_W+0,y*TILE_H+0);
+		drawSpike((x-1)*TILE_W+0,y*TILE_H,room->level->time%6,layFore);
 	}
 	/* skeleton/this */
-	if (isIn(tile,TILES_SKELETON)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[80],
-			(x-1)*TILE_W,
-			y*TILE_H
-		);
-	}
+	if (isIn(tile,TILES_SKELETON)) 
+		e(80,(x-1)*TILE_W+0,y*TILE_H+0);
 	/* potion/left */
 	if (isIn(left,TILES_POTION)) { /* animation */
-		outputDrawBitmap(
-			roomGfx.potionAnim->pFrames[
-				((room->level->time)+2*x+y)%(roomGfx.potionAnim->frames)
-			],
-			(x-1)*TILE_W+3-15,
-			y*TILE_H-15
-		);
-		outputDrawBitmap( /* base */
-			roomGfx.potionBase->pFrames[0],
-			(x-1)*TILE_W-15,
-			y*TILE_H-4
-		);
+		outputDrawBitmap(roomGfx.potionAnim->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnim->frames)],(x-1)*TILE_W+3-15,y*TILE_H-15);
+/* base */
+		outputDrawBitmap(roomGfx.potionBase->pFrames[0],(x-1)*TILE_W-15,y*TILE_H-4);
 	}
 }
 
@@ -482,102 +301,58 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 	/* normal */
 	if (isIn(tile,TILES_WALKABLE)) {
 		if (isIn(tile,TILES_PRESSABLE)) {
-			outputDrawBitmap( /* TODO: drop has resource 59 for unpressed/reise 47? check game */
-				roomGfx.environment->pFrames[59],
-				(x-1)*TILE_W,
-				y*TILE_H+((((tPressable*)tile.moreInfo)->action==eNormal)?3:4)
-			);
+			/* TODO: drop has resource 59 for unpressed/raise 47? checkgame */
+			e(59,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(tile)?3:4));
 		} else {
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[11],
-				(x-1)*TILE_W,
-				y*TILE_H+3
-			);
+			e(11,(x-1)*TILE_W+0,y*TILE_H+3);
 		}
 	} else {
 	/* wall */
 		if (isIn(tile,TILES_WALL)) {
 			tTile left;
 			tTile right;
-			void* image;
+			int image;
 			left=roomGetTile(room,x-1,y);
 			right=roomGetTile(room,x+1,y);
 			/* there are 4 cases */
 			if (isIn(left,TILES_WALL)&&isIn(right,TILES_WALL)) {
-				image=roomGfx.environment->pFrames[65];
+				image=65;
 			} else if ((!isIn(left,TILES_WALL))&&(isIn(right,TILES_WALL))) {
-				image=roomGfx.environment->pFrames[71];
+				image=71;
 			} else if ((isIn(left,TILES_WALL))&&(!isIn(right,TILES_WALL))) {
-				image=roomGfx.environment->pFrames[67];
+				image=67;
 			} else {
-				image=roomGfx.environment->pFrames[69];
+				image=69;
 			}
-			outputDrawBitmap(
-				image,
-				(x-1)*TILE_W,
-				y*TILE_H+3
-			);
+			e(image,(x-1)*TILE_W+0,y*TILE_H+3);
 		} else {
 	/* empty */
 			tTile dleft=roomGetTile(room,x-1,y+1);
+			/* tile, dleft*/
+			
 			/* gate_frame/this */
-			if (isIn(tile,TILES_GATEFRAME)) {
-				outputDrawBitmap(
-					roomGfx.environment->pFrames[42],
-					(x-1)*TILE_W,
-					y*TILE_H+3
-				);
-			}
+			if (isIn(tile,TILES_GATEFRAME)) 
+				e(42,(x-1)*TILE_W+0,y*TILE_H+3);
 			/* gate/left */
-			if (isIn(dleft,TILES_DOOR)) {
-				outputDrawBitmap(
-					roomGfx.environment->pFrames[16],
-					(x-1)*TILE_W,
-					y*TILE_H+3
-				);
-			/*	drawGateTop(x*TILE_W,(y-1)*TILE_H+3,((tGate*)tile.moreInfo)->frame);*/
-			}
+			if (isIn(dleft,TILES_DOOR)) 
+				e(16,(x-1)*TILE_W+0,y*TILE_H+3);
+			/*	drawGateTop(x*TILE_W+0,(y-1)*TILE_H+3,gateGetFrame(tile));*/
 			/* big_pillar/left */
-			if (isIn(dleft,TILE_BP_TOP)) {
-				outputDrawBitmap(
-					roomGfx.environment->pFrames[86],
-					(x-1)*TILE_W,
-					y*TILE_H+3
-				);
-			}
+			if (isIn(dleft,TILE_BP_TOP)) 
+				e(86,(x-1)*TILE_W+0,y*TILE_H+3);
 			/* pillar/left */
-			if (isIn(dleft,TILES_PILLAR)) {
-				outputDrawBitmap(
-					roomGfx.environment->pFrames[45],
-					(x-1)*TILE_W,
-					y*TILE_H+3
-				);
-			}
+			if (isIn(dleft,TILES_PILLAR)) 
+				e(45,(x-1)*TILE_W+0,y*TILE_H+3);
 			/* pillar/left */
-			if (isIn(dleft,TILES_WALL)) {
-				outputDrawBitmap(
-					roomGfx.environment->pFrames[64],
-					(x-1)*TILE_W,
-					y*TILE_H+3
-				);
-			}
+			if (isIn(dleft,TILES_WALL)) 
+				e(64,(x-1)*TILE_W+0,y*TILE_H+3);
 		}
 	}
 	/* upper objects */
-	if (isIn(tile,TILE_EXIT_LEFT)) {
-				outputDrawBitmap(
-			roomGfx.environment->pFrames[6],
-			x*TILE_W,
-			(y-1)*TILE_H+3
-		);
-	}
-	if (isIn(tile,TILE_EXIT_RIGHT)) {
-				outputDrawBitmap(
-			roomGfx.environment->pFrames[8],
-			x*TILE_W,
-			(y-1)*TILE_H+3
-		);
-	}
+	if (isIn(tile,TILE_EXIT_LEFT)) 
+		e(6,x*TILE_W+0,(y-1)*TILE_H+3);
+	if (isIn(tile,TILE_EXIT_RIGHT)) 
+		e(8,x*TILE_W+0,(y-1)*TILE_H+3);
 }
 
 /* main panel block */
@@ -585,21 +360,11 @@ void drawForePanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
 
 	/* pillar */
-	if (isIn(tile,TILES_PILLAR)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[46],
-			x*TILE_W-24,
-			y*TILE_H
-		);
-	}
+	if (isIn(tile,TILES_PILLAR)) 
+		e(46,x*TILE_W-24,y*TILE_H+0);
 	/* big pillar */
-	if (isIn(tile,TILE_BP_BOTTOM)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[84],
-			x*TILE_W-24,
-			y*TILE_H
-		);
-	}
+	if (isIn(tile,TILE_BP_BOTTOM)) 
+		e(84,x*TILE_W-24,y*TILE_H+0);
 	/* wall */
 	if (isIn(tile,TILES_WALL)) {
 		/*static unsigned short seedArray[]=WALL_PROPERTIES;*/
@@ -615,92 +380,49 @@ void drawForePanel(tRoom* room,int x, int y) {
 		if (isIn(left,TILES_WALL)&&isIn(right,TILES_WALL)) { 
 			/* First step: calculate the seed position and get the element */
 			cases=WALL_LOC_WWW;
-			outputDrawBitmap(roomGfx.environment->pFrames[66],(x-1)*TILE_W,y*TILE_H);
+			e(66,(x-1)*TILE_W+0,y*TILE_H+0);
 		} else if ((!isIn(left,TILES_WALL))&&(isIn(right,TILES_WALL))) {
 			cases=WALL_LOC_SWW;
-			outputDrawBitmap(roomGfx.environment->pFrames[72],(x-1)*TILE_W,y*TILE_H);
+			e(72,(x-1)*TILE_W+0,y*TILE_H+0);
 		} else if ((isIn(left,TILES_WALL))&&(!isIn(right,TILES_WALL))) {
 			cases=WALL_LOC_WWS;
-			outputDrawBitmap(roomGfx.environment->pFrames[68],(x-1)*TILE_W,y*TILE_H);
+			e(68,(x-1)*TILE_W+0,y*TILE_H+0);
 		} else {
 			cases=WALL_LOC_SWS;
-			outputDrawBitmap(roomGfx.environment->pFrames[70],(x-1)*TILE_W,y*TILE_H);
+			e(70,(x-1)*TILE_W+0,y*TILE_H+0);
 		}
 		/* TODO: use one seed per combination */
 			/* the seed generation algorithm */
 			/* Upper row */
-			if (wallGet(env,cases,WALL_TABLE_LINE1_DARKER,seed)) outputDrawBitmap(
-				roomGfx.environment->pFrames[75],
-				(x-1)*TILE_W,
-				y*TILE_H-39
-			);
-			if (wallGet(env,cases,WALL_TABLE_LINE1_LEFT_DOWN,seed)) outputDrawBitmap(
-				roomGfx.environment->pFrames[77],
-				(x-1)*TILE_W,
-				y*TILE_H-39
-			);
-			if (wallGet(env,cases,WALL_TABLE_LINE1_RIGHT_DOWN,seed)) outputDrawBitmap(
-				roomGfx.environment->pFrames[79],
-				(x-1)*TILE_W+24,
-				y*TILE_H-39
-			);
-			if (wallGet(env,cases,WALL_TABLE_LINE1_RIGHT_UP,seed)) outputDrawBitmap(
-				roomGfx.environment->pFrames[78],
-				(x-1)*TILE_W+24,
-				y*TILE_H-49
-			);
-			if (wallGet(env,cases,WALL_TABLE_LINE1_LEFT_UP,seed)) outputDrawBitmap(
-				roomGfx.environment->pFrames[76],
-				(x-1)*TILE_W,
-				y*TILE_H-54
-			);
+			if (wallGetInfo(WALL_TABLE_LINE1_DARKER))
+				e(75,(x-1)*TILE_W+0,y*TILE_H-39);
+			if (wallGetInfo(WALL_TABLE_LINE1_LEFT_DOWN))
+				e(77,(x-1)*TILE_W+0,y*TILE_H-39);
+			if (wallGetInfo(WALL_TABLE_LINE1_RIGHT_DOWN))
+				e(79,(x-1)*TILE_W+24,y*TILE_H-39);
+			if (wallGetInfo(WALL_TABLE_LINE1_RIGHT_UP))
+				e(78,(x-1)*TILE_W+24,y*TILE_H-49);
+			if (wallGetInfo(WALL_TABLE_LINE1_LEFT_UP))
+				e(76,(x-1)*TILE_W+0,y*TILE_H-54);
 			/* Second row */
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[74-wallGet(env,cases,WALL_TABLE_LINE2_SEP,seed)],
-				(x-1)*TILE_W+7+wallGet(env,cases,WALL_TABLE_LINE2_OFFSET,seed),
-				y*TILE_H-18
-			);
-			if (wallGet(env,cases,WALL_TABLE_LINE2_LEFT_DOWN,seed)) outputDrawBitmap(
-				roomGfx.environment->pFrames[77],
-				(x-1)*TILE_W+7+wallGet(env,cases,WALL_TABLE_LINE2_OFFSET,seed)+5,
-				y*TILE_H-39+21
-			);
-			if (wallGet(env,cases,WALL_TABLE_LINE2_RIGHT_DOWN,seed)) outputDrawBitmap(
-				roomGfx.environment->pFrames[79],
-				(x-1)*TILE_W+24+7+wallGet(env,cases,WALL_TABLE_LINE2_OFFSET,seed)-32+5,
-				y*TILE_H-39+21
-			);
-			if (wallGet(env,cases,WALL_TABLE_LINE2_RIGHT_UP,seed)) outputDrawBitmap(
-				roomGfx.environment->pFrames[78],
-				(x-1)*TILE_W+24+7+wallGet(env,cases,WALL_TABLE_LINE2_OFFSET,seed)-32+5,
-				y*TILE_H-49+21
-			);
-			if (wallGet(env,cases,WALL_TABLE_LINE2_LEFT_UP,seed)) outputDrawBitmap(
-				roomGfx.environment->pFrames[76],
-				(x-1)*TILE_W+7+wallGet(env,cases,WALL_TABLE_LINE2_OFFSET,seed)+5,
-				y*TILE_H-54+21
-			);
+			e(74-wallGetInfo(WALL_TABLE_LINE2_SEP),(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET),y*TILE_H-18);
+			if (wallGetInfo(WALL_TABLE_LINE2_LEFT_DOWN))
+				e(77,(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)+5,y*TILE_H-39+21);
+			if (wallGetInfo(WALL_TABLE_LINE2_RIGHT_DOWN))
+				e(79,(x-1)*TILE_W+24+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)-32+5,y*TILE_H-39+21);
+			if (wallGetInfo(WALL_TABLE_LINE2_RIGHT_UP))
+				e(78,(x-1)*TILE_W+24+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)-32+5,y*TILE_H-49+21);
+			if (wallGetInfo(WALL_TABLE_LINE2_LEFT_UP))
+				e(76,(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)+5,y*TILE_H-54+21);
 			/* Third row TODO: send to BottomTile */
-			outputDrawBitmap(
-				roomGfx.environment->pFrames[74-wallGet(env,cases,WALL_TABLE_LINE3_SEP,seed)],
-				(x-1)*TILE_W+3+wallGet(env,cases,WALL_TABLE_LINE3_OFFSET,seed),
-				y*TILE_H+3
-			);
-			if (wallGet(env,cases,WALL_TABLE_LINE3_LEFT_UP,seed)) outputDrawBitmap(
-				roomGfx.environment->pFrames[76],
-				(x-1)*TILE_W+5+wallGet(env,cases,WALL_TABLE_LINE3_OFFSET,seed)+5,
-				y*TILE_H-55+21*2
-			);
+			e(74-wallGetInfo(WALL_TABLE_LINE3_SEP),(x-1)*TILE_W+3+wallGetInfo(WALL_TABLE_LINE3_OFFSET),y*TILE_H+3);
+			if (wallGetInfo(WALL_TABLE_LINE3_LEFT_UP))
+				e(76,(x-1)*TILE_W+5+wallGetInfo(WALL_TABLE_LINE3_OFFSET)+5,y*TILE_H-55+21*2);
 
 	}
 	/* debris/this foreground layer */
-	if (isIn(tile,TILES_BROKENTILE)) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[51],
-			(x-1)*TILE_W,
-			y*TILE_H
-		);
-	}
+	if (isIn(tile,TILES_BROKENTILE)) 
+		e(51,(x-1)*TILE_W+0,y*TILE_H+0);
 }	
 
 /*
