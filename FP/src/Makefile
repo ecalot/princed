@@ -33,7 +33,7 @@ endif
 
 #Libraries: include path and linked libs
 INCLUDE       = -Iinclude/
-LIBS          = -lSDL -lpthread
+LIBS          = $(shell sdl-config --libs)
 
 #Defines
 DEFINES       = -DOS=\"$(OS)\" $(LINUX) 
@@ -66,12 +66,37 @@ LINKEROPTIONS = $(LINKERRELEASE)
 # main file #
 #############
 
-$(EXEFILE): $(OBJFILES)
+$(EXEFILE): check $(OBJFILES)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
 	$(LINKER) $(LINKEROPTIONS) -o $(EXEFILE) $(OBJFILES) $(LIBS) $(LINKEROPTIONS)
 	$(INFO) Program successfully compiled
 
+###################
+# program checks  #
+###################
+
+check: checkcompiler checksdl checkawk checkgrep checksed
+
+checkcompiler:
+	$(INFO) Checking C compiler...
+	$(CC) --version>/dev/null
+
+checksdl:
+	$(INFO) Checking SDL library...
+	@sdl-config --version>/dev/null
+
+checkawk:
+	$(INFO) Checking AWK...
+	@$(AWK)
+
+checksed:
+	$(INFO) Checking Sed...
+	@sed --version>/dev/null
+
+checkgrep:
+	$(INFO) Checking Grep...
+	$(GREP) --version>/dev/null
 
 ###################
 # command options #
