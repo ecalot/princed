@@ -60,8 +60,6 @@ static SDL_Surface* screen;
 
 /* Text functions */
 
-#define CHAR_SIZE 12
-
 typedef struct _valid_chars {
 	char is_valid;      /* Is character valid ? */
 	unsigned short x;   /* X pos in font image */
@@ -103,13 +101,7 @@ void initText ()
 	}
 
 	/* Load Texture */
-/*	font = SDL_LoadBMP (FONT_FILE);
-	if (!font) {
-		fprintf (stderr, "CAN'T LOAD " FONT_FILE "!\n");
-		exit(1);
-	}*/
-	aux=outputLoadBitmap(fonts,TEXT_IMG_SIZE,pal,TEXT_IMG_W,TEXT_IMG_W,0,1,0,0);
-
+	aux=outputLoadBitmap(fonts,TEXT_IMG_SIZE,pal,TEXT_IMG_H,TEXT_IMG_W,0,1,0,0);
 	font=aux->surface;
 					
 	font_init = 1;
@@ -124,6 +116,7 @@ unsigned int outputGetTextWidth (const char *txt)
 	while ((*s) != '\0') {
 		if (valid_chars[*s].is_valid) {
 			l += valid_chars[*s].w;
+			l += TEXT_KERNING;
 		}
 		s++;
 	}
@@ -173,7 +166,7 @@ void outputsDrawText(int x, int y, const char *buffer)
 			from.x = valid_chars[*s].x;
 			from.y = 0;
 			from.w = valid_chars[*s].w;
-			from.h = CHAR_SIZE;
+			from.h = TEXT_IMG_H;
 
 			to.x = current_x;
 			to.y = y;
@@ -182,6 +175,7 @@ void outputsDrawText(int x, int y, const char *buffer)
 			SDL_BlitSurface (font, &from, screen, &to);
 
 			current_x += valid_chars[*s].w;
+			current_x += TEXT_KERNING;
 		}
 		s++;
 	}
@@ -350,7 +344,7 @@ void outputUpdateScreen()
 	/* check out for messages */
 	if (messageFrames==1) outputClearLastMessage();
 	if (messageFrames) messageFrames--;
-	outputsDrawText((DEF_SCREEN_WIDTH-outputGetTextWidth(messageBuffer))/2,DEF_SCREEN_HEIGHT-CHAR_SIZE,messageBuffer);
+	outputsDrawText((DEF_SCREEN_WIDTH-outputGetTextWidth(messageBuffer))/2,DEF_SCREEN_HEIGHT-1-TEXT_IMG_H,messageBuffer);
 
 	SDL_Flip(screen);
 }

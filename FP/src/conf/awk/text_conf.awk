@@ -45,6 +45,7 @@ BEGIN {
 
 	#default
 	space=3
+	kerning=2
 	
 }
 
@@ -53,8 +54,12 @@ BEGIN {
 # Parse file into memory #
 ##########################
 
-/^Space [0-9]+$/ { #space is treates specially
+/^Space [0-9]+$/ { #space is treated specially
 	space=$2
+}
+
+/^Kerning [0-9]+$/ { #character separation in pixels
+	kerning=$2
 }
 
 /^Character '.':$/ { #new character
@@ -157,5 +162,6 @@ END {
 	printf("#define TEXT_IMG_SIZE %d\n",img)
 	printf("#define TEXT_IMG_H %d\n",maxSize)
 	printf("#define TEXT_IMG_W %d\n",offset)
+	printf("#define TEXT_KERNING %d\n",kerning)
 }
 
