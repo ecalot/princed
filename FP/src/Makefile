@@ -239,7 +239,7 @@ include/res_conf_resources.h: conf/resources.conf conf/awk/res_conf_resources.aw
 
 include/states_conf.h: $(GENERATEDSTAHEADERS)
 
-include/states_conf_static.h: conf/awk/states_conf_static.awk
+include/states_conf_static.h: conf/awk/states_conf_static.awk conf/states/*.conf
 	$(INFO) Creating states list configuration file...
 	$(AWK) -f conf/awk/states_conf_static.awk conf/states/*.conf>include/states_conf_static.h
 

@@ -48,95 +48,6 @@ typedef struct {
 	unsigned short y;
 } titleFixedimg;
 
-/* New source */
-tMenuOption playAnimation(int id) {
-	/* Declare variables */
-	int qf,            qt,              qo,                 i;
-	animFixedimg*  f;  animState* t;    animSound* o;
-	titleFixedimg* fa; tObject*   ta; /*animSound* oa;*/
-	int activef=0;     int activet=0; /*int activeo=0;*/
-	int totalf,        totalt,          totalo;
-	
-	tKey key=inputCreateKey();
-	tKey nullKey=inputCreateKey();
-
-	/* Initialize animation and allocate memory */
-	animStart(id,&totalf,&totalt,&totalo);
-	fa=(titleFixedimg*)malloc(totalf*sizeof(titleFixedimg));
-	ta=(tObject*)malloc(totalt*sizeof(tObject));
-	/*oa=(animSound*)malloc(totalo*sizeof(animSound));*/
-
-	/* main animation kernel loop */
-	while (animGetFrame(&qf,&qt,&qo,f,t,o)) {
-		printf("f%d t%d o%d ",qf,qt,qo);
-		if (!inputGetEvent(&key)) {
-			/* key pressed */
-			printf("key pressed\n");
-			return menuQuit;
-		} else {
-			/* create new images/objects/sounds */
-			for (i=0;i<qf;i++) { /*images*/
-				fa[activef].img=resLoad(f[i].res);
-				fa[activef].y=f[i].y;
-				fa[activef].x=f[i].x;
-				fa[activef].layer=f[i].layer;
-				fa[activef].duration=f[i].duration;
-				activef++;
-			}
-			for (i=0;i<qt;i++) { /*objects*/
-				ta[activet]=objectCreate(t[i].location,t[i].floor,DIR_LEFT,t[i].state,t[i].res,t[i].cacheMirror);
-				activet++;
-			}
-/*		TODO: code sounds	
- *		for (i=0;i<qo;i++) {
-				fa[activeo]=o[i];
-				activeo++;
-			}*/
-
-			outputClearScreen();
-			/* The bottom layer */
-			for (i=0;i<activef;i++) {
-				if (fa[i].layer==ANIMS_LAYERTYPE_BOTTOM)
-					outputDrawBitmap(fa[i].img->pFrames[0], fa[i].x, fa[i].y);
-			}
-			/* move objects */
-			for (i=0;i<activet;i++) {
-				/*TODO: detect exits */
-	  		objectMove(ta+i,nullKey,NULL);
-	  		objectDraw(ta[i]);
-			}
-			/* The top layer */
-			for (i=0;i<activef;i++) {
-				if (fa[i].layer==ANIMS_LAYERTYPE_TOP)
-					outputDrawBitmap(fa[i].img->pFrames[0], fa[i].x, fa[i].y);
-			}
-			outputUpdateScreen();
-
-			/* exited states and caducied backgrounds destruction */
-			for (i=0;i<activef;i++) {
-				printf("checking img=%d duration=%d\n",i,fa[i].duration);
-				if (fa[i].duration) { /* if not 0 (infinite) */
-					fa[i].duration--;
-					if (!fa[i].duration) { /* time is over for this images */
-						activef--;
-						resFree(fa[i].img);
-						printf("salio %d\n",i);
-						fa[i]=fa[activef];
-					}
-				}
-			}	
-		}
-	}
-	/*void objectDraw(tObject kid);*/
-	for (i=0;i<activef;i++) objectFree(ta[i]);
-	free(fa);
-	free(ta);
-	/*free(oa);*/
-	return menuQuit;
-}
-
-/* Old source */
-
 tMenuOption getAction(tKey key) {
 	switch(key.actionPerformed) {
 	case quit:
@@ -147,6 +58,116 @@ tMenuOption getAction(tKey key) {
 		return menuStart;
 	}
 }
+
+tMenuOption playAnimation(int id) {
+	/* Declare variables */
+	int qf,            qt,              qo,                 i;
+	animFixedimg*  f;  animState* t;    animSound* o;
+	titleFixedimg* fa; tObject*   ta; /*animSound* oa;*/
+	int activef=0;     int activet=0; /*int activeo=0;*/
+	int totalf,        totalt,          totalo;
+	int* statesAlive;
+	tKey key=inputCreateKey();
+	tKey nullKey=inputCreateKey();
+
+	/* Initialize animation and allocate memory */
+	animStart(id,&totalf,&totalt,&totalo);
+	fa=(titleFixedimg*)malloc(totalf*sizeof(titleFixedimg));
+	ta=(tObject*)malloc(totalt*sizeof(tObject));
+	statesAlive=(int*)malloc(totalt*sizeof(int));
+	/*oa=(animSound*)malloc(totalo*sizeof(animSound));*/
+
+	/* main animation kernel loop */
+	while (animGetFrame(&qf,&qt,&qo,&f,&t,&o)) {
+		/*printf("f%d t%d o%d\n",qf,qt,qo);*/
+		if (!inputGetEvent(&key)) {
+			/* key pressed */
+			printf("key pressed\n");
+			return getAction(key);
+		} else {
+			/* create new images/objects/sounds */
+			for (i=0;i<qf;i++) { /*images*/
+				fa[activef].img=resLoad(f[i].res);
+				if (!fa[activef].img) {
+					fprintf(stderr,"resource coudn't be loaded.");
+					return menuQuit;
+				}
+				fa[activef].y=f[i].y;
+				fa[activef].x=f[i].x;
+				fa[activef].layer=f[i].layer;
+				fa[activef].duration=f[i].duration;
+				activef++;
+			}
+			for (i=0;i<qt;i++) { /*objects*/
+				ta[activet]=objectCreate(t[i].location,t[i].floor,DIR_LEFT,t[i].state,t[i].res,t[i].cacheMirror);
+				statesAlive[activet]=1;
+				activet++;
+			}
+/*		TODO: code sounds	
+ *		for (i=0;i<qo;i++) {
+				fa[activeo]=o[i];
+				activeo++;
+			}*/
+
+			outputClearScreen();
+
+			/* The bottom layer */
+			for (i=0;i<activef;i++) {
+				if (fa[i].layer==ANIMS_LAYERTYPE_BOTTOM)
+					outputDrawBitmap(fa[i].img->pFrames[0], fa[i].x, fa[i].y);
+			}
+			
+			/* move objects */
+			for (i=0;i<activet;i++) {
+				int exitCode=0;
+				/*TODO: detect exits */
+				if (statesAlive[i]) {
+		  		exitCode=objectMove(ta+i,nullKey,NULL);
+		  		objectDraw(ta[i]);
+				}
+			
+				/* detect exited states and destroy them */
+				if (exitCode<0) { /* exit code detected */
+					printf("exit Code detected: i=%d exit=%d \n",i,exitCode);
+					objectFree(ta[i]);
+					statesAlive[i]=0; /* remember it is destroyed */
+				}
+			}
+			
+			/* The top layer */
+			for (i=0;i<activef;i++) {
+				if (fa[i].layer==ANIMS_LAYERTYPE_TOP) {
+					outputDrawBitmap(fa[i].img->pFrames[0], fa[i].x, fa[i].y);
+				}
+			}
+			outputUpdateScreen();
+
+			/* caducied backgrounds destruction */
+			i=activef;
+			while(i) {
+				i--;
+				if (fa[i].duration) { /* if not 0 (infinite) */
+					fa[i].duration--;
+					if (!fa[i].duration) { /* time is over for this images */
+						activef--;
+						resFree(fa[i].img);
+						fa[i]=fa[activef];
+					}
+				}
+			}	
+		}
+	}
+
+	for (i=0;i<activet;i++) if (statesAlive[i]) objectFree(ta[i]);
+	for (i=0;i<activef;i++) resFree(fa[i].img);
+	free(fa);
+	free(ta);
+	free(statesAlive);
+	/*free(oa);*/
+	return menuQuit;
+}
+
+/* Old source */
 
 tMenuOption sleep(int ticks) {
 	/* Wait ticks or a key is pressed if an action is thrown process it */
@@ -174,13 +195,11 @@ tMenuOption showTitles() {
  * returns 1 if the user has selected to load a saved game 
  * returns 2 if the user has selected to start the game
  */
-/*#define testing*/
+#define testing
 #ifdef testing
 	printf("Starting animation testing\n");
 				
-	playAnimation(ANIMS_ID_PRESENTATION);
-	printf("Finishing animation testing\n");
-	return menuQuit;
+	return playAnimation(ANIMS_ID_PRESENTATION);
 #else
 	tData *main_title;
 	/*tData *main_text;*/

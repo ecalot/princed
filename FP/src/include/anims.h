@@ -63,7 +63,7 @@ typedef struct {
 } animSound;
 
 void animStart(int animId,int *qt,int *qf,int *qo);
-int animGetFrame(int* qf,int* qt,int* qo, animFixedimg* f,animState* t, animSound* o);
+int animGetFrame(int* qf,int* qt,int* qo, animFixedimg** f,animState** t, animSound** o);
 
 #endif
 

@@ -295,7 +295,7 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 */
 
 	
-	if (current->currentState<0) return current->currentState; /* if last state return exit code */
+	if (current->frame==1&&current->currentState<0) return current->currentState; /* if last frame of the last state, return exit code */
 	return flags;
 }
 
