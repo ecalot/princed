@@ -57,10 +57,44 @@ void* outputLoadBitmap(unsigned char* data, int size, unsigned char* palette, in
 	*/
 
 	/* Dummy function */
+	void* result;
+	int i,j;
+	char printed[]=" *+@#$%&=|SVHG/OP";
+	
 	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
 	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n",invert,firstColorTransparent,size);
 
+	for (i=0;i<16;i++) {
+		printf("rgb[%d]=(%d,%d,%d) #%02x%02x%02x\n",i+1,palette[3*i],palette[3*i+1],palette[3*i+2],palette[3*i],palette[3*i+1],palette[3*i+2]);
+	}
+
+	/* Notes:
+	 * - the image is serialized
+	 *    this means that the last bits in the row to complete a full byte are garbage
+	 * - there are 2 types of images:
+	 *    1 bit/pixel (b/w)
+	 *    4 bit/pixel (16 cols)
+	 * - for the moment only 4bpp will be supported
+	 * - weight is in pixels
+	 * - weight in bytes is (w+1)/2
+	 *    we have to add 1 because of the serialization
+	 *    division by 2 is because 4bpp are 2 pixel/byte (0.5 byte/pixel)
+	 */
+	w=(w+1)/2;
+	
+	for (i=0;i<h;i++) {
+		for (j=0;j<w;j++) {
+			printf("%c%c%c%c",printed[data[i*w+j]>>4],printed[data[i*w+j]>>4],printed[data[i*w+j]&0x0f],printed[data[i*w+j]&0x0f]);
+		}
+		printf("\n");
+	}
+	
+	result=(void*)malloc(size);
+	memcpy(result,data,size);
+
+	return result;
 }
+
 void outputFreeBitmap(void* image) {}
  /* Frees the abstract object created by the loadBitmap function
 	*/
