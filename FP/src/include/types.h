@@ -105,6 +105,7 @@ typedef struct {
 	int bricks;
 	int isPressable;
 	int hasSpikes;
+	int hasPotion;
 	int hasPillar;
 	int hasFloor;
 	int hasBrokenTile;

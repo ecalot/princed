@@ -42,6 +42,7 @@ static struct {
 	tData* torch;
 	tData* environment;
 	tData* potionAnim;
+	tData* potionBase;
 } roomGfx;
 
 void roomLoadGfx(long environment) {
@@ -49,9 +50,13 @@ void roomLoadGfx(long environment) {
 		resFree(roomGfx.environment);
 	}
 	roomGfx.environment=resLoad(environment);
+	/* TODO: make potion base depend on the environment.
+	 *       create a typedef tEnvironment and use a switch
+	 */
 	if (roomGfx.torch==NULL) {
 		roomGfx.torch=resLoad(RES_ANIM_TORCH);
 		roomGfx.potionAnim=resLoad(RES_ANIM_POTION|RES_MODS_BW|RES_MODS_RED);
+		roomGfx.potionBase=resLoad(RES_IMGS_POTION_BASE);
 	}
 }
 
@@ -60,6 +65,7 @@ void roomFree() {
 	if (roomGfx.torch) {
 		resFree(roomGfx.torch);
 		resFree(roomGfx.potionAnim);
+		resFree(roomGfx.potionBase);
 	}
 	roomGfx.torch=(roomGfx.environment=NULL);
 }
@@ -84,6 +90,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		if (x==11)roomId=room->links[eRight];
 		result.hasGateFrame=(result.code==T_GATE);
 		result.bricks=0;
+		result.hasPotion=0;
 		result.hasPillar=0;
 		result.hasBigPillar=0;
 		result.isGate=(result.code==T_GATE);
@@ -114,6 +121,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.bricks=0;
 		result.hasPillar=0;
 		result.hasBigPillar=0;
+		result.hasPotion=0;
 		result.isGate=0;
 		result.walkable=1;
 		/* the case that a button is in tile 0 should never happen, but we'll care about it just in case */
@@ -155,6 +163,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);
 		result.block=0;
 		result.isRaise=0;
+		result.hasPotion=(result.code==T_POTION);
 		result.isPressable=0;
 		result.hasSkeleton=(result.code==T_SKELETON);
 		result.hasSpikes=(result.code==T_SPIKES);
@@ -171,6 +180,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.isRaise=0;
 		result.hasBigPillar=0;
 		result.walkable=0;
+		result.hasPotion=0;
 		result.hasChopper=0;
 		result.isExit=0;
 		result.isGate=0;
@@ -195,6 +205,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.walkable=0;
 		result.isExit=0;
 		result.isGate=0;
+		result.hasPotion=0;
 		result.hasChopper=0;
 		result.isRaise=0;
 		result.isPressable=0;
@@ -536,6 +547,21 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			roomGfx.environment->pFrames[80],
 			(x-1)*TILE_W,
 			y*TILE_H
+		);
+	}
+	/* potion/left */
+	if (left.hasPotion) { /* animation */
+		outputDrawBitmap(
+			roomGfx.potionAnim->pFrames[
+				((room->level->time)+2*x+y)%(roomGfx.potionAnim->frames)
+			],
+			(x-1)*TILE_W+3-15,
+			y*TILE_H-15
+		);
+		outputDrawBitmap( /* base */
+			roomGfx.potionBase->pFrames[0],
+			(x-1)*TILE_W-15,
+			y*TILE_H-4
 		);
 	}
 }
