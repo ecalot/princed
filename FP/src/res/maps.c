@@ -378,27 +378,6 @@ void  mapMove(tMap* map) {
 		}
 	}
 }
-
-int mapPressedTile(tMap* map, tTile tile, int s, int x, int y) {
-	int refresh=0;
-	if (isIn(tile,TILES_PRESSABLE)) {
-		tEvent* event;
-		((tPressable*)tile.moreInfo)->action=eJustPressed;
-		/* drop or raise button */
-		event=((tPressable*)tile.moreInfo)->event;
-		fprintf(stderr,"mapPressedTile: throw event from button %d event:%p\n",tile.back,(void*)event);
-		do {
-			event->gate->action=isIn(tile,TILES_RAISE)?eOpening:eClosingFast;
-		} while	((event++)->triggerNext);
-	}
-	printf("s=%d x=%d y=%d\n",s,x,y);
-	if (tile.code==TILE_LOOSE) {
-		map->fore[(s-1)*30+(x-1)+(y-1)*10]=TILE_EMPTY;
-		refresh=1; /* room changed, refresh it */
-	}
-	return refresh;
-}
-
 void  mapFreeLevel(tMap* map) {
 	int i;
 	for (i=0;i<24;i++) {

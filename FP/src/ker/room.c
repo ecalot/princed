@@ -452,4 +452,76 @@ void roomDrawForeground(tRoom* room) {
 	}
 }
 
+/* kernel functions */
+
+int roomPress(tRoom* room, tObject* obj) {
+	/* Catching the press events done by an object to a room
+	 * returns 0 if the room didn't change, 1 if it did
+	 */
+
+	tMap* map=room->level;
+	int s=room->id;
+	int x=(obj->location/TILE_W)+1;
+	int y=obj->floor+1;
+	tTile tile=roomGetTile(room,x,y);
+	tTile aux;
+	int refresh=0;
+	
+	enum {border,nearborder,nearbordernotlooking,middle} where;
+	int i;
+
+	/* buttons */
+	if (isIn(tile,TILES_PRESSABLE)) {
+		tEvent* event;
+		((tPressable*)tile.moreInfo)->action=eJustPressed;
+		/* drop or raise button */
+		event=((tPressable*)tile.moreInfo)->event;
+		fprintf(stderr,"mapPressedTile: throw event from button %d event:%p\n",tile.back,(void*)event);
+		do {
+			event->gate->action=isIn(tile,TILES_RAISE)?eOpening:eClosingFast;
+		} while	((event++)->triggerNext);
+	}
+
+	/* Loose tiles */
+	printf("s=%d x=%d y=%d\n",s,x,y);
+	if (isIn(tile,TILE_LOOSE)) {
+		map->fore[(s-1)*30+(x-1)+(y-1)*10]=TILE_EMPTY;
+		refresh=1; /* room changed, refresh it */
+	}
+
+	/* spikes */
+	/* there are 7 possibilities to be */
+#define WHERE_NEAR 3
+#define WHERE_IN 1
+	where=border;i=1;
+	if (((obj->location%TILE_W)<(TILE_W-WHERE_IN))&&obj->direction==DIR_LEFT){
+		where=nearborder;i=1;}
+	if (((obj->location%TILE_W)<(TILE_W-WHERE_IN))&&obj->direction==DIR_RIGHT){
+		where=nearbordernotlooking;i=1;}
+	if ((obj->location%TILE_W)<(TILE_W-WHERE_NEAR)){
+		where=middle;}
+	if (((obj->location%TILE_W)<WHERE_NEAR)&&obj->direction==DIR_LEFT){
+		where=nearborder;i=-1;}
+	if (((obj->location%TILE_W)<WHERE_NEAR)&&obj->direction==DIR_RIGHT){
+		where=nearbordernotlooking;i=-1;}
+	if ((obj->location%TILE_W)<WHERE_IN){
+		where=border;i=-1;}
+
+	if (where!=middle) {
+		if (isIn(aux=roomGetTile(room,x+i,y),TILES_CHOPPER_SPIKE)) {
+			/* spikes left in this floor */
+			tDanger* danger=aux.moreInfo;
+		} else if ((y<3)&&isIn(roomGetTile(room,x+i,y),TILE_EMPTY)&&isIn(aux=roomGetTile(room,x+i,y+1),TILES_CHOPPER_SPIKE)) {
+			/* spikes left in the lower floor, there is
+			 * a space so you can fall down */
+			tDanger* danger=aux.moreInfo;
+		} else if ((y<2)&&isIn(roomGetTile(room,x+i,y),TILE_EMPTY)&&isIn(roomGetTile(room,x+i,y+1),TILE_EMPTY)&&isIn(aux=roomGetTile(room,x+i,y+2),TILES_CHOPPER_SPIKE)) {
+			/* spikes left in the 2 level lower floor, there are
+			 * spaces so you can fall down */
+			tDanger* danger=aux.moreInfo;
+		}
+	}	
+	return refresh;
+
+}
 

@@ -51,7 +51,6 @@ tRoom mapGetRoom(tMap* map, tRoomId roomId);
 void  mapStart(tMap* map, tObject* kid, tRoomId* roomId, int level);
 
 /* events */
-int  mapPressedTile(tMap* map, tTile tile, int s, int x, int y);
 void  mapMove(tMap* map);
 
 #endif
