@@ -217,9 +217,9 @@ void drawUnlinkedLoose(int x, int y/*, int frame,tLooseLayer layer*/) {
 			e(base-3,x,y);
 			break;
 	}*/
-			e(tritop-3,x+TILE_W,y+2);
-			e(tribot-3,x,y);
-			e(base-3,x,y+3);
+	e(tritop-3,x+TILE_W,y+2);
+	e(tribot-3,x,y);
+	e(base-3,x,y+3);
 }
 
 
@@ -290,6 +290,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
 	tTile left=roomGetTile(room,x-1,y);
 	drawAllLeft(left,tile);
+	drawAllTile(left,tile);
 }
 
 /* bottom panel block at background */

@@ -47,9 +47,6 @@ int roomPress(tRoom* room, tObject* obj);
 void roomKidChangedFloor(tRoom* room, tObject* kid);
 
 #define drawAllLeft(left,tile) \
-	/* Wall/left */\
-	if ((!isIn(tile,TILES_WALL))&&(isIn(left,TILES_WALL))) \
-		e(63,(x-1)*TILE_W+0,y*TILE_H+2);\
 	/* Gate/left */\
 	if (isIn(left,TILES_DOOR)) {\
 		e(15,(x-1)*TILE_W+0,y*TILE_H+2);\
@@ -92,6 +89,26 @@ void roomKidChangedFloor(tRoom* room, tObject* kid);
 	/* skeleton/left */\
 	if (isIn(left,TILES_SKELETON)) \
 		e(81,(x-1)*TILE_W+0,y*TILE_H+2);\
+	/* sword/left */\
+	if (isIn(left,TILES_SWORD)) \
+		drawSword((x-1)*TILE_W-15,y*TILE_H-4);\
+	/* potion base/left */\
+	if (isIn(left,TILES_SMALLPOTION))\
+		drawPotionSmallBase((x-1)*TILE_W-15,y*TILE_H-4);\
+	if ((isIn(left,TILES_BIGPOTION))) \
+		drawPotionBigBase((x-1)*TILE_W-15,y*TILE_H-4);\
+	/* potion animation/left */\
+	if (isIn(left,TILES_REDPOTION))\
+		drawPotionRedBubbles((x-1)*TILE_W+3-15,y*TILE_H-15,isIn(left,TILES_BIGPOTION));\
+	if (isIn(left,TILES_GREENPOTION))\
+		drawPotionGreenBubbles((x-1)*TILE_W+3-15,y*TILE_H-15,isIn(left,TILES_BIGPOTION));\
+	if (isIn(left,TILES_BLUEPOTION))\
+		drawPotionBlueBubbles((x-1)*TILE_W+3-15,y*TILE_H-15,isIn(left,TILES_BIGPOTION));
+
+#define drawAllTile(left,tile) \
+	/* Wall/left */\
+	if ((!isIn(tile,TILES_WALL))&&(isIn(left,TILES_WALL))) \
+		e(63,(x-1)*TILE_W+0,y*TILE_H+2);\
 	/* torch/this */\
 	if (isIn(tile,TILES_TORCH)) { /* animation */\
 		drawTorchFire(x*TILE_W+11,y*TILE_H-39); \
@@ -148,7 +165,6 @@ void roomKidChangedFloor(tRoom* room, tObject* kid);
 		e(58,(x-1)*TILE_W+0,y*TILE_H);\
 	if (((isIn(tile,TILES_RAISE)&&((!isIn(tile,TILES_UNPRESSED))||(!isIn(left,TILES_WALKABLE))||isIn(left,TILES_RAISE)))&&(!isIn(tile,TILES_UNPRESSED)))||isIn(tile,TILES_DROP_UNPRESSED))\
 		e(58,(x-1)*TILE_W+0,y*TILE_H+1);\
-						\
 	if (isIn(tile,TILES_DROP_PRESSED)) \
 		e(58,(x-1)*TILE_W+0,y*TILE_H+2);\
 	/* debris/this */\
@@ -161,25 +177,9 @@ void roomKidChangedFloor(tRoom* room, tObject* kid);
 	}\
 	/* skeleton/this */\
 	if (isIn(tile,TILES_SKELETON)) \
-		e(80,(x-1)*TILE_W+0,y*TILE_H+0);\
-	/* sword/left */\
-	if (isIn(left,TILES_SWORD)) \
-		drawSword((x-1)*TILE_W-15,y*TILE_H-4);\
-	/* potion base/left */\
-	if (isIn(left,TILES_SMALLPOTION))\
-		drawPotionSmallBase((x-1)*TILE_W-15,y*TILE_H-4);\
-	if ((isIn(left,TILES_BIGPOTION))) \
-		drawPotionBigBase((x-1)*TILE_W-15,y*TILE_H-4);\
-	/* potion animation/left */\
-	if (isIn(left,TILES_REDPOTION))\
-		drawPotionRedBubbles((x-1)*TILE_W+3-15,y*TILE_H-15,isIn(left,TILES_BIGPOTION));\
-	if (isIn(left,TILES_GREENPOTION))\
-		drawPotionGreenBubbles((x-1)*TILE_W+3-15,y*TILE_H-15,isIn(left,TILES_BIGPOTION));\
-	if (isIn(left,TILES_BLUEPOTION))\
-		drawPotionBlueBubbles((x-1)*TILE_W+3-15,y*TILE_H-15,isIn(left,TILES_BIGPOTION));
+		e(80,(x-1)*TILE_W+0,y*TILE_H+0);
 
 #define drawAllBack(left,tile,right,dleft) \
-	/* TODO: fix this conditions to make miniterms */\
 	/* loose moving */\
 	if (isIn(tile,TILES_LOOSEMOVING)) \
 		drawLoose((x-1)*TILE_W+0,y*TILE_H+3,looseGetFrame(tile),layBase);\
@@ -223,7 +223,7 @@ void roomKidChangedFloor(tRoom* room, tObject* kid);
 	if (isIn(tile,TILE_EXIT_LEFT)) \
 		e(6,x*TILE_W+0,(y-1)*TILE_H+3);\
 	if (isIn(tile,TILE_EXIT_RIGHT)) \
-		e(8,x*TILE_W+0,(y-1)*TILE_H+3);\
+		e(8,x*TILE_W+0,(y-1)*TILE_H+3);
 
 
 #define drawAllFore(left,tile,right) \
