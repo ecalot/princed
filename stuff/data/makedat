@@ -64,8 +64,26 @@ then
 		fi
 		
 		#convert def files to proc files
-		sed -e "2,1s/.*/$ID/g" $FDEF > $FPROC
-		
+		#process images
+		grep -q -e '^IMG$' $FDEF
+		if [ $? == 0 ]
+		then
+			sed -e '2,$d' $FDEF > $FPROC
+			PAL=`sed -e '1,2d' -e '4,$d' $FDEF`
+			echo -n -e "$ID\n$PAL\n" >> $FPROC
+			sed -e '1,3d' $FDEF|while read frameline
+			do
+				frame=`echo "$frameline" | sed -e 's/^\([0-9]*\).*$/\1/g'`
+				#bottom=`echo "$frameline" | sed -e 's/^.* [Bb]:\([0-9]*\).*$/\1/g' -e "s/^$frameline\$/0/g"`
+				#left=`echo "$frameline" | sed -e 's/^.* [Ll]:\([0-9]*\).*$/\1/g' -e "s/^$frameline\$/0/g"`
+				#right=`echo "$frameline" | sed -e 's/^.* [Rr]:\([0-9]*\).*$/\1/g' -e "s/^$frameline\$/0/g"`
+				#echo -n -e "$frame\n$bottom\n$left\n$right\n">>$FPROC
+				echo -n -e "$frame\n">>$FPROC
+			done
+		else
+			sed -e "2,1s/.*/$ID/g" $FDEF > $FPROC
+		fi
+			
 		#convert proc files to index files
 		bin/makeindex $FPROC $FINDEX
 	
@@ -105,4 +123,5 @@ then
 	cat error_log > /dev/stderr
 	rm error_log
 fi
+
 
