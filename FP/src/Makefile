@@ -9,7 +9,9 @@ MAKEDIR    = @mkdir -p
 INDEXER    = @cd ..;./install; cd src
 DOWNLOADER = @cd ..;./install -d; cd src
 REMOVER    = @rm -f
-	
+AWK        = awk
+GREP       = @grep -v -e '^[[:space:]]*\(none[[:space:]]*\|\#.*\)\{0,1\}$$'
+
 #####################
 # Operating Systems #
 #####################
@@ -51,6 +53,10 @@ OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
 								input.o kid.o
 EXEFILE       = bin/freeprince
 
+GENERATEDHEADERS = include/res_conf_parts.h include/res_conf_files.h\
+                   include/res_conf_types.h include/res_conf_mods.h\
+                   include/res_conf_resources.h include/states_static.h
+
 #Use this to temporary remove an option
 OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
 LINKEROPTIONS = $(LINKERRELEASE)
@@ -72,7 +78,7 @@ $(EXEFILE): $(OBJFILES)
 
 clean:
 	$(INFO) Erasing temporary object files...
-	$(REMOVER) $(OBJFILES) $(EXEFILE) include/res_conf.h
+	$(REMOVER) $(OBJFILES) $(EXEFILE) $(GENERATEDHEADERS) 
 
 build: clean $(EXEFILE)
 
@@ -145,6 +151,30 @@ config.o: res/config.c include/resources.h include/res_conf.h
 	$(INFO) Compiling resource configuration module...
 	$(CC) -c res/config.c $(OPTIONS)
 
-include/res_conf.h: mkcfg conf/files.conf conf/mods.conf conf/parts.conf\
-                    conf/resources.conf conf/types.conf
-	@./mkcfg
+#AWK scripts: header generation
+include/res_conf.h: $(GENERATEDHEADERS)
+
+include/res_conf_parts.h: conf/parts.conf conf/awk/res_conf_parts.awk
+	$(INFO) Creating resource id parts configuration file...
+	$(GREP) conf/parts.conf|$(AWK) -f conf/awk/res_conf_parts.awk >include/res_conf_parts.h
+
+include/res_conf_files.h: conf/files.conf conf/awk/res_conf_files.awk
+	$(INFO) Creating resource dat files list configuration file...
+	$(GREP) conf/files.conf|$(AWK) -f conf/awk/res_conf_files.awk >include/res_conf_files.h
+
+include/res_conf_types.h: conf/types.conf conf/awk/res_conf_types.awk
+	$(INFO) Creating resource types configuration file...
+	$(GREP) conf/types.conf|$(AWK) -f conf/awk/res_conf_types.awk >include/res_conf_types.h
+
+include/res_conf_mods.h: conf/mods.conf conf/awk/res_conf_mods.awk
+	$(INFO) Creating resource modifiers configuration file...
+	$(GREP) conf/mods.conf|$(AWK) -f conf/awk/res_conf_mods.awk >include/res_conf_mods.h
+
+include/res_conf_resources.h: conf/resources.conf conf/awk/res_conf_resources.awk
+	$(INFO) Creating resource list configuration file...
+	$(GREP) conf/resources.conf|$(AWK) -f conf/awk/res_conf_resources.awk >include/res_conf_resources.h
+
+include/states_static.h: conf/states.conf conf/awk/states_static.awk
+	$(INFO) Creating states list configuration file...
+	$(GREP) conf/states.conf|sed -e 's/^\t\t\t/- - - /g' -e 's/^\t\t/- - /g' -e 's/^\t/- /g' -e 's/:$$//g'|$(AWK) -f conf/awk/states_static.awk>include/states_static.h
+
