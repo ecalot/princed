@@ -1,0 +1,46 @@
+#!/bin/bash
+
+case "$1" in
+	add)
+		if [ -z "$2" ]
+		then
+			echo "Please add a type name"
+			exit 1
+		fi
+		MAX=`grep "#define RES_TYPE" result/types.h | sed -e "s/#define RES_TYPE.* \([0-9]*\)/\1/g" | awk 'BEGIN {c=-1} {c=(c>$1)?c:$1} END {printf "%d\n",c+1}'`
+		echo "#define RES_TYPE_$2 $MAX" >> result/types.h
+		echo "Added define $2 with value $MAX"
+		exit 0
+	;;
+	del)
+		if [ -z "$2" ]
+		then
+			echo "Please add a type name to delete"
+			exit 1
+		fi
+	
+		MATCH=`grep -c "#define RES_TYPE_$2" result/types.h`
+		if [ $MATCH != 1 ]
+		then
+			echo "There are $MATCH matches, try another pattern"
+			exit 1
+		fi
+		cat result/types.h | grep -v "#define RES_TYPE_$2" > result/types.h
+		echo "Define removed"
+		exit 0
+	;;
+	list)
+		grep '#define' result/types.h|sed 's/#define RES_TYPE_\(.*\) [0-9]*$/\1/g'|sort
+		exit 0
+	;;
+	ren)
+		. $0 del $1
+		. $0 add $2
+		exit 0
+	;;
+	*)
+		echo "Usage: $0 {list|add|del|ren|help}"
+		exit 1
+	;;
+esac
+
