@@ -36,13 +36,19 @@ LIBS          = $(shell sdl-config --libs)
 DEFINES       = -DOS=\"$(OS)\" $(LINUX) 
 
 #Release type
+TYPE          = Release
 # RELEASE may be:
 #  -g -Wall -ansi -pedantic        for debug
 #  -O2                             for release
 # LINKERRELEASE may be:
 #  -s                              for release
-RELEASE       = -g -Wall -ansi -pedantic 
-LINKERRELEASE =
+ifeq ($(TYPE),Debug)
+	RELEASE       = -g -Wall -ansi -pedantic 
+	LINKERRELEASE =
+else
+	RELEASE       = -O2 
+	LINKERRELEASE = -s
+endif
 
 #Binary code files
 OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
