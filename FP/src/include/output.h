@@ -47,7 +47,7 @@ playWav(tWave sound); /* Starts the reproduction of the sample and returns */
 playMid(tMidi music); /* Starts the music reproduction and returns */
 
 /* Graph */
-void* loadBitmap(unsigned char* data, int h,int w);
+void* loadBitmap(unsigned char* data, int h,int w,int invert); /* invert is 0 when no invertion is needed and non-zero when an inversion is pervormed */
 void freeBitmap(void* image);
 void drawBitmap(void* image,int x, int y);
 clearScreen();
