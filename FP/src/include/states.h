@@ -21,6 +21,8 @@ typedef struct {
 	tsMoveType   moveType; /* absolute or relative */
 	char         moveOffset; /* amount of moving units the kid will move depending on the offset type */
 	short        nextStateId; /* Id of the first action of the next state */
+	short        animStart; /* Index of the first frame in the animation array */
+	short        animSize; /* number of frames to be shown */
 } tsAction;
 
 /* public object */

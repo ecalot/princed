@@ -1,7 +1,9 @@
 BEGIN {
 	currentCondition=-1
 	currentAction=0
-	printf("#define STATES_CONDITIONS {\\\n");
+	printf("#define STATES_MOVETYPES_RELATIVE 0\n")
+	printf("#define STATES_MOVETYPES_ABSOLUTEFORWARD 1\n\n")
+	printf("#define STATES_CONDITIONS {\\\n")
 	tmp="conf/statesproperties.conf"
 	while ((getline line < tmp) > 0) {
 		gsub(/[	 ]+/, "-",line)
@@ -14,20 +16,7 @@ BEGIN {
 	}
 	close(tmp)
 	currentAnimation=0
-}
-
-function addLine(coma) {
-				stateArray[currentAction]=sprintf(\
-					"\t/* %sAction: %s, Animations: start=%d total=%d */ \\\n\t\t{/*initial condition*/ %d, /*next state*/ **replace*%s**, /*steps*/ %d}%s\\\n",\
-					rememberAction,\
-					startAnimation,\
-					currentAnimation-startAnimation,\
-					conditions,\
-					nextState,\
-					steps,\
-					linkedState,\
-					coma\
-				)
+	latestLevel=-1
 }
 
 {
@@ -37,7 +26,8 @@ function addLine(coma) {
 				if (listType == "next") {
 					nextState=tolower($4)
 				} else if (listType == "steps") {
-					steps=$4
+					moveOffset=$5
+					moveType=tolower($4)
 				} else if (listType == "conditions") {
 					if (oldType != listType ) {
 						oldType=listType
@@ -71,6 +61,16 @@ function addLine(coma) {
 						arrayAnimation[currentAnimation]=$4
 						currentAnimation++
 					}
+				} else if (listType == "level") {
+					if (arrayLevel[$4]) {
+						printf("Parsing error in states.conf: Redeclaration of level '%d' in uncommented line %d.\n",$4,NR)>"/dev/stderr"
+						exit 23
+					} else {
+						arrayLevel[$4]=currentAction+1
+						if ($4>latestLevel) {
+							latestLevel=$4
+						}
+					}
 				}
 			} else {
 				$3=tolower($3)
@@ -79,14 +79,17 @@ function addLine(coma) {
 			}
 		} else {		
 			if (conditions) {
-				linkedState=currentState
-				currentState=""
-				stateList[linkedState]=currentAction
-				if (linkedState) {
-					linkedState=sprintf("State: %s (%d), ",linkedState,currentActions)
-				}
-				addLine(",")
+				actionArray[currentAction,"description"]=rememberAction
+				actionArray[currentAction,"isFirstInState"]=currentState
+				actionArray[currentAction,"animationStart"]=startAnimation
+				actionArray[currentAction,"animationSize"]=currentAnimation-startAnimation
+				actionArray[currentAction,"conditionStart"]=conditions
+				actionArray[currentAction,"nextState"]=nextState
+				actionArray[currentAction,"moveType"]=moveType
+				actionArray[currentAction,"moveOffset"]=moveOffset
+				actionArray[currentAction,"lastComma"]=","
 				currentAction++;
+				currentState=""
 			}
 
 			startAnimation=currentAnimation
@@ -102,30 +105,80 @@ function addLine(coma) {
 	} else {
 		listType=""
 		currentState=tolower($1)
+		stateList[currentState]=currentAction
 	}
 
 }
 
 END {
+	actionArray[currentAction,"description"]=rememberAction
+	actionArray[currentAction,"isFirstInState"]=currentState
+	actionArray[currentAction,"animationStart"]=startAnimation
+	actionArray[currentAction,"animationSize"]=currentAnimation-startAnimation
+	actionArray[currentAction,"conditionStart"]=conditions
+	actionArray[currentAction,"nextState"]=nextState
+	actionArray[currentAction,"moveType"]=moveType
+	actionArray[currentAction,"moveOffset"]=moveOffset
+	actionArray[currentAction,"lastComma"]=""
 	printf("\t{esTrue,0} /* the end */\\\n};\n\n#define STATES_ACTIONS {\\\n");
-	linkedState=currentState
-	addLine("")
+
 	for (i=0;i<=currentAction;i++) {
-		replaceStart=match(stateArray[i],/\*\*replace\*(.*)\*\*/)
-		line=substr(stateArray[i],10+replaceStart)
-		replaceEnd=match(line,/\*\*/)
-		line=substr(line,0,replaceEnd)
-		stateNumber=stateList[line]
-		if (!stateNumber) stateNumber=0
-		printf "%s%d /* %s */%s", substr(stateArray[i],0,replaceStart),stateNumber,line,substr(stateArray[i],11+replaceEnd+replaceStart)
+		nextStateId=stateList[actionArray[i,"nextState"]]
+		#print comments
+		printf("\t/* Action: %s (%d) \\\n",\
+			actionArray[i,"description"],\
+			i\
+		)
+		if (actionArray[i,"isFirstInState"]) {
+			printf("\t * State: %s (%d) \\\n",\
+				actionArray[i,"isFirstInState"],\
+				i\
+			)
+		}
+		printf("\t * Animations: animStart=%d, animSize=%d \\\n",\
+			actionArray[i,"animationStart"],\
+			actionArray[i,"animationSize"]\
+		)
+		printf("\t * Conditionals: conditionId=%d, nextStateId=%d (%s) \\\n",\
+			actionArray[i,"conditionStart"],\
+			nextStateId,\
+			actionArray[i,"nextState"]\
+		)
+		printf("\t * Movements: moveType=%s, moveOffset=%d */ \\\n",\
+			actionArray[i,"moveType"],\
+			actionArray[i,"moveOffset"]\
+		)
+		#print array
+		printf("\t\t{%d,STATES_MOVETYPES_%s,%d,%d,%d,%d}%s\\\n",\
+			actionArray[i,"conditionStart"],\
+			toupper(actionArray[i,"moveType"]),\
+			actionArray[i,"moveOffset"],\
+			nextStateId,\
+			actionArray[i,"animationStart"],\
+			actionArray[i,"animationSize"],\
+			actionArray[i,"lastComma"]\
+		)
 	}
-	printf("};\n\n#define STATES_ANIMATIONS {\\\n\t");
+
+	printf("};\n\n#define STATES_ANIMATIONS {\\\n\t")
 	coma=""
 	for (i=0;i<currentAnimation;i++) {
 		printf "%s%d",coma,arrayAnimation[i]
 		if (i%10==9) printf("\\\n\t");
 		coma=","
 	}
-	printf("\\\n};\n");
+
+	printf("\\\n};\n\n#define STATES_LEVELS {")
+	coma=""
+	for (i=0;i<=latestLevel;i++) {
+		if (!arrayLevel[i]) {
+			printf("Parsing error in states.conf: Level number %d is defined but level %d is not.\n",latestLevel,i)>"/dev/stderr"
+			exit 24
+		}
+		printf "%s%s",coma,arrayLevel[i]-1
+		coma=","
+	}
+	printf("};\n")
+
 }
 
