@@ -245,8 +245,6 @@ void emptyTable(tResource* r[]) {
 	while (i--) *(r++)=NULL;
 }
 
-
-
 /* parse file */
 int parseFile(const char* vFile, const char* datFile, tResource* r[]) {
 	/* Declare error variable */
@@ -328,3 +326,4 @@ void getFileName(char* vFileext,const char* vDirExt,tResource* r,unsigned short 
 		sprintf(vFileext,"%s/%s",vDirExt,r->path);
 	}
 }
+

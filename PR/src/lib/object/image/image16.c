@@ -44,6 +44,19 @@ compress.c: Princed Resources : Image Compression Library
 \***************************************************************/
 
 /***************************************************************\
+|                Internal compression prototypes                |
+\***************************************************************/
+
+void compressLzg(const unsigned char* input, int inputSize, 
+                 unsigned char* output, int *outputSize);
+void compressRle(const unsigned char* input, int inputSize, 
+                 unsigned char* output, int *outputSize);
+int expandLzg(const unsigned char* input, int inputSize, 
+               unsigned char* output, int *outputSize);
+int expandRle(const unsigned char* input, int inputSize, 
+               unsigned char* output, int *outputSize);
+
+/***************************************************************\
 |                        Image transpose                        |
 \***************************************************************/
 
@@ -68,132 +81,6 @@ void antiTransposeImage(tImage* image,int size) {
 	while (cursor<size) {outputaux[cursor]=image->pix[transpose(cursor,image->widthInBytes,image->height)];cursor++;}
 	free(image->pix);
 	image->pix=outputaux;
-}
-
-/***************************************************************\
-|                    Uncompression algorithms                   |
-\***************************************************************/
-
-/* LZG expansion algorithm sub function */
-unsigned char popBit(unsigned char *byte) {
-	unsigned char bit=(unsigned char)((*byte)&1);
-	(*byte)>>=1;
-	return bit;
-}
-
-/* Expands LZ Groody algorithm. This is the core of PR */
-int expandLzg(const unsigned char* array, int arraySize, tImage* image, int imageSize) {
-	char k;
-	int location,h,cursor=0,pos=0;
-	unsigned char maskbyte,rep;
-
-	if ((image->pix=getMemory(/*imageSize*/MAX_MOD_SIZE_IN_LZG))==NULL) return COMPRESS_RESULT_FATAL; /* reserve memory */
-	for(location=0;location<MAX_MOD_SIZE_IN_LZG;image->pix[location]=0,location++); /* clean output garbage */
-
-	/* main loop */
-	while (cursor<imageSize) {
-		maskbyte=array[pos++];
-		for (k=8;k&&(cursor<imageSize);k--) {
-			if (popBit(&maskbyte)) {
-				image->pix[cursor++]=array[pos++];
-			} else {
-				location=66+(((rep=array[pos])&3)<<8)+(unsigned char)array[pos+1];pos+=2;
-				rep=(unsigned char)((rep>>2)+3);
-				while (rep--) { /* Be careful in big images */
-					h=cursor/MAX_MXD_SIZE_IN_LZG-((location%MAX_MXD_SIZE_IN_LZG)>(cursor%MAX_MXD_SIZE_IN_LZG));
-					image->pix[cursor++]=image->pix[((h<0)?0:h)*MAX_MXD_SIZE_IN_LZG+(location++)%MAX_MXD_SIZE_IN_LZG];
-/*
-					h=((cursor-(location&0x3FF))&(~0x3FF));
-					image->pix[cursor]=image->pix[((h<0)?0:h)+(location&0x3FF)];
-					cursor++;location++;
-*/
-				}
-			}
-		}
-	}
-	return ((pos==arraySize)&(cursor==imageSize))-1; /* WARNING or SUCCESS */
-}
-
-/* Expands RLE algorithm */
-int expandRle(const unsigned char* array, int arraySize, tImage* image, int imageSize) {
-	int cursor=0;
-	register signed char rep;
-	int pos=0;
-
-	if ((image->pix=getMemory(imageSize+128))==NULL) return COMPRESS_RESULT_FATAL; /* reserve memory */
-
-	/* main loop */
-	while (cursor<imageSize) {
-		rep=(signed char)(array[pos++]);
-		if (rep<0) {
-			/* Negative */
-			while (rep++) image->pix[cursor++]=array[pos];
-			pos++;
-		} else {
-			/* Positive */
-			rep=~rep;
-			while (rep++) image->pix[cursor++]=array[pos++];
-		}
-	}
-	return ((pos==arraySize)&(cursor==imageSize))-1; /* WARNING or SUCCESS */
-}
-
-/***************************************************************\
-|                    Compression algorithms                     |
-\***************************************************************/
-
-/* Compress using the Run Length Encoding algorithm */
-void compressRle(unsigned char* data,tImage* img,int *dataSize) {
-	/* Declare pointers */
-	unsigned char* cursorData  = data;
-	char*          counter;
-	unsigned char* cursorPix   = img->pix;
-	unsigned char* imgEnd      = img->pix+(*dataSize);
-
-	while (cursorPix<imgEnd) {
-		/* Step 1: Create counter */
-		counter=(char*)(cursorData++);
-		*counter=-1;
-
-		/* Step 2: Look and copy the string until more than two repeated bytes are found */
-		while (
-			(cursorPix+1<imgEnd)&&  /* bugfix: reads one more */
-			(
-				(*cursorPix!=*(cursorPix+1))||
-				(
-					/* (*cursorPix==*(cursorPix+1))&& */
-					((cursorPix+2)<imgEnd)&& /* bugfix: reads one more */
-					(*cursorPix!=*(cursorPix+2))
-				)
-			)&&
-			((*counter)!=127)
-		) {
-			*(cursorData)=*(cursorPix);
-			(*counter)++;
-			cursorPix++;
-			cursorData++;
-		}
-
-		/* Step 3: If there was a repeated string, let's ignore it and add the cursor with the repetitions */
-		if (*counter==-1) {
-			while ((cursorPix+1<imgEnd)&&(*cursorPix==(*(cursorPix+1)))&&((*counter)!=-128)) {
-				cursorPix++;
-				(*counter)--;
-			}
-
-			*(cursorData)=*(cursorPix); /* Print repeated char */
-			cursorPix++;
-			cursorData++;
-		}
-	}
-	/* Write the last char 
-	if ((*counter)>0) {
-		*(cursorData++)=0;
-		*(cursorData)= ||||||| 0xff |||||  *(cursorPix); |||||||
-	} else {
-		(*counter)--;
-	}*/
-	*dataSize=(int)((long int)cursorData-(long int)data); /* Note: casted to long for portability with 64 bits architectures */
 }
 
 /***************************************************************\

@@ -17,10 +17,10 @@ OS      := $(shell uname)
 ifeq ($(OS),Linux)
   LINUX = -DLINUX
   OS    = GNU/Linux
-  SRC2  =
+  PORTS =
 else
   LINUX = -DNOLINUX
-  SRC2  = getopt.o getopt1.o
+  PORTS = getopt.o getopt1.o
 	ifeq ($(OS),Darwin)
 		LINUX = -DNOLINUX -DMACOS
 	endif
@@ -50,11 +50,16 @@ else
   LINKERRELEASE = -s
 endif
 
-OBJFILES = import.o compress.o export.o resources.o tasks.o disk.o\
-           xmlparse.o xmlsearch.o dat.o bmp.o mid.o pal.o wav.o plv.o\
-           memory.o $(SRC2) pr.o 
+FILES    = import.o compress.o export.o resources.o tasks.o disk.o\
+           dat.o bmp.o mid.o pal.o wav.o plv.o\
+           memory.o pr.o
 
-SRC3     = main.o filedir.o
+XML      = parse.o search.o
+COMPRESS = compress.o lzg_compress.o lzg_uncompress.o rle_compress.o rle_uncompress.o 
+CONSOLE  = main.o filedir.o
+
+EXEOBJ   = $(FILES) $(XML) $(COMPRESS) $(CONSOLE) $(PORTS)
+LIBOBJ   = $(FILES) $(XML) $(COMPRESS) $(PORTS)
 
 EXEFILE  = bin/pr
 XMLFILE  = bin/resources.xml
@@ -65,20 +70,21 @@ LINKEROPTIONS = $(LINKERRELEASE)
 
 #main file
 
-$(EXEFILE): $(OBJFILES) $(XMLFILE) $(SRC3)
+$(EXEFILE): $(EXEOBJ)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
-	$(CC) $(OPTIONS) -o bin/pr $(OBJFILES) $(SRC3) 
+	$(CC) $(OPTIONS) -o bin/pr $(EXEOBJ) 
 	$(INFO) Program successfully compiled
 	$(INFO)
 	$(INFO) Please read readme.txt for syntax information
 	$(INFO)
 
 #command options
+.PHONY: clean cleanxml build all lib
 
 clean:
 	$(INFO) Erasing temporary object files...
-	$(REMOVER) $(OBJFILES) $(EXEFILE) $(SRC3)
+	$(REMOVER) $(EXEOBJ) $(EXEFILE)
 
 cleanxml:
 	$(INFO) Erasing xml file...
@@ -88,13 +94,13 @@ build: clean bin/pr
 
 all: $(EXEFILE)
 
-lib: $(OBJFILES) $(SRC3)
+lib: $(LIBOBJ)
 	$(MAKEDIR) bin
 	$(INFO) Making dynamic library...
-	$(CC) $(OPTIONS) -o bin/pr.so $(OBJFILES) -Llibc -shared -dynamic
+	$(CC) $(OPTIONS) -o bin/pr.so $(LIBOBJ) -Llibc -shared -dynamic
 	$(INFO) Library successfully compiled
 	$(INFO)
-	$(INFO) Please read lib/readme.coders.txt and pr.h for interfaces
+	$(INFO) Please read readme.coders.txt and pr.h for interfaces
 	$(INFO)
 
 #files
@@ -116,9 +122,25 @@ export.o: lib/export.c
 	$(INFO) Compiling export module...
 	$(CC) -c lib/export.c $(OPTIONS)
 
-compress.o: lib/compress.c
+compress.o: lib/compression/main.c
 	$(INFO) Compiling compression module...
-	$(CC) -c lib/compress.c $(OPTIONS)
+	$(CC) -c lib/compression/main.c -o compress.o $(OPTIONS)
+
+lzg_compress.o: lib/compression/lzg_compress.c
+	$(INFO) Compiling LZG compression module...
+	$(CC) -c lib/compression/lzg_compress.c $(OPTIONS)
+
+rle_compress.o: lib/compression/rle_compress.c
+	$(INFO) Compiling RLE compression module...
+	$(CC) -c lib/compression/rle_compress.c $(OPTIONS)
+
+lzg_uncompress.o: lib/compression/lzg_uncompress.c
+	$(INFO) Compiling LZG uncompression module...
+	$(CC) -c lib/compression/lzg_uncompress.c $(OPTIONS)
+
+rle_uncompress.o: lib/compression/rle_uncompress.c
+	$(INFO) Compiling RLE uncompression module...
+	$(CC) -c lib/compression/rle_uncompress.c $(OPTIONS)
 
 main.o: console/main.c
 	$(INFO) Compiling command parsing module for standard mode...
@@ -140,20 +162,20 @@ tasks.o: lib/tasks.c
 	$(INFO) Compiling extra tasks module...
 	$(CC) -c lib/tasks.c $(OPTIONS)
 
-xmlparse.o: lib/xmlparse.c
-	$(INFO) Compiling xml parsing module...
-	$(CC) -c lib/xmlparse.c $(OPTIONS)
+parse.o: lib/xml/parse.c
+	$(INFO) Compiling XML parsing module...
+	$(CC) -c lib/xml/parse.c $(OPTIONS)
 
-xmlsearch.o: lib/xmlsearch.c
-	$(INFO) Compiling xml search features...
-	$(CC) -c lib/xmlsearch.c $(OPTIONS)
+search.o: lib/xml/search.c
+	$(INFO) Compiling XML search features...
+	$(CC) -c lib/xml/search.c $(OPTIONS)
 
 disk.o: lib/disk.c
 	$(INFO) Compiling disk access library...
 	$(CC) -c lib/disk.c $(OPTIONS)
 
 dat.o: lib/dat.c
-	$(INFO) Compiling dat editing library...
+	$(INFO) Compiling DAT editing library...
 	$(CC) -c lib/dat.c $(OPTIONS)
 
 bmp.o: lib/formats/bmp.c
@@ -161,7 +183,7 @@ bmp.o: lib/formats/bmp.c
 	$(CC) -c lib/formats/bmp.c $(OPTIONS)
 
 mid.o: lib/formats/mid.c
-	$(INFO) Compiling midi audio files support \(mid\)...
+	$(INFO) Compiling MIDI audio files support \(mid\)...
 	$(CC) -c lib/formats/mid.c $(OPTIONS)
 
 plv.o: lib/formats/plv.c

@@ -202,7 +202,6 @@ void compressLzg(const unsigned char* input2, int inputSize,
 			/* No suitable pattern found. Just copy the current byte. */
 			pushMaskBit(1, output, &outputPos);
 			output[outputPos] = input[inputPos];
-printf("copy i=%d o=%d data=%02x\n", outputPos, inputPos, output[outputPos]);
 			inputPos++;
 			outputPos++;
 		}

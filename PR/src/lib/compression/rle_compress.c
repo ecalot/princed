@@ -35,12 +35,13 @@ compress.c: Princed Resources : Image Compression Library
 #include <stdio.h>
 
 /* Compress using the Run Length Encoding algorithm */
-void compressRle(unsigned char* data,tImage* img,int *dataSize) {
+void compressRle(const unsigned char* input, int inputSize, 
+                 unsigned char* output, int *outputSize) {
 	/* Declare pointers */
-	unsigned char* cursorData  = data;
+	unsigned char* cursorData        = output;
 	char*          counter;
-	unsigned char* cursorPix   = img->pix;
-	unsigned char* imgEnd      = img->pix+(*dataSize);
+	const unsigned char* cursorPix   = input;
+	const unsigned char* imgEnd      = input+(*outputSize);
 
 	while (cursorPix<imgEnd) {
 		/* Step 1: Create counter */
@@ -85,6 +86,6 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
 	} else {
 		(*counter)--;
 	}*/
-	*dataSize=(int)((long int)cursorData-(long int)data); /* Note: casted to long for portability with 64 bits architectures */
+	*outputSize=(int)((long int)cursorData-(long int)output); /* Note: casted to long for portability with 64 bits architectures */
 }
 
