@@ -1,0 +1,2 @@
+#define CONFIG_MAX_ITEMS 200
+
