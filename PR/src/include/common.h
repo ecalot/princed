@@ -164,9 +164,6 @@ int prVerifyDatType(const char* vFiledat);
 int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char * vDatFileName,const char* datAuthor, const char* backupExtension);
 int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char* vDatFileName, const char* backupExtension);
 
-/* Recursive function */
-int prMain(int option, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor,FILE* output);
-
 /***************************************************************\
 |                   Command Line specific options               |
 \***************************************************************/

@@ -32,12 +32,10 @@ tasks.c: Princed Resources : Classify a DAT file
 */
 
 #include <stdio.h>
-#include "tasks.h"
+#include "classify.h"
 #include "memory.h"
 #include "resources.h"
 #include "dat.h"
-#include "xmlparse.h"
-#include "xmlsearch.h"
 #include "pr.h"
 
 /***************************************************************\

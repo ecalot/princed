@@ -56,9 +56,9 @@ pr.c: Main source file for Princed Resources library
 #include "compress.h"
 #include "dat.h" /* MAX_RES_COUNT */
 
-#include "extract.h"
-#include "compile.h"
-#include "tasks.h"
+#include "export.h"
+#include "import.h"
+#include "classify.h"
 
 #include "memory.h"    /* getMemory, free */
 #include "disk.h"      /* getFileNameFromPath */
