@@ -45,7 +45,7 @@ pr.c: Main source file for Princed Resources
 
 //Compilation options
 
-//#define UNIX
+#define UNIX
 //#define DLL
 #define PR_ABOUT "Princed resources (PR) V0.6 beta.\r\n(c) Copyright 2003 - Princed Development Team\r\nhttp://www.princed.com.ar\r\n\r\n"
 
