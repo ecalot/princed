@@ -20,7 +20,7 @@ OS    = Win32
 ####################
 
 #Libraries: include path and linked libs
-INCLUDE       = -Iinclude -IC:\windows\Escritorio\sdl\SDL-1.2.7 -IC:\windows\Escritorio\sdl\SDL-1.2.7\sdl -Iports\include
+INCLUDE       = -Iinclude -Iports\include -Iports\include\sdl
 LIBS          = SDL.lib
 
 #Defines
