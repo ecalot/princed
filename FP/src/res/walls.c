@@ -35,6 +35,8 @@ tiles.c: FreePrince : Wall generation algorithm functions
 int wallGet(unsigned short env,unsigned short loc,unsigned short tab,unsigned short n) {
 	static unsigned long wallList[WALL_COUNT_TABLES][WALL_SIZE_TABLES]=WALL_ARRAYS;
 
+	if (loc==WALL_LOC_NONE) return 0; /* this is not a wall */
+	
 	if (!tab) {
 		return 0;
 	}	else {

@@ -242,5 +242,6 @@ END {
 	}
 	printf("}\n")
 	printf("#define WALL_COUNT_TABLES %d\n#define WALL_SIZE_TABLES %d\n",totalcount,totaltotal)
+	printf("#define WALL_LOC_NONE %d\n",loc+1)
 }
 

@@ -429,24 +429,20 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 	tTile left=roomGetTile(room,x-1,y);
 	tTile tile=roomGetTile(room,x,y);
 	tTile right=roomGetTile(room,x+1,y);
+	tTile dleft=roomGetTile(room,x-1,(y==3)?3:(y+1));
 	int cases=wallGetCase(left,tile,right);
 
 	/* TODO: fix this conditions to make miniterms */
 	/* loose moving */
-	if (isIn(tile,TILES_LOOSEMOVING)) {
+	if (isIn(tile,TILES_LOOSEMOVING)) 
 		drawLoose((x-1)*TILE_W+0,y*TILE_H+3,looseGetFrame(tile),layBase);
-	
 	/* normal */
-	} else if (isIn(tile,TILES_WALKABLE)) {
-		if (isIn(tile,TILES_PRESSABLE)) {
-			/* TODO: drop has resource 59 for unpressed/raise 47? checkgame */
-			e(59,(x-1)*TILE_W+0,y*TILE_H+(isIn(tile,TILES_UNPRESSED)?3:4));
-		} else {
-			e(11,(x-1)*TILE_W+0,y*TILE_H+3);
-		}
-	} else {
+	if (isIn(tile,TILES_PRESSABLE)) 
+		/* TODO: drop has resource 59 for unpressed/raise 47? checkgame */
+		e(59,(x-1)*TILE_W+0,y*TILE_H+(isIn(tile,TILES_UNPRESSED)?3:4));
+	if (isIn(tile,TILES_WALKABLE)&&(!isIn(tile,TILES_LOOSEMOVING))&&(!isIn(tile,TILES_PRESSABLE)))
+		e(11,(x-1)*TILE_W+0,y*TILE_H+3);
 	/* wall */
-		if (isIn(tile,TILES_WALL)) {
 			/* there are 4 cases */
 			if (wallCase(WALL_LOC_WWW))
 				e(65,(x-1)*TILE_W+0,y*TILE_H+3);
@@ -456,9 +452,8 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 				e(67,(x-1)*TILE_W+0,y*TILE_H+3);
 			if (wallCase(WALL_LOC_SWS))
 				e(69,(x-1)*TILE_W+0,y*TILE_H+3);
-		} else {
+		if (isIn(tile,TILES_SPACE)) {
 	/* empty */
-			tTile dleft=roomGetTile(room,x-1,y+1);
 			/* tile, dleft*/
 			
 			/* gate_frame/this */
@@ -478,7 +473,6 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 			if (isIn(dleft,TILES_WALL)) 
 				e(64,(x-1)*TILE_W+0,y*TILE_H+3);
 		}
-	}
 	/* upper objects */
 	if (isIn(tile,TILE_EXIT_LEFT)) 
 		e(6,x*TILE_W+0,(y-1)*TILE_H+3);
