@@ -103,41 +103,41 @@ Versions:
   + Added monochrome format support for image types 00,01,02,03 and 04;
     only stable in title.dat texts.
   + Fixed palette bug
- * PR v1.0 beta
+ * PR v1.0 beta (2004-03-22)
   - Added attribute "path" as an alias of "external" in XML
   + Added full monochrome resource support
-  - Added the itemtype attribute "autodetect"
+  - DAT File list recycle bug fix
+  - PLV Checksum not ignored anymore
   - Added XML handling primitives in DLL
+  - Added the itemtype attribute "autodetect"
+  - Removed support of numeric "itemtype" attributes
+  - Renamed xml module to xmlparse
   - Better resource naming when unknown extraction is performed
   - Changed tag name "itemtypes" to "resources"
-  - Code made a bit easy to read, abstracted dat handling library
-  - DAT File list recycle bug fix
   - Directory ended in "/" bug
   - Fixed backup bug. Implemented a file pointer dynamic table using the
     LIFO philosophy for safe open files in the disk handling library
   - Fixed bug in compressed image size (2 bytes bigger than the normal)
   - Fixed memory freeing
   - Improved and abstracted transposition in monochromatic images
+  - Unknown option bug fixed
+  - Code in strict ANSI C (test with GCC pedantic)
+  - Code made a bit easy to read, abstracted dat handling library
+  - Coded partial importing and exporting feature
   - Lower memory allocation (getmemory & image compress size bugs fixed)
   - Optimizations
-  - PLV Checksum not ignored anymore
-  - Removed support of numeric "itemtype" attributes
-  - Renamed xml module to xmlparse
-  - Unknown option bug fixed
-  o Coded partial importing and exporting feature
-  o Code in strict ANSI C (test with GCC pedantic)
+  - Other versions of POP 1 tested
+ * PR v1.0
+  x Optimization
+  x Stable version for win32 and unix based systems
+  - Use defines write8i(char,fp),write16i,write32i,read8i...
   x Checksum verification
-  x Full testing
-  x Other versions of POP 1 tested
-  x Set, if applicable, POP2 in the parent folder of the    unknown.xml file
-
+  x Set, if applicable, POP2 in the parent folder of the
+    unknown.xml file
+ 
 2) ToDo List & Future Plans:
 
- * PR v1.0:
-  x Optimization
-  x & stable version for win32 and unix
-    based systems
- * PR v1.1:
+* PR v1.1:
   x Add a C++ class to use PR
  * PR v1.5:
   x Code the compression algorithms Lzg to optimize compiled

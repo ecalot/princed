@@ -1,4 +1,4 @@
-Princed Resources v1.0
+Princed Resources v1.0 beta
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -48,8 +48,7 @@ Type "wave":
   - Sample rate: 11025
   - Bytes/Sec: 11025
   - Block Align: 1
- Recommended editors: GoldWave, CoolEdit.  Standard Windows programs do not
- understand the .wav format.
+ Recommended editors: GoldWave, CoolEdit. 
 
 Type "midi":
  For musical instrument digital interface we are using the standard midi
