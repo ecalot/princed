@@ -184,6 +184,25 @@ DEP_CPP_PAL_C=\
 # End Source File
 # Begin Source File
 
+SOURCE=.\formats\plv.c
+DEP_CPP_PLV_C=\
+	".\include\compile.h"\
+	".\include\disk.h"\
+	".\include\plv.h"\
+	".\include\resources.h"\
+	
+
+!IF  "$(CFG)" == "tasks - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\formats\wav.c
 DEP_CPP_WAV_C=\
 	".\include\compile.h"\
@@ -285,7 +304,7 @@ DEP_CPP_EXTRA=\
 # Begin Source File
 
 SOURCE=.\pr.c
-DEP_CPP_PR_C10=\
+DEP_CPP_PR_C12=\
 	".\include\bmp.h"\
 	".\include\compile.h"\
 	".\include\compress.h"\
@@ -414,6 +433,10 @@ SOURCE=.\include\mid.h
 # Begin Source File
 
 SOURCE=.\include\pal.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\include\plv.h
 # End Source File
 # Begin Source File
 
