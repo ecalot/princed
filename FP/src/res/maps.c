@@ -60,7 +60,6 @@ void* mapLoadLevel(tMemory level) {
 				gates++;
 			}
 		}
-		fprintf(stderr,"Screen %d has %d gates.\n",i,gateInRoom);
 		if (gateInRoom) {
 			map->screenGates[i]=malloc(gateInRoom*sizeof(tGate*));
 		} else {
@@ -79,7 +78,6 @@ void* mapLoadLevel(tMemory level) {
 				newGate.frame=map->back[i*30+j];
 				newGate.action=map->back[i*30+j]?eClose:eOpen;
 				map->back[i*30+j]=gateInRoom;
-				fprintf(stderr,"mapLoadLevel: Asignando gate pointer: screen %d, gate number %d\n",i,gateInRoom);
 				map->screenGates[i][gateInRoom]=map->gates+gates;
 				auxGates[i*30+j]=map->gates+gates;
 				fprintf(stderr,"mapLoadLevel: Loading gate: indexed=%d gate pointer=%p\n",i,(void*)auxGates[i*30+j]);
@@ -99,7 +97,6 @@ void* mapLoadLevel(tMemory level) {
 		T=!((byte1>>7)&1);
 		map->events[i].triggerNext=T;
 		map->events[i].gate=auxGates[(S-1)*30+L]; /* in case of error null is assigned */
-		fprintf(stderr,"mapLoadLevel: Loading event: S=%d L=%d T=%d gate number=%d gate pointer=%p\n",S,L,T,(S-1)*30+L,(void*)auxGates[(S-1)*30+L]);
 	}
 	free(auxGates);
 	return (void*)map;
@@ -310,7 +307,7 @@ void  mapPressedTile(tMap* map, tTile tile, int s, int x, int y) {
 		fprintf(stderr,"mapPressedTile: throw event %d\n",tile.back);
 		do {
 			map->events[tile.back].gate->action=tile.isRaise?eOpening:eClosingFast;
-		} while	(0&&map->events[tile.back++].triggerNext);
+		} while	(map->events[tile.back++].triggerNext);
 	}
 
 }

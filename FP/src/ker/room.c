@@ -83,7 +83,6 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasBigPillar=0;
 		result.isGate=(result.code==T_GATE);
 		result.gateInfo=room->level->screenGates[roomId-1][result.back];
-		printf("gate@%d,%d. S%d, door=%d fr=%d time=%d action=%d\n",x,y,roomId,result.back,result.gateInfo->frame,result.gateInfo->time,result.gateInfo->action);
 		result.walkable=1;
 		result.hasChopper=0;
 		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);
@@ -566,9 +565,6 @@ void drawForePanel(tRoom* room,int x, int y) {
 		unsigned short seed;
 		tTile left;
 		tTile right;
-		/*int l;
-		for (l=0;l<53;l++) printf("%d-",w2_sep(seedArray[l]));
-		printf("\n");*/
 		left=roomGetTile(room,x-1,y);
 		right=roomGetTile(room,x+1,y);
 		/* there are 4 cases */
