@@ -259,19 +259,23 @@ END {
 	coma=""
 	for (i=0;i<currentAnimation;i++) {
 		flags=arrayAnimation[i,"flags"]
-		s=match(flags,/([^0-9 +-])/,a)
-		match(flags,/[+][ ]*([0-9]+)/,b)
-		match(flags,/[-][ ]*([0-9]+)/,c)
-		steps=b[1]/1
-		offxs=c[1]/1
-		if (s&&a[1]!="#") {
+		
+		b=match(flags,/[+][ ]*([0-9]+)/)
+		steps=substr(flags,b,RLENGTH)/1
+		c=match(flags,/[-][ ]*([0-9]+)/)
+		offxs=substr(flags,c,RLENGTH)/1
+		
+		s=match(flags,/([^0-9 +-])/)
+		if (s) d=substr(flags,s,1)
+		if (s&&(d!="#")) {
 			coma2=""
 			flagmask=""
 			while (s) {
-				flagmask=sprintf("%s%sSTATES_FLAG_%s",flagmask,coma2,toupper(a[1]))
+				flagmask=sprintf("%s%sSTATES_FLAG_%s",flagmask,coma2,toupper(d))
 				flags=substr(flags,s+1,length(flags)-s)
-				s=match(flags,/([^0-9 +-])/,a)
-				if (a[1]=="#") s=0
+				s=match(flags,/([^0-9 +-])/)
+				if (s) d=substr(flags,s,1)
+				if (d=="#") s=0
 				coma2="|"
 			}
 		} else {
