@@ -33,7 +33,7 @@ input.h: Free Prince : Input devices handling
 #ifndef _INPUT_H_
 #define _INPUT_H_
 
-typedef enum {none=0,quit,load,reload,passLevel,showUp,showLeft,showRight,showDown,showScreens,showVersion,moreTime,lessTime,addLive,addHitPoint,gotoTitles,kill,resurrect,other}tAction;
+typedef enum {none=0,quit,load,reload,passLevel,showUp,showLeft,showRight,showDown,showScreens,showVersion,addTime,takeTime,addLive,addHitPoint,gotoTitles,kill,resurrect,other}tAction;
 
 /*#define inputIgnoreCtrl(a)  (a&( ~(1<<1) ))*/
 /* TODO: use inputIgnore* for each Set* */

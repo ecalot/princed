@@ -71,6 +71,14 @@ int editAction(tKey* key,SDLKey k) {
 		case SDLK_l:
 			key->actionPerformed=passLevel;
 			break;
+		case SDLK_PLUS:
+		case SDLK_KP_PLUS:
+			key->actionPerformed=addTime;
+			break;
+		case SDLK_LESS:
+		case SDLK_KP_MINUS:
+			key->actionPerformed=takeTime;
+			break;
 		default:
 			break;
 		}
