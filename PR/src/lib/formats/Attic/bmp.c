@@ -1,3 +1,35 @@
+/*  Princed V3 - Prince of Persia Level Editor for PC Version
+    Copyright (C) 2003 Princed Development Team
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+    The authors of this program may be contacted at http://forum.princed.com.ar
+*/
+
+/*
+bmp.c: Princed Resources : BMP file support
+¯¯¯¯¯
+ Copyright 2003 Princed Development Team
+  Created: 24 Aug 2003
+
+  Author: Enrique Calot <ecalot.cod@princed.com.ar>
+  Version: 1.01 (2003-Oct-23)
+
+ Note:
+  DO NOT remove this copyright notice
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,13 +39,13 @@
 #include "compile.h"
 
 char mFormatExtractBmp(unsigned char* data, char *vFileext,unsigned long int size,tImage image) {
-printf("hola, vengo a colgarme\n");
+//printf("hola, vengo a colgarme\n");
 	if ((mExpandGraphic(data,&image,size))>0) {
-printf("ya expandi\n");
+//printf("ya expandi\n");
 		mWriteBitMap(image,vFileext);
-printf("Escribi el bitmap\n");
+//printf("Escribi el bitmap\n");
 		free(image.pix);
-printf("libere imagen\n");
+//printf("libere imagen\n");
 		return 1;
 	} else {
 		return 0;
@@ -25,15 +57,14 @@ char mFormatCompileBmp(unsigned char* data, FILE* fp, tResource *res) {
 	int size;
 	tImage img;
 	unsigned char aux[10000];
+
 	if (!mReadBitMap(&img,data,(*res).size)) return 0;
-	//free(data);
-			//printf("llega 2\n");
 	mCompressGraphic(aux,img,&size);
-	printf("llega ssss2\n");
+//printf("llega ssss2\n");
 	free(img.pix);
-	printf("llega ssss3\n");
+//printf("llega ssss3\n");
 	mAddFileToDatFile(fp,aux,size);
-	printf("llega ssss4\n");
+//printf("llega ssss4\n");
 	(*res).size=size; //this was a bug (added to debug ;) ironic, don't you think?
 	/* Note: after the debugging we realized this line was missing so this is not a bug anymore*/
 	return 1;
@@ -156,7 +187,7 @@ char mReadBitMap(tImage* img,char* data, int size) {
 
 	//Calculate serialized widths
 	width=(width+1)>>1;            //raw serialized width
-	width2=width+((-width)&3); //bmp serialized width
+	width2=width+((-width)&3);     //bmp serialized width
 
 	//Validate image and file size; get memory to allocate the image
 	ok=ok&& ( ((*img).height*width2)                == (size-118));

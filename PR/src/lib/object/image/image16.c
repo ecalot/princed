@@ -1,3 +1,36 @@
+/*  Princed V3 - Prince of Persia Level Editor for PC Version
+    Copyright (C) 2003 Princed Development Team
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+    The authors of this program may be contacted at http://forum.princed.com.ar
+*/
+
+/*
+compress.c: Princed Resources : Image Compressor
+¯¯¯¯¯¯¯¯¯¯
+ Copyright 2003 Princed Development Team
+  Created: 24 Aug 2003
+
+  Author: Enrique Calot <ecalot.cod@princed.com.ar>
+  Version: 1.01 (2003-Oct-23)
+
+ Note:
+  DO NOT remove this copyright notice
+*/
+
 /***************************************************************\
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
@@ -7,8 +40,7 @@
 #include "memory.h"
 
 //reserved memory for the Lzx algorithm
-#define MAX_MOD_SIZE_IN_LZX 32001
-//38401
+#define MAX_MOD_SIZE_IN_LZX 32001                     /* 38401 */
 //modulus to be used in the 10 bits of the algorithm
 #define MAX_MXD_SIZE_IN_LZX 0x400
 
@@ -30,8 +62,8 @@ unsigned char popBit(unsigned char *byte) {
 
 //Expands B3/B4 algorithm
 void expandLzx(char* array,tImage* img, int *i,int cursor, int virtualSize) {
-	int pos,h;
 	char k;
+	int pos,h;
 	unsigned char maskbyte,rep;
 //printf("expandLzx %d %d \n",virtualSize,cursor);
 
@@ -55,29 +87,24 @@ void expandLzx(char* array,tImage* img, int *i,int cursor, int virtualSize) {
 
 //Compress B1/B2 algorithm
 void compressRle(unsigned char* data,tImage* img,int *dataSize) {
-//	//printf("llega 3.51\n");
 	//Declare pointers
   char* cursorData  = data;
   char* counter;
   char* cursorPix   = (*img).pix;
   char* imgEnd      = (*img).pix+((*img).size>>1)-1;
-	//printf("llega 3.52\n");
 
   while (cursorPix<imgEnd) {
 		//Step 1: Create counter
 		*(counter=(cursorData++))=-1;
 
 		//Step 2: Look and copy the string until a repeated byte is found
-
 		while ((cursorPix<imgEnd)&&(*cursorPix!=*(cursorPix+1))&&((*counter)!=127)) {
 			cursorPix++;
 			(*counter)++;
 			*(cursorData)=*(cursorPix-1);
 			cursorData++;
 		}
-////printf("llega 3.55 cd=%d cp=%d ie=%d\n",cursorData-data,cursorPix,imgEnd);
 
-		//cursorPix--;
 		//Step 3: If there was a repeated string, let's ignore it and add the cursor with the repetitions
 		if (*counter==-1) {
 			while ((cursorPix<imgEnd)&&(*cursorPix==(*(cursorPix+1)))&&((*counter)!=-128)) {
@@ -91,14 +118,8 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
 	}
 	*(cursorData++)=0;
 	*(cursorData++)=*(cursorPix);
-//	//printf("compressRle: cursorData=%d data=%d cursorPix=%d imgEnd=%d\n",(int)cursorData,(int)data,(int)((*img).pix),(int)imgEnd);
-	*dataSize=(int)cursorData-(int)data;
+	*dataSize=(int)cursorData-(int)data; //Note: data loss in 64 bits architectures
 }
-
-
-
-
-
 
 //Expands an array into an image
 int mExpandGraphic(char* array,tImage *image, int virtualSize) {
@@ -111,22 +132,19 @@ int mExpandGraphic(char* array,tImage *image, int virtualSize) {
 		 normaly: (* ignored types)
 		 checksum* - height - 00 - width - 00 - 00* - compression type
 	*/
-////printf("expand graphic le ejecuta %d\n",virtualSize);
 
   int cursor=0;
   int i=1;
 
   //Get memory for the image
 	image->height=((unsigned char)array[(i)])+256*((unsigned char)array[(i+1)]) ;
-i=i+2;
+	i=i+2;
 	image->width =((unsigned char)array[(i)])+256*((unsigned char)array[(i+1)]);
-i=i+2;
+	i=i+2;
 	(*image).size  =(*image).height*(*image).width;
-//printf("h=%d, w=%d %x %x %x %x   \n",(*image).height,image->width,(unsigned char)array[1],(unsigned char)array[2],(unsigned char)array[3],(unsigned char)array[4]);
 	virtualSize=(((*image).height*((*image).width+((*image).width&1)))>>1);
 	i++;
 
-//printf("geteo memoria %x %d\n",(unsigned char)array[i],virtualSize);
   switch ((unsigned char)array[i++]) {
 		case PG_COMP_RAW: //No Compression Algorithm
 		  if (((*image).pix=getMemory(virtualSize))==NULL) return -1;
@@ -163,18 +181,14 @@ i=i+2;
 			}
 			break;
 		case PG_COMP_LZX_LR: //LZ Groody Up to Down Version Compression Algorithm
-		//printf("llega b4\n");
 		  if (((*image).pix=getMemory(MAX_MOD_SIZE_IN_LZX))==NULL) return -1;
 			expandLzx(array,image,&i,cursor,virtualSize);
 			break;
 		case PG_COMP_LZX_UD: //LZ Groody Left to Right Version Compression Algorithm
-//printf("hi\n");
 		  if (((*image).pix=getMemory(MAX_MOD_SIZE_IN_LZX))==NULL) return -1;
 			{
 			unsigned char* outputaux=getMemory(virtualSize);
-			//printf("antes\n");
 			expandLzx(array,image,&i,cursor,virtualSize);
-			//printf("despues\n");
 			//Transpose
 		  while (cursor<virtualSize) outputaux[transpose(cursor,(*image).width,(*image).height)]=(*image).pix[cursor++];
 			free((*image).pix);
@@ -234,24 +248,3 @@ int mCompressGraphic(unsigned char* data,tImage i, int* size) {
 #endif
 	return 1;
 }
-
-/***************************************************************\
-|                         File handling                         |
-\***************************************************************/
-
-//Deprecated
-/*
-char mLoadFilePalette(char* vFile,int address, char* pal) {
-	FILE *fp;
-	char aux;
-
-	if ((fp=fopen(vFile,"rb"))==NULL) {
-		return 0;
-	} else {
-		fseek (fp, address, SEEK_SET);
-		aux=fread (pal,SIZE_OF_PALETTE,1,fp);
-		fclose(fp);
-		return aux;
-	}
-}
-*/

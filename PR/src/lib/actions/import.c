@@ -1,3 +1,36 @@
+/*  Princed V3 - Prince of Persia Level Editor for PC Version
+    Copyright (C) 2003 Princed Development Team
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+    The authors of this program may be contacted at http://forum.princed.com.ar
+*/
+
+/*
+compile.c: Princed Resources : DAT Compiler
+¯¯¯¯¯¯¯¯¯
+ Copyright 2003 Princed Development Team
+  Created: 24 Aug 2003
+
+  Author: Enrique Calot <ecalot.cod@princed.com.ar>
+  Version: 1.01 (2003-Oct-23)
+
+ Note:
+  DO NOT remove this copyright notice
+*/
+
 /***************************************************************\
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
@@ -6,6 +39,7 @@
 #include "compile.h"
 #include "memory.h"
 #include "bmp.h"
+#include "mid.h"
 #include "wav.h"
 #include "pal.h"
 #include "parser.h"
@@ -27,17 +61,13 @@ char mBeginDatFile(FILE* *fp,char* vFile) {
 
 void mAddFileToDatFile(FILE* fp, char* data, int size) {
 	//calculates the checksum of a file
-	//unsigned char sndHeader[]={0,2};
 	unsigned char checksum=0;
 	int k;
 	for (k=0;k<size;k++) checksum+=data[k];
 	checksum=~checksum;
-printf("mAddFileToDatFile: llega X1 size=%d\n",size);
 	//writes the header and the midi sound
 	fwrite(&checksum,1,1,fp);
 	fwrite(data,size,1,fp);
-printf("mAddFileToDatFile: llega X2\n");
-
 }
 
 void mSetEndFile(FILE* fp,int sizeOfIndex) {
@@ -55,10 +85,10 @@ void mSetEndFile(FILE* fp,int sizeOfIndex) {
 
 int mCreateIndexInDatFile(FILE* fp, tResource* r[], char* vUpperFile) {
 	//Add extra text at the end of the file
-	int k=2;
-	unsigned short int tot=0;
-	unsigned short int junk=0;
 	unsigned short int i=0;
+	unsigned short int junk=0;
+	unsigned short int tot=0;
+	int k=2;
 	int pos=ftell(fp);
 
 	fwrite(&tot,2,1,fp);
@@ -80,35 +110,19 @@ int mCreateIndexInDatFile(FILE* fp, tResource* r[], char* vUpperFile) {
 	return k;
 }
 
-//Format detection function
-void mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
-			printf("llega G size=%d\n",res->size);
-
+//Format detection function (private function, not in header file)
+char mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
 	switch ((*res).type) {
 		case 2: //compile bitmap
-			printf("llega 1\n");
-			printf("bitmap size in=%d\n",res->size);
-			if (!mFormatCompileBmp(*data,fp,res)) {
-				printf("Error!!\n");
-			}
-			printf("bitmap size out=%d\n",res->size);
-			break;
+			return mFormatCompileBmp(*data,fp,res);
 		case 3: //compile wave
 			mFormatCompileWav(*data,fp,res);
 			break;
 		case 4: //compile midi
-			//send to mid
-			{
-			unsigned char* file;
-			file=getMemory((*res).size);
-			file[0]=(*res).type-2;
-			memcpy(file+1,*data,(*res).size);
-			(*res).size++;
-			mAddFileToDatFile(fp,file,(*res).size);
-			free(file);
-			}
+			mFormatCompileMid(*data,fp,res);
 			break;
-		case 6:
+		case 6: //compile palette
+			//TODO: make mFormatCompilePal and stop using char** for data
 			mImportPalette(data,&((*res).size));
 		case 1:
 		case 5:
@@ -116,6 +130,7 @@ void mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
 			mAddFileToDatFile(fp,*data,(*res).size);
 			break;
 	}
+	return 1;
 }
 
 /***************************************************************\
@@ -134,24 +149,23 @@ char mSaveFile(char* vFile,unsigned char *d, int s) {
 	}
 }
 
-/*
-	Return values:
-		-1 File couldn't be open for writing
-		00 File succesfully compiled
-		positive number: number of missing files
-
-
-*/
 int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
+	/*
+		Return values:
+			-1 File couldn't be open for writing
+			00 File succesfully compiled
+			positive number: number of missing files
+	*/
+
 	FILE* fp;
-	char vUpperFile[200];
 	char vFileext[200];
-	unsigned char* data;
+	char vUpperFile[200];
 	int ok=0;
+	unsigned char* data;
 	unsigned short int i=0;
 
 	if (!mBeginDatFile(&fp,vFiledat)) {
-		printf("Error opening the file.\r\n");
+//		printf("Error opening the file.\r\n");
 		return -1;
 	}
 
@@ -164,18 +178,10 @@ int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
 				//the file is in the archive, so I'll add it to the main dat body
 				if ((*r[i]).size=mLoadFileArray(vFileext,&data)) {
 					(*r[i]).offset=(unsigned short)ftell(fp);
-					mAddCompiledFileToDatFile(fp,&data,r[i]);
-
-					{
-						char sss[300];
-						sprintf(sss,"r1\\bmp%05d.raw",i);
-printf("size: id=%d size=%d %02x %02x %02x %02x %02x %02x %02x\n",i,r[i]->size,data[0],data[1],data[2],data[3],data[4],data[5],data[6]);
-
-					mSaveFile(sss,data,r[i]->size);
+					if (!mAddCompiledFileToDatFile(fp,&data,r[i])) {
+						ok++;
 					}
-
 					free(data);
-					printf("libere ok\n");
 				} else {
 					ok++;
 				}
