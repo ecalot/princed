@@ -80,7 +80,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	
 	result.back=room->back[x+12*y];
 	result.code=room->fore[x+12*y]&0x1F;
-	result.moreInfo=(void*)1/*NULL*/;
+	result.moreInfo=NULL;
 	
 	/* TODO: use a tile group: special, with GATES, PRESSABLE, SPIKES,
 	 * CHOPPER.
