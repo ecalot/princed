@@ -282,8 +282,15 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 			int accumulate=0;
 			int i,j;
 			int from,to;
+			int moveTo=statesActionList[action].moveOffset;
+			
+			if (kid->direction!=DIR_LEFT)
+				moveTo+=STATES_STEPS_PER_TILE-(kid->location%STATES_STEPS_PER_TILE);
+			else
+				moveTo+=kid->location%STATES_STEPS_PER_TILE;
+			
 			/* First iteration: determine i=number of frames not cropped */
-			for (i=0;(i<current->frame)&&(accumulate<statesActionList[action].moveOffset);i++) {
+			for (i=0;(i<current->frame)&&(accumulate<moveTo);i++) {
 				accumulate+=current->steps[alternate(i,current->frame)];
 			}
 			for (j=0;j<i;j++) {
