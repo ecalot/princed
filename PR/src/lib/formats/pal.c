@@ -36,7 +36,6 @@ pal.c: Princed Resources : JASC PAL files support
 #include <stdlib.h>
 #include <stdio.h>
 #include "pal.h"
-#include "pr.h" /* for MAX_FILENAME_SIZE */
 #include "memory.h"
 #include "disk.h"
 #include "resources.h"

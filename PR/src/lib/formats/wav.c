@@ -32,7 +32,6 @@ wav.c: Princed Resources : WAV files support
 */
 
 /* Includes */
-#include "pr.h"
 #include "wav.h"
 #include "dat.h"
 #include "disk.h"

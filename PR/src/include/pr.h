@@ -39,177 +39,66 @@ pr.h: Princed Resources : Main header prototypes and definitions
 #ifndef _PR_H_
 #define _PR_H_
 
-/***************************************************************\
-|                Princed Resource Library Functions             |
-\***************************************************************/
-
-#include <stdio.h>
-
-/* User configuration defines */
-#ifndef WIN32
- #define UNIX
-#endif
-
-/* do not #define DLL, use -DDLL as a precompiler option instead */
-#ifdef DLL
-void prSetOutput(FILE* output);
- #ifdef UNIX
-  #define SO
- #endif
-#endif
-
-#ifndef OS
- #ifndef UNIX
-  #define OS "Win32"
- #else
-  #define OS ""
- #endif
-#endif
-
-/* Debug options */
-/* #define DEB_FLAG */
-/* #define MEM_CHECK */
-
-#ifdef MEM_CHECK
-
-#ifdef malloc
-#undef malloc
-#endif
-
-#include "memory.h"
- #define malloc(a) mymalloc(a,__FILE__,__LINE__)
- #define free(a) myfree(a,__FILE__,__LINE__)
-#endif
-
-#ifdef DEB_FLAG
- #define fld(a) printf(a "\n")
-#else
- #define fld(a)
-#endif
-
-/***************************************************************\
-|             M A I N   P R O G R A M   D E F I N E S           |
-\***************************************************************/
-
-/***************************************************************\
-|                     PR Specific Defines                       |
-\***************************************************************/
-
-#define PR_URL                    "http://www.princed.com.ar"
-#define PR_VERSION                "v1.0-dev2"
-#define PR_COPY                   "(c) Copyright 2003 - 2005 Princed Development Team"
-
-/***************************************************************\
-|                         Other defines                         |
-\***************************************************************/
-
-/* Default Files */
-#define RES_XML_UNKNOWN_XML      "unknown.xml"
-#define RES_XML_RESOURC_XML      "resources.xml"
-
-#define DEFAULT_BACKUP_EXTENSION "bak"
-
-/* Define max & min's */
-#define MAX_FILENAME_SIZE        260
-
-/***************************************************************\
-|                        L A N G U A G E                        |
-\***************************************************************/
-
-#include "en.lang.pr.h"
-
-/* Credits */
-#define PARSING_ABOUT PR_TXT_AUTHORS": \n\
-   "PR_TXT_CODER"\n\
-    Enrique Calot\n\
-\n\
-   "PR_TXT_COD_ASSIST"\n\
-    Santiago Zamora\n\
-\n\
-   "PR_TXT_GFX_COMP"\n\
-    Tammo Jan Dijkema\n\
-    Enrique Calot\n\
-\n\
-   "PR_TXT_GFX_DEV"\n\
-    Tammo Jan Dijkema\n\
-    Anke Balderer\n\
-\n\
-   "PR_TXT_MID"\n\
-    Christian Lundheim\n\
-\n\
-   "PR_TXT_XML"\n\
-    Steven Fayers\n\
-\n\
-   "PR_TXT_TRANSLATION"\n\
-    "PR_TXT_ABOUT_TRANSLATOR"\n\
-\n"
+/* types */
+typedef struct tTag {
+	struct tTag* child;
+	struct tTag* next;
+	char* tag;
+	char* desc;
+	char* path;
+	char* file;
+	char* itemtype;
+	char* name;
+	char* palette;
+	char* type;
+	char* value;
+	char* version;
+	char* number;
+}tTag;
 
 /***************************************************************\
 |                           Prototypes                          |
 \***************************************************************/
+/* The library EXPORTS are:
+ * prExportDat
+ * prExportDatOpt
+ * prImportDat
+ * prImportDatOpt
+ * prVerifyDatType
+ * prSetOutput
+ * parseStructure
+ * resourceTreeGetChild
+ * resourceTreeGetInfo
+ * resourceTreeGetNext
+ * freeParsedStructure
+ * setCompressionLevel
+ * freeParsingCache
+ * freeTagStructure
+ * parseXmlFile
+ */
 
 /* Main functions */
 int prExportDat(const char* vDatFile, const char* vDirName, const char* vResFile);
 int prImportDat(const char* vDatFile, const char* vDirName, const char* vResFile);
-int prVerifyDatType(const char* vFiledat);
+int prClassifyDat(const char* vFiledat);
 
 /* Extra featured functions */
 int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char * vDatFileName,const char* datAuthor, const char* backupExtension);
 int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char* vDatFileName, const char* backupExtension);
 
-/***************************************************************\
-|                   Command Line specific options               |
-\***************************************************************/
+/* Option functions */
+void prSetOutput(FILE* output);
+void setCompressionLevel(int cl);
 
-#ifndef PR_IGNORE_RAW_OPTION
-#define PARSING_OPTRAW ,{"raw",         no_argument,       0,'r'},
-#define PARSING_CHRRAW "r"
-#else
-#define PARSING_OPTRAW ,
-#define PARSING_CHRRAW ""
-#endif
-#define PARSING_OPTIONS {\
-{"import",      optional_argument, 0,'c'},\
-{"classify",    no_argument,       0,'d'},\
-{"export",      optional_argument, 0,'x'},\
-\
-{"setauthor",   required_argument, 0,'a'},\
-{"backup",      optional_argument, 0,'b'},\
-{"force",       no_argument,       0,'f'},\
-{"cgi",         no_argument,       0,'g'},\
-{"help",        no_argument,       0,'?'},\
-{"resource",    required_argument, 0,'s'},\
-{"compression-level",    required_argument, 0,'z'}\
-PARSING_OPTRAW\
-{"recursive",   no_argument,       0,'R'},\
-{"datfile",     required_argument, 0,'t'},\
-{"unknown",     no_argument,       0,2},\
-{"verbose",     no_argument,       0,'v'},\
-{"version",     no_argument,       0,1},\
-{0, 0, 0, 0}\
-}
-
-#define PARSING_CHARS    "z::i::c::dx::e::b::a::fgs::t::Rvh?"PARSING_CHRRAW
-
-/* Flags */
-#define import_flag      0x0001
-#define classify_flag    0x0002
-#define export_flag      0x0004
-#define backup_flag      0x0008
-#define force_flag       0x0010
-#define cgi_flag         0x0020
-#define help_flag        0x0040
-#define raw_flag         0x0080
-#define recursive_flag   0x0100
-#define verbose_flag     0x0200
-#define version_flag     0x0400
-#define unknown_flag     0x0800
-#define undef1_flag      0x1000
-#define undef2_flag      0x2000
-#define undef3_flag      0x4000
-#define undef4_flag      0x8000
-
-#define hasFlag(a) (optionflag&(a))
-#define setFlag(a) optionflag|=(a)
+/* Xml parsing functions */
+tTag* resourceTreeGetChild(tTag* whereAmI);
+tTag* resourceTreeGetNext (tTag* whereAmI);
+int   resourceTreeGetInfo (tTag* whereAmI, char** tag, char** desc, char** path, char** file, char** itemtype, char** name, char** palette, char** type, char** value, char** version, char** number);
+int parseStructure(const char* vFile, tTag** structure);
+void freeParsedStructure(tTag** structure);
+void freeParsingCache();
+void  freeTagStructure (tTag* structure);
+tTag* parseXmlFile     (const char* vFile,int* error);
 
 #endif
+

@@ -35,10 +35,11 @@ main.c: PR console program parsing routine
  #include "getopt.h"
 #endif
 
-#include "pr.h"
+#include "common.h"
 #include <string.h>
 #include "memory.h"
 #include "filedir.h"
+#include "disk.h" /* MAX_FILENAME_SIZE */
 #include "compress.h" /* setCompressionLevel */
 #include "xmlparse.h" /* free parsed cache */
 
@@ -210,7 +211,7 @@ int main (int argc, char **argv) {
 				} else {
 					/* classify */
 					fprintf(outputStream,PR_TEXT_TASK_CLASSIFY,file);
-					result=prVerifyDatType(file);
+					result=prClassifyDat(file);
 					fprintf(outputStream,PR_TEXT_RESULT,classifyErrors[result+2],result);
 				}
 				free(file);

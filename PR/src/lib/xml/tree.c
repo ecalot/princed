@@ -39,7 +39,7 @@ resources.c: Princed Resources : Resource Handler
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "pr.h"
+#include "common.h"
 #include "xmlparse.h"
 #include "xmlsearch.h"
 #include "disk.h"

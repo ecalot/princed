@@ -19,7 +19,7 @@
 */
 
 /*
-pr.h: Princed Resources : Main header prototypes and definitions
+common.h: Princed Resources : Defines and prototypes common to all PR code
 ¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -36,8 +36,8 @@ pr.h: Princed Resources : Main header prototypes and definitions
   DO NOT remove this copyright notice
 */
 
-#ifndef _PR_H_
-#define _PR_H_
+#ifndef _COMMON_H_
+#define _COMMON_H_
 
 /***************************************************************\
 |                Princed Resource Library Functions             |
@@ -50,41 +50,10 @@ pr.h: Princed Resources : Main header prototypes and definitions
  #define UNIX
 #endif
 
-/* do not #define DLL, use -DDLL as a precompiler option instead */
-#ifdef DLL
-void prSetOutput(FILE* output);
- #ifdef UNIX
-  #define SO
- #endif
-#endif
-
+#ifdef WIN32
 #ifndef OS
- #ifndef UNIX
-  #define OS "Win32"
- #else
-  #define OS ""
- #endif
+#define OS "Win32"
 #endif
-
-/* Debug options */
-/* #define DEB_FLAG */
-/* #define MEM_CHECK */
-
-#ifdef MEM_CHECK
-
-#ifdef malloc
-#undef malloc
-#endif
-
-#include "memory.h"
- #define malloc(a) mymalloc(a,__FILE__,__LINE__)
- #define free(a) myfree(a,__FILE__,__LINE__)
-#endif
-
-#ifdef DEB_FLAG
- #define fld(a) printf(a "\n")
-#else
- #define fld(a)
 #endif
 
 /***************************************************************\
@@ -96,7 +65,7 @@ void prSetOutput(FILE* output);
 \***************************************************************/
 
 #define PR_URL                    "http://www.princed.com.ar"
-#define PR_VERSION                "v1.0-dev2"
+#define PR_VERSION                "v1.0-RC2"
 #define PR_COPY                   "(c) Copyright 2003 - 2005 Princed Development Team"
 
 /***************************************************************\
@@ -110,7 +79,6 @@ void prSetOutput(FILE* output);
 #define DEFAULT_BACKUP_EXTENSION "bak"
 
 /* Define max & min's */
-#define MAX_FILENAME_SIZE        260
 
 /***************************************************************\
 |                        L A N G U A G E                        |
@@ -148,18 +116,13 @@ void prSetOutput(FILE* output);
 |                           Prototypes                          |
 \***************************************************************/
 
-/* Main functions */
-int prExportDat(const char* vDatFile, const char* vDirName, const char* vResFile);
-int prImportDat(const char* vDatFile, const char* vDirName, const char* vResFile);
-int prVerifyDatType(const char* vFiledat);
-
-/* Extra featured functions */
-int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char * vDatFileName,const char* datAuthor, const char* backupExtension);
-int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char* vDatFileName, const char* backupExtension);
+#include "pr.h"
 
 /***************************************************************\
 |                   Command Line specific options               |
 \***************************************************************/
+
+#define PR_IGNORE_RAW_OPTION
 
 #ifndef PR_IGNORE_RAW_OPTION
 #define PARSING_OPTRAW ,{"raw",         no_argument,       0,'r'},
@@ -213,3 +176,4 @@ PARSING_OPTRAW\
 #define setFlag(a) optionflag|=(a)
 
 #endif
+

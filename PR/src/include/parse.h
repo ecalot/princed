@@ -36,37 +36,7 @@ xmlparse.h: Princed Resources : xml handling functions headers
 
 int equalsIgnoreCase(const char s1[],const char s2[]);
 
-typedef struct tTag {
-	struct tTag* child;
-	struct tTag* next;
-	char* tag;
-	char* desc;
-	char* path;
-	char* file;
-	char* itemtype;
-	char* name;
-	char* palette;
-	char* type;
-	char* value;
-	char* version;
-	char* number;
-}tTag;
-
 /* Constants */
 #define MAX_VALUE_SIZE 3000
-
-/* Prototypes */
-void  freeTagStructure (tTag* structure);
-tTag* parseXmlFile     (const char* vFile,int* error);
-
-int parseStructure(const char* vFile, tTag** structure);
-void freeParsedStructure(tTag** structure);
-void freeParsingCache();
-
-#ifdef DLL
-tTag* resourceTreeGetChild(tTag* whereAmI);
-tTag* resourceTreeGetNext (tTag* whereAmI);
-int   resourceTreeGetInfo (tTag* whereAmI, char** tag, char** desc, char** path, char** file, char** itemtype, char** name, char** palette, char** type, char** value, char** version, char** number);
-#endif
 
 #endif

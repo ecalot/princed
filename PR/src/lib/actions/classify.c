@@ -36,7 +36,7 @@ tasks.c: Princed Resources : Classify a DAT file
 #include "memory.h"
 #include "resources.h"
 #include "dat.h"
-#include "pr.h"
+#include "common.h"
 
 /***************************************************************\
 |                    Get the type of a DAT file                 |
@@ -46,7 +46,7 @@ extern int pop1;
 
 #define READ_ERROR {mReadCloseDatFile();return 0;}
 
-int prVerifyDatType(const char* vFiledat) {
+int prClassifyDat(const char* vFiledat) {
 	int                indexNumber;
 	long int           id;
 	unsigned char*     data;

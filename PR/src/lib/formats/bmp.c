@@ -35,7 +35,7 @@ bmp.c: Princed Resources : BMP file support
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pr.h"
+#include "common.h"
 #include "bmp.h"
 #include "disk.h"
 #include "memory.h"

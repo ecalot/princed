@@ -36,7 +36,7 @@ compile.c: Princed Resources : DAT Compiler
 \***************************************************************/
 
 #include <string.h>
-#include "pr.h"
+#include "common.h"
 #include "import.h"
 
 #include "dat.h"

@@ -48,7 +48,7 @@ disk.c: Princed Resources : Disk Access & File handling functions
 #include <sys/stat.h>
 
 #ifndef DISK_ALLWAYS_FORCE
-#include "pr.h" /* language texts */
+#include "common.h" /* language texts */
 #include "xmlparse.h" /* equalsIgnoreCase */
 #endif
 

@@ -34,7 +34,7 @@ mid.c: Princed Resources : MIDI files support
 /* Includes */
 #include "mid.h"
 #include "disk.h"
-#include "pr.h"
+#include "common.h"
 #include "dat.h"
 #include "memory.h"
 #include <string.h>

@@ -37,7 +37,7 @@ xmlsearch.c: Princed Resources : specific xml handling functions
 #include <stdio.h> /* only on debugging purposes */
 
 /* Includes */
-#include "pr.h"
+#include "common.h"
 #include "xmlparse.h"
 #include "resources.h"
 #include "xmlsearch.h"

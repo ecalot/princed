@@ -36,7 +36,6 @@ compress.c: Princed Resources : Image Compression Library
 #include <string.h>
 #include "compress.h"
 #include "memory.h"
-#include "pr.h"
 #include "disk.h" /* array2short */
 
 /* Compression level explanation:

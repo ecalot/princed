@@ -35,7 +35,7 @@ extract.c: Princed Resources : DAT Extractor
 
 #include <stdio.h>
 #include <string.h>
-#include "pr.h"
+#include "common.h"
 
 #include "export.h"
 #include "dat.h"

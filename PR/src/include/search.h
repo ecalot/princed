@@ -39,6 +39,7 @@ xmlparse.h: Princed Resources : xml handling functions header file
 #define _XMLSEARCH_H_
 
 /* Includes */
+#include "common.h" /* tTag */
 #include "xmlparse.h"
 #include "resources.h"
 

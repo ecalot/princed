@@ -39,7 +39,7 @@ xmlparse.c: Princed Resources : xml parsing functions
 #include "xmlparse.h"
 #include "disk.h"
 #include "memory.h"
-#include "pr.h"
+#include "common.h"
 #include <string.h>
 #include <stdio.h> /* Included only for XML specific attribute code */
 #include <stdlib.h>
