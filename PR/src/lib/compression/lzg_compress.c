@@ -111,11 +111,14 @@ void search_best_pattern(unsigned char *input, int inputSize,
 
 		/* Comment these three lines and uncomment the next two to get
 		 * 5% more compression at 4x execution time: */
+#ifdef LZG_FASTER
 		window_len -= wc - window;
 		if (window_len <= 0) break;
 		window = wc;
-		/*window_len--;
-		window++;*/
+#else
+		window_len--;
+		window++;
+#endif
 	}
 }
 
@@ -163,10 +166,10 @@ void compressLzg(unsigned char* input, int inputSize,
 
 	/* Create ghost window filled with zeros before input data: */
 	for (i = inputSize - 1; i >= 0; i--)
-		input[i + WIN_SIZE] = input[i];
+		input[i + WIN_SIZE] = input[i]; /* First move the data WIN_SIZE bytes forward */
 	for (i = 0; i < WIN_SIZE; i++)
-		input[i] = 0;
-	input += WIN_SIZE;
+		input[i] = 0; /* Second fill in with zeros the first WIN_SIZE bytes */
+	input += WIN_SIZE; /* Third move the input beginning again to the data start */
 
 	while (inputPos < inputSize)
 	{
@@ -197,7 +200,7 @@ printf("copy i=%d o=%d data=%02x\n", outputPos, inputPos, output[outputPos]);
 	}
 
 	/* finish last maskByte: */
-	*maskByte >>= (8 - maskBit);
+	*maskByte >>= (8 - maskBit); /* TODO: optimize with ~ */
 
 	*outputSize = outputPos;
 }
