@@ -35,9 +35,7 @@ dat.c: Princed Resources : DAT library
 #include <string.h>
 #include "pr.h"
 
-//#include "resources.h"
 #include "disk.h"
-//#include "memory.h"
 #include "dat.h"
 
 /***************************************************************\
@@ -108,11 +106,11 @@ int mReadFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
 	unsigned short int id;
 
 	/* for each archived file the index is read */
-	id=    array2short(indexPointer+ofk+k*recordSize);//(indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8);
-	printf("a ver: %d %d\n",id,(indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8));
+	id=    array2short(indexPointer+ofk+k*recordSize);/*(indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8);*/
+/* printf("a ver: %d %d\n",id,(indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8)); */
 	
-	offset=array2long(indexPointer+ofk+k*recordSize+2);//indexPointer[ofk+k*recordSize+2])+(indexPointer[ofk+k*recordSize+3]<<8)+(indexPointer[ofk+k*recordSize+4]<<16)+(indexPointer[ofk+k*recordSize+5]<<24);
-	*size= array2short(indexPointer+ofk+k*recordSize+6);//indexPointer[ofk+k*recordSize+6])+(indexPointer[ofk+k*recordSize+7]<<8)+1;
+	offset=array2long(indexPointer+ofk+k*recordSize+2);/*indexPointer[ofk+k*recordSize+2])+(indexPointer[ofk+k*recordSize+3]<<8)+(indexPointer[ofk+k*recordSize+4]<<16)+(indexPointer[ofk+k*recordSize+5]<<24);*/
+	*size= array2short(indexPointer+ofk+k*recordSize+6);/*indexPointer[ofk+k*recordSize+6])+(indexPointer[ofk+k*recordSize+7]<<8)+1;*/
 	if ((!pop1)&&(!(indexPointer[ofk+k*recordSize+8]==0x40)&&(!indexPointer[ofk+k*recordSize+9])&&(!indexPointer[ofk+k*recordSize+10]))) return -1;
 	if (offset+indexSize>readDatFileSize) return -1;
 	*data=readDatFile+offset;

@@ -93,7 +93,7 @@ fld("b");
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
 		id=mReadFileInDatFile(indexNumber,&data,&size);
 fld("c");
-printf("*K) id=%d size=%d %d:%d:%d:%d:%d:%d\n",id,size,data[0],data[1],data[2],data[3],data[4],data[5]);
+/* printf("*K) id=%d size=%d %d:%d:%d:%d:%d:%d\n",id,size,data[0],data[1],data[2],data[3],data[4],data[5]); */
 
 		if (id<0) return -3; /* Read error */
 		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
@@ -103,7 +103,7 @@ fld("d");
 		/* set resource information on this index entry */
 		if (mReadInitResource(r+id,data,size)) return -2;
 fld("e");
-printf("z->%d\n",r[id]->type);
+/* printf("z->%d\n",r[id]->type); */
 		if ((r[id]->type==RES_TYPE_PALETTE)||isInThePartialList(r[id]->path,id)) { /* If the resource was specified or is a palette, do the tasks */
 			if (!(hasFlag(unknown_flag))) { /* If unknown flag is set do nothing but generate the unknown.xml file */
 				if (hasFlag(raw_flag)) r[id]->type=0; /* If "extract as raw" is set, type is 0 */
@@ -133,9 +133,9 @@ fld("f");
 						break;
 					case RES_TYPE_PCSPEAKER: /* save pcs file */
 					case RES_TYPE_MIDI:	/* save midi file */
-printf("a->%d\n",ok);
+/* printf("a->%d\n",ok); */
 						ok=ok&&mFormatExportMid(data,vFileext,size,optionflag,backupExtension);
-printf("b->%d\n",ok);
+/* printf("b->%d\n",ok); */
 						break;
 					case RES_TYPE_WAVE: /* save wav file */
 						ok=ok&&mFormatExportWav(data,vFileext,size,optionflag,backupExtension);

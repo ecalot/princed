@@ -240,7 +240,7 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 	whatIs fileType;
 	static int all=0;
 	int result;
-fld("g1");
+
 #ifdef UNIX
 #ifndef IGNORE_TERM_CHANGE
 	/* This will eliminate the enter after the input */
@@ -321,15 +321,15 @@ int writeData(const unsigned char* data, int ignoreChars, char* vFileext, int si
 	/* Verify parameters */
 	size-=ignoreChars;
 	if (size<0) return 0;
-	//if (size==0) return 1; /* Wrote 0 bytes */
+	/*if (size==0) return 1; * Wrote 0 bytes */
 
 	/* Save file */
 	ok=writeOpen(vFileext,&target,optionflag);
-printf("x->%d\n",ok);
+/* printf("x->%d\n",ok); */
 	ok=ok&&((!size)||fwrite(data+ignoreChars,size,1,target));
-printf("x->%d\n",ok);
+/* printf("x->%d\n",ok); */
 	ok=ok&&(!writeCloseOk(target,optionflag,backupExtension));
-printf("x->%d\n",ok);
+/* printf("x->%d\n",ok); */
 	return ok;
 }
 
@@ -345,7 +345,6 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 	int  aux;
 
 	/* Open the file */
-	fp=fopen(repairFolders(vFile),"rb");
 	if ((fp=fopen(repairFolders(vFile),"rb"))==NULL) {
 		return 0;
 	} else {

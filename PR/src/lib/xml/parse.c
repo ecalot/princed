@@ -377,9 +377,8 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 			/* Set variable and destroy old variables */
 			sprintf(str,"%s/%s",father->path,tag->path);
 			free(tag->path);
-			if ((*(father->path))==0) free(father->path);
+			if ((*(father->path))==0) {free(father->path);father->path=NULL;}
 			tag->path=str;
-			memcpy(tag->path,str,x);
 		}
 	}
 	/* END specific xml tag inheritance */
@@ -460,11 +459,13 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 	char* value=NULL;
 	tTag* tag;
 	tTag* father;
+	int size;
 
-	if (!mLoadFileArray(vFile,(unsigned char**)(&l))) {
+	if (!(size=mLoadFileArray(vFile,(unsigned char**)(&l)))) {
 		*error=-4; /* File not open */
 		return NULL;
 	}
+	l[size-1]=0; /* The last character must be an end of line (the > is forbiden) */ 
 	p=l;
 
 	*error=getNextTag(&p, &value);
@@ -482,7 +483,9 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 		free(father);
 		return NULL;
 	}
+	
 	*error=getNextTag(&p, &value);
+	
 	free(l);
 	if (*error<0) {
 		freeTagStructure(tag);

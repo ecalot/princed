@@ -134,7 +134,8 @@ Versions:
   x Checksum verification
   x Set, if applicable, POP2 in the parent folder of the
     unknown.xml file
- 
+  - Fixed some memory leaks in xml parser
+	
 2) ToDo List & Future Plans:
 
 * PR v1.1:

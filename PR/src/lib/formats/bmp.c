@@ -56,7 +56,7 @@ fld("ZA1");
 
 	/* Expand graphic and check results */
 	result=mExpandGraphic(data,&image,size);
-printf("0) %d+%d*%d,%d\n",image.pix,image.height,image.widthInBytes,image.widthInBytes);
+/* printf("0) %d+%d*%d,%d\n",image.pix,image.height,image.widthInBytes,image.widthInBytes); */
 	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
 		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);
 	if (result==COMPRESS_RESULT_FATAL) return 0;
@@ -111,7 +111,7 @@ fld("alpha");
 	/* open file */
 	if (!writeOpen(vFile,&bitmap,optionflag)) return 0;
 fld("beta");
-printf("a) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes);
+/* printf("a) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes); */
 
 	/* initialize variables */
 	width=img.width;
@@ -123,7 +123,7 @@ printf("a) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes);
 	r=(g=(b=(unsigned char*)&extra)+1)+1;
 	lineSerialization=(-img.widthInBytes)&3;
 	filesize=offset+(img.widthInBytes+lineSerialization)*height;
-printf("b) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes);
+/* printf("b) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes); */
 fld("gamma");
 
 	/* Write header */
@@ -162,7 +162,7 @@ fld("epsilon");
 	/* Write data */
 	while (img.height--) {
 fld("e1");
-printf("c) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes);
+/* printf("c) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes); */
 		fwrite(img.pix+img.height*img.widthInBytes,img.widthInBytes,1,bitmap);
 fld("e2");
 		fwrite(&zero,lineSerialization,1,bitmap);

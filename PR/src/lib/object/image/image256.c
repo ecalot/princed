@@ -213,21 +213,21 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 
 	int imageSizeInBytes;
 	int result;
-printf("+K) %d:%d:%d:%d:%d:%d\n",data[0],data[1],data[2],data[3],data[4],data[5]);
+/* printf("+K) %d:%d:%d:%d:%d:%d\n",data[0],data[1],data[2],data[3],data[4],data[5]); */
 
 	data++;
-	image->height=array2short(data);//((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;
+	image->height=array2short(data);
 	data+=2;
-	image->width =array2short(data);//((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;
+	image->width =array2short(data);
 	data+=2;
-printf("K) %d;%d\n",image->width,image->height);
+/* printf("K) %d;%d\n",image->width,image->height); */
 
 fld("XX");
 	if (*(data++)) return COMPRESS_RESULT_FATAL; /* Verify format */
 fld("YY");
 	image->type=(unsigned char)(*(data++));
 	dataSizeInBytes-=7;
-printf("K) %d+%d*%d,%d\n",image->pix,image->height,image->widthInBytes,image->widthInBytes);
+/* printf("K) %d+%d*%d,%d\n",image->pix,image->height,image->widthInBytes,image->widthInBytes); */
 	if (image->type&0xB0) {
 		image->widthInBytes=(image->width+1)/2;
 	} else {
@@ -261,7 +261,7 @@ printf("K) %d+%d*%d,%d\n",image->pix,image->height,image->widthInBytes,image->wi
 			result=COMPRESS_RESULT_FATAL;
 			break;
 	}
-printf("-K) %d+%d*%d,%d\n",image->pix,image->height,image->widthInBytes,image->widthInBytes);
+/* printf("-K) %d+%d*%d,%d\n",image->pix,image->height,image->widthInBytes,image->widthInBytes); */
 	return result; /* Ok */
 }
 

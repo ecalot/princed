@@ -18,7 +18,7 @@ endif
 #Compiler options
 INCLUDE = -Iinclude/
 DEFINES = -DOS=\"$(OS)\" $(LINUX) 
-OPTIONS = $(INCLUDE) $(DEFINES)
+OPTIONS = $(INCLUDE) $(DEFINES) -g -pedantic
 
 OBJFILES = compile.o compress.o extract.o resources.o tasks.o disk.o\
            xmlparse.o xmlsearch.o dat.o bmp.o mid.o pal.o wav.o plv.o\
@@ -34,7 +34,7 @@ EXEFILE  = bin/pr
 bin/pr: $(OBJFILES) $(SRC1) bin/resources.xml
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
-	$(CC) -o bin/pr $(OBJFILES) $(SRC1) -s -O2
+	$(CC) $(OPTIONS) -o bin/pr $(OBJFILES) $(SRC1) -O2
 	$(INFO) Program successfully compiled
 	$(INFO)
 	$(INFO) Please read readme.txt for syntax information
@@ -53,7 +53,7 @@ all: $(EXEFILE)
 lib: clean $(OBJFILES) $(SRC3)
 	$(MAKEDIR) bin
 	$(INFO) Making dynamic library...
-	$(CC) -o bin/pr.so $(OBJFILES) $(SRC3) -O2 -Llibc -shared -dynamic
+	$(CC) $(OPTIONS) -o bin/pr.so $(OBJFILES) $(SRC3) -Llibc -shared -dynamic
 	$(INFO) Library successfully compiled
 	$(INFO)
 	$(INFO) Please read readme.coders.txt and pr.h for interfaces

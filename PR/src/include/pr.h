@@ -67,7 +67,7 @@ void prSetOutput(FILE* output);
 #endif
 
 /* Debug options */
-#define DEB_FLAG
+/* #define DEB_FLAG */
 /* #define MEM_CHECK */
 
 #ifdef MEM_CHECK

@@ -33,7 +33,7 @@ memory.c: Princed Resources : Memory handling
 
 #include "memory.h"
 #include <string.h>
-
+
 #ifndef MEM_CHECK
 char* strallocandcopy(const char* text) {
 	int size;
@@ -75,8 +75,8 @@ void* mymalloc(int size,char* fileName,int line) {
 	nodo->line=line;
 	nodo->size=size;
 	nodo->pointer=p;
-	//if (!(memcounter%100))
-	//fprintf(stderr,"Memory allocation: %d bytes at %p in %d@%s (%d/%d)\n",size,p,line,fileName,memsize,memcounter);
+	/*if (!(memcounter%100))
+	//fprintf(stderr,"Memory allocation: %d bytes at %p in %d@%s (%d/%d)\n",size,p,line,fileName,memsize,memcounter); */
 	memcounter++;
 	memsize+=size;
 	memsizef+=size;
@@ -87,8 +87,8 @@ void myfree(void* a,char* fileName,int line) {
 	memm* currentNode;
 	memm* priorNode=NULL;
 	memcounter--;
-	//if ((!(memcounter%100))||((memcounter<100)&&(memcounter>-100)))
-	//fprintf(stderr,"Liberando memoria? -> %p (%d/%d)\n",a,memsize,memcounter);
+	/*if ((!(memcounter%100))||((memcounter<100)&&(memcounter>-100)))
+	//fprintf(stderr,"Liberando memoria? -> %p (%d/%d)\n",a,memsize,memcounter);*/
 
 
 	free(a);
@@ -109,7 +109,7 @@ void myfree(void* a,char* fileName,int line) {
 
 	memsizef-=currentNode->size;
 
-	//fprintf(stderr,"Liberada: %d bytes at %p alloc: %d@%s | free  %d@%s  (%d/%d)\n",currentNode->size,currentNode->pointer,currentNode->line,currentNode->file,line,fileName,memsize,memcounter);
+	/*fprintf(stderr,"Liberada: %d bytes at %p alloc: %d@%s | free  %d@%s  (%d/%d)\n",currentNode->size,currentNode->pointer,currentNode->line,currentNode->file,line,fileName,memsize,memcounter);*/
 
 	/* free node and set prior pointer to the next */
 	if (priorNode==NULL) {

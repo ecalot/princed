@@ -155,6 +155,6 @@ pr.h: Princed Resources : English language strings
 #define PR_TXT_GFX_DEV           "Graphic format development"
 #define PR_TXT_MID               "MID Sound format development"
 #define PR_TXT_XML               "Resources.xml edition"
-#define PR_TXT_TRANSLATION       "Translation"
-#define PR_TXT_ABOUT_TRANSLATOR  "<transwi text='Please add your name here for the credits, use different lines to add more names.'>\n"
+#define PR_TXT_TRANSLATION       ""
+#define PR_TXT_ABOUT_TRANSLATOR  ""
 
