@@ -102,6 +102,7 @@ void* mapLoadLevel(tMemory level) {
 				tPressable newPressable;
 				newPressable.event=map->events+map->back[i*30+j];
 				newPressable.action=eNormal;
+				newPressable.type=((map->fore[i*30+j]&0x1f)==T_BTN_RAISE)?eRaise:eDrop;
 				map->back[i*30+j]=pressableInRoom;
 				map->screenPressables[i][pressableInRoom]=map->pressables+pressables;
 				fprintf(stderr,"mapLoadLevel: Creating button: indexed=%d,%d btn pointer=%p\n",i,pressableInRoom,(void*)(map->pressables+pressables));
@@ -285,8 +286,8 @@ void  mapMove(tMap* map) {
 	int i;
 	slevel(time)++;
 	if (slevel(time)==1000) slevel(time)=0;
-	/* check out all the gates in the level */
-	
+
+	/* check out and update all the gates in the level */
 	for (i=0;i<slevel(totalGates);i++) {
 		int maxFrames;
 		maxFrames=(map->gates[i].type==eNormalGate)?46:50;
@@ -328,11 +329,26 @@ void  mapMove(tMap* map) {
 			break;
 		}
 	}
+	
+	/* check out and update all the buttons in the level */
+	for (i=0;i<slevel(totalPressables);i++) {
+		switch (map->pressables[i].action) {
+		case eJustPressed:
+			map->pressables[i].action=ePressed;
+			break;
+		case ePressed:
+			map->pressables[i].action=eNormal;
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void  mapPressedTile(tMap* map, tTile tile, int s, int x, int y) {
 	if (tile.isPressable) {
 		tEvent* event;
+		((tPressable*)tile.moreInfo)->action=eJustPressed;
 		/* drop or raise button */
 		event=((tPressable*)tile.moreInfo)->event;
 		fprintf(stderr,"mapPressedTile: throw event from button %d event:%p\n",tile.back,(void*)event);
@@ -340,7 +356,6 @@ void  mapPressedTile(tMap* map, tTile tile, int s, int x, int y) {
 			event->gate->action=tile.isRaise?eOpening:eClosingFast;
 		} while	((event++)->triggerNext);
 	}
-
 }
 
 

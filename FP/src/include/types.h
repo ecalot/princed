@@ -42,6 +42,7 @@ typedef unsigned char tModId;
 typedef enum {eOpenTimer,eOpen,eClose,eClosing,eOpening,eClosingFast}tGateAction;
 typedef enum {eJustPressed,eNormal,ePressed,eStuck}tPressableAction;
 typedef enum {eNormalGate,eExitGate}tGateType;
+typedef enum {eDrop,eRaise}tPressableType;
 
 typedef struct {
 	int time;
@@ -57,6 +58,7 @@ typedef struct {
 
 typedef struct {
 	tEvent* event;
+	tPressableType type;
 	tPressableAction action;
 } tPressable;
 

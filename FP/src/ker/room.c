@@ -304,7 +304,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[10],
 			(x-1)*TILE_W,
-			y*TILE_H+1
+			y*TILE_H+((((tPressable*)left.moreInfo)->action==eNormal)?1:2)
 		);
 	}
 	/* debris/left */
@@ -438,9 +438,9 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	/* pressable/this */
 	if (tile.isRaise) {
 		outputDrawBitmap(
-			roomGfx.environment->pFrames[58-((left.walkable)&&(!left.isRaise))],
+			roomGfx.environment->pFrames[(((tPressable*)left.moreInfo)->action==eNormal)?(58-((left.walkable)&&(!left.isRaise))):58],
 			(x-1)*TILE_W,
-			y*TILE_H
+			y*TILE_H+((((tPressable*)left.moreInfo)->action==eNormal)?0:1)
 		);
 	}
 	/* debris/this */
@@ -483,11 +483,19 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 	
 	/* normal */
 	if (tile.walkable) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[(tile.isPressable)?47:11],
-			(x-1)*TILE_W,
-			y*TILE_H+3
-		);
+		if (tile.isPressable) {
+			outputDrawBitmap( /* TODO: drop has resource 59 for unpressed/reise 47? check game */
+				roomGfx.environment->pFrames[59],
+				(x-1)*TILE_W,
+				y*TILE_H+((((tPressable*)tile.moreInfo)->action==eNormal)?3:4)
+			);
+		} else {
+			outputDrawBitmap(
+				roomGfx.environment->pFrames[11],
+				(x-1)*TILE_W,
+				y*TILE_H+3
+			);
+		}
 	} else {
 	/* wall */
 		if (tile.isWall) {
