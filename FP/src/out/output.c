@@ -130,8 +130,8 @@ outputLoadBitmap(const unsigned char* data, int size,
 		int serialized=result->w&1;
 		for (i = 0; i < w; i++) {
 			for (j = 0; j < result->h; j++) {
-				if (i) putpixel(result, (i<<1)-serialized, j, (data[w-i+j*w])&0x0f);
-				putpixel(result, (i<<1)+1-serialized, j, (data[w-i+j*w])>>4);
+				if (i) putpixel(result, (i<<1)-serialized, j, (data[w-1-i+j*w])&0x0f);
+				putpixel(result, (i<<1)+1-serialized, j, (data[w-1-i+j*w])>>4);
 			}
 		}
 	}
