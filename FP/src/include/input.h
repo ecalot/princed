@@ -80,5 +80,6 @@ int inputGetEvent(tKey* key);
 int inputDelay(tKey* key,int ticks);
 void inputStopTimer();
 void inputInitTimer();
+void inputPause();
 
 #endif

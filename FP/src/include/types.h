@@ -51,7 +51,7 @@ typedef struct { /* The state object: only struct that is not static to the stat
 	short* flags;      /* actions to be performed by each frame (make sound, press floor, etc) */
 	short* steps;      /* the number of steps each frame has to move */
 	short* offsx;      /* the height the images has to be raised */
-	short  currentState; /* the Id of the state the kid is */
+	short  currentState; /* the Id of the state the object is */
 	short  imgoffx;    /* the height the current image has to be raised */
 	short  image; /* the next image to be shown */
 	float  step; /* the number of pixels a frame has to move */
@@ -136,6 +136,8 @@ typedef struct {
 	tData* gfxCache[2];
 	tState action;
 	tObjectType type;
+	int hitPoints;
+	int lives;
 } tObject;
 
 typedef enum {eLeft=0,eRight=1,eUp=2,eDown=3}tDirection;

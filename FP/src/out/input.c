@@ -263,4 +263,9 @@ int inputDelay(tKey* key,int ticks) {
 	return ticks;
 }
 
+void inputPause() {
+	tKey key=inputCreateKey();
+	while (1)
+		if (!inputGetEvent(&key)) return;
+}
 

@@ -56,6 +56,7 @@ int playgame(int optionflag,int level) {
 	tMap*   map=(tMap*)resMap->pFrames;
 	tRoom   room;
 	tRoomId roomId;
+	int death=0;
 	
 	/*TODO: use a map.c function that reads this information and creates the kid*/
 	kid=objectCreate(30,1,DIR_RIGHT,stateKidInLevel(level),RES_IMG_ALL_KID,1,oKid);
@@ -68,7 +69,7 @@ int playgame(int optionflag,int level) {
 	room=mapGetRoom(map,roomId);
 	
 	/* Level loop here */
-	while (1) {
+	while (death>=0) {
 		if (inputGetEvent(&key)) {
 			/* Time event */
 
@@ -77,11 +78,12 @@ int playgame(int optionflag,int level) {
 			 * TODO: send to the real place where
 			 * the key is interpreted in kid object
 			 */
-			objectMove(&kid,key,&room);
+			death=objectMove(&kid,key,&room);
 			mapMove(map);
 			/* Drawing functions */
 			outputClearScreen(); /* TODO: send to drawBackground() */
 			roomDrawBackground(&room);
+			kidDrawLives(&kid);
 			objectDraw(kid);
 			roomDrawForeground(&room);
 			outputUpdateScreen();
@@ -148,8 +150,11 @@ int playgame(int optionflag,int level) {
 			}
 		}
 	}
-
-	return 0;
+	outputDrawMessage(1,"You are dead! Press a key\n");
+	outputUpdateScreen();
+	inputPause();
+	return playgame(optionflag,level); /* TODO: fix this recursivity */
+/*	return 0;*/
 }
 
 /*

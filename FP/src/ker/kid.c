@@ -34,9 +34,42 @@ kid.c: Free Prince : Kid object
 #include "room.h"
 #include <stdio.h> /* DEBUG printf */
 #include "states.h"
+#include "output.h" /* outputDrawBitmap */
 #include "maps.h" /* mapGetRoom */
 
+/* Live stuff */
+#define KID_LIVE_FILL 216
+#define KID_LIVE_EMPTY 217
 
+void kidDrawLives(tObject *kid) {
+	int i;
+	static int blink=0;
+	blink=!blink;
+	for (i=0;i<kid->lives;i++){
+		register int res=((i<kid->hitPoints)&&!((kid->hitPoints==1)&&(blink)))?
+			KID_LIVE_FILL:KID_LIVE_EMPTY;
+		
+		outputDrawBitmap(kid->gfxCache[1]->pFrames[res],2+8*i,11+3*TILE_H);
+
+	}
+}
+
+void kidGetLive(tObject *kid) {
+	kid->lives++;
+}
+
+void kidGetHitPoint(tObject *kid) {
+	if (kid->hitPoints<kid->lives)
+		kid->hitPoints++;
+}
+
+int kidTakeHitPoint(tObject *kid) {
+	/* Returns 0 if death or the number of remaining hit points if not */
+	return --kid->hitPoints;
+}				
+
+/* Room stuff */
+				
 int kidVerifyRoom(tObject *kid,tRoom *room,int refresh) {
 	/* if the kid is out of the screen we need to change the screen and put
 	 * the kid back again on it

@@ -62,6 +62,10 @@ tObject objectCreate(int location, int floor, int direction, int stateId, unsign
 	object.type=type;
 	object.direction=direction;
 	object.action=createState(stateId);
+
+	/* Default lives */
+	object.lives=3;
+	object.hitPoints=3;
 	return object;
 }
 
@@ -89,6 +93,12 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 	switch (object->type) {
 		case oKid:
 			refresh=kidMove(object,flags,room);
+			if (flags&STATES_FLAG_H) {
+				if (!kidTakeHitPoint(object)) { /* take a hit point */
+					/* the kid has died! */
+					flags=STATE_EXIT_CODE_SPLASH;
+				}
+			}
 			break;
 		case oGeneric:
 		default:

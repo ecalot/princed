@@ -31,6 +31,7 @@
 BEGIN {
 	currentCondition=-1
 	currentAction=-1
+	exitNextState=-1
 	printf("#define STATES_MOVETYPES_ABSOLUTEONSTART 0\n")
 	printf("#define STATES_MOVETYPES_ABSOLUTEONSTOP 1\n")
 	printf("#define STATES_MOVETYPES_RELATIVETURN 2\n")
@@ -52,6 +53,20 @@ BEGIN {
 	currentAnimation=0
 	greatestLevel=-1
 	first=0
+}
+
+function addExit (name) {
+	if (exitArray[name]) {
+		nextStateId=exitArray[name]
+	} else {
+		nextStateId=exitNextState
+		exitArray[name]=exitNextState
+		exitNextState--
+	}
+}
+
+/^create exit [^ ]+$/ {
+	addExit(toupper($3))
 }
 
 #3 tabs (options values)
@@ -204,18 +219,11 @@ END {
 	actionArray[currentAction,"lastComma"]=""
 	printf("\t{esLast,0} /* the end */\\\n}\n\n#define STATES_ACTIONS {\\\n")
 
-	exitNextState=-1
 	for (i=0;i<=currentAction;i++) {
 		nextState=actionArray[i,"nextState"]
 		if (nextState ~ /^exit /) { #if the next state is exit+something, something will be remembered
 			split(nextState,a," ")
-			if (exitArray[a[2]]) {
-				nextStateId=exitArray[a[2]]
-			} else {
-				nextStateId=exitNextState
-				exitArray[a[2]]=exitNextState
-				exitNextState--
-			}
+			addExit(a[2])
 		} else {
 			nextStateId=stateList[nextState]
 		}

@@ -38,6 +38,10 @@ kid.h: Free Prince : Kid object
 
 #include "types.h"
 
+void kidDrawLives(tObject *kid);
+void kidGetLive(tObject *kid);
+void kidGetHitPoint(tObject *kid);
+int kidTakeHitPoint(tObject *kid);
 int kidMove(tObject* kid,short flags,tRoom* room);
 
 #endif
