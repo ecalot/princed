@@ -53,68 +53,80 @@ BEGIN {
 
 #3 tabs (options values)
 /^\t\t\t[^\t# ].*$/ {
-				if (listType == "next") {
-					nextState=tolower($1)
-				} else if (listType == "steps") {
-					moveOffset=$2
-					moveType=tolower($1)
-				} else if (listType == "conditions") {
-					if ($1=="none") next
-					if (oldType != listType ) {
-						oldType=listType
-						currentCondition++
-						printf("\t{esLast,0}, /* condition number %d */\\\n",currentCondition)
-						conditions=currentCondition+1
-					}
-					currentCondition++
-					if ($2!=sprintf("%d",$2)) {
-						if (defines[$2]) {
-							result=sprintf("STATES_COND_%s /* %d */",$2,defines[$2])
-						} else {
-							if ($2) {
-								printf("Parsing error in states.conf: Condition modifier '%s' not recognized on uncommented line %d.\n",$2,NR)>"/dev/stderr"
-								exit 22
-							}
-							result=0
-						}
-					} else {
-						result=$2
-					}
-					printf("\t{es%s,%s}, /* condition number %d */\\\n",$1,result,currentCondition)
-				} else if (listType == "animation") {
-					if (match($1,/^[0-9]+-[0-9]*$/)) {
-						split($1,a,"-")
-						for (g=a[1];g<=a[2];g++) {
-							arrayAnimation[currentAnimation,"frame"]=g
-							arrayAnimation[currentAnimation,"flags"]=$2
-							currentAnimation++
-						}
-					} else {
-						arrayAnimation[currentAnimation,"frame"]=$1
-						arrayAnimation[currentAnimation,"flags"]=$2
-						currentAnimation++
-					}
-				} else if (listType == "level") {
-					if (arrayLevel[$1]) {
-						printf("Parsing error in states.conf: Redeclaration of level '%d' on line %d.\n",$1,NR)>"/dev/stderr"
-						exit 23
-					} else {
-						arrayLevel[$1]=currentAction+1
-						if ($1>greatestLevel) {
-							greatestLevel=$1
-						}
-					}
-				} else if (listType == "guardskill") {
-					if (arrayGuard[$1]) {
-						printf("Parsing error in states.conf: Redeclaration of guard skill '%d' on line %d.\n",$1,NR)>"/dev/stderr"
-						exit 25
-					} else {
-						arrayGuard[$1]=currentAction+1
-						if ($1>greatestSkill) {
-							greatestSkill=$1
-						}
-					}
+# next option
+	if (listType == "next") {
+		nextState=tolower($1)
+		if (nextState=="exit" && $2) {
+			nextState="exit " toupper($2)
+		}
+# steps option
+	} else if (listType == "steps") {
+		moveOffset=$2
+		moveType=tolower($1)
+# conditions option
+	} else if (listType == "conditions") {
+		if ($1=="none") next
+		if (oldType != listType ) {
+			oldType=listType
+			currentCondition++
+			printf("\t{esLast,0}, /* condition number %d */\\\n",currentCondition)
+			conditions=currentCondition+1
+		}
+		currentCondition++
+		if ($2!=sprintf("%d",$2)) {
+			if (defines[$2]) {
+				result=sprintf("STATES_COND_%s /* %d */",$2,defines[$2])
+			} else {
+				if ($2) {
+					printf("Parsing error in states.conf: Condition modifier '%s' not recognized on uncommented line %d.\n",$2,NR)>"/dev/stderr"
+					exit 22
 				}
+				result=0
+			}
+		} else {
+			result=$2
+		}
+		printf("\t{es%s,%s}, /* condition number %d */\\\n",$1,result,currentCondition)
+# animation option
+	} else if (listType == "animation") {
+		if (match($1,/^[0-9]+-[0-9]*$/)) {
+			split($1,a,"-")
+			for (g=a[1];g<=a[2];g++) {
+				arrayAnimation[currentAnimation,"frame"]=g
+				arrayAnimation[currentAnimation,"flags"]=$2
+				currentAnimation++
+			}
+		} else {
+			arrayAnimation[currentAnimation,"frame"]=$1
+			arrayAnimation[currentAnimation,"flags"]=$2
+			currentAnimation++
+		}
+# level option
+	} else if (listType == "level") {
+		if (arrayLevel[$1]) {
+			printf("Parsing error in states.conf: Redeclaration of level '%d' on line %d.\n",$1,NR)>"/dev/stderr"
+			exit 23
+		} else {
+			arrayLevel[$1]=currentAction+1
+			if ($1>greatestLevel) {
+				greatestLevel=$1
+			}
+		}
+# guardskill option
+	} else if (listType == "guardskill") {
+		if (arrayGuard[$1]) {
+			printf("Parsing error in states.conf: Redeclaration of guard skill '%d' on line %d.\n",$1,NR)>"/dev/stderr"
+			exit 25
+		} else {
+			arrayGuard[$1]=currentAction+1
+			if ($1>greatestSkill) {
+				greatestSkill=$1
+			}
+		}
+# mark option
+	} else if (listType == "mark") {
+		arrayMarks[toupper($1)]=currentAction+1
+	}
 }
 
 #2 tabs (action options)
@@ -171,8 +183,21 @@ END {
 	actionArray[currentAction,"lastComma"]=""
 	printf("\t{esLast,0} /* the end */\\\n}\n\n#define STATES_ACTIONS {\\\n")
 
+	exitNextState=-1
 	for (i=0;i<=currentAction;i++) {
-		nextStateId=stateList[actionArray[i,"nextState"]]
+		nextState=actionArray[i,"nextState"]
+		if (nextState ~ /^exit /) { #if the next state is exit+something, something will be remembered
+			split(nextState,a," ")
+			if (exitArray[a[2]]) {
+				nextStateId=exitArray[a[2]]
+			} else {
+				nextStateId=exitNextState
+				exitArray[a[2]]=exitNextState
+				exitNextState--
+			}
+		} else {
+			nextStateId=stateList[nextState]
+		}
 		#print comments
 		printf("\t/* Action: %s (%d) \\\n",\
 			actionArray[i,"description"],\
@@ -249,7 +274,16 @@ END {
 		printf "%s%s",coma,arrayGuard[i]-1
 		coma=","
 	}
-printf("}\n")
-
+	printf("}\n\n")
+	#define exit codes
+	for (exitCode in exitArray) {
+		printf "#define STATE_EXIT_CODE_%s %d\n",exitCode,exitArray[exitCode]
+	}
+	printf("\n")
+	#define marks
+	for (marks in arrayMarks) {
+		printf "#define STATE_MARKS_%s %d\n",marks,arrayMarks[marks]
+	}
+	printf("\n")
 }
 

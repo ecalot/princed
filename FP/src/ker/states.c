@@ -188,6 +188,7 @@ short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 	}
 	current->acumLocation+=current->step;
 	kid->location=current->acumLocation;
+	if (current->currentState<0) return current->currentState; /* if last state return exit code */
 	return flags;
 }
 

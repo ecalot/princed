@@ -132,10 +132,6 @@ typedef struct {
 	int location;
 	int floor;
 	int direction;
-	void* frame;
-	/*int velocity;*/
-	/*enum {stay,run}nextAction;*/
-	/*tData* action;*/
 	tState action;
 } tKid;
 
