@@ -49,30 +49,38 @@ void editKey(tKey* key,SDLKey sdlkey,int status) {
 		/* keys */
 		case SDLK_UP:
 			key->upPressed=status;
+			key->downPressed=!status;
 			break;
 		case SDLK_DOWN:
 			key->downPressed=status;
+			key->upPressed=!status;
 			break;					
 		case SDLK_RIGHT:
 			key->rightPressed=status;
+			key->leftPressed=!status;
 			break;					
 		case SDLK_LEFT:
 			key->leftPressed=status;
+			key->rightPressed=!status;
 			break;					
 		case SDLK_HOME:
 			key->upPressed=status;
 			key->leftPressed=status;
+			key->rightPressed=!status;
 			break;					
 		case SDLK_END:
 			key->downPressed=status;
 			key->leftPressed=status;
+			key->rightPressed=!status;
 			break;					
 		case SDLK_PAGEUP:
 			key->upPressed=status;
+			key->leftPressed=!status;
 			key->rightPressed=status;
 			break;					
 		case SDLK_PAGEDOWN:
 			key->downPressed=status;
+			key->leftPressed=!status;
 			key->rightPressed=status;
 			break;					
 		/* mods*/
