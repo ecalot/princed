@@ -9,8 +9,7 @@ MAKEDIR    = @mkdir -p
 INDEXER    = @cd ..;./install; cd src
 DOWNLOADER = @cd ..;./install -d; cd src
 REMOVER    = @rm -f
-AWK        = awk
-GREP       = @cat
+AWK        = @awk
 
 #####################
 # Operating Systems #
@@ -90,7 +89,7 @@ checksdl:
 
 checkawk:
 	$(INFO) Checking AWK...
-	@which $(AWK)>/dev/null
+	@which awk>/dev/null
 
 ###################
 # command options #
@@ -193,41 +192,41 @@ include/res_conf.h: $(GENERATEDRESHEADERS)
 
 include/res_conf_parts.h: conf/parts.conf conf/awk/res_conf_parts.awk
 	$(INFO) Creating resource id parts configuration file...
-	$(GREP) conf/parts.conf|$(AWK) -f conf/awk/res_conf_parts.awk >include/res_conf_parts.h
+	$(AWK) -f conf/awk/res_conf_parts.awk  conf/parts.conf>include/res_conf_parts.h
 
 include/res_conf_files.h: conf/files.conf conf/awk/res_conf_files.awk
 	$(INFO) Creating resource dat files list configuration file...
-	$(GREP) conf/files.conf|$(AWK) -f conf/awk/res_conf_files.awk >include/res_conf_files.h
+	$(AWK) -f conf/awk/res_conf_files.awk  conf/files.conf>include/res_conf_files.h
 
 include/res_conf_types.h: conf/types.conf conf/awk/res_conf_types.awk
 	$(INFO) Creating resource types configuration file...
-	$(GREP) conf/types.conf|$(AWK) -f conf/awk/res_conf_types.awk >include/res_conf_types.h
+	$(AWK) -f conf/awk/res_conf_types.awk  conf/types.conf>include/res_conf_types.h
 
 include/res_conf_mods.h: conf/mods.conf conf/awk/res_conf_mods.awk
 	$(INFO) Creating resource modifiers configuration file...
-	$(GREP) conf/mods.conf|$(AWK) -f conf/awk/res_conf_mods.awk >include/res_conf_mods.h
+	$(AWK) -f conf/awk/res_conf_mods.awk  conf/mods.conf>include/res_conf_mods.h
 
 include/res_conf_resources.h: conf/resources.conf conf/awk/res_conf_resources.awk
 	$(INFO) Creating resource list configuration file...
-	$(GREP) conf/resources.conf|$(AWK) -f conf/awk/res_conf_resources.awk >include/res_conf_resources.h
+	$(AWK) -f conf/awk/res_conf_resources.awk  conf/resources.conf>include/res_conf_resources.h
 
 include/states_conf.h: $(GENERATEDSTAHEADERS)
 
 include/states_conf_static.h: conf/states.conf conf/awk/states_conf_static.awk
 	$(INFO) Creating states list configuration file...
-	$(GREP) conf/states.conf|$(AWK) -f conf/awk/states_conf_static.awk>include/states_conf_static.h
+	$(AWK) -f conf/awk/states_conf_static.awk conf/states.conf>include/states_conf_static.h
 
 include/states_conf_properties.h: conf/statesproperties.conf conf/awk/states_conf_properties.awk
 	$(INFO) Creating states condition properties configuration file...
-	$(GREP) conf/statesproperties.conf|$(AWK) -f conf/awk/states_conf_properties.awk >include/states_conf_properties.h
+	$(AWK) -f conf/awk/states_conf_properties.awk  conf/statesproperties.conf>include/states_conf_properties.h
 
 include/tiles_conf.h: $(GENERATEDTILHEADERS)
 
 include/tiles_conf_types.h: conf/tiles.conf conf/awk/tiles_conf_types.awk
 	$(INFO) Creating tile list configuration file...
-	$(GREP) conf/tiles.conf|$(AWK) -f conf/awk/tiles_conf_types.awk>include/tiles_conf_types.h
+	$(AWK) -f conf/awk/tiles_conf_types.awk conf/tiles.conf>include/tiles_conf_types.h
 
 include/tiles_conf_groups.h: conf/tiles.conf conf/awk/tiles_conf_groups.awk
 	$(INFO) Creating tile groups configuration file...
-	$(GREP) conf/tiles.conf|$(AWK) -f conf/awk/tiles_conf_groups.awk>include/tiles_conf_groups.h
+	$(AWK) -f conf/awk/tiles_conf_groups.awk conf/tiles.conf>include/tiles_conf_groups.h
 
