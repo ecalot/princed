@@ -71,7 +71,7 @@ void objectDraw(tObject object) {
 	outputDrawBitmap(
 		image, 
 		object_getLocation(object,image),
-		stateGetBottom(object)+58+object.floor*TILE_H
+		58-stateGetBottom(object)+object.floor*TILE_H
 	);
 }
 
