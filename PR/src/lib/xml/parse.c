@@ -544,8 +544,6 @@ void freeParsedStructure(tTag** structure) {
 |                Resource tree browsing for DLL                 |
 \***************************************************************/
 
-#ifdef DLL
-
 tTag* resourceTreeGetNext (tTag* whereAmI) {
 	return whereAmI->next;
 }
@@ -569,6 +567,4 @@ int   resourceTreeGetInfo (tTag* whereAmI,	char** tag, char** desc, char** path,
 	*number=whereAmI->number;
 	return 1;
 }
-
-#endif
 

@@ -139,8 +139,6 @@ Versions:
   x Code the compression algorithms Lzg to optimize compiled
     bitmap dat files
 
-create prlib.h
-
 2) ToDo List & Future Plans:
 
 * PR v1.1:
