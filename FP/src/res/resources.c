@@ -95,7 +95,7 @@ tData* resLoad(long id) {
 	int total=res_get_part_size(id);
 	int from=res_get_part_from(id);
 	int type=res_get_part_type(id);
-
+printf("type=%d mask=%d total=%d from=%d id=%08x\n",type,mask,total,from,id);
 	switch (type) {
 		case RES_TYPE_LVL:
 			if (total!=2) {
@@ -129,6 +129,7 @@ tData* resLoad(long id) {
 				printf("Fatal Error: resLoad: palette not found!\n");
 				return NULL;
 			}
+			printf("hola %d\n",palette.size);
 			if (palette.size!=100) {
       	printf("Fatal error: resLoad: invalid palette\n");
         return NULL;
