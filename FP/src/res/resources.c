@@ -55,14 +55,16 @@ resources.c: Princed Resources : DAT Extractor
 
 tData* res_createData(int nFrames,int type) {
 	tData* result;
-	/* TODO: send those lines to res_createData*/
 	result=(tData*)malloc(sizeof(tData));
 	
 	switch (type) {
-		case RES_TYPE_IMG:
-			result->type=eImages;/*res_getVirtualTypeFromReal(res_getIdxType);*/
-			nFrames--;
-			break;
+	case RES_TYPE_IMG:
+		result->type=eImages;/*res_getVirtualTypeFromReal(res_getIdxType);*/
+		nFrames--;
+		break;
+	case RES_TYPE_LVL:
+		result->type=eLevel;/*res_getVirtualTypeFromReal(res_getIdxType);*/
+		break;
 	}
 	
 	result->pFrames=(void**)malloc(nFrames*sizeof(void*));
@@ -104,12 +106,14 @@ void res_createFrames(tMemory data,int type,void** returnValue,int number,int ma
 		case RES_TYPE_SND_MIDI:
 		case RES_TYPE_SND_WAVE:
 		case RES_TYPE_IMG_PALETTED:
-		case RES_TYPE_LVL:
 			result=(tMemory*)malloc(sizeof(tMemory)); /* both sides are void* :)  */
 			/* TODO: data->array must be copied or it wont be available after the file is closed */
 			*result=data;
 			printf("res_createFrames: Allocating resource[%d]\n",number);
 			
+			break;
+		case RES_TYPE_LVL:
+			(tMemory*)result=mapLoadLevel(data);
 			break;
 	}
 
@@ -186,7 +190,6 @@ int res_getDataByArray(short int* id,int maxItems,void** result,int ids,int type
  * */
 
 tData* resLoad(long id) {
-				
 	/* Initialize abstract variables to read this new DAT file */
 	unsigned short int numberOfItems;
 	tData* result;
@@ -219,15 +222,15 @@ tData* resLoad(long id) {
 	}
 
 	strncpy(file1,res_getIdxFile1,14);
-	
+
 	mReadCloseDatFile();
 
 	/* READ FILE */
-	
+
 	for (i=0;i<nFrames;i++) {
 		printf("frames[%d]=%d\n",i,frames[i]);
 	}
-	
+
 	if (!mReadBeginDatFile(&numberOfItems,file1)) {
 		printf("Fatal Error: resLoad: resource file not found!\n");
 		free(frames);

@@ -52,7 +52,7 @@ typedef struct {
 typedef enum {eLeft=0,eRight=1,eUp=2,eDown=3}tDirection;
 
 /* called from reources */
-void* mapLoadLevel(tMemory* level);
+void* mapLoadLevel(tMemory level);
 void  mapDestroy(tData* map);
 
 /* called from the kernel */

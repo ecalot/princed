@@ -79,7 +79,9 @@ typedef struct {
 
 #define RES_MOD_RIGHT          0x00010000
 #define RES_MOD_LEFT           0x00000000
+#define RES_MOD_MAP            0x00020000
 #define res_modIsRight(a) ((a)&0x0001)
+#define res_modIsMap(a)   ((a)&0x0002)
 #define res_modGetId(a)   ((a)&0xffff)
 #define res_modGetMask(a) ((a)>>16)
 
