@@ -136,39 +136,47 @@ BEGIN {
 }
 #1 tab (action)
 /^\t[^\t# ].*$/ {
-			if (first) {
-				actionArray[currentAction,"description"]=rememberAction
-				actionArray[currentAction,"isFirstInState"]=currentState
-				actionArray[currentAction,"animationStart"]=startAnimation
-				actionArray[currentAction,"animationSize"]=currentAnimation-startAnimation
-				actionArray[currentAction,"conditionStart"]=conditions
-				actionArray[currentAction,"nextState"]=nextState
-				actionArray[currentAction,"moveType"]=moveType
-				actionArray[currentAction,"moveOffset"]=moveOffset
-				actionArray[currentAction,"lastComma"]=","
-				currentAction++
-				currentState=""
-			} else {
-				first=1
-			}
+	if (first) {
+		actionArray[currentAction,"description"]=rememberAction
+		if (currentState) {
+			actionArray[currentAction,"isFirstInState"]=currentState
+		} else {
+			actionArray[currentAction,"isFirstInState"]=priorState
+			priorState=""
+		}
+		actionArray[currentAction,"animationStart"]=startAnimation
+		actionArray[currentAction,"animationSize"]=currentAnimation-startAnimation
+		actionArray[currentAction,"conditionStart"]=conditions
+		actionArray[currentAction,"nextState"]=nextState
+		actionArray[currentAction,"moveType"]=moveType
+		actionArray[currentAction,"moveOffset"]=moveOffset
+		actionArray[currentAction,"lastComma"]=","
+		currentAction++
+		currentState=""
+	} else {
+		first=1
+	}
 
-			startAnimation=currentAnimation
-			listType=""
-			conditions=0
-			if (tolower($1) != "action") {
-				printf("Error! \"%s\" should be an action.\n",$0)>"/dev/stderr"
-			}
-			$1=""
-			rememberAction=substr($0,2)
+	startAnimation=currentAnimation
+	listType=""
+	conditions=0
+	if (tolower($1) != "action") {
+		printf("Error! \"%s\" should be an action.\n",$0)>"/dev/stderr"
+	}
+	$1=""
+	rememberAction=substr($0,2)
 }
 
 #no tabs (states)
 /^[^\t# ].*$/ {
 		listType=""
-		if ($1 ~ /:$/ ) $1=substr($1,1,length($1)-1)
-		priorState=currentState #TODO fix that!!!
-		currentState=tolower($1)
-		stateList[currentState]=currentAction+1
+		if ($1 ~ /:$/) $1=substr($1,1,length($1)-1)
+		if (currentState) {
+			priorState=tolower($1)
+		} else {
+			currentState=tolower($1)
+		}
+		stateList[tolower($1)]=currentAction
 }
 
 END {
