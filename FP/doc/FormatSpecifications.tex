@@ -69,8 +69,8 @@ Table of Contents
 
 3.2. DAT reading primitives
  int  mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFile);
- int  mReadFileInDatFile(int indexNumber,unsigned char** data,unsigned long int
-*size);
+ int  mReadFileInDatFile(int indexNumber,unsigned char** data,unsigned long
+      int *size);
  int  mReadInitResource(tResource** res,const unsigned char* data,long size);
  void mReadCloseDatFile();
 
@@ -79,8 +79,8 @@ Table of Contents
  void mWriteFileInDatFile(const unsigned char* data, int size);
  void mWriteFileInDatFileIgnoreChecksum(unsigned char* data,int size);
  void mWriteInitResource(tResource** res);
- void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const char*
-backupExtension);
+ void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const
+      char* backupExtension);
 
 4. File Specifications
 
@@ -237,8 +237,8 @@ backupExtension);
  16     2287    unknown II
  2      2303    0F 09 (2319)
 
- All levels has a size of 2305, except in the original game, that the potion
- level has a size of 2304 (may be it was wrong trimmed).
+ All levels has a size of 2305, except in the original game, that the
+ potion level has a size of 2304 (may be it was wrong trimmed).
 
 4.4.1 Unknown blocks
  Blocks described in this section are: Unknown from I to IV.
@@ -253,25 +253,26 @@ backupExtension);
 
  As unknown III were all zeros for each level in the original set, it was a
  team decision to use those bytes for format extension. If one of them is
- not the default 00 00 00 hex then the level was extended by the team. Those
- extensions are only supported by RoomShaker at this  moment. To see how
- those extensions were defined read the appendix I'll write some day.
+ not the default 00 00 00 hex then the level was extended by the team.
+ Those extensions are only supported by RoomShaker at this  moment. To see
+ how those extensions were defined read the appendix I'll write some day.
  
 4.4.2 Room mapping
  This section explains how the main walls and objects are stored. The
  blocks involved here are "wall" and "background"
 
  In a level you can store a maximum of 24 screens (also called rooms) of 30
- tiles each, having three stages of 10 tiles each. Screens are numbered from
- 1 to 24 (not 0 to 23) because the 0 was reserved special cases.
+ tiles each, having three stages of 10 tiles each. Screens are numbered
+ from 1 to 24 (not 0 to 23) because the 0 was reserved special cases.
 
  The wall and background blocks have 24 sub-blocks inside. Those sub-blocks
  has a size of 30 bytes each and has a screen associated. So, for example,
  the sub-block staring in 0 corresponds to the screen 1 and the sub-block
  starting in 690 corresponds to the screen 24. 
- It is reserved 1 byte from the wall block and one from the background block
- for each tile. To locate the appropriate tile you have to do the following
- calculation: tile=(screen-1)*30+tileOffset where tileOffset is a number
+ It is reserved 1 byte from the wall block and one from the background
+ block for each tile. To locate the appropriate tile you have to do the
+ following calculation: tile=(screen-1)*30+tileOffset where tileOffset is a
+ number
  from 0 to 29 that means a tile from 0 to 9 if in the upper stage, from
  10 to 19 if in the middle stage and 20 to 29 if in the bottom stage.
  We define this as the location format and will be used also in the start
@@ -451,10 +452,12 @@ backupExtension);
  
  Let's define:
   Screen as S and it is a number from 1 to 24 (5 bits)
-	 S = s1 s2 s3 s4 s5 where sn is the bit n of the binary representation of S
+   S = s1 s2 s3 s4 s5
+	  where sn is the bit n of the binary representation of S
 	Location as L and is a number from 0 to 29 (5 bits)
-	 L = l1 l2 l3 l4 l5 where ln is the bit n of the binary representation of L
-	 This number is according to the location format specifications.
+   L = l1 l2 l3 l4 l5
+	  where ln is the bit n of the binary representation of L
+   This number is according to the location format specifications.
 	Trigger-next as T and is a 0 or 1 (1 bit)
    T = t1
 
@@ -503,5 +506,6 @@ Just raw sound
       under the terms of the GNU Free Documentation License, Version 1.2
       or any later version published by the Free Software Foundation;
       with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
-      Texts.  A copy of the license is included in the section entitled "GNU
-      Free Documentation License".
+      Texts.  A copy of the license is included in the section entitled
+			"GNU Free Documentation License".
+
