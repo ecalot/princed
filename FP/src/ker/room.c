@@ -495,7 +495,9 @@ int roomPress(tRoom* room, tObject* obj) {
 		((tPressable*)tile.moreInfo)->action=eJustPressed;
 		/* drop or raise button */
 		event=((tPressable*)tile.moreInfo)->event;
+#ifdef DEBUGROOM
 		fprintf(stderr,"mapPressedTile: throw event from button %d event:%p\n",tile.back,(void*)event);
+#endif
 		do {
 			event->gate->action=isIn(tile,TILES_RAISE)?eOpening:eClosingFast;
 		} while	((event++)->triggerNext);
