@@ -53,7 +53,7 @@ disk.c: Princed Resources : Disk Access & File handling functions
 #ifndef WIN32
   #define defmkdir(a) mkdir (a,(mode_t)0755)
 #else
-	/*#include <direct.h> wasn't it dirent? */
+	#include <direct.h> 
   #define defmkdir(a) mkdir (a)
 #endif
 
