@@ -1,3 +1,7 @@
+use:
+ - listypes: to see a list of valid .def file types
+ - makedat: to compile .def resources
+
 0: image (the first number is a pelette) | black is transparent
 1: mirrored image (idem) | black is transparent
 2: 0 but black is black
