@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#configure colors
 NO_COLOR="\033[0m"
 LGREEN="\033[01;32m"
 LRED="\033[01;31m"
@@ -8,9 +9,14 @@ SDONE="[$LGREEN Done$NO_COLOR ]"
 SOK="[$LGREEN  OK $NO_COLOR ]"
 SFAIL="[$LRED Fail$NO_COLOR ]"
 
+#setup
 numberstart=50
+VARDEFINE="#define"
+VARDEFSTART="DATA_START_ITEMS"
+VARDEFEND="DATA_END_ITEMS"
 
 #initializes output files
+FAIL=0
 number=$numberstart
 echo -n "Generating header and xml files            "
 cp -f result/data.h result/data.h.bak 2>/dev/null >/dev/null
@@ -20,15 +26,44 @@ cat xml/gen1.xml > xml/resources.xml
 #process and add all definitions to the xml and h files
 for definition in def/*.def 
 do
+	#define variables and convert the resource type
 	definition=`echo $definition|sed -e "s/def\/\(.*\)\.def/\1/g"`
-	bin/makeindex def/$definition.def index/$definition.index
+	FDEF="def/$definition.def"
+	FPROC="proc/$definition.p"
+	FINDEX="index/$definition.index"
+	TYPE=`sed -e '1,1d' -e '3,$d' $FDEF`
+	LINEX="^$VARDEFINE RES_TYPE_$TYPE \([0-9]*\)\$"
+	LINE=`grep -e "$LINEX" result/types.h`	
+	ID=`echo "$LINE"|sed -e "s/$LINEX/\1/g"`
+
+	if [ -z "$ID" ] 
+	then
+		FAIL=1
+		echo "Invalid type $TYPE in $FDEF" >> error_log
+	fi
+	
+	#convert def files to proc files
+	sed -e "2,1s/.*/$ID/g" $FDEF > $FPROC
+	
+	#convert proc files to index files
+	bin/makeindex $FPROC $FINDEX
+
+	#add logs
 	echo "  <item value=\"$number\" path=\"$definition.index\">$definition</item>" >> xml/resources.xml
-	echo "#define $definition $number" >> result/data.h
+	echo "$VARDEFINE $definition $number" >> result/data.h
+
 	number=`expr $number + 1`
 done
+
+#finish files
 cat xml/gen2.xml >> xml/resources.xml
-echo -e "\n#define DATA_START_ITEMS $numberstart\n#define DATA_END_ITEMS $number" >> result/data.h
-echo -e "$SOK"
+echo -e "\n$VARDEFINE $VARDEFSTART $numberstart\n$VARDEFINE $VARDEFEND $number" >> result/data.h
+if [ $FAIL == 1 ]
+then
+	echo -e "$SFAIL"
+else
+	echo -e "$SOK"
+fi
 
 #generate the dat file using the proceced indexes and the xml file
 echo -n "Generating dat file                        "
@@ -40,3 +75,11 @@ if [ $result == 0 ] ; then
 else
 	echo -e "$SFAIL"
 fi
+
+if [ $FAIL == 1 ]
+then
+	echo -e "\nPlease correct the following errors:\n"
+	cat error_log > /dev/stderr
+	rm error_log
+fi
+
