@@ -3,6 +3,8 @@
 
 //princed resource library
 
+#include <stdio.h>
+
 //User configuration defines
 #ifndef WIN32
  #define UNIX
@@ -74,11 +76,13 @@ int prVerifyDatType(const char* vFiledat);
 int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char * vDatFileName,const char* datAuthor, const char* backupExtension);
 int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char* vDatFileName, const char* backupExtension);
 
+int prMain(int* option, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor,FILE* output);
+
 //Command Line specific options
 
 #define PARSING_HELP "Usage: \n"\
-"  pr [DATFILEPATH] [-x [EXTRACTDIR]|-c [COMPILEDIR]|-d]\n"\
-"  pr [DATFILEPATH] [OPTIONS]\n"\
+"  pr [-x [EXTRACTDIR]|-c [COMPILEDIR]|-d] [DATFILEPATH]\n"\
+"  pr [OPTIONS] [DATFILEPATH]\n"\
 "\n"\
 "  Mandatory arguments to long options are mandatory for short options too.\n"\
 "\n"\
@@ -134,7 +138,7 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 #define force_flag       0x0010
 #define cgi_flag         0x0020
 #define help_flag        0x0040
-#define undef4_flag      0x0080
+#define first_flag       0x0080
 #define raw_flag         0x0100
 #define recursive_flag   0x0200
 #define verbose_flag     0x0400
@@ -143,5 +147,7 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 #define undef1_flag      0x2000
 #define undef2_flag      0x4000
 #define undef3_flag      0x8000
+
+#define optionflag (*pOption)
 
 #endif
