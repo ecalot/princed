@@ -38,7 +38,7 @@ int kernel(int optionflag,int level) {
  *  
  * optionflag may be read using hasFlag(name_flag); Note that the variable must be called optionflag
  */
-	printf("Hello, I'm a dummy kernel, I was called to do the stuff\nwith '%x' options and go to the level '%d'\n",optionflag,levels);
+	printf("Hello, I'm a dummy kernel, I was called to do the stuff\nwith '%x' options and go to the level '%d'\n",optionflag,level);
 	return 0;
 }
 
