@@ -85,7 +85,7 @@ $(EXEFILE): $(OBJFILES)
 # program checks  #
 ###################
 
-check: checkcompiler checksdl checkawk
+checks: checkcompiler checksdl checkawk
 
 checkcompiler:
 	$(INFO) Checking C compiler...
