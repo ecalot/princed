@@ -39,11 +39,16 @@ bmp.c: Princed Resources : BMP file support
 #include "memory.h"
 #include "compile.h"
 
-char mFormatExtractBmp(unsigned char* data, char *vFileext,unsigned long int size,tImage image) {
+char mFormatExtractBmp(unsigned char* data, const char *vFileext,unsigned long int size,tImage image) {
+	/*
+		This function will expand the data into an image structure,
+		then the bitmap structure will be saved to disk
+
+		Note: The old structure is passed by paremeters in order to
+		      keep the right palette.
+	*/
+
 	if ((mExpandGraphic(data,&image,size))>0) {
-		//Create base dir
-		repairFolders(vFileext);
-		makebase(vFileext);
 		//Write bitmap
 		mWriteBitMap(image,vFileext);
 		//free bitmap
@@ -60,17 +65,18 @@ char mFormatCompileBmp(unsigned char* data, FILE* fp, tResource *res) {
 	tImage img;
 	unsigned char aux[10000];
 
-	if (!mReadBitMap(&img,data,(*res).size)) return 0;
+	if (!mReadBitMap(&img,data,res->size)) return 0;
 	mCompressGraphic(aux,&img,&size);
+
 	free(img.pix);
 
 	mAddFileToDatFile(fp,aux,size);
-	(*res).size=size; //this was a bug (added to debug ;) ironic, don't you think?
+	res->size=size; //this was a bug (added to debug ;) ironic, don't you think?
 	/* Note: after the debugging we realized this line was missing so this is not a bug anymore*/
 	return 1;
 }
 
-char mWriteBitMap(tImage img,char* vFile) {
+char mWriteBitMap(tImage img,const char* vFile) {
 
 	//declare variables
 	unsigned char i=0;
@@ -120,8 +126,7 @@ char mWriteBitMap(tImage img,char* vFile) {
 		0x22,0x22,0x22,0
 	};
 
-
-	if ((bitmap = fopen (vFile,"wb"))==NULL) return 0;
+	if (!writeOpen(vFile, &bitmap)) return 0;
 
 	filesize=((img.size+1)/2+118);
 	width=img.width;

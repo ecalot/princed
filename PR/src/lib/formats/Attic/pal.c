@@ -44,21 +44,6 @@ pal.c: Princed Resources : JASC PAL files support
 |                 Jasc Palette handling functions               |
 \***************************************************************/
 
-//Private function taken from the parser
-
-#define chgnum(n) ((0x30<(n))&&((n)<0x3A))?((n)-(0x30)):0
-
-//Tokenizer simple
-//Sintaxis: getNumberToken(string texto,var int token,char caracterSeparador,
-//                   var int startPosition, int deprecated)
-int getNumberToken(char texto[],unsigned short int *token,char tokenizer,int* i,int k) {
-	char a;
-	//Copiar el string hasta que se encuentre el token o se termine la linea.
-	//En caso de que no entre el texto en el token, lo deja truncado pero avanza i hasta el final
-	for (*token=0;(((a=texto[(*i)++])!=tokenizer)&&a);(*token)=(*token)*10+chgnum(a));
-	return (a);
-}
-
 //Public functions
 char mFormatExtractPal(unsigned char** data, char *vFileext,unsigned long int size) {
 	//Convert palette from POP format to JASC format
@@ -73,9 +58,12 @@ char mImportPalette(unsigned char** data, unsigned short *size) {
 	unsigned char palh[]=PAL_HEADER;
 	unsigned char pals[]=PAL_SAMPLE;
 	unsigned char* pal;
-	unsigned short int parsed;
+	unsigned char* pal2;
+	unsigned char* data2;
+	//unsigned short int parsed;
+	unsigned char r,g,b;
 	int i=0;
-	int k=0;
+	int k=16;
 
 	//check size
 	if (*size<130) return 0;
@@ -84,20 +72,20 @@ char mImportPalette(unsigned char** data, unsigned short *size) {
 
 	//set palette with sample
 	memcpy(pal,pals,100);
+	pal2=pal+4;
 
 	//verify jasc pal header
 	while (palh[i]==(*data)[i++]);
-	if (i!=sizeof(palh)) return 0;
+	if (i!=sizeof(palh)) return 0; //pallete differs with headers
 
 	//set current values
-	for (;k<16;k++) {
-		getNumberToken((*data),&parsed,' ',&i,4);
-		pal[(k*3)+4]=(parsed+2)>>2;
-		getNumberToken((*data),&parsed,' ',&i,4);
-		pal[(k*3)+5]=(parsed+2)>>2;
-		getNumberToken((*data),&parsed,'\r',&i,4);
-		pal[(k*3)+6]=(parsed+2)>>2;
-		i++; //Jump \n
+	data2=strtok(*data+sizeof(palh),"\r\n");
+	while (k--) {
+		if (!sscanf(data2,"%d %d %d",&r,&g,&b)) return 0;
+		*(pal2++)=(r+2)>>2;
+		*(pal2++)=(g+2)>>2;
+		*(pal2++)=(b+2)>>2;
+		data2=strtok(NULL,"\r\n");
 	}
 
 	//free old data and set new

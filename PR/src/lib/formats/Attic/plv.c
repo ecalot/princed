@@ -51,28 +51,33 @@ plv.c: Princed Resources : PLV prince level files support
 //Private function to get the currect date/time
 char* getDate() {
 	//Code taken from RDR 1.4.1a coded by Enrique Calot
-	//TODO: improve variable names
 	//TODO: define date string format for plv
 
 	//Declare variables
-	static char semana   []   = DATE_WEEKDAYS;
-	static char meses    []   = DATE_MONTHS;
+	static char weeks   []   = DATE_WEEKDAYS;
+	static char months  []   = DATE_MONTHS;
 	static char formated [37];
-	time_t      fechat;
-	struct tm*  fecha;
-	int         agno;          
+	time_t      datet;
+	struct tm*  date;
 
-	time(&fechat);
-	fecha  = gmtime(&fechat);
-	agno   = (*fecha).tm_year+1900;
+	time(&datet);
+	date   = gmtime(&datet);
 
 	//Format: "Tue, 26 Nov 2002 22:16:39 GMT"
-	sprintf(formated,"%s, %d %s %.4d %.2d:%.2d:%.2d GMT",(semana+(4*((*fecha).tm_wday))),((*fecha).tm_mday),(meses+(4*((*fecha).tm_mon))),agno,((*fecha).tm_hour),((*fecha).tm_min),((*fecha).tm_sec));
+	sprintf(formated,"%s, %d %s %.4d %.2d:%.2d:%.2d GMT",
+		weeks+4*(date->tm_wday),
+		date->tm_mday,
+		months+4*(date->tm_mon),
+		date->tm_year+1900,
+		date->tm_hour,
+		date->tm_min,
+		date->tm_sec
+	);
 	return formated;
 }
 
 
-char mFormatExtractPlv(unsigned char* data, char *vFileext,unsigned long int size,unsigned char level, char* filename, char* desc, char* title) {
+char mFormatExtractPlv(unsigned char* data, const char *vFileext,unsigned long int size,unsigned char level, const char* filename, const char* desc, const char* title) {
 	//Plv files are saved as raw except you must ignore the checksum and add the plv constant file header
 
 	//Variables
@@ -80,6 +85,7 @@ char mFormatExtractPlv(unsigned char* data, char *vFileext,unsigned long int siz
 	char ok;
 	char sizeOfNow;
 	char* now;
+	const char* nullString="";
 
 	//Get current time
 	now=getDate();
@@ -87,6 +93,10 @@ char mFormatExtractPlv(unsigned char* data, char *vFileext,unsigned long int siz
 
 	//Ignore checksum
 	size--;
+
+	//Validate null strings when no description is set
+	if (desc==NULL) desc=nullString;
+	if (title==NULL) title=nullString;
 
 	/* Writing file */
 
@@ -114,9 +124,9 @@ char mFormatExtractPlv(unsigned char* data, char *vFileext,unsigned long int siz
 	ok=ok&&fwrite(PLV_FOOT_ORIG_FILE,sizeof(PLV_FOOT_ORIG_FILE),1,target);
 	ok=ok&&fwrite(filename,strlen(filename)+1,1,target);
 
+	//Close file and return
 	ok=ok&&(!fclose(target));
 	return ok;
-
 }
 
 char mFormatCompilePlv(unsigned char* data, FILE* fp, tResource *res) {
