@@ -183,7 +183,7 @@ int isADatFile(const char* vResFile, const char* file) {
 }
 
 /* layer 2, module check Import type */
-int fileDirGetFilesImport(tFileDir2* list1,tFileDir2* files,const char* resfile) {
+int fileDirGetFilesImport(tFileDir2* list1,tFileDir2* files,const char* resfile,int given) {
 	char* file;
 	char* opt;
 	whatIs type;
@@ -201,13 +201,19 @@ int fileDirGetFilesImport(tFileDir2* list1,tFileDir2* files,const char* resfile)
 		
 		/* a not found file may become either a directory or a file depending on the res file */
 		if (type==eNotFound) {
-			int isdat=isADatFile(resfile,file);
-			if (isdat<0) parseError=isdat;
-
-			if (isdat) {
+			/* first check if the dat type was given by the -t option */
+			if (given) {
 				type=eFile;
 			} else {
-				type=eDirectory;
+			/* if the dat type wasn't given by the -t option let's use all the files in the XML */
+				int isdat;
+				isdat=isADatFile(resfile,file);
+				if (isdat<0) parseError=isdat;
+				if (isdat) {
+					type=eFile;
+				} else {
+					type=eDirectory;
+				}
 			}
 		}
 		
@@ -273,9 +279,6 @@ int fileDirGetFilesExport(tFileDir2* list1,tFileDir2* files,int notHasRecursiveF
 	return 0;
 }
 
-
-
-
 /* layer 3, primitives */
 
 void fileDirClearOptions(tFileDir2* list1) {
@@ -315,7 +318,7 @@ void fileDirAddOption(tFileDir2* list1, const char* option) {
 
 
 
-int fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notHasRecursiveFlag,const char* resfile) {
+int fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notHasRecursiveFlag,const char* resfile,int given) {
 /* case 1: * import from more than one directory */
  
 	if (!hasExportFlag&&!notHasRecursiveFlag) {
@@ -330,7 +333,7 @@ int fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notH
 	if (hasExportFlag)
 		return fileDirGetFilesExport(list1,files,notHasRecursiveFlag);
 	else
-		return fileDirGetFilesImport(list1,files,resfile);
+		return fileDirGetFilesImport(list1,files,resfile,given);
 	
 }
 

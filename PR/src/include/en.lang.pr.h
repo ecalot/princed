@@ -143,7 +143,7 @@ NULL,NULL,NULL,\
                               is not a dat file)\n\
    -t, --datfile=DATFILE      specifies a dat file to read resources\n\
                               different than the original file\n\
-   -z, --compression-level=n  a number from 1 to 7 specifying how hard has PR\n\
+   -z, --compression-level=N  a number from 1 to 7 specifying how hard has PR\n\
                               to try to reduce the generated dat files.\n"
 
 #define PARSING_HELP_PART4 "\

@@ -53,7 +53,7 @@ typedef struct {
 
 void  fileDirClearOptions(tFileDir2* list1);
 void  fileDirAddOption(tFileDir2* list1, const char* option);
-int   fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notHasRecursiveFlag,const char* vResFile);
+int fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notHasRecursiveFlag,const char* resfile,int givenDatFilename);
 char* fileDirGetFile(tFileDir2* files,char** datfile);
 
 #endif

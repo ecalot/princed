@@ -173,7 +173,7 @@ int main (int argc, char **argv) {
     } else {
 				fileDirAddOption(&input,".");
 		}
-		c=fileDirGetFiles(&input,&files,!hasFlag(import_flag),!hasFlag(recursive_flag),resFile);
+		c=fileDirGetFiles(&input,&files,!hasFlag(import_flag),!hasFlag(recursive_flag),resFile,datFileName!=NULL);
 
 		switch (c) {
 		case -20: /* import from more than one directory */
