@@ -220,10 +220,11 @@ tRoom mapGetRoom(tData* map, tRoomId roomAux) {
 	return result;
 }
 
-void  mapStart(tData* map, tKid* kid, tRoomId *roomId) {
+void  mapStart(tData* map, tKid* kid, tRoomId *roomId, int level) {
 	/* kid->x,y */
+	static char environments[]=MAP_ENVIRONMENTS;
 	*roomId=slevel(start)[0];
-	printf("mapStart: binding kid to map in room %d\n",*roomId);
+	printf("mapStart: binding kid to map in room %d using the %d environment\n",*roomId,environments[level]);
 	roomLoadGfx(RES_IMG_ENV_DUNGEON);
 }
 

@@ -38,6 +38,8 @@ maps.c: Freeprince : Map handling library
 #include "resources.h" /* tMemory */
 #include "kid.h" /* tKid */
 
+#define MAP_ENVIRONMENTS {0,0,0,0,1,1,1,0,0,0,1,1,0,0,1,0}
+
 typedef struct {
 	tRoomId        links[4*24];
 	unsigned char  fore [24*30];
@@ -57,7 +59,7 @@ void  mapDestroy(tData* map);
 
 /* called from the kernel */
 tRoom mapGetRoom(tData* map, tRoomId roomId);
-void  mapStart(tData* map, tKid* kid, tRoomId* roomId);
+void  mapStart(tData* map, tKid* kid, tRoomId* roomId, int level);
 
 /* events */
 void  mapPressedTile(tData* map, tTile tile);

@@ -57,7 +57,7 @@ int playgame(int optionflag,int level) {
 	/* Game loop here */
 	
 	/* Initialize kid and room in the map */
-	mapStart(map,&kid,&roomId);
+	mapStart(map,&kid,&roomId,level);
 	room=mapGetRoom(map,roomId);
 	
 	/* Level loop here */
@@ -110,7 +110,7 @@ int playgame(int optionflag,int level) {
 				level++;
 				level%=16;
 				map=resLoad(RES_MAP|level);
-				mapStart(map,&kid,&roomId);
+				mapStart(map,&kid,&roomId,level);
 				room=mapGetRoom(map,roomId);
 				printf("Kernel/playgame: cheat: Pass to level %d\n",level);
 				break;
