@@ -1,11 +1,22 @@
 #include "states.h"
+#include <stdlib.h>
 
-
-short* stateGetAnimation(int action,short* frames);
-
+/* Private static state graph */
 static tsAction statesActionList[]=STATES_ACTIONS;
 static short statesAnimationList[]=STATES_ANIMATIONS;
 static tsCondition statesConditionList[]=STATES_CONDITIONS;
+
+short* stateGetAnimation(int action,short *frames) {
+	short* result;
+	tsAction* a=statesActionList+action;
+	short i=a->animSize;
+	short* j=statesAnimationList+a->animStart;
+	/* TODO: depending on relative and absolute crop the middle frames */
+	*frames=i;
+	result=(short*)malloc(sizeof(short)*i);
+	while (i--) result[i]=*(j++);
+	return result;
+}
 
 /* public functions interface */
 tState createState(int level) {
