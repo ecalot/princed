@@ -169,8 +169,8 @@ Len	Offs	BlockName & Description
   wall   0x01 +Normal  -No Blue line
 */
 
-#define MAP_B_NONE T_EMPTY
-#define MAP_F_WALL 0
-#define MAP_F_FREE 0
+#define MAP_B_NONE 0
+#define MAP_F_WALL T_WALL
+#define MAP_F_FREE T_EMPTY
 
 #endif

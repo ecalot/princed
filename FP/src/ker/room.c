@@ -122,7 +122,7 @@ void roomDrawBackground(tRoom* room) {
 			/* main panel block */
 			tTile tile=roomGetTile(room,x,y);
 			tTile left=roomGetTile(room,x-1,y);
-			/* Wall */
+			/* Wall/left */
 			if (!tile.isWall) {
 				if (left.isWall) {
 					outputDrawBitmap(
@@ -132,28 +132,42 @@ void roomDrawBackground(tRoom* room) {
 					);
 				}
 			}
-			/* torch */
-			if (tile.hasTorch) {
-				outputDrawBitmap(
-					roomGfx.torch->pFrames[(map->time+2*x+y)%(roomGfx.torch->frames)],
-					x*TILE_W+16,
-					y*TILE_H-40
-				);
-			}
-			/* TODO: draw base */
-
-			/* normal floor */
+			/* normal/left */
 			if (left.hasFloor) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[10],
 					(x-1)*TILE_W,
 					y*TILE_H
 				);
-				
 			}
+			/* debris/left */
+			if (left.hasBrokenTile) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[49],
+					(x-1)*TILE_W,
+					y*TILE_H
+				);
+			}
+			/* torch/this */
+			if (tile.hasTorch) {
+				outputDrawBitmap(
+					roomGfx.torch->pFrames[(map->time+2*x+y)%(roomGfx.torch->frames)],
+					x*TILE_W+16,
+					y*TILE_H-40
+				);
+			}	/* TODO: draw base */
+			/* normal/this */
 			if (tile.hasFloor) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[9],
+					(x-1)*TILE_W,
+					y*TILE_H-2
+				);
+			}
+			/* debris/this */
+			if (tile.hasBrokenTile) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[48],
 					(x-1)*TILE_W,
 					y*TILE_H-2
 				);
