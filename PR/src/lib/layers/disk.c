@@ -46,7 +46,7 @@ disk.c: Princed Resources : Disk Access & File handling functions
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef UNIX
+#ifndef WIN32
 	#define defmkdir(a) mkdir (a,(mode_t)0755)
 	#include <dirent.h>
 	#include <termios.h>
