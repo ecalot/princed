@@ -32,6 +32,7 @@ resources.h: Princed Resources : Resource Handler headers
 
 #include "kernel.h"
 #include "resources.h"
+#include "output.h"
 
 int kernel(int optionflag,int level) {
 /* levels=-1 is default
@@ -42,7 +43,8 @@ int kernel(int optionflag,int level) {
 	
 	tData* testResource;
 	int i;
-			
+	
+	outputInit();
 	printf("Hello, I'm a dummy kernel, I was called to do the stuff\nwith '%x' options and go to the level '%d'\n",optionflag,level);
 	testResource=resLoad(RES_ANIM_RUN_LEFT);	
 	
@@ -63,6 +65,7 @@ int kernel(int optionflag,int level) {
 		printf("frame %d: size=%d\n",i,((tMemory*)(testResource->pFrames[i]))->size);
 	}
 	
+	outputStop();
 	return 0;
 }
 
