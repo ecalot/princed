@@ -1,0 +1,885 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_ELEMMASK            BITMAP  DISCARDABLE     "res\\elemmask.bmp"
+IDB_ELEMS               BITMAP  DISCARDABLE     "res\\elems.bmp"
+IDB_GUARD               BITMAP  DISCARDABLE     "res\\guard.bmp"
+IDB_GUARDMASK           BITMAP  DISCARDABLE     "res\\guardmask.bmp"
+IDB_BACKMASK            BITMAP  DISCARDABLE     "res\\backmask.bmp"
+IDB_BACKS               BITMAP  DISCARDABLE     "res\\backs.bmp"
+IDB_ELEMPMASK           BITMAP  DISCARDABLE     "res\\elempmask.bmp"
+IDB_ELEMP               BITMAP  DISCARDABLE     "res\\elemp.bmp"
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+IDR_TOOLPAL             BITMAP  DISCARDABLE     "res\\palette.bmp"
+IDB_ABOUT_PIC           BITMAP  DISCARDABLE     "res\\about_pi.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// 24
+//
+
+1                       24      DISCARDABLE     "res\\manifest.txt"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_EDIT_SAV DIALOG DISCARDABLE  0, 0, 265, 127
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit Saved Game"
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Close",IDCANCEL,219,102,39,12
+    LTEXT           "&File Name:",IDC_STATIC,7,15,34,8
+    EDITTEXT        IDC_EDIT1,64,13,194,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...",IDC_BROWSE,216,28,42,12
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,45,251,1
+    PUSHBUTTON      "&Open",IDC_OPEN,114,28,42,12
+    PUSHBUTTON      "&Save",IDC_SAVE,166,28,40,12
+    LTEXT           "&Level:",IDC_STATIC,7,60,20,8
+    COMBOBOX        IDC_COMBO1,64,58,108,14,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "L&ives:",IDC_STATIC,7,80,21,8
+    EDITTEXT        IDC_EDIT2,64,78,96,13,ES_AUTOHSCROLL
+    CONTROL         "Spin1",IDC_SPIN1,"msctls_updown32",UDS_ARROWKEYS,160,78,
+                    12,13
+    LTEXT           "&Remining time:",IDC_STATIC,7,102,50,8
+    PUSHBUTTON      "&New",IDC_BUTTON1,64,28,41,12
+    EDITTEXT        IDC_EDIT3,63,103,108,12,ES_AUTOHSCROLL
+END
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 262, 169
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Princed V3"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         158,IDC_STATIC,"Static",SS_BITMAP,7,7,63,154,
+                    WS_EX_CLIENTEDGE
+    LTEXT           "Princed V3 Release 1",IDC_STATIC,75,7,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2003 - Princed V3 Development Team",
+                    IDC_STATIC,75,17,180,8
+    DEFPUSHBUTTON   "OK",IDOK,205,147,50,14,WS_GROUP
+    LTEXT           "Some enhaced GUI elements are Copyright © 1998 Kirk Stowell. This program is freeware, you may share and distribute it. However you must read and respect the program license provided in the package where you have installed this program.",
+                    IDC_STATIC,75,100,180,40
+    LTEXT           "Visit our homepage for newer versions:\r http://www.princed.com.ar",
+                    IDC_STATIC,75,82,128,16
+    EDITTEXT        IDC_EDIT2,75,28,180,49,ES_MULTILINE | ES_READONLY | 
+                    WS_VSCROLL
+END
+
+IDD_DIALOG_SELECT_LEVEL DIALOG DISCARDABLE  0, 0, 229, 57
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Select level"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,172,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,172,24,50,14
+    COMBOBOX        IDC_COMBO1,13,19,151,112,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Select the number of the level you want to edit",
+                    IDC_STATIC,14,7,152,9
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_EDIT_SAV, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 258
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
+    END
+
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 255
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 161
+    END
+
+    IDD_DIALOG_SELECT_LEVEL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 222
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 50
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_HANDPALM            CURSOR  DISCARDABLE     "res\\hand.cur"
+IDC_ZOOMTOOL            CURSOR  DISCARDABLE     "res\\zoomer.cur"
+IDC_DROPPER             CURSOR  DISCARDABLE     "res\\dropper.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_FILE_NEW
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    SEPARATOR
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_FILE_PRINT
+    SEPARATOR
+    BUTTON      ID_APP_ABOUT
+END
+
+IDR_TOOLPAL TOOLBAR DISCARDABLE  24, 24
+BEGIN
+    BUTTON      ID_TOOL_SELECTION
+    SEPARATOR
+    BUTTON      ID_BUTTON32903
+    BUTTON      ID_BUTTON32904
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New...\tCtrl+N",             ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
+        MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
+        MENUITEM "Save All",                    ID_FILE_SAVEALL
+        MENUITEM SEPARATOR
+        MENUITEM "Compile DAT...",              ID_FILE_COMPILEDAT
+        MENUITEM "Uncompile DAT...",            ID_FILE_UNCOMPILEDAT
+        MENUITEM "Publish DAT...",              ID_FILE_PUBLISHDAT
+        MENUITEM SEPARATOR
+        MENUITEM "Export to Image...",          ID_FILE_EXPORTTOIMAGE
+        MENUITEM "Export to Text...",           ID_FILE_EXPORTTOTEXT
+        MENUITEM "Export to HTML...",           ID_FILE_EXPORTTOHTML
+        MENUITEM SEPARATOR
+        MENUITEM "Search Files...",             ID_FILE_SEARCHFILES
+        MENUITEM "Preferences...",              ID_FILE_PREFERENCES
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Main &Toolbar",               ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+        MENUITEM "Map Tools",                   ID_VIEW_MAPTOOLS
+        MENUITEM "Tool Options Window",         ID_VIEW_TOOLOPTIONSWINDOW
+        MENUITEM "Level Properties...",         ID_VIEW_LEVELPROPERTRIES
+        MENUITEM "Open Levels",                 ID_VIEW_OPENLEVELS
+        MENUITEM "Screen reader menu",          ID_VIEW_READERSCREENMENU
+        MENUITEM SEPARATOR
+        MENUITEM "Toggle Grid",                 ID_VIEW_TOGGLEGRID
+        MENUITEM "Toggle &Rulers",              ID_VIEW_TOGGLERULERS
+        MENUITEM SEPARATOR
+        POPUP "Zoom"
+        BEGIN
+            MENUITEM "In\t+",                       ID_VIEW_IN
+            MENUITEM "Out\t-",                      ID_VIEW_ZOOM_OUT
+            MENUITEM SEPARATOR
+            MENUITEM "Fit screen to window",        ID_VIEW_ZOOM_FITSCREENTOWINDOW
+
+            MENUITEM "200%",                        ID_VIEW_ZOOM_200
+            MENUITEM "100%",                        ID_VIEW_ZOOM_100
+            MENUITEM "50%",                         ID_VIEW_ZOOM_50
+            MENUITEM "25%",                         ID_VIEW_ZOOM_25
+            MENUITEM "Fit level to window",         ID_VIEW_ZOOM_FITLEVELTOWINDOW
+
+        END
+    END
+    POPUP "Debug"
+    BEGIN
+        MENUITEM "Run level from &degub position", 
+                                                ID_DEBUG_RUNLEVELFROMDEGUBPOSITION
+
+        MENUITEM "Run level from &start position", 
+                                                ID_DEBUG_RUNLEVELFROMSTARTPOSITION
+
+        MENUITEM "&Refresh running level",      ID_DEBUG_REFRESHRUNNINGLEVE
+        MENUITEM "Run DAT &file...",            ID_DEBUG_RUNDATFILE
+        MENUITEM "S&top running",               ID_DEBUG_STOPRUNNING
+        MENUITEM SEPARATOR
+        MENUITEM "Execute &Prince of Persia",   ID_DEBUG_EXECUTEPRINCEOFPERSIA
+
+    END
+    POPUP "Addons"
+    BEGIN
+        MENUITEM "Edit &Hall of Fame",          ID_ADDONS_EDITHALLOFFAME
+        MENUITEM "Edit &saved game",            ID_ADDONS_EDITSAVEDGAME
+        MENUITEM "Edit &graphics",              ID_ADDONS_EDITGRAPHICS
+        , GRAYED
+        MENUITEM "Edit &Prince.exe",            ID_ADDONS_EDITPRINCEEXE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Help topics",                 ID_HELP_HELPTOPICS
+        MENUITEM SEPARATOR
+        MENUITEM "Index",                       ID_HELP_INDEX
+        MENUITEM "License",                     ID_HELP_LICENSE
+        MENUITEM "Frequently asked questions",  ID_HELP_FREQUENTLYASKEDQUESTIONS
+
+        MENUITEM SEPARATOR
+        MENUITEM "Princed Home Page",           ID_HELP_PRINCEDHOMEPAGE
+        MENUITEM SEPARATOR
+        MENUITEM "&About Princed V3...",        ID_APP_ABOUT
+    END
+END
+
+IDR_PRINCETYPE MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New...\tCtrl+N",             ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
+        MENUITEM "Save &As...\tF11",            ID_FILE_SAVE_AS
+        MENUITEM "Save All\tCtrl+Alt+S",        ID_FILE_SAVEALL
+        MENUITEM SEPARATOR
+        MENUITEM "Compile DAT...\tCtrl+D",      ID_FILE_COMPILEDAT
+        MENUITEM "Uncompile DAT...\tCtrl+U",    ID_FILE_UNCOMPILEDAT
+        MENUITEM "Publish DAT...\tCtrl+P",      ID_FILE_PUBLISHDAT
+        MENUITEM SEPARATOR
+        MENUITEM "Export to Image...\tCtrl+I",  ID_FILE_EXPORTTOIMAGE
+        MENUITEM "Export to Text...\tCtrl+T",   ID_FILE_EXPORTTOTEXT
+        MENUITEM "Export to HTML...\tCtrl+H",   ID_FILE_EXPORTTOHTML
+        MENUITEM SEPARATOR
+        MENUITEM "Search Files...\tCtrl+F",     ID_FILE_SEARCHFILES
+        MENUITEM "Preferences...\tF8",          ID_FILE_PREFERENCES
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit\tCtrl+Q",               ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM "Redo\tCtrl+Y",                ID_EDIT_REDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t Selection\tCtrl+X",      ID_EDIT_CUT
+        MENUITEM "&Copy Selection\tCtrl+C",     ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+        MENUITEM "Clear Selection\tDel",        ID_EDIT_CLEARSELECTION
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Main &Toolbar\tAlt+T",        ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar\tAlt+1",          ID_VIEW_STATUS_BAR
+        MENUITEM "Map Tools\tAlt+M",            ID_VIEW_MAPTOOLS
+        MENUITEM "Tool Options Window\tAlt+O",  ID_VIEW_TOOLOPTIONSWINDOW
+        MENUITEM "Level Properties...\tCtrl+F4", ID_VIEW_LEVELPROPERTRIES
+        MENUITEM "Open Levels\tAlt+L",          ID_VIEW_OPENLEVELS
+        MENUITEM "Screen reader menu",          ID_VIEW_READERSCREENMENU
+        MENUITEM SEPARATOR
+        MENUITEM "Palace",                      ID_VIEW_ASPALACE
+        MENUITEM "Dungeon",                     ID_VIEW_ASDUNGEON
+        MENUITEM SEPARATOR
+        MENUITEM "Toggle Grid\tAlt+G",          ID_VIEW_TOGGLEGRID
+        MENUITEM "Toggle &Rulers\tAlt+R",       ID_VIEW_TOGGLERULERS
+        MENUITEM SEPARATOR
+        POPUP "Zoom"
+        BEGIN
+            MENUITEM "In\t+",                       ID_VIEW_ZOOM_IN
+            MENUITEM "Out\t-",                      ID_VIEW_ZOOM_OUT
+            MENUITEM SEPARATOR
+            MENUITEM "Fit screen to window\t/",     ID_VIEW_ZOOM_FITSCREENTOWINDOW
+
+            MENUITEM "200%",                        ID_VIEW_ZOOM_200
+            MENUITEM "100%",                        ID_VIEW_ZOOM_100
+            MENUITEM "50%",                         ID_VIEW_ZOOM_50
+            MENUITEM "25%",                         ID_VIEW_ZOOM_25
+            MENUITEM "Fit level to window\t*",      ID_VIEW_ZOOM_FITLEVELTOWINDOW
+
+        END
+    END
+    POPUP "Map &tools"
+    BEGIN
+        MENUITEM "&Wall\tW",                    ID_MAPTOOLS_WALL
+        MENUITEM "&Space\tS",                   ID_MAPTOOLS_CLEAR
+        POPUP "&Objects"
+        BEGIN
+            MENUITEM "&Potion\tP",                  ID_MAPTOOLS_OBJECTS_POSSION
+
+            MENUITEM "&Skeleton\tK",                ID_MAPTOOLS_WALKABLE_BALDOZACONESQUELETO
+
+            MENUITEM "S&word\tR",                   ID_MAPTOOLS_SWORD
+            MENUITEM "S&tart Position\tN",          ID_MAPTOOLS_OBJECTS_STARTPOSITION
+
+            MENUITEM "&Debug Position\tI",          ID_MAPTOOLS_OBJECTS_DEBUGPOSITION
+
+            MENUITEM "&Guard\tG",                   ID_MAPTOOLS_OBJECTS_GUARDS
+
+        END
+        POPUP "&Background"
+        BEGIN
+            MENUITEM "&Torch\tCtrl+Shift+T",        ID_MAPTOOLS_BACKGROUND_LIGHT
+
+            MENUITEM "&Bricks\tCtrl+Shift+B",       ID_MAPTOOLS_BACKGROUND_BRICKS
+
+            MENUITEM "&Window\tCtrl+Alt+I",         ID_MAPTOOLS_BACKGROUND_WINDOW
+
+            MENUITEM "Big W&indow\tCtrl+Alt+H",     ID_MAPTOOLS_BACKGROUND_BIGWINDOW
+
+            MENUITEM "&Column\tCtrl+Shift+C",       ID_MAPTOOLS_BACKGROUND_COLUMN
+
+            MENUITEM "Big C&olumn\tCtrl+Alt+C",     ID_MAPTOOLS_BACKGROUND_BIGCOLUMN
+
+            MENUITEM SEPARATOR
+            MENUITEM "Random\tAlt+B",               ID_MAPTOOLS_BACKGROUND_RANDOM
+
+        END
+        POPUP "&Panel"
+        BEGIN
+            MENUITEM "Normal &Floor\tF",            ID_MAPTOOLS_WALKABLE_NORMAL
+
+            MENUITEM "&Broken Floor\tB",            ID_MAPTOOLS_WALKABLE_BALDOZAROTA
+
+            MENUITEM "&Loose Floor\tL",             ID_MAPTOOLS_WALKABLE_BALDOZAFLOJA
+
+            MENUITEM "&Door Opener\tO",             ID_MAPTOOLS_WALKABLE_BALDOZAAPRETABLE
+
+            MENUITEM "Door &Closer\tC",             ID_MAPTOOLS_WALKABLE_DOORCLOSER
+
+            MENUITEM "&Spikes\tCtrl+Shift+S",       ID_MAPTOOLS_WALKABLE_PINCHES
+
+            MENUITEM SEPARATOR
+            MENUITEM "Random\tAlt+P",               ID_MAPTOOLS_WALKABLE_RANDOM
+
+        END
+        POPUP "&Gates"
+        BEGIN
+            MENUITEM "Door\tD",                     ID_MAPTOOLS_GATES_DOOR
+            MENUITEM "Chopper\tH",                  ID_MAPTOOLS_GATES_PUERTASIERRA
+
+            MENUITEM "Level Gate\tT",               ID_MAPTOOLS_GATES_LEVELGATE
+
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Hand\tAlt+H",                ID_MAPTOOLS_ARRASTRAR
+        MENUITEM "Sele&ct\tAlt+S",              ID_MAPTOOLS_SELECT
+        MENUITEM "&Zoom\tAlt+Z",                ID_MAPTOOLS_ZOOM
+        MENUITEM "&Dropper\tAlt+D",             ID_MAPTOOLS_DROPPER
+    END
+    POPUP "Debug"
+    BEGIN
+        MENUITEM "Run level from &debug position\tF5", 
+                                                ID_DEBUG_RUNLEVELFROMDEGUBPOSITION
+
+        MENUITEM "Run level from &start position\tCtrl+F5", 
+                                                ID_DEBUG_RUNLEVELFROMSTARTPOSITION
+
+        MENUITEM "&Refresh running level\tCtrl+A", 
+                                                ID_DEBUG_REFRESHRUNNINGLEVE
+        MENUITEM "Run DAT &file...\tF9",        ID_DEBUG_RUNDATFILE
+        MENUITEM "S&top running\tCtrl+F9",      ID_DEBUG_STOPRUNNING
+        MENUITEM SEPARATOR
+        MENUITEM "Execute &Prince of Persia\tF10", 
+                                                ID_DEBUG_EXECUTEPRINCEOFPERSIA
+
+    END
+    POPUP "Addons"
+    BEGIN
+        MENUITEM "Edit &Hall of Fame\tCtrl+1",  ID_ADDONS_EDITHALLOFFAME
+        MENUITEM "Edit &saved game\tCtrl+2",    ID_ADDONS_EDITSAVEDGAME
+        MENUITEM "Edit &graphics\tCtrl+3",      ID_ADDONS_EDITGRAPHICS
+        , GRAYED
+        MENUITEM "Edit &Prince.exe\tCtrl+4",    ID_ADDONS_EDITPRINCEEXE
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "Fit to &level\tCtrl+F6",      ID_WINDOW_FITTOLEVEL
+        MENUITEM "Tile &Horizontally",          ID_WINDOW_TILE_HORZ
+        MENUITEM "Tile &Vertically",            ID_WINDOW_TILE_VERT
+        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
+        MENUITEM "&Arrange Icons",              ID_WINDOW_ARRANGE
+        MENUITEM "Close all\tCtrl+Shift+F4",    ID_WINDOW_CLOSEALL
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "Help topics\tF1",             ID_HELP_HELPTOPICS
+        MENUITEM SEPARATOR
+        MENUITEM "Index\tCtrl+F1",              ID_HELP_INDEX
+        MENUITEM "License",                     ID_HELP_LICENSE
+        MENUITEM "Frequently asked questions",  ID_HELP_FREQUENTLYASKEDQUESTIONS
+
+        MENUITEM SEPARATOR
+        MENUITEM "Princed Home Page\tCtrl+Alt+F1", ID_HELP_PRINCEDHOMEPAGE
+        MENUITEM SEPARATOR
+        MENUITEM "&About Princed V3...",        ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    "1",            ID_ADDONS_EDITHALLOFFAME, VIRTKEY, CONTROL, NOINVERT
+    "2",            ID_ADDONS_EDITSAVEDGAME, VIRTKEY, CONTROL, NOINVERT
+    "3",            ID_ADDONS_EDITGRAPHICS, VIRTKEY, CONTROL, NOINVERT
+    "4",            ID_ADDONS_EDITPRINCEEXE, VIRTKEY, CONTROL, NOINVERT
+    "5",            ID_VIEW_STATUS_BAR,     VIRTKEY, ALT, NOINVERT
+    "A",            ID_DEBUG_REFRESHRUNNINGLEVE, VIRTKEY, CONTROL, NOINVERT
+    "B",            ID_MAPTOOLS_WALKABLE_BALDOZAROTA, VIRTKEY, NOINVERT
+    "B",            ID_MAPTOOLS_BACKGROUND_RANDOM, VIRTKEY, ALT, NOINVERT
+    "B",            ID_MAPTOOLS_BACKGROUND_BRICKS, VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+    "C",            ID_MAPTOOLS_WALKABLE_DOORCLOSER, VIRTKEY, NOINVERT
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    "C",            ID_MAPTOOLS_BACKGROUND_BIGCOLUMN, VIRTKEY, CONTROL, ALT, 
+                                                    NOINVERT
+    "C",            ID_MAPTOOLS_BACKGROUND_COLUMN, VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+    "D",            ID_MAPTOOLS_GATES_DOOR, VIRTKEY, NOINVERT
+    "D",            ID_FILE_COMPILEDAT,     VIRTKEY, CONTROL, NOINVERT
+    "D",            ID_MAPTOOLS_DROPPER,    VIRTKEY, ALT, NOINVERT
+    "E",            ID_ADDONS_EDITPRINCEEXE, VIRTKEY, ALT, NOINVERT
+    "F",            ID_MAPTOOLS_WALKABLE_NORMAL, VIRTKEY, NOINVERT
+    "F",            ID_FILE_SEARCHFILES,    VIRTKEY, CONTROL, NOINVERT
+    "F",            ID_ADDONS_EDITHALLOFFAME, VIRTKEY, ALT, NOINVERT
+    "G",            ID_MAPTOOLS_OBJECTS_GUARDS, VIRTKEY, NOINVERT
+    "G",            ID_VIEW_TOGGLEGRID,     VIRTKEY, ALT, NOINVERT
+    "H",            ID_MAPTOOLS_GATES_PUERTASIERRA, VIRTKEY, NOINVERT
+    "H",            ID_FILE_EXPORTTOHTML,   VIRTKEY, CONTROL, NOINVERT
+    "H",            ID_MAPTOOLS_ARRASTRAR,  VIRTKEY, ALT, NOINVERT
+    "H",            ID_MAPTOOLS_BACKGROUND_BIGWINDOW, VIRTKEY, CONTROL, ALT, 
+                                                    NOINVERT
+    "I",            ID_MAPTOOLS_OBJECTS_DEBUGPOSITION, VIRTKEY, NOINVERT
+    "I",            ID_FILE_EXPORTTOIMAGE,  VIRTKEY, CONTROL, NOINVERT
+    "I",            ID_MAPTOOLS_BACKGROUND_WINDOW, VIRTKEY, CONTROL, ALT, 
+                                                    NOINVERT
+    "K",            ID_MAPTOOLS_WALKABLE_BALDOZACONESQUELETO, VIRTKEY, 
+                                                    NOINVERT
+    "K",            ID_ADDONS_EDITGRAPHICS, VIRTKEY, ALT, NOINVERT
+    "L",            ID_MAPTOOLS_WALKABLE_BALDOZAFLOJA, VIRTKEY, NOINVERT
+    "L",            ID_VIEW_OPENLEVELS,     VIRTKEY, ALT, NOINVERT
+    "M",            ID_VIEW_TOOLOPTIONSWINDOW, VIRTKEY, ALT, NOINVERT
+    "N",            ID_MAPTOOLS_OBJECTS_STARTPOSITION, VIRTKEY, NOINVERT
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_MAPTOOLS_WALKABLE_BALDOZAAPRETABLE, VIRTKEY, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_MAPTOOLS_OBJECTS_POSSION, VIRTKEY, NOINVERT
+    "P",            ID_FILE_PUBLISHDAT,     VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_MAPTOOLS_WALKABLE_RANDOM, VIRTKEY, ALT, NOINVERT
+    "Q",            ID_APP_EXIT,            VIRTKEY, CONTROL, NOINVERT
+    "R",            ID_MAPTOOLS_SWORD,      VIRTKEY, NOINVERT
+    "R",            ID_VIEW_TOGGLERULERS,   VIRTKEY, ALT, NOINVERT
+    "S",            ID_MAPTOOLS_CLEAR,      VIRTKEY, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_MAPTOOLS_SELECT,     VIRTKEY, ALT, NOINVERT
+    "S",            ID_MAPTOOLS_WALKABLE_PINCHES, VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+    "T",            ID_MAPTOOLS_GATES_LEVELGATE, VIRTKEY, NOINVERT
+    "T",            ID_FILE_EXPORTTOTEXT,   VIRTKEY, CONTROL, NOINVERT
+    "T",            ID_VIEW_TOOLBAR,        VIRTKEY, ALT, NOINVERT
+    "T",            ID_MAPTOOLS_BACKGROUND_LIGHT, VIRTKEY, SHIFT, CONTROL, 
+                                                    NOINVERT
+    "U",            ID_FILE_UNCOMPILEDAT,   VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_ADD,         ID_VIEW_ZOOM_IN,        VIRTKEY, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    VK_DELETE,      ID_EDIT_CLEARSELECTION, VIRTKEY, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    VK_DIVIDE,      ID_VIEW_ZOOM_FITSCREENTOWINDOW, VIRTKEY, NOINVERT
+    VK_F1,          ID_HELP_HELPTOPICS,     VIRTKEY, NOINVERT
+    VK_F1,          ID_HELP_INDEX,          VIRTKEY, CONTROL, NOINVERT
+    VK_F1,          ID_HELP_PRINCEDHOMEPAGE, VIRTKEY, CONTROL, ALT, NOINVERT
+    VK_F10,         ID_DEBUG_EXECUTEPRINCEOFPERSIA, VIRTKEY, NOINVERT
+    VK_F4,          ID_VIEW_LEVELPROPERTRIES, VIRTKEY, CONTROL, NOINVERT
+    VK_F4,          ID_WINDOW_CLOSEALL,     VIRTKEY, CONTROL, ALT, NOINVERT
+    VK_F5,          ID_DEBUG_RUNLEVELFROMDEGUBPOSITION, VIRTKEY, NOINVERT
+    VK_F5,          ID_DEBUG_RUNLEVELFROMSTARTPOSITION, VIRTKEY, CONTROL, 
+                                                    NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_WINDOW_FITTOLEVEL,   VIRTKEY, CONTROL, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_F8,          ID_FILE_PREFERENCES,    VIRTKEY, NOINVERT
+    VK_F9,          ID_DEBUG_RUNDATFILE,    VIRTKEY, NOINVERT
+    VK_F9,          ID_DEBUG_STOPRUNNING,   VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    VK_MULTIPLY,    ID_VIEW_ZOOM_FITLEVELTOWINDOW, VIRTKEY, NOINVERT
+    VK_SUBTRACT,    ID_VIEW_ZOOM_OUT,       VIRTKEY, NOINVERT
+    "W",            ID_MAPTOOLS_WALL,       VIRTKEY, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "Y",            ID_EDIT_REDO,           VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_MAPTOOLS_ZOOM,       VIRTKEY, ALT, NOINVERT
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 3,0,1,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "To get the latest version visit our homepage: http://www.princed.com.ar\0"
+            VALUE "CompanyName", "Princed Development Team\0"
+            VALUE "FileDescription", "Princed V3\0"
+            VALUE "FileVersion", "3, 0, 1\0"
+            VALUE "InternalName", "Princed V3\0"
+            VALUE "LegalCopyright", "Copyright (C) 2003 - Princed Development Team\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "Princed V3.EXE\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "Princed V3 Application\0"
+            VALUE "ProductVersion", "3, 0, 1\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_DIALOG_SELECT_LEVEL DLGINIT
+BEGIN
+    IDC_COMBO1, 0x403, 5, 0
+0x6544, 0x6f6d, "\000" 
+    IDC_COMBO1, 0x403, 8, 0
+0x654c, 0x6576, 0x206c, 0x0031, 
+    IDC_COMBO1, 0x403, 8, 0
+0x654c, 0x6576, 0x206c, 0x0032, 
+    IDC_COMBO1, 0x403, 8, 0
+0x654c, 0x6576, 0x206c, 0x0032, 
+    IDC_COMBO1, 0x403, 8, 0
+0x654c, 0x6576, 0x206c, 0x0033, 
+    IDC_COMBO1, 0x403, 9, 0
+0x654c, 0x6576, 0x206c, 0x3231, "\000" 
+    IDC_COMBO1, 0x403, 10, 0
+0x654c, 0x6576, 0x206c, 0x3231, 0x0063, 
+    IDC_COMBO1, 0x403, 18, 0
+0x654c, 0x6576, 0x206c, 0x3331, 0x5020, 0x6972, 0x636e, 0x7365, 0x0073, 
+
+    IDC_COMBO1, 0x403, 7, 0
+0x6f50, 0x6974, 0x6e6f, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDP_SOCKETS_INIT_FAILED "Windows sockets initialization failed."
+END
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    IDR_MAINFRAME           "Princed V3"
+    IDR_PRINCETYPE          "\nPrince\nPrince\nPrince of Persia Map data (*.dat; *.ped)\nped\nPrincedV3.Document\nPrince Document"
+END
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "Princed V3"
+    AFX_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_NEW             "Create a new document\nNew"
+    ID_FILE_OPEN            "Open an existing document\nOpen"
+    ID_FILE_CLOSE           "Close the active document\nClose"
+    ID_FILE_SAVE            "Save the active document\nSave"
+    ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
+    ID_FILE_PAGE_SETUP      "Change the printing options\nPage Setup"
+    ID_FILE_PRINT_SETUP     "Change the printer and printing options\nPrint Setup"
+    ID_FILE_PRINT           "Print the active document\nPrint"
+    ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_MRU_FILE1       "Open this document"
+    ID_FILE_MRU_FILE2       "Open this document"
+    ID_FILE_MRU_FILE3       "Open this document"
+    ID_FILE_MRU_FILE4       "Open this document"
+    ID_FILE_MRU_FILE5       "Open this document"
+    ID_FILE_MRU_FILE6       "Open this document"
+    ID_FILE_MRU_FILE7       "Open this document"
+    ID_FILE_MRU_FILE8       "Open this document"
+    ID_FILE_MRU_FILE9       "Open this document"
+    ID_FILE_MRU_FILE10      "Open this document"
+    ID_FILE_MRU_FILE11      "Open this document"
+    ID_FILE_MRU_FILE12      "Open this document"
+    ID_FILE_MRU_FILE13      "Open this document"
+    ID_FILE_MRU_FILE14      "Open this document"
+    ID_FILE_MRU_FILE15      "Open this document"
+    ID_FILE_MRU_FILE16      "Open this document"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_WINDOW_NEW           "Open another window for the active document\nNew Window"
+    ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
+    ID_WINDOW_CASCADE       "Arrange windows so they overlap\nCascade Windows"
+    ID_WINDOW_TILE_HORZ     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_TILE_VERT     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+    AFX_IDS_MDICHILD        "Activate this window"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
+    IDS_PRINCED_HOMEPAGE    "http://www.princed.com.ar"
+    IDS_WALL_NAMES          "Space\nFloor\nSpike\nColumn\nDoor\n0x05\nDoor Closer\nCarpet Wall\nBig Column Bottom\nBig Column Top\nPotion\nLoose Floor\nCarpet Wall Space\n0x0d\nBroken Floor\nDoor Opener\nExit Gate Left\nExit Gate Right\nChopper\nFloor with Torch\nWall\nSkeleton\nSword\nStar Window Left\nStar Window Right\nArch Column\nArch Down\nSmall Arch\nBig Arch Left\nBig Arch Right\nBroken Floor with Torch\n0x1f"
+    IDS_ABOUT_TEXT          "testing"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_MAPTOOLS_CLEAR       "Inserts a space"
+    ID_MAPTOOLS_OBJECTS_POSSION 
+                            "Places a floor with a potion (one of five types)"
+    ID_MAPTOOLS_WALL        "Inserts a wall"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_MAPTOOLS_WALKABLE_BALDOZACONESQUELETO 
+                            "Places a floor with a skeleton: not available in palace mode"
+    ID_MAPTOOLS_SWORD       "Places a floor with a sword"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_SAVEALL         "Saves all document\nSave All"
+    ID_VIEW_MAPTOOLS        "Show or hide the map tools bar\nMap Tools"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Spanish (Castilian) (unknown sub-lang: 0xB) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESS)
+#ifdef _WIN32
+LANGUAGE LANG_SPANISH, 0xB
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\Princed V3.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#include ""afxprint.rc""       // printing/print preview resources\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\princed.ico"
+IDR_PRINCETYPE          ICON    DISCARDABLE     "res\\32x32.ped.ico"
+#endif    // Spanish (Castilian) (unknown sub-lang: 0xB) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\Princed V3.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#include "afxprint.rc"       // printing/print preview resources
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

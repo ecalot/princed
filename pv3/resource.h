@@ -1,0 +1,126 @@
+//{{NO_DEPENDENCIES}}
+// Microsoft Developer Studio generated include file.
+// Used by Princed V3.rc
+//
+#define IDD_ABOUTBOX                    100
+#define IDP_SOCKETS_INIT_FAILED         104
+#define IDR_MAINFRAME                   128
+#define IDR_PRINCETYPE                  129
+#define IDD_DIALOG_SELECT_LEVEL         132
+#define IDB_ELEMMASK                    136
+#define IDB_ELEMS                       137
+#define IDB_GUARD                       139
+#define IDB_GUARDMASK                   140
+#define IDB_BACKMASK                    141
+#define IDB_BACKS                       142
+#define IDB_ELEMPMASK                   143
+#define IDB_ELEMP                       144
+#define IDD_EDIT_SAV                    145
+#define IDC_HANDPALM                    146
+#define IDC_ZOOMTOOL                    147
+#define IDR_TOOLPAL                     148
+#define IDC_DROPPER                     150
+#define IDB_ABOUT_PIC                   158
+#define IDC_COMBO1                      1000
+#define IDC_EDIT1                       1001
+#define IDC_BROWSE                      1002
+#define IDC_OPEN                        1003
+#define IDC_SAVE                        1004
+#define IDC_LEVEL                       1005
+#define IDC_SPIN1                       1006
+#define IDC_EDIT2                       1007
+#define IDC_BUTTON1                     1009
+#define IDC_EDIT3                       1010
+#define ID_FILE_SAVEALL                 32771
+#define ID_FILE_COMPILEDAT              32772
+#define ID_FILE_UNCOMPILEDAT            32773
+#define ID_FILE_PUBLISHDAT              32774
+#define ID_FILE_EXPORTTOIMAGE           32775
+#define ID_FILE_EXPORTTOTEXT            32776
+#define ID_FILE_EXPORTTOHTML            32777
+#define ID_FILE_SEARCHFILES             32778
+#define ID_FILE_PREFERENCES             32779
+#define ID_EDIT_CLEARSELECTION          32780
+#define ID_VIEW_MAPTOOLS                32781
+#define ID_VIEW_TOOLOPTIONSWINDOW       32782
+#define ID_VIEW_LEVELPROPERTRIES        32783
+#define ID_VIEW_OPENLEVELS              32784
+#define ID_VIEW_READERSCREENMENU        32785
+#define ID_VIEW_TOGGLEGRID              32786
+#define ID_VIEW_TOGGLERULERS            32787
+#define ID_VIEW_IN                      32788
+#define ID_VIEW_ZOOM_OUT                32789
+#define ID_VIEW_ZOOM_FITSCREENTOWINDOW  32790
+#define ID_VIEW_ZOOM_200                32791
+#define ID_VIEW_ZOOM_100                32792
+#define ID_VIEW_ZOOM_50                 32793
+#define ID_VIEW_ZOOM_25                 32794
+#define ID_VIEW_ZOOM_FITLEVELTOWINDOW   32795
+#define ID_ADDONS_EDITHALLOFFAME        32796
+#define ID_ADDONS_EDITSAVEDGAME         32797
+#define ID_ADDONS_EDITGRAPHICS          32798
+#define ID_ADDONS_EDITPRINCEEXE         32799
+#define ID_DEBUG_RUNLEVELFROMDEGUBPOSITION 32800
+#define ID_DEBUG_RUNLEVELFROMSTARTPOSITION 32801
+#define ID_DEBUG_REFRESHRUNNINGLEVE     32802
+#define ID_DEBUG_RUNDATFILE             32803
+#define ID_DEBUG_STOPRUNNING            32804
+#define ID_DEBUG_EXECUTEPRINCEOFPERSIA  32805
+#define ID_WINDOW_TILEHORIZONTALLY      32806
+#define ID_WINDOW_FITTOLEVEL            32807
+#define ID_WINDOW_CLOSEALL              32808
+#define ID_HELP_HELPTOPICS              32809
+#define ID_HELP_LICENSE                 32810
+#define ID_HELP_FREQUENTLYASKEDQUESTIONS 32811
+#define ID_HELP_PRINCEDHOMEPAGE         32812
+#define ID_FILE_NEWX                    32813
+#define ID_TOOL_SELECTION               32814
+#define ID_MAPTOOLS_CLEAR               32850
+#define ID_MAPTOOLS_OBJECTS_POSSION     32851
+#define ID_MAPTOOLS_OBJECTS_STARTPOSITION 32852
+#define ID_MAPTOOLS_OBJECTS_DEBUGPOSITION 32853
+#define ID_MAPTOOLS_OBJECTS_GUARDS      32854
+#define ID_MAPTOOLS_BACKGROUND_LIGHT    32855
+#define ID_MAPTOOLS_BACKGROUND_BRICKS   32856
+#define ID_MAPTOOLS_BACKGROUND_WINDOW   32857
+#define ID_MAPTOOLS_BACKGROUND_BIGWINDOW 32858
+#define ID_MAPTOOLS_BACKGROUND_COLUMN   32859
+#define ID_MAPTOOLS_BACKGROUND_BIGCOLUMN 32860
+#define ID_MAPTOOLS_BACKGROUND_RANDOM   32861
+#define ID_MAPTOOLS_WALL                32862
+#define ID_MAPTOOLS_WALKABLE_NORMAL     32863
+#define ID_MAPTOOLS_WALKABLE_BALDOZAROTA 32864
+#define ID_MAPTOOLS_WALKABLE_BALDOZAAPRETABLE 32865
+#define ID_MAPTOOLS_WALKABLE_BALDOZACONESQUELETO 32866
+#define ID_MAPTOOLS_WALKABLE_PINCHES    32867
+#define ID_MAPTOOLS_WALKABLE_BALDOZAFLOJA 32868
+#define ID_MAPTOOLS_WALKABLE_RANDOM     32869
+#define ID_MAPTOOLS_GATES_DOOR          32870
+#define ID_MAPTOOLS_GATES_PUERTASIERRA  32871
+#define ID_MAPTOOLS_GATES_LEVELGATE     32872
+#define ID_MAPTOOLS_DROPPER             32873
+#define ID_MAPTOOLS_SELECT              32874
+#define ID_MAPTOOLS_ZOOM                32875
+#define ID_MAPTOOLS_ARRASTRAR           32876
+#define ID_MAPTOOLS_WALKABLE_DOORCLOSER 32877
+#define ID_MAPTOOLS_SWORD               32878
+#define ID_VIEW_ASDUNGEON               32901
+#define ID_VIEW_ASPALACE                32902
+#define ID_BUTTON32903                  32903
+#define ID_BUTTON32904                  32904
+#define ID_VIEW_ZOOM_IN                 32905
+#define IDS_PRINCED_HOMEPAGE            61446
+#define IDS_WALL_NAMES                  61447
+#define IDS_ABOUT_TEXT                  61448
+
+// Next default values for new objects
+// 
+#ifdef APSTUDIO_INVOKED
+#ifndef APSTUDIO_READONLY_SYMBOLS
+#define _APS_3D_CONTROLS                     1
+#define _APS_NEXT_RESOURCE_VALUE        159
+#define _APS_NEXT_COMMAND_VALUE         32907
+#define _APS_NEXT_CONTROL_VALUE         1011
+#define _APS_NEXT_SYMED_VALUE           101
+#endif
+#endif
