@@ -80,13 +80,14 @@ int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int option
 	unsigned char*     data;
 	unsigned long  int size;
 	unsigned short int numberOfItems;
-	unsigned short int paletteId=0;
+	signed long    int bufferedPalette=0;
 
 	/* Initialize abstract variables to read this new DAT file */
 	if (!mReadBeginDatFile(&numberOfItems,vFiledat)) return -1;
 fld("a");
 	/* Initializes the palette list */
 	initializePaletteList;
+	
 fld("b");
 
 	/* main loop */
@@ -123,9 +124,9 @@ fld("f");
 						/* This will remember the palette for the next images */
 						r[id]->palAux=getMemory(size);
 						memcpy(r[id]->palAux,data,size);
-						if (!paletteId) { /* In case there is no loaded palettes load immediately the first found palette to clear garbage */
+						if (!bufferedPalette) { /* In case the palette buffer is empty, load immediately the first found palette to clear garbage */
 							mLoadPalette(data,image);
-							paletteId=id;
+							bufferedPalette=id;
 						}
 						/* This will export the palette */
 						if (isInThePartialList(r[id]->path,id))  /* If the palette was specified extract it */
@@ -143,16 +144,24 @@ fld("f");
 					case RES_TYPE_IMAGE: /* save image */
 						/* Palette handling */
 fld("Z1");
-						if (r[id]->palette!=paletteId) { /* The palette isn't the already loaded */
+						if (r[id]->palette!=bufferedPalette) { /* The palette isn't in the buffer */
 							if (r[id]->palette) { /* We need a palette */
 								/*
-									We need a palette and it is not the palette we have loaded in memory
+									We need a palette and it is not the palette we have loaded in buffer
 									So a new palette is going to be loaded.
 								*/
 								if ((r[r[id]->palette]->palAux)!=NULL) { /* If this palette wasn't loaded, it becomes loaded */
 									mLoadPalette(r[r[id]->palette]->palAux,image);
-									paletteId=r[id]->palette; /* sets the new palette loaded */
+									bufferedPalette=r[id]->palette; /* sets the new palette loaded */
 								}
+							}
+						} else {
+							/* It could be that r[id]->palette==bufferedPalette because both are 0,
+							 * in that case there is no buffered palette, but I don't know what palette
+							 * I need (cga case), so I'll use a default hard-coded palette */
+							if (!bufferedPalette) {
+								memcpy(image.pal,DEFAULT_PALETTE,SIZE_OF_PALETTE);
+								bufferedPalette=-1; /* -1 is the id of this default palette */
 							}
 						}
 						/* Export bitmap */
