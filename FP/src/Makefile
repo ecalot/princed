@@ -45,7 +45,10 @@ clean:
 
 build: clean  $(EXEFILE)
 
-all: $(EXEFILE)
+all: install build
+
+install: ../install
+	@cd ..;./install; cd src
 
 #files
 
