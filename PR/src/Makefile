@@ -50,7 +50,7 @@ else
   LINKERRELEASE = -s
 endif
 
-OBJFILES = compile.o compress.o extract.o resources.o tasks.o disk.o\
+OBJFILES = import.o compress.o export.o resources.o tasks.o disk.o\
            xmlparse.o xmlsearch.o dat.o bmp.o mid.o pal.o wav.o plv.o\
            memory.o $(SRC2) pr.o 
 
@@ -104,17 +104,17 @@ $(XMLFILE): resources.xml.gz
 	$(MAKEDIR) bin
 	$(GZIP) -cd resources.xml.gz >bin/resources.xml
 
-compile.o: lib/compile.c
+import.o: lib/import.c
 	$(INFO) Compiling import module...
-	$(CC) -c lib/compile.c $(OPTIONS)
+	$(CC) -c lib/import.c $(OPTIONS)
 
 memory.o: lib/memory.c
 	$(INFO) Compiling memory manager...
 	$(CC) -c lib/memory.c $(OPTIONS)
 
-extract.o: lib/extract.c
+export.o: lib/export.c
 	$(INFO) Compiling export module...
-	$(CC) -c lib/extract.c $(OPTIONS)
+	$(CC) -c lib/export.c $(OPTIONS)
 
 compress.o: lib/compress.c
 	$(INFO) Compiling compression module...
@@ -156,25 +156,25 @@ dat.o: lib/dat.c
 	$(INFO) Compiling dat editing library...
 	$(CC) -c lib/dat.c $(OPTIONS)
 
-bmp.o: formats/bmp.c
+bmp.o: lib/formats/bmp.c
 	$(INFO) Compiling bitmap files support \(bmp\)...
-	$(CC) -c formats/bmp.c $(OPTIONS)
+	$(CC) -c lib/formats/bmp.c $(OPTIONS)
 
-mid.o: formats/mid.c
+mid.o: lib/formats/mid.c
 	$(INFO) Compiling midi audio files support \(mid\)...
-	$(CC) -c formats/mid.c $(OPTIONS)
+	$(CC) -c lib/formats/mid.c $(OPTIONS)
 
-plv.o: formats/plv.c
+plv.o: lib/formats/plv.c
 	$(INFO) Compiling prince level files support \(plv\)...
-	$(CC) -c formats/plv.c $(OPTIONS)
+	$(CC) -c lib/formats/plv.c $(OPTIONS)
 
-pal.o: formats/pal.c
+pal.o: lib/formats/pal.c
 	$(INFO) Compiling JASC palette support \(pal\)...
-	$(CC) -c formats/pal.c $(OPTIONS)
+	$(CC) -c lib/formats/pal.c $(OPTIONS)
 
-wav.o: formats/wav.c
+wav.o: lib/formats/wav.c
 	$(INFO) Compiling digital wave audio support \(wav\)...
-	$(CC) -c formats/wav.c $(OPTIONS)
+	$(CC) -c lib/formats/wav.c $(OPTIONS)
 
 dirent.o: ports/dirent.c
 	$(INFO) Porting the dirent structure...
