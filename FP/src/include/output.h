@@ -49,8 +49,8 @@ void outputPlayMid(tMidi music); /* Starts the music reproduction and returns */
 /* Graph */
 
  /* Graph: Primitives for resources module */
-void* outputLoadBitmap(unsigned char* data, unsigned char* palette, int h,int w,int invert);
- /* Returns an abstract object allocated in memory using the data information ti build it
+void* outputLoadBitmap(unsigned char* data, int size, unsigned char* palette, int h,int w,int invert, int firstColorTransparent);
+	/* Returns an abstract object allocated in memory using the data information ti build it
 	* invert is 0 when no invertion is needed and non-zero when an inversion is performed
 	*/
 
