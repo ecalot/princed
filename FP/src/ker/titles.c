@@ -130,6 +130,7 @@ tMenuOption showTitles() {
 	} while (result==sNone);
 	
 	inputStopTimer();
+	resFree(main_title);
 	return result;
 }	
 

@@ -86,6 +86,8 @@ void kidFree() {
 	resFree(kidGfx.running[DIR_RIGHT]);
 	resFree(kidGfx.startrunning[DIR_LEFT]);
 	resFree(kidGfx.startrunning[DIR_RIGHT]);
+	resFree(kidGfx.stoprunning[DIR_LEFT]);
+	resFree(kidGfx.stoprunning[DIR_RIGHT]);
 	resFree(kidGfx.turnrunning[DIR_LEFT]);
 	resFree(kidGfx.turnrunning[DIR_RIGHT]);
 	resFree(kidGfx.jumprunning[DIR_LEFT]);
