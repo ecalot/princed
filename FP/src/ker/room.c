@@ -70,16 +70,6 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	result.code=fore&0x1F;
 	
 	switch (result.code) { /* TODO: use arrays and a better algorithm */
-	case T_EMPTY:
-		result.hasPillar=0;
-		result.walkable=0;
-		result.block=0;
-		result.hasTorch=0;
-		result.hasFloor=0;
-		result.hasBrokenTile=0;
-		result.isWall=0;
-		result.hasSword=0;
-		break;
 	case T_FLOOR:
 	case T_TORCH:
 	case T_SWORD:
@@ -104,6 +94,17 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.isWall=1;
 		result.hasSword=0;
 		break;
+	case T_EMPTY:
+	default:
+		result.hasPillar=0;
+		result.walkable=0;
+		result.block=0;
+		result.hasTorch=0;
+		result.hasFloor=0;
+		result.hasBrokenTile=0;
+		result.isWall=0;
+		result.hasSword=0;
+		break;
 	}
 	return result;
 }
@@ -122,45 +123,38 @@ void roomDrawBackground(tRoom* room) {
 			if (tile.hasTorch) {
 				outputDrawBitmap(
 					roomGfx.torch->pFrames[(map->time+2*x+y)%(roomGfx.torch->frames)],
-					x*TILE_W-30,
+					x*TILE_W+16,
 					y*TILE_H-40
 				);
 			}
 			if (tile.hasFloor) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[10],
-					x*TILE_W,
+					(x-1)*TILE_W,
 					y*TILE_H
 				);
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[9],
-					x*TILE_W,
+					(x-1)*TILE_W,
 					y*TILE_H+2
 				);
 			}
 			if (tile.hasBrokenTile) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[2],
-					x*TILE_W,
+					(x-1)*TILE_W,
 					y*TILE_H
 				);
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[1],
-					x*TILE_W,
+					(x-1)*TILE_W,
 					y*TILE_H+2
-				);
-			}
-			if (tile.isWall) {
-				outputDrawBitmap(
-					roomGfx.environment->pFrames[29],
-					x*TILE_W+TILE_W,
-					y*TILE_H+1
 				);
 			}
 			if (tile.walkable) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[8],
-					x*TILE_W+TILE_W,
+					x*TILE_W,
 					y*TILE_H+1
 				);
 			}
@@ -171,17 +165,33 @@ void roomDrawBackground(tRoom* room) {
 void roomDrawForeground(tRoom* room) {
 	int x,y;
 	tTile tile;
+	tTile tileNext;
 	/*tMap* map=room->level;*/
 	
 	for (x=0;x<12;x++) {
 		for (y=0;y<5;y++) {
 			tile=roomGetTile(room,x,y);
+			if (x!=11) tileNext=roomGetTile(room,x+1,y);
 			if (tile.hasPillar) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[25],
-					x*TILE_W+TILE_W,
+					x*TILE_W-20,
 					y*TILE_H+1
 				);
+			}
+			if (tile.isWall) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[29],
+					(x-1)*TILE_W,
+					y*TILE_H+1
+				);
+				if ((x!=11)&&(!tileNext.isWall)) {
+					outputDrawBitmap(
+						roomGfx.environment->pFrames[26],
+						x*TILE_W,
+						y*TILE_H+1
+					);
+				}
 			}
 		}
 	}
