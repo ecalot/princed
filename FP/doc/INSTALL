@@ -16,28 +16,20 @@ cd FP/src
 make install
 
 The dat files will be downloaded (about 200kb), after that the resource
-index will be generated and the source compiled.
+configuration will be generated and the source compiled.
 
-The the CVS code isn't a binary distribution and it needs to be compiled, some
-packets are required in both cases (coders and anonymous).
+The CVS code isn't a binary distribution and it needs to be compiled,
+some packets are required in both cases (coders and anonymous).
 
 The requiered packages are:
-bash
-bzip2
-sed
-wget
-gcc
-make
-libsdl1.2-dev
+ bash bzip2 sed awk wget gcc make libsdl1.2-dev
 
-The first four packets are installed by default.
-For the moment the only supported Operating System in the instalation is GNU/Linux.
-This is because the installer script was made in bash and the distributed PR and
-makeindex are binary files. If you want to install FP in any other operating system
-please download a PR distribution, compile it for your OS and replace PR file in
-FP/data/bin. Then compile FP/data/bin/src/makeindex.c to FP/data/bin/makeindex.
-The installation script was made and tested with bash, try to have this installed
-in your system too.
+The first five packets are installed by default.
+For the moment the only supported platform is x86. This is because of the
+endian registers in the processors. We are working to finish porting the
+abstraction disk library.
+he installation script was made and tested with bash, try to have this installed
+in your system.
 
 If you are using debian you can install the packages just typing:
 apt-get install bash wget gcc make libsdl1.2-dev
@@ -49,7 +41,6 @@ Make options:
 - make clean      clears the intermediate and final compiled files
 - make download   downloads the dat files, generate index
 - make all        generates index and re-builds the source
-- make index      generate index only
 
 CVS nightly tarballs:
 ~~~~~~~~~~~~~~~~~~~~
