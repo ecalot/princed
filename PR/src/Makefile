@@ -21,8 +21,8 @@ DEFINES = -DOS=\"$(OS)\" $(LINUX)
 OPTIONS = $(INCLUDE) $(DEFINES)
 
 OBJFILES = compile.o compress.o extract.o resources.o tasks.o disk.o\
-           xmlparse.o xmlsearch.o dat.o bmp.o mid.o pal.o wav.o plv.o memory.o\
-           $(SRC2)
+           xmlparse.o xmlsearch.o dat.o bmp.o mid.o pal.o wav.o plv.o\
+           memory.o $(SRC2)
 
 SRC1     = pr.o
 SRC3     = prlib.o
@@ -48,9 +48,9 @@ clean:
 
 build: clean bin/pr
 
-all: $(EXEFILE) lib
+all: $(EXEFILE)
 
-lib: $(OBJFILES) $(SRC3)
+lib: clean $(OBJFILES) $(SRC3)
 	$(MAKEDIR) bin
 	$(INFO) Making dynamic library...
 	$(CC) -o bin/pr.so $(OBJFILES) $(SRC3) -O2 -Llibc -shared -dynamic
