@@ -71,6 +71,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	
 	switch (result.code) { /* TODO: use arrays and a better algorithm */
 	case T_EMPTY:
+		result.hasPillar=0;
 		result.walkable=0;
 		result.block=0;
 		result.hasTorch=0;
@@ -94,6 +95,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasSword=(result.code==T_SWORD);
 		break;
 	case T_WALL:
+		result.hasPillar=0;
 		result.walkable=0;
 		result.block=1;
 		result.hasTorch=0;
@@ -146,6 +148,13 @@ void roomDrawBackground(tRoom* room) {
 					roomGfx.environment->pFrames[1],
 					x*TILE_W,
 					y*TILE_H+2
+				);
+			}
+			if (tile.isWall) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[29],
+					x*TILE_W+TILE_W,
+					y*TILE_H+1
 				);
 			}
 			if (tile.walkable) {
