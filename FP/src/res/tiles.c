@@ -44,26 +44,25 @@ int evaluate(tTile tile,int type) { /* type is the number in the modifier */
 int isIn(tTile tile,short group) {
 	static unsigned char tileList[]=TILE_GROUP_LIST;
 	unsigned char* i;
-	int docontinue;
 
 	tile.code=tile.code&0x1F; /* get the last 5 bits and clear the beginning */
 	if (group<32) return (tile.code==group);
 	i=tileList+(group-32);
 	tile.code++;
-	do {
-		docontinue=0;
-		while ((*i)&&(((*i)&0x3f)!=tile.code)) i+=((*i)&0xC0)?2:1;
+
+	while (*i) {
 		if ((*i)&0x80) { /* compare against the back */
-			i++;
-			if ((*i)==(tile.back)) return 1;
-			docontinue=1;
+			if (((*(i++))&0x3f)==tile.code) 
+				if (*i==tile.back) return 1;
 		} else if ((*i)&0x40) { /* compare against the function */
-			i++;
-			if (evaluate(tile,*i)) return 1;
-			docontinue=1;
+			if (((*(i++))&0x3f)==tile.code) 
+				if (evaluate(tile,*i)) return 1;
+		} else { /* compare the simple tile */
+			if (((*i)&0x3f)==tile.code) return 1;
 		}
-	} while (docontinue);
-	return *i; /* returns non-zero if true and zero if false */
+		i++;
+	} 
+	return 0; /* returns 1 if true and zero if false */
 }
 
 int isInGroup(unsigned char fore,unsigned char back,short group) {
