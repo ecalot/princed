@@ -30,14 +30,28 @@ input.h: Free Prince : Input devices handling
   DO NOT remove this copyright notice
 */
 
-/* Deprecated file! */
 #ifndef _INPUT_H_
 #define _INPUT_H_
 
-typedef struct {...} tKey
+typedef enum {none=0,quit,reload,passLevel,showUp,showLeft,showRight,showDown,moreTime,lessTime,addLive,addHitPoint,gotoTitles,kill,resurrect}tAction;
 
-tKey getInput();
-/* Returns the next input (either from the keyboard or joystick or whatever) */
 
+typedef struct {
+	int shiftPressed;
+	int controlPressed;
+	int upPressed;
+	int leftPressed;
+	int rightPressed;
+	tAction actionPerformed;
+} tKey
+
+void inputInitKey(tKey* key);
+int inputGetEvent(tKey* key);
+/* Saves the key status un key (either from the keyboard or joystick or whatever)
+ * returns 1 if a time event is activated or 0 if an action was performed
+ */
+
+void inputStopTimer();
+void inputInitTimer();
 
 #endif

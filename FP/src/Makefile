@@ -135,6 +135,10 @@ output.o: out/output.c include/resources.h
 	$(INFO) Compiling main output module...
 	$(CC) -c out/output.c $(OPTIONS)
 
+input.o: out/input.c include/input.h
+	$(INFO) Compiling main input module...
+	$(CC) -c out/input.c $(OPTIONS)
+
 config.o: res/config.c include/resources.h
 	$(INFO) Compiling resource configuration module...
 	$(CC) -c res/config.c $(OPTIONS)
