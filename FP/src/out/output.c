@@ -105,6 +105,7 @@ outputLoadBitmap(const unsigned char* data, int size,
 	printf("%d\n",firstColorTransparent);
 	if (!result) {
 		fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
+		free(colors);
 		return NULL;
 	}
 	SDL_SetPalette(result, SDL_LOGPAL, colors, 0, palette.colors);
@@ -126,10 +127,11 @@ outputLoadBitmap(const unsigned char* data, int size,
 			}
 		}
 	} else {
+		int serialized=result->w&1;
 		for (i = 0; i < w; i++) {
 			for (j = 0; j < result->h; j++) {
-				putpixel(result, (i<<1), j, (data[w-i+j*w])&0x0f);
-				putpixel(result, (i<<1)+1, j, (data[w-i+j*w])>>4);
+				if (i) putpixel(result, (i<<1)-serialized, j, (data[w-i+j*w])&0x0f);
+				putpixel(result, (i<<1)+1-serialized, j, (data[w-i+j*w])>>4);
 			}
 		}
 	}
