@@ -8,7 +8,7 @@
 
 typedef enum {esLast=0,esKeyUp,esKeyDown,esKeyForward,esKeyBack,esKeyShift,esMapUp,esMapDown,esMapForward,esMapBack,esMapOn,esForwardTileNearerThan,esForwardTileFartherThan,esScreenUp,esScreenDown,esScreenLeft,esScreenRight,esInScreen,esInLevel,esForwardChangeToScreen,esInFloorTop,esInfloorMiddle,esInfloorBottom}tsConditionType;
 
-
+								
 typedef enum {esDangerous,esNone,esWalk,esPotion,esSword,esMirror,esNotApplicable=0}tsTileType;
 typedef enum {esRelative,esForwardTile,esRelativeTurn}tsMoveType; /*  */
 
@@ -26,11 +26,13 @@ typedef struct {
 	short        animSize; /* number of frames to be shown */
 } tsAction;
 
+#define stateGetImage(a) (((a).action.image))
+
 /* public functions interface */
 
-/* This function should return the image frame
+/* This function should return the frame flags
  * and actions to be performed by this call */
-int stateUpdate(tKey* key, tKid* kid,tRoom* room,short* flags);
+short stateUpdate(tKey* key, tKid* kid,tRoom* room);
 
 /* Create a State depending on the level */
 tState createState(int level);

@@ -46,10 +46,13 @@ typedef enum {eDrop,eRaise}tPressableType;
 
 typedef struct { /* The state object: only struct that is not static to the state class */
 	short  frame; /* when zero, animation is released and the next state is taken */
-	short* animation;
-	short* animOffset;
-	short* flags;
-	short  currentState;
+	short* animation; /* list of frames for this state */
+	short* animOffset; /* position of those frames */
+	short* flags;      /* actions to be performed by each frame (make sound, press floor, etc) */
+	short  currentState; /* the Id of the state the kid is */
+	short  image; /* the next image to be shown */
+	float  step; /* the number of pixels a frame has to move */
+	float  acumLocation; /* the kid location in float (will be casted to int in the kid object) */
 } tState;
 
 typedef struct {
@@ -71,7 +74,7 @@ typedef struct {
 } tPressable;
 
 typedef struct {
-	tRoomId        links[4*24];
+	tRoomId        links[ 4*24];
 	unsigned char  fore [24*30];
 	unsigned char  back [24*30];
 	tGate**        screenGates[24];

@@ -119,9 +119,9 @@ tKid kidCreate() {
 
 	if (kidGfx.kid[0]==NULL) loadGfx();
 
-	kid.location=100;
-	kid.floor=0;
-	kid.direction=DIR_LEFT;
+	kid.location=30;
+	kid.floor=1;
+	kid.direction=DIR_RIGHT;
 /*	kid.frame=0;
 	kid.action=kidGfx.normal[DIR_LEFT];
 	kid.nextAction=stay;
@@ -132,17 +132,16 @@ tKid kidCreate() {
 }
 
 void kidDraw(tKid kid) {
-	outputDrawBitmap(kid.frame,kid.location,58+kid.floor*TILE_H); /* TODO: change location value in a lower layer*/
+	outputDrawBitmap(
+		kidGfx.kid[kid.direction]->pFrames[stateGetImage(kid)-1], /* TODO: move this -1 to each script frame */
+		(kid.location*32)/10,
+		58+kid.floor*TILE_H
+	);
 }
 
 int kidMove(tKid* kid,tKey key,tRoom* room) {
 #ifdef NEW_KERNEL
-	short flags;
-	int index=stateUpdate(&key,kid,room,&flags)-1;
-	printf("index=%d\n",index);
-	kid->frame=kidGfx.kid[kid->direction]->pFrames[index];
-	/* TODO: stateUpdate should return flags and edit kid->frame by it's own */
-	printf("flags=%x (%d)\n",flags,flags);
+	return stateUpdate(&key,kid,room);
 #else
 	int result;
 	tTile tile;
@@ -296,7 +295,7 @@ int kidMove(tKid* kid,tKey key,tRoom* room) {
 		*room=mapGetRoom((void*)(room->level),room->links[eDown]);
 		kid->floor=0;
 	}
+	return result;
 #endif
-	return 1/*result*/;
 }
 

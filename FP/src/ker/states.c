@@ -4,38 +4,45 @@
 #include <stdio.h> /* For debug purposes */
 #include "kid.h" /* DIR_LEFT DIR_RIGHT */
 
+void debugShowFlag(short optionflag) {
+	if (optionflag&STATES_FLAG_U) printf("ScreenUp ");
+	if (optionflag&STATES_FLAG_H) printf("ScreenLeft ");
+	if (optionflag&STATES_FLAG_J) printf("ScreenRight ");
+	if (optionflag&STATES_FLAG_N) printf("ScreenDown ");
+	if (optionflag&STATES_FLAG_P) printf("PressFloor ");
+	if (optionflag&STATES_FLAG_C) printf("PressCeiling ");
+	if (optionflag&STATES_FLAG_S) printf("Sound");
+	printf("\n");
+}
+
+#define STATES_STEPS_PER_TILE 32 
 /* Private static state graph */
 static tsAction statesActionList[]=STATES_ACTIONS;
 static short statesAnimationList[]=STATES_ANIMATIONS;
 static tsCondition statesConditionList[]=STATES_CONDITIONS;
 
-short* stateGetAnimation(int action,short *frames,short** flags,float* offsets) {
-	short* result;
+void stateGetAnimation(int action,tState *state/*short *frames,short** flags,float* offsets*/) {
 	tsAction* a=statesActionList+action;
 	short i=a->animSize;
 	short* j=statesAnimationList+(a->animStart*2);
 	short totaloffset=a->moveOffset;
 	/* TODO: depending on relative and absolute crop the middle frames */
-	*frames=i;
-	result=(short*)malloc(sizeof(short)*i);
-	*flags =(short*)malloc(sizeof(short)*i);
-	printf("animsize=%d animstart=%d\n",i,a->animStart);
-	*offsets=(float)(totaloffset)/(float)(*frames); /* the second short is the flag */
+	state->frame=i;
+	state->animation=(short*)malloc(sizeof(short)*i);
+	state->flags=(short*)malloc(sizeof(short)*i);
+	printf("* Animsize=%d Animstart=%d. (new animation allocated) Next:\n",i,a->animStart);
+	state->step=(float)(totaloffset)/(float)(i); /* the first short is the frame */
 	while (i--) {
-		printf ("copiando animacion=%d ",result[i]=*j);
-		j++;
-		printf("flag=%d j=%p\n",((*flags)[i])=*j,(void*)j); /* the second short is the flag */
-		j++;
+		(state->animation)[i]=*(j++);
+		((state->flags)[i])=*(j++); /* the second short is the flag */
 	}
-	return result;
 }
 
 /* public functions interface */
 tState createState(int level) {
 	tState start;
 	static short statesLevelList[]=STATES_LEVELS;
-	float step;
-	start.animation=stateGetAnimation(statesLevelList[level],&(start.frame),&(start.flags),&step);
+	stateGetAnimation(statesLevelList[level],&start);
 	start.currentState=statesActionList[statesLevelList[level]].nextStateId;
 	return start;
 }
@@ -45,8 +52,8 @@ tState createState(int level) {
 /* Evaluates a condition indexed in the condition table */
 int evaluateCondition(int condition,tKey* key, tKid* kid, tRoom* room) {
 	tsCondition c=statesConditionList[condition];
-	int thisTile=kid->location/32+1+12*kid->floor;
-	int whereInTile=(kid->direction==DIR_LEFT)?(kid->location%32):32-(kid->location%32);
+	int thisTile=kid->location/STATES_STEPS_PER_TILE+1+12*kid->floor;
+	int whereInTile=(kid->direction==DIR_LEFT)?(kid->location%STATES_STEPS_PER_TILE):STATES_STEPS_PER_TILE-(kid->location%STATES_STEPS_PER_TILE);
 	switch(c.type) {
 	case esKeyUp:
 		return inputGetUp(key->status)? /* TODO: argument notPressed isn't supported */
@@ -119,18 +126,22 @@ int evaluateState(int state, tKey* key, tKid* kid, tRoom* room) {
 
 /* This function should return the image frame and actions to be performed by this call
  * returns the animation number corresponding to this frame */
-int stateUpdate(tKey* key, tKid* kid,tRoom* room,short* flags) {
+short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 	tState* current=&(kid->action);
-	static float step;
-	static float acumLocation;
-	int imageFrame;
-
+	/*static float step;
+	static float acumLocation;*/
+	short flags;
+	
 	current->frame--;
 	
-	imageFrame    =current->animation[current->frame];
-	*flags        =current->flags    [current->frame];
-	printf("stateUpdate: animation=%d flags=%d\n",imageFrame,*flags);
-	/*printf("currentframe=%d\n",current->frame)*/
+	current->image=current->animation[current->frame];
+	flags         =current->flags    [current->frame];
+	
+	/* BEGIN DEBUG */
+	printf("stateUpdate: animation=%d ",current->image);
+	debugShowFlag(flags);
+	/* END DEBUG */
+	
 	if (!current->frame) {
 		int action;
 		free(current->animation);
@@ -140,43 +151,43 @@ int stateUpdate(tKey* key, tKid* kid,tRoom* room,short* flags) {
 
 		/* Performs the events called by this action */
 			/* Remember the animation and flags for the next current->frame frames */
-		current->animation=stateGetAnimation(action,&(current->frame),&(current->flags),&step);
+		stateGetAnimation(action,current);
 			/* Remember the state where we are now */
 		current->currentState=statesActionList[action].nextStateId;
 			/* Move the kid (turn+traslate) */
 		if (kid->direction==DIR_LEFT) {
-			step=-step;
+			current->step=-current->step;
 			switch(statesActionList[action].moveType) {
 			case STATES_MOVETYPES_RELATIVE:
-				kid->location-=statesActionList[action].moveOffset;
+				/*kid->location-=statesActionList[action].moveOffset;*/
 				break;
 			case STATES_MOVETYPES_ABSOLUTEFORWARD:
-				kid->location=kid->location-(kid->location%32);
+				kid->location=kid->location-(kid->location%STATES_STEPS_PER_TILE);
 				break;
 			case STATES_MOVETYPES_RELATIVETURN:
-				kid->location-=statesActionList[action].moveOffset;
+				/*kid->location-=statesActionList[action].moveOffset;*/
 				kid->direction=DIR_RIGHT;
 				break;
 			}
 		} else {
 			switch(statesActionList[action].moveType) {
 			case STATES_MOVETYPES_RELATIVE:
-				kid->location+=statesActionList[action].moveOffset;
+				/*kid->location+=statesActionList[action].moveOffset;*/
 				break;
 			case STATES_MOVETYPES_ABSOLUTEFORWARD:
-				kid->location=32+kid->location-(kid->location%32);
+				kid->location=STATES_STEPS_PER_TILE+kid->location-(kid->location%STATES_STEPS_PER_TILE);
 				break;
 			case STATES_MOVETYPES_RELATIVETURN:
-				kid->location+=statesActionList[action].moveOffset;
+				/*kid->location+=statesActionList[action].moveOffset;*/
 				kid->direction=DIR_LEFT;
 				break;
 			}
 		}
-		acumLocation=kid->location;
+		current->acumLocation=kid->location;
 	}
-	acumLocation+=step;
-	kid->location=acumLocation;
-	return imageFrame;
+	current->acumLocation+=current->step;
+	kid->location=current->acumLocation;
+	return flags;
 }
 
 
