@@ -131,7 +131,7 @@ Versions:
   x Optimization
   x Stable version for win32 and unix based systems
   - Use defines write8i(char,fp),write16i,write32i,read8i...
-  x Checksum verification
+  - Checksum verification in PLV files
   x Set, if applicable, POP2 in the parent folder of the
     unknown.xml file
   - Fixed some memory leaks in xml parser

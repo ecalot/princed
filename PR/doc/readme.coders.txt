@@ -1,4 +1,4 @@
-Princed Resources V0.9
+Princed Resources V1.0
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -148,7 +148,7 @@ total 76
 -rwxr-xr-x    1 ecalot   users       32656 dic  9 10:02 pr
 -rwxr-xr-x    1 ecalot   users       42941 dic  9 10:02 pr.so
 -shell-2.05b$ ./pr
-Princed resources (PR) V0.9 Linux
+Princed resources (PR) V1.0 GNU/Linux
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 
