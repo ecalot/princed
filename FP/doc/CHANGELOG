@@ -18,3 +18,4 @@ Versions
  - Rebuilt tile handling library
  - Tested BSD port
  - Titles and presentations sent to a configuration file
+ - Coded lives

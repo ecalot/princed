@@ -35,7 +35,8 @@ LIBS          = $(shell sdl-config --libs --cflags)
 #LIBS         = -L/usr/local/lib -lSDL-1.1 -pthread 
 
 #Defines
-DEFINES       = -DOS=\"$(OS)\" $(LINUX) 
+FS            = -DOUTPUT_FULLSCREEN
+DEFINES       = -DOS=\"$(OS)\" $(LINUX) $(FS)
 
 #Release type
 TYPE          = Debug

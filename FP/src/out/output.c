@@ -49,9 +49,6 @@ output.c: Free Prince : Output Devices Handler
 #define DEF_SCREEN_WIDTH  320
 #define DEF_SCREEN_HEIGHT 200
 
-#define OUTPUT_FULLSCREEN
-
-
 #ifdef OUTPUT_FULLSCREEN
 #define fullscreen SDL_FULLSCREEN
 #else
