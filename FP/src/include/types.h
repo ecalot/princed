@@ -49,6 +49,7 @@ typedef struct { /* The state object: only struct that is not static to the stat
 	short* animation; /* list of frames for this state */
 	short* animOffset; /* position of those frames */
 	short* flags;      /* actions to be performed by each frame (make sound, press floor, etc) */
+	short* steps;      /* the number of steps each frame has to move */
 	short  currentState; /* the Id of the state the kid is */
 	short  image; /* the next image to be shown */
 	float  step; /* the number of pixels a frame has to move */

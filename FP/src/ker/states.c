@@ -21,17 +21,19 @@ static tsCondition statesConditionList[]=STATES_CONDITIONS;
 void stateGetAnimation(int action,tState *state/*short *frames,short** flags,float* offsets*/) {
 	tsAction* a=statesActionList+action;
 	short i=a->animSize;
-	short* j=statesAnimationList+(a->animStart*2);
+	short* j=statesAnimationList+(a->animStart*3);
 	short totaloffset=a->moveOffset;
 	/* TODO: depending on relative and absolute crop the middle frames */
 	state->frame=i;
 	state->animation=(short*)malloc(sizeof(short)*i);
+	state->steps=(short*)malloc(sizeof(short)*i);
 	state->flags=(short*)malloc(sizeof(short)*i);
 	printf("* Animsize=%d Animstart=%d. (new animation allocated) Next:\n",i,a->animStart);
-	state->step=(float)(totaloffset)/(float)(i); /* the first short is the frame */
+	state->step=(float)(totaloffset)/(float)(i); /* this is the full step to be used in case a non step walk is set TODO: delete this system */
 	while (i--) {
-		(state->animation)[i]=*(j++);
+		(state->animation)[i]=*(j++); /* the first short is the frame */
 		((state->flags)[i])=*(j++); /* the second short is the flag */
+		((state->steps)[i])=*(j++); /* the third short is the frame step */
 	}
 }
 
@@ -149,14 +151,16 @@ short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 	/*static float step;
 	static float acumLocation;*/
 	short flags;
+	short steps;
 	
 	current->frame--;
 	
 	current->image=current->animation[current->frame];
 	flags         =current->flags    [current->frame];
+	steps         =current->steps    [current->frame];
 	
 	/* BEGIN DEBUG */
-	printf("stateUpdate: animation=%d ",current->image);
+	printf("stateUpdate: animation=%d steps=%d ",current->image,steps);
 	debugShowFlag(flags);
 	/* END DEBUG */
 	
@@ -164,6 +168,7 @@ short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 		int action;
 		free(current->animation);
 		free(current->flags);
+		free(current->steps);
 		/* Find matching action */
 		action=evaluateState(current->currentState,key,kid,room);
 
@@ -174,8 +179,10 @@ short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 		current->currentState=statesActionList[action].nextStateId;
 		printf("NEW STATE: action=%d next=%d\n",action,current->currentState);
 			/* Move the kid (turn+traslate) */
+		/* TODO: code absolutestepsforward and relativestepsforward*/
 		if (kid->direction==DIR_LEFT) {
-			current->step=-current->step;
+			/*current->step=-current->step;*/
+			steps=-steps;
 			switch(statesActionList[action].moveType) {
 			case STATES_MOVETYPES_RELATIVE:
 				/*kid->location-=statesActionList[action].moveOffset;*/
@@ -204,8 +211,8 @@ short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 		}
 		current->acumLocation=kid->location;
 	}
-	current->acumLocation+=current->step;
-	kid->location=current->acumLocation;
+	/*current->acumLocation+=current->step;*/
+	kid->location+=steps; /*current->acumLocation;*/
 	if (current->currentState<0) return current->currentState; /* if last state return exit code */
 	return flags;
 }

@@ -35,6 +35,7 @@ BEGIN {
 	printf("#define STATES_MOVETYPES_ABSOLUTEFORWARD 1\n\n")
 	printf("#define STATES_MOVETYPES_RELATIVETURN 2\n\n")
 	printf("#define STATES_CONDITIONS {\\\n")
+#mawg property validation
 #	tmp="conf/statesproperties.conf"
 #	while ((getline line < tmp) > 0) {
 #		gsub(/[	 ]+/, "-",line)
@@ -77,19 +78,20 @@ BEGIN {
 		#add condition
 		currentCondition++
 		if ($2!=sprintf("%d",$2)) {
-			if (1) {      #defines[$2]) {
+			#if (1) {      #defines[$2]) {
 				if ($1~/^Map/) {
 					result=sprintf("TG_%s",$2,0)
 				} else {
 					result=sprintf("STATES_COND_%s",$2,0)
 				}
-			} else {
-				if ($2) {
-					printf("Parsing error in states.conf: Condition modifier '%s' not recognized on uncommented line %d.\n",$2,NR)>"/dev/stderr"
-					exit 22
-				}
-				result=0
-			}
+			#} else {
+			#
+			#	if ($2) {
+			#		printf("Parsing error in states.conf: Condition modifier '%s' not recognized on uncommented line %d.\n",$2,NR)>"/dev/stderr"
+			#		exit 22
+			#	}
+			#	result=0
+			#}
 		} else {
 			result=$2
 		}
@@ -101,11 +103,13 @@ BEGIN {
 			for (g=a[1];g<=a[2];g++) {
 				arrayAnimation[currentAnimation,"frame"]=g
 				arrayAnimation[currentAnimation,"flags"]=$2
+				arrayAnimation[currentAnimation,"steps"]=$2+$3
 				currentAnimation++
 			}
 		} else {
 			arrayAnimation[currentAnimation,"frame"]=$1
 			arrayAnimation[currentAnimation,"flags"]=$2
+			arrayAnimation[currentAnimation,"steps"]=$2+$3
 			currentAnimation++
 		}
 # level option
@@ -253,6 +257,7 @@ END {
 	coma=""
 	for (i=0;i<currentAnimation;i++) {
 		flags=arrayAnimation[i,"flags"]
+		steps=arrayAnimation[i,"steps"]
 		if (flags!="") {
 			coma2=""
 			flagmask=""
@@ -264,7 +269,7 @@ END {
 		} else {
 			flagmask="0"
 		}
-		printf "%s%d,%s",coma,arrayAnimation[i,"frame"],flagmask
+		printf "%s%d,%s,%d",coma,arrayAnimation[i,"frame"],flagmask,steps
 		if (i%10==9) printf("\\\n\t")
 		coma=","
 	}
