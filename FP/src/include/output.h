@@ -39,7 +39,7 @@ drawMessage(const char* text);
 
 /* Sound */
 playWav(tWave sound);
-playMid(tMidi music);
+playMid(tMidi music); /* Starts the music reproduction and returns */
 
 /* Graph */
 drawBitmap(tImage image);
