@@ -47,6 +47,7 @@ EXEOBJ   = $(FILES) $(XML) $(COMPRESS) $(CONSOLE) $(PORTS)
 LIBOBJ   = $(FILES) $(XML) $(COMPRESS) $(PORTS)
 
 EXEFILE  = bin\pr.exe
+DLLFILE  = bin\pr.dll
 XMLFILE  = bin\resources.xml
 
 #Use this to temporary remove an option
@@ -79,7 +80,7 @@ build: clean bin\pr
 
 all: $(EXEFILE)
 
-lib: $(LIBOBJ)
+$(DLLFILE): $(LIBOBJ)
 	$(MAKEDIR) bin
 	$(INFO) Making dynamic library...
 	$(CC) $(LIBOBJ) -dll ..\winbins\pr.def -o bin\pr.dll
@@ -108,7 +109,7 @@ export.obj: lib\actions\export.c
 	$(CC) $(OPTIONS) -c lib\actions\export.c
 
 compress.obj: lib\compression\main.c
-	$(INFO) Compiling compression module...
+	$(INFO) Compiling main compression module...
 	$(CC) $(OPTIONS) -Focompress.obj -c lib\compression\main.c
 
 lzg_compress.obj: lib\compression\lzg_compress.c
