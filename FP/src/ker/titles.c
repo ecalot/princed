@@ -46,7 +46,13 @@ typedef struct {
 	unsigned short duration;
 	unsigned short x;
 	unsigned short y;
-} titleFixedimg;
+} titleImage;
+
+typedef struct {
+	tObject        obj;
+	int            active;
+	unsigned short duration;
+} titleObject;
 
 tMenuOption getAction(tKey key) {
 	switch(key.actionPerformed) {
@@ -61,30 +67,34 @@ tMenuOption getAction(tKey key) {
 
 tMenuOption playAnimation(int id) {
 	/* Declare variables */
-	int qf,            qt,              qo,                 i;
-	animFixedimg*  f;  animState* t;    animSound* o;
-	titleFixedimg* fa; tObject*   ta; /*animSound* oa;*/
-	int activef=0;     int activet=0; /*int activeo=0;*/
-	int totalf,        totalt,          totalo;
-	int* statesAlive;
+	int qf,            qt,               qo,                 i;
+	animImage*  f;  animObject* t;     animSound* o;
+	titleImage* fa; titleObject* ta; /*animSound* oa;*/
+	int activef=0;     int activet=0;  /*int activeo=0;*/
+	int totalf,        totalt,           totalo;
 	tKey key=inputCreateKey();
 	tKey nullKey=inputCreateKey();
 
 	/* Initialize animation and allocate memory */
 	animStart(id,&totalf,&totalt,&totalo);
-	fa=(titleFixedimg*)malloc(totalf*sizeof(titleFixedimg));
-	ta=(tObject*)malloc(totalt*sizeof(tObject));
-	statesAlive=(int*)malloc(totalt*sizeof(int));
+	fa=(titleImage*)malloc(totalf*sizeof(titleImage));
+	ta=(titleObject*)malloc(totalt*sizeof(titleObject));
 	/*oa=(animSound*)malloc(totalo*sizeof(animSound));*/
 
 	/* main animation kernel loop */
 	while (animGetFrame(&qf,&qt,&qo,&f,&t,&o)) {
+		int reprocessInput=1;
 		/*printf("f%d t%d o%d\n",qf,qt,qo);*/
+		while(reprocessInput) {
 		if (!inputGetEvent(&key)) {
 			/* key pressed */
 			printf("key pressed\n");
-			return getAction(key);
+		 	/*  if there is an action      and  the action wasn't control key */
+			if (key.actionPerformed!=none  &&   !(inputGetCtrl(key.status)&&key.actionPerformed==other))
+				return getAction(key);
+			reprocessInput=1;
 		} else {
+			reprocessInput=0;
 			/* create new images/objects/sounds */
 			for (i=0;i<qf;i++) { /*images*/
 				fa[activef].img=resLoad(f[i].res);
@@ -99,8 +109,10 @@ tMenuOption playAnimation(int id) {
 				activef++;
 			}
 			for (i=0;i<qt;i++) { /*objects*/
-				ta[activet]=objectCreate(t[i].location,t[i].floor,DIR_LEFT,t[i].state,t[i].res,t[i].cacheMirror);
-				statesAlive[activet]=1;
+				ta[activet].obj=objectCreate(t[i].location,t[i].floor,DIR_LEFT,t[i].state,t[i].res,t[i].cacheMirror);
+				ta[activet].active=1;
+				ta[activet].duration=t[i].duration;
+				printf("saving duration[%d]=%d\n",i,t[i].duration);
 				activet++;
 			}
 /*		TODO: code sounds	
@@ -120,17 +132,21 @@ tMenuOption playAnimation(int id) {
 			/* move objects */
 			for (i=0;i<activet;i++) {
 				/*TODO: detect exits */
-				if (statesAlive[i]) {
+				if (ta[i].active) {
 					int exitCode;
-		  		exitCode=objectMove(ta+i,nullKey,NULL);
+		  		exitCode=objectMove(&(ta[i].obj),nullKey,NULL);
+					if (ta[i].duration) ta[i].duration--;
+					printf("decrementing duration[%d]=%d\n",i,ta[i].duration);
 
 					/* detect exited states and destroy them */
-					if (exitCode<0) { /* exit code detected */
+
+					/* if the time is over or exit code detected */
+					if ((ta[i].duration==1)||(exitCode<0)) {
 						printf("exit Code detected: i=%d exit=%d \n",i,exitCode);
-						objectFree(ta[i]);
-						statesAlive[i]=0; /* remember it is destroyed */
+						objectFree(ta[i].obj);
+						ta[i].active=0; /* remember it is destroyed */
 					} else {
-		  			objectDraw(ta[i]);
+		  			objectDraw(ta[i].obj);
 					}
 				}
 			}
@@ -155,15 +171,14 @@ tMenuOption playAnimation(int id) {
 						fa[i]=fa[activef];
 					}
 				}
-			}	
+			}	}
 		}
 	}
 
-	for (i=0;i<activet;i++) if (statesAlive[i]) objectFree(ta[i]);
+	for (i=0;i<activet;i++) if (ta[i].active) objectFree(ta[i].obj);
 	for (i=0;i<activef;i++) resFree(fa[i].img);
 	free(fa);
 	free(ta);
-	free(statesAlive);
 	/*free(oa);*/
 	return menuQuit;
 }

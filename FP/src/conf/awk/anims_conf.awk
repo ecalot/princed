@@ -47,51 +47,55 @@ BEGIN {
 	animcount++
 	animation["name" animcount]=$2
 	animation["size" animcount]=$3
-	animation["startf" animcount]=totalfixedimg
-	animation["startt" animcount]=totalstate
+	animation["startf" animcount]=totalimage
+	animation["startt" animcount]=totalobject
 	animation["starto" animcount]=totalsound
 	halt
 }
 
 #tables
-#fixed images
-/^[[:space:]]*[[:digit:]]+[[:space:]]+FIXEDIMG[[:space:]]/ {
-	totalfixedimg++
-	f["frame" totalfixedimg]=$1/1
-	f["res" totalfixedimg]=toupper($3)
+#static images
+/^[[:space:]]*[[:digit:]]+[[:space:]]+IMAGE[[:space:]]/ {
+	totalimage++
+	f["frame" totalimage]=$1/1
+	f["res" totalimage]=toupper($3)
 	if (toupper($4)=="INFINITE") $4=0
-	f["duration" totalfixedimg]=$4/1
-	f["layer" totalfixedimg]=toupper($5)
+	f["duration" totalimage]=$4/1
+	f["layer" totalimage]=toupper($5)
 	if (tolower($6)=="right") $6=320 #here will be the screen width size
 	if (tolower($6)=="left") $6=0
-	f["x" totalfixedimg]=$6/1
+	f["x" totalimage]=$6/1
 	if (tolower($7)=="bottom") $7=200 #here will be the screen height size
 	if (tolower($7)=="top") $7=0
-	f["y" totalfixedimg]=$7/1
+	f["y" totalimage]=$7/1
 	animation["sizef" animcount]++
 	halt
 }
 
-#states
-/^[[:space:]]*[[:digit:]]+[[:space:]]+STATE[[:space:]]/ {
-	totalstate++
-	$6=tolower($6)
+#objects
+/^[[:space:]]*[[:digit:]]+[[:space:]]+OBJECT[[:space:]]/ {
+	totalobject++
+	$4=tolower($4)
 	$7=tolower($7)
+	$8=tolower($8)
 	
-	t["frame" totalstate]=$1/1
-	t["res" totalstate]=toupper($3)
-	t["state" totalstate]=toupper($4)
-	t["location" totalstate]=$5/1
-	if ($6=="up") $6=1
-	if ($6=="middle") $6=2
-	if ($6=="center") $6=2
-	if ($6=="centre") $6=2
-	if ($6=="down") $6=3
-	t["floor" totalstate]=$6/1
-	if ($7=="no") $7=0
-	if ($7=="yes") $7=1
-	if ($7=="mirror") $7=1
-	t["cacheMirror" totalstate]=$7/1
+	t["frame" totalobject]=$1/1
+	t["res" totalobject]=toupper($3)
+	if ($4=="infinite") $4=0
+	if ($4=="untilexit") $4=0
+	t["duration" totalobject]=$4/1
+	t["object" totalobject]=toupper($5)
+	t["location" totalobject]=$6/1
+	if ($7=="up") $7=1
+	if ($7=="middle") $7=2
+	if ($7=="center") $7=2
+	if ($7=="centre") $7=2
+	if ($7=="down") $7=3
+	t["floor" totalobject]=$7/1
+	if ($8=="no") $8=0
+	if ($8=="yes") $8=1
+	if ($8=="mirror") $8=1
+	t["cacheMirror" totalobject]=$8/1
 	animation["sizet" animcount]++
 	halt
 }
@@ -113,12 +117,12 @@ BEGIN {
 
 END {
 	#avoid empty records
-	if (!totalfixedimg) {
-		printf("Semantic error in line at anims.conf: At least one FIXEDIMG is needed.\n")>"/dev/stderr"
+	if (!totalimage) {
+		printf("Semantic error in anims.conf: At least one IMAGE is needed.\n")>"/dev/stderr"
 		exit 30
 	}
-	if (!totalstate) {
-		printf("Semantic error in anims.conf: At least one STATE is needed.\n")>"/dev/stderr"
+	if (!totalobject) {
+		printf("Semantic error in anims.conf: At least one OBJECT is needed.\n")>"/dev/stderr"
 		exit 31
 	}
 	if (!totalsound) {
@@ -131,20 +135,20 @@ END {
 	printf("#define ANIMS_LAYERTYPE_BOTTOM  1\n")
 	printf("\n")
 	
-	#output fixedimg table
+	#output image table
 	coma=""
-	printf("#define ANIMS_FIXEDIMG {")
-	for (i=1;i<=totalfixedimg;i++) {
-		printf("%s\\\n\t{/*frame*/ (unsigned short)%d,/*res*/ (unsigned long)RES_%s, /*duration*/ %d, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_%s, /*x,y*/ (unsigned short)%d,(unsigned short)%d}",coma,f["frame" i],f["res" i],f["duration" i],f["layer" i],f["x" i],f["y" i])
+	printf("#define ANIMS_IMAGE {")
+	for (i=1;i<=totalimage;i++) {
+		printf("%s\\\n\t{/*frame*/ %d,/*res*/ (unsigned long)(RES_%s), /*duration*/ %d, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_%s, /*x,y*/ (unsigned short)%d,(unsigned short)%d}",coma,f["frame" i],f["res" i],f["duration" i],f["layer" i],f["x" i],f["y" i])
 		coma=","
 	}
 	printf("\\\n}\n\n")
 
-	#output state mark table
+	#output object mark table
 	coma=""
-	printf("#define ANIMS_STATE {")
-	for (i=1;i<=totalstate;i++) {
-		printf("%s\\\n\t{/*frame*/ %d, /*res*/ (unsigned long)RES_%s, /*state*/ STATE_MARKS_%s, /*loc*/ %d, /*floor*/%d, /*mirror*/ %d}",coma,t["frame" i],t["res" i],t["state" i],t["location" i],t["floor" i],t["cacheMirror" i])
+	printf("#define ANIMS_OBJECT {")
+	for (i=1;i<=totalobject;i++) {
+		printf("%s\\\n\t{/*frame*/ %d, /*res*/ (unsigned long)(RES_%s), /*duration*/ %d, /*object*/ STATE_MARKS_%s, /*loc*/ %d, /*floor*/%d, /*mirror*/ %d}",coma,t["frame" i],t["res" i],t["duration" i],t["object" i],t["location" i],t["floor" i],t["cacheMirror" i])
 		coma=","
 	}
 	printf("\\\n}\n\n")
@@ -162,7 +166,7 @@ END {
 	coma=""
 	printf("#define ANIMS_TABLE {")
 	for (i=1;i<=animcount;i++) {
-		printf("%s\\\n\t{/*fixedimg*/ %d,%d, /*state*/ %d,%d, /*sound*/ %d,%d, /*animsize*/ %d}",coma,animation["startf" i],animation["sizef" i],animation["startt" i],animation["sizet" i],animation["starto" i],animation["sizeo" i],animation["size" i])
+		printf("%s\\\n\t{/*image*/ %d,%d, /*object*/ %d,%d, /*sound*/ %d,%d, /*animsize*/ %d}",coma,animation["startf" i],animation["sizef" i],animation["startt" i],animation["sizet" i],animation["starto" i],animation["sizeo" i],animation["size" i])
 		coma=","
 	}
 	printf("\\\n}\n\n")
