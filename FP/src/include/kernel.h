@@ -43,7 +43,7 @@ kernel.h: Princed Resources : Resource Handler headers
 #define hasFlag(a) (optionflag&(a))
 #define setFlag(a) optionflag|=(a)
 
-#define FP_VERSION "0.4-pre-alpha-shadow-of-the-castle"
+#define FP_VERSION "0.4-pre-alpha-rata"
 
 int kernel(int optionflag,int level);
 /* level=-1 is default

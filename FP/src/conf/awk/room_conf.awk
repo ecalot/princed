@@ -42,7 +42,14 @@
 }
 
 /[\t ]*draw/ {
-	printf("%s\\\n",$0);
+	f=$1
+	x=$2
+	y=$3
+	$1=$2=$3=""
+	r=$0
+	comma=","
+	if ($0~/^[\t ]*$/) comma=""
+	printf("%s((x)+(%s),(y)+(%s)%s%s);\\\n",f,x,y,comma,r);
 }
 
 END {
