@@ -521,7 +521,6 @@ int macfwrites(const void* var,FILE* file) {
 	unsigned char* big_e=(unsigned char*)&bigEndian;
 	lit_e[0]=big_e[1];
 	lit_e[1]=big_e[0];
-printf("written short=%04x==%04x\n",littleEndian,bigEndian);
 	return fwrite(lit_e,2,1,file);
 }
 
@@ -534,7 +533,6 @@ int macfwritel(const void* var,FILE* file) {
 	lit_e[1]=big_e[2];
 	lit_e[2]=big_e[1];
 	lit_e[3]=big_e[0];
-printf("2) written long=%08x==%08x %d==%d\n",littleEndian,bigEndian,littleEndian,bigEndian);
 	return fwrite(lit_e,4,1,file);
 }
 
