@@ -1,5 +1,5 @@
-/*  Princed V3 - Prince of Persia Level Editor for PC Version
-    Copyright (C) 2003 Princed Development Team
+/*  FreePrince - POP1 remake
+    Copyright (C) 2003,2004 Princed Development Team
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 */
 
 /*
-extract.c: Princed Resources : DAT Extractor
-¯¯¯¯¯¯¯¯¯
+resources.c: Princed Resources : DAT Extractor
+¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2003, 2004 Princed Development Team
   Created: 24 Aug 2003
 
@@ -45,17 +45,6 @@ extract.c: Princed Resources : DAT Extractor
 
 /***************************************************************\
 |                  I M P L E M E N T A T I O N                  |
-\***************************************************************/
-/*
-#define initializePaletteList \
-for (id=0;id<MAX_RES_COUNT;id++) {\
-	if (r[id]!=NULL) {\
-		r[id]->palAux=NULL;\
-	}\
-}
-*/
-/***************************************************************\
-|                                                               |
 \***************************************************************/
 
 /*
@@ -216,7 +205,6 @@ tData* resLoad(int id) {
 		printf("Fatal Error: resLoad: index could not be read!\n");
 		return NULL;
 	}
-	printf("eeee\n");
 	printf("file1='%s'. file2='%s' type='%d'. frames='%d'.\n",
 		res_getIdxFile1,
 		res_getIdxFile2,
@@ -256,7 +244,7 @@ tData* resLoad(int id) {
 		return NULL;
 	}
 	
-	//mReadCloseDatFile();
+	mReadCloseDatFile();
 	free(frames);
 
 	return result;
