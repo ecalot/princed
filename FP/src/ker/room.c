@@ -48,6 +48,7 @@ static struct {
 	tData* potionAnimGreen;
 	tData* potionAnimBlue;
 	tData* potionBase;
+	tData* sword;
 } roomGfx;
 
 void roomLoadGfx(long environment) {
@@ -64,6 +65,7 @@ void roomLoadGfx(long environment) {
 		roomGfx.potionAnimGreen=resLoad(RES_ANIM_POTION|RES_MODS_BW|RES_MODS_GREEN);
 		roomGfx.potionAnimBlue=resLoad(RES_ANIM_POTION|RES_MODS_BW|RES_MODS_BLUE);
 		roomGfx.potionBase=resLoad(RES_IMGS_POTION_BASE);
+		roomGfx.sword=resLoad(RES_IMGS_SWORD);
 	}
 }
 
@@ -75,6 +77,7 @@ void roomFree() {
 		resFree(roomGfx.potionAnimGreen);
 		resFree(roomGfx.potionAnimBlue);
 		resFree(roomGfx.potionBase);
+		resFree(roomGfx.sword);
 	}
 	roomGfx.torch=(roomGfx.environment=NULL);
 }
@@ -375,6 +378,9 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	/* skeleton/this */
 	if (isIn(tile,TILES_SKELETON)) 
 		e(80,(x-1)*TILE_W+0,y*TILE_H+0);
+	/* sword/left */
+	if (isIn(left,TILES_SWORD)) 
+		outputDrawBitmap(roomGfx.sword->pFrames[(room->level->time%20)==0],(x-1)*TILE_W-15,y*TILE_H-4);
 	/* potion base/left */
 	if (isIn(left,TILES_SMALLPOTION))
 		outputDrawBitmap(roomGfx.potionBase->pFrames[0],(x-1)*TILE_W-15,y*TILE_H-4);
