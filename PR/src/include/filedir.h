@@ -15,11 +15,11 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-    The authors of this program may be contacted at http://forum.princed.com.ar
+    The authors of this program may be contacted at http:/forum.princed.com.ar
 */
 
 /*
-xml.h: Princed Resources : xml handling functions header file
+xmlparse.h: Princed Resources : xml handling functions header file
 ¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 23 Oct 2003
@@ -38,33 +38,43 @@ xml.h: Princed Resources : xml handling functions header file
 #ifndef _XMLSEARCH_H_
 #define _XMLSEARCH_H_
 
-
-//Includes
-#include "xml.h"
+/* Includes */
+#include "xmlparse.h"
 #include "resources.h"
 
 /****************************************************************\
 |                   Tag Tree Searching Functions                 |
 \****************************************************************/
 
-tTag* searchTree(tTag* t,const char* datFile, const char* id);
-void workTag(const tTag* t, tResource* r[]);
-void workTree(const tTag* t,const char* datFile, tResource* r[]);
+const tTag* searchTree(const tTag* t,const char* datFile, const char* id);
+void workTag(const tTag* t,void* pass);
 
-//Searching Structures
+/* Abstract function that runs all the tree and executes "function(tag,pass)" for each tag */
+void workTree(const tTag* t,void* pass, void (*function)(const tTag*,void*));
 
-//File List Structure
+void compareXmlFile(tTag* modified,tTag* original);
+
+/* Searching Structures */
+
+/* File List Structure */
 typedef struct tListNode {
  char* file;
  struct tListNode* next;
 }tListNode;
 
-//File List Functions
-void addFileToList(const char* file);
-void getFiles(const tTag* t);
+/* File List Functions */
+void addFileToList(const tTag* t,void* junk);
 char* getFileFromList();
 
+/* Abstract passing structures */
+typedef struct tPassWork {
+	const char* datFile;
+	tResource** r;
+}tPassWork;
 
+typedef struct tPassCompare {
+	const tTag* tag;
+}tPassCompare;
 
 #endif
 

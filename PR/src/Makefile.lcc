@@ -1,51 +1,119 @@
-pr.exe: compile.obj compress.obj extract.obj parser.obj pr.obj resources.obj tasks.obj formats/bmp.obj formats/mid.obj formats/pal.obj formats/wav.obj
-	@echo Linking files...
-	@lcclnk pr.obj compile.obj compress.obj extract.obj parser.obj resources.obj tasks.obj formats\bmp.obj formats/mid.obj formats/pal.obj formats/wav.obj
-	@echo Program succesfully compiled
-	@echo
-	@echo Please read readme.txt for syntax information
-	@echo
-	
-parser.obj: parser.c
-	@echo Compiling parsing library...
-	@lcc parser.obj parser.c -Iinclude
+CC=@lc
+LINKER=@lcclnk
+INFO=@echo
+
+INCLUDE = -Iinclude\ 
+DEFINES = -DWIN32 
+#-DDLL
+OPTIONS = $(INCLUDE) $(DEFINES)
+
+OBJFILES = compile.obj compress.obj extract.obj pr.obj dat.obj resources.obj\
+           tasks.obj disk.obj xmlparse.obj xmlsearch.obj bmp.obj mid.obj\
+           pal.obj wav.obj plv.obj memory.obj\
+           dirent.obj getopt.obj getopt1.obj
+
+EXEFILE  = pr.exe
+
+#main file
+
+$(EXEFILE): $(OBJFILES)
+	$(INFO) Linking files...
+	$(LINKER) $(OBJFILES) -o $(EXEFILE) -s
+	#$(INFO) Making dynamic library...
+	#$(LINKER) $(OBJFILES) -dll pr.def -s -o pr.dll
+	$(INFO) Program successfully compiled
+	$(INFO):
+	$(INFO) Please read readme.txt for syntax information
+	$(INFO):
+
+#command options
+
+clean:
+	$(INFO) Erasing temporary object files...
+	@del *.obj
+
+build: clean all
+
+all: $(EXEFILE)
+
+#files
 
 compile.obj: compile.c
-	@echo Compiling import module...
-	@lcc compile.c -Iinclude
+	$(INFO) Compiling import module...
+	$(CC) $(OPTIONS) -c compile.c
+
+memory.obj: memory.c
+	$(INFO) Compiling memory manager...
+	$(CC) $(OPTIONS) -c memory.c
 
 extract.obj: extract.c
-	@echo Compiling export module...
-	@lcc extract.c -Iinclude
+	$(INFO) Compiling export module...
+	$(CC) $(OPTIONS) -c extract.c
 
 compress.obj: compress.c
-	@echo Compiling compression module...
-	@lcc compress.c -Iinclude
+	$(INFO) Compiling compression module...
+	$(CC) $(OPTIONS) -c compress.c
 
 pr.obj: pr.c
-	@echo Compiling main module...
-	@lcc pr.c -Iinclude
+	$(INFO) Compiling main module in standard mode...
+	$(CC) $(OPTIONS) -c pr.c
+
+prlib.obj: pr.c
+	$(INFO) Compiling main module in library mode...
+	$(CC) $(OPTIONS) -DDLL -o prlib.obj -c pr.c
 
 resources.obj: resources.c
-	@echo Compiling resource manager module...
-	@lcc resources.c -Iinclude
+	$(INFO) Compiling resource manager module...
+	$(CC) $(OPTIONS) -c resources.c
 
 tasks.obj: tasks.c
-	@echo Compiling extra tasks module...
-	@lcc tasks.c -Iinclude
+	$(INFO) Compiling classify module...
+	$(CC) $(OPTIONS) -c tasks.c
+
+dat.obj: dat.c
+	$(INFO) Compiling abstract dat handling library...
+	$(CC) $(OPTIONS) -c dat.c
+
+xmlparse.obj: xmlparse.c
+	$(INFO) Compiling xml parsing module...
+	$(CC) $(OPTIONS) -c xmlparse.c
+
+xmlsearch.obj: xmlsearch.c
+	$(INFO) Compiling xml search features...
+	$(CC) $(OPTIONS) -c xmlsearch.c
+
+disk.obj: disk.c
+	$(INFO) Compiling disk access functions...
+	$(CC) $(OPTIONS) -c disk.c
 
 bmp.obj: formats\bmp.c
-	@echo Compiling bitmap files support (bmp)...
-	@lcc formats\bmp.c -Iinclude
+	$(INFO) Compiling bitmap files support (bmp)...
+	$(CC) $(OPTIONS) -c formats\bmp.c
 
 mid.obj: formats\mid.c
-	@echo Compiling midi audio files support (mid)...
-	@lcc formats\mid.c -Iinclude
+	$(INFO) Compiling midi audio files support (mid)...
+	$(CC) $(OPTIONS) -c formats\mid.c
+
+plv.obj: formats\plv.c
+	$(INFO) Compiling prince level files support (plv)...
+	$(CC) $(OPTIONS) -c formats\plv.c
 
 pal.obj: formats\pal.c
-	@echo Compiling JASC palette support (pal)...
-	@lcc formats\pal.c -Iinclude
+	$(INFO) Compiling JASC palette support (pal)...
+	$(CC) $(OPTIONS) -c formats\pal.c
 
 wav.obj: formats\wav.c
-	@echo Compiling digital wave audio support (wav)...
-	@lcc formats\wav.c -Iinclude
+	$(INFO) Compiling digital wave audio support (wav)...
+	$(CC) $(OPTIONS) -c formats\wav.c
+
+dirent.obj: ports\dirent.c
+	$(INFO) Porting the dirent structure...
+	$(CC) $(OPTIONS) -c ports\dirent.c
+	
+getopt.obj: ports\getopt.c
+	$(INFO) Porting the Unix-like getopt function (first part)...
+	$(CC) $(OPTIONS) -c ports\getopt.c
+
+getopt1.obj: ports\getopt1.c
+	$(INFO) Porting the Unix-like getopt function (second part)...
+	$(CC) $(OPTIONS) -c ports\getopt1.c

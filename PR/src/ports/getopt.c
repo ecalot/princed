@@ -288,7 +288,7 @@ _getopt_initialize (optstring)
 
   nextchar = NULL;
 
-  posixly_correct = "permute";//getenv ("POSIXLY_CORRECT");
+  posixly_correct = "permute";/* getenv ("POSIXLY_CORRECT"); */
 
   /* Determine how to handle the ordering of options and nonoptions.  */
 

@@ -52,6 +52,7 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386 /out:"bin/pr.exe"
+# SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Cmds=del winbins\pr.exe	copy bin\pr.exe winbins\pr.exe >nul	scripts\upx.exe winbins\pr.exe
@@ -129,10 +130,13 @@ PostBuild_Cmds=scripts\upx.exe winbins\pr.dll
 SOURCE=.\formats\bmp.c
 DEP_CPP_BMP_C=\
 	".\include\bmp.h"\
-	".\include\compile.h"\
 	".\include\compress.h"\
+	".\include\dat.h"\
 	".\include\disk.h"\
+	".\include\english.h"\
+	".\include\pr.h"\
 	".\include\resources.h"\
+	".\include\xmlparse.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -148,10 +152,13 @@ DEP_CPP_BMP_C=\
 
 SOURCE=.\formats\mid.c
 DEP_CPP_MID_C=\
-	".\include\compile.h"\
+	".\include\dat.h"\
 	".\include\disk.h"\
+	".\include\english.h"\
 	".\include\mid.h"\
+	".\include\pr.h"\
 	".\include\resources.h"\
+	".\include\xmlparse.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -168,9 +175,13 @@ DEP_CPP_MID_C=\
 SOURCE=.\formats\pal.c
 DEP_CPP_PAL_C=\
 	".\include\compress.h"\
+	".\include\dat.h"\
 	".\include\disk.h"\
+	".\include\english.h"\
 	".\include\pal.h"\
+	".\include\pr.h"\
 	".\include\resources.h"\
+	".\include\xmlparse.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -186,10 +197,13 @@ DEP_CPP_PAL_C=\
 
 SOURCE=.\formats\plv.c
 DEP_CPP_PLV_C=\
-	".\include\compile.h"\
+	".\include\dat.h"\
 	".\include\disk.h"\
+	".\include\english.h"\
 	".\include\plv.h"\
+	".\include\pr.h"\
 	".\include\resources.h"\
+	".\include\xmlparse.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -205,9 +219,13 @@ DEP_CPP_PLV_C=\
 
 SOURCE=.\formats\wav.c
 DEP_CPP_WAV_C=\
-	".\include\compile.h"\
+	".\include\dat.h"\
+	".\include\disk.h"\
+	".\include\english.h"\
+	".\include\pr.h"\
 	".\include\resources.h"\
 	".\include\wav.h"\
+	".\include\xmlparse.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -279,13 +297,16 @@ DEP_CPP_COMPI=\
 	".\include\bmp.h"\
 	".\include\compile.h"\
 	".\include\compress.h"\
+	".\include\dat.h"\
 	".\include\disk.h"\
+	".\include\english.h"\
 	".\include\mid.h"\
 	".\include\pal.h"\
 	".\include\plv.h"\
 	".\include\pr.h"\
 	".\include\resources.h"\
 	".\include\wav.h"\
+	".\include\xmlparse.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -302,6 +323,28 @@ DEP_CPP_COMPI=\
 SOURCE=.\compress.c
 DEP_CPP_COMPR=\
 	".\include\compress.h"\
+	".\include\english.h"\
+	".\include\pr.h"\
+	
+
+!IF  "$(CFG)" == "tasks - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\dat.c
+DEP_CPP_DAT_C=\
+	".\include\disk.h"\
+	".\include\english.h"\
+	".\include\pr.h"\
+	".\include\resources.h"\
+	".\include\xmlparse.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -319,8 +362,9 @@ SOURCE=.\disk.c
 DEP_CPP_DISK_=\
 	".\include\direntwin.h"\
 	".\include\disk.h"\
+	".\include\english.h"\
 	".\include\pr.h"\
-	".\include\xml.h"\
+	".\include\xmlparse.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -338,7 +382,9 @@ SOURCE=.\extract.c
 DEP_CPP_EXTRA=\
 	".\include\bmp.h"\
 	".\include\compress.h"\
+	".\include\dat.h"\
 	".\include\disk.h"\
+	".\include\english.h"\
 	".\include\extract.h"\
 	".\include\mid.h"\
 	".\include\pal.h"\
@@ -346,6 +392,7 @@ DEP_CPP_EXTRA=\
 	".\include\pr.h"\
 	".\include\resources.h"\
 	".\include\wav.h"\
+	".\include\xmlparse.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -373,15 +420,17 @@ SOURCE=.\memory.c
 # Begin Source File
 
 SOURCE=.\pr.c
-DEP_CPP_PR_C18=\
+DEP_CPP_PR_C1a=\
 	".\include\compile.h"\
 	".\include\compress.h"\
 	".\include\disk.h"\
+	".\include\english.h"\
 	".\include\extract.h"\
 	".\include\getopt.h"\
 	".\include\pr.h"\
 	".\include\resources.h"\
 	".\include\tasks.h"\
+	".\include\xmlparse.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -399,9 +448,10 @@ SOURCE=.\resources.c
 DEP_CPP_RESOU=\
 	".\include\compress.h"\
 	".\include\disk.h"\
+	".\include\english.h"\
 	".\include\pr.h"\
 	".\include\resources.h"\
-	".\include\xml.h"\
+	".\include\xmlparse.h"\
 	".\include\xmlsearch.h"\
 	
 
@@ -418,8 +468,13 @@ DEP_CPP_RESOU=\
 
 SOURCE=.\tasks.c
 DEP_CPP_TASKS=\
+	".\include\dat.h"\
+	".\include\english.h"\
+	".\include\pr.h"\
 	".\include\resources.h"\
 	".\include\tasks.h"\
+	".\include\xmlparse.h"\
+	".\include\xmlsearch.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -433,11 +488,12 @@ DEP_CPP_TASKS=\
 # End Source File
 # Begin Source File
 
-SOURCE=.\xml.c
-DEP_CPP_XML_C=\
+SOURCE=.\xmlparse.c
+DEP_CPP_XMLPA=\
 	".\include\disk.h"\
+	".\include\english.h"\
 	".\include\pr.h"\
-	".\include\xml.h"\
+	".\include\xmlparse.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -453,8 +509,10 @@ DEP_CPP_XML_C=\
 
 SOURCE=.\xmlsearch.c
 DEP_CPP_XMLSE=\
+	".\include\english.h"\
+	".\include\pr.h"\
 	".\include\resources.h"\
-	".\include\xml.h"\
+	".\include\xmlparse.h"\
 	".\include\xmlsearch.h"\
 	
 
@@ -578,10 +636,6 @@ SOURCE=.\Makefile
 # Begin Source File
 
 SOURCE=.\Makefile.lcc
-# End Source File
-# Begin Source File
-
-SOURCE=.\winbins\pr.def
 # End Source File
 # Begin Source File
 

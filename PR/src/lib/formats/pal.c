@@ -31,14 +31,16 @@ pal.c: Princed Resources : JASC PAL files support
   DO NOT remove this copyright notice
 */
 
-//Includes
+/* Includes */
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "pal.h"
+#include "pr.h" /* for MAX_FILENAME_SIZE */
 #include "memory.h"
 #include "disk.h"
 #include "resources.h"
+#include "dat.h"
 
 /***************************************************************\
 |                 Jasc Palette handling functions               |
@@ -46,82 +48,96 @@ pal.c: Princed Resources : JASC PAL files support
 
 static const char* enter="\r\n";
 
-//Public functions
-char mFormatExtractPal(unsigned char** data, char *vFileext,unsigned long int size) {
-	//Convert palette from POP format to JASC format
-	mExportPalette(data,&size);
-	//save JASC palette
-	return writeData(*data,0,vFileext,size);
+/* Public functions */
+int mFormatExportPal(const unsigned char* data, char *vFileext,unsigned long int size,int optionflag,const char* backupExtension ) {
+	unsigned char* pal=getMemory(240);
+	unsigned char* aux=getMemory(MAX_FILENAME_SIZE);
+	int i;
+
+	/* Export extra palette information */
+	sprintf(aux,"%s.more",vFileext);
+	writeData(data,1,aux,size,optionflag,backupExtension);
+
+	/* Convert palette from POP format to JASC format */
+	strcpy((char*)pal,PAL_HEADER);
+	for (i=0;i<16;i++) {
+		strcpy((char*)aux,(char*)pal);
+		sprintf((char*)pal,"%s%d %d %d%s",
+			aux,
+			data[(i*3)+5]<<2,
+			data[(i*3)+6]<<2,
+			data[(i*3)+7]<<2,
+			enter
+		);
+	}
+	for (i=0;pal[i];i++);
+	size=i-1;
+
+	/* save JASC palette */
+	i=writeData(pal,0,vFileext,size,optionflag,backupExtension);
+
+	free(pal);
+	free(aux);
+	return i;
 }
 
-char mImportPalette(unsigned char** data, unsigned short *size) {
+int mFormatImportPal(unsigned char* data, tResource *res,const char* vFile) {
 
-	//declare variables
-	unsigned char palh[]=PAL_HEADER;
-	unsigned char pals[]=PAL_SAMPLE;
+	/* declare variables */
+	unsigned char* pals;
+	unsigned char* pals1;
+	unsigned char  pals2[]=PAL_SAMPLE;
+	unsigned char  palh []=PAL_HEADER;
 	unsigned char* pal;
 	unsigned char* pal2;
 	char* data2;
-	//unsigned short int parsed;
+	char aux[MAX_FILENAME_SIZE];
 	unsigned int r;
 	unsigned int g;
 	unsigned int b;
 	int i=0;
 	int k=16;
+	int sample1;
 
-	//check size
-	if (*size<130) return 0;
+	/* check size */
+	if ((res->size)<130) return 0;
 
-	//verify jasc pal header
-	while (palh[i]==(*data)[i++]);
-	if (i!=sizeof(palh)) return 0; //palette differs with headers
+	/* verify jasc pal header */
+	while (palh[i]==(data)[i++]);
+	if (i!=sizeof(palh)) return 0; /* palette differs with headers */
 
-	//Allocate palette
+	/* Read sample */
+	sprintf(aux,"%s.more",vFile);
+	sample1=mLoadFileArray(aux,&pals1);
+	if (sample1==100) {
+		pals=pals1;
+	} else {
+		pals=pals2;
+	}
+
+	/* Allocate palette */
 	pal=getMemory(100);
 
-	//set palette with sample
+	/* set palette with sample */
 	memcpy(pal,pals,100);
 	pal2=pal+4;
+	if (sample1) free(pals1);
 
-	//set current values
-	data2=strtok((char*)(*data)+sizeof(palh)-1,enter);
+	/* set current values */
+	data2=strtok((char*)(data)+sizeof(palh)-1,enter);
 	while (k--) {
-		printf("%s -",data2);
 		if (!sscanf(data2,"%d %d %d",&r,&g,&b)) return 0;
-		/* Those lines mean a loss of data (palettes colors are saved in the nearest multiple of 4) */
+		/* Those lines mean a loss of data (palette colors are saved in the nearest multiple of 4) */
 		*(pal2++)=(unsigned char)((r+2)>>2);
 		*(pal2++)=(unsigned char)((g+2)>>2);
 		*(pal2++)=(unsigned char)((b+2)>>2);
-		//printf("-> %03d %03d %03d \n",r,g,b);
 		data2=strtok(NULL,enter);
 	}
 
-	//free old data and set new
-	free(*data);
-	*data=pal;
-	*size=100;
+	/* save and free palette */
+	mWriteSetFileInDatFile(pal,res->size=100);
+	free(pal);
+
 	return 1;
 }
 
-void mExportPalette(unsigned char** data, unsigned long int *size) {
-	unsigned char* pal=getMemory(240);
-	unsigned char* aux=getMemory(240);
-	unsigned char i;
-
-	strcpy((char*)pal,PAL_HEADER);
-
-	for (i=0;i<16;i++) {
-		strcpy((char*)aux,(char*)pal);
-		sprintf((char*)pal,"%s%d %d %d%s",aux,(*data)[(i*3)+5]<<2,(*data)[(i*3)+6]<<2,(*data)[(i*3)+7]<<2,enter);
-	}
-	for (i=0;pal[i];i++);
-	free(*data);
-	free(aux);
-	(*data)=pal;
-	*size=i-1;
-}
-
-//TODO: use a macro
-void mLoadPalette(unsigned char* array,tImage *image) {
-	memcpy(image->pal,array+5,16*3);
-}

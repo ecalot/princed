@@ -1,93 +1,149 @@
-Princed Resources V0.9
+Princed Resources v1.0
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
 
+
 1) Change Log
- * PG
-  - Added support to export .bmp files
-  - Added bitmap decompression
-  - Added static palette extraction
- * PS
-  - Added support to .mid files
-  - Added support to indexed dat files
- * PR 0.1 Alpha
+Legend:
+ + Format descovery first implementation
+    Previous versions didn't support this features
+    Format bug fixes
+ - Code improvement
+    Things that were supported before, but they have been improved
+    Code bug fixes
+
+Versions:
+ * PG (unreleased)
+  + Added support to export .bmp files
+  + Added bitmap decompression
+  + Added static palette extraction
+ * PS (unreleased)
+  + Added support to .mid files
+  + Added support to indexed dat files
+ * PR 0.1 alpha (2003-06-09)
   - Merged PS and PG into one extractor.
-  - Added dynamic palette extraction
+  + Added dynamic palette extraction
   - Added resource.txt parser.
-  - Added support to .wav files.
-  - Added support to export JASC palette for .pal files.
-  - Coded type header verification
+  + Added support to .wav files.
+  + Added support to export JASC palette for .pal files.
+  + Coded type header verification
   - Solved several bugs.
- * PR 0.2 Alpha
-  - Added classifying dat type feature
-  - Added support to import .bmp files
+ * PR 0.2 alpha (2003-06-17)
+  + Added classifying dat type feature
+  + Added support to import .bmp files
   - Implemented CGI output support for UNIX versions
   - Source files were abstracted
- * PR 0.3 beta
+ * PR 0.3 beta (2003-06-25)
   - Added modifiers -x[rnu] -c[r]
   - Added pr.dll compiling
-  - Bitmaps aren't upside down anymore 
-  - Images bigger than 256 pixels length or width now are recognized
-  - Improved decompression algorithm in bigger images
+  + Bitmaps aren't upside down anymore 
+  + Images bigger than 256 pixels length or width now are recognized
+  + Improved decompression algorithm in bigger images
   - Optimized bitmap handling
   - Solved bugs in bitmap format
-  - Solved segmentation fault in title.dat
- * PR 0.4 beta
+  + Solved segmentation fault in title.dat
+ * PR 0.4 beta (2003-06-27)
   - Fixed a memory bug since v0.3
-  - Pop2 DAT files detected (file type 11)
- * PR 0.5 beta
+  + Pop2 DAT files detected (file type 11)
+ * PR 0.5 beta (2003-07-03)
   - Abstracted format handling
   - Optimized bmp saving algorithm
-  - Solved and optimized decompression for big images
-  - Some Pop2 graphics are extracted (palettes aren't supported yet)
- * PR 0.6 alpha
-  - Coded full import/export bmp (in separate files not included in this distribution)
-  - Completed and tested bmp reading algorithm
+  + Solved and optimized decompression for big images
+  + Some Pop2 graphics are extracted (palettes aren't supported yet)
+ * PR 0.6 alpha (2003-10-08)
+  - Coded full import/export bmp (in separate files not included
+    in this distribution)
+  + Completed and tested bmp reading algorithm
   - Optimized PG algorithms and reserved memory sizes
- * PR 0.6 beta
-  - Added full import bmp support
-  - Solved palette import bug
- * PR 0.7
+ * PR 0.6 beta (2003-10-17)
+  + Added full import bmp support
+  + Solved palette import bug
+ * PR 0.7 (2003-10-23)
   - Added Makefile
   - Moved PG module to compress.c and bmp.c
   - Moved midi support to mid.c
-  - Solved corrupted images on compression bug
+  + Solved corrupted images on compression bug
   - Source ported to several compilers and platforms
- * PR 0.8 beta
+ * PR 0.8 beta (2003-11-04)
   - Abstracted disk functions into one module
-  - Added PC Speaker sound classification
-  - Added compression algorithms B0 and B2. Before that it was only working B1.
+  + Added PC Speaker sound classification
+  + Added compression algorithms B0 and B2. Before that it was only
+    working B1.
   - Coded a base directory creator for files
-  - Coded a parser and the resources tree in xml. 
+  - Coded a parser and the resources tree in xmlparse. 
   - Coded inheritance of owner's attributes to tag child
   - Coded linking from an id to a palette
-  - Coded the compression algorithm selector to optimize the bitmap compiled dat files
+  - Coded the compression algorithm selector to optimize the bitmap
+    compiled dat files
   - Coded unknown extracted files saved in unknown.xml
- * PR v0.9
+ * PR v0.9 Release 1 (unstable) (2003-12-22)
   - Abstracted output
   - Added pr.so dynamic library for unix versions
-  - Code full extractor that looks into directories and extract dat files
-  - Coded detector of dat file in relative path (e.g. pr dat/dungeon.dat -x l)
+  - Coded detector of dat file in relative path
+  - Coded full extractor that looks into directories
   - Coded new UNIX-style command line parsing and options
   - Defined and supported .plv format for RoomShaker & Princed. 
   - Dropped old code (txt parser and directory parsing functions)
   - Improved B1/B2 compressor (4% gained in big files, 1% in small files)
-  x Improved resources.xml
-  x Tested and stable
-  x Works in all dat files
-  x Set, if applicable, POP2 in the father folder of the unknown.xml file
+  - Tested and more stable
+ * PR v0.9 Release 2 (stable) (2004-02-21)
+  - Added and improved PLV support
+  - Empty files automatically removed
+  - Fixed minor bugs
+  - Fixed wav quality bug
+  - Force and backup options are working
+  - Improved resources.xml. Now it works in digisnd1.dat, digisnd2.dat,
+    digisnd3.dat, fat.dat, guard.dat, guard1.dat, guard2.dat,
+    ibm_snd1.dat, ibm_snd2.dat, kid.dat, levels.dat, midisnd1.dat,
+    midisnd2.dat, prince.dat, pv.dat, shadow.dat, skel.dat, title.dat,
+    vdungeon.dat, vizier.dat and vpalace.dat
+  - Fixed lcc makefile
+  - Ported to BSD and SunOs
+  + Added monochrome format support for image types 00,01,02,03 and 04;
+    only stable in title.dat texts.
+  + Fixed palette bug
+ * PR v1.0 beta
+  - Added attribute "path" as an alias of "external" in XML
+  + Added full monochrome resource support
+  - Added the itemtype attribute "autodetect"
+  - Added XML handling primitives in DLL
+  - Better resource naming when unknown extraction is performed
+  - Changed tag name "itemtypes" to "resources"
+  - Code made a bit easy to read, abstracted dat handling library
+  - DAT File list recycle bug fix
+  - Directory ended in "/" bug
+  - Fixed backup bug. Implemented a file pointer dynamic table using the
+    LIFO philosophy for safe open files in the disk handling library
+  - Fixed bug in compressed image size (2 bytes bigger than the normal)
+  - Fixed memory freeing
+  - Improved and abstracted transposition in monochromatic images
+  - Lower memory allocation (getmemory & image compress size bugs fixed)
+  - Optimizations
+  - PLV Checksum not ignored anymore
+  - Removed support of numeric "itemtype" attributes
+  - Renamed xml module to xmlparse
+  - Unknown option bug fixed
+  o Coded partial importing and exporting feature
+  o Code in strict ANSI C (test with GCC pedantic)
+  x Checksum verification
+  x Full testing
+  x Other versions of POP 1 tested
+  x Set, if applicable, POP2 in the parent folder of the    unknown.xml file
 
-2) ToDo List
- i)   Add full pop2 support
- ii)  Code the compression algorithms (B3, B4) to optimize the bitmap compiled dat files
- iii) Add a C++ class to use PR
+2) ToDo List & Future Plans:
 
-
-3) Future Versions:
-  PR v1.0:      First optimized & stable version for win32 and unix based systems
-  PR v1.1:      added iii
-  PR v1.5:      added ii
-  PR v2.0 beta: added i
-  PR v2.0:      Optimized & stable version for win32 and unix based systems
+ * PR v1.0:
+  x Optimization
+  x & stable version for win32 and unix
+    based systems
+ * PR v1.1:
+  x Add a C++ class to use PR
+ * PR v1.5:
+  x Code the compression algorithms Lzg to optimize compiled
+    bitmap dat files
+ * PR v2.0 beta:
+  x Add full pop2 support
+ * PR v2.0:
+  x Optimized & stable version for win32 and unix based systems
 

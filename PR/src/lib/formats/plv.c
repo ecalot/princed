@@ -40,31 +40,34 @@ plv.c: Princed Resources : PLV prince level files support
   DO NOT remove this copyright notice
 */
 
-//Includes
+/* Includes */
 #include "plv.h"
 #include "disk.h"
-#include "compile.h"
+#include "dat.h"
 #include "memory.h"
 #include <string.h>
 #include <time.h>
 
-//Private function to get the currect date/time
+/* Private function to get the currect date/time */
 char* getDate() {
-	//Code taken from RDR 1.4.1a coded by Enrique Calot
-	//TODO: define date string format for plv
+	/* Code taken from RDR 1.4.1a coded by Enrique Calot */
 
-	//Declare variables
+	/* Declare variables */
+#ifdef PLV_FULL_FORMAT
 	static char weeks   []   = DATE_WEEKDAYS;
 	static char months  []   = DATE_MONTHS;
+#endif
 	static char formated [37];
 	time_t      datet;
 	struct tm*  date;
 
+	/* get GMT time from the system clock */
 	time(&datet);
-	date   = gmtime(&datet);
+	date=gmtime(&datet);
 
-	//Format: "Tue, 26 Nov 2002 22:16:39 GMT"
-	sprintf(formated,"%s, %d %s %.4d %.2d:%.2d:%.2d GMT",
+#ifdef PLV_FULL_FORMAT
+	/* Format: "Tue, 26 Nov 2002 22:16:39" */
+	sprintf(formated,"%s, %d %s %.4d %.2d:%.2d:%.2d",
 		weeks+4*(date->tm_wday),
 		date->tm_mday,
 		months+4*(date->tm_mon),
@@ -73,48 +76,72 @@ char* getDate() {
 		date->tm_min,
 		date->tm_sec
 	);
+#else
+	/* Format: "2002-11-26 22:16:39" */
+	sprintf(formated,"%.4d-%.2d-%.2d %.2d:%.2d:%.2d",
+		date->tm_year+1900,
+		date->tm_mon+1,
+		date->tm_mday,
+		date->tm_hour,
+		date->tm_min,
+		date->tm_sec
+	);
+#endif
 	return formated;
 }
 
+int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned long int size,unsigned char level, const char* filename, const char* desc, const char* title, const char* vDatAuthor,int optionflag,const char* backupExtension) {
+	/* Plv files are saved as raw except you must ignore the checksum and add the plv constant file header */
 
-char mFormatExtractPlv(unsigned char* data, const char *vFileext,unsigned long int size,unsigned char level, const char* filename, const char* desc, const char* title, const char* vDatAuthor) {
-	//Plv files are saved as raw except you must ignore the checksum and add the plv constant file header
-
-	//Variables
+	/* Variables */
 	FILE* target;
 	int ok;
 	unsigned char sizeOfNow;
 	char* now;
 	const char* nullString="";
-	static const char* author="PR user";
+	static const char* author=PLV_DEFAULT_AUTHOR;
+	unsigned long int block2size;
+	const unsigned long int numberOfFieldPairs=8;
 
-	//Get current time
+	/* Get current time */
 	now=getDate();
 	sizeOfNow=(unsigned char)(strlen(now)+1);
 
-	//Ignore checksum
-	size--;
+	/* Ignore checksum */
+	/* size--; */
 
-	//Validate null strings when no description is set
+	/* Validate null strings when no description is set */
 	if (desc==NULL) desc=nullString;
 	if (title==NULL) title=nullString;
 	if (vDatAuthor==NULL) vDatAuthor=author;
 
 	/* Writing file */
 
-	//Safe open for writing mode
-	ok=writeOpen(vFileext,&target);
+	/* Safe open for writing mode */
+	ok=writeOpen(vFileext,&target,optionflag);
 
-	//Write headers
+	/* Write headers */
 	ok=ok&&fwrite(PLV_HEADER_A,PLV_HEADER_A_SIZE,1,target);
 	ok=ok&&fwrite(&level,1,1,target);
-	ok=ok&&fwrite(PLV_HEADER_B,PLV_HEADER_B_SIZE,1,target);
-	ok=ok&&fwrite(&size,1,sizeof(size),target);
+	ok=ok&&fwrite(&numberOfFieldPairs,4,1,target);
+	ok=ok&&fwrite(&size,1,4,target);
 
-	//Write raw data ignoring checksum
-	ok=ok&&fwrite(data+1,size,1,target);
+	/* Write block 1: raw data without ignoring checksum */
+	ok=ok&&fwrite(data,size,1,target);
 
-	//Write footers
+	/* Write footers */
+	block2size=(
+		sizeof(PLV_FOOT_EDITOR)+	strlen(vDatAuthor)+1+
+		sizeof(PLV_FOOT_TITLE)+	strlen(title)+1+
+		sizeof(PLV_FOOT_DESC)+	strlen(desc)+1+
+		sizeof(PLV_FOOT_TCREAT)+	sizeOfNow+
+		sizeof(PLV_FOOT_TMODIF)+	sizeOfNow+
+		sizeof(PLV_FOOT_ORIG_FILE)+	strlen(filename)+1
+	);
+
+	ok=ok&&fwrite(&block2size,4,1,target);
+
+	/* Write block 2 */
 	ok=ok&&fwrite(PLV_FOOT_EDITOR,sizeof(PLV_FOOT_EDITOR),1,target);
 	ok=ok&&fwrite(vDatAuthor,strlen(vDatAuthor)+1,1,target);
 	ok=ok&&fwrite(PLV_FOOT_TITLE,sizeof(PLV_FOOT_TITLE),1,target);
@@ -128,19 +155,36 @@ char mFormatExtractPlv(unsigned char* data, const char *vFileext,unsigned long i
 	ok=ok&&fwrite(PLV_FOOT_ORIG_FILE,sizeof(PLV_FOOT_ORIG_FILE),1,target);
 	ok=ok&&fwrite(filename,strlen(filename)+1,1,target);
 
-	//Close file and return
-	ok=ok&&(!fclose(target));
-	return (char)ok;
+	/* Close file and return */
+	ok=ok&&(!writeCloseOk(target,optionflag,backupExtension));
+	return ok;
 }
 
-char mFormatCompilePlv(unsigned char* data, FILE* fp, tResource *res) {
+int mFormatImportPlv(unsigned char* data, tResource *res) {
+	/* declare variables */
+	unsigned char* pos;
+	unsigned long int oldSize=res->size;
 
-	unsigned long int size;
-	//This is ignoring all kind of verifications and assuming (res->size)>PLV_HEADER_SIZE !!!
-	//TODO: must verify the plv format version, if not 1, then PR is too old!
+	/* integrity check 1 */
+	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE) return 0;
+	/* if (memcmp(data,PLV_HEADER_A,PLV_HEADER_A_SIZE)) return 0; */
 
-	//memcpy(&size,data+PLV_HEADER_SIZE_OFFSET,4); //Only when longs are 4 bytes
-//	mAddFileToDatFile(fp,data+PLV_HEADER_A_SIZE+PLV_HEADER_B_SIZE+1+4,size);
-//	free(file);
+	/* jump to size */
+	pos=data+PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE;
+	/* read size and jump to data */
+	res->size=*(pos++);
+	res->size+=(*(pos++))<<8;
+	res->size+=(*(pos++))<<16;
+	res->size+=(*(pos++))<<24;
+
+	/* integrity check 2 */
+	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE+res->size) return 0;
+
+	/* verify checksum */
+	if (!checkSum(pos,res->size)) return 0;
+
+	/* save data */
+	mWriteSetFileInDatFileIgnoreChecksum(pos,res->size--);
+
 	return 1;
 }

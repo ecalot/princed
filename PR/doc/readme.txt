@@ -1,39 +1,44 @@
-Princed Resources V0.9
+Princed Resources v1.0
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
 
-Please read this readme file throughly before starting to use Princed Resource Editor.
+Please read this readme file throughly before starting to use Princed
+Resource Editor.
 
 1) Supported file formats:
 
-The extractor supports only a few file formats, it uses the
-most commonly supported versions of the formats to allow maximum compatibility. 
-As we haven't got enough time to code the program we decided to support only those kinds of formats, and let the user make the necessary conversions.
+ The extractor supports only a few file formats, it uses the most commonly
+ supported versions of the formats to allow maximum compatibility. 
+ As we haven't got enough time to code the program we decided to support
+ only those kinds of formats, and let the user make the necessary
+ conversions.
 
 Resource Types:
- 01 Levels
- 02 Bitmaps
- 03 Waves
- 04 Midis
- 05 Undefined
- 06 Palette
- 07 Internal PC Speaker Sounds
- 08 to 10 reserved
+ Name       Extension  Description
 
-Type 01:
- We decided to give Level files the extension ".pet".  These files can be  edited Princed V3.  PV3 can also edit the whole levels.dat file.
- Recommended editor: PV3.
+ level      plv        Prince of Persia level
+ image      bmp        Graphic in windows bitmap format
+ wave       wav        Wave digital audio sounds
+ midi       mid        Game music in midi format
+ binary     bin        Binary files
+ palette    pal        Image palette in the Jasc format
+ pcspeaker  pcs        Internal PC Speaker Sounds
 
-Type 02:
+Type "level":
+ We decided to give Level files the extension ".plv".  These files
+ can be edited in RoomShaker from version 1.66 and Princed V3.
+ PV3 can also edit the whole levels.dat file.
+ Recommended editor: RoomShaker.
+
+Type "image":
  We use Windows Bitmaps (BMP) to extract the files.
  The file specifications are:
-  - 16 color-palette.
+  - 16 color-palette in paletted images and a 2 color-palette in B/W images
   - No compression.
-  - Currently the images are saved upside down (We are going to change that).
- Recommended editor: Paint Shop Pro, perhaps even MS Paint.
+ Recommended editor: Paint Shop Pro, but even MS Paint works.
  
-Type 03:
+Type "wave":
  For digital audio we are using the standard .wav format.
  The file specifications are:
   - Size of Format: 16
@@ -46,87 +51,78 @@ Type 03:
  Recommended editors: GoldWave, CoolEdit.  Standard Windows programs do not
  understand the .wav format.
 
-Type 04:
+Type "midi":
  For musical instrument digital interface we are using the standard midi
  format (mid) and type 0 midi format.
  The file specifications are:
   - Unknown (see standard MIDI specifications)
  Recommended editor: Power Tracks.
 
-Type 05:
- Some binary garbage stuff.
+Type "binary":
+ Some binary garbage or untested stuff.
  Recommended editor: xvi32 or any other hex editor.
 
-Type 06:
- For the bitmaps palettes we are using the Jasc Pal format (Not Microsoft pal format)
+Type "palette":
+ For the bitmap palettes we are using the Jasc Pal format (Not Microsoft
+  .pal format)
  Recommended editor: Paint Shop Pro.
 
-Type 07:
- For the internal PC Speaker sound we are using binary data saved in pcs format
+Type "pcspeaker":
+ For the internal PC Speaker sound we are using binary data saved in pcs
+  format
+ The formas is saved this way:
+  2 unique bytes for headers
+  3 bytes per note (2 for frequency and 1 for duration)
  Recommended editor: xvi32 or any other hex editor.
 
 2) Bugs:
- This version has lots of new features but we didn't have enough time to test it.
- There are lots known bugs. This program was only tested using vdungeon.dat and
- vpalace.dat.
- so we know there are bugs in other dat files but we can't solve them very fast.
- It is recommended to upgrade to the next stable when it is released.
- To report bugs please go to http://sourceforge.net/tracker/?func=add&group_id=91915&atid=598845.
+ All known bugs were solved. If you find a bug (program crashes, corrupted
+ resources, typos, etc), it's very probable that we haven't found it. So
+ please report it. To report bugs just post them in
+ http://sourceforge.net/tracker/?func=add&group_id=91915&atid=598845
 
 3) Usage: 
-   pr [-x [EXTRACTDIR]|-c [COMPILEDIR]|-d] [DATFILEPATH] 
-   pr [OPTIONS] [DATFILEPATH]
- 
-   Mandatory arguments to long options are mandatory for short options too.
- 
-    -c, --import[=DIRNAME]     imports from DIRNAME into given dat file
-    -d, --classify             returns the DAT file type
-    -x, -e, --export[=DIRNAME] extracts given dat file into DIRNAME
- 
-    -b, --backup[=EXTENSION]   backup your files
-    -f, --force                default option, you cannot disable it,
-                               so please make a backup of your files
-    -g, --cgi                  run as CGI and output mime headers
-    -h, --help                 display this help and exit
-    -m, --resource=RESFILE     uses an user-specific resource xml file
-    -r, --raw                  uses raw format
-    -R, --recursive            searches for all dat files (only if DATFILEPATH
-                               is not a dat file)
-    -t, --datfile=DATFILE      specifies a dat file to read resources
-                               different that the original file
-        --unknown              generate the unknown file without performing
-                               any extraction
-    -v, --verbose              explain what is being done
-        --version              output version information and exit
-
- Note: if DATFILEPATH is not provided or if it is a directory all dat files
-       that are set on resources.xml will be selected
+ Run the program without parameters to get the usage help.
  
  Syntax samples:
  
  C:\PRINCED\PR> pr -xext dat\vdungeon.dat
  
- This will extract the bitmaps and palettes allocated in   C:\princed\pr\dat\vdungeon.dat into the c:\princed\pr\ext. 
+ This will extract the bitmaps and palettes allocated in 
+ C:\princed\pr\dat\vdungeon.dat into the c:\princed\pr\ext. 
  Note: ext must exist.
  
  C:\PRINCE> pr -x vdungeon.dat
  
- This will extract all the bitmaps and palettes allocated in  c:\prince\vdungeon.dat
- into c:\prince.
+ This will extract all the bitmaps and palettes allocated in
+ c:\prince\vdungeon.dat into c:\prince.
  
  C:\PRINCED\PR> pr -cext compiled\vdungeon.dat
  
- This will compile the bitmaps and palettes that are in c:\princed\pr\ext and
- associated to vdungeon.dat in the resource file and generate the file
+ This will compile the bitmaps and palettes that are in c:\princed\pr\ext
+ and associated to vdungeon.dat in the resource file and generate the file
  c:\princed\pr\compiled\vdungeon.dat.
  
 4) New versions
- It's strongly recommended that you download a newer stable version of this program as soon as it comes available in the official url (http://www.princed.com.ar)
+ It's strongly recommended that you download a newer stable version of
+ this program as soon as it comes available in the official url
+ http://www.princed.com.ar
 
-5) Credits
+5) Requirements
+  
+  25127199 bytes in ram are approx required for a normal full directory task
+  
+  Recomended:
+   AMD K6-II at 350Mhz or higher
+   32 Mb ram
+
+6) Credits
 
  Coding & main routines
   Enrique Calot
+  
+ Coding Assistant
+  Santiago Zamora
 
  Graphic compression algorithms
   Tammo Jan Dijkema

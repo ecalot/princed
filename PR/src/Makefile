@@ -1,75 +1,149 @@
-bin/pr: compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o prlib.o memory.o
-	
-	@echo Linking files...
+#Programs
+CC      = @gcc
+LINKER  = @ld
+INFO    = @echo
+MAKEDIR = @mkdir -p
+
+#Operating Systems
+OS      := $(shell uname)
+ifeq ($(OS),Linux)
+  LINUX = -DLINUX
+  OS    = GNU/Linux
+  SRC2  =
+else
+  LINUX = -DNOLINUX
+  SRC2  = getopt.o getopt1.o
+endif
+
+#Compiler options
+INCLUDE = -Iinclude/
+DEFINES = -DOS=\"$(OS)\" $(LINUX) 
+OPTIONS = $(INCLUDE) $(DEFINES)
+
+OBJFILES = compile.o compress.o extract.o resources.o tasks.o disk.o\
+           xmlparse.o xmlsearch.o dat.o bmp.o mid.o pal.o wav.o plv.o memory.o\
+           $(SRC2)
+
+SRC1     = pr.o
+SRC3     = prlib.o
+
+EXEFILE  = bin/pr
+
+#main file
+
+bin/pr: $(OBJFILES) $(SRC1) bin/resources.xml
+	$(INFO) Linking files...
+	$(MAKEDIR) bin
+	$(CC) -o bin/pr $(OBJFILES) $(SRC1) -s -O2
+	$(INFO) Program successfully compiled
+	$(INFO)
+	$(INFO) Please read readme.txt for syntax information
+	$(INFO)
+
+#command options
+
+clean:
+	$(INFO) Erasing temporary object files...
+	@rm -f *.o bin/pr
+
+build: clean bin/pr
+
+all: $(EXEFILE) lib
+
+lib: $(OBJFILES) $(SRC3)
+	$(MAKEDIR) bin
+	$(INFO) Making dynamic library...
+	$(CC) -o bin/pr.so $(OBJFILES) $(SRC3) -O2 -Llibc -shared -dynamic
+	$(INFO) Library successfully compiled
+	$(INFO)
+	$(INFO) Please read readme.coders.txt and pr.h for interfaces
+	$(INFO)
+
+#files
+
+bin/resources.xml: resources.xml.gz
+	$(INFO) Uncompressing resources...
 	@mkdir -p bin
-	@gcc -o bin/pr compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o memory.o -s -O2
-	@echo Making dynamic library...
-	@gcc -o bin/pr.so compile.o compress.o extract.o prlib.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o memory.o -O2 -Llibc -shared -dynamic
-	@echo Program successfully compiled
-	@echo
-	@echo Please read readme.txt for syntax information
-	@echo
+	@gunzip resources.xml.gz
+	@cp -f resources.xml bin
+	@gzip resources.xml
 
 compile.o: compile.c
-	@echo Compiling import module...
-	@gcc -c compile.c -Iinclude/
+	$(INFO) Compiling import module...
+	$(CC) -c compile.c $(OPTIONS)
 
 memory.o: memory.c
-	@echo Compiling memory manager...
-	@gcc -c memory.c -Iinclude/
+	$(INFO) Compiling memory manager...
+	$(CC) -c memory.c $(OPTIONS)
 
 extract.o: extract.c
-	@echo Compiling export module...
-	@gcc -c extract.c -Iinclude/
+	$(INFO) Compiling export module...
+	$(CC) -c extract.c $(OPTIONS)
 
 compress.o: compress.c
-	@echo Compiling compression module...
-	@gcc -c compress.c -Iinclude/
+	$(INFO) Compiling compression module...
+	$(CC) -c compress.c $(OPTIONS)
 
 pr.o: pr.c
-	@echo Compiling main module in standard mode...
-	@gcc -c pr.c -Iinclude/ -DOS=\"`uname`\" 
+	$(INFO) Compiling main module in standard mode...
+	$(CC) -c pr.c $(OPTIONS)
 
 prlib.o: pr.c
-	@echo Compiling main module in library mode...
-	@gcc -c pr.c -Iinclude/ -DDLL -o prlib.o
+	$(INFO) Compiling main module in library mode...
+	$(CC) -c pr.c $(OPTIONS) -DDLL -o prlib.o
 
 resources.o: resources.c
-	@echo Compiling resource manager module...
-	@gcc -c resources.c -Iinclude/
+	$(INFO) Compiling resource manager module...
+	$(CC) -c resources.c $(OPTIONS)
 
 tasks.o: tasks.c
-	@echo Compiling extra tasks module...
-	@gcc -c tasks.c -Iinclude/
+	$(INFO) Compiling extra tasks module...
+	$(CC) -c tasks.c $(OPTIONS)
 
-xml.o: xml.c
-	@echo Compiling xml parsing module...
-	@gcc -c xml.c -Iinclude/
+xmlparse.o: xmlparse.c
+	$(INFO) Compiling xml parsing module...
+	$(CC) -c xmlparse.c $(OPTIONS)
 
 xmlsearch.o: xmlsearch.c
-	@echo Compiling xml search features...
-	@gcc -c xmlsearch.c -Iinclude/
+	$(INFO) Compiling xml search features...
+	$(CC) -c xmlsearch.c $(OPTIONS)
 
 disk.o: disk.c
-	@echo Compiling disk access functions...
-	@gcc -c disk.c -Iinclude/
+	$(INFO) Compiling disk access library...
+	$(CC) -c disk.c $(OPTIONS)
+
+dat.o: dat.c
+	$(INFO) Compiling dat editing library...
+	$(CC) -c dat.c $(OPTIONS)
 
 bmp.o: formats/bmp.c
-	@echo Compiling bitmap files support \(bmp\)...
-	@gcc -c formats/bmp.c -Iinclude/
+	$(INFO) Compiling bitmap files support \(bmp\)...
+	$(CC) -c formats/bmp.c $(OPTIONS)
 
 mid.o: formats/mid.c
-	@echo Compiling midi audio files support \(mid\)...
-	@gcc -c formats/mid.c -Iinclude/
+	$(INFO) Compiling midi audio files support \(mid\)...
+	$(CC) -c formats/mid.c $(OPTIONS)
 
 plv.o: formats/plv.c
-	@echo Compiling prince level files support \(plv\)...
-	@gcc -c formats/plv.c -Iinclude/
+	$(INFO) Compiling prince level files support \(plv\)...
+	$(CC) -c formats/plv.c $(OPTIONS)
 
 pal.o: formats/pal.c
-	@echo Compiling JASC palette support \(pal\)...
-	@gcc -c formats/pal.c -Iinclude/
+	$(INFO) Compiling JASC palette support \(pal\)...
+	$(CC) -c formats/pal.c $(OPTIONS)
 
 wav.o: formats/wav.c
-	@echo Compiling digital wave audio support \(wav\)...
-	@gcc -c formats/wav.c -Iinclude/
+	$(INFO) Compiling digital wave audio support \(wav\)...
+	$(CC) -c formats/wav.c $(OPTIONS)
+
+dirent.o: ports/dirent.c
+	$(INFO) Porting the dirent structure...
+	$(CC) $(OPTIONS) -c ports/dirent.c
+	
+getopt.o: ports/getopt.c
+	$(INFO) Porting the Unix-like getopt function \(first part\)...
+	$(CC) $(OPTIONS) -c ports/getopt.c
+
+getopt1.o: ports/getopt1.c
+	$(INFO) Porting the Unix-like getopt function \(second part\)...
+	$(CC) $(OPTIONS) -c ports/getopt1.c

@@ -31,26 +31,27 @@ mid.c: Princed Resources : MIDI files support
   DO NOT remove this copyright notice
 */
 
-//Includes
+/* Includes */
 #include "mid.h"
 #include "disk.h"
-#include "compile.h"
+#include "pr.h"
+#include "dat.h"
 #include "memory.h"
 #include <string.h>
 
-char mFormatExtractMid(unsigned char* data, char *vFileext,unsigned long int size) {
-	//Mid files are saved as raw except you must ignore checksum & sound type
-	return writeData(data,2,vFileext,size);
+int mFormatExportMid(const unsigned char* data, char *vFileext,unsigned long int size,int optionflag,const char* backupExtension) {
+	/* Mid files are saved as raw except you must ignore checksum & sound type */
+	return writeData(data,2,vFileext,size,optionflag,backupExtension);
 }
 
-char mFormatCompileMid(unsigned char* data, FILE* fp, tResource *res) {
+int mFormatImportMid(unsigned char* data, tResource *res) {
 	unsigned char* file;
 
-	file=getMemory((*res).size);
-	file[0]=(unsigned char)((res->type==4)?2:0); //Now should be 0x02 //First character must be a 0x01 (wav type in dat)
-	memcpy(file+1,data,(*res).size);
-	(*res).size++;
-	mAddFileToDatFile(fp,file,(*res).size);
+	file=getMemory(res->size+1);
+	file[0]=(unsigned char)((res->type==4)?2:0); /* Now should be 0x02: First character must be a 0x01 (wav type in dat) */
+	memcpy(file+1,data,res->size);
+	res->size++;
+	mWriteSetFileInDatFile(file,res->size);
 	free(file);
 	return 1;
 }

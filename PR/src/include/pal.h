@@ -1,21 +1,49 @@
+/*  Princed V3 - Prince of Persia Level Editor for PC Version
+    Copyright (C) 2003 Princed Development Team
 
-/***************************************************************\
-|                 Jasc Palette handling functions               |
-\***************************************************************/
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+    The authors of this program may be contacted at http://forum.princed.com.ar
+*/
+
+/*
+pal.h: Princed Resources : JASC PAL files support headers
+¯¯¯¯¯
+ Copyright 2003 Princed Development Team
+  Created: 24 Aug 2003
+
+  Author: Enrique Calot <ecalot.cod@princed.com.ar>
+  Version: 1.01 (2003-Oct-23)
+
+ Note:
+  DO NOT remove this copyright notice
+*/
 
 #ifndef _PAL_H_
 #define _PAL_H_
 
 #include "compress.h"
+#include "resources.h"
+#include <stdio.h>
 
 #define PAL_HEADER "JASC-PAL\r\n0100\r\n16\r\n"
 #define PAL_SAMPLE {0x97, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x03, 0x08, 0x0F, 0x07, 0x0C, 0x13, 0x0C, 0x11, 0x16, 0x11, 0x17, 0x1C, 0x1E, 0x21, 0x25, 0x2F, 0x31, 0x33, 0x3F, 0x3F, 0x3F, 0x2A, 0x2A, 0x2A, 0x15, 0x15, 0x15, 0x17, 0x1C, 0x20, 0x07, 0x0C, 0x13, 0x0C, 0x12, 0x17, 0x15, 0x1A, 0x1F, 0x00, 0x1D, 0x13, 0x00, 0x29, 0x27, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
 
-char mFormatExtractPal(unsigned char** data, char *vFileext,unsigned long int size);
-char mImportPalette(unsigned char** data, unsigned short *size);
-void mExportPalette(unsigned char** data, unsigned long int *size);
+int mFormatExportPal(const unsigned char* data, char *vFileext,unsigned long int size,int optionflag,const char* backupExtensio);
+int mFormatImportPal(unsigned char* data, tResource *res,const char* vFile);
 
-//This function will be obsolete
-void mLoadPalette(unsigned char* array,tImage *image);
+#define mLoadPalette(array,image)	memcpy(((image).pal),((array)+5),(16*3))
 
 #endif

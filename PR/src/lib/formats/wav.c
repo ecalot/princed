@@ -31,18 +31,19 @@ wav.c: Princed Resources : WAV files support
   DO NOT remove this copyright notice
 */
 
-//Includes
+/* Includes */
+#include "pr.h"
 #include "wav.h"
-#include "compile.h"
+#include "dat.h"
 #include "disk.h"
 
-int mFormatExtractWav(unsigned char* data, char *vFileext,unsigned long int size) {
+int mFormatExportWav(const unsigned char* data, char *vFileext,unsigned long int size,int optionflag,const char* backupExtension) {
 	FILE*         target;
 	int ok;
 	unsigned char wav[]=WAVE_HEADER;
 
 	size-=2;
-	ok=writeOpen(vFileext,&target);
+	ok=writeOpen(vFileext,&target,optionflag);
 
 	wav[4]=(unsigned char)((size+36)&0xFF);
 	wav[5]=(unsigned char)(((size+36)>>8)&0xFF);
@@ -55,20 +56,20 @@ int mFormatExtractWav(unsigned char* data, char *vFileext,unsigned long int size
 	wav[43]=(unsigned char)(((size)>>24)&0xFF);
 
 	ok=ok&&fwrite(wav,sizeof(wav),1,target);
-	ok=ok&&fwrite(data+2,size-2,1,target);
-	ok=ok&&(!fclose(target));
+	ok=ok&&fwrite(data+2,size,1,target);
+	ok=ok&&(!writeCloseOk(target,optionflag,backupExtension));
 
 	return ok;
 }
 
-int mFormatCompileWav(unsigned char* data, FILE* fp, tResource *res) {
+int mFormatImportWav(unsigned char* data, tResource *res) {
 	unsigned char wav[]=WAVE_HEADER;
 	int i=sizeof(wav);
 
-	if ((*res).size<=i) return 0;
+	if (res->size<=i) return 0;
 	res->size-=(--i);
 	while ((i==4||i==5||i==6||i==7||i==40||i==41||i==42||i==43||(data[i]==wav[i]))&&(i--));
-	data[sizeof(wav)-1]=1; //First character must be a 0x01 (wav type in dat)
-	if (i==-1) mAddFileToDatFile(fp,data+sizeof(wav)-1,(*res).size);
+	data[sizeof(wav)-1]=1; /* First character must be a 0x01 (wav type in dat) */
+	if (i==-1) mWriteSetFileInDatFile(data+sizeof(wav)-1,res->size);
 	return 1;
 }

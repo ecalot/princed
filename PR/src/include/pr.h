@@ -29,8 +29,8 @@ pr.h: Princed Resources : Main header prototypes and definitions
 
   Modified by: Enrique Calot <ecalot.cod@princed.com.ar>
   Version: 1.10 (2003-Dec-03)
-  
-  Language: English
+
+  Language: Abstract
 
  Note:
   DO NOT remove this copyright notice
@@ -45,13 +45,14 @@ pr.h: Princed Resources : Main header prototypes and definitions
 
 #include <stdio.h>
 
-//User configuration defines
+/* User configuration defines */
 #ifndef WIN32
  #define UNIX
 #endif
 
 /* do not #define DLL, use -DDLL as a precompiler option instead */
 #ifdef DLL
+void prSetOutput(FILE* output);
  #ifdef UNIX
   #define SO
  #endif
@@ -65,11 +66,24 @@ pr.h: Princed Resources : Main header prototypes and definitions
  #endif
 #endif
 
-//Debug options
-#define DEB_FLAG
+/* Debug options */
+/* #define DEB_FLAG */
+/* #define MEM_CHECK */
+
+#ifdef MEM_CHECK
+
+#ifdef malloc
+#undef malloc
+#endif
+
+#include "memory.h"
+ #define malloc(a) mymalloc(a,__FILE__,__LINE__)
+ #define free(a) myfree(a,__FILE__,__LINE__)
+
+#endif
 
 #ifdef DEB_FLAG
- #define fld(a) printf(a "\n");
+ #define fld(a) printf(a "\n")
 #else
  #define fld(a)
 #endif
@@ -78,162 +92,67 @@ pr.h: Princed Resources : Main header prototypes and definitions
 |             M A I N   P R O G R A M   D E F I N E S           |
 \***************************************************************/
 
-
 /***************************************************************\
-|                           Text Defines                        |
+|                     PR Specific Defines                       |
 \***************************************************************/
 
-
-#define PR_ABOUT                  "Princed resources (PR) V0.9 "OS"\n(c) Copyright 2003 - Princed Development Team\n\
-http://www.princed.com.ar\n\n"
-
-#define PR_CGI_TEXT1              "Content-Type:text/html\n\nRunning as a cgi\n"
-#define PR_CGI_TEXT2              "Result: %02d type\n"
-
-#define PR_TEXT_SKIPING           "Found invalid option '%c', skiping . . .\n"
-#define PR_TEXT_RESULT            "Result: %s (%d)\n"
-#define PR_TEXT_RESULT_ERR        "Result: %d files with errors\n"
-
-#define PR_TEXT_FILE_NOT_FOUND    "Result: File or directory '%s' not found\n"
-
-#define PR_TEXT_SCANNING_CURRENT  "Scanning dat files in current directory\n"
-#define PR_TEXT_SCANNING_GIVEN    "Scanning dat files in given directory\n"
-
-#define PR_TEXT_IMPORTING_CURRENT "Importing all valid dat files from the currect directory\n"
-#define PR_TEXT_IMPORTING_GIVEN   "Importing all valid files from given directory\n"
-
-#define PR_TEXT_TASK_COMPILE      "Compiling '%s' from '%s' with %04x\n"
-#define PR_TEXT_TASK_CLASSIFY     "Classifing '%s'\n"
-#define PR_TEXT_TASK_EXTRACT      "Extracting '%s' to '%s' with %04x\n"
-
-/***************************************************************\
-|                        Text Output Arrays                     |
-\***************************************************************/
-
-#define PR_TEXT_EXPORT_ARRAY {\
-"Ok",\
-"Error accessing the file DAT", /* DAT or extracted */\
-"Memory error in extraction",\
-"Invalid DAT file",\
-"XML Parse error",\
-"Memory error in parsing",\
-"XML Attribute not recognized",\
-"XML File not found"}
-
-#define PR_TEXT_CLASSIFY_ARRAY {\
-"Memory error",\
-"File not found or no access error",\
-"Not a valid POP1 DAT file",\
-"Levels file",\
-"Graphic file with an image in the first valid entry (not common)",\
-"Waves/Digital sound file",\
-"Midis file",\
-"Valid DAT file with Undefined content",\
-"Graphic file with a palette in the first valid entry (common)",\
-"PC Speaker dat file",\
-"","","",\
-"Pop2 dat files"}
-
-#define PR_TEXT_IMPORT_ARRAY {\
-"File succesfully compiled",\
-"DAT File couldn't be open for writing",\
-"XML Parse error",\
-"No memory",\
-"XML Attribute not recognized",\
-"XML File not found"}
-
+#define PR_URL                    "http://www.princed.com.ar"
+#define PR_VERSION                "v1.0b-dev1"
+#define PR_COPY                   "(c) Copyright 2003, 2004 - Princed Development Team"
 /***************************************************************\
 |                         Other defines                         |
 \***************************************************************/
 
-
-//Default Files
-#define RES_XML_UNKNOWN_XML  "unknown.xml"
-#define RES_XML_RESOURC_XML  "resources.xml"
-
-//Define max & min's
-#define MAX_RES_COUNT 65000
-
-//Define max & min's
-#define MAX_FILENAME_SIZE  260
-#define MAX_EXTENSION_SIZE 10
+/* Default Files */
+#define RES_XML_UNKNOWN_XML      "unknown.xml"
+#define RES_XML_RESOURC_XML      "resources.xml"
 
 #define DEFAULT_BACKUP_EXTENSION "bak"
 
-//Path defines
+/* Define max & min's */
+#define MAX_RES_COUNT            25000
+#define MAX_FILENAME_SIZE        260
+
+/* Path defines */
 #ifdef UNIX
- #define DIR_SEPARATOR       '/'
+ #define DIR_SEPARATOR           '/'
 #else
- #define DIR_SEPARATOR       '\\'
+ #define DIR_SEPARATOR           '\\'
 #endif
 
 /***************************************************************\
-|                            Prototypes                         |
+|                        L A N G U A G E                        |
 \***************************************************************/
 
-//Main functions
+#include "english.h"
+
+/***************************************************************\
+|                           Prototypes                          |
+\***************************************************************/
+
+/* Main functions */
 int prExportDat(const char* vDatFile, const char* vDirName, const char* vResFile);
 int prImportDat(const char* vDatFile, const char* vDirName, const char* vResFile);
 int prVerifyDatType(const char* vFiledat);
 
-//Extra featured functions
+/* Extra featured functions */
 int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char * vDatFileName,const char* datAuthor, const char* backupExtension);
 int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char* vDatFileName, const char* backupExtension);
 
-//Recursive function
-int prMain(int* option, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor,FILE* output);
+/* Recursive function */
+int prMain(int option, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor,FILE* output);
 
 /***************************************************************\
 |                   Command Line specific options               |
 \***************************************************************/
 
-#define PARSING_HELP "Usage: \n\
-  pr [-x[EXTRACTDIR]|-c[COMPILEDIR]|-d] [DATFILEPATH]\n\
-  pr [OPTIONS] [DATFILEPATH]\n\
-\n\
-  Mandatory arguments to long options are mandatory for short options too.\n\
-\n\
-   -c, --import[=DIRNAME]     imports from DIRNAME into given dat file\n\
-   -d, --classify             returns the DAT file type\n\
-   -x, -e, --export[=DIRNAME] extracts given dat file into DIRNAME\n\
-\n\
-   -a, --setauthor=NAME       sets your name in extracted PLV files\n\
-   -b, --backup[=EXTENSION]   backup your files\n\
-   -f, --force                default option, you cannot disable it,\n\
-                              so please make a backup of your files\n\
-   -g, --cgi                  run as CGI and output mime headers\n\
-   -h, -?, --help             display this help and exit\n\
-   -m, --resource=RESFILE     uses an user-specific resource xml file\n\
-   -r, --raw                  uses raw format\n\
-   -R, --recursive            searches for all dat files (only if DATFILEPATH\n\
-                              is not a dat file)\n\
-   -t, --datfile=DATFILE      specifies a dat file to read resources\n\
-                              different that the original file\n\
-       --unknown              generate the unknown file without performing\n\
-                              any extraction\n\
-   -v, --verbose              explain what is being done\n\
-       --version              output version information and exit\n\
-\n"
-
-#define PARSING_ABOUT "Authors: \n\
-   Coding & main routines\n\
-    Enrique Calot\n\
-\n\
-   Graphic compression algorithms\n\
-    Tammo Jan Dijkema\n\
-    Enrique Calot\n\
-\n\
-   Graphic format development\n\
-    Tammo Jan Dijkema\n\
-    Anke Balderer\n\
-\n\
-   MID Sound format development\n\
-    Christian Lundheim\n\
-\n\
-   Resources.xml edition\n\
-    Steven Fayers\n\
-\n"
-
+#ifndef PR_IGNORE_RAW_OPTION
+#define PARSING_OPTRAW ,{"raw",         no_argument,       0,'r'},
+#define PARSING_CHRRAW "r"
+#else
+#define PARSING_OPTRAW ,
+#define PARSING_CHRRAW ""
+#endif
 #define PARSING_OPTIONS {\
 {"import",      optional_argument, 0,'c'},\
 {"classify",    no_argument,       0,'d'},\
@@ -244,8 +163,8 @@ int prMain(int* option, const char* extension,const char* dirName,const char* re
 {"force",       no_argument,       0,'f'},\
 {"cgi",         no_argument,       0,'g'},\
 {"help",        no_argument,       0,'?'},\
-{"resource",    required_argument, 0,'m'},\
-{"raw",         no_argument,       0,'r'},\
+{"resource",    required_argument, 0,'s'}\
+PARSING_OPTRAW\
 {"recursive",   no_argument,       0,'R'},\
 {"datfile",     required_argument, 0,'t'},\
 {"unknown",     no_argument,       0,2},\
@@ -254,7 +173,7 @@ int prMain(int* option, const char* extension,const char* dirName,const char* re
 {0, 0, 0, 0}\
 }
 
-#define PARSING_CHARS    "c::dx::e::b::a:fgm:t:rRv"
+#define PARSING_CHARS    "i::c::dx::e::b::a::fgs::t::Rvh?"PARSING_CHRRAW
 
 /* Flags */
 #define import_flag      0x0001
@@ -264,16 +183,17 @@ int prMain(int* option, const char* extension,const char* dirName,const char* re
 #define force_flag       0x0010
 #define cgi_flag         0x0020
 #define help_flag        0x0040
-#define first_flag       0x0080
-#define raw_flag         0x0100
-#define recursive_flag   0x0200
-#define verbose_flag     0x0400
-#define version_flag     0x0800
-#define unknown_flag     0x1000
-#define undef1_flag      0x2000
-#define undef2_flag      0x4000
-#define undef3_flag      0x8000
+#define raw_flag         0x0080
+#define recursive_flag   0x0100
+#define verbose_flag     0x0200
+#define version_flag     0x0400
+#define unknown_flag     0x0800
+#define undef1_flag      0x1000
+#define undef2_flag      0x2000
+#define undef3_flag      0x4000
+#define undef4_flag      0x8000
 
-#define optionflag (*pOption)
+#define hasFlag(a) (optionflag&(a))
+#define setFlag(a) optionflag|=(a)
 
 #endif
