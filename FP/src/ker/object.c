@@ -76,6 +76,7 @@ tObject objectCreate(int location, int floor, int direction, int stateId, unsign
 }
 
 void objectDraw(tObject* object) {
+	/* stateUpdate MUST be called before this function if the object was created/interrupted */
 	void* image=object->gfxCache[object->direction ^ stateGetMirror(object)]->pFrames[stateGetImage(object)-1];
 	/* TODO: move this -1 to each script frame */
 	outputDrawBitmap(
@@ -89,16 +90,31 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 	/* advance state and get the flag, then interpret the flag and do the events */
 	short flags;
 	int refresh;
+	int x=object->location/TILE_W;
+	int y=object->floor;
 	
 	flags=stateUpdate(&key,object,room);
 
 	if (room==NULL) return flags; /* exits if it is not associated to a room */
 
-/* a static variable type in the tObject determinates what object is it about. This is to simulate polymorphism.
- * call a function that performs all the actions knowing the room, the object and the flags. Returns refresh. */	
+	
+	/* a static variable type in the tObject determinates what object is it about.
+	 * This is to simulate polymorphism.
+	 * call a function that performs all the actions knowing the room,
+	 * the object and the flags. Returns refresh.
+	 */
+	
 	switch (object->type) {
 		case oKid:
 			refresh=kidMove(object,flags,room);
+			/* Check if the object must fall down */
+			if (flags&STATES_FLAG_P) {
+				tTile tile=roomGetTile(room,x+1,y+1);
+				if (!isIn(tile,TILES_WALKABLE)) {
+					objectInterrupt(object,STATE_MARKS_FALL);
+					flags=stateUpdate(&key,object,room); /* move again the to the interrupted state */
+				}
+			}
 			if (flags&STATES_FLAG_H) {
 				if (!kidTakeHitPoint(object)) /* loose a hit point */
 					/* the kid has died! */
@@ -107,8 +123,6 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 					outputBlinkScreen(1,1);
 			}
 			if (flags&STATES_FLAG_D) {
-				int x=object->location/TILE_W;
-				int y=object->floor;
 				tTile tile=roomGetTile(room,x+1,y+1);
 				if (!kidDrinkPotion(object,tile)) /* drink the potion */
 					flags=STATE_EXIT_CODE_SPLASH;
