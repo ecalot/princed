@@ -32,6 +32,7 @@ dat.c: Princed Resources : DAT library
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "pr.h"
 
