@@ -1,0 +1,254 @@
+Table of Contents
+
+1. Preamble .......................................................... 26
+2. Introduction
+3. Primitives
+3.1. DAT reading and writing primitives
+3.2. DAT reading primitives
+3.3. DAT writing primitives
+4. File Specifications
+4.1. General file specs, index and checksums
+4.2. Images
+4.2.1 Headers
+4.2.2 Algorithms
+4.2.2.1 Run length encoding (RLE)
+4.2.2.2 Custom LZ
+4.3. Palettes
+4.4. Levels
+4.4.1 Room mapping
+4.4.2 Room linking
+4.4.3 Guard handling
+4.4.4 Door events 
+4.5. Digital Waves
+4.6. Midi music
+4.7. Internal PC Speaker
+4.8. Binary files
+5. Credits
+6. License
+
+1. Preamble
+ This file was written thanks to the reverse engineering made by several
+ people, see the credits section.
+
+2. Introduction
+ There are two versions of the DAT file format: DAT v1.0 used in POP 1.x
+ and DAT v2.0 used in POP 2. In this document we will specify DAT v1.0.
+
+ DAT files were made to store levels, images, palettes, wave, midi and
+ internal speaker sounds. Each type has it's own format as described in
+ the next sections.
+ 
+ As the format is very old and the original game was distributed in disks,
+ it is normal to think that the file format uses checksum validation to
+ detect any kind of file corruption.
+
+ DAT files are indexed, this means there is an index and you can access
+ each resource through an ID and this ID is unique for the resource inside
+ the file.
+
+ Images stores their height and width but not their palette, so the palette
+ is another resource and must be shared by a group of images.
+
+3. Primitives
+ This section shows how the PR dat handling primitives works, this library
+ is useful to access resources without having to worry about the format.
+
+3.1. DAT reading and writing primitives
+ Opening a dat file for RW mode
+ Syntax:
+ int mRWBeginDatFile(
+  const char* vFile, /* the name of the file to be open */
+  unsigned short int *numberOfItems, /* saves the total items count */
+  int optionflag /* see optionflag appendix */
+ );
+ Return values are:
+
+ int mRWCloseDatFile(dontSave)
+
+3.2. DAT reading primitives
+ int  mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFile);
+ int  mReadFileInDatFile(int indexNumber,unsigned char** data,unsigned long int
+*size);
+ int  mReadInitResource(tResource** res,const unsigned char* data,long size);
+ void mReadCloseDatFile();
+
+3.3. DAT writing primitives
+ int  mWriteBeginDatFile(const char* vFile, int optionflag);
+ void mWriteFileInDatFile(const unsigned char* data, int size);
+ void mWriteFileInDatFileIgnoreChecksum(unsigned char* data,int size);
+ void mWriteInitResource(tResource** res);
+ void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const char*
+backupExtension);
+
+4. File Specifications
+
+4.1. General file specs, index and checksums
+ All DAT files has an index, this index has a number of items count and
+ a list of items.
+ The index is stored at the very end of the file.
+ The first 6 bytes are reserved to locate the index and know the file size.
+
+ Stored values:
+ Lets define the numbers as:
+  LE - Little endian: 16 bits, storing two groups of 8 bits ordered from
+       the less representative to the most representative without sign.
+       i.e. 65534 is FFFE in hex and is stored FE FF (1111 1110 1111 1111)
+       Range: 0 to 65535
+       2 bytes
+  BE - Big endian: 32 bits, storing four groups of 8 bits each ordered from
+       the less representative to the most representative without sign.
+       i.e. 65538 is 00010002 in hex and is stored 02 00 01 00
+       (0000 0010 0000 0000 0000 0001 0000 0000)
+       Range: 0 to 2^32-1
+       4 bytes
+  SC - Signed char: 8 bits, the first for the sign and the 7 last for the
+       number. If the first bit is a 0, then the number is positive, if not
+       the number is negative, in that case invert all bits and add 1 to
+       get the positive number.
+       i.e. -1 is FF (1111 1111), 1 is 01 (0000 0001)
+       Range: -128 to 127
+       1 byte
+  UC - Unsigned char: 8 bits that represent the number.
+       i.e. 32 is 20 (0010 0000)
+       Range: 0 to 255
+       1 byte
+
+ Index structures:
+ The DAT header: 6 bytes
+  Offset 0, size 4, type BE: Index offset (the location where the offset
+                             begins)
+  Offset 4, size 2, type LE: IndexSize (the number of bytes the index has)
+                             Note that the index size is 8*numberOfItems+2
+
+ The DAT index header: 2 bytes
+  Offset IndexSize, size 2, type LE: NumberOfItems (resources count)
+  Offset IndexSize+2, size 8*NumberOfItems: The index (a list of
+                              NumberOfItems blocks of 8-bytes-index record)
+
+ The 8-bytes-index record: 8 bytes
+  Relative offset 0, size 2, type LE: Item ID
+  Relative offset 2, size 4, type BE: Resource start absolute offset
+  Relative offset 6, size 2, type LE: Size of the item (not including
+                                      checksums)
+
+ Checksum byte:
+ There is a checksum byte for each item (resource), this is the first byte
+ of the item, the rest of the bytes are the item data. The item type is not
+ stores and may only be determined by reading the data and applying some
+ filters, this method may fail.
+
+ The if you add whole item data including checksum and take the less
+ representative byte you will get the sum of the file. This sum must be FF
+ in hex (255 in UC or -1 in SC). If the sum is not FF, then adjust the
+ checksum in order to set this value to the sum. The best way to do that is
+ adding all the bytes in the item (excluding the checksum) and inverting
+ all the bits.
+
+ From now on the specification are special for each data (that doesn't
+ include the checksum byte)
+
+4.2. Images
+ Each image has a 6 bytes header that is
+
+4.2.1 Headers
+ The 6-bytes-image header: 6 bytes
+  Relative offset 0, size 2, type LE: Height
+  Relative offset 2, size 2, type BE: Width 
+  Relative offset 4, size 2: Information
+
+ Information is a set of bits where:
+  the first 8 are zeros
+  the next 4 are the resolution:
+   if it is 1011 (B in hex) then the image has 16 colors
+   if it is 0000 (0 in hex) then the image has 2 colors
+  the last 4 are the 5 compression types:
+   from 0 to 4:
+   0 RAW_LR
+   1 RLE_LR
+   2 RLE_UD
+   3 LZG_LR
+   4 LZG_UD
+
+ The next data is the image compressed with the specified algorithm.
+
+4.2.2 Algorithms
+ RAW_LR means that the data wasn't compressed, it is used for small images
+        the format is saved from left to right (LR) serializing a line to
+        the next integer byte if necessary.
+ RLE_LR has a Run length encoding (RLE) algorithm, after uncompressed the
+        image can be read as a RAW_LR.
+ RLE_UD is the same as RLE_LR except that after uncompressed the image must
+        be drawn from up to down and then from left to right.
+ LZG_LR has any kind of variant of the LZ77 algorithm (the sliding windows
+        algorithm), here we named it LZG in honor of Lance Groody, the
+        original coder.
+        After uncompressed it may be handled as RAW_LR
+ LZG_UD Uses LZG compression but is drawn from top to bottom as RLE_UD
+
+4.2.2.1 Run length encoding (RLE)
+ The first byte is allways a control byte, the format is SC. If the control
+ byte is negative, then the next byte must be repeated n times as the bit
+ inverted control byte says, after the next byte another control byte is
+ stored.
+ If the control byte is positive or zero just copy textual the next n bytes
+ where n is the control byte plus one and the next byte is another control
+ byte.
+ If you reach a control byte but the image size is passed, then you have
+ completed the image.
+
+4.2.2.2 Custom LZ
+ Use the source, Luke.
+ 
+4.3. Palettes
+ Palettes have 100 bytes allways, after 4 bytes from the beginning the
+ first 16 records of 3 bytes are the VGA colors stored in the RGB-18 bits
+ format (6 bits for each color). Each color is a number from 0 to 63.
+ Remember to shift the color bytes by two to get the color number from 0
+ to 256.
+ 
+4.4. Levels
+ I'll write it tomorrow.
+
+4.4.1 Room mapping
+4.4.2 Room linking
+4.4.3 Guard handling
+4.4.4 Door events 
+
+4.5. Digital Waves
+Just raw sound
+ Size of Format: 16
+ Format: PCM
+ Attributes: 8 bit, mono, unsigned
+ Channels: 1
+ Sample rate: 11025
+ Bytes/Sec: 11025
+ Block Align: 1
+ 
+4.6. Midi music
+ Standard midi files
+
+4.7. Internal PC Speaker
+ We are not so sure about it, but we think it is:
+  2 unique bytes for headers
+  3 bytes per note (2 for frequency and 1 for duration)
+ 
+4.8. Binary files
+ Some binary files contains relevant information
+ The resource number ??? in prince.dat has the VGA guard palettes in it
+ saving n records of a 16-color-palette of 3 bytes in the specified palette
+ format.
+
+5. Credits
+ This document:
+  Writing                    Enrique Calot
+
+ Reverse Engineering:
+  Indexes                    Enrique Calot
+  Levels                     Enrique Calot
+  Images                 Tammo Jan Dijkema
+  RLE Compression        Tammo Jan Dijkema
+  LZG Compression            Anke Balderer
+  Sounds                Christian Lundheim
+
+6. License
+ This document is under the FSF documentation license.
