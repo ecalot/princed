@@ -1,5 +1,5 @@
-Princed Resources v1.0-dev1
-(c) Copyright 2003, 2004 - Princed Development Team
+Princed Resources v1.0-dev2
+(c) Copyright 2003 - 2005 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
 
@@ -120,6 +120,28 @@ Binary:
   Recomended:
    AMD K6-II at 350Mhz or higher
    32 Mb RAM
+	
+	Benchmark results:
+   Performed on an AMD Athlon(tm) XP 2000+ with 1667.022 MHz
+	 The file tested was the original vdungeon.dat, sized 14220 bytes
+
+	 Normal benchmark results:
+	  Compression level 1. Size 38031 bytes. Time 0.028137 seconds.
+	  Compression level 2. Size 23756 bytes. Time 0.031273 seconds.
+	  Compression level 3. Size 15912 bytes. Time 0.031836 seconds.
+	  Compression level 4. Size 12519 bytes. Time 0.066246 seconds.
+	  Compression level 5. Size 11347 bytes. Time 0.087975 seconds.
+	  Compression level 6. Size 11218 bytes. Time 1.506183 seconds.
+	  Compression level 7. Size 10932 bytes. Time 2.916612 seconds.
+
+	 Benchamrk using valgrind 
+	  Compression level 1. Size 38031 bytes. Time 1.239898 seconds.
+	  Compression level 2. Size 23756 bytes. Time 1.244662 seconds.
+	  Compression level 3. Size 15912 bytes. Time 1.305006 seconds.
+	  Compression level 4. Size 12519 bytes. Time 2.251174 seconds.
+	  Compression level 5. Size 11347 bytes. Time 2.908357 seconds.
+	  Compression level 6. Size 11218 bytes. Time 73.004200 seconds.
+	  Compression level 7. Size 10932 bytes. Time 144.786515 seconds.
 
 6) Credits
 
@@ -132,6 +154,7 @@ Binary:
  Graphic compression algorithms
   Tammo Jan Dijkema
   Enrique Calot
+	Diego Essaya
 
  Graphic format development
   Tammo Jan Dijkema
@@ -152,6 +175,7 @@ Special thanks to:
  - the authors of GCC and LCC for making excelent free compilers.
  - SourceForge.net for the home page hosting and the development
    enviornment provided.
+ - Lugfi for all the support. 
 
 Please enjoy using Princed Resource Editor!
 

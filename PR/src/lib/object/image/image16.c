@@ -39,6 +39,50 @@ compress.c: Princed Resources : Image Compression Library
 #include "pr.h"
 #include "disk.h" /* array2short */
 
+/* Compression level explanation:
+ *
+ * Definitions:
+ *  no compression is called RAW
+ *  there are 2 algorithms types: RLE and LZG
+ *  we can use the modifier: transpose and not transpose (t)
+ *  we can use the LZG modifier: Faster (checks faster the LZG window ignoring
+ *   less probable pattern) (+)
+ *
+ *  So the possible compression algorithms are:
+ *   RAW, RLE, RLEt, LZG, LZGt, LZG+, LZGt+
+ *  
+ *  It is known that LZG+ allways compresses better or equal than LZG
+ *
+ * Depending on the compression level, the compressor will compress with
+ * all the algorithms specified and keep only the smaller result using
+ * the following table
+ * 
+ * Level  Algorithms
+ *   1    RAW
+ *   2    RAW, RLE
+ *   3    RAW, RLE, RLEt
+ *   4    RAW, RLE, RLEt, LZG
+ *   5    RAW, RLE, RLEt, LZG, LZGt
+ *   6    RAW, RLE, RLEt, LZG+, LZGt
+ *   7    RAW, RLE, RLEt, LZG+, LZGt+
+ *
+ * The default level used in PR will be 3.
+ *
+ * In images with big enthropy that generates DAT files bigger than 64kb, using
+ * a better compression is a must. The POP1 DAT file format has this limitation
+ * and the only way to get through with it is improving the compression.
+ *
+ * For testing DAT files that are not for distribution compression 3 is highly
+ * recomended because is much faster and you perform compressions more often.
+ * 
+ * When you release a DAT file a compression level 7 is the best you can use.
+ * You'll have to wait some time to get the importing, but the decompression
+ * is as faster as the decompression in other levels. The game supports it and
+ * decompresses the files very fast. Another advantage is that it is better to
+ * distribute smaller dat files.
+ *
+ */
+
 /***************************************************************\
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
@@ -58,6 +102,17 @@ int expandLzg(const unsigned char* input, int inputSize,
                unsigned char** output, int *outputSize);
 int expandRle(const unsigned char* input, int inputSize, 
                unsigned char** output, int *outputSize);
+
+/***************************************************************\
+|                   Compression Level Manager                   |
+\***************************************************************/
+
+int compressionLevel=3;
+int compressionHigher;
+
+void setCompressionLevel(int cl) {
+	compressionLevel=cl;
+}
 
 /***************************************************************\
 |                        Image transpose                        |
@@ -125,29 +180,37 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 	} else {
 		image->widthInBytes=(image->width+7)/8;
 	}
-	imageSizeInBytes=image->widthInBytes*image->height;
 
+#define checkSize if (imageSizeInBytes!=(image->widthInBytes*image->height))\
+	return COMPRESS_RESULT_FATAL
+#define checkResult if (result==COMPRESS_RESULT_FATAL)\
+	return COMPRESS_RESULT_FATAL
+	
 	switch (getAlgor(image->type)) {
 		case COMPRESS_RAW: /* No Compression Algorithm */
-						/* TODO: use dataSize */
-			if ((image->pix=getMemory(imageSizeInBytes))==NULL) return COMPRESS_RESULT_FATAL;
-			memcpy(image->pix,data,imageSizeInBytes);
+			if ((image->pix=getMemory(dataSizeInBytes))==NULL) return COMPRESS_RESULT_FATAL;
+			memcpy(image->pix,data,dataSizeInBytes);
+			imageSizeInBytes=image->widthInBytes*image->height;
 			result=COMPRESS_RESULT_SUCCESS;
 			break;
 		case COMPRESS_RLE_LR: /* RLE Left to Right Compression Algorithm */
 			result=expandRle(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
+			checkSize;
 			break;
 		case COMPRESS_RLE_UD: /* RLE Up to Down Compression Algorithm */
 			result=expandRle(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
-			if (result==COMPRESS_RESULT_FATAL) return COMPRESS_RESULT_FATAL;
+			checkResult;
+			checkSize;
 			transposeImage(image,imageSizeInBytes);
 			break;
 		case COMPRESS_LZG_LR: /* LZ Groody Left to Right Compression Algorithm */
 			result=expandLzg(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
+			checkSize;
 			break;
 		case COMPRESS_LZG_UD: /* LZ Groody Up to Down Compression Algorithm */
 			result=expandLzg(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
-			if (result==COMPRESS_RESULT_FATAL) return COMPRESS_RESULT_FATAL;
+			checkResult;
+			checkSize;
 			transposeImage(image,imageSizeInBytes);
 			break;
 		default:
@@ -165,6 +228,7 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	int            algorithm;
 	int            i;
 	int            imageSizeInBytes;
+	int            max_alg=1;
 
 	/* Initialize variables */
 	imageSizeInBytes=image->widthInBytes*image->height;
@@ -194,12 +258,14 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	 * size plus a byte each 127 bytes.
 	 * This is accoted by 2*n+50
 	 */
-	compressed[COMPRESS_RLE_LR]=getMemory((2*imageSizeInBytes+50)); 
-	compressRle(
-		image->pix,imageSizeInBytes,
-		compressed[COMPRESS_RLE_LR],&(compressedSize[COMPRESS_RLE_LR])
-	);
-
+	cLevel(2) {
+		compressed[COMPRESS_RLE_LR]=getMemory((2*imageSizeInBytes+50)); 
+		compressRle(
+			image->pix,imageSizeInBytes,
+			compressed[COMPRESS_RLE_LR],&(compressedSize[COMPRESS_RLE_LR])
+		);
+		max_alg++;
+	}
 	/* COMPRESS_LZG_LR 
 	 * If all the uncompressed data has a big enthropy, there
 	 * will be a maskbyte for a block of 8 bytes.
@@ -209,12 +275,18 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	 * allocated.
 	 * This is accoted by 2*n+1050
 	 */
-	compressed[COMPRESS_LZG_LR]=getMemory((2*imageSizeInBytes+1050));
-	compressLzg(
-		image->pix,imageSizeInBytes,
-		compressed[COMPRESS_LZG_LR],&(compressedSize[COMPRESS_LZG_LR])
-	);
-	
+	cLevel(4) {
+		cLevel(6)
+			setHigh;
+		else
+			unsetHigh;
+		compressed[COMPRESS_LZG_LR]=getMemory((2*imageSizeInBytes+1050));
+		compressLzg(
+			image->pix,imageSizeInBytes,
+			compressed[COMPRESS_LZG_LR],&(compressedSize[COMPRESS_LZG_LR])
+		);
+		max_alg++;
+	}
 
 	/* Transposed compression
 	 * Transposition is used to test the same compression
@@ -223,22 +295,32 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	 * The following algorithms will be the same as above, but
 	 * using the image matrix transposed.
 	 */
-	antiTransposeImage(image,imageSizeInBytes);
+	cLevel(3) 
+		antiTransposeImage(image,imageSizeInBytes);
 
 	/* COMPRESS_RLE_UD */
-	compressed[COMPRESS_RLE_UD]=getMemory(2*imageSizeInBytes+50);
-	compressRle(
-		image->pix,imageSizeInBytes,
-		compressed[COMPRESS_RLE_UD],&(compressedSize[COMPRESS_RLE_UD])
-	);
+	cLevel(3) {
+		compressed[COMPRESS_RLE_UD]=getMemory(2*imageSizeInBytes+50);
+		compressRle(
+			image->pix,imageSizeInBytes,
+			compressed[COMPRESS_RLE_UD],&(compressedSize[COMPRESS_RLE_UD])
+		);
+		max_alg++;
+	}
 
 	/* COMPRESS_LZG_UD */
-	compressed[COMPRESS_LZG_UD]=getMemory(2*imageSizeInBytes+1050);
-	compressLzg(
-		image->pix,imageSizeInBytes,
-		compressed[COMPRESS_LZG_UD],&(compressedSize[COMPRESS_LZG_UD])
-	);
-
+	cLevel(5) {
+		cLevel(7)
+			setHigh;
+		else
+			unsetHigh;
+		compressed[COMPRESS_LZG_UD]=getMemory(2*imageSizeInBytes+1050);
+		compressLzg(
+			image->pix,imageSizeInBytes,
+			compressed[COMPRESS_LZG_UD],&(compressedSize[COMPRESS_LZG_UD])
+		);
+		max_alg++;
+	}
 	/*
 		Process results
 	*/
@@ -246,7 +328,7 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	/* Select the best compression (find minimum) */
 	*dataSizeInBytes=compressedSize[COMPRESS_RAW];
 	algorithm=COMPRESS_RAW;
-	for (i=COMPRESS_RLE_LR;i<COMPRESS_WORKING_ALGORITHMS;i++) {
+	for (i=COMPRESS_RLE_LR;i<max_alg;i++) {
 		if ((*dataSizeInBytes)>compressedSize[i]) {
 			(*dataSizeInBytes)=compressedSize[i];
 			algorithm=i;
@@ -273,7 +355,7 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	(*data)[5]=image->type|algorithm;
 
 	/* Free all compression attempts */
-	for (i=COMPRESS_RAW;i<COMPRESS_WORKING_ALGORITHMS;i++) free(compressed[i]);
+	for (i=COMPRESS_RAW;i<max_alg;i++) free(compressed[i]);
 	return 1;
 }
 

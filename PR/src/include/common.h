@@ -188,7 +188,8 @@ int prMain(int option, const char* extension,const char* dirName,const char* res
 {"force",       no_argument,       0,'f'},\
 {"cgi",         no_argument,       0,'g'},\
 {"help",        no_argument,       0,'?'},\
-{"resource",    required_argument, 0,'s'}\
+{"resource",    required_argument, 0,'s'},\
+{"compression-level",    required_argument, 0,'z'}\
 PARSING_OPTRAW\
 {"recursive",   no_argument,       0,'R'},\
 {"datfile",     required_argument, 0,'t'},\
@@ -198,7 +199,7 @@ PARSING_OPTRAW\
 {0, 0, 0, 0}\
 }
 
-#define PARSING_CHARS    "i::c::dx::e::b::a::fgs::t::Rvh?"PARSING_CHRRAW
+#define PARSING_CHARS    "z::i::c::dx::e::b::a::fgs::t::Rvh?"PARSING_CHRRAW
 
 /* Flags */
 #define import_flag      0x0001

@@ -40,13 +40,14 @@ compress.c: Princed Resources : Image Compression Library
 int expandRle(const unsigned char* input, int inputSize, 
                unsigned char** output, int *outputSize) {
 	int cursor=0;
-	register signed char rep;
+	register signed char rep=1;
 	int pos=0;
 
-	if ((*output=malloc(*outputSize+128))==NULL) return COMPRESS_RESULT_FATAL; /* reserve memory */
+	/* reserve memory */
+	if ((*output=malloc(40000))==NULL) return COMPRESS_RESULT_FATAL; 
 
 	/* main loop */
-	while (cursor<*outputSize) {
+	while (pos<inputSize) {
 		rep=(signed char)(input[pos++]);
 		if (rep<0) {
 			/* Negative */
@@ -55,9 +56,11 @@ int expandRle(const unsigned char* input, int inputSize,
 		} else {
 			/* Positive */
 			rep=~rep;
-			while (rep++) (*output)[cursor++]=input[pos++];
+			while ((rep++)&&(pos<inputSize)) (*output)[cursor++]=input[pos++];
 		}
 	}
-	return ((pos==inputSize)&(cursor==*outputSize))-1; /* WARNING or SUCCESS */
+
+	*outputSize=cursor;
+	return (rep==1)?COMPRESS_RESULT_SUCCESS:COMPRESS_RESULT_WARNING;
 }
 

@@ -118,8 +118,9 @@ NULL,NULL,NULL,\
 #define PARSING_RAW ""
 #endif
 #define PARSING_HELP_BEGIN "Usage: \n\
-  pr [-x[EXPORTDIR]|-i[IMPORTDIR]|-d] [DATFILEPATH]\n\
-  pr [OPTIONS] [DATFILEPATH]\n\
+  pr [OPTIONS] [-x[EXPORTDIR]|-i[IMPORTDIR]|-d] [DATFILEPATH]...\n\
+  pr --help\n\
+  pr --version\n\
 \n\
   Mandatory arguments to long options are mandatory for short options too.\n\
 \n"
@@ -142,6 +143,12 @@ NULL,NULL,NULL,\
                               is not a dat file)\n\
    -t, --datfile=DATFILE      specifies a dat file to read resources\n\
                               different than the original file\n\
+   -z, --compression-level=n  a number from 1 to 7 specifying how hard has PR\n\
+                              to try to reduce the generated dat files.\n"
+
+#define PARSING_HELP_PART4 "\
+                              1 is high speed, low compression, 7 is high\n\
+                              compression but low speed.\n\
        --unknown              generate the unknown file without performing\n\
                               any extraction\n\
    -v, --verbose              explain what is being done\n\

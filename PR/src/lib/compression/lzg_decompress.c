@@ -31,6 +31,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "compress.h"
 
 /* modulus to be used in the 10 bits of the algorithm */
 #define LZG_WINDOW_SIZE    0x400 /* =1024=1<<10 */
@@ -90,5 +91,6 @@ int expandLzg(const unsigned char* input, int inputSize,
 		(*output2)[iCursor-LZG_WINDOW_SIZE]=output[iCursor];
 
 	return (!maskbyte)-1;
+	/*return rep?COMPRESS_RESULT_WARNING:COMPRESS_RESULT_SUCCESS;*/
 }
 

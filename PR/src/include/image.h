@@ -85,6 +85,13 @@ typedef struct {
 int mCompressGraphic(unsigned char** a,tImage* i, int* size);
 int mExpandGraphic(const unsigned char* array,tImage *image, int size);
 
+void setCompressionLevel(int cl);
+
+#define cLevel(a) if (compressionLevel>=a)
+#define cHigh if (compressionHigher)
+#define setHigh compressionHigher=1
+#define unsetHigh compressionHigher=0
+
 #define getCarry(a) ((a)>>6)
 #define getAlgor(a) a&0x4F
 

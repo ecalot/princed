@@ -39,6 +39,7 @@ main.c: PR console program parsing routine
 #include <string.h>
 #include "memory.h"
 #include "filedir.h"
+#include "compress.h" /* setCompressionLevel */
 #include "xmlparse.h" /* free parsed cache */
 
 FILE* outputStream;
@@ -48,6 +49,7 @@ void syntax() {
 	fprintf(outputStream,PARSING_HELP_PART1);
 	fprintf(outputStream,PARSING_HELP_PART2);
 	fprintf(outputStream,PARSING_HELP_PART3);
+	fprintf(outputStream,PARSING_HELP_PART4);
 }
 
 /***************************************************************\
@@ -105,6 +107,9 @@ int main (int argc, char **argv) {
 				case 's':
 					freeAllocation(resFile);
 					resFile=strallocandcopy(optarg);
+					break;
+				case 'z':
+					if (optarg) setCompressionLevel(atoi(optarg));
 					break;
 				case 'r':
 #ifndef PR_IGNORE_RAW_OPTION

@@ -66,9 +66,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "compress.h"
 
 /*#define LZG_REVERSE*/
-/*#define LZG_FASTER*/
+extern int compressionHigher;
 
 #ifdef LZG_REVERSE
 void *memrchr2(unsigned char *s, int c, size_t n) {
@@ -126,16 +127,16 @@ void search_best_pattern(unsigned char *input, int inputSize,
 
 		if (pattern_len == MAX_PATTERN_SIZE) break;
 
-		/* if LZG_FASTER is defined compression rate will be 5% worst
-		 * and compression time will be 80% faster */
-#ifdef LZG_FASTER
-		window_len -= wc - window;
-		if (window_len <= 0) break;
-		window = wc;
-#else
-		window_len--;
-		window++;
-#endif
+		/* if cLevel is 9 compression rate will be 5% better
+		 * and compression time will be 400% slower */
+		cHigh {
+			window_len--;
+			window++;
+		} else {
+			window_len -= wc - window;
+			if (window_len <= 0) break;
+			window = wc;
+		}
 	}
 }
 
