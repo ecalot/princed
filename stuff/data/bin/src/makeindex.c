@@ -6,8 +6,9 @@ int main(int c, char** files) {
 	char* index;
 	FILE* fpd;
 	FILE* fpi;
-	char filename[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	unsigned short int i;
+	char filename[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	char filenameaux[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	unsigned short int i,j;
 	unsigned short int numbers[500];
 	
 	if (c!=3) {
@@ -35,7 +36,16 @@ int main(int c, char** files) {
 
 	//process filename
 	fgets(filename,sizeof(filename),fpd);
-	fwrite(filename,1,20,fpi);
+	for(i=0,j=0;filename[i];i++) {
+		if (filename[i]==' ') {
+			j=14;
+			continue;
+		}
+		if (filename[i]=='\n') break;
+		filenameaux[j]=filename[i];
+		j++;
+	}
+	fwrite(filenameaux,1,28,fpi);
 
 	//resd numbers
 	i=0;
