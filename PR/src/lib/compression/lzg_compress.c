@@ -66,7 +66,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "lzg_compress.h"
 
 /*#define LZG_REVERSE*/
 /*#define LZG_FASTER*/

@@ -30,7 +30,6 @@
  */
 
 #include <stdio.h>
-#include "lzg_uncompress.h"
 
 /* modulus to be used in the 10 bits of the algorithm */
 #define LZG_WINDOW_SIZE    0x400 /* =1024=1<<10 */
@@ -55,11 +54,9 @@ int expandLzg(const unsigned char* input, int inputSize,
 	/* main loop */
 	while (iCursor<inputSize) {
 		maskbyte=input[iCursor++];
-printf("maskbyte i=%d\n", iCursor - 1);
 		for (k=8;k&&(iCursor<inputSize);k--) {
 			if (popBit(&maskbyte)) {
 				output[oCursor++]=input[iCursor++]; /* copy input to output */
-printf("copy i=%d o=%d data=%02x\n", iCursor - 1, oCursor - (LZG_WINDOW_SIZE + 1), output[oCursor-1]);
 			} else {
 				/*
 				 * loc:
@@ -74,7 +71,6 @@ printf("copy i=%d o=%d data=%02x\n", iCursor - 1, oCursor - (LZG_WINDOW_SIZE + 1
 				iCursor+=2; /* move the cursor 2 bytes ahead */
 				
 				loc=(oCursor-loc)&0x3ff; /* this is the real loc number (allways positive!) */
-printf("pattern i=%d o=%d rep=%d loc=%d\n", iCursor - 2, oCursor-LZG_WINDOW_SIZE, rep, loc);
 				
 				while (rep--) { /* repeat pattern in output */
 					output[oCursor]=output[oCursor-loc];
