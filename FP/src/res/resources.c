@@ -95,7 +95,7 @@ tData* resLoad(long id) {
 	int total=res_get_part_size(id);
 	int from=res_get_part_from(id);
 	int type=res_get_part_type(id);
-printf("type=%d mask=%d total=%d from=%d\n",type,mask,total,from);
+
 	switch (type) {
 		case RES_TYPE_LVL:
 			if (total!=2) {
@@ -117,21 +117,21 @@ printf("type=%d mask=%d total=%d from=%d\n",type,mask,total,from);
 			tMemory palette;
       tImage image;
       tPalette pal;
-printf("ttest\n"); 
+
 			result=(tData*)malloc(sizeof(tData));
 			result->frames=total-2; /* drop filename and palette */
 			result->pFrames=(void**)malloc(result->frames*sizeof(void*));
-printf("sssttest %d %d\n",from,res_list[from] );
+
 			if (!mReadBeginDatFile(&numberOfItems,res_file[res_list[from]])) {
 				printf("Fatal Error: resLoad: level file not found!\n");
 				return NULL;
 			}
-printf("ttest\n");
+
 			if(!res_getDataById(res_list[from+1],numberOfItems,&palette)) {
 				printf("Fatal Error: resLoad: palette not found!\n");
 				return NULL;
 			}
-			printf("hola %d\n",(long)palette.size);
+
 			if (palette.size!=100) {
       	printf("Fatal error: resLoad: invalid palette\n");
         return NULL;
@@ -150,7 +150,7 @@ printf("ttest\n");
 				/* convert image structure into blittable output surfaces */
 				result->pFrames[total]=(void*)outputLoadBitmap(
 					image.pix,image.widthInBytes*image.height,pal,image.height,image.width,
-					(mask&(RES_MODS_LEFT))==(RES_MODS_LEFT),1
+					(mask&(RES_MODS_RIGHT))==(RES_MODS_RIGHT),1
         );
 
 				/* free intermediate image data */
