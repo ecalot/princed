@@ -305,10 +305,14 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	if (isIn(left,TILE_BP_TOP)) 
 		e(85,(x-1)*TILE_W+0,y*TILE_H+3);
 	/* pressable/left */
-	if (isIn(left,TILE_BTN_RAISE)) 
-		e(10,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(left)?1:2));
-	if (isIn(left,TILE_BTN_DROP)) 
-		e(10,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(left)?2:3));
+	if (isIn(left,TILES_RAISE_PRESSED)) 
+		e(10,(x-1)*TILE_W+0,y*TILE_H+2);
+	if (isIn(left,TILES_RAISE_UNPRESSED)) 
+		e(10,(x-1)*TILE_W+0,y*TILE_H+1);
+	if (isIn(left,TILES_DROP_PRESSED)) 
+		e(10,(x-1)*TILE_W+0,y*TILE_H+3);
+	if (isIn(left,TILES_DROP_UNPRESSED)) 
+		e(10,(x-1)*TILE_W+0,y*TILE_H+2);
 	/* debris/left */
 	if (isIn(left,TILES_BROKENTILE)) 
 		e(49,(x-1)*TILE_W+0,y*TILE_H+2);
@@ -369,19 +373,17 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	if (isIn(tile,TILE_BP_TOP)) 
 		e(87,(x-1)*TILE_W+8,y*TILE_H+3);
 	/* pressable/this */
-	if (isIn(tile,TILE_BTN_RAISE) && buttonIsNormal(tile) && isIn(left,TILES_WALKABLE) && ( !isIn(left,TILES_RAISE )) )
-		e(57,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(tile)?0:1));
-	if (isIn(tile,TILE_BTN_RAISE) && (  ( !buttonIsNormal(tile) )||( !isIn(left,TILES_WALKABLE) )|| isIn(left,TILES_RAISE) )  )
+	if (isIn(tile,TILES_RAISE_UNPRESSED)&&isIn(left,TILES_WALKABLE)&&(!isIn(left,TILES_RAISE)))
+		e(57,(x-1)*TILE_W+0,y*TILE_H);
+	if (isIn(tile,TILES_RAISE) && (  ( !buttonIsNormal(tile) )||( !isIn(left,TILES_WALKABLE) )|| isIn(left,TILES_RAISE) )  )
 		e(58,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(tile)?0:1));
-	if (isIn(tile,TILE_BTN_DROP)) 
-		e(58,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(tile)?1:2));
+	if (isIn(tile,TILES_DROP_PRESSED)) 
+		e(58,(x-1)*TILE_W+0,y*TILE_H+2);
+	if (isIn(tile,TILES_DROP_UNPRESSED)) 
+		e(58,(x-1)*TILE_W+0,y*TILE_H+1);
 	/* debris/this */
 	if (isIn(tile,TILES_BROKENTILE)) 
 		e(48,(x-1)*TILE_W+0,y*TILE_H+0);
-	/* chopper/this /
-	if (isIn(tile,TILE_CHOPPER)) 
-		e(9,(x-1)*TILE_W+0,y*TILE_H+0);
-	*/
 	/* spikes/this */
 	if (isIn(tile,TILES_SPIKES)) {
 		e(101,(x-1)*TILE_W+0,y*TILE_H+0);
