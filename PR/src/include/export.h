@@ -4,8 +4,6 @@
 
 #include "resources.h"
 
-char writeData(unsigned char* data, int ignoreChars, char* vFileext, int size);
-
 /***************************************************************\
 |                     M A I N   E X T R A C T                   |
 \***************************************************************/

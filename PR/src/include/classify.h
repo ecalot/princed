@@ -1,5 +1,6 @@
 
-//int verifyDatType(char* vFiledat);
+#ifndef _TASKS_H_
+#define _TASKS_H_
 
 /*
 	Return values may be:
@@ -14,12 +15,10 @@
 	 04 Midis file
 	 05 Valid DAT file with Undefined content
 	 06 Graphic file with a palette in the first valid entry (common)
+	 07 PC Speaker dat file
 
 	 11 Pop2 dat files
 */
-
-#ifndef _TASKS_H_
-#define _TASKS_H_
 
 int prVerifyDatType(char* vFiledat);
 

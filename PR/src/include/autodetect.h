@@ -2,20 +2,23 @@
 #ifndef _RESOURCES_H_
 #define _RESOURCES_H_
 
-#define HEADER      "Princed V3.0 alpha game resources list\n(c) Copyright 2003 - Enrique P. Calot\n(c) Copyright 2003 - Princed Development Team\n\nSyntax:\nId    Size  Offset    File    Type Description       Comments\nXXXXX YYYYY ZZZZZ SSSSSSSS.DAT TT Ddddddddddddd...  #cccccccc....\n\nComments are optional\n\nNote:\n You can edit description and commets here in the file and\n they will be saved in the dat files.\n\nResource Types:\n 01 Levels\n 02 Bitmaps\n 03 Waves\n 04 Midis\n"
-#define BEGIN_TABLE "BEGIN resources table\n"
-#define END_TABLE   "END resources table\n"
-
 #define MAX_LINE_SIZE 300
+
+#define RES_XML_UNKNOWN_XML   "unknown.xml"
+#define RES_XML_UNKNOWN_PATH  "%s/unknown/%s/"
+#define RES_XML_UNKNOWN_START "<?xml version=\"1.0\" ?>\n<itemtypes version=\"0.6\">\n <folder name=\"unknown\" file=\"%s\" external=\"%s\" palette=\"%d\">\n"
+#define RES_XML_UNKNOWN_ITEM  "  <item value=\"%d\" external=\"res%05d.%s\" itemtype=\"%d\">Unknown Resource number %d</item>\n"
+#define RES_XML_UNKNOWN_END   " </folder>\n</itemtypes>\n"
+#define RES_XML_UNKNOWN_FILES "%d.%s"
 
 //types
 typedef struct {
+	unsigned short int palette;
 	unsigned short int size;
 	unsigned short int offset;
-	char      file[13];
 	char      type;
-	char*     desc;
-	char*     coms;
+	char*     path;
+	char*     palAux;
 }tResource;
 
 //Verify  header
@@ -29,6 +32,7 @@ char verifyHeader(char* array, int size);
 	 04 Midis
 	 05 Undefined
 	 06 Palette
+	 07 Speaker Sounds
 */
 
 /***************************************************************\
@@ -39,18 +43,17 @@ char verifyHeader(char* array, int size);
 void emptyTable(tResource* r[]);
 
 //parse file
-char parseFile(char* vFile,tResource* r[]);
+char parseFile(char* vFile, char* datFile, tResource* r[]);
 
 //generate file
 char generateFile(char* vFile,tResource* r[]);
 
 //Resources extras
 
-void getFileName(char* vFileext,char* vDirExt,char type, unsigned short int id);
+void getFileName(char* vFileext,char* vDirExt,tResource* r,short id,char* vFiledat);
 void getUpperFolder(char* aux, char* vFiledat);
 
-//File handrling
-int mLoadFileArray(char* vFile,unsigned char** array);
-char mSaveRaw(char* vFile,unsigned char* output, int size);
+//In case there are unknown resources it closes the unknown XML output
+void endUnknownXml();
 
 #endif

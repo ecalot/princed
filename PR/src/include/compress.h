@@ -1,8 +1,7 @@
 
-#ifndef _PG_H_
-#define _PG_H_
+#ifndef _COMPRESS_H_
+#define _COMPRESS_H_
 
-#define SIZE_OF_FILE    64*1024
 #define SIZE_OF_ARRAY   1000
 #define SIZE_OF_PALETTE 3*16
 
@@ -22,7 +21,7 @@ typedef struct {
 
 //Prototypes:
 
-int mCompressGraphic(unsigned char* a,tImage i, int* size);
+int mCompressGraphic(unsigned char* a,tImage* i, int* size);
 int mExpandGraphic(char* array,tImage *image, int size);
 
 /*
