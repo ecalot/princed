@@ -47,10 +47,6 @@ disk.c: Princed Resources : Disk Access & File handling functions
 #include <sys/types.h>
 #include <sys/stat.h>
 
-/* #define DISK_DIR_SCANING         */
-/* #define DISK_TERM_MANIPULATION   */
-#define DISK_ALLWAYS_FORCE
-
 #ifndef DISK_ALLWAYS_FORCE
 #include "pr.h" /* language texts */
 #include "xmlparse.h" /* equalsIgnoreCase */

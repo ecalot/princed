@@ -41,12 +41,15 @@ disk.h: Princed Resources : Disk Access & File handling functions headers
 
 #include <stdio.h>
 
+/* #define DISK_DIR_SCANING         */
+/* #define DISK_TERM_MANIPULATION   */
+#define DISK_ALLWAYS_FORCE
+
 /* 64 Kb */
 #define SIZE_OF_FILE     256*1024
 #define MAX_FILENAME_SIZE        260
 
 #define DIR_SEPARATOR '/'
-
 
 typedef enum {eFile,eDirectory,eNotFound}whatIs;
 
@@ -76,16 +79,31 @@ const char* getFileNameFromPath(const char* path);
 whatIs isDir(const char *nombre);
 #define mRemoveFile(a) remove(repairFolders(a))
 
+#ifdef DISK_DIR_SCANING
+int recurseDirectory(const char* path,int recursive, void* pass, void (*function)(const char*,void*));
+#endif
+
 /* array2vars*/
 
 #define array2short(a) ((*(a)))+((*((a)+1))<<8)
 #define array2long(a)  ((*(a)))+((*((a)+1))<<8)+((*((a)+2))<<16)+((*((a)+3))<<24)
 
+#ifdef MACOS
+#define freadshort(var,file)  macfreads ((var),file)
+#define freadlong(var,file)   macfreadl ((var),file)
+#define fwriteshort(var,file) macfwrites((var),file)
+#define fwritelong(var,file)  macfwritel((var),file)
+#define fwritechar(var,file)  fwrite((var),1,1,file)
+int macfreads (void* bigEndian,FILE* file);
+int macfreadl (void* var,FILE* file);
+int macfwrites(const void* var,FILE* file);
+int macfwritel(const void* var,FILE* file);
+#else
 #define freadshort(var,file)  fread ((var),2,1,file)
 #define freadlong(var,file)   fread ((var),4,1,file)
 #define fwriteshort(var,file) fwrite((var),2,1,file)
 #define fwritelong(var,file)  fwrite((var),4,1,file)
 #define fwritechar(var,file)  fwrite((var),1,1,file)
-
 #endif
 
+#endif

@@ -41,8 +41,15 @@ disk.h: Princed Resources : Disk Access & File handling functions headers
 
 #include <stdio.h>
 
+#define DISK_DIR_SCANING
+#define DISK_TERM_MANIPULATION
+/* #define DISK_ALLWAYS_FORCE   */
+
 /* 64 Kb */
 #define SIZE_OF_FILE     256*1024
+#define MAX_FILENAME_SIZE        260
+
+#define DIR_SEPARATOR '/'
 
 typedef enum {eFile,eDirectory,eNotFound}whatIs;
 
@@ -69,10 +76,12 @@ int  mLoadFileArray(const char* vFile,unsigned char** array);
 int  makebase      (const char* p);
 const char* repairFolders(const char* a);
 const char* getFileNameFromPath(const char* path);
-int recurseDirectory(const char* path,int recursive, void* pass, void (*function)(const char*,void*));
 whatIs isDir(const char *nombre);
-int mCopy(const char* strSource, const char* strTarget);
 #define mRemoveFile(a) remove(repairFolders(a))
+
+#ifdef DISK_DIR_SCANING
+int recurseDirectory(const char* path,int recursive, void* pass, void (*function)(const char*,void*));
+#endif
 
 /* array2vars*/
 
@@ -98,4 +107,3 @@ int macfwritel(const void* var,FILE* file);
 #endif
 
 #endif
-
