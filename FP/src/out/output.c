@@ -159,7 +159,8 @@ outputLoadBitmap(const unsigned char* data, int size,
 /* Frees the abstract object created by the loadBitmap function */
 void outputFreeBitmap(void* image) {
 	if (image) {
-		SDL_FreeSurface((SDL_Surface *)image);
+		SDL_FreeSurface(((tSurface*)image)->surface);
+		free(image);
 	}
 }
 
