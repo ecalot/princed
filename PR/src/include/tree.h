@@ -68,7 +68,7 @@ typedef struct {
 	unsigned char number; /* Used for level number */
 	char      type;
 	char*     path;
-	char*     palAux;
+	unsigned char*     palAux;
 	char*     name;
 	char*     desc;
 }tResource;

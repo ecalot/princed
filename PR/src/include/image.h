@@ -57,7 +57,6 @@ typedef struct {
 	int width;
 	int widthInBytes;
 	int height;
-	//int sizeInBytes;
 	unsigned char* pix;
 	unsigned char pal[SIZE_OF_PALETTE];
 	unsigned char type; /* XY where X=B if 4 bits or X=0 if 1 bit; Y=algorithm */

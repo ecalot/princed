@@ -43,7 +43,6 @@ disk.h: Princed Resources : Disk Access & File handling functions headers
 
 /* 64 Kb */
 #define SIZE_OF_FILE     256*1024
-//#define COPY_BUFFER_SIZE 512
 
 typedef enum {eFile,eDirectory,eNotFound}whatIs;
 
