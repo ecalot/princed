@@ -34,7 +34,40 @@ titles.c: FreePrince : Titles, animation and presentation
 #include "output.h"
 #include "titles.h"
 #include "input.h"
-#include <stdio.h> /* debug printf */
+#include <stdio.h> /* NULL */
+#include <stdlib.h> /* malloc/free */
+
+#include "anims.h"
+#include "kid.h"
+
+/* New source */
+
+tMenuOption playAnimation(int id) {
+	int totalStates=animStart(id);
+	int qf,qt,qo,i;
+	animFixedimg* f;
+	animState* t;
+	animSound* o;
+	tKey key=inputCreateKey();
+	tKey nullKey=inputCreateKey();
+
+	tKid* object=(tKid*)malloc(totalStates*sizeof(tKid));
+	for (i=0;i<totalStates;i++) object[i]=kidCreate();
+	while (animGetFrame(&qf,&qt,&qo,f,t,o)) {
+		if (inputGetEvent(&key)) {
+			/* key pressed */
+			printf("key pressed\n");
+		} else {
+  		kidMove(object+1,nullKey,NULL);
+		}
+	}
+	/*void kidDraw(tKid kid);*/
+	for (i=0;i<totalStates;i++) kidFree(object[i]);
+	free(object);
+	return menuQuit;
+}
+
+/* Old source */
 
 tMenuOption getAction(tKey key) {
 	switch(key.actionPerformed) {
