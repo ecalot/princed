@@ -69,5 +69,21 @@ void roomDrawBackground(tRoom* room);
 void roomDrawForeground(tRoom* room);
 void roomLoadGfx(long environment); /* Only to initialize environment by mapStart */
 
+#define w1_darker(a)     ((a)&1)
+#define w1_left_down(a)  ((a>>1)&1)
+#define w1_right_down(a) ((a>>2)&1)
+#define w1_right_up(a)   ((a>>3)&1)
+#define w2_left_down(a)  ((a>>4)&1)
+#define w2_left_up(a)    ((a>>5)&1)
+#define w2_right_down(a) ((a>>6)&1)
+#define w2_right_up(a)   ((a>>7)&1)
+
+#define w2_offset(a)     ((a>>8)&1)
+#define w2_sep(a)        ((a>>9)&1)
+#define w3_offset(a)     ((a>>10)&1)
+#define w3_sep(a)        ((a>>13)&1)
+
+#define WALL_PROPERTIES {37632, 28483, 27648, 9224, 46081, 37760, 19200, 9280, 9248, 46888, 28418, 19328, 9216, 46081, 37632, 28416, 19201, 46080, 36864, 0, 0, 0, 128, 0, 64, 1, 4, 0, 128, 0, 8, 1, 4, 16, 65, 2, 8, 0, 128, 0, 0, 0, 0, 0, 2, 0, 16, 0, 0, 1, 0, 0, 0}
+
 #endif
 
