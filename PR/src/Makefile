@@ -94,7 +94,7 @@ lib: $(OBJFILES) $(SRC3)
 	$(CC) $(OPTIONS) -o bin/pr.so $(OBJFILES) -Llibc -shared -dynamic
 	$(INFO) Library successfully compiled
 	$(INFO)
-	$(INFO) Please read readme.coders.txt and pr.h for interfaces
+	$(INFO) Please read lib/readme.coders.txt and pr.h for interfaces
 	$(INFO)
 
 #files
@@ -104,57 +104,57 @@ $(XMLFILE): resources.xml.gz
 	$(MAKEDIR) bin
 	$(GZIP) -cd resources.xml.gz >bin/resources.xml
 
-compile.o: compile.c
+compile.o: lib/compile.c
 	$(INFO) Compiling import module...
-	$(CC) -c compile.c $(OPTIONS)
+	$(CC) -c lib/compile.c $(OPTIONS)
 
-memory.o: memory.c
+memory.o: lib/memory.c
 	$(INFO) Compiling memory manager...
-	$(CC) -c memory.c $(OPTIONS)
+	$(CC) -c lib/memory.c $(OPTIONS)
 
-extract.o: extract.c
+extract.o: lib/extract.c
 	$(INFO) Compiling export module...
-	$(CC) -c extract.c $(OPTIONS)
+	$(CC) -c lib/extract.c $(OPTIONS)
 
-compress.o: compress.c
+compress.o: lib/compress.c
 	$(INFO) Compiling compression module...
-	$(CC) -c compress.c $(OPTIONS)
+	$(CC) -c lib/compress.c $(OPTIONS)
 
-main.o: main.c
+main.o: console/main.c
 	$(INFO) Compiling command parsing module for standard mode...
-	$(CC) -c main.c $(OPTIONS)
+	$(CC) -c console/main.c $(OPTIONS)
 
-pr.o: pr.c
+pr.o: lib/pr.c
 	$(INFO) Compiling main library primitives for both modes...
-	$(CC) -c pr.c $(OPTIONS)
+	$(CC) -c lib/pr.c $(OPTIONS)
 	
-filedir.o: filedir.c
+filedir.o: console/filedir.c
 	$(INFO) Compiling directory and recursive file reading module for standard mode...
-	$(CC) -c filedir.c $(OPTIONS)
+	$(CC) -c console/filedir.c $(OPTIONS)
 
-resources.o: resources.c
+resources.o: lib/resources.c
 	$(INFO) Compiling resource manager module...
-	$(CC) -c resources.c $(OPTIONS)
+	$(CC) -c lib/resources.c $(OPTIONS)
 
-tasks.o: tasks.c
+tasks.o: lib/tasks.c
 	$(INFO) Compiling extra tasks module...
-	$(CC) -c tasks.c $(OPTIONS)
+	$(CC) -c lib/tasks.c $(OPTIONS)
 
-xmlparse.o: xmlparse.c
+xmlparse.o: lib/xmlparse.c
 	$(INFO) Compiling xml parsing module...
-	$(CC) -c xmlparse.c $(OPTIONS)
+	$(CC) -c lib/xmlparse.c $(OPTIONS)
 
-xmlsearch.o: xmlsearch.c
+xmlsearch.o: lib/xmlsearch.c
 	$(INFO) Compiling xml search features...
-	$(CC) -c xmlsearch.c $(OPTIONS)
+	$(CC) -c lib/xmlsearch.c $(OPTIONS)
 
-disk.o: disk.c
+disk.o: lib/disk.c
 	$(INFO) Compiling disk access library...
-	$(CC) -c disk.c $(OPTIONS)
+	$(CC) -c lib/disk.c $(OPTIONS)
 
-dat.o: dat.c
+dat.o: lib/dat.c
 	$(INFO) Compiling dat editing library...
-	$(CC) -c dat.c $(OPTIONS)
+	$(CC) -c lib/dat.c $(OPTIONS)
 
 bmp.o: formats/bmp.c
 	$(INFO) Compiling bitmap files support \(bmp\)...
