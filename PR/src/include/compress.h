@@ -85,8 +85,6 @@ typedef struct {
 int mCompressGraphic(unsigned char** a,tImage* i, int* size);
 int mExpandGraphic(const unsigned char* array,tImage *image, int size);
 
-void setCompressionLevel(int cl);
-
 #define cLevel(a) if (compressionLevel>=a)
 #define cHigh if (compressionHigher)
 #define setHigh compressionHigher=1
@@ -95,25 +93,5 @@ void setCompressionLevel(int cl);
 #define getCarry(a) ((a)>>6)
 #define getAlgor(a) a&0x4F
 
-/*
-	Class future definitions
-
-public:
- char cPrincedGraph::mOpenGraphDat     (char* fileName);
- char cPrincedGraph::mSaveGraphDat     (char* fileName);
- char cPrincedGraph::mGetGraphFull     (int id, CBitmap &bitmap, CBitmap &mask);
- char cPrincedGraph::mGetGraphMap      (int id, CBitmap &bitmap);
- char cPrincedGraph::mGetGraphMask     (int id, CBitmap &bmask);
- char cPrincedGraph::mSetGraph         (int id, CBitmap &bitmap);
- int  cPrincedGraph::mGetGraphCount    ();
- char cPrincedGraph::mSaveImportBmp    (int id, char* fileName);
- char cPrincedGraph::mSaveExportBmp    (int id, char* fileName);
-
-private:
- unsigned char* file;
- int            fileSize;
- tImage*        imageArray[256];
- int            imageArrayLength;
-
-*/
 #endif
+
