@@ -4,7 +4,7 @@ int main(int a, char** b) {
 	FILE* fp;
 	char c,o;
 	int i,j,g;
-	char *chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 -:.;,<>\\/*!\"$%&/()=@^[]'\"-_";
+	char *chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 -:.;,<>\\/*!\"$%&/()=@^`[]'\"-_";
 	char* s;
 	int pos_x[92] = {0, 7, 14, 21, 28, 34, 40, 47, 54, 59, 66, 74, 80,
 		89, 96, 103, 110, 117, 124, 131, 138, 145, 152, 161, 168, 175, 184,
