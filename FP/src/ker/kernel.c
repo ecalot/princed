@@ -40,20 +40,27 @@ kernel.c: FreePrince : Main Kernel
 #include "titles.h"
 #include "kid.h"
 #include "room.h"
+#include "maps.h"
 
 /*
  * Main game control function
  */
 
 int playgame(int optionflag,int level) {
-	tKey   key=inputCreateKey();
-	tKid   kid=kidCreate();
-
-/* Game loop here */
-	drawScreen(4,level);
-/* Level loop here */
-	outputClearScreen(); /* TODO: send to drawScreen(0) */
-	/*drawScreen(0); TODO: try to optimize what to draw */
+	/* Create objects */
+	tKey    key=inputCreateKey();
+	tKid    kid=kidCreate();
+	tData*  map=NULL; /*resLoad(RES_MAP+level);*/
+	tRoom   room;
+	tRoomId roomId;
+	
+	/* Game loop here */
+	
+	/* Initialize kid and room in the map */
+	mapStart(map,&kid,&roomId);
+	room=mapGetRoom(map,roomId);
+	
+	/* Level loop here */
 	while (1) {
 		if (inputGetEvent(&key)) {
 			/* Time event */
@@ -64,21 +71,21 @@ int playgame(int optionflag,int level) {
 			 * the key is interpreted in kid object
 			 */
 			kidMove(&kid,key);
-			
+			mapMove(map);	
 			/* Drawing functions */
 			outputClearScreen(); /* TODO: send to drawScreen(0) */
-			drawScreen(0,0);
-			drawScreen(1,0);
-			drawScreen(2,0);
+			roomDrawBackground(&room);
 			kidDraw(kid);
-			drawScreen(3,0);
+			roomDrawForeground(&room);
 			outputUpdateScreen();
 		} else {
 			/* Action event */
 			switch (key.actionPerformed) {
 			case quit:
+				resFree(map);
 				return 1;
 			case gotoTitles:
+				resFree(map);
 				return 0;
 			default:
 				break;

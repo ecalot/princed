@@ -19,8 +19,8 @@
 */
 
 /*
-drawscreen.c: FreePrince : Draw Screen
-¯¯¯¯¯¯¯¯¯¯¯¯
+room.c: FreePrince : Room and Tile Object
+¯¯¯¯¯¯
  Copyright 2004 Princed Development Team
   Created: 18 Jul 2004
 
@@ -38,82 +38,75 @@ drawscreen.c: FreePrince : Draw Screen
 #include "room.h"
 #include "maps.h"
 
-void drawScreen(/*tRoom room, */int layer,int level) { /* TODO: rename it to roomDraw */
-	static int frame=0;
-	int i,x,y,fase;
-	tTile tile;
-	static tData* torch;
-	static tData* environment;
+static struct {
+	tData* torch;
+	tData* environment;
+} roomGfx;
 
-/* draws the screen where the kid is
- * if layer is 0 the background is loaded
- * if layer is 1 the foreground columns are loaded
- * if layer is 2 the torches are drawn
- * if layer is 3 the columns that need to be redrawn are drawn
- *
- * if layer is 4 the function loads the vdungeon enviorment
- *             5                        vpalace
- */
-
-	switch (layer&0x0f) {
-		case 0:
-			/* Draw and initialize the background */
-			frame=0;
-			for(x=0;x<5;x++) {
-				for (y=0;y<12;y++) {
-					/*tile=levelGetTile(room,x,y);*/
-					printf("%c",'A'+tile.code);
-				/*drawTile((i%10)*20,(i/10)*20,map[i]);*/
-				}
-				printf("\n");
-			}
-			break;
-		case 1:
-			break;
-		case 2:
-			if (frame==torch->frames) frame=0;
-			fase=0;
-			for (i=0;i<30;i++) {
-/*				if (map[i]==torch) {								
-					outputDraw((i%10)*20,(i/10)*20,torch.pFrame[(frame+fase)%torch.frames]);
-					fase+=2;
-				}*/
-			}
-			frame++;
-			break;
-		case 3:
-			break;
-		case 4:
-		case 5:
-			if (environment!=NULL) {
-				resFree(environment);
-				if (layer&0x1) {
-					environment=resLoad(RES_IMG_ENV_DUNGEON);
-				} else {
-					/*environment=resLoad(RES_IMG_ENV_PALACE);*/
-				}
-			}
-			if (torch==NULL) {
-				torch=resLoad(RES_ANIM_TORCH);
-			}
-			break;
-		case 6:
-			if (torch!=NULL) {
-				resFree(torch);
-				torch=NULL;
-			}
-			if (environment!=NULL) {
-				resFree(environment);
-				environment=NULL;
-			}
-			break;
+void roomLoadGfx(long environment) {
+	if (roomGfx.environment!=NULL) {
+		resFree(roomGfx.environment);
 	}
-
-	
+	roomGfx.environment=resLoad(environment);
+	if (roomGfx.torch==NULL) {
+		roomGfx.torch=resLoad(RES_ANIM_TORCH);
+	}
 }
 
+void roomFree() {
+	if (roomGfx.environment) resFree(roomGfx.environment);
+	if (roomGfx.torch) resFree(roomGfx.torch);
+	roomGfx.torch=(roomGfx.environment=NULL);
+}
+
+/* room */
 tTile roomGetTile(tRoom* room,int x, int y) {
-	tTile result;
+	tTile   result;
+	tTileId fore;
+	tModId  back;
+
+	fore=room->fore[x+12*y];
+	back=room->back[x+12*y];
+	result.code=fore&0x1F;
+	
+	switch (result.code) { /* TODO: use arrays and a better algorithm */
+	case T_EMPTY:
+		result.walkable=0;
+		result.block=0;
+		result.hasTorch=0;
+		result.hasFloor=0;
+		result.hasBrokenTile=0;
+		result.isWall=0;
+		result.hasSword=0;
+		break;
+	case T_FLOOR:
+	case T_TORCH:
+	case T_SWORD:
+	case T_DEBRIS:
+		result.walkable=1;
+		result.block=0;
+		result.hasTorch=(result.code==T_TORCH);
+		result.hasFloor=1;
+		result.hasBrokenTile=(result.code==T_DEBRIS);
+		result.isWall=0;
+		result.hasSword=(result.code==T_SWORD);
+		break;
+	case T_WALL:
+		result.walkable=0;
+		result.block=1;
+		result.hasTorch=0;
+		result.hasFloor=0;
+		result.hasBrokenTile=0;
+		result.isWall=1;
+		result.hasSword=0;
+		break;
+	}
 	return result;
 }
+
+void roomDrawBackground(tRoom* room) {
+}
+void roomDrawForeground(tRoom* room) {
+}
+
 

@@ -40,6 +40,7 @@ typedef unsigned char tTileId;
 typedef unsigned char tModId;
 
 typedef struct {
+	void*          level;
 	tRoomId        id;
 	tRoomId        links[4];
 	tRoomId        corners[4];
@@ -63,7 +64,9 @@ typedef struct {
 	char code;
 } tTile;
 
-void drawScreen(/*tRoom room, */int layer,int level); /* TODO: rename it to roomDraw */
+tTile roomGetTile(tRoom* room,int x, int y);
+void roomDrawBackground(tRoom* room);
+void roomDrawForeground(tRoom* room);
 
 #endif
 

@@ -31,14 +31,15 @@ maps.c: Freeprince : Map handling library
 */
 
 #include <string.h> /* mempcy */
+#include <stdlib.h> /* malloc */
 #include "maps.h"
 #include "room.h"
+#include "kid.h"
+#include "resources.h"
 
-static unsigned char* slevel;
-static int sscreen;
+#define slevel(field) (((tMap*)map->pFrames[0])->field)
 
-
-/* Privates */
+/* Privates 
 
 void maps_getStartPosition(int* pantalla, int* p, int *b,tDirection *sentido,tDirection *sentido2) {
 	int valor;
@@ -52,84 +53,30 @@ void maps_getStartPosition(int* pantalla, int* p, int *b,tDirection *sentido,tDi
 }
 
 void maps_getGuard(int pantalla,int *p,int *b,int *skill,int *color,tDirection *sentido,int *exists) {
-	/* Posicion */
+	 Posicion 
 	unsigned char valor=(slevel[(MAPS_BLOCK_OFFSET_GUARD_POSITION+sscreen-1)]);
 	*exists = (valor<30);
 	*b      = (valor%10);
 	*p      = (valor/10);
-	/* sentido */
+	 sentido 
 	*sentido=slevel[MAPS_BLOCK_OFFSET_GUARD_DIRECTION+pantalla-1]?eRight:eLeft;
-	/* skill */
+	* skill *
 	*skill  =slevel[MAPS_BLOCK_OFFSET_GUARD_SKILL+pantalla-1];
-	/* Color */
+	* Color *
 	*color  =slevel[MAPS_BLOCK_OFFSET_GUARD_COLOR+pantalla-1];
 }
-
+*/
 /* Publics */
-
-int levelUse(void* level) {
-/* Sets the level for future use using the resource given
- * Initializes the position in the beginning of the level
- *
- * Return 0 on success
- */
-	
-	/* Remember level */
-	slevel=level;
-
-	/* Set start screen */
-	sscreen=slevel[MAPS_BLOCK_OFFSET_START_POSITION];
-
-	printf("levelUse: using new level\n");	
-	return level==NULL;
+void* mapLoadLevel(tMemory* level) {
+	tMap* map=(tMap*)malloc(sizeof(tMap));
+	memcpy(map->fore,level->array+MAPS_BLOCK_OFFSET_WALL,30*24);
+	memcpy(map->back,level->array+MAPS_BLOCK_OFFSET_BACK,30*24);
+	memcpy(map->start,level->array+MAPS_BLOCK_OFFSET_START_POSITION,3);
+/*	memcpy(slevel(links),level.data+MAPS_BLOCK_OFFSET_LINKS,4*24);*/
+	return (void*)map;
 }
 
-tTile levelGetTile(tRoom* room,int x, int y) {
-	tTile   result;
-	tTileId fore;
-	tModId  back;
-
-	fore=room->fore[x+12*y];
-	back=room->back[x+12*y];
-	result.code=fore&0x1F;
-	
-	switch (result.code) { /* TODO: use arrays and a better algorithm */
-	case T_EMPTY:
-		result.walkable=0;
-		result.block=0;
-		result.hasTorch=0;
-		result.hasFloor=0;
-		result.hasBrokenTile=0;
-		result.isWall=0;
-		result.hasSword=0;
-		break;
-	case T_FLOOR:
-	case T_TORCH:
-	case T_SWORD:
-	case T_DEBRIS:
-		result.walkable=1;
-		result.block=0;
-		result.hasTorch=(result.code==T_TORCH);
-		result.hasFloor=1;
-		result.hasBrokenTile=(result.code==T_DEBRIS);
-		result.isWall=0;
-		result.hasSword=(result.code==T_SWORD);
-		break;
-	case T_WALL:
-		result.walkable=0;
-		result.block=1;
-		result.hasTorch=0;
-		result.hasFloor=0;
-		result.hasBrokenTile=0;
-		result.isWall=1;
-		result.hasSword=0;
-		break;
-	}
-	return result;
-}
-
-
-tRoom levelGetRoom(tRoomId roomId) {
+tRoom mapGetRoom(tData* map, tRoomId roomId) {
 	tRoom result;
 	tRoomId roomAux;
 
@@ -137,12 +84,12 @@ tRoom levelGetRoom(tRoomId roomId) {
 	result.id=roomId;
 
 	/* SET room links */
-	memcpy(result.links,slevel+MAPS_BLOCK_OFFSET_LINK+((roomId-1)*4),4);
+	memcpy(result.links,slevel(links)+((roomId-1)*4),4);
 	/* up corners */
 	roomAux=result.links[2];
 	if (roomAux) {
-		result.corners[0]=slevel[MAPS_BLOCK_OFFSET_LINK+((roomAux-1)*4)+0];
-		result.corners[1]=slevel[MAPS_BLOCK_OFFSET_LINK+((roomAux-1)*4)+1];
+		result.corners[0]=*(slevel(links)+((roomAux-1)*4)+0);
+		result.corners[1]=*(slevel(links)+((roomAux-1)*4)+1);
 	} else {
 		result.corners[0]=0;
 		result.corners[1]=0;
@@ -150,8 +97,8 @@ tRoom levelGetRoom(tRoomId roomId) {
 	/* down corners */
 	roomAux=result.links[3];
 	if (roomAux) {
-		result.corners[2]=slevel[MAPS_BLOCK_OFFSET_LINK+((roomAux-1)*4)+0];
-		result.corners[3]=slevel[MAPS_BLOCK_OFFSET_LINK+((roomAux-1)*4)+1];
+		result.corners[2]=*(slevel(links)+((roomAux-1)*4)+0);
+		result.corners[3]=*(slevel(links)+((roomAux-1)*4)+1);
 	} else {
 		result.corners[2]=0;
 		result.corners[3]=0;
@@ -160,32 +107,32 @@ tRoom levelGetRoom(tRoomId roomId) {
 	/* SET corner bytes */
 	/* left+up */
 	if ((roomAux=result.corners[0])) {
-		result.fore[0]=slevel[MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+29];
-		result.back[0]=slevel[MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+29];
+		result.fore[0]=*(slevel(fore)+30*(roomAux-1)+29);
+		result.back[0]=*(slevel(back)+30*(roomAux-1)+29);
 	} else {
 		result.fore[0]=MAP_F_WALL;
 		result.back[0]=MAP_B_NONE;
 	}
 	/* right+up */
 	if ((roomAux=result.corners[1])) {
-		result.fore[11]=slevel[MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+20];
-		result.back[11]=slevel[MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+20];
+		result.fore[11]=*(slevel(fore)+30*(roomAux-1)+20);
+		result.back[11]=*(slevel(back)+30*(roomAux-1)+20);
 	} else {
 		result.fore[11]=MAP_F_FREE;
 		result.back[11]=MAP_B_NONE;
 	}
 	/* left+down */
 	if ((roomAux=result.corners[2])) {
-		result.fore[48]=slevel[MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+9];
-		result.back[48]=slevel[MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+9];
+		result.fore[48]=*(slevel(fore)+30*(roomAux-1)+9);
+		result.back[48]=*(slevel(back)+30*(roomAux-1)+9);
 	} else {
 		result.fore[48]=MAP_F_WALL;
 		result.back[48]=MAP_B_NONE;
 	}
 	/* right+down */
 	if ((roomAux=result.corners[3])) {
-		result.fore[59]=slevel[MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+0];
-		result.back[59]=slevel[MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+0];
+		result.fore[59]=*(slevel(fore)+30*(roomAux-1)+0);
+		result.back[59]=*(slevel(back)+30*(roomAux-1)+0);
 	} else {
 		result.fore[59]=MAP_F_WALL;
 		result.back[59]=MAP_B_NONE;
@@ -193,12 +140,12 @@ tRoom levelGetRoom(tRoomId roomId) {
 
 	/* Left room */
 	if ((roomAux=result.links[0])) {
-		result.fore[12]=slevel[MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+9];
-		result.back[12]=slevel[MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+9];
-		result.fore[24]=slevel[MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+19];
-		result.back[24]=slevel[MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+19];
-		result.fore[36]=slevel[MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+29];
-		result.back[36]=slevel[MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+29];
+		result.fore[12]=*(slevel(fore)+30*(roomAux-1)+9);
+		result.back[12]=*(slevel(back)+30*(roomAux-1)+9);
+		result.fore[24]=*(slevel(fore)+30*(roomAux-1)+19);
+		result.back[24]=*(slevel(back)+30*(roomAux-1)+19);
+		result.fore[36]=*(slevel(fore)+30*(roomAux-1)+29);
+		result.back[36]=*(slevel(back)+30*(roomAux-1)+29);
 	} else {
 		result.fore[12]=MAP_F_WALL;
 		result.back[12]=MAP_B_NONE;
@@ -210,12 +157,12 @@ tRoom levelGetRoom(tRoomId roomId) {
 
 	/* Right room */
 	if ((roomAux=result.links[1])) {
-		result.fore[11]=slevel[MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+0];
-		result.back[11]=slevel[MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+0];
-		result.fore[23]=slevel[MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+10];
-		result.back[23]=slevel[MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+10];
-		result.fore[35]=slevel[MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+20];
-		result.back[35]=slevel[MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+20];
+		result.fore[11]=*(slevel(fore)+30*(roomAux-1)+0);
+		result.back[11]=*(slevel(back)+30*(roomAux-1)+0);
+		result.fore[23]=*(slevel(fore)+30*(roomAux-1)+10);
+		result.back[23]=*(slevel(back)+30*(roomAux-1)+10);
+		result.fore[35]=*(slevel(fore)+30*(roomAux-1)+20);
+		result.back[35]=*(slevel(back)+30*(roomAux-1)+20);
 	} else {
 		result.fore[11]=MAP_F_WALL;
 		result.back[11]=MAP_B_NONE;
@@ -227,8 +174,8 @@ tRoom levelGetRoom(tRoomId roomId) {
 
 	/* Top room */
 	if ((roomAux=result.links[2])) {
-		memcpy(result.fore+1,slevel+MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+20,10);
-		memcpy(result.back+1,slevel+MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+20,10);
+		memcpy(result.fore+1,slevel(fore)+30*(roomAux-1)+20,10);
+		memcpy(result.back+1,slevel(back)+30*(roomAux-1)+20,10);
 	} else {
 		memcpy(result.fore+1,"aaaa aaaa ",10); /* TODO: use tiles */
 		memcpy(result.back+1,"aaaa aaaa ",10); /* TODO: use tiles */
@@ -236,20 +183,20 @@ tRoom levelGetRoom(tRoomId roomId) {
 
 	/* Bottom room */
 	if ((roomAux=result.links[3])) {
-		memcpy(result.fore+49,slevel+MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+0,10);
-		memcpy(result.back+49,slevel+MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+0,10);
+		memcpy(result.fore+49,slevel(fore)+30*(roomAux-1)+0,10);
+		memcpy(result.back+49,slevel(back)+30*(roomAux-1)+0,10);
 	} else {
 		memcpy(result.fore+49,"aaaa aaaa ",10); /* TODO: use tiles */
 		memcpy(result.back+49,"aaaa aaaa ",10); /* TODO: use tiles */
 	}
 
 	/* Main room */
-	memcpy(result.fore+13,slevel+MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+0,10);
-	memcpy(result.back+13,slevel+MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+0,10);
-	memcpy(result.fore+25,slevel+MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+10,10);
-	memcpy(result.back+25,slevel+MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+10,10);
-	memcpy(result.fore+37,slevel+MAPS_BLOCK_OFFSET_WALL+30*(roomAux-1)+20,10);
-	memcpy(result.back+37,slevel+MAPS_BLOCK_OFFSET_BACK+30*(roomAux-1)+20,10);
+	memcpy(result.fore+13,slevel(fore)+30*(roomAux-1)+0,10);
+	memcpy(result.back+13,slevel(back)+30*(roomAux-1)+0,10);
+	memcpy(result.fore+25,slevel(fore)+30*(roomAux-1)+10,10);
+	memcpy(result.back+25,slevel(back)+30*(roomAux-1)+10,10);
+	memcpy(result.fore+37,slevel(fore)+30*(roomAux-1)+20,10);
+	memcpy(result.back+37,slevel(back)+30*(roomAux-1)+20,10);
 
 /* This will save a screen map into data.
  * 
@@ -273,31 +220,39 @@ tRoom levelGetRoom(tRoomId roomId) {
 	return result;
 }
 
-/*int levelMoveScreen(tDirection direction) {
- * Moves the position screen that is inside the library
- *
- * Returns 0 id the screen didn't exist and the screen id
- * in case the screen was moved
- *
- 
-	return sscreen=slevel[MAPS_BLOCK_OFFSET_LINK+((sscreen-1)*4)+direction]; 
-}*/
-
-int levelGetGuards(/* TODO: add modifiers */);
-int levelGetDoorMap(/* TODO: idem */);
-
-int levelGetStarPosition(int* screen, int* position) {
-/* TODO: define position as an int or using x,y coordinate system*/
-	/* maps_getStartPosition(screen, position, int *b,tDirection *sentido,tDirection *sentido2); */
-	return 0;
+void  mapStart(tData* map, tKid* kid, tRoomId* roomId) {
+	/* kid->x,y */
+	*roomId=slevel(start)[0];
 }
 
-int levelGetInformation(int *thisScreen, unsigned char* LRUDscreens, unsigned char* cornerScreens) {
-/* TODO: define the format of cornerscreens */
-	*thisScreen=sscreen;
-	memcpy(LRUDscreens,slevel+MAPS_BLOCK_OFFSET_LINK+(sscreen-1)*4,4);
-	return sscreen;
+void  mapMove(tData* map) {
+	/* slevel(time)++;*/
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #ifdef OLD_MAP_SRC
 

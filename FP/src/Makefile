@@ -115,9 +115,9 @@ kernel.o: ker/kernel.c include/kernel.h include/resources.h include/output.h
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
-room.o: ker/drawscreen.c
+room.o: ker/room.c
 	$(INFO) Compiling kernel room object...
-	$(CC) -c ker/drawscreen.c $(OPTIONS)
+	$(CC) -c ker/room.c $(OPTIONS)
 
 kid.o: ker/kid.c
 	$(INFO) Compiling kernel kid object...
