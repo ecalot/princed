@@ -135,6 +135,7 @@ Versions:
   x Set, if applicable, POP2 in the parent folder of the
     unknown.xml file
   - Fixed some memory leaks in xml parser
+  - Solved bug in palette buffer initialization for autodetected images
 	
 2) ToDo List & Future Plans:
 
