@@ -290,7 +290,7 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 				moveTo+=kid->location%STATES_STEPS_PER_TILE;
 			
 			/* First iteration: determine i=number of frames not cropped */
-			for (i=0;(i<current->frame)&&(accumulate<moveTo);i++) {
+			for (i=0;(i<current->frame)&&(accumulate<=moveTo);i++) {
 				accumulate+=current->steps[alternate(i,current->frame)];
 			}
 			for (j=0;j<i;j++) {
