@@ -8,3 +8,4 @@ states_conf_properties.h
 states_conf_flags.h
 tiles_conf_types.h
 tiles_conf_groups.h
+walls_conf.h
