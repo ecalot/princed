@@ -65,6 +65,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "lzg_compress.h"
 
 /*#define LZG_REVERSE*/
@@ -141,21 +142,21 @@ void search_best_pattern(unsigned char *input, int inputSize,
 
 /* Insert the specified bit in the current maskByte. If the maskByte is full,
  * start a new one. */
-void pushMaskBit(int b, unsigned char **maskByte, 
-                 unsigned char *output, int *outputPos)
+void pushMaskBit(int b, unsigned char *output, int *outputPos)
 {
 	static int maskBit=8;
+	static unsigned char* maskByte;
 	if ( maskBit == 8 ) /* first time or maskBit is full */
 	{
 		/* start a new maskByte */
-		*maskByte = output + *outputPos;
+		maskByte = output + *outputPos;
 		(*outputPos)++;
-		**maskByte = 0;
+		*maskByte = 0;
 		maskBit = 0;
 printf("maskbyte i=%d\n", *outputPos - 1);
 	}
 
-	**maskByte |= b<<maskBit;
+	*maskByte |= b<<maskBit;
 	maskBit++;
 }
 
@@ -173,19 +174,21 @@ printf("pattern i=%d o=%d rep=%d loc=%d\n", outputPos, inputPos, pattern_len, in
 
 /* Compress using the LZG algorithm */
 /* Assume output has been allocated and the size is very big */
-void compressLzg(unsigned char* input, int inputSize, 
+void compressLzg(const unsigned char* input2, int inputSize, 
                  unsigned char* output, int *outputSize)
 {
 	int inputPos = 0, outputPos = 0;
-	unsigned char *maskByte;
 	int i;
 
+	unsigned char* input=malloc(inputSize+WIN_SIZE);
+	
 	/* Create ghost window filled with zeros before input data: */
-	for (i = inputSize - 1; i >= 0; i--)
-		input[i + WIN_SIZE] = input[i]; /* First move the data WIN_SIZE bytes forward */
+	/* memset */
 	for (i = 0; i < WIN_SIZE; i++)
-		input[i] = 0; /* Second fill in with zeros the first WIN_SIZE bytes */
-	input += WIN_SIZE; /* Third move the input beginning again to the data start */
+		input[i] = 0;
+	input += WIN_SIZE;
+	for (i = 0; i < inputSize; i++)
+		input[i] = input2[i];
 
 	while (inputPos < inputSize)
 	{
@@ -198,7 +201,7 @@ void compressLzg(unsigned char* input, int inputSize,
 		if (best_pattern_len < MIN_PATTERN_SIZE)
 		{
 			/* No suitable pattern found. Just copy the current byte. */
-			pushMaskBit(1, &maskByte, output, &outputPos);
+			pushMaskBit(1, output, &outputPos);
 			output[outputPos] = input[inputPos];
 printf("copy i=%d o=%d data=%02x\n", outputPos, inputPos, output[outputPos]);
 			inputPos++;
@@ -207,14 +210,15 @@ printf("copy i=%d o=%d data=%02x\n", outputPos, inputPos, output[outputPos]);
 		else
 		{
 			/* Can compress. Repeat the best pattern. */
-			pushMaskBit(0, &maskByte, output, &outputPos);
+			pushMaskBit(0, output, &outputPos);
 			addPattern(input, inputPos, output, outputPos,
 			           best_pattern, best_pattern_len);
 			inputPos += best_pattern_len;
 			outputPos += 2;
 		}
 	}
-
+	
+	free(input-WIN_SIZE);
 	*outputSize = outputPos;
 }
 
