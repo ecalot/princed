@@ -36,7 +36,7 @@ LIBS          = $(shell sdl-config --libs --cflags)
 DEFINES       = -DOS=\"$(OS)\" $(LINUX) 
 
 #Release type
-TYPE          = Release
+TYPE          = Debug
 # RELEASE may be:
 #  -g -Wall -ansi -pedantic        for debug
 #  -O2                             for release
@@ -54,7 +54,7 @@ endif
 OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
                 output.o maps.o config.o room.o titles.o \
                 input.o kid.o states.o tiles.o walls.o anims.o\
-								object.o
+                object.o
 EXEFILE       = bin/freeprince
 
 GENERATEDRESHEADERS = include/res_conf_parts.h include/res_conf_files.h\
@@ -174,9 +174,9 @@ kid.o: ker/kid.c include/kid.h include/states.h $(GENERATEDSTAHEADERS) \
 
 object.o: ker/object.c include/object.h include/resources.h include/res_conf.h\
        include/states.h $(GENERATEDRESHEADERS)\
-			 $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) include/res_conf.h\
+       $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) include/res_conf.h\
        include/types.h include/tiles.h include/tiles_conf.h include/output.h\
-			 include/kid.h
+       include/kid.h
 	$(INFO) Compiling kernel kid object support...
 	$(CC) -c ker/object.c $(OPTIONS)
 
@@ -210,8 +210,8 @@ config.o: res/config.c include/resources.h include/res_conf.h
 
 states.o: ker/states.c include/states.h\
           include/resources.h include/res_conf.h include/types.h\
-					include/tiles.h include/tiles_conf.h $(GENERATEDRESHEADERS)\
-					$(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)
+          include/tiles.h include/tiles_conf.h $(GENERATEDRESHEADERS)\
+          $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)
 	$(INFO) Compiling kernel states module...
 	$(CC) -c ker/states.c $(OPTIONS)
 
