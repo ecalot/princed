@@ -268,20 +268,20 @@ END {
 		s=match(flags,/([^0-9 +@\$-])/)
 		if (s) d=substr(flags,s,1)
 		if (s&&(d!="#")) {
-			coma2=""
 			flagmask=""
 			while (s) {
-				flagmask=sprintf("%s%sSTATES_FLAG_%s",flagmask,coma2,toupper(d))
+				flagmask=sprintf("%sSTATES_FLAG_%s|",flagmask,toupper(d))
 				flags=substr(flags,s+1,length(flags)-s)
 				s=match(flags,/([^0-9 +@\$-])/)
 				if (s) d=substr(flags,s,1)
 				if (d=="#") s=0
-				coma2="|"
 			}
 		} else {
-			flagmask="0"
+			flagmask=""
 		}
-		printf "%s%d,%s,%d",coma,arrayAnimation[i,"frame"],flagmask,steps
+		if (offxs) flagmask=sprintf("%sSTATES_FLAG_HEIGHTOFFSET|",flagmask)
+		printf "%s%d,%s0,%d",coma,arrayAnimation[i,"frame"],flagmask,steps
+#		if (offxs) printf ",/* h= */%d",offxs
 		if (i%10==9) printf("\\\n\t")
 		coma=","
 	}
