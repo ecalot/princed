@@ -42,6 +42,7 @@ typedef unsigned char tModId;
 typedef enum {eOpenTimer,eOpen,eClose,eClosing,eOpening,eClosingFast}tGateAction;
 
 typedef struct {
+	int time;
 	int frame;
 	tGateAction action;
 } tGate;

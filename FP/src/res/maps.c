@@ -259,20 +259,53 @@ void  mapStart(tMap* map, tKid* kid, tRoomId *roomId, int level) {
 }
 
 void  mapMove(tMap* map) {
+	int i;
 	slevel(time)++;
 	if (slevel(time)==1000) slevel(time)=0;
-
+	/* check out all the gates in the level */
+	for (i=0;i<slevel(totalGates);i++) {
+		switch (map->gates[i].action) {
+		case eOpenTimer:
+			if (map->gates[i].time) {
+				map->gates[i].time--;
+			} else {
+				map->gates[i].action=eClosing;
+			}
+			break;
+		case eOpening:
+			map->gates[i].time=12*10;
+			if (map->gates[i].frame) {
+				map->gates[i].frame--;
+			} else {
+				map->gates[i].action=eOpenTimer;
+			}
+			break;
+		case eClosing:
+			if (map->gates[i].frame!=46) {
+				map->gates[i].frame++;
+			} else {
+				map->gates[i].action=eClose;
+			}
+			break;
+		case eClosingFast:
+			map->gates[i].frame+=30;
+			if (map->gates[i].frame>46) {
+				map->gates[i].action=eClose;
+				map->gates[i].frame=46;
+			}
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void  mapPressedTile(tMap* map, tTile tile, int s, int x, int y) {
 	if (tile.isPressable) {
-		tGate* gate;
 		/* drop or raise button */
 		fprintf(stderr,"mapPressedTile: throw event %d\n",tile.back);
 		do {
-			gate=map->events[tile.back].gate;
-			fprintf(stderr,"mapPressedTile: activating door. gate pointer=%p\n",(void*)gate);
-			/*fprintf(stderr,"mapPressedTile: activating door. status=%d action=%d\n",gate->status,gate->action);*/
+			map->events[tile.back].gate->action=eOpening;
 		} while	(0&&map->events[tile.back++].triggerNext);
 	}
 
