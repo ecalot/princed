@@ -40,9 +40,21 @@ typedef unsigned char tTileId;
 typedef unsigned char tModId;
 
 typedef struct {
+	int status;
+	int action;
+} tGate;
+
+typedef struct {
+	tGate* gate;
+	int triggerNext;
+} tEvent;
+
+typedef struct {
 	tRoomId        links[4*24];
 	unsigned char  fore [24*30];
 	unsigned char  back [24*30];
+	tGate**        screenGates[24];
+	tGate*         gates;
 	/*
 	 * Active door handling here
 	 * */

@@ -162,6 +162,7 @@ int kidMove(tKid* kid,tKey key,tRoom* room) {
 			} else if (key.status&K_Up) {
 				/* jump */
 				kid->action=kidGfx.jumping[kid->direction];
+				kid->floor--;
 				kid->velocity=0;
 			} else if (key.status&K_Left) {
 				if (kid->direction==DIR_LEFT) {
@@ -259,6 +260,14 @@ int kidMove(tKid* kid,tKey key,tRoom* room) {
 			fprintf(stderr,"kidMove: Tile not walkable, falling\n");
 			kid->floor++;
 	}
+	if (kid->floor<0) {
+		kid->floor=2;
+		*room=mapGetRoom((void*)(room->level),room->links[eUp]);
+	} else if (kid->floor>2) {
+		*room=mapGetRoom((void*)(room->level),room->links[eDown]);
+		kid->floor=0;
+	}
+
 	return result;
 }
 

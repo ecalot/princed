@@ -35,6 +35,7 @@ maps.c: Freeprince : Map handling library
 #include "maps.h"
 #include "room.h"
 #include "kid.h"
+#include "types.h"
 
 #define slevel(field) (map->field)
 
@@ -68,10 +69,55 @@ void maps_getGuard(int pantalla,int *p,int *b,int *skill,int *color,tDirection *
 /* Publics */
 void* mapLoadLevel(tMemory level) {
 	tMap* map=(tMap*)malloc(sizeof(tMap));
+	int i;
+	int gates=0;
+	int gateInRoom=0;
+	int change=-1;
+	/* copy maps, links and start position */
 	memcpy(map->fore,level.array+MAPS_BLOCK_OFFSET_WALL,30*24);
 	memcpy(map->back,level.array+MAPS_BLOCK_OFFSET_BACK,30*24);
 	memcpy(map->start,level.array+MAPS_BLOCK_OFFSET_START_POSITION,3);
 	memcpy(map->links,level.array+MAPS_BLOCK_OFFSET_LINK,4*24);
+
+	/* generate and load gate structures */
+	for (i=0;i<30*24;i++) { /* count gates and create gate tree middle nodes */
+		if ((map->fore[i]==T_GATE)||(map->fore[i]==T_EXIT_LEFT)) {
+			if (i/30!=change) {
+				printf("Screen %d has %d gates.",change,gateInRoom);
+				map->screenGates[change]=malloc(gateInRoom*sizeof(tGate*));
+				gateInRoom=0;
+			} else {
+				gateInRoom++;
+			}
+			gates++;
+		}
+	}
+	if (gateInRoom) {
+		printf("Screen %d has %d gates.",change,gateInRoom);
+		map->screenGates[change]=malloc(gateInRoom*sizeof(tGate*));
+		gateInRoom=0;
+	}
+	change=-1;
+	/* create gates sctucture */
+	map->gates=malloc(gates*sizeof(tGate));
+	gates=0;
+	for (i=0;i<30*24;i++) {
+		if ((map->fore[i]==T_GATE)||(map->fore[i]==T_EXIT_LEFT)) {
+			tGate newGate;
+			if (i/30!=change) {
+				gateInRoom=0;
+			} else {
+				gateInRoom++;
+			}
+			newGate.status=map->back[i];
+			newGate.action=map->back[i];
+			map->back[i]=gateInRoom;
+			map->screenGates[i/30][gateInRoom]=map->gates+gates;
+			map->gates[gates++]=newGate;
+		}
+	}
+
+	
 	return (void*)map;
 }
 
