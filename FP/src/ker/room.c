@@ -289,8 +289,8 @@ void drawChopper(int x, int y, int frame, tChopperLayer layer) {
 void drawBackPanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
 	tTile left=roomGetTile(room,x-1,y);
-	drawAllLeft(x,y,left,tile);
-	drawAllTile(x,y,left,tile);
+	drawAllLeft(x-1,y,left,tile);
+	drawAllTile(x-1,y,left,tile);
 }
 
 /* bottom panel block at background */
@@ -300,7 +300,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 	tTile right=roomGetTile(room,x+1,y);
 	tTile dleft=roomGetTile(room,x-1,(y==3)?3:(y+1));
 	int cases=wallGetCase(left,tile,right);
-	drawAllBack(x,y,left,tile,right,dleft) \
+	drawAllBack(x-1,y,left,tile,right,dleft); 
 }
 
 /* main panel block */
@@ -311,7 +311,7 @@ void drawForePanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
 	tTile right=roomGetTile(room,x+1,y);
 	int cases=wallGetCase(left,tile,right);
-	drawAllFore(x,y,left,tile,right);
+	drawAllFore(x-1,y,left,tile,right);
 }	
 
 /*
