@@ -115,15 +115,15 @@ kernel.o: ker/kernel.c include/kernel.h include/resources.h include/res_conf.h i
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
-room.o: ker/room.c
+room.o: ker/room.c include/room.h include/resources.h include/res_conf.h
 	$(INFO) Compiling kernel room object...
 	$(CC) -c ker/room.c $(OPTIONS)
 
-kid.o: ker/kid.c
+kid.o: ker/kid.c include/kid.h include/resources.h include/res_conf.h
 	$(INFO) Compiling kernel kid object...
 	$(CC) -c ker/kid.c $(OPTIONS)
 
-titles.o: ker/titles.c
+titles.o: ker/titles.c include/resources.h include/res_conf.h
 	$(INFO) Compiling kernel titles module...
 	$(CC) -c ker/titles.c $(OPTIONS)
 

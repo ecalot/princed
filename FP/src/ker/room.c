@@ -334,7 +334,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 	/* normal */
 	if (tile.walkable) {
 		outputDrawBitmap(
-			roomGfx.environment->pFrames[(tile.code==T_BTN_DROP)?47:11],
+			roomGfx.environment->pFrames[(tile.code==T_BTN_DROP||tile.code==T_BTN_RAISE)?47:11],
 			(x-1)*TILE_W,
 			y*TILE_H+3
 		);
@@ -405,17 +405,31 @@ void drawForePanel(tRoom* room,int x, int y) {
 	/* wall */
 	if (tile.isWall) {
 		static unsigned short seedArray[]=WALL_PROPERTIES;
+		unsigned short seed;
 		tTile left;
 		tTile right;
+		/*int l;
+		for (l=0;l<53;l++) printf("%d-",w2_sep(seedArray[l]));
+		printf("\n");*/
 		left=roomGetTile(room,x-1,y);
 		right=roomGetTile(room,x+1,y);
 		/* there are 4 cases */
-		if (left.isWall&&right.isWall) {
-			unsigned short seed;
-			outputDrawBitmap(roomGfx.environment->pFrames[66],(x-1)*TILE_W,y*TILE_H);
-			/* the seed generation algorithm */
+		if (left.isWall&&right.isWall) { 
 			/* First step: calculate the seed position and get the element */	
 			seed=seedArray[room->id+(x-1)+(y-1)*10-1];
+			outputDrawBitmap(roomGfx.environment->pFrames[66],(x-1)*TILE_W,y*TILE_H);
+		} else if ((!left.isWall)&&(right.isWall)) {
+			outputDrawBitmap(roomGfx.environment->pFrames[72],(x-1)*TILE_W,y*TILE_H);
+			seed=seedArray[room->id+(x-1)+(y-1)*10-1];
+		} else if ((left.isWall)&&(!right.isWall)) {
+			outputDrawBitmap(roomGfx.environment->pFrames[68],(x-1)*TILE_W,y*TILE_H);
+			seed=seedArray[room->id+(x-1)+(y-1)*10-1];
+		} else {
+			outputDrawBitmap(roomGfx.environment->pFrames[70],(x-1)*TILE_W,y*TILE_H);
+			seed=seedArray[room->id+(x-1)+(y-1)*10-1];
+		}
+		/* TODO: use one seed per combination */
+			/* the seed generation algorithm */
 			/* Upper row */
 			if (w1_darker(seed)) outputDrawBitmap(
 				roomGfx.environment->pFrames[75],
@@ -444,24 +458,42 @@ void drawForePanel(tRoom* room,int x, int y) {
 			);
 			/* Second row */
 			outputDrawBitmap(
-				roomGfx.environment->pFrames[73+w2_sep(seed)],
-				(x-1)*TILE_W+11+w2_offset(seed),
+				roomGfx.environment->pFrames[74-w2_sep(seed)],
+				(x-1)*TILE_W+7+w2_offset(seed),
 				y*TILE_H-18
+			);
+			if (w2_left_down(seed)) outputDrawBitmap(
+				roomGfx.environment->pFrames[77],
+				(x-1)*TILE_W+7+w2_offset(seed)+5,
+				y*TILE_H-39+21
+			);
+			if (w2_right_down(seed)) outputDrawBitmap(
+				roomGfx.environment->pFrames[79],
+				(x-1)*TILE_W+24+7+w2_offset(seed)-32+5,
+				y*TILE_H-39+21
+			);
+			if (w2_right_up(seed)) outputDrawBitmap(
+				roomGfx.environment->pFrames[78],
+				(x-1)*TILE_W+24+7+w2_offset(seed)-32+5,
+				y*TILE_H-49+21
+			);
+			if (w2_left_up(seed)) outputDrawBitmap(
+				roomGfx.environment->pFrames[76],
+				(x-1)*TILE_W+7+w2_offset(seed)+5,
+				y*TILE_H-54+21
 			);
 			/* Third row TODO: send to BottomTile */
 			outputDrawBitmap(
-				roomGfx.environment->pFrames[73+w3_sep(seed)],
+				roomGfx.environment->pFrames[74-w3_sep(seed)],
 				(x-1)*TILE_W+3+w3_offset(seed),
 				y*TILE_H+3
 			);
+			if ((room->id+(x-1)+(y-1)*10)==16) outputDrawBitmap(
+				roomGfx.environment->pFrames[76],
+				(x-1)*TILE_W+5+w3_offset(seed)+5,
+				y*TILE_H-55+21*2
+			);
 
-		} else if ((!left.isWall)&&(right.isWall)) {
-			outputDrawBitmap(roomGfx.environment->pFrames[72],(x-1)*TILE_W,y*TILE_H);
-		} else if ((left.isWall)&&(!right.isWall)) {
-			outputDrawBitmap(roomGfx.environment->pFrames[68],(x-1)*TILE_W,y*TILE_H);
-		} else {
-			outputDrawBitmap(roomGfx.environment->pFrames[70],(x-1)*TILE_W,y*TILE_H);
-		}
 	}
 	/* debris/this foreground layer */
 	if (tile.hasBrokenTile) {
