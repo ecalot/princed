@@ -1,16 +1,7 @@
 
 #ifndef _BMP_H_
 #define _BMP_H_
-/*
-#include <stdio.h>
-#if DIR_SEPARATOR=='/'
-#include "../pg.h"
-#include "../resources.h"
-#else
-#include "pg.h"
-#include "resources.h"
-#endif
-*/
+
 #include "resources.h"
 #include "compress.h"
 

@@ -4,7 +4,9 @@
 //princed resource library
 
 //User configuration defines
-#define UNIX
+#ifndef WIN32
+ #define UNIX
+#endif
 //#define DLL
 #define PR_ABOUT "Princed resources (PR) V0.7\r\n(c) Copyright 2003 - Princed Development Team\r\nhttp://www.princed.com.ar\r\n\r\n"
 

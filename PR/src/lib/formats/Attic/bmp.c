@@ -1,10 +1,3 @@
-/*
-#if DIR_SEPARATOR=='/'
-#include "bmp.h"
-#else
-#include "formats/bmp.h"
-#endif
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,6 +13,7 @@ printf("ya expandi\n");
 		mWriteBitMap(image,vFileext);
 printf("Escribi el bitmap\n");
 		free(image.pix);
+printf("libere imagen\n");
 		return 1;
 	} else {
 		return 0;
@@ -40,7 +34,8 @@ char mFormatCompileBmp(unsigned char* data, FILE* fp, tResource *res) {
 	printf("llega ssss3\n");
 	mAddFileToDatFile(fp,aux,size);
 	printf("llega ssss4\n");
-	(*res).size=size; //TODO: delete this bug (added to debug ;) ironic, don't you think
+	(*res).size=size; //this was a bug (added to debug ;) ironic, don't you think?
+	/* Note: after the debugging we realized this line was missing so this is not a bug anymore*/
 	return 1;
 }
 
@@ -104,16 +99,16 @@ char mWriteBitMap(tImage img,char* vFile) {
 
 	//TODO: avoid using header array andwrite everithing in one run
 
-	header[2]=filesize;
-	header[3]=filesize>>8;
-	header[4]=filesize>>16;
-	header[5]=filesize>>24;
+	header[2]=(unsigned char)(filesize);
+	header[3]=(unsigned char)(filesize>>8);
+	header[4]=(unsigned char)(filesize>>16);
+	header[5]=(unsigned char)(filesize>>24);
 
-	header[18]=width;
-	header[19]=width>>8;
+	header[18]=(unsigned char)(width);
+	header[19]=(unsigned char)(width>>8);
 
-	header[22]=height;
-	header[23]=height>>8;
+	header[22]=(unsigned char)(height);
+	header[23]=(unsigned char)(height>>8);
 
 //BEGIN of format writing
 	//Write ColorTable

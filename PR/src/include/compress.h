@@ -46,12 +46,4 @@ private:
  int            imageArrayLength;
 
 */
-/*
-#include <stdio.h>
-#include <stdlib.h>
-#include "pg.h"
-#include "formats/bmp.h"
-#include "formats/pal.h"
-#include "memory.h"
-*/
 #endif

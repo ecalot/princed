@@ -5,13 +5,6 @@
 
 #ifndef _PAL_H_
 #define _PAL_H_
-/*
-#if DIR_SEPARATOR=='/'
-#include "../pg.h"
-#else
-#include "pg.h"
-#endif
-*/
 
 #include "compress.h"
 

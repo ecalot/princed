@@ -1,14 +1,7 @@
 
 #ifndef _WAV_H_
 #define _WAV_H_
-/*
-#include <stdio.h>
-#if DIR_SEPARATOR=='/'
-#include "../resources.h"
-#else
-#include "resources.h"
-#endif
-*/
+
 #include "resources.h"
 #include <stdio.h>
 

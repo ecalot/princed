@@ -1,13 +1,3 @@
-/*
-#if DIR_SEPARATOR=='/'
-#include "wav.h"
-#include "../compile.h"
-#else
-#include "formats/wav.h"
-#include "compile.h"
-#endif
-*/
-
 #include "wav.h"
 #include "compile.h"
 
@@ -20,15 +10,15 @@ char mFormatExtractWav(unsigned char* data, char *vFileext,unsigned long int siz
 
 						size-=2;
 						ok=((target=fopen(vFileext,"wb"))!=NULL);
-						wav[4]=(size+36)&0xFF;
-						wav[5]=((size+36)>>8)&0xFF;
-						wav[6]=((size+36)>>16)&0xFF;
-						wav[7]=((size+36)>>24)&0xFF;
+						wav[4]=(unsigned char)((size+36)&0xFF);
+						wav[5]=(unsigned char)(((size+36)>>8)&0xFF);
+						wav[6]=(unsigned char)(((size+36)>>16)&0xFF);
+						wav[7]=(unsigned char)(((size+36)>>24)&0xFF);
 
-						wav[40]=(size)&0xFF;
-						wav[41]=((size)>>8)&0xFF;
-						wav[42]=((size)>>16)&0xFF;
-						wav[43]=((size)>>24)&0xFF;
+						wav[40]=(unsigned char)((size)&0xFF);
+						wav[41]=(unsigned char)(((size)>>8)&0xFF);
+						wav[42]=(unsigned char)(((size)>>16)&0xFF);
+						wav[43]=(unsigned char)(((size)>>24)&0xFF);
 						ok=ok&&fwrite(wav,sizeof(wav),1,target);
 						ok=ok&&fwrite(data+2,size-2,1,target);
 						ok=ok&&(!fclose(target));

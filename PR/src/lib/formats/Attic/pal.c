@@ -1,10 +1,3 @@
-/*
-#if DIR_SEPARATOR=='/'
-#include "pal.h"
-#else
-#include "formats/pal.h"
-#endif
-*/
 
 #include <string.h>
 #include <stdlib.h>
@@ -27,16 +20,19 @@ char mFormatExtractPal(unsigned char** data, char *vFileext,unsigned long int si
 }
 
 char mImportPalette(unsigned char** data, unsigned short *size) {
-	//check size
-	if (*size<130) return 0;
 
 	//declare variables
 	unsigned char palh[]=PAL_HEADER;
 	unsigned char pals[]=PAL_SAMPLE;
-	unsigned char* pal=getMemory(100);
+	unsigned char* pal;
 	unsigned short int parsed;
 	int i=0;
 	int k=0;
+
+	//check size
+	if (*size<130) return 0;
+
+	pal=getMemory(100);
 
 	//set palette with sample
 	memcpy(pal,pals,100);
@@ -66,10 +62,10 @@ char mImportPalette(unsigned char** data, unsigned short *size) {
 void mExportPalette(unsigned char** data, unsigned long int *size) {
 	unsigned char* pal=getMemory(240);
 	unsigned char* aux=getMemory(240);
+	unsigned char i;
 
 	sprintf(pal,PAL_HEADER);
 
-	unsigned char i;
 	for (i=0;i<16;i++) {
 		sprintf(aux,pal);
 		sprintf(pal,"%s%d %d %d\r\n",aux,(*data)[(i*3)+5]<<2,(*data)[(i*3)+6]<<2,(*data)[(i*3)+7]<<2);
