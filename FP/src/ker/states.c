@@ -188,6 +188,9 @@ int evaluateCondition(int condition,tKey* key, tObject* kid, tRoom* room) {
 	case esForwardChangeToScreen:
 		DefaultFalse(kid);
 		statesCondRet(((statesKidLeft)&&(kidX==1))||((!statesKidLeft)&&(kidX==10)));
+	case esKidLooking:
+		DefaultFalse(kid);
+		statesCondRet(kid->direction==c.argument);
 	case esLast:
 		return STATES_CONDRESULT_END;
 	default:

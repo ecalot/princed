@@ -97,7 +97,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	roomId=room->id;
 
 	if ((!roomId)||(roomId>24)) {
-		fprintf(stderr,"Assert: invalid room read: %d\n",roomId);					
+		fprintf(stderr,"Assert: kid outside the map\n");					
 		exit(1);
 	}
 						
