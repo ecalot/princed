@@ -116,10 +116,12 @@ void roomDrawBackground(tRoom* room) {
 	int x,y;
 	tTile tile;
 	tMap* map=room->level;
+	tTile tileNext;
 	
 	for (x=0;x<12;x++) {
 		for (y=0;y<5;y++) {
 			tile=roomGetTile(room,x,y);
+			if (x!=11) tileNext=roomGetTile(room,x+1,y);
 			if (tile.hasTorch) {
 				outputDrawBitmap(
 					roomGfx.torch->pFrames[(map->time+2*x+y)%(roomGfx.torch->frames)],
@@ -158,6 +160,13 @@ void roomDrawBackground(tRoom* room) {
 					y*TILE_H+1
 				);
 			}
+			if (tile.isWall&&(x!=11)&&(!tileNext.isWall)) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[26],
+					x*TILE_W,
+					y*TILE_H+3
+				);
+			}
 		}
 	}
 }
@@ -165,13 +174,11 @@ void roomDrawBackground(tRoom* room) {
 void roomDrawForeground(tRoom* room) {
 	int x,y;
 	tTile tile;
-	tTile tileNext;
 	/*tMap* map=room->level;*/
 	
 	for (x=0;x<12;x++) {
 		for (y=0;y<5;y++) {
 			tile=roomGetTile(room,x,y);
-			if (x!=11) tileNext=roomGetTile(room,x+1,y);
 			if (tile.hasPillar) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[25],
@@ -185,13 +192,6 @@ void roomDrawForeground(tRoom* room) {
 					(x-1)*TILE_W,
 					y*TILE_H+1
 				);
-				if ((x!=11)&&(!tileNext.isWall)) {
-					outputDrawBitmap(
-						roomGfx.environment->pFrames[26],
-						x*TILE_W,
-						y*TILE_H+1
-					);
-				}
 			}
 		}
 	}

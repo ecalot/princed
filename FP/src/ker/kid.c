@@ -140,7 +140,7 @@ int kidMove(tKid* kid,tKey key/*,tRoom room*/) {
 		 *
 		 * Note: falling and climbing context are ignored
 		 */
-		printf("next action=%d direction=%d keystatus=%x ",kid->nextAction,kid->direction,key.status);
+		/*printf("next action=%d direction=%d keystatus=%x ",kid->nextAction,kid->direction,key.status);*/
 
 		/* STAY events
 		 */
@@ -250,7 +250,6 @@ int kidMove(tKid* kid,tKey key/*,tRoom room*/) {
 				kid->velocity=kid->velocity/2; /* 50% slower */
 			}
 		}
-		printf("Velocity=%d\n",kid->velocity);
 		return 1;
 	} else {
 		/* TODO: tile traspassing and validations here

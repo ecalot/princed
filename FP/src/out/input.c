@@ -71,6 +71,22 @@ int editAction(tKey* key,SDLKey k) {
 	}
 	/* Normal actions */
 	if (!(key->status)) {
+		switch (k) {
+		case SDLK_u:
+			key->actionPerformed=showUp;
+			break;
+		case SDLK_h:	
+			key->actionPerformed=showLeft;
+			break;
+		case SDLK_n:	
+			key->actionPerformed=showDown;
+			break;
+		case SDLK_j:	
+			key->actionPerformed=showRight;
+			break;
+		default:
+			break;
+		}		
 	}
 	return key->actionPerformed;
 }
@@ -134,7 +150,6 @@ int inputGetEvent(tKey* key) {
 	
 	while(SDL_WaitEvent(&event))
 	{
-		/*printf("Event dropped: key status=%x action=%d\n",key->status,key->actionPerformed);*/
 		key->actionPerformed=none;
 		switch (event.type) {
 		case SDL_KEYDOWN:

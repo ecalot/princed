@@ -87,7 +87,25 @@ int playgame(int optionflag,int level) {
 			case gotoTitles:
 				resFree(map);
 				return 0;
-			default:
+			case showUp:
+				if(roomId=room.links[eUp]) {
+					room=mapGetRoom(map,roomId);
+					printf("Kernel/playgame: cheat: Looking up\n");
+				}
+				break;
+			case showLeft:
+				if(roomId=room.links[eLeft])
+					room=mapGetRoom(map,roomId);
+				break;
+			case showDown:
+				if(roomId=room.links[eDown])
+					room=mapGetRoom(map,roomId);
+				break;
+			case showRight:
+				if(roomId=room.links[eRight])
+					room=mapGetRoom(map,roomId);
+				break;
+		default:
 				break;
 			}
 		}
