@@ -77,7 +77,7 @@ void* mapLoadLevel(tMemory level) {
 			if (((map->fore[i*30+j]&0x1f)==T_GATE)||((map->fore[i*30+j]&0x1f)==T_EXIT_LEFT)) {
 				tGate newGate;
 				newGate.frame=map->back[i*30+j];
-				newGate.action=map->back[i*30+j]?eOpen:eClose;
+				newGate.action=map->back[i*30+j]?eClose:eOpen;
 				map->back[i*30+j]=gateInRoom;
 				fprintf(stderr,"mapLoadLevel: Asignando gate pointer: screen %d, gate number %d\n",i,gateInRoom);
 				map->screenGates[i][gateInRoom]=map->gates+gates;
@@ -294,7 +294,11 @@ void  mapMove(tMap* map) {
 				map->gates[i].frame=46;
 			}
 			break;
-		default:
+		case eClose:
+			map->gates[i].frame=46;
+			break;
+		case eOpen:
+			map->gates[i].frame=0;
 			break;
 		}
 	}
