@@ -1,6 +1,5 @@
 To install from the CVS (advanced users only):
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 If you are a coder type:
 
 export CVS_RSH=ssh
@@ -19,6 +18,28 @@ make install
 The dat files will be downloaded (about 200kb), after that the resource
 index will be generated and the source compiled.
 
+The the CVS code isn't a binary distribution and it needs to be compiled, some
+packets are required in both cases (coders and anonymous).
+
+The requiered packages are:
+bash
+wget
+gcc
+make
+libsdl1.2-dev
+
+The first four packets are installed by default.
+For the moment the only supported Operating System in the instalation is GNU/Linux.
+This is because the installer script was made in bash and the distributed PR and
+makeindex are binary files. If you want to install FP in any other operating system
+please download a PR distribution, compile it for your OS and replace PR file in
+FP/data/bin. Then compile FP/data/bin/src/makeindex.c to FP/data/bin/makeindex.
+The installation script was made and tested with bash, try to have this installed
+in your system too.
+
+If you are using debian you can install the packages just typing:
+apt-get install bash wget gcc make libsdl1.2-dev
+
 Make options:
 - make            compiles only the latest modified sources
 - make build      compiles all the sources
@@ -28,8 +49,19 @@ Make options:
 - make all        generates index and re-builds the source
 - make index      generate index only
 
-To install from the files:
-~~~~~~~~~~~~~~~~~~~~~~~~~
+CVS nightly tarballs:
+~~~~~~~~~~~~~~~~~~~~
+Is just the last CVS stuff compressed. To install it just uncompress it and follow
+the CVS installation steps (except for the cvs command).
 
+To install from the binary distribution files:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 There isn't any distribution yet :(
+
+Note:
+~~~~
+The program is very unestable, don't expect to see the original game, because we
+need a lot of time more to reach something similar. Please be patient. Current
+CVS distributions are just for developers or to show the improvements.
+
 
