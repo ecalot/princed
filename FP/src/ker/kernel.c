@@ -105,6 +105,9 @@ int playgame(int optionflag,int level) {
 				if ((roomId=room.links[eRight]))
 					room=mapGetRoom(map,roomId);
 				break;
+			case showVersion:
+				fprintf(stderr,"FreePrince v"FP_VERSION"\n");
+				break;
 			case showScreens:
 				fprintf(stderr,"S%d L%d R%d A%d B%d\n",
 					room.id,
@@ -113,7 +116,7 @@ int playgame(int optionflag,int level) {
 					room.links[eUp],
 					room.links[eDown]
 				);
-				break;				
+				break;
 		default:
 				break;
 			}

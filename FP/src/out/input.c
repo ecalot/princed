@@ -61,7 +61,6 @@ int editAction(tKey* key,SDLKey k) {
 		case SDLK_r:	
 			key->actionPerformed=gotoTitles;
 			break;
-		
 		default:
 			break;
 		}
@@ -86,6 +85,9 @@ int editAction(tKey* key,SDLKey k) {
 			break;
 		case SDLK_c:	
 			key->actionPerformed=showScreens;
+			break;
+		case SDLK_v:	
+			key->actionPerformed=showVersion;
 			break;
 		default:
 			break;
