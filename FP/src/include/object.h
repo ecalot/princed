@@ -19,7 +19,7 @@
 */
 
 /*
-kid.h: Free Prince : Kid and other object
+kid.h: Free Prince : Generic objects
 ¯¯¯¯¯
  Copyright 2004 Princed Development Team
   Created: 19 Jul 2004
@@ -30,8 +30,8 @@ kid.h: Free Prince : Kid and other object
   DO NOT remove this copyright notice
 */
 
-#ifndef _KID_H_
-#define _KID_H_
+#ifndef _OBJECT_H_
+#define _OBJECT_H_
 
 #include "resources.h"
 #include "input.h"
@@ -48,8 +48,6 @@ tObject objectCreate(int location, int floor, int direction, int stateId, unsign
 void objectDraw(tObject obj);
 int  objectMove(tObject* obj,tKey key,tRoom* room);
 void objectFree(tObject obj);
-
-int kidMove(tObject* kid,short flags,tRoom* room);
 
 #endif
 

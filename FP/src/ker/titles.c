@@ -38,7 +38,7 @@ titles.c: FreePrince : Titles, animation and presentation
 #include <stdlib.h> /* malloc/free */
 
 #include "anims.h"
-#include "kid.h"
+#include "object.h"
 
 typedef struct {
 	tData*        img;

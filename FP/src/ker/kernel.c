@@ -39,7 +39,7 @@ kernel.c: FreePrince : Main Kernel
 #include "input.h"
 #include "titles.h"
 #include "states.h" /* stateKidInLevel */
-#include "kid.h"
+#include "object.h"
 #include "room.h"
 #include "maps.h"
 

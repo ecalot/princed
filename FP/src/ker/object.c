@@ -36,6 +36,7 @@ object.h: Free Prince : Objects
 #include "maps.h" /* mapGetRoom getTile */
 #include <stdio.h> /* NULL */
 #include "states.h"
+#include "object.h"
 
 void loadGfx(int storeMirrored, tData** gfxCache, unsigned long resId) {
 	gfxCache[DIR_LEFT]=resLoad(resId);

@@ -150,7 +150,7 @@ dat.o: res/dat.c include/disk.h include/dat.h
 	$(CC) -c res/dat.c $(OPTIONS)
 
 kernel.o: ker/kernel.c include/kernel.h include/resources.h\
-          include/res_conf.h include/output.h include/kid.h\
+          include/res_conf.h include/output.h include/object.h\
           $(GENERATEDSTAHEADERS)
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
@@ -166,16 +166,17 @@ kid.o: ker/kid.c include/kid.h include/states.h $(GENERATEDSTAHEADERS) \
 	$(INFO) Compiling kernel object support...
 	$(CC) -c ker/kid.c $(OPTIONS)
 
-object.o: ker/object.c include/kid.h include/resources.h include/res_conf.h\
+object.o: ker/object.c include/object.h include/resources.h include/res_conf.h\
        include/states.h $(GENERATEDRESHEADERS)\
 			 $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) include/res_conf.h\
-       include/types.h include/tiles.h include/tiles_conf.h include/output.h
+       include/types.h include/tiles.h include/tiles_conf.h include/output.h\
+			 include/kid.h
 	$(INFO) Compiling kernel kid object support...
 	$(CC) -c ker/object.c $(OPTIONS)
 
 titles.o: ker/titles.c include/resources.h include/res_conf.h\
           include/anims_conf.h $(GENERATEDSTAHEADERS) $(GENERATEDRESHEADERS)\
-          include/kid.h
+          include/object.h
 	$(INFO) Compiling kernel titles module...
 	$(CC) -c ker/titles.c $(OPTIONS)
 

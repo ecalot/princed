@@ -34,7 +34,7 @@ states.c: FreePrince : State object
 #include <stdlib.h>
 #include "tiles.h" /* isInGroup & groups */
 #include <stdio.h> /* For debug purposes */
-#include "kid.h" /* DIR_LEFT DIR_RIGHT */
+#include "object.h" /* DIR_LEFT DIR_RIGHT */
 
 void debugShowFlag(short optionflag) {
 	if (optionflag&STATES_FLAG_F) printf("Falling ");
@@ -238,8 +238,9 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 			break;
 		case STATES_MOVETYPES_ABSOLUTEONSTOP: {
 			/* AbsoluteOnStop (x)
-			 * Deletes frames (in the middle) to make sure that, at the end of the animation,
-			 * the kid had moved only x step units from the first forward tile change
+			 * Deletes frames (in the middle) to make sure that, at the end of
+			 * the animation, the kid had moved only x step units from the first
+			 * forward tile change
 			 * if there is a lack of movements by frame it stops before reaching it.
 			 */
 			/* 1) calculate the number of frames the guy will move */

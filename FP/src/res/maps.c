@@ -97,7 +97,7 @@ void* mapLoadLevel(tMemory level) {
 	map->totalGates=gates;
 	map->pressables=malloc(pressables*sizeof(tPressable));
 	map->totalPressables=pressables;
-	map->dangers=malloc(gates*sizeof(tGate));
+	map->dangers=malloc(dangers*sizeof(tDanger));
 	map->totalDangers=dangers;
 	gates=0;
 	pressables=0;
@@ -146,6 +146,7 @@ void* mapLoadLevel(tMemory level) {
 		pressableInRoom=0;
 		dangerInRoom=0;
 	}
+printf("Map in memory\n");
 
 	/* read event list from file and convert it into the event array in memory */
 	for (i=0;i<256;i++) {
@@ -159,6 +160,7 @@ void* mapLoadLevel(tMemory level) {
 		map->events[i].gate=auxGates[(S-1)*30+L]; /* in case of error null is assigned */
 	}
 	free(auxGates);
+printf("Map loaded\n");
 	return (void*)map;
 }
 
@@ -299,7 +301,7 @@ tRoom mapGetRoom(tMap* map, tRoomId roomAux) {
  * This will save a screen map modifiers into data.
  *
  * data and borders are in the same form as Walls but they contain
- * additional modifiers that must be defined in maps.h.
+ * additional modifiers that must be defined in conf files.
  * e.g. MAPS_ITEMS_DOOROPEN 0x01
  */
 
@@ -377,15 +379,46 @@ void  mapMove(tMap* map) {
 			break;
 		}
 	}
+
+	/* check out and update all the spikes and choppers *
+	printf("updating\n");
+	for (i=0;i<slevel(totalDangers);i++) {
+		printf("updating Spikes: action: %d frame=%d time=%d\n",map->dangers[i].action,map->dangers[i].frame,map->dangers[i].time);
+		switch (map->dangers[i].action) {
+		case eSpiUp:
+			map->dangers[i].frame++;
+			if (map->dangers[i].frame>3) {
+				map->dangers[i].frame=3;
+				map->dangers[i].action=eSpiWaitUp;
+				map->dangers[i].time=30;
+			}
+			break;
+		case eSpiWaitUp:
+			map->dangers[i].time--;
+			if (!map->dangers[i].time) {
+				map->dangers[i].action=eSpiDown;
+			}
+			break;
+		case eSpiDown:
+			if (map->dangers[i].frame) map->dangers[i].frame++;
+			if (map->dangers[i].frame==6) map->dangers[i].frame=0;
+			break;
+		default:
+			break;
+		}
+	}*/
 }
+
 void  mapFreeLevel(tMap* map) {
 	int i;
 	for (i=0;i<24;i++) {
 		free(map->screenGates[i]);
 		free(map->screenPressables[i]);
+		/*free(map->screenDangers[i]);*/
 	}
 	free(map->gates);
 	free(map->pressables);
+	/*free(map->dangers);*/
 	free(map);
 }
 

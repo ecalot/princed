@@ -36,6 +36,7 @@ room.c: FreePrince : Room and Tile Object
 #include "resources.h"
 #include "output.h"
 #include "room.h"
+#include "object.h" /* DIR_LEFT DIR_RIGHT */
 #include "tiles.h"
 #include "maps.h"
 #include "walls.h"
@@ -101,6 +102,14 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		/* the case that a button is in tile 0 should never happen, but we'll care about it just in case */
 		if (roomId<24)
 			result.moreInfo=room->level->screenPressables[roomId-1][result.back];
+	} else if (isIn(result,TILES_CHOPPER_SPIKE)) {
+		roomId=room->id;
+		if (y==0)	roomId=room->links[eUp]; /*TODO: validate corners */
+		if (x==0) roomId=room->links[eLeft];
+		if (y==4) roomId=room->links[eDown];
+		if (x==11)roomId=room->links[eRight];
+		if (roomId<24)
+			result.moreInfo=room->level->screenDangers[roomId-1][result.back];
 	}
 	return result;
 }
@@ -111,9 +120,11 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 
 #define e(a,x,y) outputDrawBitmap(roomGfx.environment->pFrames[a],(x),(y))
 			
-#define buttonIsNormal(a) (((tPressable*)a.moreInfo)->action==eNormal)
-#define gateGetFrame(a)   (((tGate*)a.moreInfo)->frame)
-#define wallGetInfo(a)    wallGet(env,cases,(a),seed)
+#define buttonIsNormal(a)  (((tPressable*)a.moreInfo)->action==eNormal)
+#define chopperGetFrame(a) (((tDanger*)a.moreInfo)->frame)
+#define gateGetFrame(a)    (((tGate*)a.moreInfo)->frame)
+#define spikeGetFrame(a)   (((tDanger*)a.moreInfo)->frame)
+#define wallGetInfo(a)     (wallGet(env,cases,(a),seed))
 
 /* door drawing */
 #define drawGateTop(x,y,frame) outputDrawBitmap(roomGfx.environment->pFrames[35-((frame)&7)],x,y)
@@ -214,7 +225,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	/* spikes/left */
 	if (isIn(left,TILES_SPIKES)) {
 		e(107,(x-1)*TILE_W+0,y*TILE_H+2);
-		drawSpike((x-2)*TILE_W+0,y*TILE_H,room->level->time%6,layRight);
+		drawSpike((x-2)*TILE_W+0,y*TILE_H,spikeGetFrame(left),layRight);
 	}
 	/* skeleton/left */
 	if (isIn(left,TILES_SKELETON)) 
@@ -281,7 +292,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	/* spikes/this */
 	if (isIn(tile,TILES_SPIKES)) {
 		e(101,(x-1)*TILE_W+0,y*TILE_H+0);
-		drawSpike((x-1)*TILE_W+0,y*TILE_H,room->level->time%6,layFore);
+		drawSpike((x-1)*TILE_W+0,y*TILE_H,spikeGetFrame(tile),layFore);
 	}
 	/* skeleton/this */
 	if (isIn(tile,TILES_SKELETON)) 
@@ -507,18 +518,22 @@ int roomPress(tRoom* room, tObject* obj) {
 	if ((obj->location%TILE_W)<WHERE_IN){
 		where=border;i=-1;}
 
-	if (where!=middle) {
+	if (where!=middle) { /* TODO: the first case is different.
+	                      * try to make it as similar as possible */
 		if (isIn(aux=roomGetTile(room,x+i,y),TILES_CHOPPER_SPIKE)) {
 			/* spikes left in this floor */
 			tDanger* danger=aux.moreInfo;
+			/*danger->action=eSpiUp;*/
 		} else if ((y<3)&&isIn(roomGetTile(room,x+i,y),TILE_EMPTY)&&isIn(aux=roomGetTile(room,x+i,y+1),TILES_CHOPPER_SPIKE)) {
 			/* spikes left in the lower floor, there is
 			 * a space so you can fall down */
 			tDanger* danger=aux.moreInfo;
+			/*danger->action=eSpiUp;*/
 		} else if ((y<2)&&isIn(roomGetTile(room,x+i,y),TILE_EMPTY)&&isIn(roomGetTile(room,x+i,y+1),TILE_EMPTY)&&isIn(aux=roomGetTile(room,x+i,y+2),TILES_CHOPPER_SPIKE)) {
 			/* spikes left in the 2 level lower floor, there are
 			 * spaces so you can fall down */
 			tDanger* danger=aux.moreInfo;
+			/*danger->action=eSpiUp;*/
 		}
 	}	
 	return refresh;
