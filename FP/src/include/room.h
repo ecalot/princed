@@ -34,6 +34,9 @@ room.h: FreePrince : Draw Screen
 #ifndef _ROOM_H_
 #define _ROOM_H_
 
+#define TILE_W 32
+#define TILE_H 63
+
 typedef char tRoomId;
 typedef unsigned char tTileId;
 typedef unsigned char tModId;

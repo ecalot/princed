@@ -152,8 +152,6 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	return result;
 }
 
-#define TILE_W 32
-#define TILE_H 63
 
 /*
  * Drawing functions

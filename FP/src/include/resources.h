@@ -95,5 +95,5 @@ void resStop();
 
 /* Resource handling includes */
 #include "res_conf.h"
-
+#define BW_COLORS {252/4,252/4,252/4,252/4,0,0,0,252/4,0,0,0,252/4}
 #endif

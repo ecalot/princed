@@ -189,8 +189,17 @@ tData* resLoad(long id) {
       	printf("Fatal error: resLoad: invalid palette\n");
         return NULL;
       }
-      pal.colors=16; /* TODO: detect when it is 2 colors */
- 	    pal.color=(tColor*)(palette.array+5);	/*memcpy(image.pal,data.array+5,16*3);*/
+			if (mask&RES_MODS_BW) { /* if black and white */
+				/* this palette is white, red, green, blue */
+				static const char bwpalettes[]=BW_COLORS;
+				static char       bwpalette[]={0,0,0,0,0,0};
+ 		    memcpy(bwpalette,bwpalettes+3*((mask>>5)&3),3);
+	      pal.colors=2;
+				pal.color=(tColor*)bwpalette;
+			} else {
+	      pal.colors=16;
+ 		    pal.color=(tColor*)(palette.array+5);
+			}
 			for (total=0;total<result->frames;total++) {
 				if(!res_getDataById(res_list[from+2+total],numberOfItems,&raw)) {
 					printf("Fatal Error: resLoad: image not found!\n");
@@ -206,7 +215,7 @@ tData* resLoad(long id) {
 				/* convert image structure into blittable output surfaces */
 				result->pFrames[total]=(void*)outputLoadBitmap(
 					image.pix,image.widthInBytes*image.height,pal,image.height,image.width,
-					invert,1,down,invert?right:left
+					invert,!(mask&RES_MODS_BW),down,invert?right:left
         );
 
 				/* free intermediate image data */

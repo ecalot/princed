@@ -33,6 +33,7 @@ kid.h: Free Prince : Kid object
 #include "kid.h"
 #include "output.h"
 #include "resources.h" /* resLoad/resFree */
+#include "room.h" /* TILE_H */
 #include <stdio.h> /* NULL */
 
 static struct {
@@ -111,7 +112,7 @@ tKid kidCreate() {
 }
 
 void kidDraw(tKid kid) {
-	outputDrawBitmap(kid.action->pFrames[kid.frame],kid.location,120+kid.floor*60); /* TODO: use TILE_H */
+	outputDrawBitmap(kid.action->pFrames[kid.frame],kid.location,58+kid.floor*TILE_H); /* TODO: use TILE_H */
 }
 
 int kidMove(tKid* kid,tKey key/*,tRoom room*/) {
