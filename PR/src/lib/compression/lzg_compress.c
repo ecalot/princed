@@ -138,22 +138,22 @@ void search_best_pattern(unsigned char *input, int inputSize,
 
 /* Insert the specified bit in the current maskByte. If the maskByte is full,
  * start a new one. */
-void pushMaskBit(int b, unsigned char **maskByte, int *maskBit,
+void pushMaskBit(int b, unsigned char **maskByte, 
                  unsigned char *output, int *outputPos)
 {
-	if ( (!(*maskByte)) || (*maskBit == 8) )
+	static int maskBit=8;
+	if ( maskBit == 8 ) /* first time or maskBit is full */
 	{
 		/* start a new maskByte */
 		*maskByte = output + *outputPos;
 		(*outputPos)++;
 		**maskByte = 0;
-		*maskBit = 0;
+		maskBit = 0;
 printf("maskbyte i=%d\n", *outputPos - 1);
 	}
 
-	**maskByte >>= 1;
-	**maskByte += b << 7; /* TODO: |= */
-	(*maskBit)++;
+	**maskByte |= b<<maskBit;
+	maskBit++;
 }
 
 /* Insert the two bytes describing the pattern repetition to the output. */
@@ -174,8 +174,7 @@ void compressLzg(unsigned char* input, int inputSize,
                  unsigned char* output, int *outputSize)
 {
 	int inputPos = 0, outputPos = 0;
-	unsigned char *maskByte = NULL;
-	int maskBit = 0;
+	unsigned char *maskByte;
 	int i;
 
 	/* Create ghost window filled with zeros before input data: */
@@ -196,7 +195,7 @@ void compressLzg(unsigned char* input, int inputSize,
 		if (best_pattern_len < MIN_PATTERN_SIZE)
 		{
 			/* No suitable pattern found. Just copy the current byte. */
-			pushMaskBit(1, &maskByte, &maskBit, output, &outputPos);
+			pushMaskBit(1, &maskByte, output, &outputPos);
 			output[outputPos] = input[inputPos];
 printf("copy i=%d o=%d data=%02x\n", outputPos, inputPos, output[outputPos]);
 			inputPos++;
@@ -205,16 +204,13 @@ printf("copy i=%d o=%d data=%02x\n", outputPos, inputPos, output[outputPos]);
 		else
 		{
 			/* Can compress. Repeat the best pattern. */
-			pushMaskBit(0, &maskByte, &maskBit, output, &outputPos);
+			pushMaskBit(0, &maskByte, output, &outputPos);
 			addPattern(input, inputPos, output, outputPos,
 			           best_pattern, best_pattern_len);
 			inputPos += best_pattern_len;
 			outputPos += 2;
 		}
 	}
-
-	/* finish last maskByte: */
-	*maskByte >>= (8 - maskBit); /* TODO: optimize with ~ */
 
 	*outputSize = outputPos;
 }
