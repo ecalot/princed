@@ -51,7 +51,7 @@ tRoom mapGetRoom(tMap* map, tRoomId roomId);
 void  mapStart(tMap* map, tObject* kid, tRoomId* roomId, int level);
 
 /* events */
-void  mapMove(tMap* map);
+int   mapMove(tMap* map);
 
 #endif
 

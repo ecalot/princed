@@ -107,10 +107,15 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 					outputBlinkScreen(1,1);
 			}
 			if (flags&STATES_FLAG_D) {
-				tTile tile=roomGetTile(room,object->location/TILE_W+1,object->floor+1);
+				int x=object->location/TILE_W;
+				int y=object->floor;
+				tTile tile=roomGetTile(room,x+1,y+1);
 				if (!kidDrinkPotion(object,tile)) /* drink the potion */
 					flags=STATE_EXIT_CODE_SPLASH;
-				/* TODO: transform the tile into floor */
+				/* Change the map */
+				room->level->fore[(room->id-1)*30+x+y*10]=TILE_FLOOR;
+				room->level->back[(room->id-1)*30+x+y*10]=0;
+				refresh=1;
 			}
 			break;
 		case oGeneric:

@@ -180,6 +180,7 @@ void* mapLoadLevel(tMemory level) {
 		map->events[i].gate=auxGates[(S-1)*30+L]; /* in case of error null is assigned */
 	}
 	free(auxGates);
+	map->refresh=0;
 	
 	return (void*)map;
 }
@@ -340,8 +341,8 @@ void  mapStart(tMap* map, tObject* kid, tRoomId *roomId, int level) {
 }
 
 /* TODO: This is part of the kernel, it needs to be moved */
-void  mapMove(tMap* map) {
-	int i;
+int   mapMove(tMap* map) {
+	int i,refresh;
 	slevel(time)++;
 	if (slevel(time)==1000) slevel(time)=0;
 
@@ -483,6 +484,7 @@ void  mapMove(tMap* map) {
 				printf("IMPACT in s%d x%d y%d\n",loose->screen,x,y);
 				map->fore[(loose->screen-1)*30+x+y*10]=TILE_DEBRIS;
 				map->back[(loose->screen-1)*30+x+y*10]=0;
+				refresh=1;
 				loose->screen=0;
 			}
 		}
@@ -498,6 +500,12 @@ void  mapMove(tMap* map) {
 		loose=loose->next;
 	}
 	}
+
+	if (map->refresh) {
+		map->refresh=0;
+		refresh=1;
+	}
+	return refresh;
 }
 
 void  mapFreeLevel(tMap* map) {

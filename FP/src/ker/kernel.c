@@ -90,7 +90,7 @@ int playgame(int optionflag,int level) {
 				 * the key is interpreted in kid object
 				 */
 				flags=objectMove(&kid,key,&room);
-				mapMove(map);
+				if (mapMove(map)) room=mapGetRoom(map,room.id);
 				/* Drawing functions */
 				outputClearScreen(); /* TODO: send to drawBackground() */
 				roomDrawBackground(&room);

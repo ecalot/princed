@@ -117,6 +117,7 @@ typedef struct {
 	unsigned char  levelNumber;
 
 	tFlying*       flyingObjects;
+	int            refresh;
 } tMap;
 
 typedef struct {
