@@ -81,7 +81,7 @@ void initText ()
 	static unsigned char chars[] = TEXT_CHARS;
 	static int pos_x[] = TEXT_POS;
 	static unsigned char fonts[] = TEXT_IMG;
-	tSurface* aux;
+	register tSurface* aux;
 	tPalette pal;
 	tColor col[2];
 	tColor white={0,0,0};
