@@ -216,7 +216,17 @@ void roomDrawForeground(tRoom* room) {
 					y*TILE_H-2
 				);
 			}
+			/* debris/this foreground layer */
+			if (tile.hasBrokenTile) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[51],
+					(x-1)*TILE_W,
+					y*TILE_H-2
+				);
+			}
 		}
+		
+		
 		/* bottom tile-floor block TODO: separate in two functions */
 	}
 }
