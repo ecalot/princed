@@ -44,6 +44,9 @@ disk.h: Princed Resources : Disk Access & File handling functions headers
 /* 64 Kb */
 #define SIZE_OF_FILE     256*1024
 
+#define DIR_SEPARATOR '/'
+
+
 typedef enum {eFile,eDirectory,eNotFound}whatIs;
 
 #define charToUpper(a) ((a)&0xDF)

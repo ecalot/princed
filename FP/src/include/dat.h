@@ -52,7 +52,7 @@ mWriteCloseDatFile(r,dontSave,optionflag,backupExtension)
 #ifdef PR_DAT_INCLUDE_DATREAD
 /* DAT reading primitives */
 int  mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFile);
-int  mReadFileInDatFile(int indexNumber,unsigned char* *data,unsigned long  int *size);
+int  mReadFileInDatFile(int indexNumber,unsigned char** data,unsigned long int *size);
 int  mReadInitResource(tResource** res,const unsigned char* data,long size);
 void mReadCloseDatFile();
 #endif

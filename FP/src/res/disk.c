@@ -39,30 +39,20 @@ disk.c: Princed Resources : Disk Access & File handling functions
 /* Defines */
 #include "memory.h"
 #include <string.h>
-#include "pr.h"
 #include "disk.h"
 //#include "xmlparse.h" /* equalsIgnoreCase */
 #define IGNORERECURSIVEFUNCTIONS
+#define UNIX
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "resources.h"
 
 #ifdef UNIX
-	#define defmkdir(a) mkdir (a,(mode_t)0755)
-	#include <dirent.h>
-	#include <termios.h>
-	#include <unistd.h>
-	#include <fcntl.h>
-	#define osIndepGetCharacter() getchar()
+  #define defmkdir(a) mkdir (a,(mode_t)0755)
 #else
-	#include <direct.h>
-	#include "direntwin.h"
-	#define defmkdir(a) mkdir (a)
-	#include <conio.h>
-	#define osIndepGetCharacter() getche()
+  #define defmkdir(a) mkdir (a)
 #endif
-
-extern FILE* outputStream;
 
 /***************************************************************\
 |              Disk Access & File handling functions            |
@@ -72,7 +62,6 @@ extern FILE* outputStream;
 const char *repairFolders(const char* a) {
 	int i,k;
 	static char result[MAX_FILENAME_SIZE];
-fld("rf1");
 
 	for (i=0,k=0;a[i]&&(k<MAX_FILENAME_SIZE);) {
 		if (isDirSep(a,i)) {
@@ -85,9 +74,7 @@ fld("rf1");
 		}
 		k++;
 	}
-fld("rf2");
 	result[k]=0;
-fld("rf3");
 	return result;
 }
 
@@ -187,7 +174,7 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 	char* fileName;
 	unsigned long int size;
 
-	if (getFromOpenFilesList(fp,&fileName,&content,&size)) {
+	//if (getFromOpenFilesList(fp,&fileName,&content,&size)) {
 		if (dontSave) {
 			fclose(fp);
 			if (size) {
@@ -197,7 +184,9 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 			} else {
 				remove(fileName);
 			}
-		} else {
+		//}
+#if 0
+		else {
 			/* File Existed before and we need to back it up */
 			if (hasFlag(backup_flag)) {
 				char aux[MAX_FILENAME_SIZE];
@@ -212,7 +201,7 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 				fwrite(content,1,size,fp);
 			}
 		}
-
+#endif
 		free(fileName);
 		if (size) free(content);
 	}
@@ -255,8 +244,8 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 		if not, we need to know the name in case we need to delete it
 	*/
 
-	addFileToOpenFilesList(file,hasFlag(backup_flag));
-	if ((result=((*fp=fopen(file,"wb"))!=NULL))) addPointerToOpenFilesList(*fp);
+//	addFileToOpenFilesList(file,hasFlag(backup_flag));
+	result=((*fp=fopen(file,"wb"))!=NULL);// addPointerToOpenFilesList(*fp);
 	return result;
 }
 

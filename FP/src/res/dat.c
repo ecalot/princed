@@ -33,7 +33,6 @@ dat.c: Princed Resources : DAT library
 
 #include <stdio.h>
 #include <string.h>
-#include "pr.h"
 
 #include "disk.h"
 #include "dat.h"
@@ -129,9 +128,9 @@ int mReadInitResource(tResource** res,const unsigned char* data,long size) {
 		(*res)->number=0;
 		(*res)->size=(unsigned short int)size;
 		(*res)->offset=(unsigned short)offset; /* TODO delete this line */
-		(*res)->type=verifyHeader(data,(unsigned short int)size);
+		/* (*res)->type=verifyHeader(data,(unsigned short int)size); */
 	} else { /* If resource type is invalid or 0, the type will be decided by PR */
-		if (!((*res)->type)) (*res)->type=verifyHeader(data,(unsigned short int)size);
+		if (!((*res)->type)) (*res)->type=0;//verifyHeader(data,(unsigned short int)size);
 	}
 	return 0;
 }
@@ -154,7 +153,7 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 			 0 File couldn't be open
 
 	*/
-	if (writeOpen(vFile,&writeDatFile,optionflag|backup_flag)) {
+	if (writeOpen(vFile,&writeDatFile,optionflag)) {
 		fseek(writeDatFile,6,SEEK_SET);
 		return 1;
 	} else {

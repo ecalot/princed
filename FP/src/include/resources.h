@@ -46,9 +46,39 @@ resources.h: Free Prince : Resource Handler
 //tWave resGetWave(int dd, int resId);
 //tImage resGetImage(int dd, int resId);
 
-enum tDataType {eImages=2,eWave,eMidi,eLevels}
+typedef enum {eImages=2,eWave,eMidi,eLevels}tDataType;
 
-typedef struct tData {
+#define MAX_FILENAME_SIZE        260
+#define MAX_RES_COUNT            25000
+
+/* Item Types */
+
+#define RES_TYPE_RAW          0
+#define RES_TYPE_LEVEL        1
+#define RES_TYPE_IMAGE        2
+#define RES_TYPE_WAVE         3
+#define RES_TYPE_MIDI         4
+#define RES_TYPE_BINARY       5
+#define RES_TYPE_PALETTE      6
+#define RES_TYPE_PCSPEAKER    7
+
+#define RES_TYPECOUNT         8
+
+/* types */
+typedef struct {
+	unsigned short int palette;
+	unsigned short int size;
+	unsigned long int offset;
+	unsigned char number; /* Used for level number */
+	char      type;
+	char*     path;
+	unsigned char*     palAux;
+	char*     name;
+	char*     desc;
+}tResource;
+
+
+typedef struct {
 	int frames;
 	tDataType type;
 	void* pFrames;
