@@ -49,7 +49,7 @@ int evaluateCondition(int condition,tKey* key,tMap* map) {
 int evaluateAction(int currentAction,tKey* key,tMap* map) {
 	int i=statesActionList[currentAction].conditionId;
 	int result;
-	while ((result=evaluateCondition(i),key,map)==STATES_CONDRESULT_TRUE) i++;
+	while ((result=evaluateCondition(i,key,map))==STATES_CONDRESULT_TRUE) i++;
 	if (result==STATES_CONDRESULT_FALSE) return 0;
 	return 1; /* Only returns true if STATES_CONDRESULT_END is reached */
 }
@@ -57,7 +57,7 @@ int evaluateAction(int currentAction,tKey* key,tMap* map) {
 /* Evaluates a state: all conditions for all actions until a true is found and returns the next state id*/
 int evaluateState(int state, tKey* key, tMap* map) {
 	int i=state;
-	while (!evaluateAction(i,map,key)) i++;
+	while (!evaluateAction(i,key,map)) i++;
 	return i;
 }
 
@@ -74,6 +74,7 @@ int stateUpdate(tState* current,tKey* key,tMap* map) {
 		current->animation=stateGetAnimation(action,&(current->frame));
 		current->currentState=statesActionList[action].nextStateId;
 	}
+	return imageFrame;
 }
 
 
