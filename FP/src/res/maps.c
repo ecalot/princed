@@ -333,7 +333,7 @@ void  mapStart(tMap* map, tObject* kid, tRoomId *roomId, int level) {
 	/* kid->x,y */
 	static char environments[]=MAP_ENVIRONMENTS;
 	*roomId=slevel(start)[0];
-#if defined DEBUGMAPS || 1
+#if defined DEBUGMAPS
 	printf("mapStart: binding kid to map in room %d using the %d environment\n",*roomId,environments[level]);
 #endif
 	slevel(time)=0;
@@ -473,15 +473,21 @@ int   mapMove(tMap* map) {
 		int x=loose->x/TILE_W;
 		int y=loose->y/TILE_H;
 						
+#if defined DEBUGMAPS
 		if (loose->screen) printf("Updating tile (x,y)=(%d,%d) s=%d\n",loose->x,loose->y,loose->screen);
+#endif
 		if (loose->speed<7) loose->speed++;
 		if (loose->screen) room=mapGetRoom(map,loose->screen);
 		/* calculate if there will be an impact */
 		if (loose->screen&&(y!=((loose->y+loose->speed*3)/TILE_H))) { /* tile changed floor and not in screen 0*/
-			tTile tile=roomGetTile(&room,x,y);
-			printf("Tile changed floor\n");
+			tTile tile=roomGetTile(&room,x+1,y+1);
+#if defined DEBUGMAPS
+			printf("Tile changed floor tile=(%d,%d)\n",tile.code,tile.back);
+#endif
 			if (isIn(tile,TILES_WALKABLE)) {
+#if defined DEBUGMAPS
 				printf("IMPACT in s%d x%d y%d\n",loose->screen,x,y);
+#endif
 				map->fore[(loose->screen-1)*30+x+y*10]=TILE_DEBRIS;
 				map->back[(loose->screen-1)*30+x+y*10]=0;
 				refresh=1;
@@ -492,11 +498,10 @@ int   mapMove(tMap* map) {
 		/* if not keep falling */
 		loose->y+=loose->speed*3;
 		if (loose->y>3*TILE_H) { /* go the the screen bellow */
-			loose->screen=*(slevel(links)+((loose->screen-1)*4)+eDown);
+			if (loose->screen) loose->screen=*(slevel(links)+((loose->screen-1)*4)+eDown);
 			loose->y=0;
 			/* TODO: if the screen is 0 destroy loose tiles from the falling list */
 		}
-		loose->screen=loose->screen;
 		loose=loose->next;
 	}
 	}
@@ -513,11 +518,11 @@ void  mapFreeLevel(tMap* map) {
 	for (i=0;i<24;i++) {
 		free(map->screenGates[i]);
 		free(map->screenPressables[i]);
-		/*free(map->screenDangers[i]);*/
+		free(map->screenDangers[i]);
 	}
 	free(map->gates);
 	free(map->pressables);
-	/*free(map->dangers);*/
+	free(map->dangers);
 	free(map);
 }
 

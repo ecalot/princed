@@ -90,8 +90,8 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 	/* advance state and get the flag, then interpret the flag and do the events */
 	short flags;
 	int refresh;
-	int x=object->location/TILE_W;
-	int y=object->floor;
+	int x;
+	int y;
 	
 	flags=stateUpdate(&key,object,room);
 
@@ -106,11 +106,20 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 	
 	switch (object->type) {
 		case oKid:
+			/* Move the kid */
 			refresh=kidMove(object,flags,room);
+			/* Calculate the new positions */
+			x=object->location/TILE_W;
+			y=object->floor;
+			if (refresh) *room=mapGetRoom(room->level,room->id);
+			refresh=0;
 			/* Check if the object must fall down */
 			if (flags&STATES_FLAG_P) {
 				tTile tile=roomGetTile(room,x+1,y+1);
-				if (!isIn(tile,TILES_WALKABLE)) {
+				if (!isIn(tile,TILES_WALKABLE)) { /* INTERRUPTION */
+#ifdef OBJECT_DEBUG
+					printf("INTERRUPTION! (x,y)=(%d,%d) tile=(%d,%d)\n",x,y,tile.code,tile.back);
+#endif
 					objectInterrupt(object,STATE_MARKS_FALL);
 					flags=stateUpdate(&key,object,room); /* move again the to the interrupted state */
 				}

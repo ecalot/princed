@@ -93,33 +93,33 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	
 	/* TODO: use a tile group: special, with GATES, PRESSABLE, SPIKES,
 	 * CHOPPER.
-	 * Code SPIKES and CHOPPER as memory structures */
+	 */
+	roomId=room->id;
 
+	if ((!roomId)||(roomId>24)) {
+		fprintf(stderr,"Assert: invalid room read: %d\n",roomId);					
+		exit(1);
+	}
+						
 	if (isIn(result,TILES_GATES)) { 
-		roomId=room->id;
 		if (y==0)	roomId=room->links[eUp];
 		if (x==0) roomId=room->links[eLeft];
 		if (y==4) roomId=room->links[eDown];
 		if (x==11)roomId=room->links[eRight];
-		if (roomId<24)
-			result.moreInfo=room->level->screenGates[roomId-1][result.back];
+		result.moreInfo=room->level->screenGates[roomId-1][result.back];
 	} else if (isIn(result,TILES_PRESSABLE)) {
-		roomId=room->id;
 		if (y==0)	roomId=room->links[eUp]; /*TODO: validate corners */
 		if (x==0) roomId=room->links[eLeft];
 		if (y==4) roomId=room->links[eDown];
 		if (x==11)roomId=room->links[eRight];
 		/* the case that a button is in tile 0 should never happen, but we'll care about it just in case */
-		if (roomId<24)
-			result.moreInfo=room->level->screenPressables[roomId-1][result.back];
+		result.moreInfo=room->level->screenPressables[roomId-1][result.back];
 	} else if (isIn(result,TILES_CHOPPER_SPIKE)) {
-		roomId=room->id;
 		if (y==0)	roomId=room->links[eUp]; /*TODO: validate corners */
 		if (x==0) roomId=room->links[eLeft];
 		if (y==4) roomId=room->links[eDown];
 		if (x==11)roomId=room->links[eRight];
-		if (roomId<24)
-			result.moreInfo=room->level->screenDangers[roomId-1][result.back];
+		result.moreInfo=room->level->screenDangers[roomId-1][result.back];
 	}
 	return result;
 }
