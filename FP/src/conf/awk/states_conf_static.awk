@@ -1,4 +1,3 @@
-
 BEGIN {
 	currentCondition=-1
 	currentAction=0
@@ -17,7 +16,6 @@ BEGIN {
 	currentAnimation=0
 }
 
-
 function addLine(coma) {
 				stateArray[currentAction]=sprintf(\
 					"\t/* %sAction: %s, Animations: start=%d total=%d */ \\\n\t\t{/*initial condition*/ %d, /*next state*/ **replace*%s**, /*steps*/ %d}%s\\\n",\
@@ -30,11 +28,7 @@ function addLine(coma) {
 					linkedState,\
 					coma\
 				)
-
-
 }
-
-
 
 {
 	if ( $1 == "-" ) {
@@ -52,7 +46,7 @@ function addLine(coma) {
 						conditions=currentCondition+1
 					}
 					currentCondition++;
-					if (sprintf("%d",$5)) {
+					if ($5!=sprintf("%d",$5)) {
 						if (defines[$5]) {
 							result=sprintf("STATES_COND_%s /* %d */",$5,defines[$5])
 						} else {
@@ -62,6 +56,8 @@ function addLine(coma) {
 							}
 							result=0
 						}
+					} else {
+						result=$5
 					}
 					printf("\t{es%s,%s}, /* condition number %d */\\\n",$4,result,currentCondition)
 				} else if (listType == "animation") {

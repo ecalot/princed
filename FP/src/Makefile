@@ -183,5 +183,5 @@ include/states_conf_static.h: conf/states.conf conf/awk/states_conf_static.awk
 
 include/states_conf_properties.h: conf/statesproperties.conf conf/awk/states_conf_properties.awk
 	$(INFO) Creating states condition properties configuration file...
-	$(GREP) conf/statesproperties.conf|$(AWK) -f conf/awk/states_conf_properties.awk >include/states_conf_properties.h:
+	$(GREP) conf/statesproperties.conf|$(AWK) -f conf/awk/states_conf_properties.awk >include/states_conf_properties.h
 

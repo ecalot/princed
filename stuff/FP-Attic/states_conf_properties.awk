@@ -1,4 +1,4 @@
 {
-	printf("STATES_COND_%s %d",$2,$1)
+	printf("#define STATES_COND_%s %d\n",$1,$2)
 }
 
