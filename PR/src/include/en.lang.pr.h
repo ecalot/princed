@@ -66,6 +66,7 @@ pr.h: Princed Resources : English language strings
 #define PR_TEXT_IMPORT_SUCCESS    "'%s' successfully imported\n"
 #define PR_TEXT_IMPORT_ERRORS     "'%s' has errors, skipped\n"
 #define PR_TEXT_IMPORT_DONE       "Importing done, %d files imported ok, %d files with error\n"
+#define PR_TEXT_IMPORT_PLV_WARN   "Warning: PLV file may be corrupt\n"
 
 #define PR_TEXT_EXPORT_WORKING    "'%s' successfully exported\n"
 #define PR_TEXT_EXPORT_ERROR      "'%s' has errors, aborting...\n"

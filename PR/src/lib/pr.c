@@ -201,9 +201,14 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	int a;
 	const char* aux;
 	char* currentDatFileName;
+	char* currentDatFile;
+
+	currentDatFile=strallocandcopy(vDatFile);
+
+	parseGivenPath(currentDatFile);
 
 	if (vDatFileName==NULL) { /* if no special dat file was specified, a path parsed will be used */
-		aux=getFileNameFromPath(vDatFile);
+		aux=getFileNameFromPath(currentDatFile);
 	} else {
 		aux=vDatFileName;
 	}
@@ -216,9 +221,11 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 		a-=2;
 	} else {
 		/* importing errors/no errors */
-		a=compile (vDatFile, vDirName,r,opt,currentDatFileName,backupExtension);
+		a=compile (currentDatFile, vDirName,r,opt,currentDatFileName,backupExtension);
 	}
 	free(currentDatFileName);
+	free(currentDatFile);
+	freePartialList();
 	return a;
 }
 

@@ -160,6 +160,8 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 	return ok;
 }
 
+extern FILE* outputStream;
+
 int mFormatImportPlv(unsigned char* data, tResource *res) {
 	/* declare variables */
 	unsigned char* pos;
@@ -179,10 +181,11 @@ int mFormatImportPlv(unsigned char* data, tResource *res) {
 	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE+res->size) return 0;
 
 	/* validate checksum */
-	if (!checkSum(pos,res->size)) return 0;
+	if (!checkSum(pos,res->size))
+		fprintf(outputStream,PR_TEXT_IMPORT_PLV_WARN);
 
 	/* save data */
 	mWriteFileInDatFileIgnoreChecksum(pos,res->size--);
-
+	
 	return 1;
 }
