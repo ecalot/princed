@@ -79,7 +79,7 @@ tMenuOption showTitles() {
 	main_title = resLoad(RES_IMG_MAIN_BACKGROUND);
 	if (! main_title) {
 		printf("The resource couldn't be loaded!\n");
-		return 1;
+		return sQuit;
 	}
 	outputClearScreen();
 	inputInitTimer();
@@ -116,7 +116,7 @@ tMenuOption showTitles() {
 	main_text = resLoad(RES_IMG_TEXT_BACKGROUND);
 	if (! main_text) {
 		printf("The resource couldn't be loaded!\n");
-		exit(1);
+		return sQuit;
 	}
 	*/
 	/* The presents */
@@ -125,12 +125,11 @@ tMenuOption showTitles() {
 	outputDrawBitmap(main_text->pFrames[1], 0, 0);
 	outputUpdateScreen();
 	*/
-	while (1) {
+	do {
 		result=sleep(1000);
-		if (result!=sNone) return result;
-	}
-	/*inputStopTimer();
-	return sStart;
-	*/
+	} while (result==sNone);
+	
+	inputStopTimer();
+	return result;
 }	
 
