@@ -37,7 +37,12 @@ kid.h: Free Prince : Kid object
 #include "maps.h" /* getTile */
 #include <stdio.h> /* NULL */
 
+/*#define NEW_KERNEL*/
+
 static struct {
+#ifdef NEW_KERNEL
+	tData* kid[2];
+#else
 	tData* turning[2];
 	tData* normal[2];
 	tData* couching[2];
@@ -48,9 +53,14 @@ static struct {
 	tData* stoprunning[2];
 	tData* turnrunning[2];
 	tData* jumprunning[2];
+#endif
 } kidGfx;
 
 void loadGfx() {
+#ifdef NEW_KERNEL
+	kidGfx.kid[DIR_LEFT]=resLoad(RES_IMG_KID_ALL);
+	kidGfx.kid[DIR_RIGHT]=resLoad(RES_IMG_KID_ALL|RES_MODS_INVERT);
+#else
 	kidGfx.turning[DIR_LEFT]=resLoad(RES_ANIM_TURNING);
 	kidGfx.turning[DIR_RIGHT]=resLoad(RES_ANIM_TURNING|RES_MODS_INVERT);
 	kidGfx.normal[DIR_LEFT]=resLoad(RES_ANIM_NORMAL);
@@ -71,9 +81,14 @@ void loadGfx() {
 	kidGfx.turnrunning[DIR_RIGHT]=resLoad(RES_ANIM_RUN_TURN|RES_MODS_INVERT);
 	kidGfx.jumprunning[DIR_LEFT]=resLoad(RES_ANIM_JUMPRUN);
 	kidGfx.jumprunning[DIR_RIGHT]=resLoad(RES_ANIM_JUMPRUN|RES_MODS_INVERT);
+#endif
 }
 
 void kidFree() {
+#ifdef NEW_KERNEL
+	resFree(kidGfx.kid[DIR_LEFT]);
+	resFree(kidGfx.kid[DIR_RIGHT]);
+#else
 	resFree(kidGfx.turning[DIR_LEFT]);
 	resFree(kidGfx.turning[DIR_RIGHT]);
 	resFree(kidGfx.normal[DIR_LEFT]);
@@ -94,6 +109,7 @@ void kidFree() {
 	resFree(kidGfx.turnrunning[DIR_RIGHT]);
 	resFree(kidGfx.jumprunning[DIR_LEFT]);
 	resFree(kidGfx.jumprunning[DIR_RIGHT]);
+#endif
 }
 
 /* TODO: send this function to maps.c */

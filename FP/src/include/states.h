@@ -26,13 +26,6 @@ typedef struct {
 	short        animSize; /* number of frames to be shown */
 } tsAction;
 
-/* public object */
-typedef struct { /* The state object: only struct that is not static to the state class */
-	short  frame; /* when zero, animation is released and the next state is taken */
-	short* animation;
-	short  currentState;
-} tState;
-
 /* public functions interface */
 
 /* This function should return the image frame

@@ -44,6 +44,12 @@ typedef enum {eJustPressed,eNormal,ePressed,eStuck}tPressableAction;
 typedef enum {eNormalGate,eExitGate}tGateType;
 typedef enum {eDrop,eRaise}tPressableType;
 
+typedef struct { /* The state object: only struct that is not static to the state class */
+	short  frame; /* when zero, animation is released and the next state is taken */
+	short* animation;
+	short  currentState;
+} tState;
+
 typedef struct {
 	int time;
 	int frame;
