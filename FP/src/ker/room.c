@@ -138,9 +138,19 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 #define wallGetInfo(a)     (wallGet(env,cases,(a),seed))
 #define touchLoose(a)      (((tDanger*)a.moreInfo)->action=eLosMoving)
 
-/* door drawing */
+/* Special drawings */
 #define drawGateTop(x,y,frame) outputDrawBitmap(roomGfx.environment->pFrames[35-((frame)&7)],x,y)
+#define drawTorchFire(x,y) outputDrawBitmap(roomGfx.torch->pFrames[((room->level->time)+2*x+y)%(roomGfx.torch->frames)],x,y)
+#define drawSword(x,y) outputDrawBitmap(roomGfx.sword->pFrames[(room->level->time%20)==0],x,y)
+#define drawPotionSmallBase(x,y) outputDrawBitmap(roomGfx.potionBase->pFrames[0],x,y)
+#define drawPotionBigBase(x,y) outputDrawBitmap(roomGfx.potionBase->pFrames[1],x,y)
+#define drawPotionRedBubbles(x,y,isBig) outputDrawBitmap(roomGfx.potionAnimRed->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimRed->frames)],x,y-5*(isBig))
+#define drawPotionGreenBubbles(x,y,isBig) outputDrawBitmap(roomGfx.potionAnimGreen->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimGreen->frames)],x,y-5*(isBig))
+#define drawPotionBlueBubbles(x,y,isBig) outputDrawBitmap(roomGfx.potionAnimBlue->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimBlue->frames)],x,y-5*(isBig))
 
+
+
+		
 typedef enum {layTritop,layTribot,layBase}tLooseLayer;
 void drawLoose(int x, int y, int frame,tLooseLayer layer) {
 	static char looseAnimation[]={1,0,2,2,0,0,0,2,2,2,2};
@@ -260,11 +270,13 @@ void drawChopper(int x, int y, int frame, tChopperLayer layer) {
 	}
 }
 
+/* End of special drawings */
+
+
 /* main panel block */
 void drawBackPanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
 	tTile left=roomGetTile(room,x-1,y);
-	int potSize;
 	/* LEFT (left,tile) */
 	
 	/* Wall/left */
@@ -310,7 +322,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		e(81,(x-1)*TILE_W+0,y*TILE_H+2);
 	/* torch/this */
 	if (isIn(tile,TILES_TORCH)) { /* animation */
-		outputDrawBitmap(roomGfx.torch->pFrames[((room->level->time)+2*x+y)%(roomGfx.torch->frames)],x*TILE_W+11,y*TILE_H-39);
+		drawTorchFire(x*TILE_W+11,y*TILE_H-39); 
 		/* base */
 		e(56,x*TILE_W+3,y*TILE_H-24);
 	}
@@ -380,19 +392,19 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		e(80,(x-1)*TILE_W+0,y*TILE_H+0);
 	/* sword/left */
 	if (isIn(left,TILES_SWORD)) 
-		outputDrawBitmap(roomGfx.sword->pFrames[(room->level->time%20)==0],(x-1)*TILE_W-15,y*TILE_H-4);
+		drawSword((x-1)*TILE_W-15,y*TILE_H-4);
 	/* potion base/left */
 	if (isIn(left,TILES_SMALLPOTION))
-		outputDrawBitmap(roomGfx.potionBase->pFrames[0],(x-1)*TILE_W-15,y*TILE_H-4);
-	if ((potSize=5*isIn(left,TILES_BIGPOTION))) 
-		outputDrawBitmap(roomGfx.potionBase->pFrames[1],(x-1)*TILE_W-15,y*TILE_H-4);
+		drawPotionSmallBase((x-1)*TILE_W-15,y*TILE_H-4);
+	if ((isIn(left,TILES_BIGPOTION))) 
+		drawPotionBigBase((x-1)*TILE_W-15,y*TILE_H-4);
 	/* potion animation/left */
 	if (isIn(left,TILES_REDPOTION))
-		outputDrawBitmap(roomGfx.potionAnimRed->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimRed->frames)],(x-1)*TILE_W+3-15,y*TILE_H-15-potSize);
+		drawPotionRedBubbles((x-1)*TILE_W+3-15,y*TILE_H-15,isIn(left,TILES_BIGPOTION));
 	if (isIn(left,TILES_GREENPOTION))
-		outputDrawBitmap(roomGfx.potionAnimGreen->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimGreen->frames)],(x-1)*TILE_W+3-15,y*TILE_H-15-potSize);
+		drawPotionGreenBubbles((x-1)*TILE_W+3-15,y*TILE_H-15,isIn(left,TILES_BIGPOTION));
 	if (isIn(left,TILES_BLUEPOTION))
-		outputDrawBitmap(roomGfx.potionAnimBlue->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimBlue->frames)],(x-1)*TILE_W+3-15,y*TILE_H-15-potSize);
+		drawPotionBlueBubbles((x-1)*TILE_W+3-15,y*TILE_H-15,isIn(left,TILES_BIGPOTION));
 }
 
 /* bottom panel block at background */
@@ -497,32 +509,32 @@ void drawForePanel(tRoom* room,int x, int y) {
 			e(70,(x-1)*TILE_W+0,y*TILE_H+0);
 		}
 		/* TODO: use one seed per combination */
-			/* the seed generation algorithm */
-			/* Upper row */
-			if (wallGetInfo(WALL_TABLE_LINE1_DARKER))
-				e(75,(x-1)*TILE_W+0,y*TILE_H-39);
-			if (wallGetInfo(WALL_TABLE_LINE1_LEFT_DOWN))
-				e(77,(x-1)*TILE_W+0,y*TILE_H-39);
-			if (wallGetInfo(WALL_TABLE_LINE1_RIGHT_DOWN))
-				e(79,(x-1)*TILE_W+24,y*TILE_H-39);
-			if (wallGetInfo(WALL_TABLE_LINE1_RIGHT_UP))
-				e(78,(x-1)*TILE_W+24,y*TILE_H-49);
-			if (wallGetInfo(WALL_TABLE_LINE1_LEFT_UP))
-				e(76,(x-1)*TILE_W+0,y*TILE_H-54);
-			/* Second row */
-			e(74-wallGetInfo(WALL_TABLE_LINE2_SEP),(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET),y*TILE_H-18);
-			if (wallGetInfo(WALL_TABLE_LINE2_LEFT_DOWN))
-				e(77,(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)+5,y*TILE_H-39+21);
-			if (wallGetInfo(WALL_TABLE_LINE2_RIGHT_DOWN))
-				e(79,(x-1)*TILE_W+24+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)-32+5,y*TILE_H-39+21);
-			if (wallGetInfo(WALL_TABLE_LINE2_RIGHT_UP))
-				e(78,(x-1)*TILE_W+24+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)-32+5,y*TILE_H-49+21);
-			if (wallGetInfo(WALL_TABLE_LINE2_LEFT_UP))
-				e(76,(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)+5,y*TILE_H-54+21);
-			/* Third row TODO: send to BottomTile */
-			e(74-wallGetInfo(WALL_TABLE_LINE3_SEP),(x-1)*TILE_W+3+wallGetInfo(WALL_TABLE_LINE3_OFFSET),y*TILE_H+3);
-			if (wallGetInfo(WALL_TABLE_LINE3_LEFT_UP))
-				e(76,(x-1)*TILE_W+5+wallGetInfo(WALL_TABLE_LINE3_OFFSET)+5,y*TILE_H-55+21*2);
+		/* the seed generation algorithm */
+		/* Upper row */
+		if (wallGetInfo(WALL_TABLE_LINE1_DARKER))
+			e(75,(x-1)*TILE_W+0,y*TILE_H-39);
+		if (wallGetInfo(WALL_TABLE_LINE1_LEFT_DOWN))
+			e(77,(x-1)*TILE_W+0,y*TILE_H-39);
+		if (wallGetInfo(WALL_TABLE_LINE1_RIGHT_DOWN))
+			e(79,(x-1)*TILE_W+24,y*TILE_H-39);
+		if (wallGetInfo(WALL_TABLE_LINE1_RIGHT_UP))
+			e(78,(x-1)*TILE_W+24,y*TILE_H-49);
+		if (wallGetInfo(WALL_TABLE_LINE1_LEFT_UP))
+			e(76,(x-1)*TILE_W+0,y*TILE_H-54);
+		/* Second row */
+		e(74-wallGetInfo(WALL_TABLE_LINE2_SEP),(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET),y*TILE_H-18);
+		if (wallGetInfo(WALL_TABLE_LINE2_LEFT_DOWN))
+			e(77,(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)+5,y*TILE_H-39+21);
+		if (wallGetInfo(WALL_TABLE_LINE2_RIGHT_DOWN))
+			e(79,(x-1)*TILE_W+24+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)-32+5,y*TILE_H-39+21);
+		if (wallGetInfo(WALL_TABLE_LINE2_RIGHT_UP))
+			e(78,(x-1)*TILE_W+24+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)-32+5,y*TILE_H-49+21);
+		if (wallGetInfo(WALL_TABLE_LINE2_LEFT_UP))
+			e(76,(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)+5,y*TILE_H-54+21);
+		/* Third row TODO: send to BottomTile */
+		e(74-wallGetInfo(WALL_TABLE_LINE3_SEP),(x-1)*TILE_W+3+wallGetInfo(WALL_TABLE_LINE3_OFFSET),y*TILE_H+3);
+		if (wallGetInfo(WALL_TABLE_LINE3_LEFT_UP))
+			e(76,(x-1)*TILE_W+5+wallGetInfo(WALL_TABLE_LINE3_OFFSET)+5,y*TILE_H-55+21*2);
 
 	}
 	/* debris/this foreground layer */
