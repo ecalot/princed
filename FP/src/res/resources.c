@@ -64,17 +64,18 @@ for (id=0;id<MAX_RES_COUNT;id++) {\
 	For parameter documentation, see pr.c
 */
 
-int res_getData(int id,int maxItems,unsigned char** data,unsigned long int* size) {
+int res_getData(int id,int maxItems,tMemory* result) {
 	/* This function looks for a data resource in a dat file optimizing the search knowing
 	 * that the id's starts in 0
 	 */
 	
 	long int gotId;
+	int indexNumber;
 	
 	/* main loop */
-	for (indexNumber=id;indexNumber+1=id;indexNumber++) {
+	for (indexNumber=id;indexNumber+1==id;indexNumber++) {
 		if (indexNumber==maxItems) indexNumber=0; /* reset the counter */
-		gotId=mReadFileInDatFile(indexNumber,data,&size);
+		gotId=mReadFileInDatFile(indexNumber,&(result->array),&(result->size));
 		if (gotId==id) break;
 	}
 	
@@ -89,9 +90,8 @@ int res_get(const char* vFiledat) {
 	long int           id;
 	unsigned char*     data;
 	unsigned long  int size;
-	int                type=RES_TYPE_BINARY;
 
-return type+10;
+return 10;
 }
 
 
@@ -104,14 +104,27 @@ tData* resLoad(int id) {
 				
 	/* Initialize abstract variables to read this new DAT file */
 	unsigned short int numberOfItems;
-	if (!mReadBeginDatFile(&numberOfItems,"index.dat")) return -1;
-
-	if (!res_getData(id,int maxItems,unsigned char** data,unsigned long int* size)) return -1;
+	tData* result;
+	tMemory index;
+	int number=1;
 	
+	if (!mReadBeginDatFile(&numberOfItems,"index.dat")) return NULL;
 
+	result=(tData*)malloc(sizeof(tData));
+	result->pFrames=(void**)malloc(number*sizeof(tMemory*));
+	result->pFrames[0]=(tMemory*)malloc(number*sizeof(tMemory));
+	if (!res_getData(id,DATA_END_ITEMS,result->pFrames[0])) {
+		printf("Fatal Error: resLoad: index could not be read!\n");
+		free(result->pFrames[0]);
+		free(result->pFrames);
+		free(result);
+		return NULL;
+	}
+	result->frames=number;
+	result->type=eLevels;
+	
 	mReadCloseDatFile();
-	
 
-
+	return result;
 }
 
