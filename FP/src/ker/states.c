@@ -41,7 +41,7 @@ int evaluateCondition(int condition,tKey* key, tKid* kid, tRoom* room) {
 	int whereInTile=(kid->direction==eLeft)?(kid->location%32):32-(kid->location%32);
 	switch(c.type) {
 	case esKeyUp:
-		return inputGetUp(key->status)?
+		return inputGetUp(key->status)? /* TODO: argument notPressed isn't supported */
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esKeyDown:
 		return inputGetDown(key->status)?
