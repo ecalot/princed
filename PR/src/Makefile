@@ -50,7 +50,7 @@ else
   LINKERRELEASE = -s
 endif
 
-FILES    = import.o export.o resources.o tasks.o disk.o\
+FILES    = import.o export.o resources.o classify.o disk.o\
            dat.o bmp.o mid.o pal.o wav.o plv.o\
            memory.o pr.o
 
@@ -158,9 +158,9 @@ resources.o: lib/resources.c
 	$(INFO) Compiling resource manager module...
 	$(CC) -c lib/resources.c $(OPTIONS)
 
-tasks.o: lib/tasks.c
-	$(INFO) Compiling extra tasks module...
-	$(CC) -c lib/tasks.c $(OPTIONS)
+classify.o: lib/classify.c
+	$(INFO) Compiling classification module...
+	$(CC) -c lib/classify.c $(OPTIONS)
 
 parse.o: lib/xml/parse.c
 	$(INFO) Compiling XML parsing module...
