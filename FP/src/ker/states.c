@@ -69,10 +69,10 @@ void state_GetAnimation(int action,tState *state/*short *frames,short** flags,fl
 #endif
 	state->step=(float)(totaloffset)/(float)(i); /* this is the full step to be used in case a non step walk is set TODO: delete this system */
 	while (i--) {
-		(state->animation)[i]=*(j++); /* the first short is the frame */
-		((state->flags)[i])=*(j++); /* the second short is the flag */
-		((state->steps)[i])=*(j++); /* the third short is the frame step */
-		((state->offsx)[i])=*(j++); /* the fourth short is the height */
+		(state->animation)[i] = *(j++); /* the first short is the frame */
+		(state->flags)[i]     = *(j++); /* the second short is the flag */
+		(state->steps)[i]     = *(j++); /* the third short is the frame step */
+		(state->offsx)[i]     = *(j++); /* the fourth short is the height */
 	}
 }
 
