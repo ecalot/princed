@@ -5,38 +5,39 @@
 
 Table of Contents
 ~~~~~ ~~ ~~~~~~~~
-1. Preamble ............................................................ 42
-2. Introduction ........................................................ 51
-3. Primitives .......................................................... 76
-3.1. DAT reading and writing primitives ................................ 83
-3.2. DAT reading primitives ............................................ 95
-3.3. DAT writing primitives ........................................... 104
-4. DAT v1.0 Format Specifications ..................................... 113
-4.1. General file specs, index and checksums .......................... 116
-4.2. Images ........................................................... 183
-4.2.1 Headers ......................................................... 186
-4.2.2 Algorithms ...................................................... 209
-4.2.2.1 Run length encoding (RLE) ..................................... 225
-4.2.2.2 LZ variant (LZG) .............................................. 236
-4.3. Palettes ......................................................... 317
-4.4. Levels ........................................................... 324
-4.4.1 Unknown blocks .................................................. 355
-4.4.2 Room mapping .................................................... 372
-4.4.3 Room linking .................................................... 508
-4.4.4 Guard handling .................................................. 524
-4.4.5 Starting Position ............................................... 565
-4.4.6 Door events ..................................................... 579
-4.5. Digital Waves .................................................... 623
-4.6. Midi music ....................................................... 640
-4.7. Internal PC Speaker .............................................. 643
-4.8. Binary files ..................................................... 648
-5. PLV v1.0 Format Specifications ..................................... 655
-5.1. User data ........................................................ 681
-5.2. Allowed Date format .............................................. 708
-6. The SAV v1.0 format ................................................ 722
-7. The HOF v1.0 format ................................................ 768
-8. Credits ............................................................ 791
-9. License ............................................................ 810
+1. Preamble ............................................................ 43
+2. Introduction ........................................................ 52
+3. Primitives .......................................................... 77
+3.1. DAT reading and writing primitives ................................ 84
+3.2. DAT reading primitives ............................................ 96
+3.3. DAT writing primitives ........................................... 105
+4. DAT v1.0 Format Specifications ..................................... 114
+4.1. General file specs, index and checksums .......................... 117
+4.2. Images ........................................................... 184
+4.2.1 Headers ......................................................... 187
+4.2.2 Algorithms ...................................................... 210
+4.2.2.1 Run length encoding (RLE) ..................................... 226
+4.2.2.2 LZ variant (LZG) .............................................. 237
+4.3. Palettes ......................................................... 318
+4.4. Levels ........................................................... 325
+4.4.1 Unknown blocks .................................................. 356
+4.4.2 Room mapping .................................................... 373
+4.4.2.1 Wall drawing algorithm ........................................ 510
+4.4.3 Room linking .................................................... 577
+4.4.4 Guard handling .................................................. 593
+4.4.5 Starting Position ............................................... 634
+4.4.6 Door events ..................................................... 648
+4.5. Digital Waves .................................................... 692
+4.6. Midi music ....................................................... 709
+4.7. Internal PC Speaker .............................................. 712
+4.8. Binary files ..................................................... 717
+5. PLV v1.0 Format Specifications ..................................... 724
+5.1. User data ........................................................ 750
+5.2. Allowed Date format .............................................. 777
+6. The SAV v1.0 format ................................................ 791
+7. The HOF v1.0 format ................................................ 837
+8. Credits ............................................................ 860
+9. License ............................................................ 879
 
 
 1. Preamble
@@ -504,6 +505,74 @@ Table of Contents
 
  Note: Some modifiers have not been tested, there may be any other unknown
        tile type we didn't discover.
+
+
+4.4.2.1 Wall drawing algorithm
+ This section doesn't have a direct relation with the format because it
+ describes how the walls must be drawn on the screen. However, as this
+ information should be util to recreate a cloned screen read from the
+ format we decided to include this section to the document.
+
+ Wall drawing depends on what is in the right panel. If the right panel
+ is not a wall (binary code ends in 10100) a base wall will be drawn and
+ other random seed will be used. If the right panel is a wall then the main
+ base wall will be drawn and the described seed will be used.
+
+ When the base wall is drawn, the modifiers should be blitten over it.
+ There are 53 different types of walls using the same base image.
+ We will call the seed array to the one having the modifier information of
+ those 53 panels. This array has indexes from 1 to 53 included.
+
+ To calculate what value take from the array this calculation must be
+ performed: panelInfo=seedArray[screenNumber+wallPosition]
+ where panelInfo is the result modifier information that will be applied to
+ the base image; seedArray is this array that will be described above as a
+ table; screenNumber is the number of the screen the wall is (from 1 to 24)
+ and wallPosition is the position the wall is (from 0 to 29), using the
+ location format specified in section 4.4.2. This means the first value is
+ 1 (screenNumber=1 and wallPosition=0) and the last is 53 (screenNumber=24
+ and wallPosition=29).
+
+ Modifiers affects the corners of a stone. There are three stone rows per
+ wall. If the modifier is activated this corner will appear different
+ (seems to be darker). Another modifier is the gray stone.
+
+                   Table 4.4: Stone modifiers on seed position
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Modifier       Seed Positions
+	~~~~~~~~       ~~~~ ~~~~~~~~~
+     (First row modifiers)
+  Gray stone     2, 5, 14, 17, 26, 32, 35, 50
+  Left, bottom   2, 11, 36, 45
+  Left, top      37
+  Right, bottom  27, 33
+  Right, up      4, 10, 31, 37
+
+     (second row)
+  Gray stone     none 
+  Left, bottom   34, 47
+  Left, top      9, 10
+  Right, bottom  2, 8, 25, 35
+  Right, top     6, 12, 23, 29, 39
+
+     (third row)
+  Gray stone     none 
+  Left, bottom   none
+  Left, top      16
+  Right, bottom  none
+  Right, top     none
+
+ Another modifiers are saved in the seed too. Those modifiers are not
+ boolean values, they are offsets and sizes. As each stone has a different
+ size the stone separation offset is saved in the seed.
+ For the first row, the sones are all the same size and the seed is not
+ needed.
+ For the second row we've got the first 20 values, ordered from 1 to 20. 
+ position        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
+ offsets:        5,4,3,3,1,5,4,2,1, 1, 5, 3, 2, 1, 5, 4, 3, 2, 5, 4
+ separatos size: 0,1,1,0,0,0,1,1,0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0
+
+ We'll be adding the next values as soon as we count the pixels.
 
 4.4.3 Room linking
  This section describes the links block.
