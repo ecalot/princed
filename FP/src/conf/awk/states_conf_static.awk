@@ -101,12 +101,12 @@ function addExit (name) {
 			#if (1) {      #defines[$2]) {
 				if ($1~/^Map/) {
 					result=sprintf("TILES_%s",toupper($2))
+				} else if ($1~/Looking/) {
+					result=sprintf("DIR_%s",toupper($2))
+				} else if ($1~/Key/) {
+					result=sprintf("STATES_KEY_%s",toupper($2))
 				} else {
-					if ($1~/Looking/) {
-						result=sprintf("DIR_%s",toupper($2))
-					} else {
-						result=sprintf("STATES_COND_%s",toupper($2))
-					}
+					result=sprintf("STATES_COND_%s",toupper($2))
 				}
 			#} else {
 			#

@@ -4,13 +4,13 @@
  */
 
 
-#ifndef _STATES_CONF_
-#define _STATES_CONF_
+#ifndef _STATES_CONF_H_
+#define _STATES_CONF_H_
 
 /* animation frame flag options */
 #include "states_conf_flags.h"
 /* condition properties */
-#include "states_conf_properties.h"
+/*#include "states_conf_properties.h" DEPRECATED */
 /* state/action, animation and condition lists */
 #include "states_conf_static.h"
 

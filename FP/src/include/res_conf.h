@@ -4,8 +4,8 @@
  */
 
 
-#ifndef _RES_CONF_
-#define _RES_CONF_
+#ifndef _RES_CONF_H_
+#define _RES_CONF_H_
 
 /* parts */
 #include "res_conf_parts.h"

@@ -63,9 +63,9 @@ EXEFILE       = bin/freeprince
 GENERATEDRESHEADERS = include/res_conf_parts.h include/res_conf_files.h\
                       include/res_conf_types.h include/res_conf_mods.h\
                       include/res_conf_resources.h
-GENERATEDSTAHEADERS = include/states_conf_static.h include/states_conf_properties.h\
+GENERATEDSTAHEADERS = include/states_conf_static.h \
                       include/states_conf_flags.h
-
+#include/states_conf_properties.h
 GENERATEDTILHEADERS = include/tiles_conf_types.h include/tiles_conf_groups.h
 
 GENERATEDOTHHEADERS = include/walls_conf.h include/anims_conf.h include/text_conf.h
@@ -265,9 +265,9 @@ include/states_conf_static.h: conf/awk/states_conf_static.awk conf/states/*.conf
 	$(INFO) Creating states list configuration file...
 	$(AWK) -f conf/awk/states_conf_static.awk conf/states/*.conf>include/states_conf_static.h
 
-include/states_conf_properties.h: conf/statesproperties.conf conf/awk/states_conf_properties.awk
-	$(INFO) Creating states condition properties configuration file...
-	$(AWK) -f conf/awk/states_conf_properties.awk conf/statesproperties.conf>include/states_conf_properties.h
+#include/states_conf_properties.h: conf/statesproperties.conf conf/awk/states_conf_properties.awk
+#	$(INFO) Creating states condition properties configuration file...
+#	$(AWK) -f conf/awk/states_conf_properties.awk conf/statesproperties.conf>include/states_conf_properties.h
 
 include/states_conf_flags.h: conf/flags.conf conf/awk/states_conf_flags.awk
 	$(INFO) Creating states frame flags configuration file...

@@ -6,6 +6,9 @@
 #include "types.h" /* tMap */
 #include "input.h" /* tKey */
 
+#define STATES_KEY_PRESSED 1
+#define STATES_KEY_NOTPRESSED 0
+
 typedef enum {esLast=0,esKeyUp,esKeyDown,esKeyForward,esKeyBack,esKeyShift,esMapUp,esMapUpForward,esMapDown,esMapForward,esMapBack,esMapOn,esForwardTileNearerThan,esForwardTileFartherThan,esScreenUp,esScreenDown,esScreenLeft,esScreenRight,esInScreen,esInLevel,esForwardChangeToScreen,esInFloorTop,esInfloorMiddle,esInfloorBottom,esMapNotOn,esMapNotBack,esMapDownBack,esMapNotDownBack,esMapNotForward,esKidLooking}tsConditionType;
 
 								
