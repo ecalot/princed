@@ -33,7 +33,8 @@ kid.h: Free Prince : Kid object
 #include "kid.h"
 #include "output.h"
 #include "resources.h" /* resLoad/resFree */
-#include "room.h" /* TILE_H */
+#include "room.h"
+#include "maps.h" /* getTile */
 #include <stdio.h> /* NULL */
 
 static struct {
@@ -115,7 +116,9 @@ void kidDraw(tKid kid) {
 	outputDrawBitmap(kid.action->pFrames[kid.frame],kid.location,58+kid.floor*TILE_H); /* TODO: use TILE_H */
 }
 
-int kidMove(tKid* kid,tKey key/*,tRoom room*/) {
+int kidMove(tKid* kid,tKey key,tRoom* room) {
+	int result;
+	tTile tile;
 	/* Returns 1 if the action is done
 	 * returns 0 if the action needs more time */
 
@@ -126,23 +129,6 @@ int kidMove(tKid* kid,tKey key/*,tRoom room*/) {
 		kid->frame=0;
 		/* keylogIntercept(&key) --> here is the right place */
 		/* Switch the right action knowing the actual status and set the velocity and action */
-		/* stay context (walk,stay,stand,jump,turn)
-		 * stay --> stay
-		 * stay --> turn 
-		 * stay --> run
-		 * stay --> walk
-		 * stay --> couch
-		 * stay --> jump
-		 * run context 
-		 * run --> turnrun
-		 * run --> run
-		 * run --> jumprun
-		 * run --> couchrun
-		 *
-		 * Note: falling and climbing context are ignored
-		 */
-		/*printf("next action=%d direction=%d keystatus=%x ",kid->nextAction,kid->direction,key.status);*/
-
 		/* STAY events
 		 */
 		
@@ -251,14 +237,28 @@ int kidMove(tKid* kid,tKey key/*,tRoom room*/) {
 				kid->velocity=kid->velocity/2; /* 50% slower */
 			}
 		}
-		return 1;
+		result=1;
 	} else {
-		/* TODO: tile traspassing and validations here
-		 * use roomStep(tRoom room,x,y) roomTouch(tRoom room,x,y) to activate tile events
-		 * use int roomKidValid(tRoom room,tKid kid) to validate kid position
-		 */
 		kid->location+=kid->velocity;
-		return 0;
+		result=0;
 	}
+
+	/* TODO: tile traspassing and validations here
+	 * use roomStep(tRoom room,x,y) roomTouch(tRoom room,x,y) to activate tile events
+	 * use int roomKidValid(tRoom room,tKid kid) to validate kid position
+	 */
+	if (kid->location<0) {
+		kid->location=10*TILE_W;
+		*room=mapGetRoom((void*)(room->level),room->links[eLeft]);
+	} else if (kid->location>10*TILE_W) {
+		*room=mapGetRoom((void*)(room->level),room->links[eRight]);
+		kid->location=0;
+	}
+	tile=roomGetTile(room,(kid->location/TILE_W)+1,kid->floor+1);
+	if (!tile.walkable) {
+			fprintf(stderr,"kidMove: Tile not walkable, falling\n");
+			kid->floor++;
+	}
+	return result;
 }
 

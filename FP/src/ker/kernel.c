@@ -50,7 +50,8 @@ int playgame(int optionflag,int level) {
 	/* Create objects */
 	tKey    key=inputCreateKey();
 	tKid    kid=kidCreate();
-	tData*  map=resLoad(RES_MAP|level);
+	tData*  resMap=resLoad(RES_MAP|level);
+	tMap*   map=(tMap*)resMap->pFrames;
 	tRoom   room;
 	tRoomId roomId;
 	
@@ -70,8 +71,8 @@ int playgame(int optionflag,int level) {
 			 * TODO: send to the real place where
 			 * the key is interpreted in kid object
 			 */
-			kidMove(&kid,key);
-			mapMove(map);	
+			kidMove(&kid,key,&room);
+			mapMove(map);
 			/* Drawing functions */
 			outputClearScreen(); /* TODO: send to drawBackground() */
 			roomDrawBackground(&room);
@@ -82,10 +83,10 @@ int playgame(int optionflag,int level) {
 			/* Action event */
 			switch (key.actionPerformed) {
 			case quit:
-				resFree(map);
+				resFree(resMap);
 				return 1;
 			case gotoTitles:
-				resFree(map);
+				resFree(resMap);
 				return 0;
 			case showUp:
 				if ((roomId=room.links[eUp])) {
@@ -106,10 +107,11 @@ int playgame(int optionflag,int level) {
 					room=mapGetRoom(map,roomId);
 				break;
 			case passLevel:
-				resFree(map);
+				resFree(resMap);
 				level++;
 				level%=16;
-				map=resLoad(RES_MAP|level);
+				resMap=resLoad(RES_MAP|level);
+				map=(tMap*)resMap->pFrames;
 				mapStart(map,&kid,&roomId,level);
 				room=mapGetRoom(map,roomId);
 				printf("Kernel/playgame: cheat: Pass to level %d\n",level);

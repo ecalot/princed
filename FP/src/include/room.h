@@ -37,45 +37,7 @@ room.h: FreePrince : Draw Screen
 #define TILE_W 32
 #define TILE_H 63
 
-typedef char tRoomId;
-typedef unsigned char tTileId;
-typedef unsigned char tModId;
-
-typedef struct {
-	/*tMap*/ void*          level;
-	tRoomId        id;
-	tRoomId        links[4];
-	tRoomId        corners[4];
-	unsigned char  fore [60];	
-	unsigned char  back [60];
-	/* TODO: add guards */
-} tRoom;
-
-typedef struct {
-	/* Physical attributes */
-	int walkable;
-	int block;
-	
-	/* Graphical arributes */
-	int hasTorch;
-	int hasGateFrame;
-	int hasSkeleton;
-	int hasChopper;
-	int hasBigPillar;
-	int isExit;
-	int isGate;
-	int gateStatus;
-	int bricks;
-	int isPressable;
-	int hasSpikes;
-	int hasPillar;
-	int hasFloor;
-	int hasBrokenTile;
-	int isWall;
-	int hasSword;
-
-	char code;
-} tTile;
+#include "types.h"
 
 tTile roomGetTile(tRoom* room,int x, int y);
 void roomDrawBackground(tRoom* room);

@@ -35,9 +35,8 @@ maps.c: Freeprince : Map handling library
 #include "maps.h"
 #include "room.h"
 #include "kid.h"
-#include "resources.h"
 
-#define slevel(field) (((tMap*)(((tData*)map)->pFrames))->field)
+#define slevel(field) (map->field)
 
 /* Privates 
 
@@ -76,12 +75,12 @@ void* mapLoadLevel(tMemory level) {
 	return (void*)map;
 }
 
-tRoom mapGetRoom(tData* map, tRoomId roomAux) {
+tRoom mapGetRoom(tMap* map, tRoomId roomAux) {
 	tRoom result;
 
 	/* SET room id*/
 	result.id=roomAux;
-	result.level=map->pFrames;
+	result.level=map;
 	
 	/* SET room links */
 	memcpy(result.links,slevel(links)+((roomAux-1)*4),4);
@@ -220,7 +219,7 @@ tRoom mapGetRoom(tData* map, tRoomId roomAux) {
 	return result;
 }
 
-void  mapStart(tData* map, tKid* kid, tRoomId *roomId, int level) {
+void  mapStart(tMap* map, tKid* kid, tRoomId *roomId, int level) {
 	/* kid->x,y */
 	static char environments[]=MAP_ENVIRONMENTS;
 	*roomId=slevel(start)[0];
@@ -228,7 +227,7 @@ void  mapStart(tData* map, tKid* kid, tRoomId *roomId, int level) {
 	roomLoadGfx(/*environments[level]?RES_IMG_ENV_PALACE:*/RES_IMG_ENV_DUNGEON);
 }
 
-void  mapMove(tData* map) {
+void  mapMove(tMap* map) {
 	slevel(time)++;
 	if (slevel(time)==1000) slevel(time)=0;
 }

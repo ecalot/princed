@@ -40,30 +40,19 @@ maps.c: Freeprince : Map handling library
 
 #define MAP_ENVIRONMENTS {0,0,0,0,1,1,1,0,0,0,1,1,0,0,1,0}
 
-typedef struct {
-	tRoomId        links[4*24];
-	unsigned char  fore [24*30];
-	unsigned char  back [24*30];
-	/*
-	 * Active door handling here
-	 * */
-	int time;
-	unsigned char start[3];
-} tMap;
-
-typedef enum {eLeft=0,eRight=1,eUp=2,eDown=3}tDirection;
+#include "types.h"
 
 /* called from reources */
 void* mapLoadLevel(tMemory level);
-void  mapDestroy(tData* map);
+void  mapDestroy(tMap* map);
 
 /* called from the kernel */
-tRoom mapGetRoom(tData* map, tRoomId roomId);
-void  mapStart(tData* map, tKid* kid, tRoomId* roomId, int level);
+tRoom mapGetRoom(tMap* map, tRoomId roomId);
+void  mapStart(tMap* map, tKid* kid, tRoomId* roomId, int level);
 
 /* events */
-void  mapPressedTile(tData* map, tTile tile);
-void  mapMove(tData* map);
+void  mapPressedTile(tMap* map, tTile tile);
+void  mapMove(tMap* map);
 
 #endif
 

@@ -35,23 +35,16 @@ kid.h: Free Prince : Kid object
 
 #include "resources.h"
 #include "input.h"
-
-typedef struct {
-	int location;
-	int floor;
-	int direction;
-	int frame;
-	int velocity;
-	enum {stay,run}nextAction;
-	tData* action;
-} tKid;
+#include "room.h"
 
 #define DIR_LEFT  1
 #define DIR_RIGHT 0
 
+#include "types.h"
+
 tKid kidCreate();
 void kidDraw(tKid kid);
-int  kidMove(tKid* kid,tKey key/*,tRoom room*/);
+int  kidMove(tKid* kid,tKey key,tRoom* room);
 void kidFree();
 
 #endif
