@@ -73,7 +73,7 @@ LINKEROPTIONS = $(LINKERRELEASE)
 $(EXEFILE): $(EXEOBJ)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
-	$(CC) $(OPTIONS) -o bin/pr $(EXEOBJ) 
+	$(CC) $(OPTIONS) -o $(EXEFILE) $(EXEOBJ) 
 	$(INFO) Program successfully compiled
 	$(INFO)
 	$(INFO) Please read readme.txt for syntax information
@@ -112,91 +112,91 @@ $(XMLFILE): resources.xml.gz
 
 import.o: lib/actions/import.c
 	$(INFO) Compiling import module...
-	$(CC) -c lib/actions/import.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/actions/import.c
 
 memory.o: lib/layers/memory.c
 	$(INFO) Compiling memory manager...
-	$(CC) -c lib/layers/memory.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/layers/memory.c
 
 export.o: lib/actions/export.c
 	$(INFO) Compiling export module...
-	$(CC) -c lib/actions/export.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/actions/export.c
 
 compress.o: lib/compression/main.c
 	$(INFO) Compiling compression module...
-	$(CC) -c lib/compression/main.c -o compress.o $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/compression/main.c -o compress.o
 
 lzg_compress.o: lib/compression/lzg_compress.c
 	$(INFO) Compiling LZG compression module...
-	$(CC) -c lib/compression/lzg_compress.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/compression/lzg_compress.c
 
 rle_compress.o: lib/compression/rle_compress.c
 	$(INFO) Compiling RLE compression module...
-	$(CC) -c lib/compression/rle_compress.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/compression/rle_compress.c
 
 lzg_uncompress.o: lib/compression/lzg_uncompress.c
 	$(INFO) Compiling LZG uncompression module...
-	$(CC) -c lib/compression/lzg_uncompress.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/compression/lzg_uncompress.c
 
 rle_uncompress.o: lib/compression/rle_uncompress.c
 	$(INFO) Compiling RLE uncompression module...
-	$(CC) -c lib/compression/rle_uncompress.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/compression/rle_uncompress.c
 
 main.o: console/main.c
 	$(INFO) Compiling command parsing module for standard mode...
-	$(CC) -c console/main.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c console/main.c
 
 pr.o: lib/pr.c
 	$(INFO) Compiling main library primitives for both modes...
-	$(CC) -c lib/pr.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/pr.c
 	
 filedir.o: console/filedir.c
 	$(INFO) Compiling directory and recursive file reading module for standard mode...
-	$(CC) -c console/filedir.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c console/filedir.c
 
 resources.o: lib/resources.c
 	$(INFO) Compiling resource manager module...
-	$(CC) -c lib/resources.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/resources.c
 
 classify.o: lib/actions/classify.c
 	$(INFO) Compiling classification module...
-	$(CC) -c lib/actions/classify.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/actions/classify.c
 
 parse.o: lib/xml/parse.c
 	$(INFO) Compiling XML parsing module...
-	$(CC) -c lib/xml/parse.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/xml/parse.c
 
 search.o: lib/xml/search.c
 	$(INFO) Compiling XML search features...
-	$(CC) -c lib/xml/search.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/xml/search.c
 
 disk.o: lib/layers/disk.c
 	$(INFO) Compiling disk access library...
-	$(CC) -c lib/layers/disk.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/layers/disk.c
 
 dat.o: lib/layers/dat.c
 	$(INFO) Compiling DAT editing library...
-	$(CC) -c lib/layers/dat.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/layers/dat.c
 
 bmp.o: lib/formats/bmp.c
 	$(INFO) Compiling bitmap files support \(bmp\)...
-	$(CC) -c lib/formats/bmp.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/formats/bmp.c
 
 mid.o: lib/formats/mid.c
 	$(INFO) Compiling MIDI audio files support \(mid\)...
-	$(CC) -c lib/formats/mid.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/formats/mid.c
 
 plv.o: lib/formats/plv.c
 	$(INFO) Compiling prince level files support \(plv\)...
-	$(CC) -c lib/formats/plv.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/formats/plv.c
 
 pal.o: lib/formats/pal.c
 	$(INFO) Compiling JASC palette support \(pal\)...
-	$(CC) -c lib/formats/pal.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/formats/pal.c
 
 wav.o: lib/formats/wav.c
 	$(INFO) Compiling digital wave audio support \(wav\)...
-	$(CC) -c lib/formats/wav.c $(OPTIONS)
+	$(CC) $(OPTIONS) -c lib/formats/wav.c
 
 dirent.o: ports/dirent.c
 	$(INFO) Porting the dirent structure...

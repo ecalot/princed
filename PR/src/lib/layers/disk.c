@@ -71,6 +71,7 @@ disk.c: Princed Resources : Disk Access & File handling functions
 	#ifdef DISK_DIR_SCANING
 		#include "direntwin.h"
 	#endif
+	#include <conio.h> /* getche */
 	#define osIndepGetCharacter() getche()
 #endif
 

@@ -1,110 +1,187 @@
-CC=@lc
-LINKER=@lcclnk
-INFO=@echo
+############
+# Programs #
+############
 
-INCLUDE = -Iinclude\ 
-DEFINES = -DWIN32 
-#-DDLL
-OPTIONS = $(INCLUDE) $(DEFINES)
+CC         = @lc
+LINKER     = @lcclnk
+INFO       = @echo
+MAKEDIR    = @mkdir
+REMOVER    = @del
+GZIP       = @gzip
 
-OBJFILES = compile.obj compress.obj extract.obj pr.obj dat.obj resources.obj\
-           tasks.obj disk.obj xmlparse.obj xmlsearch.obj bmp.obj mid.obj\
-           pal.obj wav.obj plv.obj memory.obj\
-           dirent.obj getopt.obj getopt1.obj
+#####################
+# Operating Systems #
+#####################
 
-EXEFILE  = pr.exe
+OS    = Win32
+LINUX = -DNOLINUX
+PORTS = getopt.obj getopt1.obj dirent.obj
+
+####################
+# Compiler options #
+####################
+
+#Libraries: include path and linked libs
+INCLUDE       = -Iinclude\\ 
+DEFINES       = $(LINUX)
+
+#Release type
+TYPE          = Debug
+# RELEASE may be:
+#  -g -Wall -ansi -pedantic        for debug
+#  -O2                             for release
+# LINKERRELEASE may be:
+#  -s                              for release
+RELEASE       = -ansic
+LINKERRELEASE = -s
+
+FILES    = import.obj export.obj resources.obj classify.obj disk.obj\
+           dat.obj bmp.obj mid.obj pal.obj wav.obj plv.obj\
+           memory.obj pr.obj
+
+XML      = parse.obj search.obj
+COMPRESS = compress.obj lzg_compress.obj lzg_uncompress.obj rle_compress.obj rle_uncompress.obj 
+CONSOLE  = main.obj filedir.obj
+
+EXEOBJ   = $(FILES) $(XML) $(COMPRESS) $(CONSOLE) $(PORTS)
+LIBOBJ   = $(FILES) $(XML) $(COMPRESS) $(PORTS)
+
+EXEFILE  = bin\pr.exe
+XMLFILE  = bin\resources.xml
+
+#Use this to temporary remove an option
+OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
+LINKEROPTIONS = $(LINKERRELEASE)
 
 #main file
 
-$(EXEFILE): $(OBJFILES)
+$(EXEFILE): $(EXEOBJ)
 	$(INFO) Linking files...
-	$(LINKER) $(OBJFILES) -o $(EXEFILE) -s
-	#$(INFO) Making dynamic library...
-	#$(LINKER) $(OBJFILES) -dll pr.def -s -o pr.dll
+	$(CC) $(EXEOBJ) -o $(EXEFILE) $(LINKEROPTIONS)
 	$(INFO) Program successfully compiled
 	$(INFO):
 	$(INFO) Please read readme.txt for syntax information
 	$(INFO):
 
 #command options
+.PHONY: clean cleanxml build all lib
 
 clean:
 	$(INFO) Erasing temporary object files...
-	@del *.obj
+	$(REMOVER) *.obj
+	$(REMOVER) $(EXEFILE)
 
-build: clean all
+cleanxml:
+	$(INFO) Erasing xml file...
+	$(REMOVER) $(XMLFILE)
+
+build: clean bin\pr
 
 all: $(EXEFILE)
 
+lib: $(LIBOBJ)
+	$(MAKEDIR) bin
+	$(INFO) Making dynamic library...
+	$(CC) $(LIBOBJ) -dll ..\winbins\pr.def -o bin\pr.dll
+	$(INFO) Library successfully compiled
+	$(INFO):
+	$(INFO) Please read readme.coders.txt and pr.h for interfaces
+	$(INFO):
+
 #files
 
-compile.obj: compile.c
+$(XMLFILE): resources.xml.gz
+	$(INFO) Uncompressing resources...
+	$(MAKEDIR) bin
+	$(GZIP) -cd resources.xml.gz >bin\resources.xml
+
+import.obj: lib\actions\import.c
 	$(INFO) Compiling import module...
-	$(CC) $(OPTIONS) -c compile.c
+	$(CC) $(OPTIONS) -c lib\actions\import.c
 
-memory.obj: memory.c
+memory.obj: lib\layers\memory.c
 	$(INFO) Compiling memory manager...
-	$(CC) $(OPTIONS) -c memory.c
+	$(CC) $(OPTIONS) -c lib\layers\memory.c
 
-extract.obj: extract.c
+export.obj: lib\actions\export.c
 	$(INFO) Compiling export module...
-	$(CC) $(OPTIONS) -c extract.c
+	$(CC) $(OPTIONS) -c lib\actions\export.c
 
-compress.obj: compress.c
+compress.obj: lib\compression\main.c
 	$(INFO) Compiling compression module...
-	$(CC) $(OPTIONS) -c compress.c
+	$(CC) $(OPTIONS) -Focompress.obj -c lib\compression\main.c
 
-pr.obj: pr.c
-	$(INFO) Compiling main module in standard mode...
-	$(CC) $(OPTIONS) -c pr.c
+lzg_compress.obj: lib\compression\lzg_compress.c
+	$(INFO) Compiling LZG compression module...
+	$(CC) $(OPTIONS) -c lib\compression\lzg_compress.c
 
-prlib.obj: pr.c
-	$(INFO) Compiling main module in library mode...
-	$(CC) $(OPTIONS) -DDLL -o prlib.obj -c pr.c
+rle_compress.obj: lib\compression\rle_compress.c
+	$(INFO) Compiling RLE compression module...
+	$(CC) $(OPTIONS) -c lib\compression\rle_compress.c
 
-resources.obj: resources.c
+lzg_uncompress.obj: lib\compression\lzg_uncompress.c
+	$(INFO) Compiling LZG uncompression module...
+	$(CC) $(OPTIONS) -c lib\compression\lzg_uncompress.c
+
+rle_uncompress.obj: lib\compression\rle_uncompress.c
+	$(INFO) Compiling RLE uncompression module...
+	$(CC) $(OPTIONS) -c lib\compression\rle_uncompress.c
+
+main.obj: console\main.c
+	$(INFO) Compiling command parsing module for standard mode...
+	$(CC) $(OPTIONS) -c console\main.c
+
+pr.obj: lib\pr.c
+	$(INFO) Compiling main library primitives for both modes...
+	$(CC) $(OPTIONS) -c lib\pr.c
+	
+filedir.obj: console\filedir.c
+	$(INFO) Compiling directory and recursive file reading module for standard mode...
+	$(CC) $(OPTIONS) -c console\filedir.c
+
+resources.obj: lib\resources.c
 	$(INFO) Compiling resource manager module...
-	$(CC) $(OPTIONS) -c resources.c
+	$(CC) $(OPTIONS) -c lib\resources.c
 
-tasks.obj: tasks.c
-	$(INFO) Compiling classify module...
-	$(CC) $(OPTIONS) -c tasks.c
+classify.obj: lib\actions\classify.c
+	$(INFO) Compiling classification module...
+	$(CC) $(OPTIONS) -c lib\actions\classify.c
 
-dat.obj: dat.c
-	$(INFO) Compiling abstract dat handling library...
-	$(CC) $(OPTIONS) -c dat.c
+parse.obj: lib\xml\parse.c
+	$(INFO) Compiling XML parsing module...
+	$(CC) $(OPTIONS) -c lib\xml\parse.c
 
-xmlparse.obj: xmlparse.c
-	$(INFO) Compiling xml parsing module...
-	$(CC) $(OPTIONS) -c xmlparse.c
+search.obj: lib\xml\search.c
+	$(INFO) Compiling XML search features...
+	$(CC) $(OPTIONS) -c lib\xml\search.c
 
-xmlsearch.obj: xmlsearch.c
-	$(INFO) Compiling xml search features...
-	$(CC) $(OPTIONS) -c xmlsearch.c
+disk.obj: lib\layers\disk.c
+	$(INFO) Compiling disk access library...
+	$(CC) $(OPTIONS) -c lib\layers\disk.c
 
-disk.obj: disk.c
-	$(INFO) Compiling disk access functions...
-	$(CC) $(OPTIONS) -c disk.c
+dat.obj: lib\layers\dat.c
+	$(INFO) Compiling DAT editing library...
+	$(CC) $(OPTIONS) -c lib\layers\dat.c
 
-bmp.obj: formats\bmp.c
+bmp.obj: lib\formats\bmp.c
 	$(INFO) Compiling bitmap files support (bmp)...
-	$(CC) $(OPTIONS) -c formats\bmp.c
+	$(CC) $(OPTIONS) -c lib\formats\bmp.c
 
-mid.obj: formats\mid.c
-	$(INFO) Compiling midi audio files support (mid)...
-	$(CC) $(OPTIONS) -c formats\mid.c
+mid.obj: lib\formats\mid.c
+	$(INFO) Compiling MIDI audio files support (mid)...
+	$(CC) $(OPTIONS) -c lib\formats\mid.c
 
-plv.obj: formats\plv.c
+plv.obj: lib\formats\plv.c
 	$(INFO) Compiling prince level files support (plv)...
-	$(CC) $(OPTIONS) -c formats\plv.c
+	$(CC) $(OPTIONS) -c lib\formats\plv.c
 
-pal.obj: formats\pal.c
+pal.obj: lib\formats\pal.c
 	$(INFO) Compiling JASC palette support (pal)...
-	$(CC) $(OPTIONS) -c formats\pal.c
+	$(CC) $(OPTIONS) -c lib\formats\pal.c
 
-wav.obj: formats\wav.c
+wav.obj: lib\formats\wav.c
 	$(INFO) Compiling digital wave audio support (wav)...
-	$(CC) $(OPTIONS) -c formats\wav.c
+	$(CC) $(OPTIONS) -c lib\formats\wav.c
 
 dirent.obj: ports\dirent.c
 	$(INFO) Porting the dirent structure...
@@ -117,3 +194,4 @@ getopt.obj: ports\getopt.c
 getopt1.obj: ports\getopt1.c
 	$(INFO) Porting the Unix-like getopt function (second part)...
 	$(CC) $(OPTIONS) -c ports\getopt1.c
+

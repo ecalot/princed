@@ -112,13 +112,6 @@ void prSetOutput(FILE* output);
 /* Define max & min's */
 #define MAX_FILENAME_SIZE        260
 
-/* Path defines */
-#ifdef UNIX
- #define DIR_SEPARATOR           '/'
-#else
- #define DIR_SEPARATOR           '\\'
-#endif
-
 /***************************************************************\
 |                        L A N G U A G E                        |
 \***************************************************************/

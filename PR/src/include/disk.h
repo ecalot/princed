@@ -49,7 +49,13 @@ disk.h: Princed Resources : Disk Access & File handling functions headers
 #define SIZE_OF_FILE     256*1024
 #define MAX_FILENAME_SIZE        260
 
-#define DIR_SEPARATOR '/'
+/* Path defines */
+#ifndef WIN32
+ #define DIR_SEPARATOR           '/'
+#else
+ #define DIR_SEPARATOR           '\\'
+#endif
+
 
 typedef enum {eFile,eDirectory,eNotFound}whatIs;
 
