@@ -207,7 +207,7 @@ tData* resLoad(long id) {
 				printf("resLoad: Allocating an image framed %d by offsets d=%d,l=%d,r=%d\n",total,down,left,right);
 				result->pFrames[total]=(void*)outputLoadBitmap(
 					image.pix,image.widthInBytes*image.height,pal,image.height,image.width,
-					invert,1/*,down,invert?right:left*/
+					invert,1,down,invert?right:left
         );
 
 				/* free intermediate image data */

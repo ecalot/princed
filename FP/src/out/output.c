@@ -80,7 +80,7 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 void*
 outputLoadBitmap(const unsigned char* data, int size, 
 		const tPalette palette, int h, int w, int invert, 
-		int firstColorTransparent)
+		int firstColorTransparent, int bottom, int left)
 {
  /* Returns an abstract object allocated in memory using the data 
   * information ti build it invert is 0 when no invertion is needed and 
