@@ -60,145 +60,131 @@ int playgame(int optionflag,int level) {
 	int flags;
 	int timeDead;
 	
-while (1) {	
-	/* Initialize */
-	key=inputCreateKey();
-	resMap=resLoad(RES_MAP|level);
-	map=(tMap*)resMap->pFrames;
-	notReset=1;
-	flags=0;
-	timeDead=0;
+	while (1) {	
+		/* Initialize */
+		key=inputCreateKey();
+		resMap=resLoad(RES_MAP|level);
+		map=(tMap*)resMap->pFrames;
+		notReset=1;
+		flags=0;
+		timeDead=0;
+		
+		/*TODO: use a map.c function that reads this information and creates the kid*/
+		kid=objectCreate(30,1,DIR_RIGHT,stateKidInLevel(level),RES_IMG_ALL_KID,1,oKid);
+		outputDrawMessage(24,"LEVEL %d\n",level);
+		
+		/* Game loop here */
+		
+		/* Initialize kid and room in the map */
+		mapStart(map,&kid,&roomId,level);
+		room=mapGetRoom(map,roomId);
+		
+		/* Level loop here */
+		while (notReset) {
+			if (inputGetEvent(&key)) {
+				/* Time event */
 	
-	/*TODO: use a map.c function that reads this information and creates the kid*/
-	kid=objectCreate(30,1,DIR_RIGHT,stateKidInLevel(level),RES_IMG_ALL_KID,1,oKid);
-	outputDrawMessage(24,"LEVEL %d\n",level);
-	
-	/* Game loop here */
-	
-	/* Initialize kid and room in the map */
-	mapStart(map,&kid,&roomId,level);
-	room=mapGetRoom(map,roomId);
-	
-	/* Level loop here */
-	while (notReset) {
-		if (inputGetEvent(&key)) {
-			/* Time event */
-
-			/* Moving objects */
-			/* keylogIntercept(&key);
-			 * TODO: send to the real place where
-			 * the key is interpreted in kid object
-			 */
-			flags=objectMove(&kid,key,&room);
-			mapMove(map);
-			/* Drawing functions */
-			outputClearScreen(); /* TODO: send to drawBackground() */
-			roomDrawBackground(&room);
-			kidDrawLives(&kid);
-			objectDraw(kid);
-			roomDrawForeground(&room);
-			/* if dead */
-			if (flags&STATES_FLAG_X) timeDead++;	
-			if (timeDead==20) outputDrawMessage(120,"Press Button to Continue");
-			if (timeDead==160) outputDrawMessage(10,"Press Button to Continue");
-			if (timeDead==180) outputDrawMessage(10,"Press Button to Continue");
-			if (timeDead==200) outputDrawMessage(10,"Press Button to Continue");
-			if (timeDead==210) {
-				resFree(resMap);
-				return 0;
-			}
-			outputUpdateScreen();
-		} else {
-			/* Action event */
-			switch (key.actionPerformed) {
-			case quit:
-				resFree(resMap);
-				return 1;
-			case gotoTitles:
-				resFree(resMap);
-				return 0;
-			case showUp:
-				if ((roomId=room.links[eUp])) {
-					room=mapGetRoom(map,roomId);
-					printf("Kernel/playgame: cheat: Looking up\n");
+				/* Moving objects */
+				/* keylogIntercept(&key);
+				 * TODO: send to the real place where
+				 * the key is interpreted in kid object
+				 */
+				flags=objectMove(&kid,key,&room);
+				mapMove(map);
+				/* Drawing functions */
+				outputClearScreen(); /* TODO: send to drawBackground() */
+				roomDrawBackground(&room);
+				kidDrawLives(&kid);
+				objectDraw(kid);
+				roomDrawForeground(&room);
+				/* if dead */
+				if (flags&STATES_FLAG_X) {
+					timeDead++;	
+					kidKillHim(&kid);
 				}
-				break;
-			case showLeft:
-				if ((roomId=room.links[eLeft]))
-					room=mapGetRoom(map,roomId);
-				break;
-			case showDown:
-				if ((roomId=room.links[eDown]))
-					room=mapGetRoom(map,roomId);
-				break;
-			case showRight:
-				if ((roomId=room.links[eRight]))
-					room=mapGetRoom(map,roomId);
-				break;
-			case passLevel:
-				resFree(resMap);
-				level++;
-				level%=16;
-/*				resMap=resLoad(RES_MAP|level);
-				map=(tMap*)resMap->pFrames;
-				mapStart(map,&kid,&roomId,level);
-				room=mapGetRoom(map,roomId);
-				outputDrawMessage(24,"Cheat: Pass to level %d\n",level);*/
-				notReset=0;
-				break;
-			case buttonPressed:
-				if (!(flags&STATES_FLAG_X))
-					break; /* break if not dead */
-			case reload:
-				notReset=0;
-				break;
-			case addLive:
-				break;
-			case addHitPoint:
-				break;
-			case showVersion:
-				outputDrawMessage(24,"FreePrince v"FP_VERSION"\n");
-				break;
-			case showScreens:
-				outputDrawMessage(24,"S%d L%d R%d A%d B%d\n",
-					room.id,
-					room.links[eLeft],
-					room.links[eRight],
-					room.links[eUp],
-					room.links[eDown]
-				);
-				break;
-			case pause:
-				break;
-			case showMoreScreens:
-				outputDrawMessage(24,"S%d AL%d AR%d BL%d BR%d\n",
-					room.id,
-					room.corners[0],
-					room.corners[1],
-					room.corners[2],
-					room.corners[3]
-				);
-				break;
-			default:
-				break;
+				if (timeDead==20) outputDrawMessage(120,"Press Button to Continue");
+				if (timeDead==160) outputDrawMessage(10,"Press Button to Continue");
+				if (timeDead==180) outputDrawMessage(10,"Press Button to Continue");
+				if (timeDead==200) outputDrawMessage(10,"Press Button to Continue");
+				if (timeDead==210) {
+					resFree(resMap);
+					return 0;
+				}
+				outputUpdateScreen();
+			} else {
+				/* Action event */
+				switch (key.actionPerformed) {
+				case quit:
+					resFree(resMap);
+					return 1;
+				case gotoTitles:
+					resFree(resMap);
+					return 0;
+				case showUp:
+					if ((roomId=room.links[eUp])) {
+						room=mapGetRoom(map,roomId);
+						printf("Kernel/playgame: cheat: Looking up\n");
+					}
+					break;
+				case showLeft:
+					if ((roomId=room.links[eLeft]))
+						room=mapGetRoom(map,roomId);
+					break;
+				case showDown:
+					if ((roomId=room.links[eDown]))
+						room=mapGetRoom(map,roomId);
+					break;
+				case showRight:
+					if ((roomId=room.links[eRight]))
+						room=mapGetRoom(map,roomId);
+					break;
+				case passLevel:
+					resFree(resMap);
+					level++;
+					level%=16;
+					notReset=0;
+					break;
+				case buttonPressed:
+					if (!(flags&STATES_FLAG_X))
+						break; /* break if not dead */
+				case reload:
+					notReset=0;
+					break;
+				case addLive:
+					kidGetLive(&kid);
+					break;
+				case addHitPoint:
+					kidGetHitPoint(&kid);
+					break;
+				case showVersion:
+					outputDrawMessage(24,"FreePrince v"FP_VERSION"\n");
+					break;
+				case showScreens:
+					outputDrawMessage(24,"S%d L%d R%d A%d B%d\n",
+						room.id,
+						room.links[eLeft],
+						room.links[eRight],
+						room.links[eUp],
+						room.links[eDown]
+					);
+					break;
+				case pause:
+					break;
+				case showMoreScreens:
+					outputDrawMessage(24,"S%d AL%d AR%d BL%d BR%d\n",
+						room.id,
+						room.corners[0],
+						room.corners[1],
+						room.corners[2],
+						room.corners[3]
+					);
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}
-/*	switch (death) {
-	case STATE_EXIT_CODE_SPIKED:
-		outputDrawMessage(1,"You are spiked! Press a key");
-		break;
-	case STATE_EXIT_CODE_SPLASH:
-		outputDrawMessage(1,"Splashh! Explicit content censored!");
-		break;
-	case STATE_EXIT_CODE_CHOMPED:
-		outputDrawMessage(1,"You are dead! Press a key");
-		break;
-	}	
-	outputUpdateScreen();
-	inputPause();
-	return playgame(optionflag,level); * TODO: fix this recursivity */
-}
 	return 0;
 }
 

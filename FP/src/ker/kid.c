@@ -55,7 +55,7 @@ void kidDrawLives(tObject *kid) {
 }
 
 void kidGetLive(tObject *kid) {
-	kid->lives++;
+	kid->hitPoints=++kid->lives;
 }
 
 void kidGetHitPoint(tObject *kid) {
