@@ -129,12 +129,10 @@ void outputDrawText(int x, int y, const char *fmt, ...)
 			to.h = from.h;
 			SDL_BlitSurface (font, &from, screen, &to);
 
-			printf ("X=%d , y=%d, w=%d\n", from.x, from.y, from.w);
 			current_x += valid_chars[*s].w;
 		}
 		s++;
 	}
-	printf ("\n");
 }
 
 void outputDrawMessage(const char* fmt, ...)
