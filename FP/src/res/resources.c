@@ -55,16 +55,30 @@ for (id=0;id<MAX_RES_COUNT;id++) {\
 }
 */
 /***************************************************************\
-|                    M A I N   E X T R A C T                    |
+|                                                               |
 \***************************************************************/
 
+/*
+ * Resource creation
+ */
+
+void res_rememberPalette(tMemory data) {}
+
+/* Using the type and the array data this function will return the resources in void* fromat */
+void* res_createResource(tMemory data,int type) {
+	tMemory* result;
+	/* TODO: data->array must be copied or it wont be available after the file is closed */
+	result=(tMemory*)malloc(sizeof(tMemory)); /* both sides are void* :)  */
+	*result=(tMemory)data;
+	printf("res_createResource: Allocating frame[?]=? (type %d)\n",type);
+	return (void*)result;
+}
 
 /*
-	Extracts a dat file
-	For parameter documentation, see pr.c
-*/
+ * Functions made to get data from the DAT files using some optimizations
+ */
 
-int res_getData(int id,int maxItems,tMemory* result) {
+int res_getDataById(int id,int maxItems,tMemory* result) {
 	/* This function looks for a data resource in a dat file optimizing the search knowing
 	 * that the id's starts in 0
 	 */
@@ -83,47 +97,115 @@ int res_getData(int id,int maxItems,tMemory* result) {
 	return (gotId==id); /* 1 if the id was found, 0 if not */
 }
 
+int res_getDataByArray(short int* id,int maxItems,void** result,int ids,int type) {
+	/* This function looks for a data resource in a dat file optimizing the search knowing
+	 * that the id's starts in 0
+	 */
+	
+	long int gotId;
+	int indexNumber;
+	int i=0;
+	int old=-1;
+	tMemory data;
+	
+	/* main loop */
+	while((old!=i)&&(i!=ids)) {
+		old=i;
+		printf("res_getDataByArray: Starting resource cycling\n");
+		for (indexNumber=0;(indexNumber<maxItems)&&(i!=ids);indexNumber++) {
+			gotId=mReadFileInDatFile(
+				indexNumber,
+				&(data.array),
+				&(data.size)
+			);
+			if (gotId==id[i]) {
+				result[i]=(void*)res_createResource(data,type);
+				i++;
+			}
+		}
+	}
 
-
-int res_get(const char* vFiledat) {
-	int                indexNumber;
-	long int           id;
-	unsigned char*     data;
-	unsigned long  int size;
-
-return 10;
+	printf("Done!\n");
+	
+	/* Return value */
+	return i;
 }
 
+#define res_getIdxFile1 ((char*)(index.array+1))
+#define res_getIdxFile2 ((char*)(index.array+15))
+#define res_getIdxType (((short int*)(index.array+31))[0])
+#define res_getIdxTotal (((short int*)(index.array+29))[0])
+#define res_getIdxFrames ((short int*)(index.array+33))
 
 /**
- * Public interface
+ * Public functions
  * */
 
 tData* resLoad(int id) {
-					
 				
 	/* Initialize abstract variables to read this new DAT file */
 	unsigned short int numberOfItems;
 	tData* result;
+	int i;
+	char file1[25];
+	char file2[25];
+	short int* frames;
+	int nFrames;
 	tMemory index;
-	int number=1;
-	
+
+	/* READ INDEX */
 	if (!mReadBeginDatFile(&numberOfItems,"index.dat")) return NULL;
+	if (!res_getDataById(id,DATA_END_ITEMS,&index)) {
+		printf("Fatal Error: resLoad: index could not be read!\n");
+		return NULL;
+	}
+	printf("eeee\n");
+	printf("file1='%s'. file2='%s' type='%d'. frames='%d'.\n",
+		res_getIdxFile1,
+		res_getIdxFile2,
+		res_getIdxType,
+		res_getIdxTotal
+	);
+
+	nFrames=res_getIdxTotal;
+	frames=(short int*)malloc(nFrames*sizeof(short int));
+	for (i=0;i<nFrames;i++) {
+		frames[i]=res_getIdxFrames[i];
+	}
+
+	mReadCloseDatFile();
+
+	/* READ FILE */
+	
+	for (i=0;i<nFrames;i++) {
+		printf("frames[%d]=%d\n",i,frames[i]);
+	}
+	
+	if (!mReadBeginDatFile(&numberOfItems,res_getIdxFile1)) {
+		printf("Fatal Error: resLoad: resource file not found!\n");
+		free(frames);
+		return NULL;
+	}
 
 	result=(tData*)malloc(sizeof(tData));
-	result->pFrames=(void**)malloc(number*sizeof(tMemory*));
-	result->pFrames[0]=(tMemory*)malloc(number*sizeof(tMemory));
-	if (!res_getData(id,DATA_END_ITEMS,result->pFrames[0])) {
-		printf("Fatal Error: resLoad: index could not be read!\n");
-		free(result->pFrames[0]);
+	result->pFrames=(void**)malloc(nFrames*sizeof(void*));
+	//result->pFrames[0]=(tMemory*)malloc(nFrames*sizeof(tMemory));
+	
+	result->frames=nFrames;
+	result->type=eImages;//res_getVirtualTypeFromReal(res_getIdxType);
+
+	if (!res_getDataByArray(frames,numberOfItems,result->pFrames,nFrames,res_getIdxType)) {
+		printf("Fatal Error: resLoad: resource file invalid!\n");
+		free(frames);
+		//free(result->pFrames[0]);
 		free(result->pFrames);
 		free(result);
 		return NULL;
 	}
-	result->frames=number;
-	result->type=eLevels;
+
 	
-	mReadCloseDatFile();
+	//mReadCloseDatFile();
+	free(frames);
 
 	return result;
 }
