@@ -9,7 +9,7 @@ Versions
  - Rebuilt kernel
  - Hard Coded Movements support
  - Tested OS X and Windows ports
-
-* 0.3
  - Window Caption
 
+* 0.3
+ - Reboult kernel to support configuration files

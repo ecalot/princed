@@ -33,6 +33,7 @@ BEGIN {
 	currentAction=0
 	printf("#define STATES_MOVETYPES_RELATIVE 0\n")
 	printf("#define STATES_MOVETYPES_ABSOLUTEFORWARD 1\n\n")
+	printf("#define STATES_MOVETYPES_RELATIVETURN 2\n\n")
 	printf("#define STATES_CONDITIONS {\\\n")
 	tmp="conf/statesproperties.conf"
 	while ((getline line < tmp) > 0) {
@@ -85,7 +86,7 @@ BEGIN {
 						split($1,a,"-")
 						for (g=a[1];g<=a[2];g++) {
 							arrayAnimation[currentAnimation,"frame"]=g
-							arrayAnimation[currentAnimation,"flags"]=""
+							arrayAnimation[currentAnimation,"flags"]=$2
 							currentAnimation++
 						}
 					} else {
@@ -205,7 +206,7 @@ END {
 			coma2=""
 			flagmask=""
 			for (j=1;j<=length(flags);j++) {
-				c=substr(flags,j,j+1)
+				c=substr(flags,j,1)
 				flagmask=sprintf("%s%sSTATES_FLAG_%s",flagmask,coma2,toupper(c))
 				coma2="|"
 			}

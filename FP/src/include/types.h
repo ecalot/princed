@@ -47,6 +47,8 @@ typedef enum {eDrop,eRaise}tPressableType;
 typedef struct { /* The state object: only struct that is not static to the state class */
 	short  frame; /* when zero, animation is released and the next state is taken */
 	short* animation;
+	short* animOffset;
+	short* flags;
 	short  currentState;
 } tState;
 
@@ -127,10 +129,11 @@ typedef struct {
 	int location;
 	int floor;
 	int direction;
-	int frame;
-	int velocity;
-	enum {stay,run}nextAction;
-	tData* action;
+	void* frame;
+	/*int velocity;*/
+	/*enum {stay,run}nextAction;*/
+	/*tData* action;*/
+	tState action;
 } tKid;
 
 typedef enum {eLeft=0,eRight=1,eUp=2,eDown=3}tDirection;

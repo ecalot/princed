@@ -10,7 +10,7 @@ typedef enum {esLast=0,esKeyUp,esKeyDown,esKeyForward,esKeyBack,esKeyShift,esMap
 
 
 typedef enum {esDangerous,esNone,esWalk,esPotion,esSword,esMirror,esNotApplicable=0}tsTileType;
-typedef enum {esRelative,esForwardTile}tsMoveType; /*  */
+typedef enum {esRelative,esForwardTile,esRelativeTurn}tsMoveType; /*  */
 
 typedef struct {
 	tsConditionType type;
@@ -30,7 +30,7 @@ typedef struct {
 
 /* This function should return the image frame
  * and actions to be performed by this call */
-int stateUpdate(tState* current,tKey* key, tKid* kid,tRoom* room,short* flags);
+int stateUpdate(tKey* key, tKid* kid,tRoom* room,short* flags);
 
 /* Create a State depending on the level */
 tState createState(int level);

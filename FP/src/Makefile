@@ -148,7 +148,9 @@ room.o: ker/room.c include/room.h include/resources.h include/res_conf.h
 	$(INFO) Compiling kernel room object...
 	$(CC) -c ker/room.c $(OPTIONS)
 
-kid.o: ker/kid.c include/kid.h include/resources.h include/res_conf.h
+kid.o: ker/kid.c include/kid.h include/resources.h include/res_conf.h\
+       include/states.h include/states_conf.h include/res_conf.h\
+       include/types.h include/tiles.h include/tiles_conf.h
 	$(INFO) Compiling kernel kid object...
 	$(CC) -c ker/kid.c $(OPTIONS)
 
