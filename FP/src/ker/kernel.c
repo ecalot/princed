@@ -51,7 +51,7 @@ int kernel(int optionflag,int level) {
 		printf("The resource couldn't be loaded!\n");
 		exit(1);
 	}
-
+	
 	printf("Resource number: %d. Frames: %d. Type: %d.\n",
 		RES_ANIM_RUN_LEFT,
 		testResource->frames,
