@@ -8,5 +8,6 @@ struct FPConfig {
 };
 
 int cfgInit(FPConfig *_this,char *_pop1_path);
+void cfgDstr(FPConfig *_this);
 
 #endif

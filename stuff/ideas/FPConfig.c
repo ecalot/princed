@@ -9,3 +9,8 @@ int cfgInit(FPConfig *_this,char *_pop1_path) {
   strcpy(_this->pop1_path,_pop1_path);
   return(1);
 }
+
+void cfgDstr(FPConfig *_this) {
+  free(_this->pop1_path);
+  _this->pop1_path=NULL;
+}
