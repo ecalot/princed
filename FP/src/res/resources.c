@@ -39,6 +39,7 @@ resources.c: Princed Resources : DAT Extractor
 #include "freeprince.h"
 #include "resources.h"
 #include "output.h"
+#include "maps.h"
 
 #include "compress.h"
 
@@ -53,73 +54,6 @@ resources.c: Princed Resources : DAT Extractor
  * Resource creation
  */
 
-tData* res_createData(int nFrames,int type) {
-	tData* result;
-	result=(tData*)malloc(sizeof(tData));
-	
-	switch (type) {
-	case RES_TYPE_IMG:
-		result->type=eImages;/*res_getVirtualTypeFromReal(res_getIdxType);*/
-		nFrames--;
-		break;
-	case RES_TYPE_LVL:
-		result->type=eLevel;/*res_getVirtualTypeFromReal(res_getIdxType);*/
-		break;
-	}
-	
-	result->pFrames=(void**)malloc(nFrames*sizeof(void*));
-	result->frames=nFrames;
-	return result;
-}
-
-/* Using the type and the array data this function will return the resources in void* fromat */
-void res_createFrames(tMemory data,int type,void** returnValue,int number,int mask) {
-	tMemory* result;
-	static tImage image;
-	static tPalette palette;
-	palette.colors=16; /* TODO: detect when it is 2 colors */
-	palette.color=(tColor*)image.pal;
-
-	switch (type) {
-		case RES_TYPE_IMG:
-			if (!number) {
-				if (data.size!=100) {
-					printf("Fatal error: res_createFrames: invalid palette\n");
-					exit(1);
-				}
-				memcpy(image.pal,data.array+5,16*3);
-				printf("res_createFrames: Remembering palette\n");
-				return;
-			} else {
-				number--;
-			}
-			mExpandGraphic(data.array,&image,data.size);
-			/* TODO: the result must be an object created in output module: */
-			result=(void*)outputLoadBitmap(
-				image.pix,image.widthInBytes*image.height,palette,image.height,image.width,
-				res_modIsRight(mask),
-				1
-			);
-			 
-			printf("res_createFrames: Allocating frame[%d]=? (image type %d)\n",number,type);
-			break;
-		case RES_TYPE_SND_MIDI:
-		case RES_TYPE_SND_WAVE:
-		case RES_TYPE_IMG_PALETTED:
-			result=(tMemory*)malloc(sizeof(tMemory)); /* both sides are void* :)  */
-			/* TODO: data->array must be copied or it wont be available after the file is closed */
-			*result=data;
-			printf("res_createFrames: Allocating resource[%d]\n",number);
-			
-			break;
-		case RES_TYPE_LVL:
-			(tMemory*)result=mapLoadLevel(data);
-			break;
-	}
-
-	returnValue[number]=(void*)result;
-}
-
 /*
  * Functions made to get data from the DAT files using some optimizations
  */
@@ -128,14 +62,14 @@ int res_getDataById(int id,int maxItems,tMemory* result) {
 	/* This function looks for a data resource in a dat file optimizing the search knowing
 	 * that the id's starts in 0
 	 */
-	
+/* TODO: use static to remember where it is */	
 	long int gotId;
 	int indexNumber;
 	
 	/* main loop */
 	for (indexNumber=0;indexNumber<maxItems;indexNumber++) {
 		gotId=mReadFileInDatFile(
-				(indexNumber+id-DATA_START_ITEMS)%maxItems,
+				(indexNumber+id)%maxItems,
 				&(result->array),
 				(unsigned long *)&(result->size));
 		if (gotId==id) break;
@@ -145,45 +79,8 @@ int res_getDataById(int id,int maxItems,tMemory* result) {
 	return (gotId==id); /* 1 if the id was found, 0 if not */
 }
 
-int res_getDataByArray(short int* id,int maxItems,void** result,int ids,int type,int mask) {
-	/* This function looks for a data resource in a dat file optimizing the search knowing
-	 * that the id's starts in 0
-	 */
-	
-	long int gotId;
-	int indexNumber;
-	int i=0;
-	int old=-1;
-	tMemory data;
-	
-	/* main loop */
-	while((old!=i)&&(i!=ids)) {
-		old=i;
-		printf("res_getDataByArray: Starting resource cycling\n");
-		for (indexNumber=0;(indexNumber<maxItems)&&(i!=ids);indexNumber++) {
-			gotId=mReadFileInDatFile(
-				indexNumber,
-				&(data.array),
-				(unsigned long *)&(data.size)
-			);
-			if (gotId==id[i]) {
-				res_createFrames(data,type,result,i,mask);
-				i++;
-			}
-		}
-	}
-
-	printf("Done!\n");
-	
-	/* Return value */
-	return i;
-}
-
-#define res_getIdxFile1 ((char*)(index.array+1))
-#define res_getIdxFile2 ((char*)(index.array+15))
-#define res_getIdxType (((short int*)(index.array+31))[0])
-#define res_getIdxTotal (((short int*)(index.array+29))[0])
-#define res_getIdxFrames ((short int*)(index.array+33))
+static const short res_list[]=RES_LIST;
+static const char* res_file[]=RES_FILES;
 
 /**
  * Public functions
@@ -193,76 +90,84 @@ tData* resLoad(long id) {
 	/* Initialize abstract variables to read this new DAT file */
 	unsigned short int numberOfItems;
 	tData* result;
-	int i;
-	char file1[25];
-	/*char file2[25];*/
-	short int* frames;
-	short int type;
-	int nFrames;
-	tMemory index;
+	tMemory raw;
+	int mask=res_get_part_mods(id);
+	int total=res_get_part_size(id);
+	int from=res_get_part_from(id);
+	int type=res_get_part_type(id);
 
-	/* READ INDEX */
-	if (!mReadBeginDatFile(&numberOfItems,"index.dat")) return NULL;
-	if (!res_getDataById(res_modGetId(id),DATA_END_ITEMS,&index)) {
-		printf("Fatal Error: resLoad: index could not be read!\n");
-		return NULL;
+	switch (type) {
+		case RES_TYPE_LVL:
+			if (total!=2) {
+				printf("Fatal Error: resLoad: invalid level define!\n");
+				return NULL;
+			}
+			mask+=res_list[from+1];
+			if (!mReadBeginDatFile(&numberOfItems,res_file[res_list[from]])) {
+				printf("Fatal Error: resLoad: level file not found!\n");
+				return NULL;
+			}
+			if(!res_getDataById(mask,numberOfItems,&raw)) {
+				printf("Fatal Error: resLoad: level not found!\n");
+				return NULL;
+			}
+			mReadCloseDatFile();
+			return (tData*)mapLoadLevel(raw); /* transform from raw to a loaded map */
+		case RES_TYPE_IMG: {
+			tMemory palette;
+      tImage image;
+      tPalette pal;
+ 
+			result=(tData*)malloc(sizeof(tData));
+			result->frames=total-2; /* drop filename and palette */
+			result->pFrames=(void**)malloc(result->frames*sizeof(void*));
+			if (!mReadBeginDatFile(&numberOfItems,res_file[res_list[from]])) {
+				printf("Fatal Error: resLoad: level file not found!\n");
+				return NULL;
+			}
+			if(!res_getDataById(res_list[from+1],numberOfItems,&palette)) {
+				printf("Fatal Error: resLoad: palette not found!\n");
+				return NULL;
+			}
+			if (palette.size!=100) {
+      	printf("Fatal error: resLoad: invalid palette\n");
+        return NULL;
+      }
+      pal.colors=16; /* TODO: detect when it is 2 colors */
+ 	    pal.color=(tColor*)(palette.array+5);	/*memcpy(image.pal,data.array+5,16*3);*/
+			for (total=0;total<result->frames;total++) {
+				if(!res_getDataById(res_list[from+2+total],numberOfItems,&raw)) {
+					printf("Fatal Error: resLoad: image not found!\n");
+					return NULL;
+				}
+
+				/* expand raw image into an image structure */
+				mExpandGraphic(raw.array,&image,raw.size);
+
+				/* convert image structure into blittable output surfaces */
+				result->pFrames[total]=(void*)outputLoadBitmap(
+					image.pix,image.widthInBytes*image.height,pal,image.height,image.width,
+					(mask&(RES_MODS_LEFT))==(RES_MODS_LEFT),1
+        );
+
+				/* free intermediate image data */
+				free(image.pix);
+			
+			}
+			mReadCloseDatFile();
+			return result;
+		}
 	}
-	printf("file1='%s'. file2='%s' type='%d'. frames='%d'.\n",
-		res_getIdxFile1,
-		res_getIdxFile2,
-		res_getIdxType,
-		res_getIdxTotal
-	);
-
-	nFrames=res_getIdxTotal;
-	frames=(short int*)malloc(nFrames*sizeof(short int));
-	type=res_getIdxType;
-	for (i=0;i<nFrames;i++) {
-		frames[i]=res_getIdxFrames[i];
-	}
-
-	strncpy(file1,res_getIdxFile1,14);
-
-	mReadCloseDatFile();
-
-	/* READ FILE */
-
-	for (i=0;i<nFrames;i++) {
-		printf("frames[%d]=%d\n",i,frames[i]);
-	}
-
-	if (!mReadBeginDatFile(&numberOfItems,file1)) {
-		printf("Fatal Error: resLoad: resource file not found!\n");
-		free(frames);
-		return NULL;
-	}
-
-	/* Create a tData object with pFrames empty*/
-	result=res_createData(nFrames,type);
-
-	/* Fill pFrames into tData object */
-	if (!res_getDataByArray(frames,numberOfItems,result->pFrames,nFrames,type,res_modGetMask(id))) {
-		printf("Fatal Error: resLoad: resource file invalid!\n");
-		free(frames);
-		free(result->pFrames);
-		free(result);
-		return NULL;
-	}
-	
-	mReadCloseDatFile();
-	free(frames);
-	/* printf("resLoad: returning result pointer 0x%p\n",result); */
-	return result;
 }
 
 void resFree(tData* res) {
-	if (res->type==eImages) {
+/*	if (res->type==eImages) {
 		while (res->frames) {
 			outputFreeBitmap(res->pFrames[--(res->frames)]);
 		}
 	}
 	printf("ResFree activated\n");
 	free(res->pFrames);
-	free(res);
+	free(res);*/
 }
 

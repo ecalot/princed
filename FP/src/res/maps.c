@@ -67,11 +67,11 @@ void maps_getGuard(int pantalla,int *p,int *b,int *skill,int *color,tDirection *
 }
 */
 /* Publics */
-void* mapLoadLevel(tMemory* level) {
+void* mapLoadLevel(tMemory level) {
 	tMap* map=(tMap*)malloc(sizeof(tMap));
-	memcpy(map->fore,level->array+MAPS_BLOCK_OFFSET_WALL,30*24);
-	memcpy(map->back,level->array+MAPS_BLOCK_OFFSET_BACK,30*24);
-	memcpy(map->start,level->array+MAPS_BLOCK_OFFSET_START_POSITION,3);
+	memcpy(map->fore,level.array+MAPS_BLOCK_OFFSET_WALL,30*24);
+	memcpy(map->back,level.array+MAPS_BLOCK_OFFSET_BACK,30*24);
+	memcpy(map->start,level.array+MAPS_BLOCK_OFFSET_START_POSITION,3);
 /*	memcpy(slevel(links),level.data+MAPS_BLOCK_OFFSET_LINKS,4*24);*/
 	return (void*)map;
 }
