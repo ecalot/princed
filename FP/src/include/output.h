@@ -91,5 +91,10 @@ void outputStop();
 /* Finish all output modes, including the screen mode
  */
 
+int getHeight();
+
+int getWidth();
+
+
 #endif
 

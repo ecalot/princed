@@ -40,6 +40,9 @@ output.c: Free Prince : Output Devices Handler
 #include "resources.h" /* tMemory structure */
 #include "output.h"
 
+#define DEF_SCREEN_WIDTH 320
+#define DEF_SCREEN_HEIGHT 200
+
 /* Main screen object */
 SDL_Surface *screen;
 
@@ -185,10 +188,20 @@ int outputInit()
 		colors[i].g=255-i;
 		colors[i].b=255-i;
 	}
-	screen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE|SDL_HWPALETTE);
+	screen = SDL_SetVideoMode(DEF_SCREEN_WIDTH, DEF_SCREEN_HEIGHT, 8, SDL_SWSURFACE|SDL_HWPALETTE);
 	if (!screen) return -1;
 	/*SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);*/
 	return 0;
+}
+
+int getHeight()
+{
+	return DEF_SCREEN_HEIGHT;
+}
+
+int getWidth()
+{
+	return DEF_SCREEN_WIDTH;
 }
 
 /* Finish all output modes, including the screen mode */

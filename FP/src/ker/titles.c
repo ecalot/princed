@@ -33,6 +33,7 @@ titles.c: FreePrince : Titles, animation and presentation
 
 #include "output.h"
 #include "titles.h"
+#include <SDL/SDL.h>
 
 tMenuOption showTitles() {
 /* Show the titles animation
@@ -40,6 +41,49 @@ tMenuOption showTitles() {
  * returns 1 if the user has selected to load a saved game 
  * returns 2 if the user has selected to start the game
  */
+
+	tData *main_title;
+	tData *main_text;
+	
+	main_title = resLoad(RES_IMG_MAIN_BACKGROUND);
+	if (! main_title) {
+		printf("The resource couldn't be loaded!\n");
+		return 1;
+	}
+	outputClearScreen();
+	/* The main background */
+	outputDrawBitmap(main_title->pFrames[0], 0, 0);
+	outputUpdateScreen();
+	SDL_Delay(1000);
+	/* The presents */
+	outputDrawBitmap(main_title->pFrames[1], 100, 100);
+	outputUpdateScreen();
+	SDL_Delay(1050);
+	/* The author*/
+	outputClearScreen();
+	outputDrawBitmap(main_title->pFrames[0], 0, 0);
+	outputDrawBitmap(main_title->pFrames[2], 100, 100);
+	outputUpdateScreen();
+	SDL_Delay(1050);
+	/* The game name*/
+	outputClearScreen();
+	outputDrawBitmap(main_title->pFrames[0], 0, 0);
+	outputDrawBitmap(main_title->pFrames[3], 30, 70);
+	outputDrawBitmap(main_title->pFrames[4], 30, 190);
+	outputUpdateScreen();
+	SDL_Delay(1050);
+
+	main_text = resLoad(RES_IMG_TEXT_BACKGROUND);
+	if (! main_text) {
+		printf("The resource couldn't be loaded!\n");
+		return 1;
+	}
+	/* The presents */
+	outputDrawBitmap(main_text->pFrames[0], 0, 0);
+	outputDrawBitmap(main_text->pFrames[1], 0, 0);
+	outputUpdateScreen();
+	SDL_Delay(1050);
+	getchar();
 	return sStart;	
 }	
 
