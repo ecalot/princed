@@ -129,7 +129,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
  */
 
 #define e(a,x,y) outputDrawBitmap(roomGfx.environment->pFrames[a],(x),(y))
-			
+
 #define buttonIsNormal(a)  (((tPressable*)a.moreInfo)->action==eNormal)
 #define chopperGetFrame(a) (((tDanger*)a.moreInfo)->frame)
 #define gateGetFrame(a)    (((tGate*)a.moreInfo)->frame)
@@ -148,9 +148,6 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 #define drawPotionGreenBubbles(x,y,isBig) outputDrawBitmap(roomGfx.potionAnimGreen->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimGreen->frames)],x,y-5*(isBig))
 #define drawPotionBlueBubbles(x,y,isBig) outputDrawBitmap(roomGfx.potionAnimBlue->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimBlue->frames)],x,y-5*(isBig))
 
-
-
-		
 typedef enum {layTritop,layTribot,layBase}tLooseLayer;
 void drawLoose(int x, int y, int frame,tLooseLayer layer) {
 	static char looseAnimation[]={1,0,2,2,0,0,0,2,2,2,2};
@@ -412,7 +409,8 @@ void drawBackPanel(tRoom* room,int x, int y) {
 /* bottom panel block at background */
 void drawBackBottomTile(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
-	
+
+	/* TODO: fix this conditions to make miniterms */
 	/* loose moving */
 	if (isIn(tile,TILES_LOOSEMOVING)) {
 		drawLoose((x-1)*TILE_W+0,y*TILE_H+3,looseGetFrame(tile),layBase);
