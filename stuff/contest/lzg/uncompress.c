@@ -62,8 +62,7 @@ void expandLzg(const unsigned char* array, int arraySize,
 				
 				/* Here is the difference between big and small images */
 				while (rep--) {
-					h=cursor/MAX_MXD_SIZE_IN_LZG-
-						((location%MAX_MXD_SIZE_IN_LZG)>(cursor%MAX_MXD_SIZE_IN_LZG));
+					h=(cursor-(location%MAX_MXD_SIZE_IN_LZG))/MAX_MXD_SIZE_IN_LZG;
 					/*
 					 * if the image is stored in an array of 1024 x n bytes
 					 * "h" is the height and "location" is the width
