@@ -55,7 +55,7 @@ int isIn(tTile tile,short group) {
 		while ((*i)&&(((*i)&0x3f)!=tile.code)) i+=((*i)&0xC0)?2:1;
 		if ((*i)&0x80) { /* compare against the back */
 			i++;
-			if ((*i)==(tile.back+1)) return 1;
+			if ((*i)==(tile.back)) return 1;
 			docontinue=1;
 		} else if ((*i)&0x40) { /* compare against the function */
 			i++;
