@@ -87,6 +87,7 @@ typedef struct {
 }tResIdList;
 
 void parseGivenPath(char* path);
+int partialListActive();
 int isInThePartialList(const char* file, int value);
 void freePartialList();
 
