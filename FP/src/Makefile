@@ -134,6 +134,9 @@ downloadmore:
 run:
 	@cd bin;./freeprince;cd ..
 
+vg:
+	@cd bin;valgrind ./freeprince;cd ..
+	
 it: $(EXEFILE) run
 
 ################
