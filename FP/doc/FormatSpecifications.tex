@@ -18,26 +18,26 @@ Table of Contents
 4.2.2 Algorithms ...................................................... 210
 4.2.2.1 Run length encoding (RLE) ..................................... 226
 4.2.2.2 LZ variant (LZG) .............................................. 237
-4.3. Palettes ......................................................... 318
-4.4. Levels ........................................................... 325
-4.4.1 Unknown blocks .................................................. 356
-4.4.2 Room mapping .................................................... 373
-4.4.2.1 Wall drawing algorithm ........................................ 510
-4.4.3 Room linking .................................................... 577
-4.4.4 Guard handling .................................................. 593
-4.4.5 Starting Position ............................................... 634
-4.4.6 Door events ..................................................... 648
-4.5. Digital Waves .................................................... 692
-4.6. Midi music ....................................................... 709
-4.7. Internal PC Speaker .............................................. 712
-4.8. Binary files ..................................................... 717
-5. PLV v1.0 Format Specifications ..................................... 724
-5.1. User data ........................................................ 750
-5.2. Allowed Date format .............................................. 777
-6. The SAV v1.0 format ................................................ 791
-7. The HOF v1.0 format ................................................ 837
-8. Credits ............................................................ 860
-9. License ............................................................ 879
+4.3. Palettes ......................................................... 324
+4.4. Levels ........................................................... 331
+4.4.1 Unknown blocks .................................................. 362
+4.4.2 Room mapping .................................................... 379
+4.4.2.1 Wall drawing algorithm ........................................ 516
+4.4.3 Room linking .................................................... 583
+4.4.4 Guard handling .................................................. 599
+4.4.5 Starting Position ............................................... 640
+4.4.6 Door events ..................................................... 654
+4.5. Digital Waves .................................................... 698
+4.6. Midi music ....................................................... 715
+4.7. Internal PC Speaker .............................................. 718
+4.8. Binary files ..................................................... 723
+5. PLV v1.0 Format Specifications ..................................... 730
+5.1. User data ........................................................ 756
+5.2. Allowed Date format .............................................. 783
+6. The SAV v1.0 format ................................................ 797
+7. The HOF v1.0 format ................................................ 843
+8. Credits ............................................................ 866
+9. License ............................................................ 885
 
 
 1. Preamble
@@ -264,7 +264,7 @@ Table of Contents
  #define MAX_MOD_SIZE_IN_LZG    32001
 
  /* modulus to be used in the 10 bits of the algorithm */
- #define MAX_MXD_SIZE_IN_LZG    0x400
+ #define MAX_MXD_SIZE_IN_LZG    0x400 /* 1024 */
 
  /* LZG expansion algorithm sub function */
  unsigned char popBit(unsigned char *byte) {
@@ -280,7 +280,7 @@ Table of Contents
    int location,h,cursor=0,pos=0;
    unsigned char maskbyte,rep;
 
-   /* img is a unsigned char[] sized 0x400 */
+   /* img is an unsigned char[] sized 0x400 */
    /* clean output garbage */
    for(location=0;location<MAX_MOD_SIZE_IN_LZG;img[location]=0,location++);
 
@@ -292,8 +292,10 @@ Table of Contents
          img[cursor++]=array[pos++];
        } else {
          /*
-          * 10 bits for the slide position (S). Add 66 to this number.
-          * 6 bits for the repetition number (R). Add 3 to this number.
+				  * location:
+          *  10 bits for the slide position (S). Add 66 to this number.
+					* rep:
+          *  6 bits for the repetition number (R). Add 3 to this number.
           */
          location=66+(((rep=array[pos])&3)<<8)+(unsigned char)array[pos+1];
          pos+=2;
@@ -303,11 +305,15 @@ Table of Contents
          while (rep--) {
            h=cursor/MAX_MXD_SIZE_IN_LZG-
              ((location%MAX_MXD_SIZE_IN_LZG)>(cursor%MAX_MXD_SIZE_IN_LZG));
+					/*
+           * if the image is stored in an array of 1024 x n bytes
+					 * h is the height and location is the width
+					 */
            img[cursor++]=img[
              ((h<0)?0:h)*MAX_MXD_SIZE_IN_LZG+
              (location++)%MAX_MXD_SIZE_IN_LZG
            ];
-        }
+         }
        }
      }
    }
