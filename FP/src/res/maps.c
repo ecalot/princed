@@ -442,7 +442,7 @@ void  mapMove(tMap* map) {
 			if (!map->dangers[i].more.time) map->dangers[i].frame++;
 			break;
 		case eLosMoving:
-			if (map->dangers[i].frame) map->dangers[i].frame++;
+			map->dangers[i].frame++;
 			if (map->dangers[i].frame==11) map->dangers[i].action=eLosDown;
 			break;
 		default:

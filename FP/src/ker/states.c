@@ -146,6 +146,9 @@ int evaluateCondition(int condition,tKey* key, tObject* kid, tRoom* room) {
 	case esMapOn:
 		DefaultFalse(room);
 		statesCondRet(isIn(statesTile(0,0),c.argument));
+	case esMapNotOn:
+		DefaultFalse(room);
+		statesCondRet(!isIn(statesTile(0,0),c.argument));
 	case esForwardTileNearerThan:
 		DefaultFalse(kid);
 		statesCondRet((whereInTile<c.argument));

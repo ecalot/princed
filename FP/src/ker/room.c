@@ -127,6 +127,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 #define spikeGetFrame(a)   (((tDanger*)a.moreInfo)->frame)
 #define looseGetFrame(a)   (((tDanger*)a.moreInfo)->frame)
 #define wallGetInfo(a)     (wallGet(env,cases,(a),seed))
+#define touchLoose(a)      (((tDanger*)a.moreInfo)->action=eLosMoving)
 
 /* door drawing */
 #define drawGateTop(x,y,frame) outputDrawBitmap(roomGfx.environment->pFrames[35-((frame)&7)],x,y)
@@ -525,8 +526,6 @@ int roomPress(tRoom* room, tObject* obj) {
 	 * returns 0 if the room didn't change, 1 if it did
 	 */
 
-	tMap* map=room->level;
-	int s=room->id;
 	int x=(obj->location/TILE_W)+1;
 	int y=obj->floor+1;
 	tTile tile=roomGetTile(room,x,y);
@@ -554,11 +553,9 @@ int roomPress(tRoom* room, tObject* obj) {
 #ifdef DEBUGROOM
 	printf("s=%d x=%d y=%d\n",s,x,y);
 #endif
-	if (isIn(tile,TILE_LOOSE)) {
-		map->fore[(s-1)*30+(x-1)+(y-1)*10]=TILE_EMPTY;
-		refresh=1; /* room changed, refresh it */
-	}
-
+  if (isIn(tile,TILES_LOOSENORMAL)) 
+		touchLoose(tile);
+	
 	/* spikes */
 	/* there are 7 possibilities to be */
 #define WHERE_NEAR 6
