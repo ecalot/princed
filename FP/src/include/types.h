@@ -76,7 +76,7 @@ typedef struct {
 
 typedef struct {
 	int frame;
-	enum {eChoActive,eChoInactive,eSpiUp,eSpiWaitUp,eSpiDown,eSpiStuck} action;
+	enum {eChoActive,eChoInactive,eSpiUp,eSpiWaitUp,eSpiDown,eSpiStuck,eLosNormal,eLosMoving,eLosDown} action;
 	union {
 		int time;
 		unsigned char back;

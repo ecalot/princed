@@ -138,7 +138,17 @@ void* mapLoadLevel(tMemory level) {
 				/* initialize the tDanger object*/
 	 			newDanger.frame=0;
 	 			newDanger.more.time=1;
-				newDanger.action=((map->fore[i*30+j]&0x1f)==TILE_CHOPPER)?eChoInactive:eSpiDown;
+				switch (map->fore[i*30+j]&0x1f) {
+				case TILE_CHOPPER:
+					newDanger.action=eChoInactive;
+					break;
+				case TILE_SPIKES:
+					newDanger.action=eSpiDown;
+					break;
+				case TILE_LOOSE:
+					newDanger.action=eLosNormal;
+					break;
+				}
 				map->back[i*30+j]=dangerInRoom;
 				map->screenDangers[i][dangerInRoom]=map->dangers+dangers;
 #ifdef DEBUGMAPS
