@@ -40,8 +40,14 @@ output.c: Free Prince : Output Devices Handler
 #include "output.h"
 
 /* Text Primitives*/
-void outputDrawText(const char* text, int x, int y) {}
-void outputDrawMessage(const char* text) {}
+void outputDrawText(int x, int y, const char *fmt, ...)
+{
+}
+
+void outputDrawMessage(const char* fmt, ...)
+{
+}
+
 
 /* Sound */
 void outputPlayWav(tMemory sound) {} /* Starts the reproduction of the sample and returns */
