@@ -633,8 +633,8 @@ Table of Contents
  The guard_color is the palette the guard has (see 4.8).
  The default colors are in this table:
 
-                   Table 4.4: Default Guar colors
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                   Table 4.4: Default Guard colors
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Code Pants     Cape
   ~~~~ ~~~~~     ~~~~
@@ -645,6 +645,12 @@ Table of Contents
   0x04 Dark Blue Beige
   0x05 Purple    Beige
   0x06 Yellow    Orange
+
+ Other codes may generate random colors because the game is reading
+ the palette from trashed memory. This may also cause a game crash.
+ It should (never tested) be possible to add new colors in the guard
+ palette resource (see 4.8) avoiding the crash due to this reason.
+
 
 4.4.5 Starting Position
  This section describes the start_position block.
@@ -731,7 +737,7 @@ Table of Contents
 
 4.8. Binary files
  Some binary files contains relevant information
- The resource number ??? in prince.dat has the VGA guard palettes in it
+ The resource number 10 in prince.dat has the VGA guard palettes in it
  saving n records of a 16-color-palette of 3 bytes in the specified palette
  format.
 
