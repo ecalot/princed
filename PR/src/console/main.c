@@ -29,15 +29,15 @@ pr.c: Main source file for Princed Resources
 	  Enrique Calot
 
 	 Graphic compression algorithms
-    Tammo Jan Dijkema
-    Enrique Calot
+	  Tammo Jan Dijkema
+	  Enrique Calot
 
-   Graphic format development
-    Tammo Jan Dijkema
-    Anke Balderer
+	 Graphic format development
+	  Tammo Jan Dijkema
+	  Anke Balderer
 
-   MID Sound format development
-    Christian Lundheim
+	 MID Sound format development
+	  Christian Lundheim
 
  Note:
   DO NOT remove this copyright notice
@@ -85,13 +85,12 @@ int prExportDatOpt(char* vDatFile, char* vDirName, char* vResFile,char opt) {
 			-6 XML Attribute not recognized
 			-7 XML File not found
 	*/
-	tResource* r[65536];
+	tResource* r[MAX_RES_COUNT];
 	int a;
 
 	a=parseFile     (vResFile,vDatFile,r);
 	if (a<0) return a-3;
 	a=extract(vDatFile, vDirName,r,opt);
-	//if (!(opt&8)) generateFile(vResFile,r);
 	return a;
 }
 
@@ -114,32 +113,18 @@ int prImportDatOpt(char* vDatFile, char* vDirName, char* vResFile,char opt) {
 			00 File succesfully compiled
 			positive number: number of missing files
 	*/
-	tResource*    r[65536];
+	tResource*    r[MAX_RES_COUNT];
 	int a;
 	a=parseFile     (vResFile,vDatFile,r);
 	if (a<0) return a-1;
 	a=compile (vDatFile, vDirName,r,opt);
-	generateFile  (vResFile,r);
 	return a;
 }
-
-int prClearRes(char* vResFile) {
-	/*
-		Return values:
-			01 Ok
-			00 Error
-	*/
-	tResource* r[65536];
-	emptyTable(r);
-	return generateFile(vResFile,r);
-}
-
-
 
 //Main program
 #ifndef DLL
 void syntax() {
-	printf("Syntax:\r\n pr datfile option [extract dir]\r\n\r\nValid options:\r\n -x[rn] for extract\r\n  r: raw extraction\r\n  n: don't extract\r\n -c[r] for compile\r\n  r: raw compiling\r\n -d for type\r\n");
+	printf(PR_TEXT_SYNTAX);
 }
 
 int main(int argc, char* argv[]) {
@@ -151,9 +136,9 @@ int main(int argc, char* argv[]) {
 	int i;
 
 #ifdef UNIX
-	if (argc==2) {
-		printf("Content-Type:text/html\n\nRunning as a cgi\n");
-		printf("Result: %02d type\r\n",prVerifyDatType(argv[1]));
+	if (argc==2) { //CGI support
+		printf(PR_CGI_TEXT1);
+		printf(PR_CGI_TEXT2,prVerifyDatType(argv[1]));
 		return 1;
 	}
 #endif
@@ -165,11 +150,11 @@ int main(int argc, char* argv[]) {
 		syntax();
 		return -1;
 	}
-	if (argc==4) {
-		sprintf(dir,argv[3]);
+	if (argc==4 ) {
+		if (strlen(argv[3])<(260-1)) sprintf(dir,argv[3]);
 	}
 
-	//do selected taskbars
+	//do selected tasks
 	switch (argv[2][1]) {
 		case 'e':
 		case 'x': {// file.dat --> extracted files + resource.xml
@@ -187,12 +172,12 @@ int main(int argc, char* argv[]) {
 				switch (argv[2][i]) {
 					case 'n':option&=0xFE;break;
 					case 'r':option|=0x04;break;
-					default:printf("Found invalid option '%c', skiping . . .\r\n",argv[2][i]);break;
+					default:printf(PR_TEXT_SKIPING,argv[2][i]);break;
 				}
 			}
 			printf("Extracting '%s' to '%s' with %d\r\n",argv[1],dir,option);
-			returnValue=prExportDatOpt(argv[1],dir,"resources.xml",(char)option);
-			printf("Result: %s (%d)\r\n",array[-returnValue],returnValue);
+			returnValue=prExportDatOpt(argv[1],dir,RES_XML_RESOURC_XML,(char)option);
+			printf(PR_TEXT_RESULT,array[-returnValue],returnValue);
 		}	break;
 		case 'd': {// get type of file.dat
 			char array[14][65]={
@@ -210,7 +195,7 @@ int main(int argc, char* argv[]) {
 				"Pop2 dat files"};
 			printf("Classifing '%s'\r\n",argv[1]);
 			returnValue=prVerifyDatType(argv[1]);
-			printf("Result: %s (%d)\r\n",array[2+returnValue],returnValue);
+			printf(PR_TEXT_RESULT,array[2+returnValue],returnValue);
 		}	break;
 		case 'c': { // extracted files + resource.xml --> files.dat
 			char array[6][39]={
@@ -224,15 +209,15 @@ int main(int argc, char* argv[]) {
 				for (i=2;argv[2][i];i++) {
 					switch (argv[2][i]) {
 						case 'r':option&=0xFE;break;
-						default:printf("Found invalid option '%c', skiping . . .\r\n",argv[2][i]);break;
+						default:printf(PR_TEXT_SKIPING,argv[2][i]);break;
 					}
 				}
 			printf("Compiling '%s' from '%s' with %d\r\n",argv[1],dir,option);
-			returnValue=prImportDatOpt(argv[1],dir,"resources.xml",(char)option);
+			returnValue=prImportDatOpt(argv[1],dir,RES_XML_RESOURC_XML,(char)option);
 			if (returnValue>=0) {
-				printf("Result: %s (%d)\r\n",array[-returnValue],returnValue);
+				printf(PR_TEXT_RESULT,array[-returnValue],returnValue);
 			} else {
-				printf("Result: %d files with errors\r\n",returnValue);
+				printf(PR_TEXT_RESULT_ERR,returnValue);
 			}
 		} break;
 		default:

@@ -73,7 +73,7 @@ int prVerifyDatType(char* vFiledat) {
 		if ((numberOfItems*8+2)!=indexSize) {
 			indexOffset+=indexSize;
 			fseek(fp,0,SEEK_END);
-			printf("jaaaj %d %d\r\n",indexOffset,ftell(fp));
+//printf("jaaaj %d %d\r\n",indexOffset,ftell(fp));
 			ok=(((unsigned long)ftell(fp))==indexOffset)?11:0; //see if it is a pop2 file
 			fclose(fp);
 			return ok; //this is a pop2 dat file or invalid

@@ -79,6 +79,7 @@ void workTag(const tTag* t, tResource* r[]) {
 	//Declare variables
 	unsigned short id;
 	unsigned short size;
+	int i;
 
 	id=(unsigned short)ptoi(t->value);
 
@@ -89,28 +90,12 @@ void workTag(const tTag* t, tResource* r[]) {
 	if (r[id]==NULL) return;
 
 	//Get type and palette from tag
-	//TODO: send it to a define
 	if (t->itemtype==NULL) {
 		r[id]->type=0;
-	} else if (equalsIgnoreCase(t->itemtype,"image")) {
-		r[id]->type=2;
-	} else if (equalsIgnoreCase(t->itemtype,"palette")) {
-		r[id]->type=6;
-	} else if (equalsIgnoreCase(t->itemtype,"level")) {
-		r[id]->type=1;
-	} else if (equalsIgnoreCase(t->itemtype,"wave")) {
-		r[id]->type=3;
-	} else if (equalsIgnoreCase(t->itemtype,"midi")) {
-		r[id]->type=4;
-	} else if (equalsIgnoreCase(t->itemtype,"unknown")) {
-		r[id]->type=5;
-	} else if (equalsIgnoreCase(t->itemtype,"pcspeaker")) {
-		r[id]->type=7;
-	} else if (equalsIgnoreCase(t->itemtype,"raw")) {
-		r[id]->type=0;
-	}	else {
-		r[id]->type=(char)atoi(t->itemtype); //If error it returns 0 and the verifyHeader will try to detect the type
+	} else {
+		for (i=0;i<8;i++) if (equalsIgnoreCase(t->itemtype,getExtDesc(i))) {r[id]->type=i;break;}
 	}
+	if (i==8) r[id]->type=(char)atoi(t->itemtype); //If error it returns 0 and the verifyHeader will try to detect the type
 	r[id]->palette=(unsigned short)ptoi(t->palette); //Transforms the char* palette into a short ID value, if 0 or error no palette is needed
 
 	//get external and copy it to the resource path

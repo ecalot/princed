@@ -211,6 +211,7 @@ DEP_CPP_COMPI=\
 	".\include\disk.h"\
 	".\include\mid.h"\
 	".\include\pal.h"\
+	".\include\pr.h"\
 	".\include\resources.h"\
 	".\include\wav.h"\
 	
@@ -267,22 +268,10 @@ DEP_CPP_EXTRA=\
 	".\include\extract.h"\
 	".\include\mid.h"\
 	".\include\pal.h"\
+	".\include\pr.h"\
 	".\include\resources.h"\
 	".\include\wav.h"\
 	
-
-!IF  "$(CFG)" == "tasks - Win32 Release"
-
-!ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
-
-!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=.\parser.c
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
@@ -321,6 +310,7 @@ DEP_CPP_PR_C10=\
 SOURCE=.\resources.c
 DEP_CPP_RESOU=\
 	".\include\compress.h"\
+	".\include\disk.h"\
 	".\include\pr.h"\
 	".\include\resources.h"\
 	".\include\xml.h"\
@@ -427,10 +417,6 @@ SOURCE=.\include\pal.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\include\parser.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\include\pr.h
 # End Source File
 # Begin Source File
@@ -452,6 +438,46 @@ SOURCE=.\include\xml.h
 # Begin Source File
 
 SOURCE=include\xmlsearch.h
+# End Source File
+# End Group
+# Begin Group "Text Files"
+
+# PROP Default_Filter "*.txt"
+# Begin Source File
+
+SOURCE=..\changelog.txt
+# End Source File
+# Begin Source File
+
+SOURCE=..\gpl.txt
+# End Source File
+# Begin Source File
+
+SOURCE=..\readme.coders.txt
+# End Source File
+# Begin Source File
+
+SOURCE=..\readme.txt
+# End Source File
+# End Group
+# Begin Group "Other Files"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\Makefile
+# End Source File
+# Begin Source File
+
+SOURCE=.\winbins\pr.def
+# End Source File
+# Begin Source File
+
+SOURCE=.\bin\resources.sample.xml
+# End Source File
+# Begin Source File
+
+SOURCE=.\bin\resources.xml
 # End Source File
 # End Group
 # End Target

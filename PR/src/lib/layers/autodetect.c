@@ -41,7 +41,6 @@ resources.c: Princed Resources : Resource Handler
 #include "pr.h"
 #include "xml.h"
 #include "xmlsearch.h"
-#include "parser.h"
 #include "disk.h"
 #include "memory.h"
 #include "resources.h"
@@ -84,7 +83,7 @@ char verifyWaveHeader(char* array, int size) {
 
 char verifySpeakerHeader(char* array, int size) {
 	return
-		(size>1)&&(array[1]==0x00)
+		(size>2)&&(array[1]==0x00)
 	;
 }
 
@@ -98,48 +97,19 @@ char verifyHeader(char* array, int size) {
 	return 05;
 }
 
+const char* getExtDesc(int type) {
+	static const char extarraydesc[8][10]={"raw","level","image","wave","midi","unknown","palette","pcspeaker"};
+	return extarraydesc[type];
+}
 
 /***************************************************************\
 |                      Parsing resource file                    |
 \***************************************************************/
 
-#if 0
-//Parse line
-void parseResource(tResource* r[], char* line) {
-	//declare variables
-	int                i=0;
-	int                k=0;
-	unsigned short int id,ty;
-
-	//Begin parsing
-	for (;!(line[k]=='\r'||line[k]=='\n'||(!line[k]));k++);
-	line[k]=0;
-
-	if (getNumberToken(line,&id,' ',&i,6)) {
-		r[id]=(tResource*)malloc(sizeof(tResource));
-		getNumberToken(line,&(*(r[id])).size,' ',&i,6);
-		getNumberToken(line,&(*(r[id])).offset,' ',&i,6);
-		getUpperToken(line,(*(r[id])).file,' ',&i,12);
-		if (getNumberToken(line,&ty,' ',&i,3)) {
-			(*(r[id])).desc=(char*)malloc(255);
-			if (getToken(line,(*(r[id])).desc,'#',&i,255)) {
-				(*(r[id])).coms=(char*)malloc(1023);
-				if (!getToken(line,(*(r[id])).coms,0,&i,1023)) {
-					free ((*(r[id])).coms);
-					(*(r[id])).coms=NULL;
-				}
-			}
-		} else {
-			(*(r[id])).desc=NULL;
-		}
-		(*(r[id])).type=(char)ty;
-	}
-}
-#endif
-
+//Initializes the resource table
 void emptyTable(tResource* r[]) {
 	int i=0;
-	for (;i<65536;i++) r[i]=NULL;
+	for (;i<MAX_RES_COUNT;i++) r[i]=NULL;
 }
 
 //parse file
@@ -155,127 +125,6 @@ char parseFile(char* vFile, char* datFile, tResource* r[]) {
 	freeTagStructure(tree);
 
 	return 0;
-
-//Old code (will be removed soon)
-#if 0
-	//declare variables
-	char parsing=0;
-	char line[MAX_LINE_SIZE];
-	char B[]=BEGIN_TABLE;
-	char E[]=END_TABLE;
-	FILE* fp;
-
-	//empty resource array
-	emptyTable(r);
-
-	//parse file
-	if ((fp=fopen(vFile,"rt"))!=NULL) {
-		while (fgets(line,MAX_LINE_SIZE,fp)!=NULL) {
-			if (parsing) {
-				if (equals(line,E)) {
-					parsing=0;
-				} else {
-					parseResource(r,line);
-				}
-			} else {
-				if (equals(line,B)) parsing=1;
-			}
-		}
-		fclose(fp);
-		return 1;
-	} else {
-		return 0;
-	}
-#endif
-}
-
-//generate file
-char generateFile(char* vFile,tResource* r[]) {
-
-//Old code (will be removed soon)
-#if 0
-	//declare variables
-	FILE* fp;
-	FILE* source;
-	char B[]=BEGIN_TABLE;
-	char E[]=END_TABLE;
-	char coms[MAX_LINE_SIZE];
-	char line[MAX_LINE_SIZE];
-	char none[]="";
-	char parsing=0;
-	int id=0;
-
-	if ((fp=fopen("res.tmp","wt"))!=NULL) {
-		//insert headers
-		if ((source=fopen(vFile,"rt"))!=NULL) {
-			while ((parsing!=2)&&(fgets(line,MAX_LINE_SIZE,source)!=NULL)) {
-				if (parsing) {
-					if (equals(line,E)) {
-						parsing=2;
-					}
-				} else {
-					if (equals(line,B)) {
-						parsing=1;
-					} else {
-						fputs(line,fp);
-					}
-				}
-			}
-		}
-
-		//insert main body file
-		fputs(B,fp);
-		fputs("\n",fp);
-
-		for (;id<65536;id++) {
-			if (r[id]!=NULL) {
-				if (1||((*(r[id])).desc==NULL)) { //todo see this line
-					if ((*(r[id])).coms==NULL) {
-						sprintf(coms,none);
-					} else {
-						sprintf(coms," #",(*(r[id])).coms);
-					}
-				} else {
-					if ((*(r[id])).coms==NULL) {
-						sprintf(coms," %s",(*(r[id])).desc);
-					} else {
-						sprintf(coms," %s#%s",(*(r[id])).desc,(*(r[id])).coms);
-					}
-				}
-				sprintf(line,"<item itemtype=\"%d\" value=\"%d\" file=\"%s\" external=\"res%05d.bmp\">Res %d</item>\n",
-					(*(r[id])).type,
-					id,
-				//(*(r[id])).size,
-				//(*(r[id])).offset,
-				(*(r[id])).file,
-				id,id
-				//,
-				//coms
-				);
-				fputs(line,fp);
-			}
-		}
-		fputs("\n",fp);
-		fputs(E,fp);
-
-		//insert footers
-		if (source!=NULL) {
-			while ((parsing==2) && (fgets(line,MAX_LINE_SIZE,source)!=NULL)) {
-				fputs(line,fp);
-			}
-			fclose(source);
-		}
-		fclose(fp);
-		remove(vFile);
-		rename("res.tmp",vFile);
-		return 1;
-	} else {
-		return 0;
-	}
-#else
-	//New code ignores this function (resources.xml is read only)
-	return 1;
-#endif
 }
 
 //Resources output to xml functions
@@ -300,7 +149,7 @@ void AddToUnknownXml(const char* vFiledat,unsigned short id,const char* ext,char
 	}
 	//TODO: set itemtype in words
 	fprintf(unknownXmlFile,RES_XML_UNKNOWN_ITEM,
-		id,id,ext,type,id
+		id,id,ext,getExtDesc(type),id
 	); //To the xml output
 }
 

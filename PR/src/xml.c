@@ -376,7 +376,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 			if (str==NULL) {*error=2;return NULL;}
 
 			//Set variable and destroy old variables
-			sprintf(str,"%s%c%s",father->external,DIR_SEPARATOR,tag->external);
+			sprintf(str,"%s/%s",father->external,tag->external);
 			free(tag->external);
 			if ((*(father->external))==0) free(father->external);
 			tag->external=str;
