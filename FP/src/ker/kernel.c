@@ -151,11 +151,11 @@ int playgame(int optionflag,int level) {
 		}
 	}
 	switch (death) {
-/*	case STATE_EXIT_CODE_SPIKED:
+	case STATE_EXIT_CODE_SPIKED:
 		outputDrawMessage(1,"You are spiked! Press a key\n");
-		break;*/
+		break;
 	case STATE_EXIT_CODE_SPLASH:
-		outputDrawMessage(1,"Splashh! You are dead! Press a key\n");
+		outputDrawMessage(1,"Splashh! Explicit content censored!\n");
 		break;
 /*	case STATE_EXIT_CODE_CHOMPED:
 		outputDrawMessage(1,"You are dead! Press a key\n");
