@@ -68,6 +68,7 @@
 #include "lzg_compress.h"
 
 /*#define LZG_REVERSE*/
+/*#define LZG_FASTER*/
 
 #ifdef LZG_REVERSE
 void *memrchr2(unsigned char *s, int c, size_t n) {
@@ -117,14 +118,16 @@ void search_best_pattern(unsigned char *input, int inputSize,
 
 		if (pattern_len > *best_pattern_len) /* if it is the maximum, save it */
 		{
+			/*window_len+= *best_pattern_len - pattern_len; * optimization *
+			if (window_len <= 0) break;*/
 			*best_pattern_len = pattern_len;
 			*best_pattern = pattern;
 		}
 
 		if (pattern_len == MAX_PATTERN_SIZE) break;
 
-		/* Comment these three lines and uncomment the next two to get
-		 * 5% more compression at 4x execution time: */
+		/* if LZG_FASTER is defined compression rate will be 5% worst
+		 * and compression time will be 80% faster */
 #ifdef LZG_FASTER
 		window_len -= wc - window;
 		if (window_len <= 0) break;
