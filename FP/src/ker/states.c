@@ -155,6 +155,9 @@ int evaluateCondition(int condition,tKey* key, tObject* kid, tRoom* room) {
 	case esMapBack:
 		DefaultFalse(room);
 		statesCondRet(isIn(statesTile(-kidDirection,0),c.argument));
+	case esMapNotBack:
+		DefaultFalse(room);
+		statesCondRet(!isIn(statesTile(-kidDirection,0),c.argument));
 	case esMapOn:
 		DefaultFalse(room);
 		statesCondRet(isIn(statesTile(0,0),c.argument));
