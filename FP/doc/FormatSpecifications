@@ -15,10 +15,12 @@ Table of Contents
 4.2.2.2 Custom LZ
 4.3. Palettes
 4.4. Levels
-4.4.1 Room mapping
-4.4.2 Room linking
-4.4.3 Guard handling
-4.4.4 Door events 
+4.4.1 Unknown blocks
+4.4.2 Room mapping
+4.4.3 Room linking
+4.4.4 Guard handling
+4.4.5 Starting Position
+4.4.6 Door events 
 4.5. Digital Waves
 4.6. Midi music
 4.7. Internal PC Speaker
@@ -161,6 +163,8 @@ backupExtension);
   the next 4 are the resolution:
    if it is 1011 (B in hex) then the image has 16 colors
    if it is 0000 (0 in hex) then the image has 2 colors
+   so to calculate the bits per pixel there are in the image, just take the
+   last 2 bits and add 1 (11 is 4 and 00 is 1).
   the last 4 are the 5 compression types:
    from 0 to 4:
    0 RAW_LR
@@ -174,7 +178,9 @@ backupExtension);
 4.2.2 Algorithms
  RAW_LR means that the data wasn't compressed, it is used for small images
         the format is saved from left to right (LR) serializing a line to
-        the next integer byte if necessary.
+        the next integer byte if necessary. In case the image was 16 colors
+	two pixels per byte (4bpp) will be used, in case the image was 2
+	colors, 8 pixels per byte (1bpp) will be used.
  RLE_LR has a Run length encoding (RLE) algorithm, after uncompressed the
         image can be read as a RAW_LR.
  RLE_UD is the same as RLE_LR except that after uncompressed the image must
@@ -207,12 +213,172 @@ backupExtension);
  to 256.
  
 4.4. Levels
- I'll write it tomorrow.
+ This table has a summary of the blocks to be used in this section,
+ you can referr it from the text below.
 
-4.4.1 Room mapping
-4.4.2 Room linking
-4.4.3 Guard handling
-4.4.4 Door events 
+ Length Offset  Block Name
+ ~~~~~~ ~~~~~~  ~~~~~~~~~~
+ 720    0       wall
+ 720    720     background
+ 256    1440    door I
+ 256    1696    door II
+ 96     1952    links
+ 64     2048    unknown I
+ 3      2112    start_position
+ 3      2115    unknown III
+ 1      2116    unknown IV
+ 24     2119    guard_location
+ 24     2143    guard_direction
+ 24     2167    unknown II
+ 24     2191    unknown II
+ 24     2215    guard_skill
+ 24     2239    unknown II
+ 24     2263    guard_color
+ 16     2287    unknown II
+ 2      2303    0F 09 (2319)
+
+ All leves has a size of 2305, except in the original game, that the potion
+ level has a size of 2304 (may be it was wrong trimmed).
+
+4.4.1 Unknown blocks
+ Blocks described in this section are: Unknown from I to IV.
+
+ Unknown III and II blocks doesn't affect the level if changed, if you find
+ out what they are used to we will welcome your specification text.
+
+ Unknown I may corrupt the level if edited.
+
+ We belive unknown IV has something to do with the start position, but we
+ don't know about it.
+
+ As unknown III were all zeros for each level in the original set, it was a
+ team decision to use those bytes for format extension. If one of them is
+ not the default 00 00 00 hex then the level was extended by the team. Those
+ extensions are only supported by RoomShaker at this  moment. To see how
+ those extensions were defined read the appendix I'll write some day.
+ 
+4.4.2 Room mapping
+ This section explains how the main walls and objects are stored. The
+ blocks involved here are "wall" and "background"
+
+ In a level you can store a maximum of 24 screens (also called rooms) of 30
+ tiles each, having three stages of 10 tiles each. Screens are numered from
+ 1 to 24 (not 0 to 23) because the 0 was reserved special cases.
+
+ The wall and background blocks have 24 sub-blocks inside. Those sub-blocks
+ has a size of 30 bytes each and has a screen associated. So, for example,
+ the sub-block staring in 0 corresponds to the screen 1 and the sub-block
+ starting in 690 corresponds to the screen 24. 
+ It is reserved 1 byte from the wall block and one from the background block
+ for each tile. To locate the appropiate tile you have to do the following
+ calculation: tile=(screen-1)*30+tileOffset where tileOffset is a number
+ from 0 to 29 that means a tile from 0 to 9 if in the upper stage, from
+ 10 to 19 if in the middle stage and 20 to 29 if in the bottom stage.
+ We define this as the location format and will be used also in the start
+ position.
+ Allways looking from the left to the right.
+ So there is a wall and background byte for each tile in the level and this
+ is stored this way.
+
+ The wall part of the tile stores the main tile form according to the table
+ below:
+
+ (I should include the table here)
+
+ The background part of the tile stores a modification or attribute of the
+ wall part of the tile depending on what group it belongs.
+
+ Group door:
+ 0 if open
+ 1 if closed (I have to confirm that)
+
+ Group door trigger:
+ The event ID associated with this trigger, see Door Events (4.4.6).
+
+ Normal tile:
+ 
+ Spikes:
+ The initial spike state is stored. Only type 0 allows the spike animation.
+
+ Upper door slot:
+ The type of the carpet is stored in the palace enviornment.
+
+4.4.3 Room linking
+ This section describes the links block.
+
+ Each screen is linked to another by each of the four sides. Each link
+ is stored. There is no screen mapping, just screen linking.
+
+ The links block has 24 sub-blocks of 4 bytes each. All those sub-blocks
+ has its own correspondance with a screen (the block starting at 0 is
+ related to the screen 1 and the block starting at with 92 is related to
+ screen 24).
+ Each block of 4 bytes stores the links this screen links to reserving one
+ byte per each side in the order left (0), right (1), up (2), down (3).
+ The number 0 is used when there is no screen there.
+ Cross links should be made to allow the kid passing from a screen to
+ another and then comming back to the same screen but it's not a must.
+
+4.4.4 Guard handling
+ This section specifies the blocks: guard_location, guard_direction,
+ guard_skill and guard_color.
+
+ Each guard section has 24 bytes, each byte of them corresponds to a screen
+ so byte 0 is related to screen 1 and byte 13 is related to screen 24.
+ This screen is where the guard is located. The format only allows one
+ guard per screen. Each block describes a part of the guard.
+
+ The guard_location part of a guard describes where in the screen the guard
+ is located, this is a number from 0 to 29 if the guard is in the screen or
+ 30 if there is no guard in this screen. Other values are allowed but are
+ equivalent to 30.
+ 
+ The guard_direction part describes where the guard looks at. If the value
+ is 0, then the guard looks to the right, if the value is the hex FF (-1 or
+ 255) then he looks left. This is the direction format, and will be used in
+ the start position too.
+
+ The guard_skill is how the guard fights, style and lives. Note that the
+ lives also depends on the level you are. Allowed numbers are from 0 to 7.
+
+ TODO: add a skill table
+
+ The guard_color is the palette the guard has (see 4.8).
+
+4.4.5 Starting Position
+ This section describes the start_position block.
+ 
+ This block stores where and how the kid starts in the level. Note that all
+ level doors that are on the starting screen will be closed in the moment
+ the level starts.
+ 
+ This block has 3 bytes.
+ The first byte is the screen, allowed values are from 1 to 24.
+ The second byte is the location, see the section 4.4.2 for the location
+ format specifications.
+ The third byte is the direction, see 4.4.4 for the direction format
+ specifications.
+
+4.4.6 Door events 
+ This section explains how the doors are handled and speficies the blocks
+ door I and II.
+
+ First of all he have to define what an event line is in this file. An event
+ line is a link to a door that will be activated. If the event was triggered
+ with the action close, then the event will close the door, if the action
+ was open then the event will open the door. An event line has also a flag
+ to trigger the next event line or not.
+ An event is defined as a list of event lines, from the first to the last.
+ The last must have the trigger-next-event-line flag off. This is like a
+ list of doors that performs an action.
+ An event performs the action that it was called to do: open those doors or
+ close them. This action is defined by the type of tile pressed.
+ Each event line has an ID from 0 to 255. An event has the ID of the first
+ event line in it.
+
+ In section 4.4.2 it is explined how a door trigger is associated to an
+ event ID. Those are the tiles that starts the event depending on what are
+ them: closers or openers.
 
 4.5. Digital Waves
 Just raw sound
