@@ -40,8 +40,8 @@ int expandLzg(const unsigned char* input, int inputSize,
 	int           loc, oCursor=0, iCursor=0;
 	unsigned char maskbyte=0, rep, k;
 
-	/* clean output garbage */
-	for(loc=LZG_WINDOW_SIZE;loc--;output[loc]=0);
+	/* initialize the first 1024 bytes of the window with zeros */
+	for(oCursor=0;oCursor<LZG_WINDOW_SIZE;output[oCursor++]=0);
 
 	/* main loop */
 	while (iCursor<inputSize) {
@@ -49,44 +49,38 @@ int expandLzg(const unsigned char* input, int inputSize,
 		for (k=8;k&&(iCursor<inputSize);k--) {
 			if (popBit(&maskbyte)) {
 				output[oCursor++]=input[iCursor++]; /* copy input to output */
-printf("print %02x@input(%d)\n",output[oCursor-1],iCursor-1);
+printf("print %02x@%d from input(%d)\n",output[oCursor-1],oCursor-1025,iCursor-1);
 			} else {
 				/*
 				 * loc:
-				 *  10 bits for the slide iCursorition (S). Add 66 to this number.
+				 *  10 bits for the slide iCursorition (S). Add 66 to this number,
+				 *  substract the result to the current oCursor and take the last 10 bits.
 				 * rep:
 				 *  6 bits for the repetition number (R). Add 3 to this number.
 				 */
 				loc= 66 + ((input[iCursor] & 0x03 /*00000011*/) <<8) + input[iCursor+1];
 				rep= 3  + ((input[iCursor] & 0xfc /*11111100*/) >>2);
+			
+				iCursor+=2; /* move the cursor 2 bytes ahead */
 				
-				iCursor+=2;
+				loc=(oCursor-loc)&0x3ff; /* this is the real loc number (allways positive!) */
 				
 				while (rep--) { /* repeat pattern in output */
-					loc=loc%LZG_WINDOW_SIZE; /* loc is in range 0-1023 */
+					output[oCursor]=output[oCursor-loc];
 
-					/*
-					 * delta is ((loc-oCursor)%LZG_WINDOW_SIZE)
-					 * this is the offset where the bytes will be looked for
-					 * in the simple algorithm it is allways negative
-					 * in bigger images it can be iCursoritive
-					 * 
-					 * this value is inside the range -1023 to 1023.
-					 * if loc>oCursor the result is iCursoritive
-					 * if loc<oCursor the result is negative
-					 */
-					
-					output[oCursor]=output[oCursor+((loc-oCursor)%LZG_WINDOW_SIZE)];
-					printf("print %02x@%d delta=%d oCursor=%d\n",output[oCursor],oCursor+((loc-oCursor)%LZG_WINDOW_SIZE),((loc-oCursor)%LZG_WINDOW_SIZE),oCursor);
+					printf("print %02x@%d copied from %d (loc=%d)\n",output[oCursor],oCursor-LZG_WINDOW_SIZE,oCursor-loc-LZG_WINDOW_SIZE,loc);
 
 					oCursor++;
-					loc++;
 				}
 			}
 		}
 	}
 	
-	*outputSize=oCursor;
+	/* ignore the first 1024 bytes */
+	for(iCursor=LZG_WINDOW_SIZE;iCursor<oCursor;iCursor++)
+		output[iCursor-LZG_WINDOW_SIZE]=output[iCursor];
+
+	*outputSize=oCursor-LZG_WINDOW_SIZE;
 	return maskbyte;
 }
 
