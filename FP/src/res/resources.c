@@ -219,7 +219,7 @@ tData* resLoad(long id) {
 
 				/* get the offsets to move the image */
 				if (pal.colors==16) {/* available only for 16 colors images */
-					getOffsets(&down,&left,&right,from+2,has_D,has_L,has_R,result->frames,total);
+					getOffsets(&down,&left,&right,from-2,has_D,has_L,has_R,result->frames,total);
 				} else {
 					down=left=right=0;
 				}
