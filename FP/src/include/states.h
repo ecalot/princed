@@ -29,6 +29,7 @@ typedef struct {
 
 #define stateGetImage(a) (((a).action.image))
 #define stateGetBottom(a) (((a).action.imgoffx))
+#define stateGetMirror(a) (((a).action.mirror))
 
 /* public functions interface */
 

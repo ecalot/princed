@@ -55,6 +55,7 @@ typedef struct { /* The state object: only struct that is not static to the stat
 	short  imgoffx;    /* the height the current image has to be raised */
 	short  image; /* the next image to be shown */
 	float  step; /* the number of pixels a frame has to move */
+	int    mirror; /* the image has to be inverted */
 	float  acumLocation; /* the kid location in float (will be casted to int in the kid object) */
 } tState;
 

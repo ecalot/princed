@@ -66,7 +66,7 @@ tObject objectCreate(int location, int floor, int direction, int stateId, unsign
 }
 
 void objectDraw(tObject object) {
-	void* image=object.gfxCache[object.direction]->pFrames[stateGetImage(object)-1];
+	void* image=object.gfxCache[object.direction ^ stateGetMirror(object)]->pFrames[stateGetImage(object)-1];
 	/* TODO: move this -1 to each script frame */
 	outputDrawBitmap(
 		image, 

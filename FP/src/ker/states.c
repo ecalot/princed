@@ -201,6 +201,7 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 	flags         =current->flags    [current->frame];
 	steps         =current->steps    [current->frame];
 	current->imgoffx=current->offsx    [current->frame];
+	current->mirror=flags&STATES_FLAG_M?1:0;
 	
 	/* BEGIN DEBUGSTATES */
 #ifdef DEBUGSTATES
