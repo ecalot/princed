@@ -281,26 +281,85 @@ backupExtension);
  is stored this way.
 
  The wall part of the tile stores the main tile form according to the table
- below:
+ below. Note that those are just a limited number of tiles, each code has a
+ tile in the game. The tiles listed are all the ones needed to make a level
+ so the missing tiles have an equivalent in this list.
 
- (I should include the table here)
-
+  Code Group Description
+  ~~~~ ~~~~~ ~~~~~~~~~~~
+  0x00 0     Free space
+  0x01 0     Floor 1
+  0x11 0     Floor 2
+  0x21 0     Floor above cols
+  0x14 0     Wall 1
+  0x34 0     Wall 2
+  0x13 0     Floor w/torch 1  
+  0x33 0     Floor w/torch 2     
+  0x03 0     Column 1   
+  0x23 0     Column 2   
+  0x09 0     2 story column top
+  0x28 0     2 story col. bottom
+  0x24 1     Door
+  0x0e 0     Broken floor 1
+  0x2e 0     Broken floor 2
+  0x1e 0     Broken fl w/torch 1
+  0x3e 0     Broken fl w/torch 2
+  0x0b 0     Loose floor
+  0x0a 2     Potion 1
+  0x2a 2     Potion 2    
+  0x2f 3     Door opener
+  0x26 3     Door closer
+  0x0c 4     Wall above door
+  0x02 5     Spears 1
+  0x22 5     Spears 2
+  0x30 F     Level door left
+  0x31 F     Level door right
+  0x37 F     Big window left
+  0x38 F     Big window right
+  0x32 0     Guillotine 
+  0x16 0     Sword Lev 1
+  0x36 0     Sword Lev 12
+  0x15 0     Floor w/Skeleton
+  
  The background part of the tile stores a modification or attribute of the
- wall part of the tile depending on what group it belongs.
+ wall part of the tile depending on what group it belongs. Those are not
+ all the modifications in the game, there are more carpet styles, etc.
 
- Group door:
- 0 if open
- 1 if closed (I have to confirm that)
+  Code Group Description
+  ~~~~ ~~~~~ ~~~~~~~~~~~
+  0x00 F     Standard background
+  0x00 0     Background
+  0x01 0     Background bricks 1
+  0x02 0     Background bricks 2
+  0xFF 0     Background bricks 3
+  0x03 0     Background Window
+  0x0B 0     Background w/shadow
+  0x01 1     Open door
+  0x02 1     Closed door
+  0x01 2     Small red potion
+  0x02 2     Big red potion
+  0x03 2     Green weight potion
+  0x04 2     Green invert potion
+  0x05 2     Small blue potion
+  0x00 3     Door trigger 0
+  0x01 3     Door trigger 1
+  0x02 3     Door trigger 2
+  0xnn 3     Door trigger nn (*)
+  0x00 4     White carpet
+  0x01 4     Plain red carpet
+  0x02 4     Red carpet w/drawin
+  0x00 5     Spikes in (**)
+  0x01 5     Spikes going out 1
+  0x02 5     Spikes going out 2 
+  0x03 5     Spikes out
 
- Group door trigger:
+ (*) Group door trigger (3):
  The event ID associated with this trigger, see Door Events (4.4.6).
 
- Normal tile:
- 
- Spikes:
+ (**) Spikes (5):
  The initial spike state is stored. Only type 0 allows the spike animation.
 
- Upper door slot:
+ Upper door slot (4):
  The type of the carpet is stored in the palace enviornment.
 
 4.4.3 Room linking
