@@ -40,8 +40,6 @@ anims.h: FreePrince : Animation functions
 /* table types */
 typedef struct {
 	unsigned short frame;
-	unsigned char file;
-	unsigned short pal;
 	unsigned short res;
 	unsigned char layer;
 	unsigned short x;
@@ -50,13 +48,13 @@ typedef struct {
 
 typedef struct {
 	unsigned short frame;
-	unsigned char file;
+	unsigned short res;
 	unsigned short state;
 } animState;
 
 typedef struct {
 	unsigned short frame;
-	unsigned char file;
+	unsigned short res;
 	enum {anims_enum_midi,anims_enum_wav,anims_enum_speaker} type;
 } animSound;
 

@@ -58,12 +58,10 @@ BEGIN {
 /^[[:space:]]*[[:digit:]]+[[:space:]]+FIXEDIMG[[:space:]]/ {
 	totalfixedimg++
 	f["frame" totalfixedimg]=$1/1
-	f["file" totalfixedimg]=toupper($3)
-	f["pal" totalfixedimg]=$4/1
-	f["res" totalfixedimg]=$5/1
-	f["layer" totalfixedimg]=toupper($6)
-	f["x" totalfixedimg]=$7/1
-	f["y" totalfixedimg]=$8/1
+	f["res" totalfixedimg]=toupper($3)
+	f["layer" totalfixedimg]=toupper($4)
+	f["x" totalfixedimg]=$5/1
+	f["y" totalfixedimg]=$6/1
 	animation["sizef" animcount]++
 	halt
 }
@@ -72,7 +70,7 @@ BEGIN {
 /^[[:space:]]*[[:digit:]]+[[:space:]]+STATE[[:space:]]/ {
 	totalstate++
 	t["frame" totalstate]=$1/1
-	t["file" totalstate]=toupper($3)
+	t["res" totalstate]=toupper($3)
 	t["state" totalstate]=toupper($4)
 	animation["sizet" animcount]++
 	halt
@@ -82,7 +80,7 @@ BEGIN {
 /^[[:space:]]*[[:digit:]]+[[:space:]]+(MIDI|WAV|SPEAKER)[[:space:]]/ {
 	totalsound++
 	o["frame" totalsound]=$1/1
-	o["file" totalsound]=toupper($3)
+	o["res" totalsound]=toupper($3)
 	o["type" totalsound]=tolower($2)
 	animation["sizeo" animcount]++
 	halt
@@ -117,7 +115,7 @@ END {
 	coma=""
 	printf("#define ANIMS_FIXEDIMG {")
 	for (i=1;i<=totalfixedimg;i++) {
-		printf("%s\\\n\t{/*frame*/ %d,/*file*/ RES_FILE_%s, /*pal*/ %d, /*res*/ %d, /*layer*/ ANIMS_LAYERTYPE_%s, /*x,y*/ %d,%d}",coma,f["frame" i],f["file" i],f["pal" i],f["res" i],f["layer" i],f["x" i],f["y" i])
+		printf("%s\\\n\t{/*frame*/ (unsigned short)%d,/*res*/ (unsigned short)RES_%s, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_%s, /*x,y*/ (unsigned short)%d,(unsigned short)%d}",coma,f["frame" i],f["res" i],f["layer" i],f["x" i],f["y" i])
 		coma=","
 	}
 	printf("\\\n}\n\n")
@@ -126,7 +124,7 @@ END {
 	coma=""
 	printf("#define ANIMS_STATE {")
 	for (i=1;i<=totalstate;i++) {
-		printf("%s\\\n\t{/*frame*/ %d,/*file*/ RES_FILE_%s, /*state*/ STATE_MARKS_%s}",coma,t["frame" i],t["file" i],t["state" i])
+		printf("%s\\\n\t{/*frame*/ %d,/*res*/ RES_%s, /*state*/ STATE_MARKS_%s}",coma,t["frame" i],t["res" i],t["state" i])
 		coma=","
 	}
 	printf("\\\n}\n\n")
@@ -135,7 +133,7 @@ END {
 	coma=""
 	printf("#define ANIMS_SOUND {")
 	for (i=1;i<=totalsound;i++) {
-		printf("%s\\\n\t{/*frame*/ %d,/*file*/ RES_FILE_%s, /*type*/ anims_enum_%s}",coma,o["frame" i],o["file" i],o["type" i])
+		printf("%s\\\n\t{/*frame*/ %d,/*res*/ RES_%s, /*type*/ anims_enum_%s}",coma,o["frame" i],o["res" i],o["type" i])
 		coma=","
 	}
 	printf("\\\n}\n\n")

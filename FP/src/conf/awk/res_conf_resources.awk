@@ -52,12 +52,12 @@ BEGIN {
 			two=$inc
 			inc++
 			res++
-			filelist=(filelist coma "(short)" ((two+64)*256+(one+64)) )
+			filelist=(filelist coma "(unsigned short)" ((two+64)*256+(one+64)) )
 			coma=","
 		}
 	} else {
 		for (i=3;i<=NF;i++) {
-			if (match($i,/^[A-Z]*$/)) {
+			if (match($i,/^[A-Z]+(\+[0-9]+)?$/)) {
 				filelist=(filelist coma "RES_FILE_" $i)
 				res++
 			} else if (match($i,/^[0-9]+-[0-9]*$/)) {
