@@ -50,7 +50,7 @@ LINKERRELEASE =
 #Binary code files
 OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
                 output.o maps.o config.o room.o titles.o \
-                input.o kid.o states.o
+                input.o kid.o states.o tiles.o
 EXEFILE       = bin/freeprince
 
 GENERATEDRESHEADERS = include/res_conf_parts.h include/res_conf_files.h\
