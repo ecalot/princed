@@ -1,13 +1,15 @@
-bin/pr: compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o
+bin/pr: compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o prlib.o
 	
 	@echo Linking files...
 	@mkdir -p bin
-	@gcc -o bin/pr compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o -s
+	@gcc -o bin/pr compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o -s -O2
+	@echo Making dynamic library...
+	@gcc -o bin/pr.so compile.o compress.o extract.o prlib.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o -O2 -Llibc -shared -dynamic
 	@echo Program successfully compiled
 	@echo
 	@echo Please read readme.txt for syntax information
 	@echo
-	
+
 compile.o: compile.c
 	@echo Compiling import module...
 	@gcc -c compile.c -Iinclude/
@@ -21,8 +23,12 @@ compress.o: compress.c
 	@gcc -c compress.c -Iinclude/
 
 pr.o: pr.c
-	@echo Compiling main module...
-	@gcc -c pr.c -Iinclude/ 
+	@echo Compiling main module in standard mode...
+	@gcc -c pr.c -Iinclude/ -DOS=\"`uname`\" 
+
+prlib.o: pr.c
+	@echo Compiling main module in library mode...
+	@gcc -c pr.c -Iinclude/ -DDLL -o prlib.o
 
 resources.o: resources.c
 	@echo Compiling resource manager module...
