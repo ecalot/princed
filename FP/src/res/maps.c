@@ -157,12 +157,12 @@ tRoom mapGetRoom(tData* map, tRoomId roomAux) {
 
 	/* Right room */
 	if ((roomAux=result.links[1])) {
-		result.fore[11]=*(slevel(fore)+30*(roomAux-1)+0);
-		result.back[11]=*(slevel(back)+30*(roomAux-1)+0);
-		result.fore[23]=*(slevel(fore)+30*(roomAux-1)+10);
-		result.back[23]=*(slevel(back)+30*(roomAux-1)+10);
-		result.fore[35]=*(slevel(fore)+30*(roomAux-1)+20);
-		result.back[35]=*(slevel(back)+30*(roomAux-1)+20);
+		result.fore[23]=*(slevel(fore)+30*(roomAux-1)+0);
+		result.back[23]=*(slevel(back)+30*(roomAux-1)+0);
+		result.fore[35]=*(slevel(fore)+30*(roomAux-1)+10);
+		result.back[35]=*(slevel(back)+30*(roomAux-1)+10);
+		result.fore[47]=*(slevel(fore)+30*(roomAux-1)+20);
+		result.back[47]=*(slevel(back)+30*(roomAux-1)+20);
 	} else {
 		result.fore[11]=MAP_F_WALL;
 		result.back[11]=MAP_B_NONE;
