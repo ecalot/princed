@@ -63,7 +63,7 @@ vChar valid_chars[255];
 static SDL_Surface *font = NULL;
 int font_init = 0;
 
-#define FONT_FILE "fonts.bmp"
+#define FONT_FILE "../fonts.bmp"
 
 void initText ()
 {
@@ -120,10 +120,11 @@ unsigned int outputGetTextHeight (const char *txt)
 	return font->h;
 }
 
+#define OUTPUT_TEXT_CENTERED_X -1
+
 /* Text Primitives*/
-void outputDrawText(int x, int y, const char *fmt, ...)
+void outputvDrawText(int x, int y, const char *fmt, va_list ap)
 {
-	va_list ap;
 	char buffer[1024];
 	unsigned char *s;
 	SDL_Rect from, to;
@@ -136,7 +137,6 @@ void outputDrawText(int x, int y, const char *fmt, ...)
 
 	if (fmt == NULL) return;
 	memset (buffer, 0, sizeof(buffer));
-	va_start (ap, fmt);
 	
 	/* If vsnprintf is allowed in the standard use it */													
 #if defined __USE_BSD || defined __USE_ISOC99 || defined __USE_UNIX98
@@ -146,16 +146,19 @@ void outputDrawText(int x, int y, const char *fmt, ...)
 	/* ANSI X3.159-1989 (`ANSI C') and ISO/IEC 9899:1999 (`ISO C99') */
 	vsprintf (buffer, fmt, ap);
 #endif
-	va_end (ap);
 
 	s = (unsigned char*)buffer;
-	current_x = x;
+	if (x==OUTPUT_TEXT_CENTERED_X) {
+		current_x = (DEF_SCREEN_WIDTH-outputGetTextWidth(buffer))/2;
+	} else {
+		current_x = x;
+	}
 	while ((*s) != '\0') {
 		if (valid_chars[*s].is_valid) {
 			from.x = valid_chars[*s].x;
 			from.y = 0;
 			from.w = valid_chars[*s].w;
-			from.h = 12;
+			from.h = CHAR_SIZE;
 
 			to.x = current_x;
 			to.y = y;
@@ -169,8 +172,20 @@ void outputDrawText(int x, int y, const char *fmt, ...)
 	}
 }
 
+void outputDrawText(int x, int y, const char *fmt, ...)
+{
+	va_list ap;
+	va_start (ap, fmt);
+	outputvDrawText(x,y,fmt,ap);
+	va_end (ap);
+}
+
 void outputDrawMessage(const char* fmt, ...)
 {
+	va_list ap;
+	va_start (ap, fmt);
+	outputvDrawText(OUTPUT_TEXT_CENTERED_X,DEF_SCREEN_HEIGHT-CHAR_SIZE,fmt,ap);
+	va_end (ap);
 }
 
 void outputClearLastMessage()
@@ -342,6 +357,7 @@ int outputInit()
 	screen = SDL_SetVideoMode(DEF_SCREEN_WIDTH, DEF_SCREEN_HEIGHT, 0, SDL_SWSURFACE|SDL_HWPALETTE);
 	if (!screen) return -1;
 	/*SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);*/
+	initText();
 	return 0;
 }
 

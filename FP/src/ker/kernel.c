@@ -122,10 +122,10 @@ int playgame(int optionflag,int level) {
 				printf("Kernel/playgame: cheat: Pass to level %d\n",level);
 				break;
 			case showVersion:
-				fprintf(stderr,"FreePrince v"FP_VERSION"\n");
+				outputDrawMessage("FreePrince v"FP_VERSION"\n");
 				break;
 			case showScreens:
-				fprintf(stderr,"S%d L%d R%d A%d B%d\n",
+				outputDrawMessage("S%d L%d R%d A%d B%d\n",
 					room.id,
 					room.links[eLeft],
 					room.links[eRight],
@@ -134,7 +134,7 @@ int playgame(int optionflag,int level) {
 				);
 				break;
 			case showMoreScreens:
-				fprintf(stderr,"S%d AL%d AR%d BL%d BR%d\n",
+				outputDrawMessage("S%d AL%d AR%d BL%d BR%d\n",
 					room.id,
 					room.corners[0],
 					room.corners[1],
