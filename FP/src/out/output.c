@@ -57,30 +57,7 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 	/* Here p is the address to the pixel we want to set */
 	Uint8 *p = (Uint8 *)surface->pixels + y*surface->pitch + x*bpp;
 
-	switch (bpp) {
-	case 1:
-		*p = pixel;
-		break;
-
-	case 2:
-		*(Uint16 *)p = pixel;
-		break;
-
-	case 3:
-		if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-			p[0] = (pixel >> 16) & 0xff;
-			p[1] = (pixel >> 8) & 0xff;
-			p[2] = pixel & 0xff;
-		} else {
-			p[0] = pixel & 0xff;
-			p[1] = (pixel >> 8) & 0xff;
-			p[2] = (pixel >> 16) & 0xff;
-		}
-	break;
-	case 4:
-		*(Uint32 *)p = pixel;
-	break;
-	}
+	*p = pixel;
 }
 
 
@@ -98,11 +75,17 @@ outputLoadBitmap(const unsigned char* data, int size,
 	SDL_Surface* result;
 	int i,j;
 	Uint32 rmask, gmask, bmask, amask;
-
-	/*return (void*)SDL_LoadBMP("s.bmp");*/
+	SDL_Color colors[256];
+																				        
+	/* Fill colors with color information */
+	for(i=0;i<256;i++) {
+		colors[i].r=255-i;
+		colors[i].g=255-i;
+		colors[i].b=255-i;
+	}
+	
 	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
-	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n",
-			invert, firstColorTransparent, size);
+	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n", invert, firstColorTransparent, size);
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	rmask = 0xff000000;
@@ -116,26 +99,13 @@ outputLoadBitmap(const unsigned char* data, int size,
 	amask = 0xff000000;
 #endif
 
-	result = SDL_CreateRGBSurface(0, w, h, 16, rmask, gmask, bmask, amask);
-	if (!result)
-	{
+	result = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, rmask, gmask, bmask, amask);
+	if (!result) {
 		fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
-		exit(1);
+		return NULL;
 	}
-	
-	/* Notes:
-	 * - the image is serialized
-	 *    this means that the last bits in the row to complete a full byte
-	 *    are garbage
-	 * - there are 2 types of images:
-	 *    1 bit/pixel (b/w)
-	 *    4 bit/pixel (16 cols)
-	 * - for the moment only 4bpp will be supported
-	 * - width is in pixels
-	 * - width in bytes is (w+1)/2
-	 *    we have to add 1 because of the serialization
-	 *    division by 2 is because 4bpp are 2 pixel/byte (0.5 byte/pixel)
-	 */
+	SDL_SetPalette(result, SDL_LOGPAL, colors, 0, 256);
+
 	w = (w + 1) / 2;
 
 	/* Lock the screen for direct access to the pixels */
@@ -148,8 +118,7 @@ outputLoadBitmap(const unsigned char* data, int size,
 
 	for (i = 0; i < result->w; i++) {
 		for (j = 0; j < result->h; j++) {
-			putpixel(result, i, j, 0xFFFF00);
-					/*SDL_MapRGB(result->format, 0xff, 0xff, 0x00));*/
+			putpixel(result, i, j, 122);
 		}
 	}
 	
@@ -187,9 +156,22 @@ void outputUpdateScreen(SDL_Surface *screen)
 /* Initialization */
 SDL_Surface *outputInit() 
 {
+	int i;
+	SDL_Surface *screen;
+	SDL_Color colors[256];
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
 	atexit(outputStop);
-	return SDL_SetVideoMode(320, 200, 8, SDL_ANYFORMAT|SDL_DOUBLEBUF);
+																				        
+	/* Fill colors with color information */
+	for(i=0;i<256;i++) {
+		colors[i].r=255-i;
+		colors[i].g=255-i;
+		colors[i].b=255-i;
+	}
+	screen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE|SDL_HWPALETTE);
+	if (!screen) return NULL;
+	SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);
+	return screen;
 }
 
 /* Finish all output modes, including the screen mode */
