@@ -94,7 +94,7 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 
 	if (room==NULL) return flags; /* exits if it is not associated to a room */
 
-/* a static variable type in the tObject determinates what objet is it about. This is to simulate polymorphism.
+/* a static variable type in the tObject determinates what object is it about. This is to simulate polymorphism.
  * call a function that performs all the actions knowing the room, the object and the flags. Returns refresh. */	
 	switch (object->type) {
 		case oKid:
