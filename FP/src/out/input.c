@@ -52,6 +52,18 @@ int editAction(tKey* key,SDLKey k) {
 	/* Control actions */
 	if (inputGetCtrl(key->status)) {
 		switch (k) {
+		case SDLK_g:
+			key->actionPerformed=save;
+			break;
+		case SDLK_j:
+			key->actionPerformed=joystick;
+			break;
+		case SDLK_k:
+			key->actionPerformed=keyboard;
+			break;
+		case SDLK_a:
+			key->actionPerformed=reload;
+			break;
 		case SDLK_l:
 			key->actionPerformed=load;
 			break;
@@ -61,6 +73,9 @@ int editAction(tKey* key,SDLKey k) {
 		case SDLK_r:	
 			key->actionPerformed=gotoTitles;
 			break;
+		case SDLK_v:	
+			key->actionPerformed=showVersion;
+			break;
 		default:
 			break;
 		}
@@ -68,6 +83,24 @@ int editAction(tKey* key,SDLKey k) {
 	/* Shift actions */
 	if (inputGetShift(key->status)) {
 		switch (k) {
+		case SDLK_c:
+			key->actionPerformed=showMoreScreens;
+			break;
+		case SDLK_w:
+			key->actionPerformed=featherWeight;
+			break;
+		case SDLK_t:
+			key->actionPerformed=addLive;
+			break;
+		case SDLK_s:
+			key->actionPerformed=addHitPoint;
+			break;
+		case SDLK_i:
+			key->actionPerformed=invert;
+			break;
+		case SDLK_b:
+			key->actionPerformed=blind;
+			break;
 		case SDLK_l:
 			key->actionPerformed=passLevel;
 			break;
@@ -86,6 +119,12 @@ int editAction(tKey* key,SDLKey k) {
 	/* Normal actions */
 	if (!(key->status)) {
 		switch (k) {
+		case SDLK_r:
+			key->actionPerformed=resurrect;
+			break;
+		case SDLK_k:
+			key->actionPerformed=kill;
+			break;
 		case SDLK_u:
 			key->actionPerformed=showUp;
 			break;
@@ -98,15 +137,15 @@ int editAction(tKey* key,SDLKey k) {
 		case SDLK_j:	
 			key->actionPerformed=showRight;
 			break;
+		case SDLK_SPACE:	
+			key->actionPerformed=showTime;
+			break;
 		case SDLK_c:	
 			key->actionPerformed=showScreens;
 			break;
-		case SDLK_v:	
-			key->actionPerformed=showVersion;
-			break;
 		default:
 			break;
-		}		
+		}
 	}
 	return key->actionPerformed;
 }
