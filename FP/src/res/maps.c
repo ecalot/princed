@@ -30,6 +30,7 @@ maps.c: Freeprince : Map handling library
   DO NOT remove this copyright notice
 */
 
+#include <string.h> /* mempcy */
 #include "maps.h"
 
 static unsigned char* slevel;

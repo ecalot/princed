@@ -30,11 +30,12 @@ config.c: Free Prince : Configuration Handler
   DO NOT remove this copyright notice
 */
 
+#include <string.h> /* memcpy */
+#include <stdlib.h> /* free/malloc */
 #include "config.h"
-#include "freeprince.h"
-#include <stdlib.h>
-#include "resources.h"
 #include "dat.h"
+#include "freeprince.h"
+#include "resources.h"
 
 static tMemory options[CONFIG_MAX_ITEMS];
 
