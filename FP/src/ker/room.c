@@ -166,7 +166,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[10],
 			(x-1)*TILE_W,
-			y*TILE_H+2-1
+			y*TILE_H+1
 		);
 	}
 	/* debris/left */
@@ -200,12 +200,12 @@ void drawBackPanel(tRoom* room,int x, int y) {
 				(((tMap*)(room->level))->time+2*x+y)%(roomGfx.torch->frames)
 			],
 			x*TILE_W+16,
-			y*TILE_H+2-40
+			y*TILE_H-38
 		);
 		outputDrawBitmap( /* base */
 			roomGfx.environment->pFrames[56],
 			x*TILE_W+8,
-			y*TILE_H+2-25
+			y*TILE_H-23
 		);
 	}
 	/* normal/this */
@@ -213,7 +213,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[9],
 			(x-1)*TILE_W,
-			y*TILE_H+2-2
+			y*TILE_H
 		);
 	}
 	/* pillar/this */
@@ -221,7 +221,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[43],
 			(x-1)*TILE_W,
-			y*TILE_H+2-2
+			y*TILE_H
 		);
 	}
 	/* pressable/this */
@@ -229,7 +229,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[((left.walkable)&&(!left.isPressable))?57:58],
 			(x-1)*TILE_W,
-			y*TILE_H+2-2
+			y*TILE_H
 		);
 	}
 	/* debris/this */
@@ -237,7 +237,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[48],
 			(x-1)*TILE_W,
-			y*TILE_H+2-2
+			y*TILE_H
 		);
 	}
 	/* spikes/this */
@@ -245,7 +245,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[101],
 			(x-1)*TILE_W,
-			y*TILE_H+2-2
+			y*TILE_H
 		);
 	}
 	/* skeleton/this */
@@ -253,7 +253,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[80],
 			(x-1)*TILE_W,
-			y*TILE_H+2-2
+			y*TILE_H
 		);
 	}
 }
@@ -267,7 +267,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[11],
 			(x-1)*TILE_W,
-			y*TILE_H+2+1
+			y*TILE_H+3
 		);
 	}
 	/* wall */
@@ -291,7 +291,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			image,
 			(x-1)*TILE_W,
-			y*TILE_H+2+1
+			y*TILE_H+3
 		);
 	}
 }
@@ -305,7 +305,7 @@ void drawForePanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[46],
 			x*TILE_W-24,
-			y*TILE_H+2-2
+			y*TILE_H
 		);
 	}
 	/* wall */
@@ -329,7 +329,7 @@ void drawForePanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			image,
 			(x-1)*TILE_W,
-			y*TILE_H+2-2
+			y*TILE_H
 		);
 	}
 	/* debris/this foreground layer */
@@ -337,7 +337,7 @@ void drawForePanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[51],
 			(x-1)*TILE_W,
-			y*TILE_H+2-2
+			y*TILE_H
 		);
 	}
 }	
