@@ -65,6 +65,8 @@ tMenuOption sleep(int ticks) {
 	return menuNone;
 }
 
+#define goodBye {resFree(main_title);return result;}
+	
 tMenuOption showTitles() {
 /* Show the titles animation
  * returns 0 if the user has finished the animations with quit
@@ -86,19 +88,19 @@ tMenuOption showTitles() {
 	outputDrawBitmap(main_title->pFrames[0], 0, 200);
 	outputUpdateScreen();
 	result=sleep(12);
-	if (result!=menuNone) return result;
+	if (result!=menuNone) goodBye;
 	/* The presents */
 	outputDrawBitmap(main_title->pFrames[1], 100, 100);
 	outputUpdateScreen();
 	result=sleep(12);
-	if (result!=menuNone) return result;
+	if (result!=menuNone) goodBye;
 	/* The author*/
 	outputClearScreen();
 	outputDrawBitmap(main_title->pFrames[0], 0, 200);
 	outputDrawBitmap(main_title->pFrames[2], 100, 100);
 	outputUpdateScreen();
 	result=sleep(12);
-	if (result!=menuNone) return result;
+	if (result!=menuNone) goodBye;
 	/* The game name*/
 	outputClearScreen();
 	outputDrawBitmap(main_title->pFrames[0], 0, 200);
@@ -107,7 +109,7 @@ tMenuOption showTitles() {
 	outputUpdateScreen();
 	/*SDL_Delay(1050);*/
 	result=sleep(12);
-	if (result!=menuNone) return result;
+	if (result!=menuNone) goodBye;
 
 	/*
 	 * The outputDraw doesn't support the text files yet
@@ -127,8 +129,7 @@ tMenuOption showTitles() {
 	do {
 		result=sleep(1000);
 	} while (result==menuNone);
-	
-	resFree(main_title);
-	return result;
+
+	goodBye;
 }	
 
