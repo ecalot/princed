@@ -32,8 +32,6 @@ then
 	echo "Directory def does not contain information" >> error_log
 fi
 
-
-
 #initializes output files
 number=$numberstart
 echo -n "Generating header and xml files              "
@@ -53,8 +51,7 @@ do
 	FINDEX="index/$definition.index"
 	TYPE=`sed -e '1,1d' -e '3,$d' $FDEF`
 	LINEX="^$VARDEFINE RES_TYPE_$TYPE \([0-9]*\)\$"
-	LINE=`grep -e "$LINEX" result/types.h`	
-	ID=`echo "$LINE"|sed -e "s/$LINEX/\1/g"`
+	ID=`grep -e "$LINEX" result/types.h|sed -e "s/$LINEX/\1/g"`	
 
 	if [ -z "$ID" ] 
 	then
