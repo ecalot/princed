@@ -39,9 +39,11 @@ typedef unsigned char tRoomId;
 typedef unsigned char tTileId;
 typedef unsigned char tModId;
 
+typedef enum {eOpenTimer,eOpen,eClose,eClosing,eOpening,eClosingFast}tGateAction;
+
 typedef struct {
-	int status;
-	int action;
+	int frame;
+	tGateAction action;
 } tGate;
 
 typedef struct {
@@ -55,6 +57,7 @@ typedef struct {
 	unsigned char  back [24*30];
 	tGate**        screenGates[24];
 	tGate*         gates;
+	int            totalGates;
 	tEvent         events[256];
 	int time;
 	unsigned char start[3];

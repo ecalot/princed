@@ -63,7 +63,8 @@ void roomFree() {
 tTile roomGetTile(tRoom* room,int x, int y) {
 	tTile   result;
 	tTileId fore;
-
+	tRoomId roomId;
+	
 	fore=room->fore[x+12*y];
 	result.back=room->back[x+12*y];
 	result.code=fore&0x1F;
@@ -71,13 +72,18 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	switch (result.code) { /* TODO: use arrays and a better algorithm */
 	case T_GATE:
 	case T_EXIT_LEFT:
+		roomId=room->id;
+		if (y==0)	roomId=room->links[eUp];
+		if (x==0) roomId=room->links[eLeft];
+		if (y==4) roomId=room->links[eDown];
+		if (x==11)roomId=room->links[eRight];
 		result.hasGateFrame=(result.code==T_GATE);
 		result.bricks=0;
 		result.hasPillar=0;
 		result.hasBigPillar=0;
 		result.isGate=(result.code==T_GATE);
-		printf("getting details on gate at %d,%d\n",x,y);
-		result.gateInfo=NULL/*room->level->screenGates[room->id][back]*/;
+		printf("getting details on gate at %d,%d screen %d, door number %d\n",x,y,roomId,result.back);
+		result.gateInfo=room->level->screenGates[roomId-1][result.back];
 		result.walkable=1;
 		result.hasChopper=0;
 		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);

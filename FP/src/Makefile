@@ -64,9 +64,6 @@ $(EXEFILE): $(OBJFILES)
 	$(MAKEDIR) bin
 	$(CC) $(OPTIONS) -o $(EXEFILE) $(OBJFILES) $(LIBS) $(LINKEROPTIONS)
 	$(INFO) Program successfully compiled
-	$(INFO)
-	$(INFO) Please read readme.txt for syntax information
-	$(INFO)
 
 
 ###################
