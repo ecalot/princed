@@ -83,7 +83,7 @@ tMenuOption showTitles() {
 	}
 	outputClearScreen();
 	/* The main background */
-	outputDrawBitmap(main_title->pFrames[0], 0, 0);
+	outputDrawBitmap(main_title->pFrames[0], 0, 200);
 	outputUpdateScreen();
 	result=sleep(12);
 	if (result!=menuNone) return result;
@@ -94,14 +94,14 @@ tMenuOption showTitles() {
 	if (result!=menuNone) return result;
 	/* The author*/
 	outputClearScreen();
-	outputDrawBitmap(main_title->pFrames[0], 0, 0);
+	outputDrawBitmap(main_title->pFrames[0], 0, 200);
 	outputDrawBitmap(main_title->pFrames[2], 100, 100);
 	outputUpdateScreen();
 	result=sleep(12);
 	if (result!=menuNone) return result;
 	/* The game name*/
 	outputClearScreen();
-	outputDrawBitmap(main_title->pFrames[0], 0, 0);
+	outputDrawBitmap(main_title->pFrames[0], 0, 200);
 	outputDrawBitmap(main_title->pFrames[3], 30, 70);
 	outputDrawBitmap(main_title->pFrames[4], 30, 190);
 	outputUpdateScreen();

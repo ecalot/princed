@@ -82,7 +82,9 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case T_FLOOR:
 	case T_TORCH:
 	case T_SWORD:
+	case T_PILLAR:
 	case T_DEBRIS:
+		result.hasPillar=(result.code==T_PILLAR);
 		result.walkable=1;
 		result.block=0;
 		result.hasTorch=(result.code==T_TORCH);
@@ -114,22 +116,63 @@ void roomDrawBackground(tRoom* room) {
 			tile=roomGetTile(room,x,y);
 			if (tile.hasTorch) {
 				outputDrawBitmap(
-					roomGfx.torch->pFrames[map->time%(roomGfx.torch->frames)],
-					(x+1)*13,
-					y*24
+					roomGfx.torch->pFrames[(map->time+2*x+y)%(roomGfx.torch->frames)],
+					x*32,
+					y*48
 				);
 			}
 			if (tile.hasFloor) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[10],
-					(x+1)*13,
-					y*24
+					x*32,
+					y*48
+				);
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[9],
+					x*32,
+					y*48+2
+				);
+			}
+			if (tile.hasBrokenTile) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[2],
+					x*32,
+					y*48
+				);
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[1],
+					x*32,
+					y*48+2
+				);
+			}
+			if (tile.walkable) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[8],
+					x*32+32,
+					y*48+1
 				);
 			}
 		}
 	}
 }
+
 void roomDrawForeground(tRoom* room) {
+	int x,y;
+	tTile tile;
+	/*tMap* map=room->level;*/
+	
+	for (x=0;x<12;x++) {
+		for (y=0;y<5;y++) {
+			tile=roomGetTile(room,x,y);
+			if (tile.hasPillar) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[14],
+					x*32+32,
+					y*48+1
+				);
+			}
+		}
+	}
 }
 
 

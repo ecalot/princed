@@ -159,7 +159,7 @@ void outputDrawBitmap(void* image, int x, int y) {
 	SDL_Surface *s = (SDL_Surface *)image;
 	SDL_Rect dest;
 	dest.x = x;
-	dest.y = y;
+	dest.y = y-s->h;
 	dest.w = s->w;
 	dest.h = s->h;
 	if (SDL_MUSTLOCK(screen)) SDL_LockSurface(screen);

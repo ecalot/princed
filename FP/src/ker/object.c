@@ -111,7 +111,7 @@ tKid kidCreate() {
 }
 
 void kidDraw(tKid kid) {
-	outputDrawBitmap(kid.action->pFrames[kid.frame],kid.location,kid.floor*20);
+	outputDrawBitmap(kid.action->pFrames[kid.frame],kid.location,100+kid.floor*20);
 }
 
 int kidMove(tKid* kid,tKey key/*,tRoom room*/) {
