@@ -50,17 +50,15 @@ BEGIN {
 	first=0
 }
 
-/^([ ]*[^# ].*)$/ {
-	if ( $1 == "-" ) {
-		if ($2=="-") {
-			if ($3=="-") {
+#3 tabs (options values)
+/^\t\t\t[^\t# ].*$/ {
 				if (listType == "next") {
-					nextState=tolower($4)
+					nextState=tolower($1)
 				} else if (listType == "steps") {
-					moveOffset=$5
-					moveType=tolower($4)
+					moveOffset=$2
+					moveType=tolower($1)
 				} else if (listType == "conditions") {
-					if ($4=="none") next
+					if ($1=="none") next
 					if (oldType != listType ) {
 						oldType=listType
 						currentCondition++
@@ -68,48 +66,51 @@ BEGIN {
 						conditions=currentCondition+1
 					}
 					currentCondition++
-					if ($5!=sprintf("%d",$5)) {
-						if (defines[$5]) {
-							result=sprintf("STATES_COND_%s /* %d */",$5,defines[$5])
+					if ($2!=sprintf("%d",$2)) {
+						if (defines[$2]) {
+							result=sprintf("STATES_COND_%s /* %d */",$2,defines[$2])
 						} else {
-							if ($5) {
-								printf("Parsing error in states.conf: Condition modifier '%s' not recognized on uncommented line %d.\n",$5,NR)>"/dev/stderr"
+							if ($2) {
+								printf("Parsing error in states.conf: Condition modifier '%s' not recognized on uncommented line %d.\n",$2,NR)>"/dev/stderr"
 								exit 22
 							}
 							result=0
 						}
 					} else {
-						result=$5
+						result=$2
 					}
-					printf("\t{es%s,%s}, /* condition number %d */\\\n",$4,result,currentCondition)
+					printf("\t{es%s,%s}, /* condition number %d */\\\n",$1,result,currentCondition)
 				} else if (listType == "animation") {
-					if (match($4,/^[0-9]+-[0-9]*$/)) {
-						split($4,a,"-")
+					if (match($1,/^[0-9]+-[0-9]*$/)) {
+						split($1,a,"-")
 						for (g=a[1];g<=a[2];g++) {
 							arrayAnimation[currentAnimation]=g
 							currentAnimation++
 						}
 					} else {
-						arrayAnimation[currentAnimation]=$4
+						arrayAnimation[currentAnimation]=$1
 						currentAnimation++
 					}
 				} else if (listType == "level") {
-					if (arrayLevel[$4]) {
-						printf("Parsing error in states.conf: Redeclaration of level '%d' in uncommented line %d.\n",$4,NR)>"/dev/stderr"
+					if (arrayLevel[$1]) {
+						printf("Parsing error in states.conf: Redeclaration of level '%d' in uncommented line %d.\n",$1,NR)>"/dev/stderr"
 						exit 23
 					} else {
-						arrayLevel[$4]=currentAction+1
-						if ($4>latestLevel) {
-							latestLevel=$4
+						arrayLevel[$1]=currentAction+1
+						if ($1>latestLevel) {
+							latestLevel=$1
 						}
 					}
 				}
-			} else {
-				$3=tolower($3)
-				oldType=listType
-				listType=$3
-			}
-		} else {		
+}
+
+#2 tabs (action options)
+/^\t\t[^\t# ].*$/ {
+	oldType=listType
+	listType=tolower($1)
+}
+#1 tab (action)
+/^\t[^\t# ].*$/ {
 			if (first) {
 				actionArray[currentAction,"description"]=rememberAction
 				actionArray[currentAction,"isFirstInState"]=currentState
@@ -129,20 +130,19 @@ BEGIN {
 			startAnimation=currentAnimation
 			listType=""
 			conditions=0
-			$2=tolower($2)
-			if ($2 != "action") {
-				print "Error! \"$0\" should be an action."
+			if (tolower($1) != "action") {
+				printf("Error! \"%s\" should be an action.\n",$0)>"/dev/stderr"
 			}
-			$2=$1=""
-			rememberAction=substr($0,3)
-		}
-	} else {
+			$1=""
+			rememberAction=substr($0,2)
+}
+
+#no tabs (states)
+/^[^\t# ].*$/ {
 		listType=""
 		priorState=currentState #TODO fix that!!!
 		currentState=tolower($1)
 		stateList[currentState]=currentAction
-	}
-
 }
 
 END {

@@ -11,7 +11,6 @@ DOWNLOADER = @cd ..;./install -d; cd src
 REMOVER    = @rm -f
 AWK        = awk
 GREP       = @cat
-#@grep -v -e '^[[:space:]]*\(none[[:space:]]*\|\#.*\)\{0,1\}$$'
 
 #####################
 # Operating Systems #
@@ -79,7 +78,7 @@ $(EXEFILE): check $(OBJFILES)
 # program checks  #
 ###################
 
-check: checkcompiler checksdl checkawk checkgrep checksed
+check: checkcompiler checksdl checkawk
 
 checkcompiler:
 	$(INFO) Checking C compiler...
@@ -92,14 +91,6 @@ checksdl:
 checkawk:
 	$(INFO) Checking AWK...
 	@which $(AWK)>/dev/null
-
-checksed:
-	$(INFO) Checking Sed...
-	@sed --version>/dev/null
-
-checkgrep:
-	$(INFO) Checking Grep...
-	$(GREP) --version>/dev/null
 
 ###################
 # command options #
@@ -224,7 +215,7 @@ include/states_conf.h: $(GENERATEDSTAHEADERS)
 
 include/states_conf_static.h: conf/states.conf conf/awk/states_conf_static.awk
 	$(INFO) Creating states list configuration file...
-	$(GREP) conf/states.conf|sed -e 's/^\t\t\t/- - - /g' -e 's/^\t\t/- - /g' -e 's/^\t/- /g' -e 's/:$$//g'|$(AWK) -f conf/awk/states_conf_static.awk>include/states_conf_static.h
+	$(GREP) conf/states.conf|$(AWK) -f conf/awk/states_conf_static.awk>include/states_conf_static.h
 
 include/states_conf_properties.h: conf/statesproperties.conf conf/awk/states_conf_properties.awk
 	$(INFO) Creating states condition properties configuration file...
