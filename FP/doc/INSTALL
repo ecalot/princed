@@ -13,7 +13,7 @@ cvs -z3 -d:pserver:anonymous@cvs.fp.princed.com.ar:/cvsroot/freeprince co FP
 When the download is finished, you'll get the whole repository.
 To make the game for the first time type:
 
-cd src
+cd FP/src
 make install
 
 The dat files will be downloaded (about 200kb), after that the resource
