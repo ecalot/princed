@@ -13,15 +13,15 @@ parser.o: parser.c
 
 compile.o: compile.c
 	@echo Compiling import module...
-	@gcc -c compile.c -Iinclude/ -O3
+	@gcc -c compile.c -Iinclude/
 
 extract.o: extract.c
 	@echo Compiling export module...
-	@gcc -c extract.c -Iinclude/ -O3
+	@gcc -c extract.c -Iinclude/
 
 compress.o: compress.c
 	@echo Compiling compression module...
-	@gcc -c compress.c -Iinclude/ -O3
+	@gcc -c compress.c -Iinclude/
 
 pr.o: pr.c
 	@echo Compiling main module...
@@ -33,11 +33,11 @@ resources.o: resources.c
 
 tasks.o: tasks.c
 	@echo Compiling extra tasks module...
-	@gcc -c tasks.c -Iinclude/ -O3
+	@gcc -c tasks.c -Iinclude/
 
 bmp.o: formats/bmp.c
 	@echo Compiling bitmap files support \(bmp\)...
-	@gcc -c formats/bmp.c -Iinclude/ -O3
+	@gcc -c formats/bmp.c -Iinclude/
 
 mid.o: formats/mid.c
 	@echo Compiling midi audio files support \(mid\)...
