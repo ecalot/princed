@@ -1,0 +1,39 @@
+#!/bin/bash
+
+NO_COLOR="\033[0m"
+LGREEN="\033[01;32m"
+LRED="\033[01;31m"
+
+SDONE="[$LGREEN Done$NO_COLOR ]"
+SOK="[$LGREEN  OK $NO_COLOR ]"
+SFAIL="[$LRED Fail$NO_COLOR ]"
+
+number=50
+
+#initializes output files
+echo -n "Generating header and xml files            "
+cp -f result/data.h result/data.h.bak 2>/dev/null >/dev/null
+>result/data.h
+cat xml/gen1.xml > xml/resources.xml
+
+#process and add all definitions to the xml and h files
+for definition in `ls def` 
+do
+	bin/makeindex def/$definition index/$definition.index
+	echo "  <item value=\"$number\" path=\"$definition.index\">$definition</item>" >> xml/resources.xml
+	echo "#define $definition $number" >> result/data.h
+	number=`expr $number + 1`
+done
+cat xml/gen2.xml >> xml/resources.xml
+echo -e "$SOK"
+
+#generate the dat file using the proceced indexes and the xml file
+echo -n "Generating dat file                        "
+bin/pr --import=index --force --backup=bak --resource=xml/resources.xml result 2>/dev/null >/dev/null
+result=$?
+
+if [ $result == 0 ] ; then
+	echo -e "$SOK"
+else
+	echo -e "$SFAIL"
+fi
