@@ -29,7 +29,7 @@ output.c: Free Prince : Output Devices Handler
  Copyright 2004 Princed Development Team
   Created: 23 Mar 2004
 
-  Author: Ricardo Markiewicz <rmarkie.cod@princed.com.ar>
+  Author: Ricardo Markiewicz <rmarkie (en) fi.uba.ar>
 
  Note:
   DO NOT remove this copyright notice
@@ -49,13 +49,13 @@ void outputPlayMid(tMemory music) {} /* Starts the music reproduction and return
 
 /* Graphics */
 
-void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 /* Set the pixel at (x, y) to the given value
  * NOTE: The surface must be locked before calling this!*/
+void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 {
 	int bpp = surface->format->BytesPerPixel;
-				/* Here p is the address to the pixel we want to set */
-	Uint8 *p = (Uint8 *) surface->pixels + y * surface->pitch + x * bpp;
+	/* Here p is the address to the pixel we want to set */
+	Uint8 *p = (Uint8 *)surface->pixels + y*surface->pitch + x*bpp;
 
 	switch (bpp) {
 	case 1:
@@ -63,32 +63,33 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 		break;
 
 	case 2:
-		*(Uint16 *) p = pixel;
+		*(Uint16 *)p = pixel;
 		break;
 
 	case 3:
 		if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
-		p[0] = (pixel >> 16) & 0xff;
-		p[1] = (pixel >> 8) & 0xff;
-		p[2] = pixel & 0xff;
+			p[0] = (pixel >> 16) & 0xff;
+			p[1] = (pixel >> 8) & 0xff;
+			p[2] = pixel & 0xff;
 		} else {
-		p[0] = pixel & 0xff;
-		p[1] = (pixel >> 8) & 0xff;
-		p[2] = (pixel >> 16) & 0xff;
+			p[0] = pixel & 0xff;
+			p[1] = (pixel >> 8) & 0xff;
+			p[2] = (pixel >> 16) & 0xff;
 		}
-		break;
-
+	break;
 	case 4:
-		*(Uint32 *) p = pixel;
-		break;
+		*(Uint32 *)p = pixel;
+	break;
 	}
 }
 
 
 /* Graphics: Primitives for resources module */
-void* outputLoadBitmap(const unsigned char* data, int size, 
+void*
+outputLoadBitmap(const unsigned char* data, int size, 
 		const unsigned char* palette, int h, int w, int invert, 
-		int firstColorTransparent) {
+		int firstColorTransparent)
+{
  /* Returns an abstract object allocated in memory using the data 
   * information ti build it invert is 0 when no invertion is needed and 
   * non-zero when an inversion is performed	*/
@@ -161,26 +162,25 @@ void* outputLoadBitmap(const unsigned char* data, int size,
 	return (void*)result;
 }
 
+/* Frees the abstract object created by the loadBitmap function */
 void outputFreeBitmap(void* image) {}
- /* Frees the abstract object created by the loadBitmap function
-	*/
 
 /* Graphics: Primitives for the kernel */
 void outputDrawBitmap(SDL_Surface *screen, void* image, int x, int y) {
-/* Draws an abstract image */
+	/* Draws an abstract image */
 	SDL_Surface *s = (SDL_Surface *)image;
 	/* SDL_Rect destrect = {x, y, s->w, s->h};*/ 
-	if (SDL_MUSTLOCK(screen)) 
-		SDL_LockSurface(screen);
+	if (SDL_MUSTLOCK(screen)) SDL_LockSurface(screen);
 	SDL_BlitSurface(s, NULL, screen, NULL);
-	if (SDL_MUSTLOCK(screen)) 
-		SDL_UnlockSurface(screen);
+	if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
 }
 
-void outputClearScreen(SDL_Surface *screen) {
+void outputClearScreen(SDL_Surface *screen)
+{
 }
 
-void outputUpdateScreen(SDL_Surface *screen) {
+void outputUpdateScreen(SDL_Surface *screen) 
+{
 	SDL_Flip(screen);
 }
 
@@ -192,9 +192,8 @@ SDL_Surface *outputInit()
 	return SDL_SetVideoMode(320, 200, 8, SDL_ANYFORMAT|SDL_DOUBLEBUF);
 }
 
+/* Finish all output modes, including the screen mode */
 void outputStop()
-/* Finish all output modes, including the screen mode
- */
 {
 	SDL_Quit();
 }
