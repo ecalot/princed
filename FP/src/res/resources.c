@@ -194,6 +194,7 @@ tData* resLoad(long id) {
 	char file1[25];
 	/*char file2[25];*/
 	short int* frames;
+	short int type;
 	int nFrames;
 	tMemory index;
 
@@ -212,6 +213,7 @@ tData* resLoad(long id) {
 
 	nFrames=res_getIdxTotal;
 	frames=(short int*)malloc(nFrames*sizeof(short int));
+	type=res_getIdxType;
 	for (i=0;i<nFrames;i++) {
 		frames[i]=res_getIdxFrames[i];
 	}
@@ -233,10 +235,10 @@ tData* resLoad(long id) {
 	}
 
 	/* Create a tData object with pFrames empty*/
-	result=res_createData(nFrames,res_getIdxType);
+	result=res_createData(nFrames,type);
 
 	/* Fill pFrames into tData object */
-	if (!res_getDataByArray(frames,numberOfItems,result->pFrames,nFrames,res_getIdxType,res_modGetMask(id))) {
+	if (!res_getDataByArray(frames,numberOfItems,result->pFrames,nFrames,type,res_modGetMask(id))) {
 		printf("Fatal Error: resLoad: resource file invalid!\n");
 		free(frames);
 		free(result->pFrames);
