@@ -65,7 +65,10 @@ void expandLzg(const unsigned char* input, int inputSize,
 
 					/*
 					 * delta is ((location-cursor)%LZG_WINDOW_SIZE)
-					 * this is the correction factor for the complex algorithm
+					 * this is the offset where the bytes will be looked for
+					 * in the simple algorithm it is allways negative
+					 * in bigger images it can be positive
+					 * 
 					 * this value is inside the range -1023 to 1023.
 					 * if location>cursor the result is positive
 					 * if location<cursor the result is negative
