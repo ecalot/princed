@@ -34,20 +34,21 @@ config.c: Free Prince : Configuration Handler
 #include "freeprince.h"
 #include <stdlib.h>
 #include "resources.h"
+#include "dat.h"
 
 static tMemory options[CONFIG_MAX_ITEMS];
 
 int configInit() {
 	int id;
-	unsigned char* aux;
+	/*unsigned char* aux;*/
 					
 	for (id=0;id<CONFIG_MAX_ITEMS;id++) {
 		options[id].size=-1;
 		options[id].array=NULL;
 	}
-
+#if 0
 	/* READ INDEX */
-	if (!mReadBeginDatFile(&id,FP_CONFIG_FILE)) return -1;
+	if (!mReadBeginDatFile((unsigned short int *)&id,FP_CONFIG_FILE)) return -1;
 	for (id=0;id<DATA_END_ITEMS;id++) {
 		if (res_getDataById(id,DATA_END_ITEMS,options+id)) {
 			aux=options[id].array;
@@ -57,13 +58,13 @@ int configInit() {
 			return -3;
 		}
 	}
-
+#endif
 	mReadCloseDatFile();
 	return 0;
 }
 
 void configStop() {
-	//use CONFIG_FILE from freeprince.h
+	/*use CONFIG_FILE from freeprince.h*/
 	int i;
 
 	for (i=0;i<CONFIG_MAX_ITEMS;i++) {

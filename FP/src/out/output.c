@@ -19,7 +19,7 @@
 */
 
 /*
-resources.h: Free Prince : Output Devices Handler
+resources.c: Free Prince : Output Devices Handler
 ¯¯¯¯¯¯¯¯¯¯¯
 
  Description: 
@@ -35,11 +35,9 @@ resources.h: Free Prince : Output Devices Handler
   DO NOT remove this copyright notice
 */
 
-#ifndef _OUTPUT_H_
-#define _OUTPUT_H_
-
-#include "resources.h" /* tMemory structure */
 #include <stdlib.h> /* malloc */
+#include "resources.h" /* tMemory structure */
+#include "output.h" /* tMemory structure */
 
 /* Text Primitives*/
 void outputDrawText(const char* text, int x, int y) {}
@@ -49,35 +47,84 @@ void outputDrawMessage(const char* text) {}
 void outputPlayWav(tMemory sound) {} /* Starts the reproduction of the sample and returns */
 void outputPlayMid(tMemory music) {} /* Starts the music reproduction and returns */
 
-/* Graph */
+/* Graphics */
 
-/* Define a dummy private structure */
-typedef struct {
-	char* picture;
-	unsigned char palette[3*16];
-	int h,w;
-}SDL_very_cool_structure;
+void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
+/* Set the pixel at (x, y) to the given value
+ * NOTE: The surface must be locked before calling this!*/
+{
+	int bpp = surface->format->BytesPerPixel;
+				/* Here p is the address to the pixel we want to set */
+	Uint8 *p = (Uint8 *) surface->pixels + y * surface->pitch + x * bpp;
+
+	switch (bpp) {
+	case 1:
+		*p = pixel;
+		break;
+
+	case 2:
+		*(Uint16 *) p = pixel;
+		break;
+
+	case 3:
+		if (SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+		p[0] = (pixel >> 16) & 0xff;
+		p[1] = (pixel >> 8) & 0xff;
+		p[2] = pixel & 0xff;
+		} else {
+		p[0] = pixel & 0xff;
+		p[1] = (pixel >> 8) & 0xff;
+		p[2] = (pixel >> 16) & 0xff;
+		}
+		break;
+
+	case 4:
+		*(Uint32 *) p = pixel;
+		break;
+	}
+}
 
 
- /* Graph: Primitives for resources module */
-void* outputLoadBitmap(const unsigned char* data, int size, const unsigned char* palette, int h,int w,int invert, int firstColorTransparent) {
- /* Returns an abstract object allocated in memory using the data information ti build it
-	* invert is 0 when no invertion is needed and non-zero when an inversion is performed
-	*/
+/* Graphics: Primitives for resources module */
+void* outputLoadBitmap(const unsigned char* data, int size, 
+		const unsigned char* palette, int h, int w, int invert, 
+		int firstColorTransparent) {
+ /* Returns an abstract object allocated in memory using the data 
+  * information ti build it invert is 0 when no invertion is needed and 
+  * non-zero when an inversion is performed	*/
 
 	/* Dummy function */
-	SDL_very_cool_structure* result;
-	static char printed[]=" *+@#$%&=|SVHG/OP";
+	SDL_Surface* result;
 	int i,j;
-	
-	result=(SDL_very_cool_structure*)malloc(sizeof(SDL_very_cool_structure));
-	
-	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
-	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n",invert,firstColorTransparent,size);
+	Uint32 rmask, gmask, bmask, amask;
 
+	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
+	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n",
+			invert, firstColorTransparent, size);
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	rmask = 0xff000000;
+	gmask = 0x00ff0000;
+	bmask = 0x0000ff00;
+	amask = 0x000000ff;
+#else
+	rmask = 0x000000ff;
+	gmask = 0x0000ff00;
+	bmask = 0x00ff0000;
+	amask = 0xff000000;
+#endif
+
+	result = SDL_CreateRGBSurface(0, w, h, 8, rmask, gmask, bmask, amask);
+	if (!result)
+	{
+		fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
+		exit(1);
+	}
+	
 	/* Notes:
 	 * - the image is serialized
-	 *    this means that the last bits in the row to complete a full byte are garbage
+	 *    this means that the last bits in the row to complete a full byte
+	 *    are garbage
 	 * - there are 2 types of images:
 	 *    1 bit/pixel (b/w)
 	 *    4 bit/pixel (16 cols)
@@ -87,19 +134,28 @@ void* outputLoadBitmap(const unsigned char* data, int size, const unsigned char*
 	 *    we have to add 1 because of the serialization
 	 *    division by 2 is because 4bpp are 2 pixel/byte (0.5 byte/pixel)
 	 */
-	w=(w+1)/2;
-	result->picture=malloc(h*w*4+10);
-	result->w=w;
-	result->h=h;
-					
-	for (i=0,j=0;i<h*w;i++) { /* transform a 4 bpp array into an ASCII draw 16 bpp*/
-		result->picture[j++]=printed[data[i]>>4];
-		result->picture[j++]=printed[data[i]>>4];
-		result->picture[j++]=printed[data[i]&0x0f];
-		result->picture[j++]=printed[data[i]&0x0f];
+	w = (w + 1) / 2;
+
+	/* Lock the screen for direct access to the pixels */
+	if (SDL_MUSTLOCK(result)) {
+		if (SDL_LockSurface(result) < 0) {
+			fprintf(stderr, "Can't lock surface: %s\n", SDL_GetError());
+			exit(1);
+		}
+	}
+
+	for (i = 0; i < w; i++) {
+		for (j = 0; j < h; j++) {
+			putpixel(result, i, j, 
+					SDL_MapRGB(result->format, 0xff, 0xff, 0x00));
+		}
 	}
 	
-	memcpy(result->palette,palette,3*16); /* copy palette */
+	if (SDL_MUSTLOCK(result)) {
+		SDL_UnlockSurface(result);
+	}
+
+/*	memcpy(result->palette, palette, 3 * 16); * copy palette */
 
 	return (void*)result;
 }
@@ -108,56 +164,29 @@ void outputFreeBitmap(void* image) {}
  /* Frees the abstract object created by the loadBitmap function
 	*/
 
- /* Graph: Primitives for the kernel */
-void outputDrawBitmap(void* image,int x, int y) {
- /* Draws an abstract image
-	*/
-
-#define myImage ((SDL_very_cool_structure*)image)
-				
-	int h,w,i,j;		
-	w=myImage->w*4;
-	h=myImage->h;
-	
-	/* Draw image */
-	for (i=0;i<y;i++) printf("\n");
-	for (i=0;i<h;i++) {
-		for (j=0;j<x;j++) printf(" ");
-		for (j=0;j<w;j++) {
-			printf("%c",
-				myImage->picture[i*w+j]
-			);
-		}
-		printf("\n");
-	}
-	
-	/* show palette */
-	for (i=0;i<16;i++) {
-		printf("rgb[%d]=(%d,%d,%d) #%02x%02x%02x\n",
-			i+1,
-			myImage->palette[3*i],
-			myImage->palette[3*i+1],
-			myImage->palette[3*i+2],
-			(myImage->palette[3*i])<<2,
-			(myImage->palette[3*i+1])<<2,
-			(myImage->palette[3*i+2])<<2
-		);
-	}
-
+/* Graphics: Primitives for the kernel */
+void outputDrawBitmap(SDL_Surface *screen, void* image, int x, int y) {
+/* Draws an abstract image */
+	SDL_Surface *s = (SDL_Surface *)image;
+	/* SDL_Rect destrect = {x, y, s->w, s->h};*/ 
+	SDL_BlitSurface(s, NULL, screen, NULL);
 }
 
-void outputClearScreen() {}
- /* Crears the screen
-	*/
+void outputClearScreen(SDL_Surface *screen) {
+}
 
 /* Initialization */
-void outputInit() {}
-/* This function must be called before starting using the output functions
- * it will initialize the screen and the output module
- */
+SDL_Surface *outputInit() 
+{
+	SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
+	atexit(outputStop);
+	return SDL_SetVideoMode(320, 200, 8, 0);
+}
 
-void outputStop() {}
+void outputStop()
 /* Finish all output modes, including the screen mode
  */
+{
+	SDL_Quit();
+}
 
-#endif

@@ -30,6 +30,7 @@ resources.h: Princed Resources : Resource Handler headers
   DO NOT remove this copyright notice
 */
 
+#include <SDL/SDL.h>
 #include "kernel.h"
 #include "resources.h"
 #include "output.h"
@@ -38,33 +39,41 @@ int kernel(int optionflag,int level) {
 /* levels=-1 is default
  * levels from 0 to n is the level number
  *  
- * optionflag may be read using hasFlag(name_flag); Note that the variable must be called optionflag
+ * optionflag may be read using hasFlag(name_flag); Note that the variable
+ * must be called optionflag
  */
 	
 	tData* testResource;
+	SDL_Surface *screen;
 	int i;
 	
-	outputInit();
-	printf("Hello, I'm a dummy kernel, I was called to do the stuff\nwith '%x' options and go to the level '%d'\n",optionflag,level);
-	testResource=resLoad(RES_ANIM_RUN_LEFT);	
-	
-	/* How to use a resource */
+	screen = outputInit();
+
+	if (!screen) {
+		fprintf(stderr, "Unable to initialize screen: %s\n", SDL_GetError());
+		exit(1);
+	}
+
+	testResource=resLoad(RES_ANIM_RUN_LEFT);
 	if (!testResource) {
 		printf("The resource couldn't be loaded!\n");
 		exit(1);
 	}
-	
+
 	printf("Resource number: %d. Frames: %d. Type: %d.\n",
 		RES_ANIM_RUN_LEFT,
 		testResource->frames,
 		testResource->type
 	);
-	
+
 	for (i=0;i<testResource->frames;i++) {
 		printf("frame %d\n",i);
-		outputDrawBitmap(testResource->pFrames[i],3,3);
+		outputDrawBitmap(screen, testResource->pFrames[i], 3, 3);
+		SDL_UpdateRect(screen, 0, 0, 320, 200);
+		outputClearScreen(screen);
+		getchar();
 	}
-	
+
 	outputStop();
 	return 0;
 }

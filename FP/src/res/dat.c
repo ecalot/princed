@@ -32,6 +32,7 @@ dat.c: Princed Resources : DAT library
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "disk.h"
@@ -64,13 +65,21 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 			1 Ok
 	*/
 
-	int ok;
 	unsigned char* readDatFilePoint;
 
 	/* Open file */
 	readDatFileSize=mLoadFileArray(vFiledat,&readDatFile);
-	if (!readDatFileSize) return 0;
-	if (readDatFileSize<=6) {free(readDatFile);return 0;}
+	if (!readDatFileSize) 
+	{
+		fprintf(stderr, "mReadBeginDatFile: %s not found\n", vFiledat);
+		return 0;
+	}
+	if (readDatFileSize<=6)
+	{
+		fprintf(stderr, "mReadBeginDatFile: File too short\n");
+		free(readDatFile);
+		return 0;
+	}
 
 	readDatFilePoint=readDatFile;
 
@@ -80,6 +89,7 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	indexSize=array2short(readDatFilePoint);
 
 	if ((indexOffset>readDatFileSize)&&((indexOffset+indexSize)!=readDatFileSize)) {
+		fprintf(stderr, "mReadBeginDatFile: Invalid format\n");
 		free(readDatFile);
 		return 0; /* this is not a valid prince dat file */
 	}
@@ -105,11 +115,10 @@ int mReadFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
 	unsigned short int id;
 
 	/* for each archived file the index is read */
-	id=    array2short(indexPointer+ofk+k*recordSize);//(indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8);
-	//printf("a ver: %d %d\n",id,(indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8));
+	id=array2short(indexPointer+ofk+k*recordSize);
 	
-	offset=array2long(indexPointer+ofk+k*recordSize+2);//indexPointer[ofk+k*recordSize+2])+(indexPointer[ofk+k*recordSize+3]<<8)+(indexPointer[ofk+k*recordSize+4]<<16)+(indexPointer[ofk+k*recordSize+5]<<24);
-	*size= array2short(indexPointer+ofk+k*recordSize+6);//indexPointer[ofk+k*recordSize+6])+(indexPointer[ofk+k*recordSize+7]<<8)+1;
+	offset=array2long(indexPointer+ofk+k*recordSize+2);
+	*size= array2short(indexPointer+ofk+k*recordSize+6);
 	if ((!pop1)&&(!(indexPointer[ofk+k*recordSize+8]==0x40)&&(!indexPointer[ofk+k*recordSize+9])&&(!indexPointer[ofk+k*recordSize+10]))) return -1;
 	if (offset+indexSize>readDatFileSize) return -1;
 	*data=readDatFile+offset;
@@ -130,7 +139,7 @@ int mReadInitResource(tResource** res,const unsigned char* data,long size) {
 		(*res)->offset=(unsigned short)offset; /* TODO delete this line */
 		/* (*res)->type=verifyHeader(data,(unsigned short int)size); */
 	} else { /* If resource type is invalid or 0, the type will be decided by PR */
-		if (!((*res)->type)) (*res)->type=0;//verifyHeader(data,(unsigned short int)size);
+		if (!((*res)->type)) (*res)->type=0; /*verifyHeader(data,(unsigned short int)size);*/
 	}
 	return 0;
 }

@@ -42,9 +42,7 @@ Len	Offs	BlockName & Description
 
 #define MAPS_MAX_SCREENS    24
 #define MAPS_MAX_LENGTH     49
-//MAPS_MAX_SCREENS*2+1
 #define MAPS_LINKMAP_CENTER 24
-//(char)(MAPS_MAX_SCREENS*2+1)/2
 
 #define MAPS_DIRECTION_RIGHT 0x00
 #define MAPS_DIRECTION_LEFT  0xFF
@@ -79,7 +77,6 @@ Len	Offs	BlockName & Description
 #define MAPS_BLOCK_OFFSET_UNKNOWN_7         2288
 #define MAPS_BLOCK_SIZEOF_GATE_1            18
 #define MAPS_BLOCK_SIZEOF_GATE              18
-//256
 #define MAPS_BLOCK_OFFSET_GATE_1            1441
 #define MAPS_BLOCK_SIZEOF_GATE_2            18
 #define MAPS_BLOCK_OFFSET_GATE_2            1697
@@ -87,15 +84,15 @@ Len	Offs	BlockName & Description
 
 
 
-//Constantes copadas
+/* Constantes copadas */
 #define MAPS_sUp			2
 #define MAPS_sDown		3
 #define MAPS_sLeft		0
 #define MAPS_sRight		1
 
-//Definicion de cosas:
+/* Definicion de cosas: */
 
-//WALLS
+/* WALLS */
 #define MAPS_OBJ_ANT_1 0x13
 #define MAPS_OBJ_ANT_2 0x33
 #define MAPS_OBJ_BAL_1 0x01
@@ -130,7 +127,7 @@ Len	Offs	BlockName & Description
 #define MAPS_OBJ_VEN_L 0x37
 #define MAPS_OBJ_VEN_R 0x38
 
-//BACKS
+/* BACKS */
 #define MAPS_BCK_VEN_R 0x00
 #define MAPS_BCK_BRK_1 0x01
 #define MAPS_BCK_BRK_2 0x02

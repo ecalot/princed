@@ -36,7 +36,7 @@ compress.c: Princed Resources : Image Compression Library
 #include <string.h>
 #include "compress.h"
 #include "memory.h"
-//#include "pr.h"
+/*#include "pr.h"*/
 #include "disk.h" /* array2short */
 
 /***************************************************************\
@@ -215,9 +215,9 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 	int result;
 
 	data++;
-	image->height=array2short(data);//((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;
+	image->height=array2short(data);/*((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;*/
 	data+=2;
-	image->width =array2short(data);//((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;
+	image->width =array2short(data);/*((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;*/
 	data+=2;
 
 	if (*(data++)) return COMPRESS_RESULT_FATAL; /* Verify format */

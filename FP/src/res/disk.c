@@ -40,12 +40,12 @@ disk.c: Princed Resources : Disk Access & File handling functions
 #include "memory.h"
 #include <string.h>
 #include "disk.h"
-//#include "xmlparse.h" /* equalsIgnoreCase */
 #define IGNORERECURSIVEFUNCTIONS
 #define UNIX
 
 #include <sys/types.h>
 #include <sys/stat.h>
+
 #include "resources.h"
 
 #ifdef UNIX
@@ -174,7 +174,7 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 	char* fileName;
 	unsigned long int size;
 
-	//if (getFromOpenFilesList(fp,&fileName,&content,&size)) {
+	/*if (getFromOpenFilesList(fp,&fileName,&content,&size)) {*/
 		if (dontSave) {
 			fclose(fp);
 			if (size) {
@@ -184,7 +184,7 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 			} else {
 				remove(fileName);
 			}
-		//}
+		/*}*/
 #if 0
 		else {
 			/* File Existed before and we need to back it up */
@@ -244,8 +244,8 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 		if not, we need to know the name in case we need to delete it
 	*/
 
-//	addFileToOpenFilesList(file,hasFlag(backup_flag));
-	result=((*fp=fopen(file,"wb"))!=NULL);// addPointerToOpenFilesList(*fp);
+/*	addFileToOpenFilesList(file,hasFlag(backup_flag));*/
+	result=((*fp=fopen(file,"wb"))!=NULL);/* addPointerToOpenFilesList(*fp);*/
 	return result;
 }
 
@@ -272,7 +272,7 @@ int writeData(const unsigned char* data, int ignoreChars, char* vFileext, int si
 	/* Verify parameters */
 	size-=ignoreChars;
 	if (size<0) return 0;
-	//if (size==0) return 1; /* Wrote 0 bytes */
+	/*if (size==0) return 1; * Wrote 0 bytes */
 
 	/* Save file */
 	ok=writeOpen(vFileext,&target,optionflag);
@@ -293,8 +293,8 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 	int  aux;
 
 	/* Open the file */
-	fp=fopen(repairFolders(vFile),"rb");
 	if ((fp=fopen(repairFolders(vFile),"rb"))==NULL) {
+		fprintf(stderr, "mLoadFileArray: Unable to open file\n");
 		return 0;
 	} else {
 		/* get file size */
@@ -303,6 +303,7 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 		if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(unsigned char*)malloc(sizeof(char)*aux))==NULL) ) ) {
 			/* if the file was null or bigger than the max size or couldn't allocate the file in memory */
 			fclose(fp);
+			fprintf(stderr, "mLoadFileArray: Wrong size\n");
 			return 0;
 		} else {
 			/* if the file was successfully open */
@@ -372,7 +373,7 @@ whatIs isDir(const char *path) {
 	struct stat buf;
 
 	if(stat(path,&buf)==-1) return eNotFound;
-	return (S_IFDIR&buf.st_mode)?eDirectory:eFile;
+	return (S_ISDIR(buf.st_mode))?eDirectory:eFile;
 }
 
 #ifndef IGNORERECURSIVEFUNCTIONS

@@ -36,6 +36,7 @@ main.c: FreePrince : Main function - parsing
 #include "kernel.h"
 #include "main.h"
 #include <stdio.h>
+#include <stdlib.h> /* atoi */
 
 /***************************************************************\
 |      Standard executable command line parsing function        |

@@ -35,7 +35,7 @@ maps.c: Freeprince : Map handling library
 static unsigned char* slevel;
 static int sscreen;
 
-//Privates
+/* Privates */
 
 void maps_getStartPosition(int* pantalla, int* p, int *b,tDirection *sentido,tDirection *sentido2) {
 	int valor;
@@ -49,20 +49,20 @@ void maps_getStartPosition(int* pantalla, int* p, int *b,tDirection *sentido,tDi
 }
 
 void maps_getGuard(int pantalla,int *p,int *b,int *skill,int *color,tDirection *sentido,int *exists) {
-	//Posicion
+	/* Posicion */
 	unsigned char valor=(slevel[(MAPS_BLOCK_OFFSET_GUARD_POSITION+sscreen-1)]);
 	*exists = (valor<30);
 	*b      = (valor%10);
 	*p      = (valor/10);
-	//sentido
+	/* sentido */
 	*sentido=slevel[MAPS_BLOCK_OFFSET_GUARD_DIRECTION+pantalla-1]?eRight:eLeft;
-	//skill
+	/* skill */
 	*skill  =slevel[MAPS_BLOCK_OFFSET_GUARD_SKILL+pantalla-1];
-	//Color
+	/* Color */
 	*color  =slevel[MAPS_BLOCK_OFFSET_GUARD_COLOR+pantalla-1];
 }
 
-//Publics
+/* Publics */
 
 int levelUse(void* level) {
 /* Sets the level for future use using the resource given
@@ -71,10 +71,10 @@ int levelUse(void* level) {
  * Return 0 on success
  */
 	
-	//Remember level
+	/* Remember level */
 	slevel=level;
 
-	//Set start screen
+	/* Set start screen */
 	sscreen=slevel[MAPS_BLOCK_OFFSET_START_POSITION];
 
 	printf("levelUse: using new level\n");	
@@ -126,8 +126,8 @@ int levelGetDoorMap(/* TODO: idem */);
 
 int levelGetStarPosition(int* screen, int* position) {
 /* TODO: define position as an int or using x,y coordinate system*/
-	//maps_getStartPosition(screen, position, int *b,tDirection *sentido,tDirection *sentido2);
-
+	/* maps_getStartPosition(screen, position, int *b,tDirection *sentido,tDirection *sentido2); */
+	return 0;
 }
 
 int levelGetInformation(int *thisScreen, unsigned char* LRUDscreens, unsigned char* cornerScreens) {
@@ -143,31 +143,31 @@ int levelGetInformation(int *thisScreen, unsigned char* LRUDscreens, unsigned ch
 |                           Prototipos                          |
 \***************************************************************/
 
-	//File management procedures
+	/* File management procedures */
 	char mLoadPED(char* vFile,tLevel* lev);
-	char mLoadDAT(char* vFile,tLevel* lev,char levelNumber); //Tested 5
-	char mSavePED(char* vFile,tLevel* lev); //Tested 8
-	char mSaveDAT(char* vFile,tLevel* lev); //Tested 3
+	char mLoadDAT(char* vFile,tLevel* lev,char levelNumber); /* Tested 5 */
+	char mSavePED(char* vFile,tLevel* lev); /* Tested 8 */
+	char mSaveDAT(char* vFile,tLevel* lev); /* Tested 3 */
 
-	//char mChangeLevel(tLevel* lev,char newLevel); //0 si no hay cambios; si hay cambios en paredes devuelve la camtidad de paredes cambiadas
-	//char mAllowedOn(char levelnumber,char wall); //1 si wall es permitido en levelnumber; 0 si no
+	/* char mChangeLevel(tLevel* lev,char newLevel); //0 si no hay cambios; si hay cambios en paredes devuelve la camtidad de paredes cambiadas */
+	/* char mAllowedOn(char levelnumber,char wall); //1 si wall es permitido en levelnumber; 0 si no */
 
-	//Information methods
+	/* Information methods */
 	void mSetText (tLevel* lev,char* text);
 	void mGetText (tLevel* lev,char* text);
 
-	//tLevel Set methods
+	/* tLevel Set methods */
 	void mSetWall (tLevel* lev,char pantalla,char p,char b,char valor);
 	void mSetLink (tLevel* lev,char pantalla,char tipo,char valor);
 	void mSetGuard(tLevel* lev,char pantalla,char p,char b,char vidas,char color,char sentido,char erase);
 	void mSetBack (tLevel* lev,char pantalla,char p,char b,char valor);
-	//tLevel Get Methods
+	/* tLevel Get Methods */
 	char mGetWall (tLevel* lev,char pantalla,char p,char b);
 	char mGetLink (tLevel* lev,char pantalla,char tipo);
 	void mGetGuard(tLevel* lev,char pantalla,char* p,char* b,char* vidas,char* color,char* sentido,char* erase);
 	char mGetBack (tLevel* lev,char pantalla,char p,char b);
 
-	//Gate handling Methods
+	/* Gate handling Methods */
 	/*
 	Public:
 	mCreateEventList
@@ -183,22 +183,22 @@ int levelGetInformation(int *thisScreen, unsigned char* LRUDscreens, unsigned ch
 	*/
 
 
-	//Screen Links Handling Methods
+	/* Screen Links Handling Methods */
 	char mGetScreen    (tLevel* lev, char i,char j, char* error);
 	void mGetMainScreen(tLevel* lev, char* i,char* j);
 	void mRemScreen    (tLevel* lev, char i,char j, char* error);
 	void mAddScreen    (tLevel* lev, char i,char j, char* error);
 	void mGetSize      (tLevel* lev, char* i,char* j);
 	char mGetScrCount  (tLevel* lev);
-		//Nota: si mGetScrCount(lev) es 24, entonces el nivel esta lleno
+		/* Nota: si mGetScrCount(lev) es 24, entonces el nivel esta lleno */
 	void mCpyScreen    (tLevel* lev, char fromi,char fromj,char toi,char toj, char* error);
 
-	//Start position handling
+	/* Start position handling */
 	void mGetStartPosition(tLevel* lev,char* pantalla, char* p, char *b,char *sentido,char *sentido2);
 	void mSetStartPosition(tLevel* lev,char pantalla, char p, char b,char sentido,char sentido2);
 	void mGetDebugPosition(tLevel* lev,char* pantalla, char* p, char *b,char *sentido);
 	void mSetDebugPosition(tLevel* lev,char pantalla, char p, char b,char sentido);
-		//Nota: DebugPosition puede no existir en lev, en ese caso la convension es no existe si pantalla igual a 0, de lo contrario existe y la pantalla inicial es pantalla
+		/* Nota: DebugPosition puede no existir en lev, en ese caso la convension es no existe si pantalla igual a 0, de lo contrario existe y la pantalla inicial es pantalla */
 
 /***************************************************************\
 |                  I M P L E M E N T A T I O N                  |
@@ -231,14 +231,14 @@ void mGetArray(tLevel* lev, char *pos,int from,int length) {
 |                         Gate handling                         |
 \***************************************************************/
 
-//Privados
-void getRawEvent(tLevel* lev,char id,tGateEvent* event) { //private
+/* Privados */
+void getRawEvent(tLevel* lev,char id,tGateEvent* event) { /* private */
 	unsigned char x1,x2,valor;
 	(*event).pos[0]  =(*lev).levelArray[MAPS_BLOCK_OFFSET_GATE_1+id];
 	(*event).pos[1]  =(*lev).levelArray[MAPS_BLOCK_OFFSET_GATE_2+id];
 }
 
-void setRawEvent(tLevel* lev,char id,tGateEvent* event) { //private
+void setRawEvent(tLevel* lev,char id,tGateEvent* event) { /* private */
 	unsigned char x1,x2,validate;
 	x1=(*event).pos[0];
 	x2=(*event).pos[1];
@@ -249,13 +249,13 @@ void setRawEvent(tLevel* lev,char id,tGateEvent* event) { //private
 	(*lev).levelArray[MAPS_BLOCK_OFFSET_VALIDATOR_WALL]+=validate;
 }
 
-//Privado, pero publico dentro de maps.c
+/* Privado, pero publico dentro de maps.c */
 void mLoadEventList(tLevel* lev) {
-	//Esta funcion carga el TDA con los datos que lee del rigido
+	/* Esta funcion carga el TDA con los datos que lee del rigido */
 	char a=0;
 	char b=0;
 
-	//Cargar gateList con las asociaciones del mapa
+	/* Cargar gateList con las asociaciones del mapa */
 	int j=0;
 	for (int i=0;i<MAPS_BLOCK_SIZEOF_WALL;i++) {
 		switch ((*lev).levelArray[MAPS_BLOCK_OFFSET_WALL+i]) {
@@ -267,7 +267,7 @@ void mLoadEventList(tLevel* lev) {
 	}
 	(*lev).gateList.size=j;
 
-	//Cargar gateTDA con datos de la tabla
+	/* Cargar gateTDA con datos de la tabla */
 	j=0;
 	for (tGateEvent evento;j<MAPS_BLOCK_SIZEOF_GATE;j++) {
 		getRawEvent(lev,j,&evento);
@@ -283,7 +283,7 @@ void mLoadEventList(tLevel* lev) {
 	(*lev).gateTDA.size=a;
 }
 
-//mSevEventList private functions
+/* mSevEventList private functions */
 
 void anularEvento(tGateEvent *e) {
 	(*e).pos[0]=0;
@@ -316,7 +316,7 @@ char belongsToDiskList(tLevel* lev, tGateRow *fila,int i) {
 
 	char total=0;
 	char pertenece;
-	//recorrer la lista de eventos
+	/* recorrer la lista de eventos */
 	for (int k=i;((*lev).gateEvents.event[k].pos[0]<(0x80));k++) {
 		total++;
 		pertenece=0;
@@ -342,10 +342,10 @@ void apuntar(tLevel* lev,unsigned char i) {
 #define MAPS_GATE_SINGLE_EVENT    0
 #define MAPS_GATE_MULTIPLE_EVENT  1
 char intertLeft(tLevel* lev,tGateRow fila,int inicioFila,int numeroFila,char mode) {
-	//Esta funcion inserta en gateEvents el o los eventos de fila que no estan insertados
-	//Por cada insersion deben ser modificados los ids correspondientes en la gateList
-	//devuelve 1 si entro
-	//devuelve 0 en caso de superarse lso 256 bytes
+	/* Esta funcion inserta en gateEvents el o los eventos de fila que no estan insertados */
+	/* Por cada insersion deben ser modificados los ids correspondientes en la gateList */
+	/* devuelve 1 si entro */
+	/* devuelve 0 en caso de superarse lso 256 bytes */
 
 	/*
 	 1) En caso de MULTIPLE EVENT los elementos de la fila
@@ -384,27 +384,27 @@ char intertLeft(tLevel* lev,tGateRow fila,int inicioFila,int numeroFila,char mod
 	*/
 
 	for (j=0;(j<fila.size);j++) {
-		if (fila.event[j].pos[0]) { //Para cada evento nonulo de la fila
-			//Adelantar todos los eventos posteriores a inicioFila
+		if (fila.event[j].pos[0]) { /* Para cada evento nonulo de la fila */
+			/* Adelantar todos los eventos posteriores a inicioFila */
 			for (int k=(*lev).gateEvents.size;k>inicioFila;k--) {
 				(*lev).gateEvents.event[k+1]=(*lev).gateEvents.event[k];
 			}
 
-			//Insertar (*fila).event[j] en la gateEvents en la posicion generada en inicioFila.
-			//Se tendra en cuenta el flag de de fin de lista
+			/* Insertar (*fila).event[j] en la gateEvents en la posicion generada en inicioFila. */
+			/* Se tendra en cuenta el flag de de fin de lista */
 			(*lev).gateEvents.event[inicioFila]=setFlag(fila.event[j],c);
 
-			//El flag del fin de lista se cancela
+			/* El flag del fin de lista se cancela */
 			c=0;
 
-			//Incrementar la cantidad de eventos de la gateEvent, en caso de no poder abortar
+			/* Incrementar la cantidad de eventos de la gateEvent, en caso de no poder abortar */
 			if ((*lev).gateEvents.size==255) {
 				return 0;
 			} else {
 				(*lev).gateEvents.size++;
 			}
 
-			//Finalmente se debe recorrer la gate list e incrementar el contenido que supere a inicioFila
+			/* Finalmente se debe recorrer la gate list e incrementar el contenido que supere a inicioFila */
 			for (int k=0;k<(*lev).gateList.size;k++) {
 				if ((*lev).gateList.item[k].id>=inicioFila)
 					((*lev).gateList.item[k].id)++;
@@ -414,13 +414,13 @@ char intertLeft(tLevel* lev,tGateRow fila,int inicioFila,int numeroFila,char mod
 	return 1;
 }
 
-//Main function
+/* Main function */
 char mSaveEventList(tLevel* lev) {
-	//Lee el TDA, optimiza el espacio que ocupan los datos y lo guardaen disco
-	//devuelve 1 en caso de que entre en disco
-	//devuelve 0 en caso de que no hayan entrado los datos en disco
+	/* Lee el TDA, optimiza el espacio que ocupan los datos y lo guardaen disco */
+	/* devuelve 1 en caso de que entre en disco */
+	/* devuelve 0 en caso de que no hayan entrado los datos en disco */
 
-	//Inicializar variables
+	/* Inicializar variables */
 	unsigned char n=(*lev).gateTDA.size;
 	unsigned char c=1;
 	char x;
@@ -428,14 +428,14 @@ char mSaveEventList(tLevel* lev) {
 	(*lev).gateEvents.size=0;
 	(*lev).gateList.size=0;
 
-	//Generar a partir de gateTDA la lista de eventos gateEventList y de asociaciones gateList
-	while (n) { //Para todos los elementos
-		for (int k=0;k<(*lev).gateTDA.size;k++) { //Recorrer filas de gateTDA
-			if (obtenerFila(&fila,c,k,lev)) {  //mietras haya elementos con tamagno=c sin procesar fila=(*lev).gateTDA.row[n] where fila=(*lev).gateTDA.row[n].size=c;
-				//entra con fila seteada en la fila k con c elementos adentro.
+	/* Generar a partir de gateTDA la lista de eventos gateEventList y de asociaciones gateList */
+	while (n) { /* Para todos los elementos */
+		for (int k=0;k<(*lev).gateTDA.size;k++) { /* Recorrer filas de gateTDA */
+			if (obtenerFila(&fila,c,k,lev)) {  /* mietras haya elementos con tamagno=c sin procesar fila=(*lev).gateTDA.row[n] where fila=(*lev).gateTDA.row[n].size=c; */
+				/* entra con fila seteada en la fila k con c elementos adentro. */
 				n--;
 				x=0;
-				for (int i=0;((i<(*lev).gateEvents.size) && (!x));i++) { //recorrer lo ya creado de gateEvents
+				for (int i=0;((i<(*lev).gateEvents.size) && (!x));i++) { /* recorrer lo ya creado de gateEvents */
 					x=belongsToDiskList(lev,&fila,i);
 					switch (x) {
 						case MAPS_GATE_BELONGS:
@@ -466,8 +466,8 @@ char mSaveEventList(tLevel* lev) {
 		c++;
 	}
 
-	//Guardar gateEvents y gateList en el formato.
-	//gateList
+	/* Guardar gateEvents y gateList en el formato. */
+	/* gateList */
 	for (int i=0;i<(*lev).gateEvents.size;i++) {
 		setRawEvent(lev,i,&((*lev).gateEvents.event[i]));
 	}
@@ -492,7 +492,7 @@ void getGateAsociation(tLevel* lev,char id,char* scr,char* p,char* b, char *term
 	valor     =(x1%(0x20));
 	*b        =(valor%10);
 	*p        =(valor/10);
-	*termino  =(x1/(0x80)); //c=(Se pasa a la siguiente)?0:1
+	*termino  =(x1/(0x80)); /* c=(Se pasa a la siguiente)?0:1 */
 }
 
 void setGateAsociation(tLevel* lev,char id,char scr,char p,char b, char termino) {
@@ -507,7 +507,7 @@ void setGateAsociation(tLevel* lev,char id,char scr,char p,char b, char termino)
 	(*lev).levelArray[MAPS_BLOCK_OFFSET_VALIDATOR_WALL]+=validate;
 }
 
-void shiftEventId(tLevel* lev,char from,char delta) { //private
+void shiftEventId(tLevel* lev,char from,char delta) { /* private */
 	char validate=0;
 	char aux;
 	for (int i=0;i<MAPS_BLOCK_SIZEOF_WALL;i++) {
@@ -539,7 +539,7 @@ void insertEvent(tLevel* lev,char id,char scr,char p,char b) {
 \***************************************************************/
 
 #define MAPS_BLOCK_OFFSET_START_POSITION_SIZE3 3
-//Actualmente guarda 1+MAPS_BLOCK_SIZEOF_UNKNOWN_1+MAPS_BLOCK_SIZEOF_UNKNOWN_2+MAPS_BLOCK_SIZEOF_UNKNOWN_4+unk_5+unk_6+unk_7 = 564 caracteres. *text debe medir 565 incluyendo el caracter nulo.
+/* Actualmente guarda 1+MAPS_BLOCK_SIZEOF_UNKNOWN_1+MAPS_BLOCK_SIZEOF_UNKNOWN_2+MAPS_BLOCK_SIZEOF_UNKNOWN_4+unk_5+unk_6+unk_7 = 564 caracteres. *text debe medir 565 incluyendo el caracter nulo. */
 void mSetText (tLevel* lev,char* text) {
 	mSetArray(lev,text,MAPS_BLOCK_OFFSET_START_POSITION+MAPS_BLOCK_OFFSET_START_POSITION_SIZE3,1,MAPS_BLOCK_OFFSET_VALIDATOR_LINK);
 	mSetArray(lev,&(text[1]),MAPS_BLOCK_OFFSET_UNKNOWN_1,MAPS_BLOCK_SIZEOF_UNKNOWN_1,MAPS_BLOCK_OFFSET_VALIDATOR_WALL);
@@ -588,16 +588,16 @@ void mSetStartPosition(tLevel* lev,char pantalla, char p, char b,char sentido,ch
 	int location=MAPS_BLOCK_OFFSET_START_POSITION;
 	unsigned char offsetval=0;
 
-	//pantalla
+	/* pantalla */
 	offsetval+=(256-valor)+(*lev).levelArray[location];
 	(*lev).levelArray[location++]=valor;
 
-	//Posicion
+	/* Posicion */
 	valor     =p*10+b;
 	offsetval+=(256-valor)+(*lev).levelArray[location];
 	(*lev).levelArray[location++]=valor;
 
-	//sentidos
+	/* sentidos */
 	valor     =sentido?MAPS_DIRECTION_RIGHT:MAPS_DIRECTION_LEFT;
 	offsetval+=(256-valor)+(*lev).levelArray[location];
 	(*lev).levelArray[location]=valor;
@@ -607,7 +607,7 @@ void mSetStartPosition(tLevel* lev,char pantalla, char p, char b,char sentido,ch
 	offsetval+=(256-valor)+(*lev).levelArray[location];
 	(*lev).levelArray[location]=valor;
 
-	//Validacion
+	/* Validacion */
 	(*lev).levelArray[MAPS_BLOCK_OFFSET_VALIDATOR_LINK]+=offsetval;
 }
 
@@ -637,42 +637,42 @@ void mSetBack (tLevel* lev,char pantalla,char p,char b,char valor) {
 
 void mSetGuard(tLevel* lev,char pantalla,char p,char b,char vidas,char color,char sentido,char erase) {
 
-	//Posicion
+	/* Posicion */
 	unsigned char valor=erase?30:p*10+b;
 	int location=MAPS_BLOCK_OFFSET_GUARD_POSITION-1+pantalla;
 	unsigned char offsetval=((*lev).levelArray[MAPS_BLOCK_OFFSET_VALIDATOR_LINK]+(256-valor)+(*lev).levelArray[location]);
 	(*lev).levelArray[location]=valor;
-	//sentido
+	/* sentido */
 	valor     =sentido?MAPS_DIRECTION_RIGHT:MAPS_DIRECTION_LEFT;
 	location  =MAPS_BLOCK_OFFSET_GUARD_DIRECTION-1+pantalla;
 	offsetval+=(256-valor)+(*lev).levelArray[location];
 	(*lev).levelArray[location]=valor;
-	//skill
+	/* skill */
 	valor     =erase?1:vidas;
 	location  =MAPS_BLOCK_OFFSET_GUARD_SKILL-1+pantalla;
 	offsetval+=(256-valor)+(*lev).levelArray[location];
 	(*lev).levelArray[location]=valor;
-	//Color
+	/* Color */
 	valor     =erase?0:color;
 	location  =MAPS_BLOCK_OFFSET_GUARD_COLOR-1+pantalla;
 	offsetval+=(256-valor)+(*lev).levelArray[location];
 	(*lev).levelArray[location]=valor;
 
-	//Validar
+	/* Validar */
 	(*lev).levelArray[MAPS_BLOCK_OFFSET_VALIDATOR_LINK]=offsetval/*+(256-valor)+(*lev).levelArray[location]*/;
 }
 
 void mGetGuard(tLevel* lev,char pantalla,char* p,char* b,char* vidas,char* color,char* sentido,char* exists) {
-	//Posicion
+	/* Posicion */
 	unsigned char valor=((*lev).levelArray[(MAPS_BLOCK_OFFSET_GUARD_POSITION-1+pantalla)]);
 	*exists = (valor<30);
 	*b      = (valor%10);
 	*p      = (valor/10);
-	//sentido
+	/* sentido */
 	*sentido=!(*lev).levelArray[MAPS_BLOCK_OFFSET_GUARD_DIRECTION-1+pantalla];
-	//skill
+	/* skill */
 	*vidas  =(*lev).levelArray[MAPS_BLOCK_OFFSET_GUARD_SKILL-1+pantalla];
-	//Color
+	/* Color */
 	*color  =(*lev).levelArray[MAPS_BLOCK_OFFSET_GUARD_COLOR-1+pantalla];
 }
 
@@ -680,8 +680,8 @@ void mGetGuard(tLevel* lev,char pantalla,char* p,char* b,char* vidas,char* color
 |                     Screen Link Handling                      |
 \***************************************************************/
 
-//Recursive mapping sub procedures
-void mRecLink(char i, char j, tLevel* lev); //prototype
+/* Recursive mapping sub procedures */
+void mRecLink(char i, char j, tLevel* lev); /* prototype */
 void mRecIndirect(char i, char j, tLevel* lev, char scr, char pos) {
 	char aux;
 	char auxb;
@@ -758,24 +758,24 @@ void mCalcularLimRight (tLevel* lev) {
 }
 
 
-//	Main mCreateLinkMap
-void mCreateLinkMap(tLevel* lev) { //private
+/* 	Main mCreateLinkMap */
+void mCreateLinkMap(tLevel* lev) { /* private */
 	char	i,j,start;
 
-	//Initialize arrays
+	/* Initialize arrays */
 	for (j=0;j<MAPS_MAX_LENGTH;j++)
 		for (i=0;i<MAPS_MAX_LENGTH;(*lev).handledLinks.linkMap[i++][j]=255);
 	for (j=1;j<=MAPS_MAX_SCREENS;(*lev).handledLinks.linkList[j++]=0);
 
-	//Inicializar start en la pantalla de inicio
+	/* Inicializar start en la pantalla de inicio */
 	mGetStartPosition(lev,&start,&i,&i,&i,&i);
 	(*lev).handledLinks.linkMap[MAPS_LINKMAP_CENTER][MAPS_LINKMAP_CENTER]=start;
 	(*lev).handledLinks.linkList[start]=1;
 
-	//Start Recursive Mapper
+	/* Start Recursive Mapper */
 	mRecLink(MAPS_LINKMAP_CENTER,MAPS_LINKMAP_CENTER,lev);
 
-	//Buscar limites del nivel
+	/* Buscar limites del nivel */
 	mCalcularLimUp   (lev);
 	mCalcularLimDown (lev);
 	mCalcularLimLeft (lev);
@@ -818,41 +818,41 @@ void mAddScreen    (tLevel* lev, char i,char j, char* error) {
 		if ((*lev).handledLinks.linkList[l]) {
 			*error=1;
 		} else {
-			//Pedir pantalla
+			/* Pedir pantalla */
 			(*lev).handledLinks.linkList[l]=1;
 
 			i+=(*lev).handledLinks.limLeft;
 			j+=(*lev).handledLinks.limUp;
 
-			//En caso de agregar una pantalla en alguno de los bordes, estos se amplian
+			/* En caso de agregar una pantalla en alguno de los bordes, estos se amplian */
 			if ((*lev).handledLinks.limLeft=i) (*lev).handledLinks.limLeft--;
 			if ((*lev).handledLinks.limUp=j) (*lev).handledLinks.limUp--;
 			if ((*lev).handledLinks.limRight=i) (*lev).handledLinks.limRight++;
 			if ((*lev).handledLinks.limDown=j) (*lev).handledLinks.limDown++;
 
 
-			//Poner 0 alrededor de l
+			/* Poner 0 alrededor de l */
 			(*lev).handledLinks.linkMap[i][j-1]%=255;
 			(*lev).handledLinks.linkMap[i][j+1]%=255;
 			(*lev).handledLinks.linkMap[i+1][j]%=255;
 			(*lev).handledLinks.linkMap[i-1][j]%=255;
 
-			//Poner l en l
+			/* Poner l en l */
 			(*lev).handledLinks.linkMap[i][j]=l;
 
-			//Setear links desde l a las 4 pantallas adyacentes
+			/* Setear links desde l a las 4 pantallas adyacentes */
 			mSetLink (lev,l,MAPS_sUp,(*lev).handledLinks.linkMap[i][j-1]);
 			mSetLink (lev,l,MAPS_sDown,(*lev).handledLinks.linkMap[i][j+1]);
 			mSetLink (lev,l,MAPS_sRight,(*lev).handledLinks.linkMap[i+1][j]);
 			mSetLink (lev,l,MAPS_sLeft,(*lev).handledLinks.linkMap[i-1][j]);
 
-			//Setear links desde las 4 pantallas adyacentes a l
+			/* Setear links desde las 4 pantallas adyacentes a l */
 			mSetLink (lev,(*lev).handledLinks.linkMap[i][j+1],MAPS_sUp,l);
 			mSetLink (lev,(*lev).handledLinks.linkMap[i][j-1],MAPS_sDown,l);
 			mSetLink (lev,(*lev).handledLinks.linkMap[i-1][j],MAPS_sRight,l);
 			mSetLink (lev,(*lev).handledLinks.linkMap[i+1][j],MAPS_sLeft,l);
 
-			//Limpiar contenido de la pantalla l
+			/* Limpiar contenido de la pantalla l */
 			for (i=0;i<3;i++) {
 				for (j=0;j<10;j++) {
 					mSetWall(lev,l,i,j,0);
@@ -860,7 +860,7 @@ void mAddScreen    (tLevel* lev, char i,char j, char* error) {
 				}
 			}
 			mSetGuard(lev,l,1,1,1,1,1,1);
-			//Listo, ya cree la pantalla y la linkie
+			/* Listo, ya cree la pantalla y la linkie */
 		}
 	}
 }
@@ -873,23 +873,23 @@ void mRemScreen    (tLevel* lev, char i,char j, char* error) {
 	unsigned char l=mGetScreen(lev,i,j,error);
 	*error=*error || (!l);
 	if (!*error) {
-		//Liberar pantalla
+		/* Liberar pantalla */
 		(*lev).handledLinks.linkList[l]=0;
 
-		//Seteo posiciones absolutas
+		/* Seteo posiciones absolutas */
 		i+=(*lev).handledLinks.limLeft;
 		j+=(*lev).handledLinks.limUp;
 
-		//Poner 0 en l
+		/* Poner 0 en l */
 		(*lev).handledLinks.linkMap[i][j]=0;
 
-		//En caso de remover una pantalla en alguno de los bordes, estos se recalculan
+		/* En caso de remover una pantalla en alguno de los bordes, estos se recalculan */
 		if ((*lev).handledLinks.limLeft=i) 	mCalcularLimLeft(lev);
 		if ((*lev).handledLinks.limUp=j)    mCalcularLimUp(lev);
 		if ((*lev).handledLinks.limRight=i) mCalcularLimRight(lev);
 		if ((*lev).handledLinks.limDown=j)  mCalcularLimDown(lev);
 
-		//Borrar links desds las 4 pantallas adyacentes a l
+		/* Borrar links desds las 4 pantallas adyacentes a l */
 		mSetLink (lev,(*lev).handledLinks.linkMap[i][j+1],MAPS_sLeft,0);
 		mSetLink (lev,(*lev).handledLinks.linkMap[i][j-1],MAPS_sRight,0);
 		mSetLink (lev,(*lev).handledLinks.linkMap[i-1][j],MAPS_sDown,0);
@@ -901,27 +901,27 @@ void mCpyScreen    (tLevel* lev, char fromi,char fromj,char toi,char toj, char* 
 	char fromscr,toscr,i,j,k,l;
 	char sentido,existe;
 
-	//Verificar que la pantalla source y la pantalla target existan
-	fromscr=mGetScreen(lev,fromi,fromj,error); //Verifico que existe la pantalla from
+	/* Verificar que la pantalla source y la pantalla target existan */
+	fromscr=mGetScreen(lev,fromi,fromj,error); /* Verifico que existe la pantalla from */
 	*error=(*error || fromscr);
-	if (!*error) { //Verifico que existe la pantalla to
+	if (!*error) { /* Verifico que existe la pantalla to */
 		toscr=mGetScreen(lev,toi,toj,error);
 		*error=(*error || toscr);
 	}
-	if (!*error) { //Si existen ambas pantallas
-		//Copiar contenido de la pantalla from a la pantalla to:
+	if (!*error) { /* Si existen ambas pantallas */
+		/* Copiar contenido de la pantalla from a la pantalla to: */
 
-		//Copiar wall y back
+		/* Copiar wall y back */
 		char contenido[30];
 		mGetArray(lev,contenido,MAPS_BLOCK_OFFSET_WALL-30+fromscr*30,30);
 		mSetArray(lev,contenido,MAPS_BLOCK_OFFSET_WALL-30+toscr*30,30,MAPS_BLOCK_OFFSET_VALIDATOR_WALL);
 		mGetArray(lev,contenido,MAPS_BLOCK_OFFSET_BACK-30+fromscr*30,30);
 		mSetArray(lev,contenido,MAPS_BLOCK_OFFSET_BACK-30+toscr*30,30,MAPS_BLOCK_OFFSET_VALIDATOR_WALL);
 
-		//Copiar Guards
+		/* Copiar Guards */
 		mGetGuard(lev,fromscr,&i,&j,&k,&l,&sentido,&existe);
 		mSetGuard(lev,toscr,i,j,k,l,sentido,existe);
-		//Listo, ya se copio el contenido y el guardia
+		/* Listo, ya se copio el contenido y el guardia */
 	}
 }
 

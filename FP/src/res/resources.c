@@ -34,9 +34,11 @@ resources.c: Princed Resources : DAT Extractor
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "freeprince.h"
 #include "resources.h"
+#include "output.h"
 
 #include "compress.h"
 
@@ -61,7 +63,7 @@ tData* res_createData(int nFrames,int type) {
 		case RES_TYPE_IMG_TR_RIGHT:
 		case RES_TYPE_IMG_BL_LEFT:
 		case RES_TYPE_IMG_BL_RIGHT:
-			result->type=eImages;//res_getVirtualTypeFromReal(res_getIdxType);
+			result->type=eImages;/*res_getVirtualTypeFromReal(res_getIdxType);*/
 			nFrames--;
 			break;
 	}
@@ -82,13 +84,12 @@ void res_createFrames(tMemory data,int type,void** returnValue,int number) {
 		case RES_TYPE_IMG_BL_LEFT:
 		case RES_TYPE_IMG_BL_RIGHT:
 			if (!number) {
-				//loadPalette;
 				if (data.size!=100) {
 					printf("Fatal error: res_createFrames: invalid palette\n");
 					exit(1);
 				}
 				memcpy(image.pal,data.array+5,16*3);
-				printf("res_createFrames: Remembering palette\n",number,type);
+				printf("res_createFrames: Remembering palette\n");
 				return;
 			} else {
 				number--;
@@ -101,8 +102,6 @@ void res_createFrames(tMemory data,int type,void** returnValue,int number) {
 				(type==RES_TYPE_IMG_TR_RIGHT||type==RES_TYPE_IMG_TR_LEFT)
 			);
 			 
-			//result=(tMemory*)malloc(sizeof(tMemory)); /* both sides are void* :)  */
-			//*result=(tMemory)data;
 			printf("res_createFrames: Allocating frame[%d]=? (image type %d)\n",number,type);
 			break;
 		case RES_TYPE_SND_MIDI:
@@ -112,7 +111,7 @@ void res_createFrames(tMemory data,int type,void** returnValue,int number) {
 			result=(tMemory*)malloc(sizeof(tMemory)); /* both sides are void* :)  */
 			/* TODO: data->array must be copied or it wont be available after the file is closed */
 			*result=(tMemory)data;
-			printf("res_createFrames: Allocating resource[%d]=@%p (type %d, size %d)\n",number,type,data.array,data.size);
+			printf("res_createFrames: Allocating resource[%d]\n",number);
 			
 			break;
 	}
@@ -134,8 +133,10 @@ int res_getDataById(int id,int maxItems,tMemory* result) {
 	
 	/* main loop */
 	for (indexNumber=0;indexNumber<maxItems;indexNumber++) {
-		gotId=mReadFileInDatFile((indexNumber+id-DATA_START_ITEMS)%maxItems,&(result->array),&(result->size));
-		//printf("Debug: res_getData: indexNumber=%d gotId=%d id=%d\n",indexNumber,gotId,id);
+		gotId=mReadFileInDatFile(
+				(indexNumber+id-DATA_START_ITEMS)%maxItems,
+				&(result->array),
+				(unsigned long *)&(result->size));
 		if (gotId==id) break;
 	}
 	
@@ -162,7 +163,7 @@ int res_getDataByArray(short int* id,int maxItems,void** result,int ids,int type
 			gotId=mReadFileInDatFile(
 				indexNumber,
 				&(data.array),
-				&(data.size)
+				(unsigned long *)&(data.size)
 			);
 			if (gotId==id[i]) {
 				res_createFrames(data,type,result,i);
@@ -194,7 +195,7 @@ tData* resLoad(int id) {
 	tData* result;
 	int i;
 	char file1[25];
-	char file2[25];
+	/*char file2[25];*/
 	short int* frames;
 	int nFrames;
 	tMemory index;
@@ -218,6 +219,8 @@ tData* resLoad(int id) {
 		frames[i]=res_getIdxFrames[i];
 	}
 
+	strncpy(file1,res_getIdxFile1,14);
+	
 	mReadCloseDatFile();
 
 	/* READ FILE */
@@ -226,7 +229,7 @@ tData* resLoad(int id) {
 		printf("frames[%d]=%d\n",i,frames[i]);
 	}
 	
-	if (!mReadBeginDatFile(&numberOfItems,res_getIdxFile1)) {
+	if (!mReadBeginDatFile(&numberOfItems,file1)) {
 		printf("Fatal Error: resLoad: resource file not found!\n");
 		free(frames);
 		return NULL;
