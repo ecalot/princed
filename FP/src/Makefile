@@ -47,7 +47,7 @@ LINKERRELEASE =
 #Binary code files
 OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
                 output.o maps.o config.o room.o titles.o \
-                input.o kid.o states.o tiles.o walls.o
+                input.o kid.o states.o tiles.o walls.o anims.o
 EXEFILE       = bin/freeprince
 
 GENERATEDRESHEADERS = include/res_conf_parts.h include/res_conf_files.h\
@@ -57,6 +57,8 @@ GENERATEDSTAHEADERS = include/states_conf_static.h include/states_conf_propertie
                       include/states_conf_flags.h
 
 GENERATEDTILHEADERS = include/tiles_conf_types.h include/tiles_conf_groups.h
+
+GENERATEDOTHHEADERS = include/walls_conf.h include/anims_conf.h
 
 #Use this to temporary remove an option
 OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
@@ -96,15 +98,18 @@ checkawk:
 
 clean:
 	$(INFO) Erasing temporary object files...
-	$(REMOVER) $(OBJFILES) $(EXEFILE)\
-	           $(GENERATEDRESHEADERS) $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)\
-						 $(SRC2) include/walls_conf.h
+	$(REMOVER) $(OBJFILES) $(EXEFILE) $(GENERATEDRESHEADERS)\
+	           $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)\
+	           $(SRC2) $(GENERATEDOTHHEADERS)
 
 build: clean $(EXEFILE)
 
 all: build
 
 install: download build
+
+headers: $(GENERATEDRESHEADERS) $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)\
+         $(GENERATEDOTHHEADERS)
 
 download:
 	$(MAKEDIR) bin
@@ -143,17 +148,19 @@ dat.o: res/dat.c include/disk.h include/dat.h
 	$(INFO) Compiling resource dat editing library...
 	$(CC) -c res/dat.c $(OPTIONS)
 
-kernel.o: ker/kernel.c include/kernel.h include/resources.h include/res_conf.h include/output.h
+kernel.o: ker/kernel.c include/kernel.h include/resources.h\
+          include/res_conf.h include/output.h
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
-room.o: ker/room.c include/room.h include/resources.h include/res_conf.h include/walls_conf.h
+room.o: ker/room.c include/room.h include/resources.h include/res_conf.h\
+        include/walls_conf.h
 	$(INFO) Compiling kernel room object...
 	$(CC) -c ker/room.c $(OPTIONS)
 
 kid.o: ker/kid.c include/kid.h include/resources.h include/res_conf.h\
-       include/states.h include/states_conf.h $(GENERATEDRESHEADERS)\
-			 $(GENERATEDTILHEADERS) include/res_conf.h\
+       include/states.h $(GENERATEDRESHEADERS)\
+			 $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) include/res_conf.h\
        include/types.h include/tiles.h include/tiles_conf.h
 	$(INFO) Compiling kernel kid object...
 	$(CC) -c ker/kid.c $(OPTIONS)
@@ -183,7 +190,7 @@ config.o: res/config.c include/resources.h include/res_conf.h
 	$(INFO) Compiling resource configuration module...
 	$(CC) -c res/config.c $(OPTIONS)
 
-states.o: ker/states.c include/states.h include/states_conf.h\
+states.o: ker/states.c include/states.h\
           include/resources.h include/res_conf.h include/types.h\
 					include/tiles.h include/tiles_conf.h $(GENERATEDRESHEADERS)\
 					$(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)
@@ -198,6 +205,11 @@ walls.o: res/walls.c include/walls.h include/walls_conf.h
 	$(INFO) Compiling wall algorithm module...
 	$(CC) -c res/walls.c $(OPTIONS)
 
+anims.o: res/anims.c include/anims.h include/anims_conf.h\
+         $(GENERATEDRESHEADERS) $(GENERATEDSTAHEADERS)
+	$(INFO) Compiling animation loader module...
+	$(CC) -c res/anims.c $(OPTIONS)
+	
 #AWK scripts: header generation
 include/res_conf.h: $(GENERATEDRESHEADERS)
 
@@ -223,9 +235,9 @@ include/res_conf_resources.h: conf/resources.conf conf/awk/res_conf_resources.aw
 
 include/states_conf.h: $(GENERATEDSTAHEADERS)
 
-include/states_conf_static.h: conf/states.conf conf/awk/states_conf_static.awk
+include/states_conf_static.h: conf/awk/states_conf_static.awk
 	$(INFO) Creating states list configuration file...
-	$(AWK) -f conf/awk/states_conf_static.awk conf/states.conf>include/states_conf_static.h
+	$(AWK) -f conf/awk/states_conf_static.awk conf/states/*.conf>include/states_conf_static.h
 
 include/states_conf_properties.h: conf/statesproperties.conf conf/awk/states_conf_properties.awk
 	$(INFO) Creating states condition properties configuration file...
@@ -248,4 +260,9 @@ include/tiles_conf_groups.h: conf/tiles.conf conf/awk/tiles_conf_groups.awk
 include/walls_conf.h: conf/walls.conf conf/awk/walls_conf.awk
 	$(INFO) Creating wall algorithm randomization file...
 	$(AWK) -f conf/awk/walls_conf.awk conf/walls.conf>include/walls_conf.h
+
+include/anims_conf.h: conf/anims.conf conf/awk/anims_conf.awk
+	$(INFO) Linking animation indexes to the source...
+	$(AWK) -f conf/awk/anims_conf.awk conf/anims.conf>include/anims_conf.h
+
 

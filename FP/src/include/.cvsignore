@@ -9,3 +9,4 @@ states_conf_flags.h
 tiles_conf_types.h
 tiles_conf_groups.h
 walls_conf.h
+anims_conf.h
