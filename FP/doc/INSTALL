@@ -24,12 +24,15 @@ some packets are required in both cases (coders and anonymous).
 The requiered packages are:
  bash bzip2 sed awk wget gcc make libsdl1.2-dev
 
-The first five packets are installed by default.
+The first seven packages are installed by default.
 For the moment the only supported platform is x86. This is because of the
 endian registers in the processors. We are working to finish porting the
 abstraction disk library.
-he installation script was made and tested with bash, try to have this installed
-in your system.
+The installation script was made and tested with bash, try to have this installed
+in your system. Installation is not needed if you want to build the sources, but
+will download the data files needed by the game to be ran. In a future bash
+package won't be needed anymore and the make install will perform the download
+by itself.
 
 If you are using debian you can install the packages just typing:
 apt-get install bash wget gcc make libsdl1.2-dev
