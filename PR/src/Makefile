@@ -1,10 +1,18 @@
-#Programs
-CC      = @gcc
-LINKER  = @ld
-INFO    = @echo
-MAKEDIR = @mkdir -p
+############
+# Programs #
+############
 
-#Operating Systems
+CC         = @gcc
+LINKER     = @ld
+INFO       = @echo
+MAKEDIR    = @mkdir -p
+REMOVER    = @rm -f
+GZIP       = @gzip
+
+#####################
+# Operating Systems #
+#####################
+
 OS      := $(shell uname)
 ifeq ($(OS),Linux)
   LINUX = -DLINUX
@@ -18,26 +26,49 @@ else
 	endif
 endif
 
-#Compiler options
-INCLUDE = -Iinclude/
-DEFINES = -DOS=\"$(OS)\" $(LINUX) 
-OPTIONS = $(INCLUDE) $(DEFINES) -g -pedantic -Wall
+####################
+# Compiler options #
+####################
+
+#Libraries: include path and linked libs
+INCLUDE       = -Iinclude/
+LIBS          = 
+DEFINES       = -DOS=\"$(OS)\" $(LINUX)
+
+#Release type
+TYPE          = Debug
+# RELEASE may be:
+#  -g -Wall -ansi -pedantic        for debug
+#  -O2                             for release
+# LINKERRELEASE may be:
+#  -s                              for release
+ifeq ($(TYPE),Debug)
+  RELEASE       = -g -Wall -pedantic 
+  LINKERRELEASE =
+else
+  RELEASE       = -O2 
+  LINKERRELEASE = -s
+endif
 
 OBJFILES = compile.o compress.o extract.o resources.o tasks.o disk.o\
            xmlparse.o xmlsearch.o dat.o bmp.o mid.o pal.o wav.o plv.o\
-           memory.o $(SRC2)
+           memory.o $(SRC2) pr.o
 
-SRC1     = pr.o
 SRC3     = prlib.o
 
 EXEFILE  = bin/pr
+XMLFILE  = bin/resources.xml
+
+#Use this to temporary remove an option
+OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
+LINKEROPTIONS = $(LINKERRELEASE)
 
 #main file
 
-bin/pr: $(OBJFILES) $(SRC1) bin/resources.xml
+$(EXEFILE): $(OBJFILES) $(XMLFILE)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
-	$(CC) $(OPTIONS) -o bin/pr $(OBJFILES) $(SRC1) -O2
+	$(CC) $(OPTIONS) -o bin/pr $(OBJFILES) 
 	$(INFO) Program successfully compiled
 	$(INFO)
 	$(INFO) Please read readme.txt for syntax information
@@ -47,7 +78,11 @@ bin/pr: $(OBJFILES) $(SRC1) bin/resources.xml
 
 clean:
 	$(INFO) Erasing temporary object files...
-	@rm -f *.o bin/pr
+	$(REMOVER) $(OBJFILES) $(SRC3) $(EXEFILE)
+
+cleanxml:
+	$(INFO) Erasing xml file...
+	$(REMOVER) $(XMLFILE)
 
 build: clean bin/pr
 
@@ -64,12 +99,10 @@ lib: clean $(OBJFILES) $(SRC3)
 
 #files
 
-bin/resources.xml: resources.xml.gz
+$(XMLFILE): resources.xml.gz
 	$(INFO) Uncompressing resources...
-	@mkdir -p bin
-	@gunzip resources.xml.gz
-	@cp -f resources.xml bin
-	@gzip resources.xml
+	$(MAKEDIR) bin
+	$(GZIP) -cd resources.xml.gz >bin/resources.xml
 
 compile.o: compile.c
 	$(INFO) Compiling import module...
@@ -150,3 +183,4 @@ getopt.o: ports/getopt.c
 getopt1.o: ports/getopt1.c
 	$(INFO) Porting the Unix-like getopt function \(second part\)...
 	$(CC) $(OPTIONS) -c ports/getopt1.c
+
