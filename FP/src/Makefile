@@ -185,7 +185,8 @@ config.o: res/config.c include/resources.h include/res_conf.h
 	$(CC) -c res/config.c $(OPTIONS)
 
 states.o: ker/states.c include/states.h include/states_conf.h\
-          include/resources.h include/res_conf.h
+          include/resources.h include/res_conf.h include/types.h\
+					include/tiles.h include/tiles_conf.h
 	$(INFO) compiling kernel states module...
 	$(CC) -c ker/states.c $(OPTIONS)
 

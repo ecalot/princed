@@ -74,7 +74,8 @@ typedef struct {
 	int            totalPressables;
 	tEvent         events[256];
 	int            time;
-	unsigned char start[3];
+	unsigned char  start[3];
+	unsigned char  levelNumber;
 } tMap;
 
 typedef struct {
