@@ -143,14 +143,14 @@ void search_best_pattern(unsigned char *input, int inputSize,
 /* Insert the specified bit in the current maskByte. If the maskByte is full,
  * start a new one. */
 static int maskBit=8;
-void pushMaskBit(int b, unsigned char *output, int *outputPos)
+void pushBit(int b, unsigned char *output, int *oCursor)
 {
 	static unsigned char* maskByte;
 	if ( maskBit == 8 ) /* first time or maskBit is full */
 	{
 		/* start a new maskByte */
-		maskByte = output + *outputPos;
-		(*outputPos)++;
+		maskByte = output + *oCursor;
+		(*oCursor)++;
 		*maskByte = 0;
 		maskBit = 0;
 	}
@@ -160,14 +160,14 @@ void pushMaskBit(int b, unsigned char *output, int *outputPos)
 }
 
 /* Insert the two bytes describing the pattern repetition to the output. */
-void addPattern(unsigned char *input, int inputPos,
-                unsigned char *output, int outputPos,
+void addPattern(unsigned char *input, int iCursor,
+                unsigned char *output, int oCursor,
                 unsigned char *pattern, int pattern_len)
 {
-	int loc = (pattern - input) + 1024 - 66;
-	output[outputPos] = 
-		(((pattern_len - 3) << 2) & 0xfc) + ((loc & 0x0300) >> 8);
-	output[outputPos + 1] = (loc & 0x00FF);
+	int loc = (pattern - input) + WIN_SIZE - MAX_PATTERN_SIZE;
+	output[oCursor] = 
+		(((pattern_len - MIN_PATTERN_SIZE) << 2) & 0xfc) + ((loc & 0x0300) >> 8);
+	output[oCursor + 1] = (loc & 0x00FF);
 }
 
 /* Compress using the LZG algorithm */
@@ -175,48 +175,44 @@ void addPattern(unsigned char *input, int inputPos,
 void compressLzg(const unsigned char* input2, int inputSize, 
                  unsigned char* output, int *outputSize)
 {
-	int inputPos = 0, outputPos = 0;
-	int i;
+	int iCursor = 0, oCursor = 0;
 	unsigned char* input=malloc(inputSize+WIN_SIZE);
 
 	/* Create ghost window filled with zeros before input data: */
-	/* memset */
-	for (i = 0; i < WIN_SIZE; i++)
-		input[i] = 0;
+	memset(input, 0, WIN_SIZE);
 	input += WIN_SIZE;
-	for (i = 0; i < inputSize; i++)
-		input[i] = input2[i];
+	memcpy(input,input2,inputSize);
 
-	while (inputPos < inputSize)
+	while (iCursor < inputSize)
 	{
 		unsigned char *best_pattern;
 		int best_pattern_len;
 
-		search_best_pattern(input + inputPos, inputSize - inputPos, 
+		search_best_pattern(input + iCursor, inputSize - iCursor, 
 		                    &best_pattern, &best_pattern_len);
 
 		if (best_pattern_len < MIN_PATTERN_SIZE)
 		{
 			/* No suitable pattern found. Just copy the current byte. */
-			pushMaskBit(1, output, &outputPos);
-			output[outputPos] = input[inputPos];
-			inputPos++;
-			outputPos++;
+			pushBit(1, output, &oCursor);
+			output[oCursor] = input[iCursor];
+			iCursor++;
+			oCursor++;
 		}
 		else
 		{
 			/* Can compress. Repeat the best pattern. */
-			pushMaskBit(0, output, &outputPos);
-			addPattern(input, inputPos, output, outputPos,
+			pushBit(0, output, &oCursor);
+			addPattern(input, iCursor, output, oCursor,
 			           best_pattern, best_pattern_len);
-			inputPos += best_pattern_len;
-			outputPos += 2;
+			iCursor += best_pattern_len;
+			oCursor += 2;
 		}
 	}
 
 	maskBit=8; /* reinitialize maskBit*/
 
 	free(input-WIN_SIZE);
-	*outputSize = outputPos;
+	*outputSize = oCursor;
 }
 
