@@ -167,10 +167,11 @@ void outputFreeBitmap(void* image) {
 /* Graphics: Primitives for the kernel */
 void outputDrawBitmap(void* image, int x, int y) {
 	/* Draws an abstract image */
-	SDL_Surface *s = ((tSurface*)image)->surface;
+	tSurface* img=(tSurface*)image;
+	SDL_Surface *s = img->surface;
 	SDL_Rect dest;
-	dest.x = x;
-	dest.y = y-s->h;
+	dest.x = x+img->left;
+	dest.y = y-s->h-img->bottom;
 	dest.w = s->w;
 	dest.h = s->h;
 	if (SDL_MUSTLOCK(screen)) SDL_LockSurface(screen);
