@@ -75,7 +75,7 @@ $(EXEFILE): $(OBJFILES)
 
 clean:
 	$(INFO) Erasing temporary object files...
-	$(REMOVER) $(OBJFILES) $(EXEFILE)
+	$(REMOVER) $(OBJFILES) $(EXEFILE) include/res_conf.h
 
 build: clean $(EXEFILE)
 
@@ -99,11 +99,11 @@ main.o: main.c include/kernel.h include/main.h
 	$(CC) -c main.c $(OPTIONS)
 
 resources.o: res/resources.c include/resources.h include/compress.h \
-             include/dat.h include/disk.h
+             include/dat.h include/disk.h include/res_conf.h
 	$(INFO) Compiling main resource manager module...
 	$(CC) -c res/resources.c $(OPTIONS)
 
-disk.o: res/disk.c include/memory.h include/disk.h include/resources.h
+disk.o: res/disk.c include/memory.h include/disk.h include/resources.h include/res_conf.h
 	$(INFO) Compiling resource disk access library...
 	$(CC) -c res/disk.c $(OPTIONS)
 
@@ -111,7 +111,7 @@ dat.o: res/dat.c include/disk.h include/dat.h
 	$(INFO) Compiling resource dat editing library...
 	$(CC) -c res/dat.c $(OPTIONS)
 
-kernel.o: ker/kernel.c include/kernel.h include/resources.h include/output.h
+kernel.o: ker/kernel.c include/kernel.h include/resources.h include/res_conf.h include/output.h
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
@@ -136,7 +136,7 @@ maps.o: res/maps.c include/maps.h
 	$(INFO) Compiling resource map handling module...
 	$(CC) -c res/maps.c $(OPTIONS)
 
-output.o: out/output.c include/resources.h
+output.o: out/output.c include/resources.h include/res_conf.h
 	$(INFO) Compiling main output module...
 	$(CC) -c out/output.c $(OPTIONS)
 
@@ -144,7 +144,10 @@ input.o: out/input.c include/input.h
 	$(INFO) Compiling main input module...
 	$(CC) -c out/input.c $(OPTIONS)
 
-config.o: res/config.c include/resources.h
+config.o: res/config.c include/resources.h include/res_conf.h
 	$(INFO) Compiling resource configuration module...
 	$(CC) -c res/config.c $(OPTIONS)
 
+include/res_conf.h: mkcfg conf/files.conf conf/mods.conf conf/parts.conf\
+                    conf/resources.conf conf/types.conf
+	@./mkcfg

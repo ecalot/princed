@@ -158,6 +158,7 @@ tData* resLoad(long id) {
 			return result;
 		}
 	}
+	return NULL; /* unknown type */
 }
 
 void resFree(tData* res) {
