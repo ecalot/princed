@@ -4,10 +4,9 @@
 
 #define MAX_LINE_SIZE 300
 
-#define RES_XML_UNKNOWN_XML   "unknown.xml"
 #define RES_XML_UNKNOWN_PATH  "%s/unknown/%s/"
 #define RES_XML_UNKNOWN_START "<?xml version=\"1.0\" ?>\n<itemtypes version=\"0.6\">\n <folder name=\"unknown\" file=\"%s\" external=\"%s\" palette=\"%d\">\n"
-#define RES_XML_UNKNOWN_ITEM  "  <item value=\"%d\" external=\"res%05d.%s\" itemtype=\"%d\">Unknown Resource number %d</item>\n"
+#define RES_XML_UNKNOWN_ITEM  "  <item value=\"%d\" external=\"res%05d.%s\" itemtype=\"%s\">Unknown Resource number %d</item>\n"
 #define RES_XML_UNKNOWN_END   " </folder>\n</itemtypes>\n"
 #define RES_XML_UNKNOWN_FILES "%d.%s"
 
@@ -45,13 +44,12 @@ void emptyTable(tResource* r[]);
 //parse file
 char parseFile(char* vFile, char* datFile, tResource* r[]);
 
-//generate file
-char generateFile(char* vFile,tResource* r[]);
-
 //Resources extras
 
 void getFileName(char* vFileext,char* vDirExt,tResource* r,short id,char* vFiledat);
 void getUpperFolder(char* aux, char* vFiledat);
+
+const char* getExtDesc(int type);
 
 //In case there are unknown resources it closes the unknown XML output
 void endUnknownXml();
