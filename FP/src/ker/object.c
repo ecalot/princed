@@ -92,6 +92,7 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 	int refresh;
 	int x;
 	int y;
+	tTile tile;
 	
 	flags=stateUpdate(&key,object,room);
 
@@ -111,14 +112,25 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 			/* Calculate the new positions */
 			x=object->location/TILE_W;
 			y=object->floor;
+			
 			if (refresh) *room=mapGetRoom(room->level,room->id);
 			refresh=0;
+			tile=roomGetTile(room,x+1,y+1);
+
+			if (isIn(tile,TILES_BLOCK)) {
+#ifdef OBJECT_DEBUG
+				printf("INTERRUPTION! Wall at (x,y)=(%d,%d) tile=(%d,%d) loc=%d\n",x,y,tile.code,tile.back,object->location);
+#endif
+				objectInterrupt(object,STATE_MARKS_CRASH);
+				      stateUpdate(NULL,object,room); /* move again the to the interrupted state */
+				flags=stateUpdate(NULL,object,room); /* move again to the absoluteOnStart state */
+			}
+			
 			/* Check if the object must fall down */
 			if (flags&STATES_FLAG_P) {
-				tTile tile=roomGetTile(room,x+1,y+1);
 				if (!isIn(tile,TILES_WALKABLE)) { /* INTERRUPTION */
 #ifdef OBJECT_DEBUG
-					printf("INTERRUPTION! (x,y)=(%d,%d) tile=(%d,%d)\n",x,y,tile.code,tile.back);
+					printf("INTERRUPTION! No floor at (x,y)=(%d,%d) tile=(%d,%d)\n",x,y,tile.code,tile.back);
 #endif
 					objectInterrupt(object,STATE_MARKS_FALL);
 					flags=stateUpdate(&key,object,room); /* move again the to the interrupted state */
@@ -132,7 +144,6 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 					outputBlinkScreen(1,1);
 			}
 			if (flags&STATES_FLAG_D) {
-				tTile tile=roomGetTile(room,x+1,y+1);
 				if (!kidDrinkPotion(object,tile)) /* drink the potion */
 					flags=STATE_EXIT_CODE_SPLASH;
 				/* Change the map */
