@@ -114,7 +114,7 @@ int verifyHeader(const unsigned char* array, int size);
 \***************************************************************/
 
 /* CheckSum verification */
-int checkSum(unsigned char* data,int size);
+int checkSum(const unsigned char* data,int size);
 
 /* Empty resource table */
 void emptyTable(tResource* r[]);

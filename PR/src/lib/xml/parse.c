@@ -465,7 +465,7 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 		*error=-4; /* File not open */
 		return NULL;
 	}
-	l[size-1]=0; /* The last character must be an end of line (the > is forbiden) */ 
+	/* bugfix moved to loadArray */ l[size-1]=0; /* The last character must be an end of line (the > is forbiden) */ 
 	p=l;
 
 	*error=getNextTag(&p, &value);

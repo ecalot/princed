@@ -71,7 +71,7 @@ extern FILE* outputStream;
 const char *repairFolders(const char* a) {
 	int i,k;
 	static char result[MAX_FILENAME_SIZE];
-fld("rf1");
+
 
 	for (i=0,k=0;a[i]&&(k<MAX_FILENAME_SIZE);) {
 		if (isDirSep(a,i)) {
@@ -84,9 +84,9 @@ fld("rf1");
 		}
 		k++;
 	}
-fld("rf2");
+
 	result[k]=0;
-fld("rf3");
+
 	return result;
 }
 
@@ -133,21 +133,21 @@ void addFileToOpenFilesList(const char* fileName,int hasBackup) {
 	*/
 
 	tOpenFiles* newNode;
-fld("h1");
+
 
 	/* Create the new node and fill in the fields */
 	newNode=(tOpenFiles*)malloc(sizeof(tOpenFiles));
 	newNode->next=openFilesList;
 	newNode->name=strallocandcopy(fileName);
-fld("h2");
+
 	if (hasBackup) {
-fld("h3");
+
 		newNode->size=mLoadFileArray(fileName,&(newNode->content));
-fld("h3");
+
 	} else {
-fld("h4");
+
 		newNode->size=0;
-fld("h4");
+
 	}
 	openFilesList=newNode;
 }
@@ -220,9 +220,7 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 		if (size) free(content);
 	}
 
-	dontSave=fclose(fp);
-
-	return dontSave;
+	return fclose(fp);
 }
 
 int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
@@ -255,7 +253,7 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 	tcsetattr (STDIN_FILENO, TCSANOW, &term);
 #endif
 #endif
-fld("g2");
+
 
 	/* Create base directory and save file */
 	file=repairFolders(vFileext);
@@ -263,7 +261,7 @@ fld("g2");
 	/* Verify if file already exists. */
 	fileType=isDir(vFileext);
 	if (fileType==eDirectory) return 0;
-fld("g3");
+
 
 	if (fileType==eFile) {
 		/* File exists. We need to ask */
@@ -278,7 +276,7 @@ fld("g3");
 	} else {
 		makebase(file);
 	}
-fld("g4");
+
 
 #ifdef UNIX
 #ifndef IGNORE_TERM_CHANGE
@@ -291,12 +289,12 @@ fld("g4");
 		If the file exists, we need to remember the old content in memory
 		if not, we need to know the name in case we need to delete it
 	*/
-fld("g5");
+
 
 	addFileToOpenFilesList(file,hasFlag(backup_flag));
-fld("g6");
+
 	if ((result=((*fp=fopen(file,"wb"))!=NULL))) addPointerToOpenFilesList(*fp);
-fld("g7");
+
 	return result;
 }
 
@@ -327,11 +325,8 @@ int writeData(const unsigned char* data, int ignoreChars, char* vFileext, int si
 
 	/* Save file */
 	ok=writeOpen(vFileext,&target,optionflag);
-/* printf("x->%d\n",ok); */
 	ok=ok&&((!size)||fwrite(data+ignoreChars,size,1,target));
-/* printf("x->%d\n",ok); */
 	ok=ok&&(!writeCloseOk(target,optionflag,backupExtension));
-/* printf("x->%d\n",ok); */
 	return ok;
 }
 
@@ -355,7 +350,6 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 		/* get file size */
 		fseek(fp,0,SEEK_END);
 		aux=ftell(fp);
-fld("mLoadFileArray: 1");
 		if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(unsigned char*)malloc(aux+1))==NULL) ) ) {
 			/* if the file was null or bigger than the max size or couldn't allocate the file in memory */
 			fclose(fp);

@@ -107,8 +107,6 @@ int mReadFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
 
 	/* for each archived file the index is read */
 	id=    array2short(indexPointer+ofk+k*recordSize);/*(indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8);*/
-/* printf("a ver: %d %d\n",id,(indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8)); */
-	
 	offset=array2long(indexPointer+ofk+k*recordSize+2);/*indexPointer[ofk+k*recordSize+2])+(indexPointer[ofk+k*recordSize+3]<<8)+(indexPointer[ofk+k*recordSize+4]<<16)+(indexPointer[ofk+k*recordSize+5]<<24);*/
 	*size= array2short(indexPointer+ofk+k*recordSize+6)+1;/*indexPointer[ofk+k*recordSize+6])+(indexPointer[ofk+k*recordSize+7]<<8)+1;*/
 	if ((!pop1)&&(!(indexPointer[ofk+k*recordSize+8]==0x40)&&(!indexPointer[ofk+k*recordSize+9])&&(!indexPointer[ofk+k*recordSize+10]))) return -1;

@@ -105,9 +105,9 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResource* r[], int o
 	int ok=0;
 	unsigned char* data;
 	unsigned short int id=1;
-fld("itdb");
+
 	if (!mWriteBeginDatFile(vFiledat,optionflag)) return -1; /* File couldn't be open */
-fld("tb");
+
 	for (;id!=MAX_RES_COUNT;id++) {
 		if (r[id]!=NULL) {
 			if (hasFlag(raw_flag)) r[id]->type=0; /* compile from raw */
@@ -129,13 +129,13 @@ fld("tb");
 			}
 		}
 	}
-fld("kb");
+
 	/* Close file. If empty, don't save */
 	mWriteCloseDatFile(r,!ok,optionflag,backupExtension);
-fld("db");
+
 	/* Free allocated resources and dynamic strings */
 	freeResources;
-fld("zb");
+
 	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,error);
 	return error;
 }
@@ -167,12 +167,12 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResource* r[], in
 		if (id<0) RW_ERROR; /* Read error */ /* TODO BUG: return doesn't close file */
 		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
 		if (id>=MAX_RES_COUNT) RW_ERROR; /* A file with an ID out of range will be treated as invalid */
-fld("e");
+
 		mWriteInitResource(r+id);
 		if (r[id]&&isInThePartialList(r[id]->path,id)) { /* If the resource was specified */
 			if (hasFlag(raw_flag)) r[id]->type=0; /* compile from raw */
 			getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension);
-fld("g");
+
 			/* the file is in the archive, so i'll add it to the main dat body */
 			if ((r[id]->size=((unsigned long)mLoadFileArray(vFileext,&data)))) {
 				if (!mAddCompiledFileToDatFile(data,r[id],vFileext)) {
@@ -192,26 +192,22 @@ fld("g");
 			mWriteFileInDatFileIgnoreChecksum(data,size);
 		}
 	}
-fld("k");
 
 	/* Close dat file */
 	mRWCloseDatFile(0);
 
 	/* Free allocated resources and dynamic strings */
 	freeResources;
-fld("b");
 
 	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,error);
 	return error;
 }
 
 int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int optionflag, const char* vDatFileName,const char* backupExtension) {
-fld("b");
+
 	if (partialListActive()) {
-fld("fub");
 		return partialCompile(vFiledat,vDirExt,r,optionflag,vDatFileName,backupExtension);
 	} else {
-fld("fdb");
 		return fullCompile(vFiledat,vDirExt,r,optionflag,vDatFileName,backupExtension);
 	}
 }

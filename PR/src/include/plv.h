@@ -74,7 +74,7 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 /* Format stuff */
 #define PLV_HEADER_A           "POP_LVL\x01\x01"
 #define PLV_HEADER_A_SIZE      9
-#define PLV_HEADER_B           "\08x\0\0"
+#define PLV_HEADER_B           "\x08\0\0"
 #define PLV_HEADER_B_SIZE      4
 #define PLV_FOOT_EDITOR        "EDITORNAME\0PR\0EDITORVERS\0"PR_VERSION"\0AUTHOR"
 #define PLV_FOOT_TITLE         "TITLE"

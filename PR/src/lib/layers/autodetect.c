@@ -216,7 +216,7 @@ void freePartialList() {
 |                       Checksum handling                       |
 \***************************************************************/
 
-int checkSum(unsigned char* data,int size) {
+int checkSum(const unsigned char* data,int size) {
 	unsigned char  checksum = 1;
 
 	/* calculates the checksum */
@@ -311,7 +311,7 @@ static unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
 void endUnknownXml(int optionflag, const char* backupExtension) {
 	if (unknownXmlFile!=NULL) {
 		int i;
-		fprintf(unknownXmlFile,RES_XML_UNKNOWN_END);
+		fprintf(unknownXmlFile,RES_XML_UNKNOWN_END); /* TODO: use fwrite instead */
 		writeCloseOk(unknownXmlFile,optionflag,backupExtension);
 		unknownXmlFile=NULL;
 		for (i=0;i<RES_TYPECOUNT;i++) typeCount[i]=0;
