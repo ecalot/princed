@@ -1,10 +1,19 @@
-#Programs
-CC      = @gcc
-LINKER  = @ld
-INFO    = @echo
-MAKEDIR = @mkdir -p
+############
+# Programs #
+############
 
-#Operating Systems
+CC         = @gcc
+LINKER     = @ld
+INFO       = @echo
+MAKEDIR    = @mkdir -p
+INDEXER    = @cd ..;./install; cd src
+DOWNLOADER = @cd ..;./install -d; cd src
+REMOVER    = @rm -f
+	
+#####################
+# Operating Systems #
+#####################
+
 OS      := $(shell uname)
 ifeq ($(OS),Linux)
   LINUX = -DLINUX
@@ -15,48 +24,81 @@ else
   SRC2  = getopt.o getopt1.o
 endif
 
-#Compiler options
-INCLUDE = -Iinclude/
-DEFINES = -DOS=\"$(OS)\" $(LINUX) 
-OPTIONS = $(INCLUDE) $(DEFINES) -g -Wall -ansi -pedantic 
-# -O2 for release
 
-OBJFILES = main.o kernel.o resources.o dat.o disk.o compress.o output.o maps.o config.o
-LIBS     = -lSDL -lpthread
+####################
+# Compiler options #
+####################
 
-EXEFILE  = bin/freeprince
+#Libraries: include path and linked libs
+INCLUDE       = -Iinclude/
+LIBS          = -lSDL -lpthread
 
-#main file
+#Defines
+DEFINES       = -DOS=\"$(OS)\" $(LINUX) 
+
+#Release type
+# RELEASE may be:
+#  -g -Wall -ansi -pedantic        for debug
+#  -O2                             for release
+# LINKERRELEASE may be:
+#  -s                              for release
+RELEASE       = -g -Wall -ansi -pedantic 
+LINKERRELEASE =
+
+#Binary code files
+OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
+                output.o maps.o config.o
+EXEFILE       = bin/freeprince
+
+#Use this to temporary remove an option
+OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
+LINKEROPTIONS = $(LINKERRELEASE)
+
+#############
+# main file #
+#############
 
 $(EXEFILE): $(OBJFILES)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
-	$(CC) $(OPTIONS) -o $(EXEFILE) $(OBJFILES) $(LIBS)
+	$(CC) $(OPTIONS) -o $(EXEFILE) $(OBJFILES) $(LIBS) $(LINKEROPTIONS)
 	$(INFO) Program successfully compiled
 	$(INFO)
 	$(INFO) Please read readme.txt for syntax information
 	$(INFO)
 
-#command options
+
+###################
+# command options #
+###################
 
 clean:
 	$(INFO) Erasing temporary object files...
-	@rm -f *.o bin/freeprince
+	$(REMOVER) $(OBJFILES) $(EXEFILE)
 
-build: clean  $(EXEFILE)
+build: clean $(EXEFILE)
 
-all: install build
+all: index build
 
-install: ../install
-	@cd ..;./install; cd src
+install: download build
 
-#files
+index: ../install
+	$(INDEXER)
+
+download: ../install
+	$(DOWNLOADER)
+
+
+################
+# Source files #
+################
 
 main.o: main.c include/kernel.h include/main.h
 	$(INFO) Compiling command line parser...
 	$(CC) -c main.c $(OPTIONS)
 
-resources.o: res/resources.c include/resources.h include/compress.h include/dat.h include/disk.h
+resources.o: res/resources.c include/resources.h include/compress.h \
+             include/dat.h include/disk.h
 	$(INFO) Compiling main resource manager module...
 	$(CC) -c res/resources.c $(OPTIONS)
 
@@ -72,7 +114,8 @@ kernel.o: ker/kernel.c include/kernel.h include/resources.h include/output.h
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
-compress.o: res/compress.c include/compress.h include/memory.h include/disk.h
+compress.o: res/compress.c include/compress.h include/memory.h \
+            include/disk.h
 	$(INFO) Compiling resource compression module...
 	$(CC) -c res/compress.c $(OPTIONS)
 
