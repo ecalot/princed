@@ -48,9 +48,9 @@ void loadGfx(int storeMirrored, tData** gfxCache, unsigned long resId) {
 		gfxCache[DIR_RIGHT]=NULL;
 }
 
-void objectFree(tData** gfxCache) {
-	resFree(gfxCache[DIR_LEFT]);
-	if (gfxCache[DIR_RIGHT]) resFree(gfxCache[DIR_RIGHT]);
+void objectFree(tObject obj) {
+	resFree(obj.gfxCache[DIR_LEFT]);
+	if (obj.gfxCache[DIR_RIGHT]) resFree(obj.gfxCache[DIR_RIGHT]);
 }
 
 /* TODO: make a function in maps.c that calls this one */
