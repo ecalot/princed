@@ -15,8 +15,26 @@ VARDEFINE="#define"
 VARDEFSTART="DATA_START_ITEMS"
 VARDEFEND="DATA_END_ITEMS"
 
+#check for dirs
+if [ -d def ]
+then
+	FAIL=0
+else
+	FAIL=1
+	echo "Directory def does not exist" >> error_log
+fi
+
+FILES=`ls def/*.def 2>/dev/null`
+
+if [ -z "$FILES" -a $FAIL == 0 ]
+then
+	FAIL=1
+	echo "Directory def does not contain information" >> error_log
+fi
+
+
+
 #initializes output files
-FAIL=0
 number=$numberstart
 echo -n "Generating header and xml files            "
 cp -f result/data.h result/data.h.bak 2>/dev/null >/dev/null
@@ -24,7 +42,9 @@ echo -e "/* data.h: Auto generated file header for resources */\n">result/data.h
 cat xml/gen1.xml > xml/resources.xml
 
 #process and add all definitions to the xml and h files
-for definition in def/*.def 
+if [ $FAIL == 0 ]
+then
+for definition in def/*.def
 do
 	#define variables and convert the resource type
 	definition=`echo $definition|sed -e "s/def\/\(.*\)\.def/\1/g"`
@@ -54,6 +74,7 @@ do
 
 	number=`expr $number + 1`
 done
+fi
 
 #finish files
 cat xml/gen2.xml >> xml/resources.xml
@@ -63,20 +84,21 @@ then
 	echo -e "$SFAIL"
 else
 	echo -e "$SOK"
+
+	#generate the dat file using the proceced indexes and the xml file
+	echo -n "Generating dat file                        "
+	bin/pr --import=index --force --backup=bak --resource=xml/resources.xml result 2>/dev/null >/dev/null
+	FAIL=$?
+	if [ $FAIL == 0 ] ; then
+		echo -e "$SOK"
+	else
+		echo "PR error number $FAIL" >> error_log
+		echo -e "$SFAIL"
+	fi
 fi
 
-#generate the dat file using the proceced indexes and the xml file
-echo -n "Generating dat file                        "
-bin/pr --import=index --force --backup=bak --resource=xml/resources.xml result 2>/dev/null >/dev/null
-result=$?
-
-if [ $result == 0 ] ; then
-	echo -e "$SOK"
-else
-	echo -e "$SFAIL"
-fi
-
-if [ $FAIL == 1 ]
+#print errors and exit
+if [ $FAIL != 0 ]
 then
 	echo -e "\nPlease correct the following errors:\n"
 	cat error_log > /dev/stderr
