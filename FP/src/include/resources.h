@@ -33,6 +33,8 @@ resources.h: Free Prince : Resource Handler
 #ifndef _RESOURCES_H_
 #define _RESOURCES_H_
 
+#include "config.h"
+
 //int resOpenFile(const char* file); 
 	/* Opens file, loads the data into memory, closes the file and
 	 * returns an ID number (data descriptor) for the new structure. */
