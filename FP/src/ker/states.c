@@ -4,6 +4,8 @@
 short* stateGetAnimation(int action,short* frames);
 
 static tsAction statesActionList[]=STATES_ACTIONS;
+static short statesAnimationList[]=STATES_ANIMATIONS;
+static short statesConditionList[]=STATES_CONDITIONS;
 
 /* public functions interface */
 tState createState(int level) {
@@ -14,23 +16,8 @@ tState createState(int level) {
 	return start;
 }
 
-/* This function should return the image frame and actions to be performed by this call
- * returns the animation number corresponding to this frame */
+/* private functions */
 
-int stateUpdate(tState* current,tKey* key,tMap* map) {
-	int imageFrame=statesAnimationList[current->animation[frame]];
-	if (frame) {
-		current->frame--;
-	} else {
-		int action;
-		/* free(current->animation) */
-		action=evaluateState(current->currentState,key,map);
-		current->animation=stateGetAnimation(action,&(current->frame));
-		current->currentState=statesActionList[action].nextStateId;
-	}
-}
-
-/* privates */
 /* Evaluates a condition indexed in the condition table */
 int evaluateCondition(int condition,tKey* key,tMap* map) {
 	tsCondition c=statesConditionList[condition];
@@ -72,6 +59,21 @@ int evaluateState(int state, tKey* key, tMap* map) {
 	int i=state;
 	while (!evaluateAction(i,map,key)) i++;
 	return i;
+}
+
+/* This function should return the image frame and actions to be performed by this call
+ * returns the animation number corresponding to this frame */
+int stateUpdate(tState* current,tKey* key,tMap* map) {
+	int imageFrame=statesAnimationList[current->animation[current->frame]];
+	if (current->frame) {
+		current->frame--;
+	} else {
+		int action;
+		/* free(current->animation) */
+		action=evaluateState(current->currentState,key,map);
+		current->animation=stateGetAnimation(action,&(current->frame));
+		current->currentState=statesActionList[action].nextStateId;
+	}
 }
 
 

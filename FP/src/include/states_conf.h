@@ -7,10 +7,10 @@
 #ifndef _STATES_CONF_
 #define _STATES_CONF_
 
-/* state/action, animation and condition lists */
-#include "states_conf_static.h"
 /* condition properties */
 #include "states_conf_properties.h"
+/* state/action, animation and condition lists */
+#include "states_conf_static.h"
 
 #endif
 

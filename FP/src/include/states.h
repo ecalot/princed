@@ -3,7 +3,8 @@
 
 /* Structs */
 
-#include "types.h"
+#include "types.h" /* tMap */
+#include "input.h" /* tKey */
 
 typedef enum {esKeyUp,esKeyDown,esKeyForward,esKeyBack,esShift,esMapUp,esMapDown,esMapForward,esMapBack,esMapOn,esForwardTileNearerThan,esForwardTileFartherThan,esInScreen,esInLevel,esForwardChangeToScreen,esLast=0}tsConditionType;
 
