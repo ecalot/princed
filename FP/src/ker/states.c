@@ -24,8 +24,8 @@ states.c: FreePrince : State object
  Copyright 2004 Princed Development Team
   Created: 16 Oct 2004
 
-  Author:  Enrique Calot <ecalot.cod@princed.com.ar>
-
+  Authors:  Enrique Calot <ecalot.cod@princed.com.ar>
+	    Rodrigo Campos Catelin <rodrigocc@gmail.com>
  Note:
   DO NOT remove this copyright notice
 */
