@@ -36,6 +36,7 @@ extract.c: Princed Resources : DAT Extractor
 #include <stdio.h>
 #include <string.h>
 #include "freeprince.h"
+#include "resources.h"
 
 #include "compress.h"
 
@@ -45,14 +46,14 @@ extract.c: Princed Resources : DAT Extractor
 /***************************************************************\
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
-
+/*
 #define initializePaletteList \
 for (id=0;id<MAX_RES_COUNT;id++) {\
 	if (r[id]!=NULL) {\
 		r[id]->palAux=NULL;\
 	}\
 }
-
+*/
 /***************************************************************\
 |                    M A I N   E X T R A C T                    |
 \***************************************************************/
@@ -63,26 +64,54 @@ for (id=0;id<MAX_RES_COUNT;id++) {\
 	For parameter documentation, see pr.c
 */
 
-int prVerifyDatType(const char* vFiledat) {
+int res_getData(int id,int maxItems,unsigned char** data,unsigned long int* size) {
+	/* This function looks for a data resource in a dat file optimizing the search knowing
+	 * that the id's starts in 0
+	 */
+	
+	long int gotId;
+	
+	/* main loop */
+	for (indexNumber=id;indexNumber+1=id;indexNumber++) {
+		if (indexNumber==maxItems) indexNumber=0; /* reset the counter */
+		gotId=mReadFileInDatFile(indexNumber,data,&size);
+		if (gotId==id) break;
+	}
+	
+	/* Return value */
+	return (gotId==id); /* 1 if the id was found, 0 if not */
+}
+
+
+
+int res_get(const char* vFiledat) {
 	int                indexNumber;
 	long int           id;
 	unsigned char*     data;
 	unsigned long  int size;
 	int                type=RES_TYPE_BINARY;
-	unsigned short int numberOfItems;
 
+return type+10;
+}
+
+
+/**
+ * Public interface
+ * */
+
+tData* resLoad(int id) {
+					
+				
 	/* Initialize abstract variables to read this new DAT file */
-	if (!mReadBeginDatFile(&numberOfItems,vFiledat)) return -1;
+	unsigned short int numberOfItems;
+	if (!mReadBeginDatFile(&numberOfItems,"index.dat")) return -1;
 
-	/* main loop */
-	for (indexNumber=0;(indexNumber<numberOfItems)&&(type==RES_TYPE_BINARY);indexNumber++) {
-		id=mReadFileInDatFile(indexNumber,&data,&size);
-		if (id<0) return -1; /* Read error */
-		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
-		if (id>=MAX_RES_COUNT) return -1; /* A file with an ID out of range will be treated as invalid */
-		type=0;//verifyHeader(data,size);
-	}
+	if (!res_getData(id,int maxItems,unsigned char** data,unsigned long int* size)) return -1;
+	
 
 	mReadCloseDatFile();
-	return type+10;
+	
+
+
 }
+
