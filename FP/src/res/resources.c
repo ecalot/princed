@@ -246,7 +246,7 @@ tData* resLoad(int id) {
 	
 	mReadCloseDatFile();
 	free(frames);
-
+	printf("resLoad: returning result pointer 0x%p\n",result);
 	return result;
 }
 
