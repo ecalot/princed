@@ -122,7 +122,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasSkeleton=0;
 		result.hasSpikes=0;
 		result.hasTorch=0;
-		result.hasFloor=(result.code==T_BTN_DROP);
+		result.hasFloor=0;/*(result.code==T_BTN_DROP);*/
 		result.hasBrokenTile=0;
 		result.isWall=0;
 		result.hasSword=0;
@@ -300,12 +300,20 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		}
 	}
 	/* pressable/left */
-	if (left.isRaise) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[10],
-			(x-1)*TILE_W,
-			y*TILE_H+((((tPressable*)left.moreInfo)->action==eNormal)?1:2)
-		);
+	if (left.isPressable) {
+		if (left.isRaise) {
+			outputDrawBitmap(
+				roomGfx.environment->pFrames[10],
+				(x-1)*TILE_W,
+				y*TILE_H+((((tPressable*)left.moreInfo)->action==eNormal)?1:2)
+			);
+		} else {
+			outputDrawBitmap(
+				roomGfx.environment->pFrames[10],
+				(x-1)*TILE_W,
+				y*TILE_H+((((tPressable*)left.moreInfo)->action==eNormal)?2:3)
+			);
+		}
 	}
 	/* debris/left */
 	if (left.hasBrokenTile) {
@@ -436,12 +444,20 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		}
 	}
 	/* pressable/this */
-	if (tile.isRaise) {
-		outputDrawBitmap(
-			roomGfx.environment->pFrames[(((tPressable*)tile.moreInfo)->action==eNormal)?(58-((left.walkable)&&(!left.isRaise))):58],
-			(x-1)*TILE_W,
-			y*TILE_H+((((tPressable*)tile.moreInfo)->action==eNormal)?0:1)
-		);
+	if (tile.isPressable) {
+		if (tile.isRaise) {
+			outputDrawBitmap(
+				roomGfx.environment->pFrames[(((tPressable*)tile.moreInfo)->action==eNormal)?(58-((left.walkable)&&(!left.isRaise))):58],
+				(x-1)*TILE_W,
+				y*TILE_H+((((tPressable*)tile.moreInfo)->action==eNormal)?0:1)
+			);
+		} else {
+			outputDrawBitmap(
+				roomGfx.environment->pFrames[58],
+				(x-1)*TILE_W,
+				y*TILE_H+((((tPressable*)tile.moreInfo)->action==eNormal)?1:2)
+			);
+		}
 	}
 	/* debris/this */
 	if (tile.hasBrokenTile) {
