@@ -220,6 +220,42 @@ DEP_CPP_WAV_C=\
 
 # End Source File
 # End Group
+# Begin Group "ports"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\ports\getopt.c
+DEP_CPP_GETOP=\
+	".\include\getopt.h"\
+	
+
+!IF  "$(CFG)" == "tasks - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ports\getopt1.c
+DEP_CPP_GETOPT=\
+	".\include\getopt.h"\
+	
+
+!IF  "$(CFG)" == "tasks - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
+
+!ENDIF 
+
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\compile.c
@@ -230,6 +266,7 @@ DEP_CPP_COMPI=\
 	".\include\disk.h"\
 	".\include\mid.h"\
 	".\include\pal.h"\
+	".\include\plv.h"\
 	".\include\pr.h"\
 	".\include\resources.h"\
 	".\include\wav.h"\
@@ -287,6 +324,7 @@ DEP_CPP_EXTRA=\
 	".\include\extract.h"\
 	".\include\mid.h"\
 	".\include\pal.h"\
+	".\include\plv.h"\
 	".\include\pr.h"\
 	".\include\resources.h"\
 	".\include\wav.h"\
@@ -304,12 +342,13 @@ DEP_CPP_EXTRA=\
 # Begin Source File
 
 SOURCE=.\pr.c
-DEP_CPP_PR_C12=\
+DEP_CPP_PR_C16=\
 	".\include\bmp.h"\
 	".\include\compile.h"\
 	".\include\compress.h"\
 	".\include\disk.h"\
 	".\include\extract.h"\
+	".\include\getopt.h"\
 	".\include\pr.h"\
 	".\include\resources.h"\
 	".\include\tasks.h"\
@@ -424,6 +463,10 @@ SOURCE=.\include\extract.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\include\getopt.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\include\memory.h
 # End Source File
 # Begin Source File
@@ -489,6 +532,10 @@ SOURCE=..\readme.txt
 # Begin Source File
 
 SOURCE=.\Makefile
+# End Source File
+# Begin Source File
+
+SOURCE=.\Makefile.lcc
 # End Source File
 # Begin Source File
 
