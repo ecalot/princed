@@ -182,7 +182,7 @@ tMenuOption playAnimation(int id) {
 }
 
 /* Old source */
-
+#if 0
 tMenuOption sleep(int ticks) {
 	/* Wait ticks or a key is pressed if an action is thrown process it */
 	tKey key=inputCreateKey();
@@ -200,6 +200,7 @@ tMenuOption sleep(int ticks) {
 	}
 	return menuNone;
 }
+#endif
 
 tMenuOption showTitles() {
 /* Show the titles animation
