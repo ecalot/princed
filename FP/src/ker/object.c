@@ -32,6 +32,7 @@ kid.h: Free Prince : Kid object
 
 #include "kid.h"
 #include "output.h"
+#include "resources.h" /* resLoad/resFree */
 #include <stdio.h> /* NULL */
 
 static struct {
@@ -42,6 +43,7 @@ static struct {
 	tData* walking[2];
 	tData* running[2];
 	tData* startrunning[2];
+	tData* stoprunning[2];
 	tData* turnrunning[2];
 	tData* jumprunning[2];
 } kidGfx;
@@ -61,20 +63,45 @@ void loadGfx() {
 	kidGfx.running[DIR_RIGHT]=resLoad(RES_ANIM_RUN|RES_MOD_RIGHT);
 	kidGfx.startrunning[DIR_LEFT]=resLoad(RES_ANIM_RUN_START|RES_MOD_LEFT);
 	kidGfx.startrunning[DIR_RIGHT]=resLoad(RES_ANIM_RUN_START|RES_MOD_RIGHT);
+	kidGfx.stoprunning[DIR_LEFT]=resLoad(RES_ANIM_RUN_STOP|RES_MOD_LEFT);
+	kidGfx.stoprunning[DIR_RIGHT]=resLoad(RES_ANIM_RUN_STOP|RES_MOD_RIGHT);
 	kidGfx.turnrunning[DIR_LEFT]=resLoad(RES_ANIM_RUN_TURN|RES_MOD_LEFT);
 	kidGfx.turnrunning[DIR_RIGHT]=resLoad(RES_ANIM_RUN_TURN|RES_MOD_RIGHT);
 	kidGfx.jumprunning[DIR_LEFT]=resLoad(RES_ANIM_JUMPRUN|RES_MOD_LEFT);
 	kidGfx.jumprunning[DIR_RIGHT]=resLoad(RES_ANIM_JUMPRUN|RES_MOD_RIGHT);
 }
 
+void kidFree() {
+	resFree(kidGfx.turning[DIR_LEFT]);
+	resFree(kidGfx.turning[DIR_RIGHT]);
+	resFree(kidGfx.normal[DIR_LEFT]);
+	resFree(kidGfx.normal[DIR_RIGHT]);
+	resFree(kidGfx.walking[DIR_LEFT]);
+	resFree(kidGfx.walking[DIR_RIGHT]);
+	resFree(kidGfx.couching[DIR_LEFT]);
+	resFree(kidGfx.couching[DIR_RIGHT]);
+	resFree(kidGfx.jumping[DIR_LEFT]);
+	resFree(kidGfx.jumping[DIR_RIGHT]);
+	resFree(kidGfx.running[DIR_LEFT]);
+	resFree(kidGfx.running[DIR_RIGHT]);
+	resFree(kidGfx.startrunning[DIR_LEFT]);
+	resFree(kidGfx.startrunning[DIR_RIGHT]);
+	resFree(kidGfx.turnrunning[DIR_LEFT]);
+	resFree(kidGfx.turnrunning[DIR_RIGHT]);
+	resFree(kidGfx.jumprunning[DIR_LEFT]);
+	resFree(kidGfx.jumprunning[DIR_RIGHT]);
+}
+
 /* TODO: send this function to maps.c */
 tKid kidCreate() {
 	tKid kid;
+
+	if (kidGfx.turning[0]==NULL) loadGfx();
+
 	kid.location=100;
 	kid.floor=0;
 	kid.direction=DIR_LEFT;
 	kid.frame=0;
-	if (kidGfx.turning[0]==NULL) loadGfx();
 	kid.action=kidGfx.normal[DIR_LEFT];
 	kid.nextAction=stay;
 	kid.velocity=0;
@@ -111,7 +138,7 @@ int kidMove(tKid* kid,tKey key/*,tRoom room*/) {
 		 *
 		 * Note: falling and climbing context are ignored
 		 */
-		printf("next action=%d direction=%d ",kid->nextAction,kid->direction);
+		printf("next action=%d direction=%d keystatus=%x ",kid->nextAction,kid->direction,key.status);
 
 		/* STAY events
 		 */
@@ -147,10 +174,6 @@ int kidMove(tKid* kid,tKey key/*,tRoom room*/) {
 				/* jump */
 				kid->action=kidGfx.jumping[kid->direction];
 				kid->velocity=0;
-			} else if (!key.status) {
-					/* normal */
-					kid->velocity=0;
-					kid->action=kidGfx.normal[kid->direction];
 			} else if (key.status&K_Left) {
 				if (kid->direction==DIR_LEFT) {
 					/* run left */
@@ -175,6 +198,10 @@ int kidMove(tKid* kid,tKey key/*,tRoom room*/) {
 					kid->velocity=0;
 					kid->direction=DIR_RIGHT;
 				}
+			} else {
+				/* normal */
+				kid->velocity=0;
+				kid->action=kidGfx.normal[kid->direction];
 			}
 			/* TODO: elseif for the K_Left and K_Right to start jumping. Change nextAction */
 		} else if (kid->nextAction==run) {
@@ -208,9 +235,8 @@ int kidMove(tKid* kid,tKey key/*,tRoom room*/) {
 				}
 			} else if (!key.status) {
 				/* Stop running */
-				/* for the moment is normal */
-				kid->velocity=0;
-				kid->action=kidGfx.normal[kid->direction];
+				kid->velocity=kid->velocity/3;
+				kid->action=kidGfx.stoprunning[kid->direction];
 				kid->nextAction=stay;
 			} else if ((key.status&K_Up)==K_Up) {
 				/* Jump running */
@@ -226,7 +252,9 @@ int kidMove(tKid* kid,tKey key/*,tRoom room*/) {
 		return 1;
 	} else {
 		/* TODO: tile traspassing and validations here
-		 * use roomStep(tRoom room,x,y) roomTouch(tRoom room,x,y) to activate tile events */
+		 * use roomStep(tRoom room,x,y) roomTouch(tRoom room,x,y) to activate tile events
+		 * use int roomKidValid(tRoom room,tKid kid) to validate kid position
+		 */
 		kid->location+=kid->velocity;
 		return 0;
 	}

@@ -148,7 +148,9 @@ outputLoadBitmap(const unsigned char* data, int size,
 }
 
 /* Frees the abstract object created by the loadBitmap function */
-void outputFreeBitmap(void* image) {}
+void outputFreeBitmap(void* image) {
+	free(image); /* TODO: I think some SDL stuff should be here */
+}
 
 /* Graphics: Primitives for the kernel */
 void outputDrawBitmap(void* image, int x, int y) {

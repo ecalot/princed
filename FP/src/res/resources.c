@@ -252,3 +252,11 @@ tData* resLoad(long id) {
 	return result;
 }
 
+void resFree(tData* res) {
+	if (res->type==eImages) {
+		while (res->frames) {
+			outputFreeBitmap(res->pFrames[--(res->frames)]);
+		}
+	}
+	free(res);
+}

@@ -145,6 +145,8 @@ int kernel(int optionflag,int level) {
 			quit=control(optionflag,level);
 		}
 	} while(!quit);
+
+	kidFree();
 	outputStop();
 	return 0;
 }

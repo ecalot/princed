@@ -52,6 +52,7 @@ typedef struct {
 tKid kidCreate();
 void kidDraw(tKid kid);
 int  kidMove(tKid* kid,tKey key/*,tRoom room*/);
+void kidFree();
 
 #endif
 
