@@ -9,6 +9,6 @@
 #include "resources.h"
 
 void mAddFileToDatFile(FILE* fp, char* data, int size);
-int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt);
+int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int opt, const char* vDatFileName);
 
 #endif

@@ -20,6 +20,6 @@
 	 11 Pop2 dat files
 */
 
-int prVerifyDatType(char* vFiledat);
+int prVerifyDatType(const char* vFiledat);
 
 #endif

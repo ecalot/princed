@@ -17,6 +17,7 @@ typedef struct tTag {
  char* type;
  char* value;
  char* version;
+ char* number;
 }tTag;
 
 //Constants
@@ -26,5 +27,5 @@ typedef struct tTag {
 //tTag* getTagStructure(); //initializes
 void freeTagStructure(tTag* structure);
 //int parseNext(char** pString, tTag* tag);
-tTag* parseXmlFile(char* vFile,int* error);
+tTag* parseXmlFile(const char* vFile,int* error);
 #endif
