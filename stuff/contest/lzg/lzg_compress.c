@@ -79,12 +79,11 @@
 /* search the longest pattern in the window that matches the first bytes
  * of the input */
 void search_best_pattern(unsigned char *input, int inputSize, 
-                         unsigned char *window,
-                         unsigned char **best_pattern, 
-                         int *best_pattern_len)
+                         unsigned char **best_pattern, int *best_pattern_len)
 {
 	unsigned char *pattern;
 	int pattern_len;
+	unsigned char *window = input - (WIN_SIZE - 1);
 	int window_len = WIN_SIZE - 1;
 
 	*best_pattern_len = 0;
@@ -95,8 +94,7 @@ void search_best_pattern(unsigned char *input, int inputSize,
 		unsigned char *wc = pattern + 1;
 		pattern_len = 1;
 
-		while ( (ic < (input + inputSize)) && 
-		        (wc < (window + window_len)) &&
+		while ( (ic < (input + inputSize)) &&
 		        (*ic == *wc) &&
 				pattern_len < MAX_PATTERN_SIZE)
 		{
@@ -109,8 +107,15 @@ void search_best_pattern(unsigned char *input, int inputSize,
 			*best_pattern = pattern;
 		}
 
+		if (pattern_len == MAX_PATTERN_SIZE) break;
+
+		/* Comment these three lines and uncomment the next two to get
+		 * 5% more compression at 4x execution time: */
 		window_len -= wc - window;
+		if (window_len <= 0) break;
 		window = wc;
+		/*window_len--;
+		window++;*/
 	}
 }
 
@@ -167,13 +172,8 @@ void compressLzg(unsigned char* input, int inputSize,
 	{
 		unsigned char *best_pattern;
 		int best_pattern_len;
-		unsigned char *window;
 
-		/* Determine window position: */
-		window = input + inputPos - (WIN_SIZE - 1);
-
-		search_best_pattern(input + inputPos, inputSize - inputPos,
-		                    window, 
+		search_best_pattern(input + inputPos, inputSize - inputPos, 
 		                    &best_pattern, &best_pattern_len);
 
 		if (best_pattern_len < MIN_PATTERN_SIZE)
