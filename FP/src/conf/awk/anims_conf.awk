@@ -36,11 +36,6 @@ BEGIN {
 # Parse input into memory #
 ###########################
 
-#comments
-/^[\t ]*#/ {
-	halt
-}
-
 #animation cathegories
 /^[\t ]*ANIMATION[\t ]/ {
 	$2=toupper($2)
@@ -50,7 +45,6 @@ BEGIN {
 	animation["startf" animcount]=totalimage
 	animation["startt" animcount]=totalobject
 	animation["starto" animcount]=totalsound
-	halt
 }
 
 #tables
@@ -69,7 +63,6 @@ BEGIN {
 	if (tolower($7)=="top") $7=0
 	f["y" totalimage]=$7/1
 	animation["sizef" animcount]++
-	halt
 }
 
 #objects
@@ -97,7 +90,6 @@ BEGIN {
 	if ($8=="mirror") $8=1
 	t["cacheMirror" totalobject]=$8/1
 	animation["sizet" animcount]++
-	halt
 }
 
 #sounds
@@ -107,7 +99,6 @@ BEGIN {
 	o["res" totalsound]=toupper($3)
 	o["type" totalsound]=tolower($2)
 	animation["sizeo" animcount]++
-	halt
 }
 
 ##########################
