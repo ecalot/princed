@@ -173,13 +173,18 @@ void roomDrawBackground(tRoom* room) {
 				);
 			}
 			/* torch/this */
-			if (tile.hasTorch) {
+			if (tile.hasTorch) { /* animation */
 				outputDrawBitmap(
 					roomGfx.torch->pFrames[(map->time+2*x+y)%(roomGfx.torch->frames)],
 					x*TILE_W+16,
 					y*TILE_H-40
 				);
-			}	/* TODO: draw base */
+				outputDrawBitmap( /* base */
+					roomGfx.environment->pFrames[56],
+					x*TILE_W+8,
+					y*TILE_H-25
+				);
+			}
 			/* normal/this */
 			if (tile.hasFloor) {
 				outputDrawBitmap(
