@@ -82,7 +82,8 @@ tRoom mapGetRoom(tData* map, tRoomId roomId) {
 
 	/* SET room id*/
 	result.id=roomId;
-
+	result.level=map->pFrames;
+	
 	/* SET room links */
 	memcpy(result.links,slevel(links)+((roomId-1)*4),4);
 	/* up corners */
@@ -223,11 +224,12 @@ tRoom mapGetRoom(tData* map, tRoomId roomId) {
 void  mapStart(tData* map, tKid* kid, tRoomId *roomId) {
 	/* kid->x,y */
 	*roomId=slevel(start)[0];
+	roomLoadGfx(RES_IMG_ENV_DUNGEON);
 }
 
 void  mapMove(tData* map) {
-	/* slevel(time)++;*/
-
+	slevel(time)++;
+	if (slevel(time)==1000) slevel(time)=0;
 }
 
 

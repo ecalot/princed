@@ -34,13 +34,12 @@ room.h: FreePrince : Draw Screen
 #ifndef _ROOM_H_
 #define _ROOM_H_
 
-
 typedef char tRoomId;
 typedef unsigned char tTileId;
 typedef unsigned char tModId;
 
 typedef struct {
-	void*          level;
+	/*tMap*/ void*          level;
 	tRoomId        id;
 	tRoomId        links[4];
 	tRoomId        corners[4];
@@ -67,6 +66,7 @@ typedef struct {
 tTile roomGetTile(tRoom* room,int x, int y);
 void roomDrawBackground(tRoom* room);
 void roomDrawForeground(tRoom* room);
+void roomLoadGfx(long environment); /* Only to initialize environment by mapStart */
 
 #endif
 

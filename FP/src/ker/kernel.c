@@ -73,7 +73,7 @@ int playgame(int optionflag,int level) {
 			kidMove(&kid,key);
 			mapMove(map);	
 			/* Drawing functions */
-			outputClearScreen(); /* TODO: send to drawScreen(0) */
+			outputClearScreen(); /* TODO: send to drawBackground() */
 			roomDrawBackground(&room);
 			kidDraw(kid);
 			roomDrawForeground(&room);

@@ -105,6 +105,29 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 }
 
 void roomDrawBackground(tRoom* room) {
+	int x,y;
+	tTile tile;
+	tMap* map=room->level;
+	
+	for (x=0;x<12;x++) {
+		for (y=0;y<5;y++) {
+			tile=roomGetTile(room,x,y);
+			if (tile.hasTorch) {
+				outputDrawBitmap(
+					roomGfx.torch->pFrames[map->time%(roomGfx.torch->frames)],
+					(x+1)*13,
+					y*24
+				);
+			}
+			if (tile.hasFloor) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[10],
+					(x+1)*13,
+					y*24
+				);
+			}
+		}
+	}
 }
 void roomDrawForeground(tRoom* room) {
 }
