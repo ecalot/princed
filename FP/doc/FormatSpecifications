@@ -151,22 +151,34 @@ Table of Contents
  Index structures:
 
  The DAT header: Size = 6 bytes
-  Offset 0, size 4, type UL: IndexOffset (the location where the index
-                             begins)
-  Offset 4, size 2, type US: IndexSize (the number of bytes the index has)
-                             Note that the index size is 8*numberOfItems+2
+  - Offset 0, size 4, type UL: IndexOffset
+           (the location where the index begins)
+  - Offset 4, size 2, type US: IndexSize
+           (the number of bytes the index has)
+           Note that IndexSize is 8*numberOfItems+2
+					 Note that IndexOffset+IndexSize=file size
 
  The DAT index: Size = IndexSize bytes
-  Offset IndexOffset, size 2, type US: NumberOfItems (resources count)
-  Offset IndexOffset+2, size 8*NumberOfItems: The index (a list of
-                             NumberOfItems blocks of 8-bytes-index record)
+  - Offset IndexOffset,   size 2, type US: NumberOfItems
+           (resources count)
+  - Offset IndexOffset+2, size NumberOfItems*8: The index
+           (a list of NumberOfItems blocks of 8-bytes-length index record)
 
- The 8-bytes-index record (one per item): Size = 8 bytes
-  Relative offset 0, size 2, type US: Item ID
-  Relative offset 2, size 4, type UL: Resource start absolute offset in
-                                      file
-  Relative offset 6, size 2, type US: Size of the item (not including
-                                      checksums)
+ The 8-bytes-length index record (one per item): Size = 8 bytes
+  - Relative offset 0, size 2, type US: Item ID
+  - Relative offset 2, size 4, type UL: Resource start
+           (absolute offset in file)
+  - Relative offset 6, size 2, type US: Size of the item
+           (not including the checksum byte)
+
+ Note:
+  POP1 doesn't validate a DAT file checking:
+	 IndexOffset+IndexSize=FileSize
+  this means you can append data at the end of the file.
+
+  PR validates that IndexOffset+IndexSize<=FileSize.
+	It also compares IndexSize with 8*numberOfItems+2 to determine if a file
+  is a valid POP1 DAT file.
 
  Checksum byte:
  There is a checksum byte for each item (resource), this is the first byte
