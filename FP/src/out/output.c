@@ -56,7 +56,7 @@ typedef struct {
 } tSurface;
 
 /* Main screen object */
-SDL_Surface *screen;
+static SDL_Surface* screen;
 
 /* Text functions */
 
@@ -68,18 +68,17 @@ typedef struct _valid_chars {
 	unsigned short w;   /* Width of character */
 } vChar;
 
-vChar valid_chars[256];
+static vChar        valid_chars[256];
+static SDL_Surface* font     = NULL;
+static int          font_init = 0;
 
-static SDL_Surface *font = NULL;
-int font_init = 0;
-
-#define FONT_FILE "../fonts.bmp"
+/* #define FONT_FILE "../fonts.bmp" */
 
 void initText ()
 {
 	int i;
 	static unsigned char chars[] = TEXT_CHARS;
-	static int pos_x[] = TEXT_POS;
+	static unsigned int  pos_x[] = TEXT_POS;
 	static unsigned char fonts[] = TEXT_IMG;
 	register tSurface* aux;
 	tPalette pal;
