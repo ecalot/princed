@@ -76,6 +76,13 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 	*p = pixel;
 }
 
+typedef struct {
+	int bottom;
+	int left;
+	SDL_Surface* surface;
+} tSurface;
+
+
 /* Graphics: Primitives for resources module */
 void*
 outputLoadBitmap(const unsigned char* data, int size, 
@@ -86,10 +93,12 @@ outputLoadBitmap(const unsigned char* data, int size,
   * information ti build it invert is 0 when no invertion is needed and 
   * non-zero when an inversion is performed	*/
 
-	SDL_Surface* result;
+	/*SDL_Surface* result;*/
+	tSurface* loadedSurface;
 	int i,j;
 	SDL_Color* colors;
 
+	loadedSurface=(tSurface*)malloc(sizeof(tSurface*));
 	colors=(SDL_Color*)malloc(sizeof(SDL_Color)*palette.colors);
 
 	/* Fill colors with color information */
@@ -99,51 +108,52 @@ outputLoadBitmap(const unsigned char* data, int size,
 		colors[i].b=(palette.color[i].b<<2);
 	}
 
-/*	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
-	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n", invert, firstColorTransparent, size);*/
-
-	result = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_HWPALETTE, w, h, 8, 0, 0, 0, 0);
-	SDL_SetColorKey(result, SDL_SRCCOLORKEY, 0);
-/*	printf("%d\n",firstColorTransparent);*/
-	if (!result) {
+	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d bottom=%d left=%d\n", invert, firstColorTransparent, size, bottom, left);
+	loadedSurface->left=left;
+	loadedSurface->bottom=bottom;
+	
+	
+	loadedSurface->surface = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_HWPALETTE, w, h, 8, 0, 0, 0, 0);
+	SDL_SetColorKey(loadedSurface->surface, SDL_SRCCOLORKEY, 0);
+	if (!loadedSurface->surface) {
 		fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
 		free(colors);
 		return NULL;
 	}
-	SDL_SetPalette(result, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, palette.colors);
+	SDL_SetPalette(loadedSurface->surface, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, palette.colors);
 
 	w = (w + 1) / 2;
 
 	/* Lock the screen for direct access to the pixels */
-	if (SDL_MUSTLOCK(result)) {
-		if (SDL_LockSurface(result) < 0) {
+	if (SDL_MUSTLOCK(loadedSurface->surface)) {
+		if (SDL_LockSurface(loadedSurface->surface) < 0) {
 			fprintf(stderr, "Can't lock surface: %s\n", SDL_GetError());
 			exit(1);
 		}
 	}
 	if (!invert) {
 		for (i = 0; i < w; i++) {
-			for (j = 0; j < result->h; j++) {
-				putpixel(result, i<<1, j, (data[i+j*w])>>4);
-				putpixel(result, (i<<1)+1, j, (data[i+j*w])&0x0f);
+			for (j = 0; j < loadedSurface->surface->h; j++) {
+				putpixel(loadedSurface->surface, i<<1, j, (data[i+j*w])>>4);
+				putpixel(loadedSurface->surface, (i<<1)+1, j, (data[i+j*w])&0x0f);
 			}
 		}
 	} else {
-		int serialized=result->w&1;
+		int serialized=loadedSurface->surface->w&1;
 		for (i = 0; i < w; i++) {
-			for (j = 0; j < result->h; j++) {
-				if (i) putpixel(result, (i<<1)-serialized, j, (data[w-1-i+j*w])&0x0f);
-				putpixel(result, (i<<1)+1-serialized, j, (data[w-1-i+j*w])>>4);
+			for (j = 0; j < loadedSurface->surface->h; j++) {
+				if (i) putpixel(loadedSurface->surface, (i<<1)-serialized, j, (data[w-1-i+j*w])&0x0f);
+				putpixel(loadedSurface->surface, (i<<1)+1-serialized, j, (data[w-1-i+j*w])>>4);
 			}
 		}
 	}
 	
-	if (SDL_MUSTLOCK(result)) {
-		SDL_UnlockSurface(result);
+	if (SDL_MUSTLOCK(loadedSurface->surface)) {
+		SDL_UnlockSurface(loadedSurface->surface);
 	}
 
 	free(colors);
-	return (void*)result;
+	return (void*)loadedSurface;
 }
 
 /* Frees the abstract object created by the loadBitmap function */
@@ -156,7 +166,7 @@ void outputFreeBitmap(void* image) {
 /* Graphics: Primitives for the kernel */
 void outputDrawBitmap(void* image, int x, int y) {
 	/* Draws an abstract image */
-	SDL_Surface *s = (SDL_Surface *)image;
+	SDL_Surface *s = ((tSurface*)image)->surface;
 	SDL_Rect dest;
 	dest.x = x;
 	dest.y = y-s->h;
