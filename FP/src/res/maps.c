@@ -37,7 +37,7 @@ static int sscreen;
 
 //Privates
 
-void maps_getStartPosition(char* pantalla, char* p, char *b,tDirection *sentido,tDirection *sentido2) {
+void maps_getStartPosition(int* pantalla, int* p, int *b,tDirection *sentido,tDirection *sentido2) {
 	int valor;
 
 	*pantalla =slevel[MAPS_BLOCK_OFFSET_START_POSITION];
@@ -46,6 +46,20 @@ void maps_getStartPosition(char* pantalla, char* p, char *b,tDirection *sentido,
 	*p        =(valor/10);
 	*sentido  =(slevel[MAPS_BLOCK_OFFSET_START_POSITION+2])?eRight:eLeft;
 	*sentido2 =(slevel[MAPS_BLOCK_OFFSET_START_POSITION+6])?eRight:eLeft;
+}
+
+void maps_getGuard(int pantalla,int *p,int *b,int *skill,int *color,tDirection *sentido,int *exists) {
+	//Posicion
+	unsigned char valor=(slevel[(MAPS_BLOCK_OFFSET_GUARD_POSITION+sscreen-1)]);
+	*exists = (valor<30);
+	*b      = (valor%10);
+	*p      = (valor/10);
+	//sentido
+	*sentido=slevel[MAPS_BLOCK_OFFSET_GUARD_DIRECTION+pantalla-1]?eRight:eLeft;
+	//skill
+	*skill  =slevel[MAPS_BLOCK_OFFSET_GUARD_SKILL+pantalla-1];
+	//Color
+	*color  =slevel[MAPS_BLOCK_OFFSET_GUARD_COLOR+pantalla-1];
 }
 
 //Publics
@@ -110,12 +124,18 @@ int levelMoveScreen(tDirection direction) {
 int levelGetGuards(/* TODO: add modifiers */);
 int levelGetDoorMap(/* TODO: idem */);
 
-int levelGetStarPosition(int* screen, int* position); /* TODO: define
-		         position as an int or using x,y coordinate system*/
+int levelGetStarPosition(int* screen, int* position) {
+/* TODO: define position as an int or using x,y coordinate system*/
+	//maps_getStartPosition(screen, position, int *b,tDirection *sentido,tDirection *sentido2);
 
-int levelGetInformation(int* thisScreen, char* UDLRscreens, char* cornerScreens);
+}
+
+int levelGetInformation(int *thisScreen, unsigned char* LRUDscreens, unsigned char* cornerScreens) {
 /* TODO: define the format of cornerscreens */
-
+	*thisScreen=sscreen;
+	memcpy(LRUDscreens,slevel+MAPS_BLOCK_OFFSET_LINK+(sscreen-1)*4,4);
+	return sscreen;
+}
 
 #ifdef OLD_MAP_SRC
 
