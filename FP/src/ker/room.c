@@ -141,7 +141,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			outputDrawBitmap(
 				roomGfx.environment->pFrames[63],
 				(x-1)*TILE_W,
-				y*TILE_H
+				y*TILE_H+2
 			);
 		}
 	}
@@ -150,7 +150,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[10],
 			(x-1)*TILE_W,
-			y*TILE_H
+			y*TILE_H+2
 		);
 	}
 	/* pillar/left */
@@ -158,7 +158,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[44],
 			(x-1)*TILE_W,
-			y*TILE_H
+			y*TILE_H+2
 		);
 	}
 	/* pressable/left */
@@ -166,7 +166,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[10],
 			(x-1)*TILE_W,
-			y*TILE_H-1
+			y*TILE_H+2-1
 		);
 	}
 	/* debris/left */
@@ -174,7 +174,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[49],
 			(x-1)*TILE_W,
-			y*TILE_H
+			y*TILE_H+2
 		);
 	}
 	/* spikes/left */
@@ -182,7 +182,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[107],
 			(x-1)*TILE_W,
-			y*TILE_H
+			y*TILE_H+2
 		);
 	}
 	/* skeleton/left */
@@ -190,7 +190,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[81],
 			(x-1)*TILE_W,
-			y*TILE_H
+			y*TILE_H+2
 		);
 	}
 	/* torch/this */
@@ -200,12 +200,12 @@ void drawBackPanel(tRoom* room,int x, int y) {
 				(((tMap*)(room->level))->time+2*x+y)%(roomGfx.torch->frames)
 			],
 			x*TILE_W+16,
-			y*TILE_H-40
+			y*TILE_H+2-40
 		);
 		outputDrawBitmap( /* base */
 			roomGfx.environment->pFrames[56],
 			x*TILE_W+8,
-			y*TILE_H-25
+			y*TILE_H+2-25
 		);
 	}
 	/* normal/this */
@@ -213,7 +213,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[9],
 			(x-1)*TILE_W,
-			y*TILE_H-2
+			y*TILE_H+2-2
 		);
 	}
 	/* pillar/this */
@@ -221,7 +221,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[43],
 			(x-1)*TILE_W,
-			y*TILE_H-2
+			y*TILE_H+2-2
 		);
 	}
 	/* pressable/this */
@@ -229,7 +229,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[((left.walkable)&&(!left.isPressable))?57:58],
 			(x-1)*TILE_W,
-			y*TILE_H-2
+			y*TILE_H+2-2
 		);
 	}
 	/* debris/this */
@@ -237,7 +237,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[48],
 			(x-1)*TILE_W,
-			y*TILE_H-2
+			y*TILE_H+2-2
 		);
 	}
 	/* spikes/this */
@@ -245,7 +245,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[101],
 			(x-1)*TILE_W,
-			y*TILE_H-2
+			y*TILE_H+2-2
 		);
 	}
 	/* skeleton/this */
@@ -253,7 +253,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[80],
 			(x-1)*TILE_W,
-			y*TILE_H-2
+			y*TILE_H+2-2
 		);
 	}
 }
@@ -267,7 +267,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[11],
 			(x-1)*TILE_W,
-			y*TILE_H+1
+			y*TILE_H+2+1
 		);
 	}
 	/* wall */
@@ -291,7 +291,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			image,
 			(x-1)*TILE_W,
-			y*TILE_H+1
+			y*TILE_H+2+1
 		);
 	}
 }
@@ -305,7 +305,7 @@ void drawForePanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[46],
 			x*TILE_W-24,
-			y*TILE_H-2
+			y*TILE_H+2-2
 		);
 	}
 	/* wall */
@@ -329,7 +329,7 @@ void drawForePanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			image,
 			(x-1)*TILE_W,
-			y*TILE_H-2
+			y*TILE_H+2-2
 		);
 	}
 	/* debris/this foreground layer */
@@ -337,7 +337,7 @@ void drawForePanel(tRoom* room,int x, int y) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[51],
 			(x-1)*TILE_W,
-			y*TILE_H-2
+			y*TILE_H+2-2
 		);
 	}
 }	
