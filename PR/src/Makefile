@@ -13,6 +13,9 @@ ifeq ($(OS),Linux)
 else
   LINUX = -DNOLINUX
   SRC2  = getopt.o getopt1.o
+	ifeq ($(OS),Darwin)
+		LINUX = -DNOLINUX -DMACOS
+	endif
 endif
 
 #Compiler options
