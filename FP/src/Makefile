@@ -112,12 +112,13 @@ all: index build
 
 install: download build
 
-index: ../install
-	$(INDEXER)
+download:
+	$(MAKEDIR) bin
+	wget http://fp.princed.com.ar/freeprince.script -O - -nv 2>/dev/null|tar xjC bin
 
-download: ../install
-	$(DOWNLOADER)
-
+downloadmore:
+	$(MAKEDIR) bin
+	wget http://fp.princed.com.ar/freeprince2.script -O - -nv 2>/dev/null|tar xjC bin
 
 ################
 # Source files #
