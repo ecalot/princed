@@ -73,6 +73,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case T_FLOOR:
 	case T_TORCH:
 	case T_SWORD:
+	case T_SPIKES:
 	case T_SKELETON:
 	case T_LOOSE:
 	case T_PILLAR:
@@ -81,6 +82,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.walkable=1;
 		result.block=0;
 		result.hasSkeleton=(result.code==T_SKELETON);
+		result.hasSpikes=(result.code==T_SPIKES);
 		result.hasTorch=(result.code==T_TORCH);
 		result.hasFloor=((result.code==T_FLOOR)|(result.code==T_TORCH)|(result.code==T_PILLAR)|(result.code==T_LOOSE));
 		result.hasBrokenTile=(result.code==T_DEBRIS);
@@ -91,6 +93,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasPillar=0;
 		result.walkable=0;
 		result.hasSkeleton=0;
+		result.hasSpikes=0;
 		result.block=1;
 		result.hasTorch=0;
 		result.hasFloor=0;
@@ -103,6 +106,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasPillar=0;
 		result.walkable=0;
 		result.hasSkeleton=0;
+		result.hasSpikes=0;
 		result.block=0;
 		result.hasTorch=0;
 		result.hasFloor=0;
@@ -152,6 +156,14 @@ void roomDrawBackground(tRoom* room) {
 					y*TILE_H
 				);
 			}
+			/* spikes/left */
+			if (left.hasSpikes) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[107],
+					(x-1)*TILE_W,
+					y*TILE_H
+				);
+			}
 			/* skeleton/left */
 			if (left.hasSkeleton) {
 				outputDrawBitmap(
@@ -180,6 +192,14 @@ void roomDrawBackground(tRoom* room) {
 			if (tile.hasBrokenTile) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[48],
+					(x-1)*TILE_W,
+					y*TILE_H-2
+				);
+			}
+			/* spikes/left */
+			if (tile.hasSpikes) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[101],
 					(x-1)*TILE_W,
 					y*TILE_H-2
 				);
