@@ -106,6 +106,9 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	return result;
 }
 
+#define TILE_W 32
+#define TILE_H 60
+
 void roomDrawBackground(tRoom* room) {
 	int x,y;
 	tTile tile;
@@ -117,39 +120,39 @@ void roomDrawBackground(tRoom* room) {
 			if (tile.hasTorch) {
 				outputDrawBitmap(
 					roomGfx.torch->pFrames[(map->time+2*x+y)%(roomGfx.torch->frames)],
-					x*32,
-					y*48
+					x*TILE_W-30,
+					y*TILE_H-40
 				);
 			}
 			if (tile.hasFloor) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[10],
-					x*32,
-					y*48
+					x*TILE_W,
+					y*TILE_H
 				);
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[9],
-					x*32,
-					y*48+2
+					x*TILE_W,
+					y*TILE_H+2
 				);
 			}
 			if (tile.hasBrokenTile) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[2],
-					x*32,
-					y*48
+					x*TILE_W,
+					y*TILE_H
 				);
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[1],
-					x*32,
-					y*48+2
+					x*TILE_W,
+					y*TILE_H+2
 				);
 			}
 			if (tile.walkable) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[8],
-					x*32+32,
-					y*48+1
+					x*TILE_W+TILE_W,
+					y*TILE_H+1
 				);
 			}
 		}
@@ -166,9 +169,9 @@ void roomDrawForeground(tRoom* room) {
 			tile=roomGetTile(room,x,y);
 			if (tile.hasPillar) {
 				outputDrawBitmap(
-					roomGfx.environment->pFrames[14],
-					x*32+32,
-					y*48+1
+					roomGfx.environment->pFrames[25],
+					x*TILE_W+TILE_W,
+					y*TILE_H+1
 				);
 			}
 		}
