@@ -226,7 +226,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			(x-1)*TILE_W,
 			y*TILE_H+2
 		);
-/*		drawGate((x-1)*TILE_W,(y-1)*TILE_H+3,tile.gateInfo->status);*/
+		drawGate((x-1)*TILE_W,(y-1)*TILE_H+3,left.gateInfo->frame);
 	}
 	/* normal/left */
 	if (left.hasFloor) {
@@ -243,7 +243,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			(x-1)*TILE_W,
 			y*TILE_H+2
 		);
-		drawExit((x-2)*TILE_W+8,(y-1)*TILE_H-1,/*left.gateStatus*/((tMap*)(room->level))->time%52);
+		/*drawExit((x-2)*TILE_W+8,(y-1)*TILE_H-1,left.gateInfo->frame);*/
 	}
 	/* pillar/left */
 	if (left.hasPillar) {
@@ -498,7 +498,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 					(x-1)*TILE_W,
 					y*TILE_H+3
 				);
-/*				drawGateTop(x*TILE_W,(y-1)*TILE_H+3,tile.gateInfo->status);*/
+			/*	drawGateTop(x*TILE_W,(y-1)*TILE_H+3,tile.gateInfo->frame);*/
 			}
 			/* big_pillar/left */
 			if (dleft.hasBigPillar==2) {
