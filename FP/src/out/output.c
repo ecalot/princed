@@ -44,6 +44,8 @@ output.c: Free Prince : Output Devices Handler
 #include "output.h"
 #include "kernel.h"    /* FP_VERSION */
 
+#include "text_conf.h" /* TODO: use text.h */
+
 #define DEF_SCREEN_WIDTH 320
 #define DEF_SCREEN_HEIGHT 200
 
@@ -70,15 +72,10 @@ int font_init = 0;
 void initText ()
 {
 	int i;
-	char *chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 -:.;,<>\\/*!\"$%&/()=@^[]'\"-_";
-	int pos_x[92] = {0, 7, 14, 21, 28, 34, 40, 47, 54, 59, 66, 74, 80,
-		89, 96, 103, 110, 117, 124, 131, 138, 145, 152, 161, 168, 175, 184,
-		191, 198, 205, 212, 219, 225, 232, 239, 242, 247, 254, 257, 266, 
-		273, 280, 287, 294, 301, 308, 314, 321, 328, 337, 344, 351, 358,
-		365, 372, 379, 387, 394, 401, 408, 415, 422, 429, 433, 438, 441,
-		444, 448, 452, 458, 464, 473, 482, 490, 493, 499, 507, 516, 525,
-		534, 539, 544, 549, 556, 563, 568, 573, 578, 582, 588, 593, 600};
-
+	static unsigned char chars[] = TEXT_CHARS;
+	static int pos_x[] = TEXT_POS;
+	static unsigned char fonts[] = TEXT_IMG;
+				
 	memset(valid_chars, 0, sizeof(valid_chars));
 
 	i = 0;
