@@ -48,7 +48,7 @@ int kernel(int optionflag,int level) {
 	tData* testResource;
 	SDL_Surface *screen, *test;
 	SDL_Event e;
-	/* int i; */
+	int i;
 	
 	screen = outputInit();
 
@@ -69,21 +69,18 @@ int kernel(int optionflag,int level) {
 		testResource->type
 	);
 
-	test = outputLoadBitmap(NULL, 0, NULL, 100, 100, 1, 1);
-	if (test == NULL) {
-		printf("BMP NO CARGADO: %s\n", SDL_GetError());
-		exit(1);
-	}
-/*	for (i=0;i<testResource->frames;i++) { */
+	i=0;
 	while (1) {
 		if (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) break;
 		}
-		outputDrawBitmap(screen, /*testResource->pFrames[i]*/test, 3, 3);
 		outputClearScreen(screen);
+		outputDrawBitmap(screen, testResource->pFrames[i], 30, 30);
 		outputUpdateScreen(screen);
+		i++;
+		SDL_Delay(50);
+		if (i>13) i =0;
 	}
-/*	} */
 
 	outputStop();
 	return 0;

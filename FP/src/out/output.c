@@ -74,12 +74,11 @@ outputLoadBitmap(const unsigned char* data, int size,
 	/* Dummy function */
 	SDL_Surface* result;
 	int i,j;
-	Uint32 rmask, gmask, bmask, amask;
 	SDL_Color colors[256];
 																				        
 	/* Fill colors with color information */
 	for(i=0;i<256;i++) {
-		colors[i].r=255-i;
+		colors[i].r=i;
 		colors[i].g=255-i;
 		colors[i].b=255-i;
 	}
@@ -87,19 +86,7 @@ outputLoadBitmap(const unsigned char* data, int size,
 	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
 	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n", invert, firstColorTransparent, size);
 
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-	amask = 0x000000ff;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-	amask = 0xff000000;
-#endif
-
-	result = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, rmask, gmask, bmask, amask);
+	result = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0, 0, 0, 0);
 	if (!result) {
 		fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
 		return NULL;
@@ -118,15 +105,13 @@ outputLoadBitmap(const unsigned char* data, int size,
 
 	for (i = 0; i < result->w; i++) {
 		for (j = 0; j < result->h; j++) {
-			putpixel(result, i, j, 122);
+			putpixel(result, i, j, *(data+j+i*size));
 		}
 	}
 	
 	if (SDL_MUSTLOCK(result)) {
 		SDL_UnlockSurface(result);
 	}
-
-/*	memcpy(result->palette, palette, 3 * 16); * copy palette */
 
 	return (void*)result;
 }
@@ -138,14 +123,19 @@ void outputFreeBitmap(void* image) {}
 void outputDrawBitmap(SDL_Surface *screen, void* image, int x, int y) {
 	/* Draws an abstract image */
 	SDL_Surface *s = (SDL_Surface *)image;
-	/* SDL_Rect destrect = {x, y, s->w, s->h};*/ 
+	SDL_Rect dest;
+	dest.x = x;
+	dest.y = y;
+	dest.w = s->w;
+	dest.h = s->h;
 	if (SDL_MUSTLOCK(screen)) SDL_LockSurface(screen);
-	SDL_BlitSurface(s, NULL, screen, NULL);
+	SDL_BlitSurface(s, NULL, screen, &dest);
 	if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
 }
 
 void outputClearScreen(SDL_Surface *screen)
 {
+	SDL_FillRect(screen, NULL, 0);
 }
 
 void outputUpdateScreen(SDL_Surface *screen) 
@@ -170,7 +160,7 @@ SDL_Surface *outputInit()
 	}
 	screen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE|SDL_HWPALETTE);
 	if (!screen) return NULL;
-	SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);
+	/*SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);*/
 	return screen;
 }
 
