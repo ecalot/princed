@@ -19,12 +19,13 @@
 */
 
 /*
-resources.h: Princed Resources : Resource Handler headers
-¯¯¯¯¯¯¯¯¯¯¯
- Copyright 2003 Princed Development Team
+kernel.c: FreePrince : Main Kernel
+¯¯¯¯¯¯¯¯
+ Copyright 2004 Princed Development Team
   Created: 16 Jun 2004
 
-  Author: Diego Essaya <efghgfdht.cod@princed.com.ar>
+  Authores: Diego Essaya <dessaya.cod@princed.com.ar>
+	          Enrique Calot <ecalot.cod@princed.com.ar>
 
  Note:
   DO NOT remove this copyright notice
