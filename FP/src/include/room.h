@@ -35,7 +35,7 @@ room.h: FreePrince : Draw Screen
 #define _ROOM_H_
 
 #define TILE_W 32
-#define TILE_H 63
+#define TILE_H 62
 
 #include "types.h"
 
