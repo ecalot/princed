@@ -1,8 +1,8 @@
-bin/pr: compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o
+bin/pr: compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o
 	
 	@echo Linking files...
 	@mkdir -p bin
-	@gcc -o bin/pr compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o -s
+	@gcc -o bin/pr compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o -s
 	@echo Program successfully compiled
 	@echo
 	@echo Please read readme.txt for syntax information
@@ -51,6 +51,10 @@ bmp.o: formats/bmp.c
 mid.o: formats/mid.c
 	@echo Compiling midi audio files support \(mid\)...
 	@gcc -c formats/mid.c -Iinclude/
+
+plv.o: formats/plv.c
+	@echo Compiling prince level files support \(plv\)...
+	@gcc -c formats/plv.c -Iinclude/
 
 pal.o: formats/pal.c
 	@echo Compiling JASC palette support \(pal\)...
