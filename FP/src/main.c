@@ -41,7 +41,7 @@ int main(int argc,char** argv) {
 	tGame game;
 	int playing;
 
-	/* Parse game */
+	/* Parse options */
 	game=parseFile("engine.dat");
 	if (!game) {
 		printf("Game couldn't be loaded\n");
