@@ -95,7 +95,6 @@ void initText ()
 	font_init = 1;
 }
 
-/* Use vararg's too?? */
 unsigned int outputGetTextWidth (const char *txt)
 {
 	const unsigned char *s;
