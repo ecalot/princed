@@ -165,11 +165,11 @@ void parseGivenPath(char* path) {
 		} else {
 			if (n) {
 				partialList.list[j].idType=eString;
-				partialList.list[j].value=(char*)strallocandcopy(repairFolders(path+separator));
+				partialList.list[j].value.text=strallocandcopy(repairFolders(path+separator));
 				while (path[i]) i++;
 			} else {
 				partialList.list[j].idType=eValue;
-				partialList.list[j].value=(void*)resourceValue;
+				partialList.list[j].value.number=resourceValue;
 			}
 			resourceValue=0;
 			separator=i+1;
@@ -194,10 +194,10 @@ int isInThePartialList(const char* vFile, int value) {
 
 	for (i=0;i<partialList.count;i++) {
 		if (partialList.list[i].idType==eValue) {
-			if (value==(int)partialList.list[i].value) return 1;
+			if (value==partialList.list[i].value.number) return 1;
 		} else {
 			if (file)
-				if (equalsIgnoreCase(file,(char*)partialList.list[i].value)) return 1;
+				if (equalsIgnoreCase(file,partialList.list[i].value.text)) return 1;
 		}
 	}
 	return 0;
@@ -207,7 +207,7 @@ void freePartialList() {
 	int i;
 	for (i=0;i<partialList.count;i++) {
 		if (partialList.list[i].idType==eString)
-			free(partialList.list[i].value);
+			free(partialList.list[i].value.text);
 	}
 	partialList.count=0;
 }

@@ -77,8 +77,11 @@ typedef struct {
 typedef enum {eString,eValue}tResIdType;
 
 typedef struct {
-	tResIdType idType;
-	char*      value;
+  tResIdType idType;
+  union {
+    char*      text;
+    long       number;
+  } value;
 }tResIdListItem;
 
 typedef struct {
