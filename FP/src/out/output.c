@@ -111,11 +111,19 @@ outputLoadBitmap(const unsigned char* data, int size,
 			exit(1);
 		}
 	}
-
-	for (i = 0; i < w; i++) {
-		for (j = 0; j < result->h; j++) {
-			putpixel(result, i<<1, j, (data[i+j*w])>>4);
-			putpixel(result, (i<<1)+1, j, (data[i+j*w])&0x0f);
+	if (!invert) { /* TODO: serialized lines bugfix */
+		for (i = 0; i < w; i++) {
+			for (j = 0; j < result->h; j++) {
+				putpixel(result, i<<1, j, (data[i+j*w])>>4);
+				putpixel(result, (i<<1)+1, j, (data[i+j*w])&0x0f);
+			}
+		}
+	} else {
+		for (i = 0; i < w; i++) {
+			for (j = 0; j < result->h; j++) {
+				putpixel(result, (i<<1), j, (data[w-i+j*w])&0x0f);
+				putpixel(result, (i<<1)+1, j, (data[w-i+j*w])>>4);
+			}
 		}
 	}
 	

@@ -47,10 +47,12 @@ int kernel(int optionflag,int level) {
 	
 	SDL_Surface *screen /* , *test */;
 	SDL_Event e;
-	int i,x;
-	tData* testResource;
+	int i,location,direction;
+	tData* runningAnimationLeft;
+	tData* runningAnimationRight;
+	tData* runningAnimation;
 	tData* fondo;
-	
+
 	screen = outputInit();
 
 	if (!screen) {
@@ -58,32 +60,61 @@ int kernel(int optionflag,int level) {
 		exit(1);
 	}
 
-	testResource=resLoad(RES_ANIM_RUN_LEFT);
+	runningAnimationLeft=resLoad(RES_ANIM_RUN_LEFT);
+	runningAnimationRight=resLoad(RES_ANIM_RUN_RIGHT);
 	fondo=resLoad(RES_IMG_BACKGROUND);
-	if (!testResource) {
-		printf("The resource couldn't be loaded!\n");
+	if ((!runningAnimation) || (!fondo)) {
+		printf("The resource couldn't be loaded! %p %p\n",runningAnimation,fondo);
 		exit(1);
 	}
-
+/*
 	printf("Resource number: %d. Frames: %d. Type: %d.\n",
 		RES_ANIM_RUN_LEFT,
-		testResource->frames,
-		testResource->type
+		runningAnimation->frames,
+		runningAnimation->type
 	);
-
+*/
 	i=0;
-	x=380;
+	location=380;
+	direction=1;
+	runningAnimation=runningAnimationLeft;
 	while (1) {
 		if (SDL_PollEvent(&e)) {
-			if (e.type == SDL_QUIT) break;
+			switch (e.type) {
+				case SDL_QUIT:
+					exit(1);
+				case SDL_KEYDOWN:
+					/*fprintf(stderr, "The %s key was pressed! %d\n",
+					SDL_GetKeyName(e.key.keysym.sym),e.key.keysym.sym);*/
+					switch (e.key.keysym.sym) {
+						case SDLK_LEFT:
+							direction=1;
+							break;
+						case SDLK_RIGHT:
+							direction=0;
+							break;
+						case SDLK_q:
+							exit(1);
+							break;
+						default:
+							break;
+					}
+					break;
+			}
 		}
 		outputClearScreen(screen);
 		outputDrawBitmap(screen, fondo->pFrames[0], 0, 0);
-		outputDrawBitmap(screen, testResource->pFrames[i], x, 141);
+		outputDrawBitmap(screen, runningAnimation->pFrames[i], location, 141);
 		outputUpdateScreen(screen);
 		i++;
 		SDL_Delay(50);
-		x--;
+		if (direction) {
+			runningAnimation=runningAnimationLeft;
+			location--;
+		} else {
+			runningAnimation=runningAnimationRight;
+			location++;
+		}
 		if (i>10) i =0;
 	}
 
@@ -132,8 +163,9 @@ void event_loop()
 	{
 		switch (event.type) {
 		case SDL_KEYDOWN:
-			fprintf(stderr, "The %s key was pressed!\n",
-			SDL_GetKeyName(event.key.keysym.sym));
+			fprintf(stderr, "The %s key was pressed! %d\n",
+			SDL_GetKeyName(event.key.keysym.sym),event.key.keysym.sym);
+			
 			break;
 		case SDL_KEYUP:
 			fprintf(stderr, "The %s key was unpressed!\n",
