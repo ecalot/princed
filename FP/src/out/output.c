@@ -55,6 +55,11 @@ typedef struct {
 	SDL_Surface* surface;
 } tSurface;
 
+typedef struct {
+	int frame;
+	SDL_Color color;
+} tBlink;
+
 /* Main screen object */
 static SDL_Surface* screen;
 
@@ -105,6 +110,33 @@ void initText ()
 	font=aux->surface;
 					
 	font_init = 1;
+}
+
+static tBlink blinkState;
+
+void outputBlinkScreen (int times, int color) {
+	register int r,g,b;
+	switch (color) {
+	case 1:
+		r=63;
+		g=b=0;
+		break;
+	case 2:
+		g=63;
+		r=b=0;
+		break;
+	case 3:
+		r=g=b=63;
+		break;
+	default:
+	case 0:
+		r=g=b=0;
+		break;
+	}
+	blinkState.frame=times<<1;
+	blinkState.color.r=r<<2;
+	blinkState.color.g=g<<2;
+	blinkState.color.b=b<<2;
 }
 
 unsigned int outputGetTextWidth (const char *txt)
@@ -341,7 +373,12 @@ void outputRaiseBitmap(void* image, int h) {
 
 void outputClearScreen()
 {
-	SDL_FillRect(screen, NULL, 0);
+	if (blinkState.frame) blinkState.frame--;
+	if ((blinkState.frame%2)) {
+		SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format,blinkState.color.r,blinkState.color.g,blinkState.color.b));
+	} else {
+		SDL_FillRect(screen, NULL, 0);
+	}
 }
 
 void outputUpdateScreen() 

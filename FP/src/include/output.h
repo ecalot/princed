@@ -103,6 +103,7 @@ int outputGetHeight(void* image);
 int outputGetWidth(void* image);
 void outputRaiseBitmap(void* image, int h);
 
+void outputBlinkScreen (int times, int color);
 
 #endif
 
