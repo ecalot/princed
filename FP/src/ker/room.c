@@ -82,7 +82,8 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasPillar=0;
 		result.hasBigPillar=0;
 		result.isGate=(result.code==T_GATE);
-		result.gateInfo=room->level->screenGates[roomId-1][result.back];
+		if (roomId<24)
+			result.moreInfo=room->level->screenGates[roomId-1][result.back];
 		result.walkable=1;
 		result.hasChopper=0;
 		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);
@@ -97,6 +98,35 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.isWall=0;
 		result.hasSword=0;
 		break;
+	case T_BTN_RAISE:
+	case T_BTN_DROP:
+		roomId=room->id;
+		if (y==0)	roomId=room->links[eUp]; /*TODO: validate corners */
+		if (x==0) roomId=room->links[eLeft];
+		if (y==4) roomId=room->links[eDown];
+		if (x==11)roomId=room->links[eRight];
+		result.hasGateFrame=0;
+		result.bricks=0;
+		result.hasPillar=0;
+		result.hasBigPillar=0;
+		result.isGate=0;
+		result.walkable=1;
+		/* the case that a button is in tile 0 should never happen, but we'll care about it just in case */
+		if (roomId<24)
+			result.moreInfo=room->level->screenPressables[roomId-1][result.back];
+		result.hasChopper=0;
+		result.isExit=0;
+		result.block=0;
+		result.isRaise=(result.code==T_BTN_RAISE);
+		result.isPressable=1;
+		result.hasSkeleton=0;
+		result.hasSpikes=0;
+		result.hasTorch=0;
+		result.hasFloor=(result.code==T_BTN_DROP);
+		result.hasBrokenTile=0;
+		result.isWall=0;
+		result.hasSword=0;
+		break;
 	case T_FLOOR:
 	case T_TORCH:
 	case T_SWORD:
@@ -104,8 +134,6 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case T_POTION:
 	case T_SPIKES:
 	case T_BP_BOTTOM:
-	case T_BTN_RAISE:
-	case T_BTN_DROP:
 	case T_TORCH_DEBRIS:
 	case T_EXIT_RIGHT:
 	case T_SKELETON:
@@ -121,12 +149,12 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasChopper=(result.code==T_CHOPPER);
 		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);
 		result.block=0;
-		result.isRaise=(result.code==T_BTN_RAISE);
-		result.isPressable=(result.code==T_BTN_RAISE)|(result.code==T_BTN_DROP);
+		result.isRaise=0;
+		result.isPressable=0;
 		result.hasSkeleton=(result.code==T_SKELETON);
 		result.hasSpikes=(result.code==T_SPIKES);
 		result.hasTorch=(result.code==T_TORCH)|(result.code==T_TORCH_DEBRIS);
-		result.hasFloor=((result.code==T_FLOOR)|(result.code==T_TORCH)|(result.code==T_LOOSE)|(result.code==T_POTION)|(result.code==T_BTN_DROP)|(result.code==T_SWORD)|(result.code==T_CHOPPER));
+		result.hasFloor=((result.code==T_FLOOR)|(result.code==T_TORCH)|(result.code==T_LOOSE)|(result.code==T_POTION)|(result.code==T_SWORD)|(result.code==T_CHOPPER));
 		result.hasBrokenTile=(result.code==T_DEBRIS)|(result.code==T_TORCH_DEBRIS);
 		result.isWall=0;
 		result.hasSword=(result.code==T_SWORD);
@@ -229,7 +257,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			(x-1)*TILE_W,
 			y*TILE_H+2
 		);
-		drawGate((x-1)*TILE_W,(y-1)*TILE_H+3,left.gateInfo->frame);
+		drawGate((x-1)*TILE_W,(y-1)*TILE_H+3,((tGate*)left.moreInfo)->frame);
 	}
 	/* normal/left */
 	if (left.hasFloor) {
@@ -380,7 +408,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 				(x-1)*TILE_W,
 				y*TILE_H
 			);
-			drawExit(x*TILE_W+8,(y-1)*TILE_H-1,tile.gateInfo->frame);
+			drawExit(x*TILE_W+8,(y-1)*TILE_H-1,((tGate*)tile.moreInfo)->frame);
 		}
 	}
 	/* pillar/this */
@@ -501,7 +529,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 					(x-1)*TILE_W,
 					y*TILE_H+3
 				);
-			/*	drawGateTop(x*TILE_W,(y-1)*TILE_H+3,tile.gateInfo->frame);*/
+			/*	drawGateTop(x*TILE_W,(y-1)*TILE_H+3,((tGate*)tile.moreInfo)->frame);*/
 			}
 			/* big_pillar/left */
 			if (dleft.hasBigPillar==2) {

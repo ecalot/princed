@@ -128,7 +128,16 @@ int playgame(int optionflag,int level) {
 					room.links[eDown]
 				);
 				break;
-		default:
+			case showMoreScreens:
+				fprintf(stderr,"S%d AL%d AR%d BL%d BR%d\n",
+					room.id,
+					room.corners[0],
+					room.corners[1],
+					room.corners[2],
+					room.corners[3]
+				);
+				break;
+			default:
 				break;
 			}
 		}

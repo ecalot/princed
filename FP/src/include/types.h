@@ -67,8 +67,11 @@ typedef struct {
 	tGate**        screenGates[24];
 	tGate*         gates;
 	int            totalGates;
+	tPressable**   screenPressables[24];
+	tPressable*    pressables;
+	int            totalPressables;
 	tEvent         events[256];
-	int time;
+	int            time;
 	unsigned char start[3];
 } tMap;
 
@@ -96,7 +99,7 @@ typedef struct {
 	int isExit;
 	int isRaise;
 	int isGate;
-	tGate* gateInfo;
+	void* moreInfo;
 	int bricks;
 	int isPressable;
 	int hasSpikes;

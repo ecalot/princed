@@ -44,6 +44,8 @@ void* mapLoadLevel(tMemory level) {
 	int i,j;
 	int gates=0;
 	int gateInRoom=0;
+	int pressables=0;
+	int pressableInRoom=0;
 	tGate** auxGates=malloc(sizeof(tGate*)*24*30);
 	
 	/* copy maps, links and start position */
@@ -58,6 +60,9 @@ void* mapLoadLevel(tMemory level) {
 			if (((map->fore[i*30+j]&0x1f)==T_GATE)||((map->fore[i*30+j]&0x1f)==T_EXIT_LEFT)) {
 				gateInRoom++;
 				gates++;
+			} else if (((map->fore[i*30+j]&0x1f)==T_BTN_RAISE)||((map->fore[i*30+j]&0x1f)==T_BTN_DROP)) {
+				pressableInRoom++;
+				pressables++;
 			}
 		}
 		if (gateInRoom) {
@@ -65,12 +70,21 @@ void* mapLoadLevel(tMemory level) {
 		} else {
 			map->screenGates[i]=NULL;
 		}
+		if (pressableInRoom) {
+			map->screenPressables[i]=malloc(pressableInRoom*sizeof(tPressable*));
+		} else {
+			map->screenPressables[i]=NULL;
+		}
 		gateInRoom=0;
+		pressableInRoom=0;
 	}
 	/* create gates sctucture */
 	map->gates=malloc(gates*sizeof(tGate));
 	map->totalGates=gates;
+	map->pressables=malloc(pressables*sizeof(tPressable));
+	map->totalPressables=pressables;
 	gates=0;
+	pressables=0;
 	for (i=0;i<24;i++) {
 		for (j=0;j<30;j++) {
 			if (((map->fore[i*30+j]&0x1f)==T_GATE)||((map->fore[i*30+j]&0x1f)==T_EXIT_LEFT)) {
@@ -84,10 +98,21 @@ void* mapLoadLevel(tMemory level) {
 				fprintf(stderr,"mapLoadLevel: Loading gate: indexed=%d gate pointer=%p\n",i,(void*)auxGates[i*30+j]);
 				map->gates[gates++]=newGate;
 				gateInRoom++;
+			} else if (((map->fore[i*30+j]&0x1f)==T_BTN_RAISE)||((map->fore[i*30+j]&0x1f)==T_BTN_DROP)) {
+				tPressable newPressable;
+				newPressable.event=map->events+map->back[i*30+j];
+				newPressable.action=eNormal;
+				map->back[i*30+j]=pressableInRoom;
+				map->screenPressables[i][pressableInRoom]=map->pressables+pressables;
+				fprintf(stderr,"mapLoadLevel: Creating button: indexed=%d,%d btn pointer=%p\n",i,pressableInRoom,(void*)(map->pressables+pressables));
+				map->pressables[pressables++]=newPressable;
+				pressableInRoom++;
 			}
 		}
 		if (!gateInRoom) map->screenGates[i]=NULL;
+		if (!pressableInRoom) map->screenPressables[i]=NULL;
 		gateInRoom=0;
+		pressableInRoom=0;
 	}
 	for (i=0;i<256;i++) {
 		unsigned char byte1=level.array[MAPS_BLOCK_OFFSET_GATE_1+i];
@@ -191,12 +216,12 @@ tRoom mapGetRoom(tMap* map, tRoomId roomAux) {
 		result.fore[47]=*(slevel(fore)+30*(roomAux-1)+20);
 		result.back[47]=*(slevel(back)+30*(roomAux-1)+20);
 	} else {
-		result.fore[11]=MAP_F_WALL;
-		result.back[11]=MAP_B_NONE;
 		result.fore[23]=MAP_F_WALL;
 		result.back[23]=MAP_B_NONE;
 		result.fore[35]=MAP_F_WALL;
-		result.back[35]=MAP_B_NONE;	
+		result.back[35]=MAP_B_NONE;
+		result.fore[47]=MAP_F_WALL;
+		result.back[47]=MAP_B_NONE;	
 	}
 
 	/* Top room */
@@ -307,11 +332,13 @@ void  mapMove(tMap* map) {
 
 void  mapPressedTile(tMap* map, tTile tile, int s, int x, int y) {
 	if (tile.isPressable) {
+		tEvent* event;
 		/* drop or raise button */
-		fprintf(stderr,"mapPressedTile: throw event %d\n",tile.back);
+		event=((tPressable*)tile.moreInfo)->event;
+		fprintf(stderr,"mapPressedTile: throw event from button %d event:%p\n",tile.back,(void*)event);
 		do {
-			map->events[tile.back].gate->action=tile.isRaise?eOpening:eClosingFast;
-		} while	(map->events[tile.back++].triggerNext);
+			event->gate->action=tile.isRaise?eOpening:eClosingFast;
+		} while	((event++)->triggerNext);
 	}
 
 }
