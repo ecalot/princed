@@ -56,22 +56,22 @@ Table of Contents
  and DAT v2.0 used in POP 2. In this document we will specify DAT v1.0.
 
  DAT files were made to store levels, images, palettes, wave, midi and
- internal speaker sounds. Each type has it's own format as described in
- the next sections.
+ internal speaker sounds. Each type has its own format as described below
+ in the following sections.
 
  As the format is very old and the original game was distributed in disks,
- it is normal to think that the file format uses checksum validation to
- detect any kind of file corruption.
+ it is normal to think that the file format uses some kind of checksum
+ validation to detect file corruptions.
 
- DAT files are indexed, this means there is an index and you can access
- each resource through an ID and this ID is unique for the resource inside
+ DAT files are indexed, this means that there is an index and you can
+ access each resource through an ID that is unique for the resource inside
  the file.
 
  Images store their height and width but not their palette, so the palette
  is another resource and must be shared by a group of images.
 
- PLV files are an extension defined to support a format with only one level
- inside.
+ PLV files use the extension defined to support a format with only one
+ level inside.
 
 
 3. Primitives
@@ -115,30 +115,29 @@ Table of Contents
    ~~~ ~~~~ ~~~~~~ ~~~~~~~~~~~~~~
 
 4.1. General file specs, index and checksums
- All DAT files has an index, this index has a number of items count and
+ All DAT files have an index, this index has a number of items count and
  a list of items.
  The index is stored at the very end of the file.
  The first 6 bytes are reserved to locate the index and know the file size.
 
- Stored values:
- Lets define the numbers as:
+ Let's define the numbers as:
   US - Unsigned Short: Little endian, 16 bits, storing two groups of 8 bits
        ordered from the less representative to the most representative
        without sign.
-       i.e. 65534 is FFFE in hex and is stored FE FF (1111 1110 1111 1111)
+       i.e. 65534 is FFFE in hex and is stored FE FF (1111 1110  1111 1111)
        Range: 0 to 65535
        2 bytes
   UL - Unsigned long: Little endian, 32 bits, storing four groups of 8 bits
        each ordered from the less representative to the most representative
        without sign.
        i.e. 65538 is 00010002 in hex and is stored 02 00 01 00
-       (0000 0010 0000 0000 0000 0001 0000 0000)
+       (0000 0010  0000 0000  0000 0001  0000 0000)
        Range: 0 to 2^32-1
        4 bytes
-  SC - Signed char: 8 bits, the first for the sign and the 7 last for the
-       number. If the first bit is a 0, then the number is positive, if not
-       the number is negative, in that case invert all bits and add 1 to
-       get the positive number.
+  SC - Signed char: 8 bits, the first bit is for the sign and the 7 last
+       for the number. If the first bit is a 0, then the number is
+       positive, if not the number is negative, in that case invert all
+       bits and add 1 to get the positive number.
        i.e. -1 is FF (1111 1111), 1 is 01 (0000 0001)
        Range: -128 to 127
        1 byte
@@ -147,42 +146,48 @@ Table of Contents
        Range: 0 to 255
        1 byte
 
+ Note: Sizes are allways in bytes unless another unit is specified.
+
  Index structures:
+
  The DAT header: 6 bytes
-  Offset 0, size 4, type UL: Index offset (the location where the offset
+  Offset 0, size 4, type UL: Index offset (the location where the index
                              begins)
   Offset 4, size 2, type US: IndexSize (the number of bytes the index has)
                              Note that the index size is 8*numberOfItems+2
 
- The DAT index header: 2 bytes
+ The DAT index: IndexSize bytes
   Offset IndexSize, size 2, type US: NumberOfItems (resources count)
   Offset IndexSize+2, size 8*NumberOfItems: The index (a list of
-                              NumberOfItems blocks of 8-bytes-index record)
+                             NumberOfItems blocks of 8-bytes-index record)
 
- The 8-bytes-index record: 8 bytes
+ The 8-bytes-index record (one per item): 8 bytes
   Relative offset 0, size 2, type US: Item ID
-  Relative offset 2, size 4, type UL: Resource start absolute offset
+  Relative offset 2, size 4, type UL: Resource start absolute offset in
+                                      file
   Relative offset 6, size 2, type US: Size of the item (not including
                                       checksums)
 
  Checksum byte:
  There is a checksum byte for each item (resource), this is the first byte
  of the item, the rest of the bytes are the item data. The item type is not
- stores and may only be determined by reading the data and applying some
- filters, this method may fail.
+ stored and may only be determined by reading the data and applying some
+ filters, unfortunetely this method may fail. When you extract an item you
+ should know what kind of item you are extracting.
 
- The if you add whole item data including checksum and take the less
- representative byte you will get the sum of the file. This sum must be FF
- in hex (255 in UC or -1 in SC). If the sum is not FF, then adjust the
- checksum in order to set this value to the sum. The best way to do that is
- adding all the bytes in the item (excluding the checksum) and inverting
- all the bits.
+ If you add (sum) the whole item data including checksum and take the less
+ representative byte (modulus 256) you will get the sum of the file. This sum
+ must be FF in hex (255 in UC or -1 in SC). If the sum is not FF, then adjust
+ the checksum in order to set this value to the sum. The best way to do that is
+ adding all the bytes in the item data (excluding the checksum) and inverting
+ all the bits. The resulting byte will be the right checksum.
 
- From now on the specification are special for each data (that doesn't
- include the checksum byte)
+ From now on the specification are special for each data type (that means we
+ won't include the checksum byte anymore).
 
 4.2. Images
- Each image has a 6 bytes header that is
+ Images are stored compressed and have a header and a compressed data area.
+ Each image only one header with 6 bytes in it as follows
 
 4.2.1 Headers
  The 6-bytes-image header: 6 bytes
@@ -196,28 +201,30 @@ Table of Contents
    if it is 1011 (B in hex) then the image has 16 colors
    if it is 0000 (0 in hex) then the image has 2 colors
    so to calculate the bits per pixel there are in the image, just take the
-   last 2 bits and add 1 (11 is 4 and 00 is 1).
-  the last 4 are the 5 compression types:
+   last 2 bits and add 1. e. g. 11 is 4 (2^4=16 colors) and
+	 00 is 1 (2^1=2 colors).
+  the last 4 bits are the 5 compression types:
    from 0 to 4:
-   0 RAW_LR
-   1 RLE_LR
-   2 RLE_UD
-   3 LZG_LR
-   4 LZG_UD
+   0 RAW_LR (0000)
+   1 RLE_LR (0001)
+   2 RLE_UD (0010)
+   3 LZG_LR (0011)
+   4 LZG_UD (0100)
 
- The next data is the image compressed with the specified algorithm.
+ The following data in the resource is the image compressed with the algorithm
+ specified by those 4 bits.
 
 4.2.2 Algorithms
- RAW_LR means that the data wasn't compressed, it is used for small images
-        the format is saved from left to right (LR) serializing a line to
-        the next integer byte if necessary. In case the image was 16 colors
-        two pixels per byte (4bpp) will be used, in case the image was 2
+ RAW_LR means that the data wasn't compressed, it is used for small images.
+        The format is saved from left to right (LR) serializing a line to
+        the next integer byte if necessary. In case the image was 16 colors,
+        two pixels per byte (4bpp) will be used. In case the image was 2
         colors, 8 pixels per byte (1bpp) will be used.
  RLE_LR has a Run length encoding (RLE) algorithm, after uncompressed the
         image can be read as a RAW_LR.
- RLE_UD is the same as RLE_LR except that after uncompressed the image must
-        be drawn from up to down and then from left to right.
- LZG_LR has any kind of variant of the LZ77 algorithm (the sliding windows
+ RLE_UD is the same as RLE_LR except that after uncompressed the bytes in
+ 				the image must be drawn from up to down and then from left to right.
+ LZG_LR has some kind of variant of the LZ77 algorithm (the sliding windows
         algorithm), here we named it LZG in honor of Lance Groody, the
         original coder.
         After uncompressed it may be handled as RAW_LR.
@@ -226,11 +233,11 @@ Table of Contents
 4.2.2.1 Run length encoding (RLE)
  The first byte is allways a control byte, the format is SC. If the control
  byte is negative, then the next byte must be repeated n times as the bit
- inverted control byte says, after the next byte another control byte is
- stored.
+ inverted control byte says, after the next byte (the one that was repeated)
+ another control byte is stored.
  If the control byte is positive or zero just copy textual the next n bytes
- where n is the control byte plus one and the next byte is another control
- byte.
+ where n is the control byte plus one. After that, the next byte is the
+ following control byte.
  If you reach a control byte but the image size is passed, then you have
  completed the image.
 
@@ -244,15 +251,15 @@ Table of Contents
   If the bit is a zero read the next two bytes as control bytes with the
   following format:
    - 10 bits for the slide position (S). Add 66 to this number.
-   - 6 bits for the repetition number (R). Add 3 to this number.
+   - 6 bits for the copy size number (R). Add 3 to this number.
    Then print the next R bytes starting with the S'th byte of the slide
    window.
  After all the maskbyte is read and processed, the next byte is another
  maskbyte. Use the same procedure to finish uncompressing the file.
 
- This version of the algorithm is limited to 1024 bytes due to slide window
- size. In case you want to know the full algorithm and see how it works for
- bigger images, use the source, Luke.
+ This version of the algorithm is limited to 1024 bytes due to the slide
+ window size. In case you want to know the full algorithm and see how it
+ works for bigger images you should use the source, Luke.
 
  This is the uncompression function source:
  (note that this is part of PR that is under the GPL license)
@@ -305,10 +312,10 @@ Table of Contents
          while (rep--) {
            h=cursor/MAX_MXD_SIZE_IN_LZG-
              ((location%MAX_MXD_SIZE_IN_LZG)>(cursor%MAX_MXD_SIZE_IN_LZG));
-					/*
-           * if the image is stored in an array of 1024 x n bytes
-					 * h is the height and location is the width
-					 */
+					 /*
+            * if the image is stored in an array of 1024 x n bytes
+					  * h is the height and location is the width
+					  */
            img[cursor++]=img[
              ((h<0)?0:h)*MAX_MXD_SIZE_IN_LZG+
              (location++)%MAX_MXD_SIZE_IN_LZG
@@ -578,7 +585,8 @@ Table of Contents
  offsets:        5,4,3,3,1,5,4,2,1, 1, 5, 3, 2, 1, 5, 4, 3, 2, 5, 4
  separatos size: 0,1,1,0,0,0,1,1,0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0
 
- We'll be adding the next values as soon as we count the pixels.
+ We'll be adding the next values as soon as we count the pixels ;)
+ This information can be found in walls.conf file from FreePrince.
 
 4.4.3 Room linking
  This section describes the links block.
