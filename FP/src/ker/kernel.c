@@ -95,7 +95,7 @@ int playgame(int optionflag,int level) {
 				outputClearScreen(); /* TODO: send to drawBackground() */
 				roomDrawBackground(&room);
 				kidDrawLives(&kid);
-				objectDraw(kid);
+				objectDraw(&kid);
 				roomDrawForeground(&room);
 				/* if dead */
 				if (flags&STATES_FLAG_X) {
@@ -233,7 +233,7 @@ int kernel(int optionflag,int level) {
 		}
 	} while(!quit);
 
-	objectFree(kid); /*TODO: exiting from the story will cause a game crash because this object wasn't allocated*/
+	objectFree(&kid); /*TODO: exiting from the story will cause a game crash because this object wasn't allocated*/
 	inputStopTimer();
 	outputStop();
 	return 0;

@@ -27,9 +27,9 @@ typedef struct {
 	short        animSize; /* number of frames to be shown */
 } tsAction;
 
-#define stateGetImage(a) (((a).action.image))
-#define stateGetBottom(a) (((a).action.imgoffx))
-#define stateGetMirror(a) (((a).action.mirror))
+#define stateGetImage(a) (((a)->action.image))
+#define stateGetBottom(a) (((a)->action.imgoffx))
+#define stateGetMirror(a) (((a)->action.mirror))
 
 /* public functions interface */
 
@@ -55,7 +55,7 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room);
 /* Create a State depending on the level */
 int stateKidInLevel(int level);
 tState stateCreate(short stateId);
-void stateInterrupt(tState* state, short stateId);
+void stateReset(tState* state, short stateId);
 void stateFree(tState* state);
 
 #include "states_conf.h"

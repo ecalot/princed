@@ -96,7 +96,7 @@ void stateFree(tState* state) {
 	free(state->offsx);
 }
 
-void stateInterrupt(tState* state, short stateId) {
+void stateReset(tState* state, short stateId) {
 	stateFree(state);
 	*state=stateCreate(stateId);
 }

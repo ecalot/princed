@@ -47,10 +47,14 @@ void loadGfx(int storeMirrored, tData** gfxCache, unsigned long resId) {
 		gfxCache[DIR_RIGHT]=NULL;
 }
 
-void objectFree(tObject obj) {
-	resFree(obj.gfxCache[DIR_LEFT]);
-	if (obj.gfxCache[DIR_RIGHT]) resFree(obj.gfxCache[DIR_RIGHT]);
-	stateFree(&obj.action);
+void objectFree(tObject* obj) {
+	resFree(obj->gfxCache[DIR_LEFT]);
+	if (obj->gfxCache[DIR_RIGHT]) resFree(obj->gfxCache[DIR_RIGHT]);
+	stateFree(&obj->action);
+}
+
+void objectInterrupt(tObject* obj,short action) {
+	stateReset(&obj->action,action);
 }
 
 /* TODO: make a function in maps.c that calls this one for the kid */
@@ -71,13 +75,13 @@ tObject objectCreate(int location, int floor, int direction, int stateId, unsign
 	return object;
 }
 
-void objectDraw(tObject object) {
-	void* image=object.gfxCache[object.direction ^ stateGetMirror(object)]->pFrames[stateGetImage(object)-1];
+void objectDraw(tObject* object) {
+	void* image=object->gfxCache[object->direction ^ stateGetMirror(object)]->pFrames[stateGetImage(object)-1];
 	/* TODO: move this -1 to each script frame */
 	outputDrawBitmap(
 		image, 
 		object_getLocation(object,image),
-		58-stateGetBottom(object)+object.floor*TILE_H
+		58-stateGetBottom(object)+object->floor*TILE_H
 	);
 }
 

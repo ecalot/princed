@@ -141,10 +141,10 @@ tMenuOption playAnimation(int id) {
 					/* if the time is over or exit code detected */
 					if ((objArray[i].duration==1)||(exitCode<0)) {
 						/*printf("exit Code detected: i=%d exit=%d \n",i,exitCode);*/
-						objectFree(objArray[i].obj);
+						objectFree(&objArray[i].obj);
 						objArray[i].active=0; /* remember it is destroyed */
 					} else {
-		  			objectDraw(objArray[i].obj);
+		  			objectDraw(&objArray[i].obj);
 					}
 				}
 			}
@@ -173,7 +173,7 @@ tMenuOption playAnimation(int id) {
 		}
 	}
 
-	for (i=0;i<objsActive;i++) if (objArray[i].active) objectFree(objArray[i].obj);
+	for (i=0;i<objsActive;i++) if (objArray[i].active) objectFree(&objArray[i].obj);
 	for (i=0;i<imgsActive;i++) resFree(imgArray[i].img);
 	free(imgArray);
 	free(objArray);
