@@ -56,6 +56,7 @@ typedef struct {
 	/* Graphical arributes */
 	int hasTorch;
 	int hasSkeleton;
+	int hasSpikes;
 	int hasPillar;
 	int hasFloor;
 	int hasBrokenTile;
