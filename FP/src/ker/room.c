@@ -124,6 +124,22 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	return result;
 }
 
+/* Wall functions */
+int wallGetCase(tTile left, tTile tile, tTile right) {
+	if (!isIn(tile,TILES_WALL)) { 
+		return WALL_LOC_NONE;
+	} else if (isIn(left,TILES_WALL)&&isIn(right,TILES_WALL)) { 
+		return WALL_LOC_WWW;
+	} else if ((!isIn(left,TILES_WALL))&&(isIn(right,TILES_WALL))) {
+		return WALL_LOC_SWW;
+	} else if ((isIn(left,TILES_WALL))&&(!isIn(right,TILES_WALL))) {
+		return WALL_LOC_WWS;
+	} else {
+		return WALL_LOC_SWS;
+	}
+}
+#define wallCase(a) (cases==(a))
+
 /*
  * Drawing functions
  */
@@ -410,7 +426,10 @@ void drawBackPanel(tRoom* room,int x, int y) {
 
 /* bottom panel block at background */
 void drawBackBottomTile(tRoom* room,int x, int y) {
+	tTile left=roomGetTile(room,x-1,y);
 	tTile tile=roomGetTile(room,x,y);
+	tTile right=roomGetTile(room,x+1,y);
+	int cases=wallGetCase(left,tile,right);
 
 	/* TODO: fix this conditions to make miniterms */
 	/* loose moving */
@@ -428,22 +447,15 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 	} else {
 	/* wall */
 		if (isIn(tile,TILES_WALL)) {
-			tTile left;
-			tTile right;
-			int image;
-			left=roomGetTile(room,x-1,y);
-			right=roomGetTile(room,x+1,y);
 			/* there are 4 cases */
-			if (isIn(left,TILES_WALL)&&isIn(right,TILES_WALL)) {
-				image=65;
-			} else if ((!isIn(left,TILES_WALL))&&(isIn(right,TILES_WALL))) {
-				image=71;
-			} else if ((isIn(left,TILES_WALL))&&(!isIn(right,TILES_WALL))) {
-				image=67;
-			} else {
-				image=69;
-			}
-			e(image,(x-1)*TILE_W+0,y*TILE_H+3);
+			if (wallCase(WALL_LOC_WWW))
+				e(65,(x-1)*TILE_W+0,y*TILE_H+3);
+			if (wallCase(WALL_LOC_SWW))
+				e(71,(x-1)*TILE_W+0,y*TILE_H+3);
+			if (wallCase(WALL_LOC_WWS))
+				e(67,(x-1)*TILE_W+0,y*TILE_H+3);
+			if (wallCase(WALL_LOC_SWS))
+				e(69,(x-1)*TILE_W+0,y*TILE_H+3);
 		} else {
 	/* empty */
 			tTile dleft=roomGetTile(room,x-1,y+1);
@@ -476,7 +488,12 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 
 /* main panel block */
 void drawForePanel(tRoom* room,int x, int y) {
+	register short seed=room->id+(x-1)+(y-1)*10-1;
+	int env=WALL_ENV_DUNGEON;
+	tTile left=roomGetTile(room,x-1,y);
 	tTile tile=roomGetTile(room,x,y);
+	tTile right=roomGetTile(room,x+1,y);
+	int cases=wallGetCase(left,tile,right);
 
 	/* pillar */
 	if (isIn(tile,TILES_PILLAR)) 
@@ -485,59 +502,45 @@ void drawForePanel(tRoom* room,int x, int y) {
 	if (isIn(tile,TILE_BP_BOTTOM)) 
 		e(84,x*TILE_W-24,y*TILE_H+0);
 	/* wall */
-	if (isIn(tile,TILES_WALL)) {
-		register short seed;
-		int cases;
-		int env=WALL_ENV_DUNGEON;
-		tTile left;
-		tTile right;
-		left=roomGetTile(room,x-1,y);
-		right=roomGetTile(room,x+1,y);
-		seed=room->id+(x-1)+(y-1)*10-1;
-		/* there are 4 cases */
-		if (isIn(left,TILES_WALL)&&isIn(right,TILES_WALL)) { 
-			/* First step: calculate the seed position and get the element */
-			cases=WALL_LOC_WWW;
-			e(66,(x-1)*TILE_W+0,y*TILE_H+0);
-		} else if ((!isIn(left,TILES_WALL))&&(isIn(right,TILES_WALL))) {
-			cases=WALL_LOC_SWW;
-			e(72,(x-1)*TILE_W+0,y*TILE_H+0);
-		} else if ((isIn(left,TILES_WALL))&&(!isIn(right,TILES_WALL))) {
-			cases=WALL_LOC_WWS;
-			e(68,(x-1)*TILE_W+0,y*TILE_H+0);
-		} else {
-			cases=WALL_LOC_SWS;
-			e(70,(x-1)*TILE_W+0,y*TILE_H+0);
-		}
-		/* TODO: use one seed per combination */
-		/* the seed generation algorithm */
-		/* Upper row */
-		if (wallGetInfo(WALL_TABLE_LINE1_DARKER))
-			e(75,(x-1)*TILE_W+0,y*TILE_H-39);
-		if (wallGetInfo(WALL_TABLE_LINE1_LEFT_DOWN))
-			e(77,(x-1)*TILE_W+0,y*TILE_H-39);
-		if (wallGetInfo(WALL_TABLE_LINE1_RIGHT_DOWN))
-			e(79,(x-1)*TILE_W+24,y*TILE_H-39);
-		if (wallGetInfo(WALL_TABLE_LINE1_RIGHT_UP))
-			e(78,(x-1)*TILE_W+24,y*TILE_H-49);
-		if (wallGetInfo(WALL_TABLE_LINE1_LEFT_UP))
-			e(76,(x-1)*TILE_W+0,y*TILE_H-54);
-		/* Second row */
+	/* there are 4 cases */
+	if (wallCase(WALL_LOC_WWW))
+		e(66,(x-1)*TILE_W+0,y*TILE_H+0);
+	if (wallCase(WALL_LOC_SWW))
+		e(72,(x-1)*TILE_W+0,y*TILE_H+0);
+	if (wallCase(WALL_LOC_WWS))
+		e(68,(x-1)*TILE_W+0,y*TILE_H+0);
+	if (wallCase(WALL_LOC_SWS))
+		e(70,(x-1)*TILE_W+0,y*TILE_H+0);
+		
+	/* the seed generation algorithm */
+	/* Upper row */
+	if (wallGetInfo(WALL_TABLE_LINE1_DARKER))
+		e(75,(x-1)*TILE_W+0,y*TILE_H-39);
+	if (wallGetInfo(WALL_TABLE_LINE1_LEFT_DOWN))
+		e(77,(x-1)*TILE_W+0,y*TILE_H-39);
+	if (wallGetInfo(WALL_TABLE_LINE1_RIGHT_DOWN))
+		e(79,(x-1)*TILE_W+24,y*TILE_H-39);
+	if (wallGetInfo(WALL_TABLE_LINE1_RIGHT_UP))
+		e(78,(x-1)*TILE_W+24,y*TILE_H-49);
+	if (wallGetInfo(WALL_TABLE_LINE1_LEFT_UP))
+		e(76,(x-1)*TILE_W+0,y*TILE_H-54);
+	/* Second row */
+	if (isIn(tile,TILES_WALL))
 		e(74-wallGetInfo(WALL_TABLE_LINE2_SEP),(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET),y*TILE_H-18);
-		if (wallGetInfo(WALL_TABLE_LINE2_LEFT_DOWN))
-			e(77,(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)+5,y*TILE_H-39+21);
-		if (wallGetInfo(WALL_TABLE_LINE2_RIGHT_DOWN))
-			e(79,(x-1)*TILE_W+24+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)-32+5,y*TILE_H-39+21);
-		if (wallGetInfo(WALL_TABLE_LINE2_RIGHT_UP))
-			e(78,(x-1)*TILE_W+24+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)-32+5,y*TILE_H-49+21);
-		if (wallGetInfo(WALL_TABLE_LINE2_LEFT_UP))
-			e(76,(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)+5,y*TILE_H-54+21);
-		/* Third row TODO: send to BottomTile */
+	if (wallGetInfo(WALL_TABLE_LINE2_LEFT_DOWN))
+		e(77,(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)+5,y*TILE_H-39+21);
+	if (wallGetInfo(WALL_TABLE_LINE2_RIGHT_DOWN))
+		e(79,(x-1)*TILE_W+24+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)-32+5,y*TILE_H-39+21);
+	if (wallGetInfo(WALL_TABLE_LINE2_RIGHT_UP))
+		e(78,(x-1)*TILE_W+24+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)-32+5,y*TILE_H-49+21);
+	if (wallGetInfo(WALL_TABLE_LINE2_LEFT_UP))
+		e(76,(x-1)*TILE_W+7+wallGetInfo(WALL_TABLE_LINE2_OFFSET)+5,y*TILE_H-54+21);
+	/* Third row TODO: send to BottomTile */
+	if (isIn(tile,TILES_WALL))
 		e(74-wallGetInfo(WALL_TABLE_LINE3_SEP),(x-1)*TILE_W+3+wallGetInfo(WALL_TABLE_LINE3_OFFSET),y*TILE_H+3);
-		if (wallGetInfo(WALL_TABLE_LINE3_LEFT_UP))
-			e(76,(x-1)*TILE_W+5+wallGetInfo(WALL_TABLE_LINE3_OFFSET)+5,y*TILE_H-55+21*2);
+	if (wallGetInfo(WALL_TABLE_LINE3_LEFT_UP))
+		e(76,(x-1)*TILE_W+5+wallGetInfo(WALL_TABLE_LINE3_OFFSET)+5,y*TILE_H-55+21*2);
 
-	}
 	/* debris/this foreground layer */
 	if (isIn(tile,TILES_BROKENTILE)) 
 		e(51,(x-1)*TILE_W+0,y*TILE_H+0);
