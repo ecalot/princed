@@ -26,7 +26,7 @@ do
 	number=`expr $number + 1`
 done
 cat xml/gen2.xml >> xml/resources.xml
-echo "\n#define DATA_MAX_ITEMS $number" >> result/data.h
+echo -e "\n#define DATA_MAX_ITEMS $number" >> result/data.h
 
 echo -e "$SOK"
 
