@@ -17,6 +17,25 @@ BEGIN {
 	currentAnimation=0
 }
 
+
+function addLine(coma) {
+				stateArray[currentAction]=sprintf(\
+					"\t/* %sAction: %s, Animations: start=%d total=%d */ \\\n\t\t{/*initial condition*/ %d, /*next state*/ **replace*%s**, /*steps*/ %d}%s\\\n",\
+					rememberAction,\
+					startAnimation,\
+					currentAnimation-startAnimation,\
+					conditions,\
+					nextState,\
+					steps,\
+					linkedState,\
+					coma\
+				)
+
+
+}
+
+
+
 {
 	if ( $1 == "-" ) {
 		if ($2=="-") {
@@ -33,9 +52,18 @@ BEGIN {
 						conditions=currentCondition+1
 					}
 					currentCondition++;
-					result=$5
-					if (defines[$5]) result=defines[$5]
-					printf("\t{es%s,%d}, /* condition number %d */\\\n",$4,result,currentCondition)
+					if (sprintf("%d",$5)) {
+						if (defines[$5]) {
+							result=sprintf("STATES_COND_%s /* %d */",$5,defines[$5])
+						} else {
+							if ($5) {
+								printf("Parsing error in states.conf: Condition modifier '%s' not recognized on uncommented line %d.\n",$5,NR)>"/dev/stderr"
+								exit 22
+							}
+							result=0
+						}
+					}
+					printf("\t{es%s,%s}, /* condition number %d */\\\n",$4,result,currentCondition)
 				} else if (listType == "animation") {
 					if (match($4,/^[0-9]+-[0-9]*$/)) {
 						split($4,a,"-")
@@ -61,7 +89,7 @@ BEGIN {
 				if (linkedState) {
 					linkedState=sprintf("State: %s (%d), ",linkedState,currentActions)
 				}
-				stateArray[currentAction]=sprintf("{/*initial condition*/ %d, /*next state*/ **replace*%s**, /*steps*/ %d},\\\n\t/* %sAction: %s, Animations: start=%d total=%d*/",conditions,nextState,steps,linkedState,rememberAction,startAnimation,currentAnimation-startAnimation)
+				addLine(",")
 				currentAction++;
 			}
 
@@ -85,7 +113,7 @@ BEGIN {
 END {
 	printf("\t{esTrue,0} /* the end */\\\n};\n\n#define STATES_ACTIONS={\\\n");
 	linkedState=currentState
-	stateArray[currentAction]=sprintf("{/*initial condition*/ %d, /*next state*/ **replace*%s**, /*steps*/ %d} /* %sAction: %s */\n",conditions,nextState,steps,linkedState,rememberAction)
+	addLine("")
 	for (i=0;i<=currentAction;i++) {
 		replaceStart=match(stateArray[i],/\*\*replace\*(.*)\*\*/)
 		line=substr(stateArray[i],10+replaceStart)
@@ -93,7 +121,7 @@ END {
 		line=substr(line,0,replaceEnd)
 		stateNumber=stateList[line]
 		if (!stateNumber) stateNumber=0
-		printf "\t%s%d /* %s */%s\\\n", substr(stateArray[i],0,replaceStart),stateNumber,line,substr(stateArray[i],11+replaceEnd+replaceStart)
+		printf "%s%d /* %s */%s", substr(stateArray[i],0,replaceStart),stateNumber,line,substr(stateArray[i],11+replaceEnd+replaceStart)
 	}
 	printf("};\n\n#define STATES_ANIMATIONS={\\\n\t");
 	coma=""
