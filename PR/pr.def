@@ -1,0 +1,7 @@
+EXPORTS
+ prExportDat
+ prImportDat
+ prClearRes
+ prVerifyDatType
+ prExportDatOpt
+ prImportDatOpt

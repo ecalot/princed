@@ -1,0 +1,7 @@
+pr.dll
+_prClearRes		_prClearRes
+_prExportDat		_prExportDat
+_prExportDatOpt		_prExportDatOpt
+_prImportDat		_prImportDat
+_prImportDatOpt		_prImportDatOpt
+_prVerifyDatType		_prVerifyDatType
