@@ -834,7 +834,8 @@ Table of Contents
   ORIGINALLEVELNUMBER  Optional. The level number it has when it was
                        first exported
  
- The content values may be empty.
+ The content values may be empty. There is no need to keep an order within
+ the fields.
 
 5.2. Allowed Date format
  To make easy time parsing the time format must be very strict.
