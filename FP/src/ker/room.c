@@ -169,6 +169,28 @@ void drawLoose(int x, int y, int frame,tLooseLayer layer) {
 	}
 }
 
+void drawUnlinkedLoose(int x, int y/*, int frame,tLooseLayer layer*/) {
+	register int base,tritop,tribot;
+	base=44;
+	tritop=42;
+	tribot=40;
+/*	switch(layer) {
+		case layTritop:
+			e(tritop-3,x,y);
+			break;
+		case layTribot:
+			e(tribot-3,x,y);
+			break;
+		case layBase:
+			e(base-3,x,y);
+			break;
+	}*/
+			e(tritop-3,x+TILE_W,y+2);
+			e(tribot-3,x,y);
+			e(base-3,x,y+3);
+}
+
+
 void drawGate(int x, int y, int frame) {
 	/* frames are from 0 to 46, 0 is open; 46 is closed */
 	register int i;
@@ -498,6 +520,7 @@ void drawForePanel(tRoom* room,int x, int y) {
 
 void roomDrawBackground(tRoom* room) {
 	int x,y;
+	tFlying* loose=room->level->flyingObjects;
 	
 	for (x=1;x<11;x++) {
 	drawBackBottomTile(room,x,0);
@@ -505,6 +528,11 @@ void roomDrawBackground(tRoom* room) {
 			drawBackPanel(room,x,y);
 			drawBackBottomTile(room,x,y);
 		}
+	}
+	while (loose) { /* for each flying object check if it is in this room */
+		if (loose->screen==room->id) /* if it is draw it */
+			drawUnlinkedLoose(loose->x,loose->y);
+		loose=loose->next;
 	}
 }
 

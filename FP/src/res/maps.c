@@ -52,6 +52,7 @@ void* mapLoadLevel(tMemory level) {
 	int dangers=0;
 	int dangerInRoom=0;
 	tGate** auxGates=malloc(sizeof(tGate*)*24*30);
+	map->flyingObjects=NULL;
 	
 	/* copy maps, links and start position */
 	memcpy(map->fore,level.array+MAPS_BLOCK_OFFSET_WALL,30*24);
@@ -147,6 +148,7 @@ void* mapLoadLevel(tMemory level) {
 					break;
 				case TILE_LOOSE:
 					newDanger.action=eLosNormal;
+					newDanger.pos=i*30+j;
 					break;
 				}
 				map->back[i*30+j]=dangerInRoom;
@@ -443,11 +445,58 @@ void  mapMove(tMap* map) {
 			break;
 		case eLosMoving:
 			map->dangers[i].frame++;
-			if (map->dangers[i].frame==11) map->dangers[i].action=eLosDown;
+			if (map->dangers[i].frame==11) {
+				/* Unlink the tile from the map and add it as a falling object */
+				tFlying* loose=(tFlying*)malloc(sizeof(tFlying));
+				
+				map->dangers[i].action=eLosDown; /* Mark it as down in the map */
+				loose->next=map->flyingObjects; /* Link the tile to the flying objects list */
+				map->flyingObjects=loose;
+				
+				loose->x=(map->dangers[i].pos%10)*TILE_W;
+				loose->y=((map->dangers[i].pos%30)/10+1)*TILE_H;
+				loose->speed=0;
+				loose->screen=map->dangers[i].pos/30+1;
+			}
 			break;
 		default:
 			break;
 		}
+	}
+
+	/* Now it's time to move the flying objects */
+	{
+	tFlying* loose=map->flyingObjects;
+	while (loose) {
+		tRoom room;
+		int x=loose->x/TILE_W;
+		int y=loose->y/TILE_H;
+						
+		if (loose->screen) printf("Updating tile (x,y)=(%d,%d) s=%d\n",loose->x,loose->y,loose->screen);
+		if (loose->speed<7) loose->speed++;
+		if (loose->screen) room=mapGetRoom(map,loose->screen);
+		/* calculate if there will be an impact */
+		if (loose->screen&&(y!=((loose->y+loose->speed*3)/TILE_H))) { /* tile changed floor and not in screen 0*/
+			tTile tile=roomGetTile(&room,x,y);
+			printf("Tile changed floor\n");
+			if (isIn(tile,TILES_WALKABLE)) {
+				printf("IMPACT in s%d x%d y%d\n",loose->screen,x,y);
+				map->fore[(loose->screen-1)*30+x+y*10]=TILE_DEBRIS;
+				map->back[(loose->screen-1)*30+x+y*10]=0;
+				loose->screen=0;
+			}
+		}
+
+		/* if not keep falling */
+		loose->y+=loose->speed*3;
+		if (loose->y>3*TILE_H) { /* go the the screen bellow */
+			loose->screen=*(slevel(links)+((loose->screen-1)*4)+eDown);
+			loose->y=0;
+			/* TODO: if the screen is 0 destroy loose tiles from the falling list */
+		}
+		loose->screen=loose->screen;
+		loose=loose->next;
+	}
 	}
 }
 

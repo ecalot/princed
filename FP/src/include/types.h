@@ -84,8 +84,16 @@ typedef struct {
 		int time;
 		unsigned char back;
 	} more;
+	short pos;
 } tDanger;
 
+typedef struct node {
+	int            screen;
+	int            x,y;
+	int            speed;
+	struct node*   next;
+}tFlying;
+	
 typedef struct {
 	tRoomId        links[ 4*24];
 	unsigned char  fore [24*30];
@@ -107,6 +115,8 @@ typedef struct {
 	int            time;
 	unsigned char  start[3];
 	unsigned char  levelNumber;
+
+	tFlying*       flyingObjects;
 } tMap;
 
 typedef struct {
