@@ -215,8 +215,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 #define drawGateTop(x,y,frame) outputDrawBitmap(roomGfx.environment->pFrames[35-((frame)&7)],x,y)
 
 void drawGate(int x, int y, int frame) {
-	/* frames are from 0 to 46, 0 is open 46 is closed
-	 */
+	/* frames are from 0 to 46, 0 is open; 46 is closed */
 	register int i;
 	register const int mod=frame&7;
 	
@@ -227,6 +226,7 @@ void drawGate(int x, int y, int frame) {
 }
 
 void drawExit(int x, int y, int frame) {
+	/* Frame defined from 0 (open) to 50 (close) */
 	register int i;
 	if (frame<47) outputDrawBitmap(roomGfx.environment->pFrames[55],x,y+47);
 	outputDrawBitmap(roomGfx.environment->pFrames[50],x,y+51);
@@ -234,7 +234,23 @@ void drawExit(int x, int y, int frame) {
 		outputDrawBitmap(roomGfx.environment->pFrames[1],x,y+i+(frame&3));
 	outputDrawBitmap(roomGfx.environment->pFrames[2],x,y);
 }
-		
+
+typedef enum {layBack=113,layRight=108,layFore=102}tSpikeLayer;
+void drawSpike(int x, int y, int frame, tSpikeLayer layer) {
+	/* Frame defined from 0 (none) to 7 (near none). 4 is out. */
+	switch (layer) { /* TODO: use relative offsets in resources */
+		case layRight:
+			x+=32;
+			y-=7;
+			break;				
+		case layFore:
+		case layBack:
+			y-=2;
+			break;
+	}
+	outputDrawBitmap(roomGfx.environment->pFrames[(int)layer+((frame>4)?(6-frame):frame)],x,y);
+}	
+
 /* main panel block */
 void drawBackPanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
@@ -330,6 +346,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			(x-1)*TILE_W,
 			y*TILE_H+2
 		);
+		drawSpike((x-2)*TILE_W,y*TILE_H,room->level->time%6,layRight);
 	}
 	/* skeleton/left */
 	if (left.hasSkeleton) {
@@ -482,6 +499,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			(x-1)*TILE_W,
 			y*TILE_H
 		);
+		drawSpike((x-1)*TILE_W,y*TILE_H,room->level->time%6,layFore);
 	}
 	/* skeleton/this */
 	if (tile.hasSkeleton) {
