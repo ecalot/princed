@@ -157,7 +157,7 @@ dat.o: res/dat.c include/disk.h include/dat.h
 
 kernel.o: ker/kernel.c include/kernel.h include/resources.h\
           include/res_conf.h include/output.h include/object.h\
-          $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) include/text_conf.h
+          $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) 
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
@@ -196,7 +196,8 @@ maps.o: res/maps.c include/maps.h include/map_defs.h include/tiles.h\
 	$(INFO) Compiling resource map handling module...
 	$(CC) -c res/maps.c $(OPTIONS)
 
-output.o: out/output.c include/resources.h include/res_conf.h
+output.o: out/output.c include/resources.h include/res_conf.h\
+          include/text_conf.h
 	$(INFO) Compiling main output module...
 	$(CC) -c out/output.c $(OPTIONS)
 
