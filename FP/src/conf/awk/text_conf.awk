@@ -53,18 +53,18 @@ BEGIN {
 # Parse file into memory #
 ##########################
 
-/^Space [0-9]+$/ {
+/^Space [0-9]+$/ { #space is treates specially
 	space=$2
 }
 
-/^Character '.':$/ {
+/^Character '.':$/ { #new character
 	if (state==waitingForChar) {
 		c=ord[substr($2,2,1)]
 		state=waitingForTop
 		k++
 	} else {
-		print "Not waiting for character"
-		exit 1
+		fprintf(stderr,"Error: Unexpected character")
+		exit 75
 	}
 }
 
@@ -73,36 +73,17 @@ BEGIN {
 		len=length($1)
 		state=0
 	} else {
-		print "Not waiting for a new image"
-		exit 1
+		fprintf(stderr,"Error: Unexpected image beginning")
+		exit 74
 	}
 }
 
-/^\\[-]*\/$/ {
-	if (state>0) {
-		l=length($0)
-		if (l!=len) {
-			print "Error: the image len is not valid"
-			exit 1
-		}
-		offset+=l-2;
-		if (maxSize<state) maxSize=state
-		state=waitingForChar
-		list[k]=c
-		offs[k]=offset
-	} else {
-		print "Not waiting for and end of image"
-		exit 1
-	}
-}
-
-
-/^\|[ O]*\|$/ {
+/^\|[ O]*\|$/ { #image rows
 	if (state>=0) {
 		l=length($0)
 		if (l!=len) {
-			print "Error: the image len is not valid"
-			exit 1
+			fprintf(stderr,"Error: the image length is not valid")
+			exit 70
 		}
 		for (i=0;i<l-2;i++) {
 			if (substr($0,2+i,1)=="O") {
@@ -114,15 +95,38 @@ BEGIN {
 		}
 		state++
 	} else {
-		print "Not waiting for image"
-		exit 1
+		fprintf(stderr,"Error: unexpected image")
+		exit 73
 	}
 }
 
+/^\\[-]*\/$/ { #image ending
+	if (state>0) {
+		l=length($0)
+		if (l!=len) {
+			fprintf(stderr,"Error: the image length is not valid")
+			exit 70
+		}
+		offset+=l-2;
+		if (maxSize<state) maxSize=state
+		state=waitingForChar
+		list[k]=c
+		offs[k]=offset
+	} else {
+		fprintf(stderr,"Error: Unexpected end of image")
+		exit 71
+	}
+}
+
+###################################################
+# PART 2                                          #
+# Process memory structures generating the arrays #
+###################################################
+
 END {
 	if (state!=waitingForChar) {
-		print "End reched with an unfinished image"
-		exit 1
+		fprintf(stderr,"Error: Unexpected end of file")
+		exit 76
 	}
 	
 	printf("#define TEXT_CHARS {\\\n\t")
