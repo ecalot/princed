@@ -112,7 +112,11 @@ tData* resLoad(long id) {
 				return NULL;
 			}
 			mReadCloseDatFile();
-			return (tData*)mapLoadLevel(raw); /* transform from raw to a loaded map */
+			result=(tData*)malloc(sizeof(tData));
+			result->frames=1; /* drop filename and palette */
+			result->type=eLevels;
+			result->pFrames=(void**)mapLoadLevel(raw);
+			return result; /* transform from raw to a loaded map */
 		case RES_TYPE_IMG: {
 			tMemory palette;
       tImage image;
@@ -120,6 +124,7 @@ tData* resLoad(long id) {
 
 			result=(tData*)malloc(sizeof(tData));
 			result->frames=total-2; /* drop filename and palette */
+			result->type=eImages;
 			result->pFrames=(void**)malloc(result->frames*sizeof(void*));
 
 			if (!mReadBeginDatFile(&numberOfItems,res_file[res_list[from]])) {

@@ -75,9 +75,8 @@ tMenuOption showTitles() {
 	tData *main_title;
 	/*tData *main_text;*/
 	tMenuOption result;
-printf("hola oooo %08x %08x %08x %08x\n",res_set_part_type(RES_TYPE_IMG),res_set_part_from(73),res_set_part_size(3),res_set_part_size(0xffff));
+
 	main_title = resLoad(RES_IMG_MAIN_BACKGROUND);
-printf("hola %d\n",RES_IMG_MAIN_BACKGROUND);
 	if (! main_title) {
 		printf("The resource couldn't be loaded!\n");
 		return menuQuit;

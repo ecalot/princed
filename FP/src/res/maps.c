@@ -37,7 +37,7 @@ maps.c: Freeprince : Map handling library
 #include "kid.h"
 #include "resources.h"
 
-#define slevel(field) (((tMap*)map->pFrames[0])->field)
+#define slevel(field) (((tMap*)(((tData*)map)->pFrames))->field)
 
 /* Privates 
 
@@ -72,7 +72,7 @@ void* mapLoadLevel(tMemory level) {
 	memcpy(map->fore,level.array+MAPS_BLOCK_OFFSET_WALL,30*24);
 	memcpy(map->back,level.array+MAPS_BLOCK_OFFSET_BACK,30*24);
 	memcpy(map->start,level.array+MAPS_BLOCK_OFFSET_START_POSITION,3);
-/*	memcpy(slevel(links),level.data+MAPS_BLOCK_OFFSET_LINKS,4*24);*/
+	memcpy(map->links,level.array+MAPS_BLOCK_OFFSET_LINK,4*24);
 	return (void*)map;
 }
 
@@ -220,7 +220,7 @@ tRoom mapGetRoom(tData* map, tRoomId roomId) {
 	return result;
 }
 
-void  mapStart(tData* map, tKid* kid, tRoomId* roomId) {
+void  mapStart(tData* map, tKid* kid, tRoomId *roomId) {
 	/* kid->x,y */
 	*roomId=slevel(start)[0];
 }

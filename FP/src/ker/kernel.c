@@ -50,7 +50,7 @@ int playgame(int optionflag,int level) {
 	/* Create objects */
 	tKey    key=inputCreateKey();
 	tKid    kid=kidCreate();
-	tData*  map=NULL; /*resLoad(RES_MAP+level);*/
+	tData*  map=resLoad(RES_MAP|level);
 	tRoom   room;
 	tRoomId roomId;
 	
