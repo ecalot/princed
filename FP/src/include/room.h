@@ -84,7 +84,7 @@ void roomKidChangedFloor(tRoom* room, tObject* kid);
 	/* spikes/left */\
 	if (isIn(left,TILES_SPIKES)) {\
 		e(107,(x)*TILE_W+0,y*TILE_H+2);\
-		drawSpike((x-2)*TILE_W+0,y*TILE_H,spikeGetFrame(left),layRight);\
+		drawSpike((x)*TILE_W-TILE_W+0,y*TILE_H,spikeGetFrame(left),layRight);\
 	}\
 	/* skeleton/left */\
 	if (isIn(left,TILES_SKELETON)) \
