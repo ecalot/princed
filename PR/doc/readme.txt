@@ -73,40 +73,48 @@ Type 07:
  It is recommended to upgrade to the next stable when it is released.
  To report bugs please go to http://sourceforge.net/tracker/?func=add&group_id=91915&atid=598845.
 
-3) Syntax:
- The command syntax is very easy:
+3) Usage: 
+   pr [-x [EXTRACTDIR]|-c [COMPILEDIR]|-d] [DATFILEPATH] 
+   pr [OPTIONS] [DATFILEPATH]
  
- pr [datfile] -mainoption[suboptions] optionParameters
+   Mandatory arguments to long options are mandatory for short options too.
  
- where mainoption must be:
-  
- -x[rn] for extract
-  r: raw extraction
-  n: don't extract
- -c[r] for compile
-  r: raw compiling
- -d for type
+    -c, --import[=DIRNAME]     imports from DIRNAME into given dat file
+    -d, --classify             returns the DAT file type
+    -x, -e, --export[=DIRNAME] extracts given dat file into DIRNAME
  
- This will perform the option to the datafile using the auxiliary files in
- the optionalDirectory or current if not set.
+    -b, --backup[=EXTENSION]   backup your files
+    -f, --force                default option, you cannot disable it,
+                               so please make a backup of your files
+    -g, --cgi                  run as CGI and output mime headers
+    -h, --help                 display this help and exit
+    -m, --resource=RESFILE     uses an user-specific resource xml file
+    -r, --raw                  uses raw format
+    -R, --recursive            searches for all dat files (only if DATFILEPATH
+                               is not a dat file)
+    -t, --datfile=DATFILE      specifies a dat file to read resources
+                               different that the original file
+        --unknown              generate the unknown file without performing
+                               any extraction
+    -v, --verbose              explain what is being done
+        --version              output version information and exit
+
+ Note: if DATFILEPATH is not provided or if it is a directory all dat files
+       that are set on resources.xml will be selected
  
  Syntax samples:
  
- C:\PRINCED\PR> pr dat\vdungeon.dat -x ext
+ C:\PRINCED\PR> pr -xext dat\vdungeon.dat
  
  This will extract the bitmaps and palettes allocated in   C:\princed\pr\dat\vdungeon.dat into the c:\princed\pr\ext. 
  Note: ext must exist.
  
- C:\PRINCE> pr vdungeon.dat -x
+ C:\PRINCE> pr -x vdungeon.dat
  
  This will extract all the bitmaps and palettes allocated in  c:\prince\vdungeon.dat
  into c:\prince.
  
- C:\PRINCE> pr -t
- 
- This will clear resources in c:\prince\resources.txt
- 
- C:\PRINCED\PR> pr compiled\vdungeon.dat -c ext
+ C:\PRINCED\PR> pr -cext compiled\vdungeon.dat
  
  This will compile the bitmaps and palettes that are in c:\princed\pr\ext and
  associated to vdungeon.dat in the resource file and generate the file
@@ -116,7 +124,12 @@ Type 07:
  It's strongly recommended that you download a newer stable version of this program as soon as it comes available in the official url (http://www.princed.com.ar)
 
 5) Credits
+
  Coding & main routines
+  Enrique Calot
+
+ Graphic compression algorithms
+  Tammo Jan Dijkema
   Enrique Calot
 
  Graphic format development
@@ -126,8 +139,7 @@ Type 07:
  MID Sound format development
   Christian Lundheim
 
- Resources Management & Documentation
+ Resources.xml edition
   Steven Fayers
-
 
 Please enjoy using Princed Resource Editor!
