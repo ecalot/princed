@@ -140,7 +140,7 @@ tMenuOption playAnimation(int id) {
 
 					/* if the time is over or exit code detected */
 					if ((objArray[i].duration==1)||(exitCode<0)) {
-						printf("exit Code detected: i=%d exit=%d \n",i,exitCode);
+						/*printf("exit Code detected: i=%d exit=%d \n",i,exitCode);*/
 						objectFree(objArray[i].obj);
 						objArray[i].active=0; /* remember it is destroyed */
 					} else {
