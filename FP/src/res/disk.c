@@ -115,98 +115,15 @@ int makebase(const char* p) {
 	return a;
 }
 
-#if 0
-static tOpenFiles* openFilesList=NULL;
-
-void addFileToOpenFilesList(const char* fileName,int hasBackup) {
-	/*
-		Add a recently safe open file to the file pointer dynamic table
-		using the LIFO philosophy.
-	*/
-
-	tOpenFiles* newNode;
-
-	/* Create the new node and fill in the fields */
-	newNode=(tOpenFiles*)malloc(sizeof(tOpenFiles));
-	newNode->next=openFilesList;
-	newNode->name=strallocandcopy(fileName);
-	if (hasBackup) {
-		newNode->size=mLoadFileArray(fileName,&(newNode->content));
-	} else {
-		newNode->size=0;
-	}
-	openFilesList=newNode;
-}
-
-void addPointerToOpenFilesList(FILE* fp) { /* TODO: use a define */
-	openFilesList->file=fp;
-}
-
-int getFromOpenFilesList(FILE* fp, char** fileName, unsigned char** content, unsigned long int *size) {
-	tOpenFiles* currentNode;
-	tOpenFiles* priorNode=NULL;
-
-	/* Search using FILE* file as key */
-	if (openFilesList==NULL) return 0; /* Empty list */
-	currentNode=openFilesList;
-	while ((currentNode->file!=fp)&&(currentNode->next!=NULL)) {
-		priorNode=currentNode;
-		currentNode=currentNode->next;
-	}
-	if (currentNode->file!=fp) return 0; /* Not found */
-
-	/* Return results */
-	*fileName=currentNode->name;
-	*content=currentNode->content;
-	*size=currentNode->size;
-
-	/* free node and set prior pointer to the next */
-	if (priorNode==NULL) {
-		openFilesList=currentNode->next;
-	} else {
-		priorNode->next=currentNode->next;
-	}
-	free(currentNode);
-
-	return 1;
-}
-
-#endif
 int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension) {
-	/*unsigned char* content;*/
-	/*char* fileName;*/
 	unsigned long int size=0;
 
-	/*if (getFromOpenFilesList(fp,&fileName,&content,&size)) {*/
 		if (dontSave) {
 			fclose(fp);
 			if (size) {
 				fp=fopen(/*fileName*/"/dev/null","wb");
 				if (fp==NULL) return -1;
-				/*fwrite(content,1,size,fp);*/
-			} else {
-				/*remove(fileName);*/
 			}
-		/*}*/
-#if 0
-		else {
-			/* File Existed before and we need to back it up */
-			if (hasFlag(backup_flag)) {
-				char aux[MAX_FILENAME_SIZE];
-				static const char defaultbackupExtension[]=DEFAULT_BACKUP_EXTENSION;
-				/* Set default values if there isn't */
-				if (backupExtension==NULL) backupExtension=defaultbackupExtension;
-				/* generate the file name */
-				sprintf(aux,"%s.%s",fileName, backupExtension);
-				fclose(fp);
-				fp=fopen(aux,"wb");
-				if (fp==NULL) return -2;
-				fwrite(content,1,size,fp);
-			}
-		}
-#endif
-		/*free(fileName);*/
-		/*if (size) free(content);*/
 	}
 
 	return fclose(fp);
@@ -318,39 +235,6 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 	}
 }
 
-#ifdef PR_FUTURE_CODE
-int mDiskVealidateFileHeader(unsigned char* text, int size, FILE* fp) {
-	/*
-		Validates if the file contains the following text in the stream.
-		1 if it does
-		0 if error or doesn't
-
-		Moves the file pointer to the next position
-	*/
-
-	/* Declare variables */
-	int i;
-	unsigned char* readText;
-
-	/* Reserves memory to allocate the read bytes */
-	readText=getMemory(size);
-	if (readText==NULL) return 0; /* memory error, abort */
-
-	/* Read the file and move the file pointer */
-	if (!fread(readText,size,1,fp)) {
-		free(readText);
-		return 0;
-	}
-
-	/* Make the binary compare */
-	for (i=0;(i<size)&&(readText[i]==text[i]);i++);
-
-	/* Frees memory and returns the result */
-	free(readText);
-	return (i==size); /* 0 if the compare for was stopped before end reached */
-}
-#endif
-
 const char* getFileNameFromPath(const char* path) {
 	/*
 		If you give a path you get the filename,
@@ -378,73 +262,4 @@ whatIs isDir(const char *path) {
 	if(stat(path,&buf)==-1) return eNotFound;
 	return (S_ISDIR(buf.st_mode))?eDirectory:eFile;
 }
-
-#ifndef IGNORERECURSIVEFUNCTIONS
-
-int recurseDirectory(const char* path,int optionflag, const char* extension,const char* dirName,const char* resFile, const char* datfilename,const char* datAuthor,FILE* output) {
-	/*
-		Search for all .dat files in the directory
-		if recursive flag is set search over the subdirectories
-		if verbose flag is set shows some messages in the screen
-		when .dat files are found it runs prMain form each of them
-	*/
-
-	/* Declare variables */
-	char*          recursive;
-	struct dirent* directoryStructure;
-	DIR*           dir;
-
-	/* Opens directory */
-	if ((dir = opendir(path))==NULL) {
-		return 0;
-	}
-
-	/* Shows some messages */
-	if ((hasFlag(recursive_flag))&&(hasFlag(verbose_flag))) { /* Only recourse if recursive and verbose flags are set */
-		fprintf(outputStream,PR_TEXT_DISK_PROCESSING,path);
-	}
-
-	/* Main loop: while there are still more files left */
-	while ((directoryStructure = readdir(dir))!=NULL) {
-		if /* Don't look over the system directories */
-			(
-				strcmp(directoryStructure->d_name,".")&&
-				strcmp(directoryStructure->d_name,"..")
-		) {
-			/* Declare variables */
-			int sizeOfPath=strlen(path);
-			int sizeOfFile=strlen(directoryStructure->d_name);
-
-			/* Generate recursive path */
-			recursive=(char*)malloc(sizeOfPath+2+sizeOfFile);
-			memcpy(recursive,path,sizeOfPath);
-			recursive[sizeOfPath]=DIR_SEPARATOR;
-			memcpy(recursive+sizeOfPath+1,directoryStructure->d_name,sizeOfFile+1);
-
-			/*
-				If recursive path is a directory and recursive flag is set recourse into it
-				if recursive path is a directory and recursive flag wasn't set, just ignore
-				if recursive path is not a directory and is a dat file, do prMain
-				if recursive path is not a directory and is not a dat file, ignore
-			*/
-			if (isDir(recursive)==eDirectory) {
-				if (hasFlag(recursive_flag)) { /* Only recourse if recursive flag is set */
-					recurseDirectory(recursive,optionflag,extension,dirName,resFile,datfilename,datAuthor,output);
-				}
-			} else {
-				char aux[]=".dat";
-				if (sizeOfFile>4) {
-					if (equalsIgnoreCase(aux,directoryStructure->d_name+sizeOfFile-4)) {
-						prMain(optionflag,extension,dirName,resFile,recursive,directoryStructure->d_name,datAuthor,output);
-					}
-				}
-			}
-			/* Free all allocated memory */
-			free(recursive);
-		}
-	}
-	return 1;
-}
-
-#endif
 
