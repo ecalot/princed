@@ -34,6 +34,10 @@ fi
 
 #initializes output files
 number=$numberstart
+mkdir -p result
+mkdir -p proc
+mkdir -p index
+mkdir -p xml
 echo -n "Generating header and xml files              "
 cp -f result/data.h result/data.h.bak 2>/dev/null >/dev/null
 echo -e "/* data.h: Auto generated file header for resources */\n">result/data.h
@@ -42,35 +46,35 @@ cat xml/gen1.xml > xml/resources.xml
 #process and add all definitions to the xml and h files
 if [ $FAIL == 0 ]
 then
-for definition in def/*.def
-do
-	#define variables and convert the resource type
-	definition=`echo $definition|sed -e "s/def\/\(.*\)\.def/\1/g"`
-	FDEF="def/$definition.def"
-	FPROC="proc/$definition.p"
-	FINDEX="index/$definition.index"
-	TYPE=`sed -e '1,1d' -e '3,$d' $FDEF`
-	LINEX="^$VARDEFINE RES_TYPE_$TYPE \([0-9]*\)\$"
-	ID=`grep -e "$LINEX" result/types.h|sed -e "s/$LINEX/\1/g"`	
-
-	if [ -z "$ID" ] 
-	then
-		FAIL=1
-		echo "Invalid type $TYPE in $FDEF" >> error_log
-	fi
+	for definition in def/*.def
+	do
+		#define variables and convert the resource type
+		definition=`echo $definition|sed -e "s/def\/\(.*\)\.def/\1/g"`
+		FDEF="def/$definition.def"
+		FPROC="proc/$definition.p"
+		FINDEX="index/$definition.index"
+		TYPE=`sed -e '1,1d' -e '3,$d' $FDEF`
+		LINEX="^$VARDEFINE RES_TYPE_$TYPE \([0-9]*\)\$"
+		ID=`grep -e "$LINEX" result/types.h|sed -e "s/$LINEX/\1/g"`	
 	
-	#convert def files to proc files
-	sed -e "2,1s/.*/$ID/g" $FDEF > $FPROC
+		if [ -z "$ID" ] 
+		then
+			FAIL=1
+			echo "Invalid type $TYPE in $FDEF" >> error_log
+		fi
+		
+		#convert def files to proc files
+		sed -e "2,1s/.*/$ID/g" $FDEF > $FPROC
+		
+		#convert proc files to index files
+		bin/makeindex $FPROC $FINDEX
 	
-	#convert proc files to index files
-	bin/makeindex $FPROC $FINDEX
-
-	#add logs
-	echo "  <item value=\"$number\" path=\"$definition.index\">$definition</item>" >> xml/resources.xml
-	echo "$VARDEFINE $definition $number" >> result/data.h
-
-	number=`expr $number + 1`
-done
+		#add logs
+		echo "  <item value=\"$number\" path=\"$definition.index\">$definition</item>" >> xml/resources.xml
+		echo "$VARDEFINE $definition $number" >> result/data.h
+	
+		number=`expr $number + 1`
+	done
 fi
 
 #finish files
