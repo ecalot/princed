@@ -100,4 +100,8 @@ void resFree(tData* resource);
 void resInit();
 void resStop();
 
+/* Resource handling includes */
+#include "res_data.h"
+#include "res_types.h"
+
 #endif
