@@ -6,7 +6,7 @@
 #include "types.h" /* tMap */
 #include "input.h" /* tKey */
 
-typedef enum {esLast=0,esKeyUp,esKeyDown,esKeyForward,esKeyBack,esKeyShift,esMapUp,esMapDown,esMapForward,esMapBack,esMapOn,esForwardTileNearerThan,esForwardTileFartherThan,esScreenUp,esScreenDown,esScreenLeft,esScreenRight,esInScreen,esInLevel,esForwardChangeToScreen,esInFloorTop,esInfloorMiddle,esInfloorBottom}tsConditionType;
+typedef enum {esLast=0,esKeyUp,esKeyDown,esKeyForward,esKeyBack,esKeyShift,esMapUp,esMapUpForward,esMapDown,esMapForward,esMapBack,esMapOn,esForwardTileNearerThan,esForwardTileFartherThan,esScreenUp,esScreenDown,esScreenLeft,esScreenRight,esInScreen,esInLevel,esForwardChangeToScreen,esInFloorTop,esInfloorMiddle,esInfloorBottom}tsConditionType;
 
 								
 typedef enum {esDangerous,esNone,esWalk,esPotion,esSword,esMirror,esNotApplicable=0}tsTileType;

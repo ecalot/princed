@@ -141,6 +141,7 @@ void kidDraw(tKid kid) {
 
 int kidMove(tKid* kid,tKey key,tRoom* room) {
 #ifdef NEW_KERNEL
+	/* advance state and get the flag, then interpret the flag and do the events */
 	short flags;
 	flags=stateUpdate(&key,kid,room);
 	if (flags&STATES_FLAG_P)
@@ -153,6 +154,8 @@ int kidMove(tKid* kid,tKey key,tRoom* room) {
 		);
 	if (flags&STATES_FLAG_F)
 		kid->floor++;
+	if (flags&STATES_FLAG_U)
+		kid->floor--;
 	return flags;
 #else
 	int result;

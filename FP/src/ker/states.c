@@ -74,6 +74,10 @@ int evaluateCondition(int condition,tKey* key, tKid* kid, tRoom* room) {
 		DefaultFalse(key);
 		return inputGetShift(key->status)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
+	case esMapUpForward:
+		DefaultFalse(room);
+		return isInGroup(room->fore[thisTile-12+((kid->direction==DIR_LEFT)?-1:1)],room->back[thisTile-12+((kid->direction==DIR_LEFT)?-1:1)],c.argument)?
+			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esMapUp:
 		DefaultFalse(room);
 		return isInGroup(room->fore[thisTile-12],room->back[thisTile-12],c.argument)?
