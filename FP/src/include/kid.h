@@ -39,12 +39,12 @@ kid.h: Free Prince : Kid object
 #include "types.h"
 
 void kidDrawLives(tObject *kid);
-void kidGetLive(tObject *kid);
+void kidGetLife(tObject *kid);
 void kidGetHitPoint(tObject *kid);
 int kidTakeHitPoint(tObject *kid);
 int kidMove(tObject* kid,short flags,tRoom* room);
 void kidKillHim(tObject *kid);
-void kidDrinkPotion(tObject* object,tTile tile);
+int kidDrinkPotion(tObject* object,tTile tile); /* 0 if died */
 
 #endif
 

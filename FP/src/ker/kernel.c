@@ -151,7 +151,7 @@ int playgame(int optionflag,int level) {
 					notReset=0;
 					break;
 				case addLive:
-					kidGetLive(&kid);
+					kidGetLife(&kid);
 					break;
 				case addHitPoint:
 					kidGetHitPoint(&kid);

@@ -95,14 +95,14 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 		case oKid:
 			refresh=kidMove(object,flags,room);
 			if (flags&STATES_FLAG_H) {
-				if (!kidTakeHitPoint(object)) { /* take a hit point */
+				if (!kidTakeHitPoint(object)) /* loose a hit point */
 					/* the kid has died! */
 					flags=STATE_EXIT_CODE_SPLASH;
-				}
 			}
 			if (flags&STATES_FLAG_D) {
-				tTile tile=roomGetTile(room,object->location/TILE_W,object->floor);
-				kidDrinkPotion(object,tile);
+				tTile tile=roomGetTile(room,object->location/TILE_W+1,object->floor+1);
+				if (!kidDrinkPotion(object,tile)) /* drink the potion */
+					flags=STATE_EXIT_CODE_SPLASH;
 				/* TODO: transform the tile into floor */
 			}
 			break;

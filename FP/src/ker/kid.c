@@ -41,11 +41,6 @@ kid.c: Free Prince : Kid object
 #define KID_LIVE_FILL 216
 #define KID_LIVE_EMPTY 217
 
-void kidDrinkPotion(tObject* object,tTile tile) {
-
-
-}
-
 void kidDrawLives(tObject *kid) {
 	int i;
 	static int blink=0;
@@ -59,7 +54,7 @@ void kidDrawLives(tObject *kid) {
 	}
 }
 
-void kidGetLive(tObject *kid) {
+void kidGetLife(tObject *kid) {
 	kid->hitPoints=++kid->lives;
 }
 
@@ -77,6 +72,19 @@ void kidKillHim(tObject *kid) {
 	/* Returns 0 if death or the number of remaining hit points if not */
 	kid->hitPoints=0;
 }				
+
+int kidDrinkPotion(tObject* kid,tTile tile) {
+	/* returns 0 if died */
+	if (isIn(tile,TILE_SWORD)) {
+	} else if (isIn(tile,TILES_HITPOINT)) {
+		kidGetHitPoint(kid);
+	} else if (isIn(tile,TILES_LIFE)) {
+		kidGetLife(kid);
+	} else if (isIn(tile,TILES_POISON)) {
+		return kidTakeHitPoint(kid);
+	}
+	return 1;	
+}
 
 /* Room stuff */
 				

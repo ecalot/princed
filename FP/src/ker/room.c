@@ -309,11 +309,11 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		drawChopper((x-1)*TILE_W+0,y*TILE_H,chopperGetFrame(tile),layCBack);
 	/* empty_bricks/this */
 	if (isIn(tile,TILES_BRICKE1)) 
-		e(51,x*TILE_W+0,y*TILE_H-18);
-	if (isIn(tile,TILES_BRICKE2)) 
 		e(52,x*TILE_W+0,y*TILE_H-18);
-	if (isIn(tile,TILES_BRICKE3)) 
+	if (isIn(tile,TILES_BRICKE2)) 
 		e(53,x*TILE_W+0,y*TILE_H-18);
+	if (isIn(tile,TILES_WINDOW)) 
+		e(54,x*TILE_W+0,y*TILE_H-18);
 	/* floor_bricks/this */
 	if (isIn(tile,TILES_BRICKF1)) 
 		e(12,x*TILE_W+0,y*TILE_H-18);
