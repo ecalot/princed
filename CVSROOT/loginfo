@@ -26,3 +26,4 @@
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
 #FP echo "holamail -v -s hola ecalot@poirot.com.ar" |mail -v -s hola ecalot@poirot.com.ar
 ##DEFAULT $CVSROOT/CVSROOT/syncmail -u %{sVv} freeprince-cvs-tracker@poirot.com.ar
+FP /usr/bin/cvs -f diff -kk -u --minimal -r %{V} -r %{v} '%{s}'
