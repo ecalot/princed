@@ -64,13 +64,13 @@ resources.h: Princed Resources : Resource Handler headers
 typedef struct {
 	unsigned short int palette;
 	unsigned short int size;
-	unsigned long int offset;
-	unsigned char number; /* Used for level number */
-	char      type;
-	char*     path;
+	unsigned long int  offset; /* Used internally in dat.c to remember the offset */
+	unsigned char      number; /* Used for level number */
+	char               type;
+	char*              path;
 	unsigned char*     palAux;
-	char*     name;
-	char*     desc;
+	char*              name;
+	char*              desc;
 }tResource;
 
 /* Id list for partial manipulation */

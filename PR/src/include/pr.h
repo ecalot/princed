@@ -60,21 +60,21 @@ typedef struct tTag {
 |                           Prototypes                          |
 \***************************************************************/
 /* The library EXPORTS are:
+ * freeParsedStructure
+ * freeParsingCache
+ * freeTagStructure
+ * parseStructure
+ * parseXmlFile
  * prExportDat
  * prExportDatOpt
  * prImportDat
  * prImportDatOpt
- * prVerifyDatType
  * prSetOutput
- * parseStructure
+ * prVerifyDatType
  * resourceTreeGetChild
  * resourceTreeGetInfo
  * resourceTreeGetNext
- * freeParsedStructure
  * setCompressionLevel
- * freeParsingCache
- * freeTagStructure
- * parseXmlFile
  */
 
 /* Main functions */
