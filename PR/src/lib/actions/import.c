@@ -42,8 +42,8 @@ compile.c: Princed Resources : DAT Compiler
 #include "mid.h"
 #include "wav.h"
 #include "pal.h"
-#include "parser.h"
 #include "disk.h"
+#include "pr.h"
 
 /***************************************************************\
 |                  Dat compiling primitives                     |
@@ -93,9 +93,8 @@ int mCreateIndexInDatFile(FILE* fp, tResource* r[]) {
 	int pos=ftell(fp);
 
 	fwrite(&tot,2,1,fp);
-	for (;i!=65000;i++) { //TODO: add define 65000
+	for (;i!=MAX_RES_COUNT;i++) { //TODO: add define MAX_RES_COUNT
 		if (r[i]!=NULL) {
-//			if (equals((*r[i]).file,vUpperFile)) {
 				//the file is in the archive, so I'll add it to the index
 				k+=8;
 				tot++;
@@ -103,7 +102,6 @@ int mCreateIndexInDatFile(FILE* fp, tResource* r[]) {
 				fwrite(&((*r[i]).offset),2,1,fp);
 				fwrite(&junk,2,1,fp);
 				fwrite(&((*r[i]).size),2,1,fp);
-//			}
 		}
 	}
 	fseek(fp,pos,SEEK_SET);
@@ -148,7 +146,6 @@ int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
 
 	FILE* fp;
 	char vFileext[200];
-//	char vUpperFile[200];
 	int ok=0;
 	unsigned char* data;
 	unsigned short int i=0;
@@ -159,9 +156,8 @@ int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
 
 	//getUpperFolder(vUpperFile,vFiledat);
 
-	for (;i!=65000;i++) {
+	for (;i!=MAX_RES_COUNT;i++) {
 		if (r[i]!=NULL) {
-//			if (equals((*r[i]).file,vUpperFile)) {
 				getFileName(vFileext,vDirExt,r[i],i,vFiledat);
 				//the file is in the archive, so I'll add it to the main dat body
 				if ((*r[i]).size=mLoadFileArray(vFileext,&data)) {
@@ -173,7 +169,6 @@ int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
 				} else {
 					ok++;
 				}
-//			}
 		}
 	}
 	mSetEndFile(fp,mCreateIndexInDatFile(fp,r));

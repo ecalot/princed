@@ -32,6 +32,9 @@ extract.c: Princed Resources : DAT Extractor
 */
 
 #include <stdio.h>
+#include <string.h>
+
+#include "pr.h"
 
 #include "extract.h"
 #include "disk.h"
@@ -79,8 +82,6 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 		int                k;
 
 		//if header ok, new variables
-		//char               aux[260];
-		//char               isntImageSet=1;
 		char               recordSize;
 		char               type=0;
 		tImage             image; //this is used to make a persistent palette
@@ -115,7 +116,7 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 		//getUpperFolder(aux,vFiledat);
 
 		//Initializes the palette list
-		for (id=0;id<65000;id++) {
+		for (id=0;id<MAX_RES_COUNT;id++) {
 			if (r[id]!=NULL) {
 				r[id]->palAux=NULL;
 			}
@@ -137,14 +138,6 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 
 			//For the moment rebuilt option will be comented
 //	task|=2;
-
-			//If rebuild option has been chosen, destroy previous declaration
-//	if ((r[id]!=NULL)&&(task&2)) {
-//				if ((*(r[id])).coms!=NULL) free ((*(r[id])).coms);
-//				if ((*(r[id])).path!=NULL) free ((*(r[id])).path);
-//				free(r[id]); //TODO uncomment this line
-//				r[id]=NULL;
-//	}
 
 			//set resource information on this index entry
 			if (r[id]==NULL) {
@@ -204,12 +197,7 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 									mLoadPalette(r[r[id]->palette]->palAux,&image);
 									paletteId=r[id]->palette; //sets the new palette loaded
 								}
-							} /*else {
-								//This image was linked to the default palette
-								if ((r[paletteId]->palAux)!=NULL) { //If this palette wasn't loaded (practically impossible), it becomes loaded
-									mLoadPalette(r[paletteId]->palAux,&image);
-								}
-							}*/
+							}
 						}
 
 						//Extract bitmap
@@ -222,7 +210,7 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 		fclose(fp);
 
 		//Free allocated palettes
-		for (id=0;id<65000;id++) {
+		for (id=0;id<MAX_RES_COUNT;id++) {
 			if (r[id]!=NULL) {
 				if (r[id]->palAux!=NULL) {
 					free (r[id]->palAux);

@@ -1,17 +1,13 @@
-bin/pr: compile.o compress.o extract.o parser.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o
+bin/pr: compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o
 	
 	@echo Linking files...
 	@mkdir -p bin
-	@gcc -o bin/pr compile.o compress.o extract.o parser.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o -s
-	@echo Program succesfully compiled
+	@gcc -o bin/pr compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o -s
+	@echo Program successfully compiled
 	@echo
 	@echo Please read readme.txt for syntax information
 	@echo
 	
-parser.o: parser.c
-	@echo Compiling parsing library...
-	@gcc -c parser.c -Iinclude/
-
 compile.o: compile.c
 	@echo Compiling import module...
 	@gcc -c compile.c -Iinclude/
