@@ -20,9 +20,11 @@ INCLUDE = -Iinclude/
 DEFINES = -DOS=\"$(OS)\" $(LINUX) 
 OPTIONS = $(INCLUDE) $(DEFINES)
 
-OBJFILES = resources.o disk.o\
-           dat.o main.o\
-           $(SRC2)
+OBJFILES = main.o kernel.o
+#\
+#resources.o disk.o\
+#           dat.o main.o\
+#           $(SRC2)
 
 
 EXEFILE  = bin/freeprince
@@ -55,7 +57,7 @@ all: $(EXEFILE)
 #	$(CC) -c compress.c $(OPTIONS)
 
 main.o: main.c
-	$(INFO) Compiling main program...
+	$(INFO) Compiling command line parser...
 	$(CC) -c main.c $(OPTIONS)
 
 resources.o: res/resources.c
@@ -69,4 +71,8 @@ disk.o: res/disk.c
 dat.o: res/dat.c
 	$(INFO) Compiling dat editing library...
 	$(CC) -c res/dat.c $(OPTIONS)
+
+kernel.o: ker/kernel.c
+	$(INFO) Compiling main kernel...
+	$(CC) -c ker/kernel.c $(OPTIONS)
 
