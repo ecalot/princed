@@ -63,7 +63,7 @@ int prVerifyDatType(const char* vFiledat) {
 
 	/* main loop */
 	for (indexNumber=0;(indexNumber<numberOfItems)&&(type==RES_TYPE_BINARY);indexNumber++) {
-		id=mReadGetFileInDatFile(indexNumber,&data,&size);
+		id=mReadFileInDatFile(indexNumber,&data,&size);
 		if (id<0) READ_ERROR; /* Read error */
 		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
 		if (id>=MAX_RES_COUNT) READ_ERROR; /* A file with an ID out of range will be treated as invalid */

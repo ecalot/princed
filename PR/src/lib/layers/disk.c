@@ -45,12 +45,11 @@ disk.c: Princed Resources : Disk Access & File handling functions
 
 #include <sys/types.h>
 #include <sys/stat.h>
-extern FILE* outputStream;
+
 #ifdef UNIX
 	#define defmkdir(a) mkdir (a,(mode_t)0755)
 	#include <dirent.h>
 	#include <termios.h>
-	/*#include <curses.h>*/
 	#include <unistd.h>
 	#include <fcntl.h>
 	#define osIndepGetCharacter() getchar()
@@ -62,6 +61,8 @@ extern FILE* outputStream;
 	#define osIndepGetCharacter() getche()
 #endif
 
+extern FILE* outputStream;
+
 /***************************************************************\
 |              Disk Access & File handling functions            |
 \***************************************************************/
@@ -70,6 +71,7 @@ extern FILE* outputStream;
 const char *repairFolders(const char* a) {
 	int i,k;
 	static char result[MAX_FILENAME_SIZE];
+fld("rf1");
 
 	for (i=0,k=0;a[i]&&(k<MAX_FILENAME_SIZE);) {
 		if (isDirSep(a,i)) {
@@ -82,7 +84,9 @@ const char *repairFolders(const char* a) {
 		}
 		k++;
 	}
+fld("rf2");
 	result[k]=0;
+fld("rf3");
 	return result;
 }
 
@@ -129,15 +133,21 @@ void addFileToOpenFilesList(const char* fileName,int hasBackup) {
 	*/
 
 	tOpenFiles* newNode;
+fld("h1");
 
 	/* Create the new node and fill in the fields */
 	newNode=(tOpenFiles*)malloc(sizeof(tOpenFiles));
 	newNode->next=openFilesList;
 	newNode->name=strallocandcopy(fileName);
+fld("h2");
 	if (hasBackup) {
+fld("h3");
 		newNode->size=mLoadFileArray(fileName,&(newNode->content));
+fld("h3");
 	} else {
+fld("h4");
 		newNode->size=0;
+fld("h4");
 	}
 	openFilesList=newNode;
 }
@@ -230,7 +240,7 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 	whatIs fileType;
 	static int all=0;
 	int result;
-
+fld("g1");
 #ifdef UNIX
 #ifndef IGNORE_TERM_CHANGE
 	/* This will eliminate the enter after the input */
@@ -243,6 +253,7 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 	tcsetattr (STDIN_FILENO, TCSANOW, &term);
 #endif
 #endif
+fld("g2");
 
 	/* Create base directory and save file */
 	file=repairFolders(vFileext);
@@ -250,6 +261,7 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 	/* Verify if file already exists. */
 	fileType=isDir(vFileext);
 	if (fileType==eDirectory) return 0;
+fld("g3");
 
 	if (fileType==eFile) {
 		/* File exists. We need to ask */
@@ -264,6 +276,7 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 	} else {
 		makebase(file);
 	}
+fld("g4");
 
 #ifdef UNIX
 #ifndef IGNORE_TERM_CHANGE
@@ -276,9 +289,12 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 		If the file exists, we need to remember the old content in memory
 		if not, we need to know the name in case we need to delete it
 	*/
+fld("g5");
 
 	addFileToOpenFilesList(file,hasFlag(backup_flag));
+fld("g6");
 	if ((result=((*fp=fopen(file,"wb"))!=NULL))) addPointerToOpenFilesList(*fp);
+fld("g7");
 	return result;
 }
 
@@ -304,12 +320,16 @@ int writeData(const unsigned char* data, int ignoreChars, char* vFileext, int si
 
 	/* Verify parameters */
 	size-=ignoreChars;
-	if (size<=0) return 0;
+	if (size<0) return 0;
+	//if (size==0) return 1; /* Wrote 0 bytes */
 
 	/* Save file */
 	ok=writeOpen(vFileext,&target,optionflag);
-	ok=ok&&fwrite(data+ignoreChars,size,1,target);
+printf("x->%d\n",ok);
+	ok=ok&&((!size)||fwrite(data+ignoreChars,size,1,target));
+printf("x->%d\n",ok);
 	ok=ok&&(!writeCloseOk(target,optionflag,backupExtension));
+printf("x->%d\n",ok);
 	return ok;
 }
 
@@ -325,6 +345,7 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 	int  aux;
 
 	/* Open the file */
+	fp=fopen(repairFolders(vFile),"rb");
 	if ((fp=fopen(repairFolders(vFile),"rb"))==NULL) {
 		return 0;
 	} else {

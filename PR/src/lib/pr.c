@@ -77,6 +77,21 @@ pr.c: Main source file for Princed Resources
 |                      Main working functions                   |
 \***************************************************************/
 
+#ifdef MEM_CHECK
+
+char* strallocandcopy(const char* text) {
+	int size;
+	char* aux;
+	if (text==NULL) return NULL;
+	size=strlen(text)+1;
+	aux=(char*)malloc(size);
+	if (aux) memcpy(aux,text,size);
+	return aux;
+}
+
+#endif
+
+
 FILE* outputStream=NULL;
 
 #ifdef DLL
@@ -470,7 +485,9 @@ int main (int argc, char **argv) {
 	freeAllocation(datFilePath);
 	freeAllocation(extension);
 	freeAllocation(resFile);
-
+#ifdef MEM_CHECK
+	showStats();
+#endif
 	return 0;
 }
 

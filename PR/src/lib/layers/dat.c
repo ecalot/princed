@@ -35,9 +35,9 @@ dat.c: Princed Resources : DAT library
 #include <string.h>
 #include "pr.h"
 
-#include "resources.h"
+//#include "resources.h"
 #include "disk.h"
-#include "memory.h"
+//#include "memory.h"
 #include "dat.h"
 
 /***************************************************************\

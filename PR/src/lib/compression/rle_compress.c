@@ -32,15 +32,16 @@ compress.c: Princed Resources : Image Compression Library
   DO NOT remove this copyright notice
 */
 
-/***************************************************************\
-|                  I M P L E M E N T A T I O N                  |
-\***************************************************************/
-
 #include <stdio.h>
 #include <string.h>
 #include "compress.h"
 #include "memory.h"
 #include "pr.h"
+#include "disk.h" /* array2short */
+
+/***************************************************************\
+|                  I M P L E M E N T A T I O N                  |
+\***************************************************************/
 
 /***************************************************************\
 |                        Image transpose                        |
@@ -186,8 +187,8 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
 	}
 
 	*(cursorData++)=0;
-	*(cursorData++)=*(cursorPix);
-	*dataSize=(int)((long int)cursorData-(long int)data)-2; /* Note: casted to long for portability with 64 bits architectures */
+	*(cursorData)=*(cursorPix);
+	*dataSize=(int)((long int)cursorData-(long int)data)-1; /* Note: casted to long for portability with 64 bits architectures */
 }
 
 /***************************************************************\
@@ -212,15 +213,21 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 
 	int imageSizeInBytes;
 	int result;
+printf("+K) %d:%d:%d:%d:%d:%d\n",data[0],data[1],data[2],data[3],data[4],data[5]);
 
 	data++;
-	image->height=((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;
-	image->width =((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;
+	image->height=array2short(data);//((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;
+	data+=2;
+	image->width =array2short(data);//((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;
+	data+=2;
+printf("K) %d;%d\n",image->width,image->height);
 
-	if (*(data++)) return -1; /* Verify format */
+fld("XX");
+	if (*(data++)) return COMPRESS_RESULT_FATAL; /* Verify format */
+fld("YY");
 	image->type=(unsigned char)(*(data++));
 	dataSizeInBytes-=7;
-
+printf("K) %d+%d*%d,%d\n",image->pix,image->height,image->widthInBytes,image->widthInBytes);
 	if (image->type&0xB0) {
 		image->widthInBytes=(image->width+1)/2;
 	} else {
@@ -254,11 +261,12 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 			result=COMPRESS_RESULT_FATAL;
 			break;
 	}
+printf("-K) %d+%d*%d,%d\n",image->pix,image->height,image->widthInBytes,image->widthInBytes);
 	return result; /* Ok */
 }
 
 /* Compress an image into binary data */
-int mCompressGraphic(unsigned char* data,tImage* image, int* dataSizeInBytes) {
+int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	/* Declare variables */
 	unsigned char* compressed     [COMPRESS_WORKING_ALGORITHMS];
 	int            compressedSize [COMPRESS_WORKING_ALGORITHMS];
@@ -279,7 +287,7 @@ int mCompressGraphic(unsigned char* data,tImage* image, int* dataSizeInBytes) {
 	memcpy(compressed[COMPRESS_RAW],image->pix,compressedSize[COMPRESS_RAW]);
 
 	/* COMPRESS_RLE_LR */
-	compressed[COMPRESS_RLE_LR]=getMemory(10*imageSizeInBytes+50); /* This will reserve 10*(image size)+50 bytes, to allocate the compressed file */
+	compressed[COMPRESS_RLE_LR]=getMemory((10*imageSizeInBytes+50)); /* This will reserve 10*(image size)+50 bytes, to allocate the compressed file */
 	compressRle(compressed[COMPRESS_RLE_LR],image,&(compressedSize[COMPRESS_RLE_LR]));
 
 	/* COMPRESS_RLE_UD */
@@ -302,7 +310,8 @@ int mCompressGraphic(unsigned char* data,tImage* image, int* dataSizeInBytes) {
 	}
 
 	/* Copy the best algorithm in the compressed data */
-	memcpy(data+6,compressed[algorithm],*dataSizeInBytes);
+	*data=getMemory(*dataSizeInBytes+6);
+	memcpy(*data+6,compressed[algorithm],*dataSizeInBytes);
 	(*dataSizeInBytes)+=6;
 
 	/*
@@ -310,16 +319,17 @@ int mCompressGraphic(unsigned char* data,tImage* image, int* dataSizeInBytes) {
 	*/
 
 	/* (16 bits)height (Intel short int format) */
-	data[0]=image->height;
-	data[1]=image->height>>8;
+	(*data)[0]=image->height;
+	(*data)[1]=image->height>>8;
 	/* (16 bits)width (Intel short int format) */
-	data[2]=image->width;
-	data[3]=image->width>>8;
+	(*data)[2]=image->width;
+	(*data)[3]=image->width>>8;
 	/* (8 bits)00000000+(4 bits)palette type+(4 bits)algorithm */
-	data[4]=0;
-	data[5]=image->type|algorithm;
+	(*data)[4]=0;
+	(*data)[5]=image->type|algorithm;
 
 	/* Free all compression attempts */
 	for (i=COMPRESS_RAW;i<COMPRESS_WORKING_ALGORITHMS;i++) free(compressed[i]);
 	return 1;
 }
+
