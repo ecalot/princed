@@ -77,11 +77,15 @@ typedef struct {
 	char*     desc;
 }tResource;
 
+typedef struct {
+	unsigned char* array;
+	long int size;
+}tMemory;
 
 typedef struct {
 	int frames;
 	tDataType type;
-	void* pFrames;
+	void** pFrames;
 }tData;
 
 tData* resLoad(int id); 
