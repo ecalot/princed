@@ -1,12 +1,34 @@
+/*  Princed V3 - Prince of Persia Level Editor for PC Version
+    Copyright (C) 2003 Princed Development Team
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+    The authors of this program may be contacted at http://forum.princed.com.ar
+*/
+
 /*
+pr.c: Main source file for Princed Resources
+¯¯¯¯
 	Princed Resources library V1 beta
 	(c) Copyright 2003, Princed Development Team
 
 	Authors
-	 Main routines
+	 Coding & main routines
 	  Enrique Calot
 
-	 Graphic compression algorithm
+	 Graphic compression algorithms
     Tammo Jan Dijkema
     Enrique Calot
 
@@ -17,13 +39,15 @@
    MID Sound format development
     Christian Lundheim
 
+ Note:
+  DO NOT remove this copyright notice
 */
 
 //Compilation options
 
 //#define UNIX
 //#define DLL
-#define PR_ABOUT "Princed resources (PR) V0.5 beta.\r\n(c) Copyright 2003 - Princed Development Team\r\nhttp://www.princed.com.ar\r\n\r\n"
+#define PR_ABOUT "Princed resources (PR) V0.6 beta.\r\n(c) Copyright 2003 - Princed Development Team\r\nhttp://www.princed.com.ar\r\n\r\n"
 
 //Headers
 
@@ -65,10 +89,13 @@ int prExportDatOpt(char* vDatFile, char* vDirName, char* vResFile,char opt) {
 			00 Ok
 			-1 Error accesing the file
 			-2 Memory error
+			-3 Invalid DAT file
 	*/
 	tResource* r[65536];
+	int a;
 	parseFile (vResFile,r);
-	int a=extract(vDatFile, vDirName,r,opt);
+	printf("kkkkkkkkkkk: %x\n",opt);
+	a=extract(vDatFile, vDirName,r,opt);
 	if (!(opt&8)) generateFile(vResFile,r);
 	return a;
 }
@@ -89,8 +116,9 @@ int prImportDatOpt(char* vDatFile, char* vDirName, char* vResFile,char opt) {
 			positive number: number of missing files
 	*/
 	tResource*    r[65536];
+	int a;
 	parseFile     (vResFile,r);
-	int a=compile (vDatFile, vDirName,r,opt);
+	a=compile (vDatFile, vDirName,r,opt);
 	generateFile  (vResFile,r);
 	return a;
 }
@@ -111,25 +139,32 @@ int prClearRes(char* vResFile) {
 //Main program
 #ifndef DLL
 void syntax() {
-	printf("Syntax:\r\n pr datfile option [extract dir]\r\n\r\nValid options:\r\n -x[rnus] for extract\r\n  r: raw extraction\r\n  n: don't extract\r\n  u: update res file in case there were records\r\n  s: don't save res file\r\n -c for compile\r\n  r: raw compiling\r\n -d for type\r\n -t to clear the resource file.\r\n");
+	printf("Syntax:\r\n pr datfile option [extract dir]\r\n\r\nValid options:\r\n -x[rnus] for extract\r\n  r: raw extraction\r\n  n: don't extract\r\n  u: update res file in case there were records\r\n  s: don't save res file\r\n -c[r] for compile\r\n  r: raw compiling\r\n -d for type\r\n -t to clear the resource file.\r\n");
 }
 
 int main(int argc, char* argv[]) {
-
-#ifdef UNIX
-	if (argc==2) {
-		printf("Content-Type:text/html\n\nRunning as a cgi\n");
-		printf("Result: %d type\r\n",prVerifyDatType(argv[1]));
-		return 1;
-	}
-#endif
 
 	//declare variables
 	char dir[260]=".";
 	int returnValue=1;
 	int option;
+	int i;
 
-	//TODO: send to defines
+	//bmp vars
+	char vFileraw[100];
+	char vFilebmp[100];
+	unsigned char* data;
+	tImage img;
+	int size;
+
+#ifdef UNIX
+	if (argc==2) {
+		printf("Content-Type:text/html\n\nRunning as a cgi\n");
+		printf("Result: %02d type\r\n",prVerifyDatType(argv[1]));
+		return 1;
+	}
+#endif
+
 	printf(PR_ABOUT);
 
 	//Verify syntax
@@ -146,7 +181,7 @@ int main(int argc, char* argv[]) {
 		case 'e':
 		case 'x': // file.dat --> files.ext + resource.txt
 			option=1;
-			for (int i=2;argv[2][i];i++) {
+			for (i=2;argv[2][i];i++) {
 				switch (argv[2][i]) {
 					case 'n':option&=0xFE;break;
 					case 'r':option|=0x04;break;
@@ -165,7 +200,7 @@ int main(int argc, char* argv[]) {
 		case 'i':
 		case 'c': // files.ext + resource.txt --> files.dat
 			option=1;
-				for (int i=2;argv[2][i];i++) {
+				for (i=2;argv[2][i];i++) {
 					switch (argv[2][i]) {
 						case 'r':option&=0xFE;break;
 						default:printf("Found invalid option '%c', skiping . . .\r\n",argv[2][i]);break;
@@ -179,29 +214,20 @@ int main(int argc, char* argv[]) {
 			printf("Result: %d\r\n",returnValue=prClearRes("resources.txt"));
 			break;
 		case 'b': // img.bmp --> img.ext
-			{
-			char vFileraw[100];
-			char vFilebmp[100];
-			unsigned char* data;
-			tImage img;
-
 			sprintf(vFileraw,"%s%cres%s.raw",dir,DIR_SEPARATOR,argv[1]);
 			sprintf(vFilebmp,"%s%cres%s.bmp",dir,DIR_SEPARATOR,argv[1]);
 
 			printf("Converting '%s' into '%s'\r\n",vFilebmp,vFileraw);
-			int size=mLoadFileArray(vFilebmp,&data);
+			size=mLoadFileArray(vFilebmp,&data);
 			if (size && mReadBitMap(&img,data,size)) {
 				free(data);
 				mCompressGraphic(data,img,&size);
 				free(img.pix);
 				mSaveRaw(vFileraw,data,size);
 				free(data);
-
 			} else {
 				printf("No access to the file\r\n");
 				break;
-			}
-
 			}
 			break;
 		default:

@@ -6,12 +6,21 @@ int prVerifyDatType(char* vFiledat) {
 	//Variables
 	FILE*         fp;
   char          ok;
+  int 					k;
+
+	//if header ok, new variables
+	unsigned short int offset;
+	unsigned long int  size;
+	unsigned char*     data;
+	unsigned char      type=5;
+
+	//loop variables
+	unsigned long int indexOffset;
+	unsigned short int indexSize,val,numberOfItems;
+	unsigned char* index;
+
 
 	if (ok=((fp=fopen(vFiledat,"rb"))!=NULL)) {
-		//loop variables
-		unsigned long int indexOffset;
-		unsigned short int indexSize,val,numberOfItems;
-		unsigned char* index;
 		//verify dat format
 		ok    = fread(&indexOffset,4,1,fp);
 		ok=ok&& fread(&indexSize,2,1,fp);
@@ -27,9 +36,9 @@ int prVerifyDatType(char* vFiledat) {
 			indexOffset+=indexSize;
 			fseek(fp,0,SEEK_END);
 			printf("jaaaj %d %d\r\n",indexOffset,ftell(fp));
-			char res=(ftell(fp)==indexOffset)?11:0; //see if it is a pop2 file
+			ok=(ftell(fp)==indexOffset)?11:0; //see if it is a pop2 file
 			fclose(fp);
-			return res; //this is a pop2 dat file or invalid
+			return ok; //this is a pop2 dat file or invalid
 		}
 		if ((index=getMemory(indexSize-2))==NULL) {
 			fclose(fp);
@@ -37,14 +46,8 @@ int prVerifyDatType(char* vFiledat) {
 		}
 		ok=fread(index,indexSize-2,1,fp);
 
-		//if header ok, new variables
-		unsigned short int offset;
-		unsigned long int  size;
-		unsigned char*     data;
-		unsigned char      type=5;
-
 		//main loop
-		for (int k=0;ok&&(k<numberOfItems)&&(type==5);k++) {
+		for (k=0;ok&&(k<numberOfItems)&&(type==5);k++) {
 			//for each archived file
 			ok=ok&&!(index[k*8+4]||index[k*8+5]);
 			offset=index[k*8+2]+256*index[k*8+3];

@@ -30,6 +30,21 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 		unsigned long int indexOffset;
 		unsigned short int indexSize,numberOfItems;
 		unsigned char* index;
+		int                ofk=0;
+		int k;
+
+		//if header ok, new variables
+		unsigned short int id;
+		unsigned long int  size,offset;
+		unsigned char*     data;
+		FILE*              target;
+		char               type=0;
+		char               recordSize;
+		char               aux[260];
+		tImage             image; //this is used to make a persistent palette
+		char               isntImageSet=1;
+	//printf("kkkkkkkkkkk: %x\n",task);
+
 		//verify dat format
 		ok    = fread(&indexOffset,4,1,fp);
 		//ok=ok&& fread(&val,2,1,fp);
@@ -38,13 +53,13 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 		ok=ok&& !fseek(fp,indexOffset,SEEK_SET);
 		ok=ok&& fread(&numberOfItems,2,1,fp);
 		pop1=((numberOfItems*8+2)==indexSize);
-		int                ofk=0;
 
 		if (!pop1) { //verify if pop2
 			ofk=numberOfItems*6+2+(numberOfItems-2)*13;
 			numberOfItems=((indexSize-6-(numberOfItems*6)-((numberOfItems-2)*13))/11);
 			//printf("verificando pop2: numberOfItems=%d, indexSize=%d\r\n",numberOfItems,indexSize);
 		}
+		recordSize=pop1?8:11;
 		if (!ok) {
 			fclose(fp);
 			return -3; //this is not a valid prince dat file
@@ -55,38 +70,32 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 		}
 		ok=fread(index,indexSize-2,1,fp);
 
-		//if header ok, new variables
-		unsigned short int id;
-		unsigned long int  size,offset;
-		unsigned char*     data;
-		FILE*              target;
-		char               type=0;
-		char               recordSize=pop1?8:11;
-		char               aux[260];
-		tImage             image; //this is used to make a persistent palette
-		char               isntImageSet=1;
 		//parse folder and take dat filename in caps
 		getUpperFolder(aux,vFiledat);
 
 		//main loop
-		for (int k=0;ok&&(k<numberOfItems);k++) {
+		for (k=0;ok&&(k<numberOfItems);k++) {
 			//for each archived file
 			id=index[ofk+k*recordSize]+256*index[ofk+k*recordSize+1];
+			//printf("jajaK %d %d %d %d\n",index[ofk+k*recordSize+2],index[ofk+k*recordSize+3],index[ofk+k*recordSize+4],index[ofk+k*recordSize+5]);
 			offset=index[ofk+k*recordSize+2]+256*index[ofk+k*recordSize+3]+256*256*index[ofk+k*recordSize+4]+256*256*256*index[ofk+k*recordSize+5];
 			size=index[ofk+k*recordSize+6]+256*index[ofk+k*recordSize+7]+1;
 			if (!pop1) {
-//				printf("jajaA %d\r\n",ok);
+				printf("jajaA %d\r\n",ok);
 //printf("verificando pop2: %d, k=%d, record size=%d\r\n",size,k,recordSize);
 				ok=ok&&(index[ofk+k*recordSize+8]==0x40)&&(!index[ofk+k*recordSize+9])&&(!index[ofk+k*recordSize+10]);
 //				printf("jajaB %d\r\n",ok);
 			}
 			ok=ok&&((data=getMemory(size))!=NULL);
-//				printf("jajaB %d\r\n",ok);
+//				printf("jajaC %d offset=%d\r\n",ok,offset);
 			ok=ok&&(!fseek(fp,offset,SEEK_SET));
-//				printf("jajaB %d\r\n",ok);
+//				printf("jajaD %d\r\n",ok);
 			ok=ok&&fread(data,size,1,fp);
-//				printf("jajaB %d\r\n",ok);
+//				printf("jajaE %d\r\n",ok);
 			if (!ok) return -3;
+
+			//For the moment rebuilt option will be mandatory:
+			task|=2;
 
 			//If rebuild option has been chosen, destroy previous declaration
 			if ((r[id]!=NULL)&&(task&2)) {
@@ -104,14 +113,19 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 				(*(r[id])).desc=NULL;
 				(*(r[id])).coms=NULL;
 				(*(r[id])).type=verifyHeader(data,(unsigned short int)size);
+				//printf("%d: %d %d %d\n",id,(*(r[id])).type,(*(r[id])).offset,(*(r[id])).size);
 			}
 
 			if (task&1) {
 				//select type
+					//printf("kkkkkkk: %x -> %d\n",task,(*(r[id])).type);
+
 				if (task&4) (*(r[id])).type=0;
 				//save file
 				getFileName(vFileext,vDirExt,(*(r[id])).type,id);
 				switch ((*(r[id])).type) {
+					case 1:
+					case 5:
 					case 0:
 						ok=ok&&((target=fopen(vFileext,"wb"))!=NULL);
 						ok=ok&&fwrite(data+1,size-1,1,target); //Ignore checksum
@@ -132,8 +146,6 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 
 						//until here
 						break;
-					case 1:
-					case 5:
 					case 4:
 						//save file
 

@@ -1,6 +1,7 @@
 Princed Resources Editor V0.6 beta
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
+This program is open source under the GNU General Public License terms
 
 Please read this readme file throughly before starting to use Princed Resource Editor.
 
@@ -61,7 +62,7 @@ Type 06:
  Recommended editor: Paint Shop Pro.
 
 2) Bugs:
- As Princed Resource Editor is still an Alpha version, bugs are very common, 
+ As Princed Resource Editor Releases are still unestable versions, bugs are very common, 
  and we are attempting to fix as many as possible.  After that we will release 
  the beta version and after that the final version.
  This program was published because lots of people asked for it in this
@@ -124,87 +125,9 @@ Type 06:
  Note: c:\princed\pr\compiled must exist.
  
 4) New versions
- It's strongly recommended that you download a newer stable version of this   program as soon as it comes available in the official url (http:://www.princed.com.ar)
+ It's strongly recommended that you download a newer stable version of this  program as soon as it comes available in the official url (http://www.princed.com.ar)
 
-5) ToDo List
- i)   Fix bug in palette compiling
- ii)  Improve support of bitmap compiling
- iii) Codify the compression algorithms (B1 to B4) to optimize the bitmap compiled dat files
- iv)  Move PG to bmp.c (only when all bitmaps are Ok)
- v)   Add full pop2 support
- vi)  Add resources tree in resources.txt with the following format:
-  [Prince of Persia 1]
-   [Sounds]
-    [Wave]
-     DIGISND1.DAT 10058 Door close
-    [Midi]
-    [Speaker]
-   [Images]
-    [Animations]
-     [Jaffar walking to princess] Palette: TITLE.DAT 11022
-      TITLE.DAT 11023 Frame 1
-      TITLE.DAT 11024 Frame 2
-      TITLE.DAT 11025 Frame 3
-      TITLE.DAT 11026 Frame 4     
-    [Titles] Palette: TITLE.DAT 200
-     TITLE.DAT 203 Outside palace presentation
-    [Eviornment]
-     [Dungeon]
-     [Palace]
-    [Others]
-  [Prince of Persia 2]
-
-5.5) Versions:
-  PR v0.6 beta: unestable, added ii, iv, first full working version
-  PR v0.7:      tested & stable
-  PR v0.8 beta: added i,iii,vi
-  PR v0.9:      tested and stable
-  PR v1.0:      First optimized & stable version for win32 and linux
-
-6) Change Log
- * PG
-  - Added support to export .bmp files
-  - Added bitmap decompression
-  - Added static palette extraction
- * PS
-  - Added support to .mid files
-  - Added support to indexed dat files
- * PR 0.1 Alpha
-  - Merged PS and PG into one extractor.
-  - Added resource.txt parser.
-  - Solved several bugs.
-  - Coded type header verification
-  - Added dynamic palette extraction
-  - Added support to export JASC palette for .pal files.
-  - Added support to .wav files.
- * PR 0.2 Alpha
-  - Added support to import .bmp files
-  - Source files were abstracted
-  - Added classifing dat type feature
-  - Implemented CGI output support for UNIX versions
- * PR 0.3 beta
-  - Added pr.dll compiling
-  - Added modifiers -x[rnu] -c[r]
-  - Solved bugs in bitmap format
-  - Solved segmentation fault in title.dat
-  - Images bigger than 256 pixels lenght or width now are recognized
-  - Improved decompression algorithm in bigger images
-  - Optimized bitmap handling
-  - Bitmaps aren't upside down anymore 
- * PR 0.4 beta
-  - Fixed a memory bug since v0.3
-  - Pop2 DAT files detected (file type 11)
- * PR 0.5 beta
-  - Optimized bmp saving algorithm
-  - Abstracted format handling
-  - Solved and optimized decompression for big images
-  - Some Pop2 graphics are extracted (palettes aren't supported yet)
- * PR 0.6 beta
-  - Optimized PG algorithms and reserved memory sizes
-  - Completed and tested bmp reading algorithm
- 
-
-7) Platforms
+5) Platforms
  Binary files are compiled in DOS/Win32 console (v0.5) and in Unix/Alpha versions (v0.5). The DOS executable is pr.exe and the Unix executable is prunix. The Unix version will be used to automate the classification of server uploaded files in our unix-based web server.
 
 

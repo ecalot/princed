@@ -16,30 +16,32 @@ char mImportPalette(unsigned char** data, unsigned short *size) {
 	//declare variables
 	unsigned char palh[]=PAL_HEADER;
 	unsigned char pals[]=PAL_SAMPLE;
-	unsigned char* pal=getMemory(101);
+	unsigned char* pal=getMemory(100);
 	unsigned short int parsed;
 	int i=0;
 
 	//set palette with sample
-	memcpy(pal,pals,101);
+	memcpy(pal,pals,100);
 
-	//set current values
+	//verify jasc pal header
 	while (palh[i]==(*data)[i++]);
 	if (i!=sizeof(palh)) return 0;
+
+	//set current values
 	for (int k=0;k<16;k++) {
 		getNumberToken((*data),&parsed,' ',&i,4);
-		pal[(k*3)+5]=(parsed+2)>>2;
+		pal[(k*3)+4]=(parsed+2)>>2;
 		getNumberToken((*data),&parsed,' ',&i,4);
-		pal[(k*3)+6]=(parsed+2)>>2;
+		pal[(k*3)+5]=(parsed+2)>>2;
 		getNumberToken((*data),&parsed,'\r',&i,4);
-		pal[(k*3)+7]=(parsed+2)>>2;
-		i++;
+		pal[(k*3)+6]=(parsed+2)>>2;
+		i++; //Jump \n
 	}
 
 	//free old data and set new
 	free(*data);
 	*data=pal;
-	*size=101;
+	*size=100;
 	return 1;
 }
 

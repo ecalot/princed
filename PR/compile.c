@@ -23,12 +23,15 @@ void mAddFileToDatFile(FILE* fp, char* data, int size) {
 	//calculates the checksum of a file
 	//unsigned char sndHeader[]={0,2};
 	unsigned char checksum=0;
-	for (int k=0;k<size;k++) checksum+=data[k];
+	int k;
+	for (k=0;k<size;k++) checksum+=data[k];
 	checksum=~checksum;
-
+printf("llega X1\n");
 	//writes the header and the midi sound
 	fwrite(&checksum,1,1,fp);
 	fwrite(data,size,1,fp);
+printf("llega X2\n");
+
 }
 
 void mSetEndFile(FILE* fp,int sizeOfIndex) {
@@ -74,7 +77,10 @@ int mCreateIndexInDatFile(FILE* fp, tResource* r[], char* vUpperFile) {
 void mAddCompiledFileToDatFile(FILE* fp,unsigned char* data, tResource *res) {
 	switch ((*res).type) {
 		case 2: //compile bitmap
-			mFormatCompileBmp(data,fp,res);
+			//printf("llega 1\n");
+			if (!mFormatCompileBmp(data,fp,res)) {
+				printf("Error!!\n");
+			}
 			break;
 		case 3: //compile wave
 			mFormatCompileWav(data,fp,res);
@@ -103,6 +109,18 @@ void mAddCompiledFileToDatFile(FILE* fp,unsigned char* data, tResource *res) {
 /***************************************************************\
 |                    M A I N   F U N C T I O N                  |
 \***************************************************************/
+//TODO: delete this function
+char mSaveFile(char* vFile,unsigned char *d, int s) {
+	FILE *fp;
+
+	if ((fp=fopen(vFile,"wb"))==NULL) {
+		return 0;
+	} else {
+		fwrite (d,s,1,fp);
+		fclose(fp);
+		return 1;
+	}
+}
 
 /*
 	Return values:
@@ -135,6 +153,16 @@ int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
 				if ((*r[i]).size=mLoadFileArray(vFileext,&data)) {
 					(*r[i]).offset=ftell(fp);
 					mAddCompiledFileToDatFile(fp,data,r[i]);
+
+
+						//char sss[300];
+						//sprintf(sss,"bmp%05d.raw",i);
+/*if ((r[i]->type==2)&&(r[i]->size>10)) {
+printf("size: %d %02x %02x %02x %02x %02x %02x %02x\n",r[i]->size,data[0],data[1],data[2],data[3],data[4],data[5],data[6]);
+}*/
+					//mSaveFile(sss,data,r[i]->size);
+
+
 					free(data);
 				} else {
 					ok++;

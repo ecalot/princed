@@ -94,6 +94,8 @@ char matches1(char* text,char* mask,char ptext, char pmask) {
 
 		Devuelve 1 en caso de que el caracter coincida y 0 en caso contrario.
 	*/
+	char aux;
+
 	while (text[ptext]||mask[pmask]) {
 		if (mask[pmask]=='"') {
 			pmask++;
@@ -105,7 +107,6 @@ char matches1(char* text,char* mask,char ptext, char pmask) {
 			while (mask[pmask++]=='*');
 			pmask--;
 			if (!mask[pmask]) return 1; //acelera un poco el proceso para el caso particular de que termine en *
-			char aux;
 			while ((text[ptext]) && !(aux=matches1(text,mask,ptext++,pmask)));
 			return aux;
 		} else {

@@ -48,50 +48,37 @@ void expandLzx(char* array,tImage* img, int *i,int cursor, int virtualSize) {
 
 //Compress B1/B2 algorithm
 void compressRle(unsigned char* data,tImage* img,int *dataSize) {
-  int cursorPix=0;
-  int cursorData=0;
+	printf("llega 3.51\n");
+	//Declare pointers
+  char* cursorData  = data;
+  char* counter;
+  char* cursorPix   = (*img).pix;
+  char* imgEnd      = (*img).pix+((*img).size>>1)-1;
+	printf("llega 3.52\n");
 
-  int imgSize=((*img).size>>1)-1;
-  char enthropyBlock=1;
-  int  count=0;
+  while (cursorPix<imgEnd) {
+		//Step 1: Create counter
+		*(counter=(cursorData++))=-1;
 
-  while (cursorPix<imgSize) {
-		//Count different pixels
-		if (data[cursorPix++]==data[cursorPix]) {
-			if (enthropyBlock) { //TODO: add ||count>127
-				enthropyBlock=0;
-				//Print count . enthropy block (data[cursorPix-count..cursorPix])
+		//Step 2: Look and copy the string until a repeated byte is found
+		while ((cursorPix<=imgEnd)&&(*cursorPix!=*(++cursorPix))&&((*counter)!=127)) {
+			(*counter)++;
+			*(cursorData++)=*(cursorPix-1);
+		}
+printf("llega 3.55 cd=%d cp=%d ie=%d\n",cursorData-data,cursorPix,imgEnd);
 
-				count=0;
-			} else {
-				count++;
-			}
-		} else {
-			if (enthropyBlock) {  //TODO: add ||count>128
-				count++;
-			} else {
-				enthropyBlock=1;
-				//Print -count . unenthropy byte (data[cursorPix-1])
-
-				count=0;
-			}
+		cursorPix--;
+		//Step 3: If there was a repeated string, let's ignore it and add the cursor with the repetitions
+		if (*counter==-1) {
+			while ((cursorPix<imgEnd)&&(*cursorPix==(*(++cursorPix)))) (*counter)--;
+			*(cursorData++)=*(cursorPix-1); //Print repeated char
 		}
 	}
+	*(cursorData++)=0;
+	*(cursorData++)=*(cursorPix);
+	printf("llega 3.59\n");
 
-
-/*
-
-		if ((signed char)array[i]<0) {
-					//negative
-					while (array[i]++) (*image).pix[(cursor++)%((*image).size)]=array[i+1];
-					i+=2;
-				} else {
-					//Positive
-					char cx=array[i++]+1;
-					while (cx--) (*image).pix[(cursor++)%((*image).size)]=array[i++];
-				}
-			}
-			*/
+	*dataSize=(int)(cursorData-data);
 }
 
 
@@ -178,7 +165,11 @@ int mExpandGraphic(char* array,tImage *image, int virtualSize) {
 }
 
 //Compress an image into an array in the most quick & dirty way
-int mCompressGraphic(unsigned char* a,tImage i, int* size) {
+int mCompressGraphic(unsigned char* data,tImage i, int* size) {
+	int dataSize;
+//	unsigned char* data;
+
+	/*
 	*size=(i.size/2)+6;
 	a=getMemory(*size);
 	//height - 00 - width - 00 - 00 - compression type
@@ -191,7 +182,34 @@ int mCompressGraphic(unsigned char* a,tImage i, int* size) {
 	a[4]=0;
 	a[5]=0xB0; // how q&d I am :)
 
-	memcpy(i.pix,a+6,*size);
+	memcpy(i.pix,a+6,*size); //TODO it should be a+6,i.pix
+	*/
+//printf("llega 3\n");
+	//=getMemory(10*i.size+50); //This will reserve 10*2*(image size)+50 bytes, to allocate the compressed file
+//printf("llega 3.3\n");
+	compressRle(data+6,&i,&dataSize);
+//printf("llega 3.6\n");
+	//a=getMemory(*size=(dataSize+6));
+//printf("llega 4\n");
+	/*
+		Header Settings:
+		height - 00 - width - 00 - 00 - compression type
+	*/
+	data[2]=i.width;
+	data[3]=i.width>>8;
+
+	data[0]=i.height;
+	data[1]=i.height>>8;
+
+	data[4]=0;
+	data[5]=0xB1;
+
+	//memcpy(a+6,data,dataSize);
+	//free(data);
+*size=(dataSize+6);
+//printf("Tize: %d %02x %02x %02x %02x %02x %02x %02x\n",*size,a[0],a[1],a[2],a[3],a[4],a[5],a[6]);
+
+
 	return 1;
 }
 
