@@ -49,6 +49,23 @@ output.c: Free Prince : Output Devices Handler
 #define DEF_SCREEN_WIDTH  320
 #define DEF_SCREEN_HEIGHT 200
 
+#define OUTPUT_FULLSCREEN
+
+
+#ifdef OUTPUT_FULLSCREEN
+#define fullscreen SDL_FULLSCREEN
+#else
+#define fullscreen 0
+#endif
+
+#ifdef OUTPUT_BIGPIXELS
+#define putpixel(surface,x,y,pixel) putbigpixel(surface,x,y,pixel)
+#define transformSize(x) (x<1)
+#else
+#define putpixel(surface,x,y,pixel) putsinglepixel(surface,x,y,pixel)
+#define transformSize(x) (x)
+#endif
+
 typedef struct {
 	int bottom;
 	int left;
@@ -244,7 +261,7 @@ void outputPlayMid(tMemory music) {} /* Starts the music reproduction and return
 
 /* Set the pixel at (x, y) to the given value
  * NOTE: The surface must be locked before calling this!*/
-void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
+void putsinglepixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 {
 	int bpp = surface->format->BytesPerPixel;
 	/* Here p is the address to the pixel we want to set */
@@ -252,7 +269,15 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 
 	*p = pixel;
 }
+#ifdef OUTPUT_BIGPIXELS
+void putbigpixel(SDL_Surface *surface, int x, int y, Uint32 pixel) {
+	putsinglepixel(surface,(x<1),  (y<1),  pixel);
+	putsinglepixel(surface,(x<1)+1,(y<1),  pixel);
+	putsinglepixel(surface,(x<1),  (y<1)+1,pixel);
+	putsinglepixel(surface,(x<1)+1,(y<1)+1,pixel);
 
+}
+#endif
 
 /* Graphics: Primitives for resources module */
 void* outputLoadBitmap(const unsigned char* data, int size, 
@@ -406,7 +431,7 @@ int outputInit()
 		colors[i].g=255-i;
 		colors[i].b=255-i;
 	}
-	screen = SDL_SetVideoMode(DEF_SCREEN_WIDTH, DEF_SCREEN_HEIGHT, 0, SDL_SWSURFACE|SDL_HWPALETTE);
+	screen = SDL_SetVideoMode(transformSize(DEF_SCREEN_WIDTH), transformSize(DEF_SCREEN_HEIGHT), 0, SDL_SWSURFACE|SDL_HWPALETTE|fullscreen);
 	if (!screen) return -1;
 	/*SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);*/
 	initText();
