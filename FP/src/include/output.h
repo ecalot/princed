@@ -38,7 +38,7 @@ output.h: Free Prince : Output Devices Handler
 #ifndef _OUTPUT_H_
 #define _OUTPUT_H_
 
-#include <SDL/SDL.h>	/* SDL stuff */
+#include "resources.h"
 
 typedef struct tColor{
 	unsigned char r;

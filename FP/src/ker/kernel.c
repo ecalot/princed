@@ -36,26 +36,15 @@ kernel.c: FreePrince : Main Kernel
 #include "kernel.h"
 #include "resources.h"
 #include "output.h"
+#include "titles.h"
 
-int kernel(int optionflag,int level) {
-/* levels=-1 is default
- * levels from 0 to n is the level number
- *  
- * optionflag may be read using hasFlag(name_flag); Note that the variable
- * must be called optionflag
- */
-	
-	SDL_Event e;
+int control(int optionflag,int level) {
 	int i,location,direction,upIsPressed;
+	SDL_Event e;
 	tData* runningAnimation[4];
 	tData* animation;
 	tData* fondo;
-
-	if (outputInit()) {
-		fprintf(stderr, "Unable to initialize screen: %s\n", SDL_GetError());
-		exit(1);
-	}
-
+	
 	runningAnimation[0]=resLoad(RES_ANIM_RUN_LEFT);
 	runningAnimation[1]=resLoad(RES_ANIM_RUN_RIGHT);
 	runningAnimation[2]=resLoad(RES_ANIM_JUMPRUN_LEFT);
@@ -63,15 +52,15 @@ int kernel(int optionflag,int level) {
 	fondo=resLoad(RES_IMG_BACKGROUND);
 	if (!fondo) {
 		printf("The resource couldn't be loaded!\n");
-		exit(1);
+		return 1;
 	}
-/*
+	/*
 	printf("Resource number: %d. Frames: %d. Type: %d.\n",
 		RES_ANIM_RUN_LEFT,
 		runningAnimation->frames,
 		runningAnimation->type
 	);
-*/
+	*/
 	i=0;
 	location=160;
 	direction=0;
@@ -81,7 +70,7 @@ int kernel(int optionflag,int level) {
 		if (SDL_PollEvent(&e)) {
 			switch (e.type) {
 				case SDL_QUIT:
-					exit(1);
+					return 1;
 				case SDL_KEYDOWN:
 					/*fprintf(stderr, "The %s key was pressed! %d\n",
 					SDL_GetKeyName(e.key.keysym.sym),e.key.keysym.sym);*/
@@ -100,7 +89,7 @@ int kernel(int optionflag,int level) {
 							i=0;
 							break;
 						case SDLK_q:
-							exit(1);
+							return 1;
 							break;
 						default:
 							break;
@@ -132,9 +121,55 @@ int kernel(int optionflag,int level) {
 		if (i>animation->frames-1) i =6;
 	}
 
+	return 0;
+}
+
+/*
+ * Main function
+ */
+
+int kernel(int optionflag,int level) {
+/* levels=-1 is default
+ * levels from 0 to n is the level number
+ *  
+ * optionflag may be read using hasFlag(name_flag); Note that the variable
+ * must be called optionflag
+ */
+	
+	int menuOption;
+	int quit=0;
+	if (outputInit()) {
+		fprintf(stderr, "Unable to initialize screen: %s\n", SDL_GetError());
+		exit(1);
+	}
+
+	/*
+	 * Start main menu loop (story and titles)
+	 */
+	do {
+		if (level==-1) {
+			menuOption=showTitles();
+			switch (menuOption) {
+				case sLoad:
+					level=8; /* TODO: make read level function */
+					break;
+				case sStart:
+					level=1;
+					break;
+				case sQuit:
+					quit=1;
+					break;
+			}
+		}
+		if (!quit) {
+			quit=control(optionflag,level);
+		}
+	} while(!quit);
 	outputStop();
 	return 0;
 }
+
+
 
 #if 0
 #include <stdio.h>

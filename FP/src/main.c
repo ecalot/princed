@@ -24,7 +24,7 @@ main.c: FreePrince : Main function - parsing
  Copyright 2004, 2003 Princed Development Team
   Created: 24 Mar 2004
 
-  Author: Endfhgfhgfhg <efghgfdht.cod@princed.com.ar>
+  Author: Enrique Calot <ecalot.cod@princed.com.ar>
 
  Note:
   DO NOT remove this copyright notice
@@ -76,7 +76,7 @@ int main (int argc, char **argv) {
 		}
 	} while (c!=-1);
 
-
+	/* TODO: traditional parsing: megahit (level) */
 	/* Check syntax, help and version screens */
 	
 	if (hasFlag(help_flag)) {

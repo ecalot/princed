@@ -35,6 +35,7 @@ output.c: Free Prince : Output Devices Handler
   DO NOT remove this copyright notice
 */
 
+#include <SDL/SDL.h>
 #include <stdlib.h>    /* malloc */
 #include "resources.h" /* tMemory structure */
 #include "output.h"

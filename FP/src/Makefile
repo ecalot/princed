@@ -47,7 +47,7 @@ LINKERRELEASE =
 
 #Binary code files
 OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
-                output.o maps.o config.o
+                output.o maps.o config.o drawscreen.o titles.o
 EXEFILE       = bin/freeprince
 
 #Use this to temporary remove an option
@@ -113,6 +113,14 @@ dat.o: res/dat.c include/disk.h include/dat.h
 kernel.o: ker/kernel.c include/kernel.h include/resources.h include/output.h
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
+
+drawscreen.o: ker/drawscreen.c
+	$(INFO) Compiling screen draw module...
+	$(CC) -c ker/drawscreen.c $(OPTIONS)
+
+titles.o: ker/titles.c
+	$(INFO) Compiling titles module...
+	$(CC) -c ker/titles.c $(OPTIONS)
 
 compress.o: res/compress.c include/compress.h include/memory.h \
             include/disk.h
