@@ -50,8 +50,8 @@ tState createState(int level) {
 /* private functions */
 
 /* Evaluates a condition indexed in the condition table */
-#define DefaultTrue(pointer) if (pointer) return STATES_CONDRESULT_TRUE
-#define DefaultFalse(pointer) if (pointer) return STATES_CONDRESULT_TRUE
+#define DefaultTrue(pointer) if (!pointer) return STATES_CONDRESULT_TRUE
+#define DefaultFalse(pointer) if (!pointer) return STATES_CONDRESULT_TRUE
 int evaluateCondition(int condition,tKey* key, tKid* kid, tRoom* room) {
 	tsCondition c=statesConditionList[condition];
 #define thisTile (kid->location/STATES_STEPS_PER_TILE+1+12*kid->floor)

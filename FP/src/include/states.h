@@ -31,7 +31,22 @@ typedef struct {
 /* public functions interface */
 
 /* This function should return the frame flags
- * and actions to be performed by this call */
+ * and actions to be performed by this call
+ *
+ * Usage:
+ *  stateUpdate(tKey* key, tKid* kid,tRoom* room);
+ *  where key is a tKey* with the current key state (read from a file,
+ *  keyboard or joystick) or NULL in case there is no need to interpretate
+ *  key events to manipulate states
+ *
+ *  kid is a pointer to a person or object that uses states, with states
+ *  initialized properly by createState fucntion.
+ *
+ *  room is a pointer to a room where the events will be interpreted, the NULL
+ *  pointer is allowed. In that case actions that needs map conditions won't
+ *  be performed.
+ */
+
 short stateUpdate(tKey* key, tKid* kid,tRoom* room);
 
 /* Create a State depending on the level */
