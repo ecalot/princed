@@ -76,6 +76,6 @@ int levelGetDoorMap(/* TODO: idem */);
 int levelGetStarPosition(int* screen, int* position); /* TODO: define
 		         position as an int or using x,y coordinate system*/
 
-int levelGetInformation(int* thisScreen, char* UDLRscreens, char* cornerScreens);
+int levelGetInformation(int *thisScreen, unsigned char* LRUDscreens, unsigned char* cornerScreens);
 /* TODO: define the format of cornerscreens */
 
