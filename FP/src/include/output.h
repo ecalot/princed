@@ -72,17 +72,17 @@ void outputFreeBitmap(void* image);
 	*/
 
  /* Graph: Primitives for the kernel */
-void outputDrawBitmap(SDL_Surface *screen, void* image,int x, int y);
+void outputDrawBitmap(void* image,int x, int y);
  /* Draws an abstract image
 	*/
 
-void outputClearScreen(SDL_Surface *screen);
-void outputUpdateScreen(SDL_Surface *screen);
+void outputClearScreen();
+void outputUpdateScreen();
  /* Crears the screen
 	*/
 
 /* Initialization */
-SDL_Surface *outputInit();
+int outputInit();
 /* This function must be called before starting using the output functions
  * it will initialize the screen and the output module. Returns a pointer
  * to the initialized screen, or NULL if an error occurs. */
@@ -92,3 +92,4 @@ void outputStop();
  */
 
 #endif
+

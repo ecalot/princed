@@ -39,6 +39,9 @@ output.c: Free Prince : Output Devices Handler
 #include "resources.h" /* tMemory structure */
 #include "output.h"
 
+/* Main screen object */
+SDL_Surface *screen;
+
 /* Text Primitives*/
 void outputDrawText(int x, int y, const char *fmt, ...)
 {
@@ -48,6 +51,9 @@ void outputDrawMessage(const char* fmt, ...)
 {
 }
 
+void outputClearLastMessage()
+{
+}
 
 /* Sound */
 void outputPlayWav(tMemory sound) {} /* Starts the reproduction of the sample and returns */
@@ -139,7 +145,7 @@ outputLoadBitmap(const unsigned char* data, int size,
 void outputFreeBitmap(void* image) {}
 
 /* Graphics: Primitives for the kernel */
-void outputDrawBitmap(SDL_Surface *screen, void* image, int x, int y) {
+void outputDrawBitmap(void* image, int x, int y) {
 	/* Draws an abstract image */
 	SDL_Surface *s = (SDL_Surface *)image;
 	SDL_Rect dest;
@@ -152,21 +158,20 @@ void outputDrawBitmap(SDL_Surface *screen, void* image, int x, int y) {
 	if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
 }
 
-void outputClearScreen(SDL_Surface *screen)
+void outputClearScreen()
 {
 	SDL_FillRect(screen, NULL, 0);
 }
 
-void outputUpdateScreen(SDL_Surface *screen) 
+void outputUpdateScreen() 
 {
 	SDL_Flip(screen);
 }
 
 /* Initialization */
-SDL_Surface *outputInit() 
+int outputInit() 
 {
 	int i;
-	SDL_Surface *screen;
 	SDL_Color colors[256];
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
 	atexit(outputStop);
@@ -178,9 +183,9 @@ SDL_Surface *outputInit()
 		colors[i].b=255-i;
 	}
 	screen = SDL_SetVideoMode(320, 200, 8, SDL_SWSURFACE|SDL_HWPALETTE);
-	if (!screen) return NULL;
+	if (!screen) return -1;
 	/*SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);*/
-	return screen;
+	return 0;
 }
 
 /* Finish all output modes, including the screen mode */

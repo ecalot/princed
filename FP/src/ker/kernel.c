@@ -45,16 +45,13 @@ int kernel(int optionflag,int level) {
  * must be called optionflag
  */
 	
-	SDL_Surface *screen /* , *test */;
 	SDL_Event e;
 	int i,location,direction,upIsPressed;
 	tData* runningAnimation[4];
 	tData* animation;
 	tData* fondo;
 
-	screen = outputInit();
-
-	if (!screen) {
+	if (outputInit()) {
 		fprintf(stderr, "Unable to initialize screen: %s\n", SDL_GetError());
 		exit(1);
 	}
@@ -119,10 +116,10 @@ int kernel(int optionflag,int level) {
 					}
 			}
 		}
-		outputClearScreen(screen);
-		outputDrawBitmap(screen, fondo->pFrames[0], 0, 0);
-		outputDrawBitmap(screen, animation->pFrames[i], location, 141);
-		outputUpdateScreen(screen);
+		outputClearScreen();
+		outputDrawBitmap(fondo->pFrames[0], 0, 0);
+		outputDrawBitmap(animation->pFrames[i], location, 141);
+		outputUpdateScreen();
 		i++;
 		SDL_Delay(50);
 		animation=runningAnimation[(upIsPressed<<1)|(direction)];
