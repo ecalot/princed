@@ -24,7 +24,7 @@ INCLUDE       = -Iinclude -Iports\include -Iports\include\sdl
 LIBS          = SDL.lib
 
 #Defines
-DEFINES       = -DOS=\"$(OS)\" $(LINUX) 
+DEFINES       = -DOS=\"$(OS)\" $(LINUX) -DOUTPUT_FULLSCREEN
 
 #Release type
 # RELEASE may be:
