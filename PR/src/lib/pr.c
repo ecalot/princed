@@ -224,8 +224,8 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	return a;
 }
 
-#ifdef UNIX
 /* When compiling in Unix SO libraries */
+#ifndef WIN32
 void start() {}
 #endif
 
