@@ -438,9 +438,9 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	/* pressable/this */
 	if (tile.isRaise) {
 		outputDrawBitmap(
-			roomGfx.environment->pFrames[(((tPressable*)left.moreInfo)->action==eNormal)?(58-((left.walkable)&&(!left.isRaise))):58],
+			roomGfx.environment->pFrames[(((tPressable*)tile.moreInfo)->action==eNormal)?(58-((left.walkable)&&(!left.isRaise))):58],
 			(x-1)*TILE_W,
-			y*TILE_H+((((tPressable*)left.moreInfo)->action==eNormal)?0:1)
+			y*TILE_H+((((tPressable*)tile.moreInfo)->action==eNormal)?0:1)
 		);
 	}
 	/* debris/this */
