@@ -94,15 +94,15 @@ outputLoadBitmap(const unsigned char* data, int size,
 
 	/* Fill colors with color information */
 	for(i=0;i<palette.colors;i++) {
-		colors[i].r=palette.color[i].r<<2;
-		colors[i].g=palette.color[i].g<<2;
-		colors[i].b=palette.color[i].b<<2;
+		colors[i].r=(palette.color[i].r<<2);
+		colors[i].g=(palette.color[i].g<<2);
+		colors[i].b=(palette.color[i].b<<2);
 	}
 
 /*	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
 	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n", invert, firstColorTransparent, size);*/
 
-	result = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0, 0, 0, 0);
+	result = SDL_CreateRGBSurface(SDL_SWSURFACE|SDL_HWPALETTE, w, h, 8, 0, 0, 0, 0);
 	SDL_SetColorKey(result, SDL_SRCCOLORKEY, 0);
 /*	printf("%d\n",firstColorTransparent);*/
 	if (!result) {
@@ -110,7 +110,7 @@ outputLoadBitmap(const unsigned char* data, int size,
 		free(colors);
 		return NULL;
 	}
-	SDL_SetPalette(result, SDL_LOGPAL, colors, 0, palette.colors);
+	SDL_SetPalette(result, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, palette.colors);
 
 	w = (w + 1) / 2;
 
@@ -191,7 +191,7 @@ int outputInit()
 		colors[i].g=255-i;
 		colors[i].b=255-i;
 	}
-	screen = SDL_SetVideoMode(DEF_SCREEN_WIDTH, DEF_SCREEN_HEIGHT, 8, SDL_SWSURFACE|SDL_HWPALETTE);
+	screen = SDL_SetVideoMode(DEF_SCREEN_WIDTH, DEF_SCREEN_HEIGHT, 0, SDL_SWSURFACE|SDL_HWPALETTE);
 	if (!screen) return -1;
 	/*SDL_SetPalette(screen, SDL_LOGPAL|SDL_PHYSPAL, colors, 0, 256);*/
 	return 0;
