@@ -34,10 +34,11 @@ unsigned char popBit(unsigned char *byte) {
 }
 
 /* Expands LZ Groody algorithm. This is the core of PR */
-void expandLzg(const unsigned char* input, int inputSize, 
-								unsigned char* output, int *outputSize) {
+int expandLzg(const unsigned char* input, int inputSize, 
+               unsigned char* output, int *outputSize) {
+
 	int           loc, oCursor=0, iCursor=0;
-	unsigned char maskbyte, rep, k;
+	unsigned char maskbyte=0, rep, k;
 
 	/* clean output garbage */
 	for(loc=LZG_MAX_MEMSIZE;loc--;output[loc]=0);
@@ -82,8 +83,9 @@ void expandLzg(const unsigned char* input, int inputSize,
 			}
 		}
 	}
-
+	
 	*outputSize=oCursor;
+	return maskbyte;
 }
 
 /* END of page pasted part */
@@ -92,9 +94,9 @@ int main(int argc, char** argv) {
 	/* declare variables */
 	unsigned char uncompressed[LZG_MAX_MEMSIZE];
 	unsigned char compressed[LZG_MAX_MEMSIZE];
-	int uncompressedSize;
-	int compressedSize;
-	FILE* fp;
+	int           uncompressedSize, compressedSize;
+	FILE*         fp;
+	int           result;
 				
 	/* validate input */
 	if (argc!=3) {
@@ -116,8 +118,10 @@ int main(int argc, char** argv) {
 	fclose(fp);
 
 	/* compress file */
-	expandLzg(uncompressed,uncompressedSize,compressed,&compressedSize);
+	result=expandLzg(uncompressed,uncompressedSize,compressed,&compressedSize);
 
+	if (result) fprintf(stderr,"Maskbyte not clean, possible data corruption\n");
+	
 	/* save results */
 	fp=fopen(argv[2],"wb");	
 	if (!fp) {
