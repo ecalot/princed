@@ -134,7 +134,6 @@ tKid kidCreate() {
 void kidDraw(tKid kid) {
 	void* image=kidGfx.kid[kid.direction]->pFrames[stateGetImage(kid)-1];
 	/* TODO: move this -1 to each script frame */
-	printf("w=%d\n",outputGetWidth(image));
 	outputDrawBitmap(
 		image, 
 		((kid.location*32)/10)-((kid.direction==DIR_LEFT)?0:outputGetWidth(image)),

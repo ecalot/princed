@@ -78,8 +78,11 @@ int evaluateCondition(int condition,tKey* key, tKid* kid, tRoom* room) {
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esMapUpForward:
 		DefaultFalse(room);
-		return isInGroup(room->fore[thisTile-12+((kid->direction==DIR_LEFT)?-1:1)],room->back[thisTile-12+((kid->direction==DIR_LEFT)?-1:1)],c.argument)?
+		{
+			int t=thisTile-12+((kid->direction==DIR_LEFT)?-1:1);
+		return isInGroup(room->fore[t],room->back[t],c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
+		}
 	case esMapUp:
 		DefaultFalse(room);
 		return isInGroup(room->fore[thisTile-12],room->back[thisTile-12],c.argument)?
@@ -197,14 +200,35 @@ short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 			else
 				kid->location-=statesActionList[action].moveOffset;
 			break;
-		case STATES_MOVETYPES_ABSOLUTEONSTOP:
+		case STATES_MOVETYPES_ABSOLUTEONSTOP: {
 			/* AbsoluteOnStop (x)
 			 * Deletes frames (in the middle) to make sure that, at the end of the animation,
 			 * the kid had moved only x step units from the first forward tile change
 			 * if there is a lack of movements by frame it stops before reaching it.
 			 */
-
+			/* 1) calculate the number of frames the guy will move */
+			int accumulate=0;
+			int i,j;
+			int from,to;
+			/* First iteration: determine i=number of frames not cropped */
+			for (i=0;(i<current->frame)&&(accumulate<statesActionList[action].moveOffset);i++) {
+				accumulate+=current->steps[alternate(i,current->frame)];
+			}
+			for (j=0;j<i;j++) {
+				from=alternate(j,current->frame);
+				to=alternate(j,i);
+				if (j%2) {
+					/* the first frames are ok, so I'll fix the last frames */
+					printf("from=%d to=%d ok\n",from,to);
+					current->animation[to]=current->animation[from];
+					current->flags[to]=current->flags[from];
+					current->steps[to]=current->steps[from];
+				}
+			}
+			printf("total frames=%d number of frames to be used=%d. wanted movement=%d movement to be performed=%d\n",current->frame,i,statesActionList[action].moveOffset,accumulate);
+			current->frame=i; /* now the last frames are moved, crop the animation */
 			break;
+			}
 		case STATES_MOVETYPES_RELATIVETURN:
 			/* relative but turning */
 			kid->direction=(kid->direction==DIR_LEFT)?DIR_RIGHT:DIR_LEFT;
@@ -222,7 +246,7 @@ short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 	
 	kid->location+=(kid->direction==DIR_LEFT)?-steps:steps;
 
-
+/*
 	{
 		int jj;
 		for (jj=0;jj<5;jj++) {
@@ -232,7 +256,7 @@ short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 		}
 		printf("\n");
 	}
-
+*/
 
 	
 	if (current->currentState<0) return current->currentState; /* if last state return exit code */
