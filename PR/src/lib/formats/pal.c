@@ -92,9 +92,9 @@ int mFormatImportPal(unsigned char* data, tResource *res,const char* vFile) {
 	unsigned char* pal2;
 	char* data2;
 	char aux[MAX_FILENAME_SIZE];
-	unsigned int r;
-	unsigned int g;
-	unsigned int b;
+	int r;
+	int g;
+	int b;
 	int i=0;
 	int k=16;
 	int sample1;

@@ -66,7 +66,6 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 			1 Ok
 	*/
 
-	int ok;
 	unsigned char* readDatFilePoint;
 
 	/* Open file */

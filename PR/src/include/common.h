@@ -96,7 +96,7 @@ void prSetOutput(FILE* output);
 \***************************************************************/
 
 #define PR_URL                    "http://www.princed.com.ar"
-#define PR_VERSION                "v1.0-dev1"
+#define PR_VERSION                "v1.0-dev2"
 #define PR_COPY                   "(c) Copyright 2003, 2004 - Princed Development Team"
 
 /***************************************************************\

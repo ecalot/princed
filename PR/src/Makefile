@@ -21,7 +21,7 @@ endif
 #Compiler options
 INCLUDE = -Iinclude/
 DEFINES = -DOS=\"$(OS)\" $(LINUX) 
-OPTIONS = $(INCLUDE) $(DEFINES) -g -pedantic
+OPTIONS = $(INCLUDE) $(DEFINES) -g -pedantic -Wall
 
 OBJFILES = compile.o compress.o extract.o resources.o tasks.o disk.o\
            xmlparse.o xmlsearch.o dat.o bmp.o mid.o pal.o wav.o plv.o\

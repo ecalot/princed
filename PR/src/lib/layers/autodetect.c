@@ -365,7 +365,7 @@ int importDir(const char* directory, const char* vResFile, int pOption, const ch
 	/* Use the xml structure to Generate the file list */
 	workTree(xmlStructure,NULL,addFileToList);
 
-	while(datfile=getFileFromList()) {
+	while((datfile=getFileFromList())) {
 		sizeOfPath=strlen(vDatDirectory);
 		sizeOfFile=strlen(datfile);
 
