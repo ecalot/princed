@@ -41,7 +41,7 @@ dat.h: Princed Resources : DAT library headers
 
 #ifdef PR_DAT_INCLUDE_DATREAD
 #ifdef PR_DAT_INCLUDE_DATWRITE
-/* DAT reading and writing primitives primitives */
+/* DAT reading and writing primitives */
 int mRWBeginDatFile(const char* vFile, unsigned short int *numberOfItems, int optionflag);
 #define mRWCloseDatFile(dontSave) \
 mReadCloseDatFile();\
