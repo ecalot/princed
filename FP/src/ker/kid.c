@@ -49,26 +49,26 @@ static struct {
 } kidGfx;
 
 void loadGfx() {
-	kidGfx.turning[DIR_LEFT]=resLoad(RES_ANIM_TURNING|RES_MOD_LEFT);
-	kidGfx.turning[DIR_RIGHT]=resLoad(RES_ANIM_TURNING|RES_MOD_RIGHT);
-	kidGfx.normal[DIR_LEFT]=resLoad(RES_ANIM_NORMAL|RES_MOD_LEFT);
-	kidGfx.normal[DIR_RIGHT]=resLoad(RES_ANIM_NORMAL|RES_MOD_RIGHT);
-	kidGfx.walking[DIR_LEFT]=resLoad(RES_ANIM_WALKING|RES_MOD_LEFT);
-	kidGfx.walking[DIR_RIGHT]=resLoad(RES_ANIM_WALKING|RES_MOD_RIGHT);
-	kidGfx.couching[DIR_LEFT]=resLoad(RES_ANIM_COUCH|RES_MOD_LEFT);
-	kidGfx.couching[DIR_RIGHT]=resLoad(RES_ANIM_COUCH|RES_MOD_RIGHT);
-	kidGfx.jumping[DIR_LEFT]=resLoad(RES_ANIM_JUMP|RES_MOD_LEFT);
-	kidGfx.jumping[DIR_RIGHT]=resLoad(RES_ANIM_JUMP|RES_MOD_RIGHT);
-	kidGfx.running[DIR_LEFT]=resLoad(RES_ANIM_RUN|RES_MOD_LEFT);
-	kidGfx.running[DIR_RIGHT]=resLoad(RES_ANIM_RUN|RES_MOD_RIGHT);
-	kidGfx.startrunning[DIR_LEFT]=resLoad(RES_ANIM_RUN_START|RES_MOD_LEFT);
-	kidGfx.startrunning[DIR_RIGHT]=resLoad(RES_ANIM_RUN_START|RES_MOD_RIGHT);
-	kidGfx.stoprunning[DIR_LEFT]=resLoad(RES_ANIM_RUN_STOP|RES_MOD_LEFT);
-	kidGfx.stoprunning[DIR_RIGHT]=resLoad(RES_ANIM_RUN_STOP|RES_MOD_RIGHT);
-	kidGfx.turnrunning[DIR_LEFT]=resLoad(RES_ANIM_RUN_TURN|RES_MOD_LEFT);
-	kidGfx.turnrunning[DIR_RIGHT]=resLoad(RES_ANIM_RUN_TURN|RES_MOD_RIGHT);
-	kidGfx.jumprunning[DIR_LEFT]=resLoad(RES_ANIM_JUMPRUN|RES_MOD_LEFT);
-	kidGfx.jumprunning[DIR_RIGHT]=resLoad(RES_ANIM_JUMPRUN|RES_MOD_RIGHT);
+	kidGfx.turning[DIR_LEFT]=resLoad(RES_ANIM_TURNING|RES_MODS_LEFT);
+	kidGfx.turning[DIR_RIGHT]=resLoad(RES_ANIM_TURNING|RES_MODS_RIGHT);
+	kidGfx.normal[DIR_LEFT]=resLoad(RES_ANIM_NORMAL|RES_MODS_LEFT);
+	kidGfx.normal[DIR_RIGHT]=resLoad(RES_ANIM_NORMAL|RES_MODS_RIGHT);
+	kidGfx.walking[DIR_LEFT]=resLoad(RES_ANIM_WALKING|RES_MODS_LEFT);
+	kidGfx.walking[DIR_RIGHT]=resLoad(RES_ANIM_WALKING|RES_MODS_RIGHT);
+	kidGfx.couching[DIR_LEFT]=resLoad(RES_ANIM_CROUCH|RES_MODS_LEFT);
+	kidGfx.couching[DIR_RIGHT]=resLoad(RES_ANIM_CROUCH|RES_MODS_RIGHT);
+	kidGfx.jumping[DIR_LEFT]=resLoad(RES_ANIM_JUMP|RES_MODS_LEFT);
+	kidGfx.jumping[DIR_RIGHT]=resLoad(RES_ANIM_JUMP|RES_MODS_RIGHT);
+	kidGfx.running[DIR_LEFT]=resLoad(RES_ANIM_RUN|RES_MODS_LEFT);
+	kidGfx.running[DIR_RIGHT]=resLoad(RES_ANIM_RUN|RES_MODS_RIGHT);
+	kidGfx.startrunning[DIR_LEFT]=resLoad(RES_ANIM_RUN_START|RES_MODS_LEFT);
+	kidGfx.startrunning[DIR_RIGHT]=resLoad(RES_ANIM_RUN_START|RES_MODS_RIGHT);
+	kidGfx.stoprunning[DIR_LEFT]=resLoad(RES_ANIM_RUN_STOP|RES_MODS_LEFT);
+	kidGfx.stoprunning[DIR_RIGHT]=resLoad(RES_ANIM_RUN_STOP|RES_MODS_RIGHT);
+	kidGfx.turnrunning[DIR_LEFT]=resLoad(RES_ANIM_RUN_TURN|RES_MODS_LEFT);
+	kidGfx.turnrunning[DIR_RIGHT]=resLoad(RES_ANIM_RUN_TURN|RES_MODS_RIGHT);
+	kidGfx.jumprunning[DIR_LEFT]=resLoad(RES_ANIM_JUMPRUN|RES_MODS_LEFT);
+	kidGfx.jumprunning[DIR_RIGHT]=resLoad(RES_ANIM_JUMPRUN|RES_MODS_RIGHT);
 }
 
 void kidFree() {
