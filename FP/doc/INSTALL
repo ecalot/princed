@@ -23,6 +23,8 @@ packets are required in both cases (coders and anonymous).
 
 The requiered packages are:
 bash
+bzip2
+sed
 wget
 gcc
 make
