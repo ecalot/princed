@@ -142,16 +142,16 @@ tData* resLoad(long id) {
 	switch (type) {
 		case RES_TYPE_LVL:
 			if (total!=2) {
-				printf("Fatal Error: resLoad: invalid level define!\n");
+				fprintf(stderr,"Fatal Error: resLoad: invalid level define!\n");
 				return NULL;
 			}
 			mask+=res_list[from+1];
 			if (!mReadBeginDatFile(&numberOfItems,res_file[res_list[from]])) {
-				printf("Fatal Error: resLoad: level file not found!\n");
+				fprintf(stderr,"Fatal Error: resLoad: level file not found!\n");
 				return NULL;
 			}
 			if(!res_getDataById(mask,numberOfItems,&raw)) {
-				printf("Fatal Error: resLoad: level not found!\n");
+				fprintf(stderr,"Fatal Error: resLoad: level not found!\n");
 				return NULL;
 			}
 			result=(tData*)malloc(sizeof(tData));
@@ -174,7 +174,7 @@ tData* resLoad(long id) {
 			result->type=eImages;
 
 			if (!mReadBeginDatFile(&numberOfItems,res_file[res_list[from]])) {
-				printf("Fatal Error: resLoad: level file not found!\n");
+				fprintf(stderr,"Fatal Error: resLoad: level file not found!\n");
 				return NULL;
 			}
 
@@ -186,23 +186,14 @@ tData* resLoad(long id) {
 	      pal.colors=2;
 				pal.color=(tColor*)bwpalette;
 				result->frames=total-1; /* drop filename */
-				fprintf(stderr,"Loading a BW image with palette %d-%d-%d,%d-%d-%d color=%d\n",
-												bwpalette[0],
-												bwpalette[1],
-												bwpalette[2],
-												bwpalette[3],
-												bwpalette[4],
-												bwpalette[5],
-												((mask>>5)&3)
-												);
 			} else {
 				from++;
 				if(!res_getDataById(res_list[from],numberOfItems,&palette)) {
-					printf("Fatal Error: resLoad: palette not found!\n");
+					fprintf(stderr,"Fatal Error: resLoad: palette not found!\n");
 					return NULL;
 				}
 				if (palette.size!=100) {
-     			printf("Fatal error: resLoad: invalid palette\n");
+     			fprintf(stderr,"Fatal error: resLoad: invalid palette\n");
 					return NULL;
 				}
 				pal.colors=16;
@@ -213,7 +204,7 @@ tData* resLoad(long id) {
 			result->pFrames=(void**)malloc(result->frames*sizeof(void*));
 			for (total=0;total<result->frames;total++) {
 				if(!res_getDataById(res_list[from+total],numberOfItems,&raw)) {
-					printf("Fatal Error: resLoad: image not found!\n");
+					fprintf(stderr,"Fatal Error: resLoad: image not found!\n");
 					return NULL;
 				}
 
@@ -245,13 +236,13 @@ tData* resLoad(long id) {
 }
 
 void resFree(tData* res) {
-/*	if (res->type==eImages) {
+	if (res->type==eImages) {
 		while (res->frames) {
 			outputFreeBitmap(res->pFrames[--(res->frames)]);
 		}
 	}
-	printf("ResFree activated\n");
+	fprintf(stderr,"ResFree activated\n");
 	free(res->pFrames);
-	free(res);*/
+	free(res);
 }
 
