@@ -74,7 +74,7 @@ for (id=0;id<MAX_RES_COUNT;id++) {\
 int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int optionflag, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension) {
 	char               vFileext[MAX_FILENAME_SIZE];
 	int                indexNumber;
-	int                ok;
+	int                ok=1;
 	long int           id;
 	tImage             image; /* this is used to make a persistent palette */
 	unsigned char*     data;
@@ -83,13 +83,12 @@ int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int option
 	unsigned short int paletteId=0;
 
 	/* Initialize abstract variables to read this new DAT file */
-	if (ok=mReadBeginDatFile(&numberOfItems,vFiledat)) return ok;
+	if (!mReadBeginDatFile(&numberOfItems,vFiledat)) return -1;
 
 	/* Initializes the palette list */
 	initializePaletteList;
 
 	/* main loop */
-	ok=1;
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
 		id=mReadGetFileInDatFile(indexNumber,&data,&size);
 

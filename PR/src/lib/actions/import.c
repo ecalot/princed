@@ -93,7 +93,7 @@ for (id=0;id<MAX_RES_COUNT;id++) {\
 |                   M A I N   F U N C T I O N                   |
 \***************************************************************/
 
-int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int optionflag, const char* vDatFileName,const char* backupExtension) {
+int fullCompile(const char* vFiledat, const char* vDirExt, tResource* r[], int optionflag, const char* vDatFileName,const char* backupExtension) {
 	/*
 		Return values:
 			-1 File couldn't be open for writing
@@ -117,15 +117,15 @@ int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int optio
 			if ((r[id]->size=((unsigned short)mLoadFileArray(vFileext,&data)))) {
 				mWriteInitResource(r+id);
 				if (!mAddCompiledFileToDatFile(data,r[id],vFileext)) {
-					if (hasFlag(verbose_flag)) printf(PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
+					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
 					error++;
 				} else {
-					if (hasFlag(verbose_flag)) printf(PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
+					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
 					ok++;
 				}
 				free(data);
 			} else {
-				if (hasFlag(verbose_flag)) printf(PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
+				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
 				error++;
 			}
 		}
@@ -140,7 +140,16 @@ int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int optio
 	return error;
 }
 
+#define RW_ERROR {mRWCloseDatFile(1);return 0;}
 int partialCompile(const char* vFiledat, const char* vDirExt, tResource* r[], int optionflag, const char* vDatFileName,const char* backupExtension) {
+	/*
+		Return values:
+			-2 Previous DAT file was invalid
+			-1 File couldn't be open for writing
+			00 File successfully compiled
+			positive number: number of missing files
+	*/
+
 	char vFileext[MAX_FILENAME_SIZE];
 	int                error,ok=0;
 	int                indexNumber;
@@ -150,43 +159,53 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResource* r[], in
 	unsigned short int numberOfItems;
 
 	/* Initialize abstract variables to read this new DAT file */
-	if (error=mRWBeginDatFile(vFiledat,&numberOfItems)) return error;
+	if ((error=mRWBeginDatFile(vFiledat,&numberOfItems,optionflag))) return error;
 
 	/* main loop */
 	for (indexNumber=0;(indexNumber<numberOfItems);indexNumber++) {
 		id=mReadGetFileInDatFile(indexNumber,&data,&size);
-		if (id<0) return 0; /* Read error */
+		if (id<0) RW_ERROR; /* Read error */ /* TODO BUG: return doesn't close file */
 		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
-		if (id>=MAX_RES_COUNT) return 0; /* A file with an ID out of range will be treated as invalid */
+		if (id>=MAX_RES_COUNT) RW_ERROR; /* A file with an ID out of range will be treated as invalid */
 
 		mWriteInitResource(r+id);
 		if (r[id]&&isInThePartialList(r[id]->path,id)) { /* If the resource was specified */
 			if (hasFlag(raw_flag)) r[id]->type=0; /* compile from raw */
 			getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension);
 			/* the file is in the archive, so i'll add it to the main dat body */
-			if ((r[id]->size=((unsigned short)mLoadFileArray(vFileext,&data)))) {
+			if ((r[id]->size=((unsigned long)mLoadFileArray(vFileext,&data)))) {
 				if (!mAddCompiledFileToDatFile(data,r[id],vFileext)) {
-					if (hasFlag(verbose_flag)) printf(PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
+					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
 					error++;
 				} else {
-					if (hasFlag(verbose_flag)) printf(PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
+					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
 					ok++;
 				}
 				free(data);
 			} else {
-				if (hasFlag(verbose_flag)) printf(PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
+				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
 				error++;
 			}
 		} else {
+			r[id]->size=size-1;
 			mWriteSetFileInDatFileIgnoreChecksum(data,size);
 		}
 	}
-	/* Free allocated resources and dynamic strings */
-	freeResources;
 
 	/* Close dat file */
 	mRWCloseDatFile(0);
 
+	/* Free allocated resources and dynamic strings */
+	freeResources;
+
 	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,error);
 	return error;
+}
+
+int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int optionflag, const char* vDatFileName,const char* backupExtension) {
+	if (partialListActive()) {
+		return partialCompile(vFiledat,vDirExt,r,optionflag,vDatFileName,backupExtension);
+	} else {
+		return fullCompile(vFiledat,vDirExt,r,optionflag,vDatFileName,backupExtension);
+	}
 }

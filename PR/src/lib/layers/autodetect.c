@@ -112,6 +112,10 @@ const char* getExtDesc(int type) {
 
 static tResIdList partialList;
 
+int partialListActive() {
+	return partialList.count;
+}
+
 void parseGivenPath(char* path) {
 	/*
 		PRE:  partialList.list was not allocated

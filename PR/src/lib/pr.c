@@ -204,10 +204,11 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 
 		Return values:
 			-1 DAT File couldn't be open for writing
-			-2 XML Parse error
-			-3 No memory
-			-4 XML Attribute not recognized
-			-5 XML File not found
+			-2 DAT file not found or invalid in partial importation
+			-3 XML Parse error
+			-4 No memory
+			-5 XML Attribute not recognized
+			-6 XML File not found
 			00 File successfully imported
 			positive number: number of missing files
 	*/
@@ -229,7 +230,7 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	a=parseFile(vResFile,currentDatFileName,r);
 	if (a<0) {
 		/* parsing errors */
-		a-=1;
+		a-=2;
 	} else {
 		/* importing errors/no errors */
 		a=compile (vDatFile, vDirName,r,opt,currentDatFileName,backupExtension);

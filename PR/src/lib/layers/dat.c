@@ -58,13 +58,10 @@ void mReadCloseDatFile() {
 }
 
 int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
-	/* 
+	/*
 		Return Values:
-			-1 Wrong format
-	 *
-	 *
-	 *
-	 *
+			0 Wrong Format or file not found
+			1 Ok
 	*/
 
 	int ok;
@@ -72,8 +69,8 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 
 	/* Open file */
 	readDatFileSize=mLoadFileArray(vFiledat,&readDatFile);
-	if (!readDatFileSize) return -1;
-	if (readDatFileSize<=6) return -1;
+	if (!readDatFileSize) return 0;
+	if (readDatFileSize<=6) {free(readDatFile);return 0;}
 
 	readDatFilePoint=readDatFile;
 
@@ -84,7 +81,7 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 
 	if ((indexOffset>readDatFileSize)&&((indexOffset+indexSize)!=readDatFileSize)) {
 		free(readDatFile);
-		return -1; /* this is not a valid prince dat file */
+		return 0; /* this is not a valid prince dat file */
 	}
 
 	indexPointer=readDatFile+indexOffset;
@@ -100,18 +97,19 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	}
 	recordSize=pop1?8:11;
 
-	return 0;
+	return 1;
 }
 
 int mReadGetFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
-	int ok=1;
+	int ok=1; /* TODO: rename mReadGet* for mRead* and mWriteSet for mWrite */
 	unsigned short int id;
 
 	/* for each archived file the index is read */
 	id=    (indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8);
 	offset=(indexPointer[ofk+k*recordSize+2])+(indexPointer[ofk+k*recordSize+3]<<8)+(indexPointer[ofk+k*recordSize+4]<<16)+(indexPointer[ofk+k*recordSize+5]<<24);
 	*size= (indexPointer[ofk+k*recordSize+6])+(indexPointer[ofk+k*recordSize+7]<<8)+1;
-	if (!pop1) ok=(indexPointer[ofk+k*recordSize+8]==0x40)&&(!indexPointer[ofk+k*recordSize+9])&&(!indexPointer[ofk+k*recordSize+10]);
+	if ((!pop1)&&(!(indexPointer[ofk+k*recordSize+8]==0x40)&&(!indexPointer[ofk+k*recordSize+9])&&(!indexPointer[ofk+k*recordSize+10]))) return -1;
+	if (offset+indexSize>readDatFileSize) return -1;
 	*data=readDatFile+offset;
 	return ok?id:-1;
 }
@@ -127,7 +125,7 @@ int mReadInitResource(tResource** res,const unsigned char* data,long size) {
 		(*res)->palette=0;
 		(*res)->number=0;
 		(*res)->size=(unsigned short int)size;
-		(*res)->offset=(unsigned short)offset;
+		(*res)->offset=(unsigned short)offset; /* TODO delete this line */
 		(*res)->type=verifyHeader(data,(unsigned short int)size);
 	} else { /* If resource type is invalid or 0, the type will be decided by PR */
 		if (!((*res)->type)) (*res)->type=verifyHeader(data,(unsigned short int)size);
@@ -145,6 +143,11 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 	/*
 		Opens safely a dat file for writing mode and
 		reserves space for the headers
+
+		Return Values:
+			 1 Ok
+			 0 File couldn't be open
+
 	*/
 
 	if (writeOpen(vFile,&writeDatFile,optionflag|backup_flag)) {
@@ -156,6 +159,9 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 }
 
 void mWriteInitResource(tResource** res) {
+	if ((*res)==NULL) {
+		(*res)=(tResource*)malloc(sizeof(tResource));
+	}
 	(*res)->offset=(unsigned long)ftell(writeDatFile);
 }
 
@@ -215,4 +221,23 @@ void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const char* 
 	/* Closes the file and flushes the buffer */
 	writeClose(writeDatFile,dontSave,optionflag,backupExtension);
 }
+
+/***************************************************************\
+|                       DAT R/W primitives                      |
+\***************************************************************/
+
+int mRWBeginDatFile(const char* vFile, unsigned short int *numberOfItems, int optionflag) {
+	if (!mReadBeginDatFile(numberOfItems,vFile)) return -2;
+	if (!mWriteBeginDatFile(vFile,optionflag)) {
+		mReadCloseDatFile();
+		return -1;
+	}
+	return 0;
+}
+
+
+
+
+
+
 

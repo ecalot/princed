@@ -32,7 +32,7 @@ tasks.c: Princed Resources : Classify a DAT file
 */
 
 #include <stdio.h>
-#include "tasks.h" 
+#include "tasks.h"
 #include "memory.h"
 #include "resources.h"
 #include "dat.h"
@@ -48,8 +48,9 @@ tasks.c: Princed Resources : Classify a DAT file
 
 extern int pop1;
 
+#define READ_ERROR {mReadCloseDatFile();return 0;}
+
 int prVerifyDatType(const char* vFiledat) {
-	int                error;
 	int                indexNumber;
 	long int           id;
 	unsigned char*     data;
@@ -58,16 +59,17 @@ int prVerifyDatType(const char* vFiledat) {
 	unsigned short int numberOfItems;
 
 	/* Initialize abstract variables to read this new DAT file */
-	if (error=mReadBeginDatFile(&numberOfItems,vFiledat)) return error;
+	if (!mReadBeginDatFile(&numberOfItems,vFiledat)) return -1;
 
 	/* main loop */
 	for (indexNumber=0;(indexNumber<numberOfItems)&&(type==RES_TYPE_BINARY);indexNumber++) {
 		id=mReadGetFileInDatFile(indexNumber,&data,&size);
-		if (id<0) return 0; /* Read error */
+		if (id<0) READ_ERROR; /* Read error */
 		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
-		if (id>=MAX_RES_COUNT) return 0; /* A file with an ID out of range will be treated as invalid */
+		if (id>=MAX_RES_COUNT) READ_ERROR; /* A file with an ID out of range will be treated as invalid */
 		type=verifyHeader(data,size);
 	}
+
 	mReadCloseDatFile();
 	return pop1?type:(type+10);
 }
