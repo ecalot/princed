@@ -1,4 +1,4 @@
-             
+
                              Prince of Persia
                                File Formats
                               Specifications
@@ -22,21 +22,21 @@ Table of Contents
 4.4. Levels ............................................................ 324
 4.4.1 Unknown blocks ................................................... 355
 4.4.2 Room mapping ..................................................... 372
-4.4.3 Room linking ..................................................... 484
-4.4.4 Guard handling ................................................... 500
-4.4.5 Starting Position ................................................ 527
-4.4.6 Door events ...................................................... 541
-4.5. Digital Waves ..................................................... 585
-4.6. Midi music ........................................................ 598
-4.7. Internal PC Speaker ............................................... 601
-4.8. Binary files ...................................................... 606
-5. PLV v1.0 Format Specifications ...................................... 613
-5.1. User data ......................................................... 639
-5.2. Allowed Date format ............................................... 666
-6. The SAV v1.0 format ................................................. 680
-7. The HOF v1.0 format ................................................. 726
-8. Credits ............................................................. 749
-9. License ............................................................. 767
+4.4.3 Room linking ..................................................... 508
+4.4.4 Guard handling ................................................... 524
+4.4.5 Starting Position ................................................ 565
+4.4.6 Door events ...................................................... 579
+4.5. Digital Waves ..................................................... 623
+4.6. Midi music ........................................................ 640
+4.7. Internal PC Speaker ............................................... 643
+4.8. Binary files ...................................................... 648
+5. PLV v1.0 Format Specifications ...................................... 655
+5.1. User data ......................................................... 681
+5.2. Allowed Date format ............................................... 708
+6. The SAV v1.0 format ................................................. 722
+7. The HOF v1.0 format ................................................. 768
+8. Credits ............................................................. 791
+9. License ............................................................. 810
 
 
 1. Preamble
@@ -57,7 +57,7 @@ Table of Contents
  DAT files were made to store levels, images, palettes, wave, midi and
  internal speaker sounds. Each type has it's own format as described in
  the next sections.
- 
+
  As the format is very old and the original game was distributed in disks,
  it is normal to think that the file format uses checksum validation to
  detect any kind of file corruption.
@@ -186,7 +186,7 @@ Table of Contents
 4.2.1 Headers
  The 6-bytes-image header: 6 bytes
   Relative offset 0, size 2, type US: Height
-  Relative offset 2, size 2, type UL: Width 
+  Relative offset 2, size 2, type UL: Width
   Relative offset 4, size 2: Information
 
  Information is a set of bits where:
@@ -234,7 +234,7 @@ Table of Contents
  completed the image.
 
 4.2.2.2 LZ variant (LZG)
- This is a simplified algorithm explaination:
+ This is a simplified algorithm explanation:
 
  There is a slide window initialized with zeros.
  The first byte is a maskbyte.
@@ -263,7 +263,7 @@ Table of Contents
  #define MAX_MOD_SIZE_IN_LZG    32001
 
  /* modulus to be used in the 10 bits of the algorithm */
- #define MAX_MXD_SIZE_IN_LZG    0x400 
+ #define MAX_MXD_SIZE_IN_LZG    0x400
 
  /* LZG expansion algorithm sub function */
  unsigned char popBit(unsigned char *byte) {
@@ -278,11 +278,11 @@ Table of Contents
    char k;
    int location,h,cursor=0,pos=0;
    unsigned char maskbyte,rep;
- 
+
    /* img is a unsigned char[] sized 0x400 */
    /* clean output garbage */
    for(location=0;location<MAX_MOD_SIZE_IN_LZG;img[location]=0,location++);
- 
+
    /* main loop */
    while (cursor<imageSize) {
      maskbyte=array[pos++];
@@ -313,14 +313,14 @@ Table of Contents
    return ((pos==arraySize)&(cursor==imageSize));
    /* 0 is ERROR, 1 is SUCCESS */
  }
- 
+
 4.3. Palettes
  Palettes have 100 bytes allways, after 4 bytes from the beginning the
  first 16 records of 3 bytes are the VGA colors stored in the RGB-18 bits
  format (6 bits for each color). Each color is a number from 0 to 63.
  Remember to shift the color bytes by two to get the color number from 0
  to 256.
- 
+
 4.4. Levels
  This table has a summary of the blocks to be used in this section,
  you can referr it from the text below.
@@ -328,26 +328,26 @@ Table of Contents
                    Table 4.1: Level blocks
                    ~~~~~~~~~~~~~~~~~~~~~~~
 
- Length Offset  Block Name
- ~~~~~~ ~~~~~~  ~~~~~~~~~~
- 720    0       wall
- 720    720     background
- 256    1440    door I
- 256    1696    door II
- 96     1952    links
- 64     2048    unknown I
- 3      2112    start_position
- 3      2115    unknown III
- 1      2116    unknown IV
- 24     2119    guard_location
- 24     2143    guard_direction
- 24     2167    unknown II
- 24     2191    unknown II
- 24     2215    guard_skill
- 24     2239    unknown II
- 24     2263    guard_color
- 16     2287    unknown II
- 2      2303    0F 09 (2319)
+  Length Offset  Block Name
+  ~~~~~~ ~~~~~~  ~~~~~~~~~~
+  720    0       wall
+  720    720     background
+  256    1440    door I
+  256    1696    door II
+  96     1952    links
+  64     2048    unknown I
+  3      2112    start_position
+  3      2115    unknown III
+  1      2116    unknown IV
+  24     2119    guard_location
+  24     2143    guard_direction
+  24     2167    unknown II
+  24     2191    unknown II
+  24     2215    guard_skill
+  24     2239    unknown II
+  24     2263    guard_color
+  16     2287    unknown II
+  2      2303    0F 09 (2319)
 
  All levels has a size of 2305, except in the original game, that the
  potion level has a size of 2304 (may be it was wrong trimmed).
@@ -368,7 +368,7 @@ Table of Contents
  not the default 00 00 00 hex then the level was extended by the team.
  Those extensions are only supported by RoomShaker at this  moment. To see
  how those extensions were defined read the appendix I'll write some day.
- 
+
 4.4.2 Room mapping
  This section explains how the main walls and objects are stored. The
  blocks involved here are "wall" and "background"
@@ -380,7 +380,7 @@ Table of Contents
  The wall and background blocks have 24 sub-blocks inside. Those sub-blocks
  has a size of 30 bytes each and has a screen associated. So, for example,
  the sub-block staring in 0 corresponds to the screen 1 and the sub-block
- starting in 690 corresponds to the screen 24. 
+ starting in 690 corresponds to the screen 24.
  It is reserved 1 byte from the wall block and one from the background
  block for each tile. To locate the appropriate tile you have to do the
  following calculation: tile=(screen-1)*30+tileOffset where tileOffset is a
@@ -398,88 +398,112 @@ Table of Contents
  tile in the game. The tiles listed are all the ones needed to make a level
  so the missing tiles have an equivalent in this list.
 
+ Each tile has a code id, as some codes are repeated this is how you have
+ to calculate the codes. A tile in the wall part has 8 bits in this format
+ rrmccccc, where rr are random bits and can be ignored. m is a modifier of
+ the tile. For example modified loose floors do not fall down. The rest
+ ccccc is the code of the tile tabled below. Tile names are the same as the
+ ones used by RoomShaker to keep compatibility.
+
                    Table 4.2: Foreground Walls
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  Code Group Description
-  ~~~~ ~~~~~ ~~~~~~~~~~~
-  0x00 0     Free space
-  0x01 0     Floor 1
-  0x11 0     Floor 2
-  0x21 0     Floor above columns
-  0x14 0     Wall 1
-  0x34 0     Wall 2
-  0x13 0     Floor w/torch 1  
-  0x33 0     Floor w/torch 2     
-  0x03 0     Column 1   
-  0x23 0     Column 2   
-  0x09 0     2 story column top
-  0x28 0     2 story column bottom
-  0x24 1     Door
-  0x0e 0     Broken floor 1
-  0x2e 0     Broken floor 2
-  0x1e 0     Broken floor w/torch 1
-  0x3e 0     Broken floor w/torch 2
-  0x0b 0     Loose floor
-  0x0a 2     Potion 1
-  0x2a 2     Potion 2    
-  0x2f 3     Door opener
-  0x26 3     Door closer
-  0x0c 4     Wall above door
-  0x02 5     Spears 1
-  0x22 5     Spears 2
-  0x30 F     Level door left
-  0x31 F     Level door right
-  0x37 F     Big window left
-  0x38 F     Big window right
-  0x32 0     Chopper
-  0x16 0     Sword Level 1
-  0x36 0     Sword Level 12
-  0x15 0     Floor w/Skeleton
-  
- The background part of the tile stores a modification or attribute of the
- wall part of the tile depending on what group it belongs. Those are not
- all the modifications in the game, there are more carpet styles, etc.
+  Hexa Binary Group  Description
+  ~~~~ ~~~~~~ ~~~~~  ~~~~~~~~~~~
+  0x00 00000  free   Empty
+  0x01 00001  free   Floor
+  0x02 00010  spike  Spikes
+  0x03 00011  none   Pillar
+  0x04 00100  gate   Gate
+  0x05 00101  none   Stuck Button
+  0x06 00110  event  Drop Button
+  0x07 00111  tapest Tapestry
+  0x08 01000  none   Top Big-pillar
+  0x09 01001  none   Bottom Big-pillar
+  0x0A 01010  potion Potion
+  0x0B 01011  none   Loose Floor
+  0x0C 01100  ttop   Tapestry Top
+  0x0D 01101  none   Mirror
+  0x0E 01110  none   Debris
+  0x0F 01111  event  Raise Button
+  0x10 10000  none   Exit Left
+  0x11 10001  none   Exit Right
+  0x12 10010  chomp  Chopper
+  0x13 10011  none   Torch
+  0x14 10100  wall   Wall
+  0x15 10101  none   Skeleton
+  0x16 10110  none   Sword
+  0x17 10111  none   Balcony Left
+  0x18 11000  none   Balcony Right
+  0x19 11001  none   Lattice Pillar
+  0x1A 11010  none   Lattice Support
+  0x1B 11011  none   Small Lattice
+  0x1C 11100  none   Lattice Left
+  0x1D 11101  none   Lattice Right
+  0x1E 11110  none   Torch with Debris
+  0x1F 11111  none   Null
 
-                   Table 4.3: Background modifications
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ The background part of the tile stores a modifier or attribute of the
+ wall part of the tile. This works independently of the modifier bit in the
+ code. The tile  modifier depends on the group the tile belongs which are
+ wall, chomp, event, ttop, potion, tapp, gate, spike and free.
+ The group event allows the 256 modifiers and will be described in 4.4.6.
+ Note + means allowed for the dungeon environment, - means allowed for the
+ palace environment.
 
-  Code Group Description
-  ~~~~ ~~~~~ ~~~~~~~~~~~
-  0x00 F     Standard background
-  0x00 0     Background
-  0x01 0     Background bricks 1
-  0x02 0     Background bricks 2
-  0xFF 0     Background bricks 3
-  0x03 0     Background Window
-  0x0B 0     Background w/shadow
-  0x01 1     Open door
-  0x02 1     Closed door
-  0x01 2     Small red potion
-  0x02 2     Big red potion
-  0x03 2     Green weight potion
-  0x04 2     Green invert potion
-  0x05 2     Small blue potion
-  0x00 3     Door trigger 0
-  0x01 3     Door trigger 1
-  0x02 3     Door trigger 2
-  0xnn 3     Door trigger nn (*)
-  0x00 4     White carpet
-  0x01 4     Plain red carpet
-  0x02 4     Red carpet w/drawing
-  0x00 5     Spikes in (**)
-  0x01 5     Spikes going out 1
-  0x02 5     Spikes going out 2 
-  0x03 5     Spikes out
+                   Table 4.3: Background modifiers by group
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- (*) Group door trigger (3):
- The event ID associated with this trigger, see Door Events (4.4.6).
+  Group  Code Description
+  ~~~~~  ~~~~ ~~~~~~~~~~~
+  none   0x00 This value is used allways for this group
+  free   0x00 +Nothing -Blue line
+  free   0x01 +Spot1   -No blue line
+  free   0x02 +Spot2   -Diamond
+  free   0x03 Window
+  free   0xFF +Spot3   -Blue line?
+  spike  0x00 Normal (allows animation)
+  spike  0x01 Barely Out
+  spike  0x02 Half Out
+  spike  0x03 Fully Out
+  spike  0x04 Fully Out
+  spike  0x05 Out?
+  spike  0x06 Out?
+  spike  0x07 Half Out?
+  spike  0x08 Barely Out?
+  spike  0x09 Disabled
+  gate   0x00 Closed
+  gate   0x01 Open
+  tapest 0x00 -With Lattice
+  tapest 0x01 -Alternative Design
+  tapest 0x02 -Normal
+  tapest 0x03 -Black
+  potion 0x00 Empty
+  potion 0x01 Health point
+  potion 0x02 Life
+  potion 0x03 Feather Fall
+  potion 0x04 Invert
+  potion 0x05 Poison
+  potion 0x06 Open
+  ttop   0x00 -With lattice
+  ttop   0x01 -Alernative design
+  ttop   0x02 -Normal
+  ttop   0x03 -Black
+  ttop   0x04 -Black
+  ttop   0x05 -With alternative design and bottom
+  ttop   0x06 -With bottom
+  ttop   0x07 -With window
+  chomp  0x00 Normal
+  chomp  0x01 Half Open
+  chomp  0x02 Closed
+  chomp  0x03 Partially Open
+  chomp  0x04 Extra Open
+  chomp  0x05 Stuck Open
+  wall   0x00 +Normal  -Blue line
+  wall   0x01 +Normal  -No Blue line
 
- (**) Spikes (5):
- The initial spike state is stored. Only type 0 allows the spike animation.
-
- Upper door slot (4):
- The type of the carpet is stored in the palace environment.
+ Note: Some modifiers have not been tested, there may be any other unknown
+       tile type we didn't discover.
 
 4.4.3 Room linking
  This section describes the links block.
@@ -511,26 +535,40 @@ Table of Contents
  30 if there is no guard in this screen. Other values are allowed but are
  equivalent to 30. The number from 0 to 29 is in the location format
  specified in section 4.4.2
- 
+
  The guard_direction part describes where the guard looks at. If the value
  is 0, then the guard looks to the right, if the value is the hex FF (-1 or
  255) then he looks left. This is the direction format, and will be used in
  the start position too.
 
  The guard_skill is how the guard fights, style and lives. Note that the
- lives also depends on the level you are. Allowed numbers are from 0 to 7.
+ lives also depends on the level you are. Allowed numbers are from 0 to 9.
 
  TODO: add a skill table
 
  The guard_color is the palette the guard has (see 4.8).
+ The default colors are in this table:
+
+                   Table 4.4: Default Guar colors
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Code Pants     Cape
+  ~~~~ ~~~~~     ~~~~
+  0x00 Light     Blue Pink
+  0x01 Red       Purple
+  0x02 Orange    Yellow
+  0x03 Green     Yellow
+  0x04 Dark Blue Beige
+  0x05 Purple    Beige
+  0x06 Yellow    Orange
 
 4.4.5 Starting Position
  This section describes the start_position block.
- 
+
  This block stores where and how the kid starts in the level. Note that all
  level doors that are on the starting screen will be closed in the moment
  the level starts.
- 
+
  This block has 3 bytes.
  The first byte is the screen, allowed values are from 1 to 24.
  The second byte is the location, see the section 4.4.2 for the location
@@ -567,7 +605,7 @@ Table of Contents
  define them as byte I and byte II.
  You can find there: the door screen, the door location, and the
  trigger-next flag. The format is the following:
- 
+
  Let's define:
   Screen as S and it is a number from 1 to 24 (5 bits)
    S = s1 s2 s3 s4 s5
@@ -588,13 +626,17 @@ Table of Contents
                    Table 4.4: Wave Specifications
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Size of Format: 16
-  Format: PCM
-  Attributes: 8 bit, mono, unsigned
-  Channels: 1
-  Sample rate: 11025
-  Bytes/Sec: 11025
-  Block Align: 1
- 
+  Format:         PCM
+  Attributes:     8 bit, mono, unsigned
+  Channels:       1
+  Sample rate:    11025
+  Bytes/Second:   11025
+  Block Align:    1
+
+ GNU/Linux users can play the raw waves just dropping them inside /dev/dsp
+ As dat headers are very small it is valid to type in a shell console with
+ dsp write access: cat digisnd?.dat>/dev/dsp to play the whole wave files.
+
 4.6. Midi music
  Standard midi files
 
@@ -602,7 +644,7 @@ Table of Contents
  We are not so sure about it, but we think it is:
   2 unique bytes for headers
   3 bytes per note (2 for frequency and 1 for duration)
- 
+
 4.8. Binary files
  Some binary files contains relevant information
  The resource number ??? in prince.dat has the VGA guard palettes in it
@@ -671,7 +713,7 @@ Table of Contents
  Where YYYY is the year in 4 digits, MM is the month in numbers, MM the
  months, DD the days, HH the hour, II the minute and SS the second in the
  military time: HH is a number from 00 to 23.
- 
+
  If the month, day, hour or second have only one digit, the other digit
  must be completed with 0.
  i.e. 2002-11-26 22:16:39
@@ -684,7 +726,7 @@ Table of Contents
  restart the game from this position.
 
  SAV files are 8 bytes length in the following format:
- 
+
                    Table 6.1: SAV blocks
                    ~~~~~~~~~~~~~~~~~~~~~
 
@@ -732,7 +774,7 @@ Table of Contents
  is 6, so the second byte is allways 0x00.
  Following those bytes there is an array of records. This array has a full
  size of 29 bytes distributed according to the following table.
- 
+
                    Table 7.1: HOF blocks
                    ~~~~~~~~~~~~~~~~~~~~~
 
@@ -755,11 +797,12 @@ Table of Contents
  Reverse Engineering:
   Indexes . . . . . . . . . . . . . . . . . . . . . . . . . Enrique Calot
   Levels . . . . . . . . . . . . . . . . . . . . . . . . .  Enrique Calot
+  Tiles  . . . . . . . . . . . . . . . . . . . . . . . . .  Brendon James
   Images . . . . . . . . . . . . . . . . . . . . . . .  Tammo Jan Dijkema
   RLE Compression . . . . . . . . . . . . . . . . . . . Tammo Jan Dijkema
   LZG Compression . . . . . . . . . . . . . . . . . . . . . Anke Balderer
   Sounds . . . . . . . . . . . . . . . . . . . . . . . Christian Lundheim
- 
+
  PLV v1.0:
   Definition . . . . . . . . . . . . . . . . . . . . . . .  Brendon James
                                                             Enrique Calot
