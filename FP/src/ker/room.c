@@ -486,7 +486,6 @@ void drawForePanel(tRoom* room,int x, int y) {
 		e(84,x*TILE_W-24,y*TILE_H+0);
 	/* wall */
 	if (isIn(tile,TILES_WALL)) {
-		/*static unsigned short seedArray[]=WALL_PROPERTIES;*/
 		register short seed;
 		int cases;
 		int env=WALL_ENV_DUNGEON;
