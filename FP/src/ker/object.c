@@ -99,6 +99,8 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 				if (!kidTakeHitPoint(object)) /* loose a hit point */
 					/* the kid has died! */
 					flags=STATE_EXIT_CODE_SPLASH;
+				else
+					outputBlinkScreen(1,1);
 			}
 			if (flags&STATES_FLAG_D) {
 				tTile tile=roomGetTile(room,object->location/TILE_W+1,object->floor+1);
