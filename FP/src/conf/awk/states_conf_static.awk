@@ -117,10 +117,10 @@ BEGIN {
 # level option
 	} else if (listType == "level") {
 		if (arrayLevel[$1]) {
-			printf("Parsing error in states.conf: Redeclaration of level '%d' on line %d.\n",$1,NR)>"/dev/stderr"
+			printf("Parsing error in %s: Redeclaration of level '%d' on line %d.\n",FILENAME,$1,FNR)>"/dev/stderr"
 			exit 23
 		} else {
-			arrayLevel[$1]=currentAction+1
+			arrayLevel[$1]=currentAction+1 #i'm adding 1 to leave the 0 as "not set"
 			if ($1>greatestLevel) {
 				greatestLevel=$1
 			}
@@ -128,17 +128,17 @@ BEGIN {
 # guardskill option
 	} else if (listType == "guardskill") {
 		if (arrayGuard[$1]) {
-			printf("Parsing error in states.conf: Redeclaration of guard skill '%d' on line %d.\n",$1,NR)>"/dev/stderr"
+			printf("Parsing error in %s: Redeclaration of guard skill '%d' on line %d.\n",FILENAME,$1,FNR)>"/dev/stderr"
 			exit 25
 		} else {
-			arrayGuard[$1]=currentAction+1
+			arrayGuard[$1]=currentAction+1 #i'm adding 1 to leave the 0 as "not set"
 			if ($1>greatestSkill) {
 				greatestSkill=$1
 			}
 		}
 # mark option
 	} else if (listType == "mark") {
-		arrayMarks[toupper($1)]=currentAction+1
+		arrayMarks[toupper($1)]=currentAction
 	}
 }
 
@@ -149,14 +149,14 @@ BEGIN {
 }
 #1 tab (action)
 /^\t[^\t# ].*$/ {
-	if (first) {
+#	if (first) {
 		actionArray[currentAction,"description"]=rememberAction
-		if (currentState) {
+#		if (currentState) {
 			actionArray[currentAction,"isFirstInState"]=currentState
-		} else {
-			actionArray[currentAction,"isFirstInState"]=priorState
-			priorState=""
-		}
+#		} else {
+#			actionArray[currentAction,"isFirstInState"]=priorState
+#			priorState=""
+#		}
 		actionArray[currentAction,"animationStart"]=startAnimation
 		actionArray[currentAction,"animationSize"]=currentAnimation-startAnimation
 		actionArray[currentAction,"conditionStart"]=conditions
@@ -165,9 +165,9 @@ BEGIN {
 		actionArray[currentAction,"moveOffset"]=moveOffset
 		actionArray[currentAction,"lastComma"]=","
 		currentState=""
-	} else {
-		first=1
-	}
+#	} else {
+#		first=1
+#	}
 
 	currentAction++
 	startAnimation=currentAnimation
@@ -184,9 +184,9 @@ BEGIN {
 /^[^\t# ].*$/ {
 		listType=""
 		if ($1 ~ /:$/) $1=substr($1,1,length($1)-1)
-		if (currentState) {
-			priorState=tolower($1)
-		} else {
+		if (!currentState) {
+		#	priorState=tolower($1)
+		#} else {
 			currentState=tolower($1)
 		}
 		stateList[tolower($1)]=currentAction+1
@@ -224,9 +224,9 @@ END {
 			actionArray[i,"description"],\
 			i\
 		)
-		if (actionArray[i,"isFirstInState"]) {
+		if (actionArray[i-1,"isFirstInState"]) {
 			printf("\t * State: %s (%d) \\\n",\
-				actionArray[i,"isFirstInState"],\
+				actionArray[i-1,"isFirstInState"],\
 				i\
 			)
 		}
@@ -280,7 +280,7 @@ END {
 	coma=""
 	for (i=0;i<=greatestLevel;i++) {
 		if (!arrayLevel[i]) {
-			printf("Parsing error in states.conf: Level number %d is defined but level %d is not.\n",greatestLevel,i)>"/dev/stderr"
+			printf("Parsing error in states directory: Level number %d is defined but level %d is not.\n",greatestLevel,i)>"/dev/stderr"
 			exit 24
 		}
 		printf "%s%s",coma,arrayLevel[i]-1
@@ -290,7 +290,7 @@ END {
 	coma=""
 	for (i=0;i<=greatestGuard;i++) {
 		if (!arrayGuard[i]) {
-			printf("Parsing error in states.conf: Guard skill %d is defined but skill %d is not.\n",greatestGuard,i)>"/dev/stderr"
+			printf("Parsing error in states directory: Guard skill %d is defined but skill %d is not.\n",greatestGuard,i)>"/dev/stderr"
 			exit 26
 		}
 		printf "%s%s",coma,arrayGuard[i]-1
