@@ -58,6 +58,8 @@ GENERATEDRESHEADERS = include/res_conf_parts.h include/res_conf_files.h\
                       include/res_conf_resources.h
 GENERATEDSTAHEADERS = include/states_conf_static.h include/states_conf_properties.h
 
+GENERATEDTILHEADERS = include/tiles_conf_types.h include/tiles_conf_groups.h
+
 #Use this to temporary remove an option
 OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
 LINKEROPTIONS = $(LINKERRELEASE)
@@ -88,7 +90,7 @@ checksdl:
 
 checkawk:
 	$(INFO) Checking AWK...
-	@$(AWK)
+	@which $(AWK)>/dev/null
 
 checksed:
 	$(INFO) Checking Sed...
@@ -181,8 +183,13 @@ config.o: res/config.c include/resources.h include/res_conf.h
 	$(CC) -c res/config.c $(OPTIONS)
 
 states.o: ker/states.c include/states.h include/states_conf.h include/resources.h include/res_conf.h
-	$(INFO) Compiling kernel states module...
+	$(INFO) compiling kernel states module...
 	$(CC) -c ker/states.c $(OPTIONS)
+
+tiles.o: res/tiles.c include/tiles.h include/tiles_conf.h
+	$(INFO) compiling resource tile classification module...
+	$(CC) -c res/tiles.c $(OPTIONS)
+
 
 #AWK scripts: header generation
 include/res_conf.h: $(GENERATEDRESHEADERS)
@@ -216,4 +223,14 @@ include/states_conf_static.h: conf/states.conf conf/awk/states_conf_static.awk
 include/states_conf_properties.h: conf/statesproperties.conf conf/awk/states_conf_properties.awk
 	$(INFO) Creating states condition properties configuration file...
 	$(GREP) conf/statesproperties.conf|$(AWK) -f conf/awk/states_conf_properties.awk >include/states_conf_properties.h
+
+include/tiles_conf.h: $(GENERATEDTILHEADERS)
+
+include/tiles_conf_types.h: conf/tiles.conf conf/awk/tiles_conf_types.awk
+	$(INFO) Creating tile list configuration file...
+	$(GREP) conf/tiles.conf|$(AWK) -f conf/awk/tiles_conf_types.awk>include/tiles_conf_types.h
+
+include/tiles_conf_groups.h: conf/tiles.conf conf/awk/tiles_conf_groups.awk
+	$(INFO) Creating tile groups configuration file...
+	$(GREP) conf/tiles.conf|$(AWK) -f conf/awk/tiles_conf_groups.awk >include/tiles_conf_groups.h
 

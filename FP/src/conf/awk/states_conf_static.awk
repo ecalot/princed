@@ -47,9 +47,10 @@ BEGIN {
 	close(tmp)
 	currentAnimation=0
 	latestLevel=-1
+	first=0
 }
 
-{
+/^([ ]*[^# ].*)$/ {
 	if ( $1 == "-" ) {
 		if ($2=="-") {
 			if ($3=="-") {
@@ -108,7 +109,7 @@ BEGIN {
 				listType=$3
 			}
 		} else {		
-			if (conditions) {
+			if (first) {
 				actionArray[currentAction,"description"]=rememberAction
 				actionArray[currentAction,"isFirstInState"]=currentState
 				actionArray[currentAction,"animationStart"]=startAnimation
@@ -120,6 +121,8 @@ BEGIN {
 				actionArray[currentAction,"lastComma"]=","
 				currentAction++
 				currentState=""
+			} else {
+				first=1
 			}
 
 			startAnimation=currentAnimation
@@ -134,6 +137,7 @@ BEGIN {
 		}
 	} else {
 		listType=""
+		priorState=currentState #TODO fix that!!!
 		currentState=tolower($1)
 		stateList[currentState]=currentAction
 	}

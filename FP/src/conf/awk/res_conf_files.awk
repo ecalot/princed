@@ -32,7 +32,7 @@ BEGIN {
 	res=0
 }
 
-{
+/^([ ]*[^# ].*)$/ {
 	printf "#define RES_FILE_%s %d\n",$1,res
 	for (i = 2; i <= NF; i++) {
 		filelist=(filelist coma $i)

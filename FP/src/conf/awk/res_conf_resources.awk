@@ -35,7 +35,7 @@ BEGIN {
 	items=0
 }
 
-{
+/^([ ]*[^# ].*)$/ {
 	oldres=res
 	if (substr($2,1,2)=="OF") {
 		if ((items!=0)&&(NF!=items)) {
