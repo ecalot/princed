@@ -76,6 +76,7 @@ This program is open source under the GNU General Public License terms
   x Code full extractor (looks for all files in a speficied tag and children 
     and makes a list calling to addIfNotRepeated, then calls PR extract
     fucntion for each file in the list)
+  x Defined and supported .plv format for RoomShaker & Princed. 
  
 
 2) ToDo List

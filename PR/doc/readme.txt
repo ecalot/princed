@@ -18,7 +18,7 @@ Resource Types:
  04 Midis
  05 Undefined
  06 Palette
- 07 PC Speaker Sounds
+ 07 Internal PC Speaker Sounds
  08 to 10 reserved
 
 Type 01:
