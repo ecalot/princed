@@ -1,6 +1,0 @@
-Princed resources (PR) V0.5 beta.
-(c) Copyright 2003 - Princed Development Team
-http://www.princed.com.ar
-
-Extracting 'dat\levels.dat' to 'ext' with 1
-Result: 1
