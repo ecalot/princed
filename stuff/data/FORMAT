@@ -1,5 +1,7 @@
-1: image (the first number is a pelette)
-2: mirrored image (idem)
-3: midi
-4: wave
-5: level
+0: image (the first number is a pelette) | black is transparent
+1: mirrored image (idem) | black is transparent
+2: 0 but black is black
+3: 1 but black is black
+4: midi
+5: wave
+6: level
