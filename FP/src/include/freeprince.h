@@ -8,3 +8,4 @@
  * #define POP1_CLONE
  */
 
+#define FP_CONFIG_FILE "fpconfig.dat"
