@@ -18,11 +18,11 @@
 
 /* BEGIN of page pasted part */
 
-/* A big number */
-#define MAX_MOD_SIZE_IN_LZG    32001
+/* A big number (the output must be less that that) */
+#define LZG_MAX_MEMSIZE    32001
 
 /* modulus to be used in the 10 bits of the algorithm */
-#define MAX_MXD_SIZE_IN_LZG    0x400 /* 1024 */
+#define LZG_WINDOW_SIZE    0x400 /* =1024=1<<10 */
 
 /* LZG expansion algorithm sub function */
 unsigned char popBit(unsigned char *byte) {
@@ -32,22 +32,22 @@ unsigned char popBit(unsigned char *byte) {
 }
 
 /* Expands LZ Groody algorithm. This is the core of PR */
-void expandLzg(const unsigned char* array, int arraySize, 
-								unsigned char* img, int *imageSize) {
+void expandLzg(const unsigned char* input, int inputSize, 
+								unsigned char* output, int *outputSize) {
 	char k;
 	int location,cursor=0,pos=0;
 	unsigned char maskbyte,rep;
 
-	/* img is an unsigned char[] sized 0x400 */
+	/* output is an unsigned char[] sized 0x400 */
 	/* clean output garbage */
-	for(location=0;location<MAX_MOD_SIZE_IN_LZG;img[location]=0,location++);
+	for(location=LZG_MAX_MEMSIZE;location--;output[location]=0);
 
 	/* main loop */
-	while (pos<arraySize) {
-		maskbyte=array[pos++];
-		for (k=8;k&&(pos<arraySize);k--) {
+	while (pos<inputSize) {
+		maskbyte=input[pos++];
+		for (k=8;k&&(pos<inputSize);k--) {
 			if (popBit(&maskbyte)) {
-				img[cursor++]=array[pos++];
+				output[cursor++]=input[pos++]; /* copy input to output */
 			} else {
 				/*
 				 * location:
@@ -55,24 +55,25 @@ void expandLzg(const unsigned char* array, int arraySize,
 				 * rep:
 				 *  6 bits for the repetition number (R). Add 3 to this number.
 				 */
-				rep=      3  + ((array[pos] & 0xfc /*11111100*/) >>2);
-				location= 66 + ((array[pos] & 0x03 /*00000011*/) <<8) + array[pos+1];
+				location= 66 + ((input[pos] & 0x03 /*00000011*/) <<8) + input[pos+1];
+				rep=      3  + ((input[pos] & 0xfc /*11111100*/) >>2);
 				
 				pos+=2;
 				
-				/* Here is the difference between big and small images */
-				while (rep--) {
-					location=location%MAX_MXD_SIZE_IN_LZG; /* location is in range 0-1023 */
+				while (rep--) { /* repeat pattern in output */
+					location=location%LZG_WINDOW_SIZE; /* location is in range 0-1023 */
 
 					/*
-					 * delta is ((location-cursor)%MAX_MXD_SIZE_IN_LZG)
+					 * delta is ((location-cursor)%LZG_WINDOW_SIZE)
 					 * this is the correction factor for the complex algorithm
 					 * this value is inside the range -1023 to 1023.
 					 * if location>cursor the result is positive
 					 * if location<cursor the result is negative
 					 */
-					img[cursor]=img[cursor+((location-cursor)%MAX_MXD_SIZE_IN_LZG)];
+					
+					output[cursor]=output[cursor+((location-cursor)%LZG_WINDOW_SIZE)];
 
+					/* Increase both variables */
 					cursor++;
 					location++;
 				}
@@ -80,15 +81,15 @@ void expandLzg(const unsigned char* array, int arraySize,
 		}
 	}
 
-	*imageSize=cursor;
+	*outputSize=cursor;
 }
 
 /* END of page pasted part */
 
 int main(int argc, char** argv) {
 	/* declare variables */
-	unsigned char uncompressed[MAX_MOD_SIZE_IN_LZG];
-	unsigned char compressed[MAX_MOD_SIZE_IN_LZG];
+	unsigned char uncompressed[LZG_MAX_MEMSIZE];
+	unsigned char compressed[LZG_MAX_MEMSIZE];
 	int uncompressedSize;
 	int compressedSize;
 	FILE* fp;
