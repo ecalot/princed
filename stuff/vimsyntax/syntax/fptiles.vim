@@ -1,9 +1,9 @@
 " Vim syntax file
 " Language:	FreePrince tiles.conf file
 " Maintainer:	Diego Essaya <dessaya@fi.uba.ar>
-" Last Change:	$Date: 2004-10-30 01:28:55 $
+" Last Change:	$Date: 2005-03-10 16:01:29 $
 " URL: http://www.fp.princed.com.ar/
-" $Revision: 1.1 $
+" $Revision: 1.2 $
 
 " For version 5.x: Clear all syntax items
 " For version 6.x: Quit when a syntax file was already loaded
@@ -15,15 +15,22 @@ endif
 
 syn case ignore
 
-syntax match fpComment /#.*$/ contains=fpTodo
-syntax match fpTodo /\<TODO\>/ contained
+syntax match fpGroups /^[^#]*/ contains=fpOp,fpIdent,fpNumber
 
 syntax match fpTile /^tile\>/ nextgroup=fpName skipwhite
 syntax match fpName /\<\w\+\>/ contained nextgroup=fpID skipwhite
 syntax match fpID /\<\d\+\>/ contained nextgroup=fpGroup skipwhite
 syntax match fpGroup /\<\w\+\>/ contained
 
-syntax match fpGroups /^\(tile\)\@![^#]\+/
+syntax match fpComment /#.*$/ contains=fpTodo
+syntax match fpTodo /\<TODO\>/ contained
+
+syntax match fpNumber /\d\+/ contained
+highlight link fpNumber      Number
+syntax match fpIdent /\<\a\w*\>/ contained
+highlight link fpIdent      Identifier
+syntax match fpOp /[:;\-=<>+()*&^%$@!~.,/]/ contained
+highlight link fpOp      Operator
 
 highlight link fpComment Comment
 highlight link fpTodo    Todo
