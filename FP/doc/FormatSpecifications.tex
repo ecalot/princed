@@ -6,41 +6,42 @@
 Table of Contents
 ~~~~~ ~~ ~~~~~~~~
 1. Preamble ............................................................. 42
-2. Introduction ......................................................... 50
-3. Primitives ........................................................... 74
-3.1. DAT reading and writing primitives ................................. 80
-3.2. DAT reading primitives ............................................. 92
-3.3. DAT writing primitives ............................................ 101
-4. DAT v1.0 Format Specifications ...................................... 110
-4.1. General file specs, index and checksums ........................... 113
-4.2. Images ............................................................ 180
-4.2.1 Headers .......................................................... 183
-4.2.2 Algorithms ....................................................... 206
-4.2.2.1 Run length encoding (RLE) ...................................... 222
-4.2.2.2 LZ variant (LZG) ............................................... 233
-4.3. Palettes .......................................................... 314
-4.4. Levels ............................................................ 321
-4.4.1 Unknown blocks ................................................... 352
-4.4.2 Room mapping ..................................................... 369
-4.4.3 Room linking ..................................................... 481
-4.4.4 Guard handling ................................................... 497
-4.4.5 Starting Position ................................................ 524
-4.4.6 Door events ...................................................... 538
-4.5. Digital Waves ..................................................... 582
-4.6. Midi music ........................................................ 595
-4.7. Internal PC Speaker ............................................... 598
-4.8. Binary files ...................................................... 603
-5. PLV v1.0 Format Specifications ...................................... 610
-5.1. User data ......................................................... 634
-5.2. Allowed Date format ............................................... 661
-6. The SAV v1.0 format ................................................. 675
-7. The HOF v1.0 format ................................................. 720
-8. Credits ............................................................. 743
-9. License ............................................................. 760
+2. Introduction ......................................................... 51
+3. Primitives ........................................................... 76
+3.1. DAT reading and writing primitives ................................. 83
+3.2. DAT reading primitives ............................................. 95
+3.3. DAT writing primitives ............................................ 104
+4. DAT v1.0 Format Specifications ...................................... 113
+4.1. General file specs, index and checksums ........................... 116
+4.2. Images ............................................................ 183
+4.2.1 Headers .......................................................... 186
+4.2.2 Algorithms ....................................................... 209
+4.2.2.1 Run length encoding (RLE) ...................................... 225
+4.2.2.2 LZ variant (LZG) ............................................... 236
+4.3. Palettes .......................................................... 317
+4.4. Levels ............................................................ 324
+4.4.1 Unknown blocks ................................................... 355
+4.4.2 Room mapping ..................................................... 372
+4.4.3 Room linking ..................................................... 484
+4.4.4 Guard handling ................................................... 500
+4.4.5 Starting Position ................................................ 527
+4.4.6 Door events ...................................................... 541
+4.5. Digital Waves ..................................................... 585
+4.6. Midi music ........................................................ 598
+4.7. Internal PC Speaker ............................................... 601
+4.8. Binary files ...................................................... 606
+5. PLV v1.0 Format Specifications ...................................... 613
+5.1. User data ......................................................... 639
+5.2. Allowed Date format ............................................... 666
+6. The SAV v1.0 format ................................................. 680
+7. The HOF v1.0 format ................................................. 726
+8. Credits ............................................................. 749
+9. License ............................................................. 767
 
 
 1. Preamble
    ~~~~~~~~
+
  This file was written thanks to the hard work on reverse engineering made
  by several people, see the credits section. In case you find any mistake
  in the text please report it. A copy of this document should be available
@@ -49,6 +50,7 @@ Table of Contents
 
 2. Introduction
    ~~~~~~~~~~~~
+
  There are two versions of the DAT file format: DAT v1.0 used in POP 1.x
  and DAT v2.0 used in POP 2. In this document we will specify DAT v1.0.
 
@@ -73,6 +75,7 @@ Table of Contents
 
 3. Primitives
    ~~~~~~~~~~
+
  This section shows how the PR dat handling primitives works, this library
  is useful to access resources without having to worry about the format.
  Here you can find the primitive chart of the dat.h library.
@@ -608,6 +611,8 @@ Table of Contents
 
 
 5. PLV v1.0 Format Specifications
+   ~~~ ~~~~ ~~~~~~ ~~~~~~~~~~~~~~
+
  PLV v1.0 files are defined in this table:
 
                    Table 5.1: PLV blocks
@@ -674,6 +679,7 @@ Table of Contents
 
 6. The SAV v1.0 format
    ~~~ ~~~ ~~~~ ~~~~~~
+
  SAV v1.0 saves kid level, lives and remaining time information in order to
  restart the game from this position.
 
@@ -701,7 +707,7 @@ Table of Contents
 
   Range values:
    0.000 to 59.916 seconds
-	                 (rounded by units of 83 milliseconds or 1/12 seconds)
+                   (rounded by units of 83 milliseconds or 1/12 seconds)
    0     to 719    ticks
 
  Level (iii)
@@ -742,6 +748,7 @@ Table of Contents
 
 8. Credits
    ~~~~~~~
+
  This document:
   Writing . . . . . . . . . . . . . . . . . . . . . . . . . Enrique Calot
 
@@ -759,6 +766,7 @@ Table of Contents
 
 9. License
    ~~~~~~~
+
       Copyright (c)  2004  Princed Project Team
       Permission is granted to copy, distribute and/or modify this document
       under the terms of the GNU Free Documentation License, Version 1.2
