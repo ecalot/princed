@@ -129,7 +129,8 @@ downloadmore:
 # Source files #
 ################
 
-main.o: main.c include/kernel.h include/main.h
+main.o: main.c include/kernel.h include/main.h include/maps.h\
+        include/map_defs.h include/tiles.h include/tiles_conf.h
 	$(INFO) Compiling command line parser...
 	$(CC) -c main.c $(OPTIONS)
 
@@ -167,7 +168,7 @@ compress.o: res/compress.c include/compress.h include/memory.h \
 	$(INFO) Compiling resource compression module...
 	$(CC) -c res/compress.c $(OPTIONS)
 
-maps.o: res/maps.c include/maps.h
+maps.o: res/maps.c include/maps.h include/map_defs.h include/tiles.h include/tiles_conf.h
 	$(INFO) Compiling resource map handling module...
 	$(CC) -c res/maps.c $(OPTIONS)
 
@@ -183,7 +184,8 @@ config.o: res/config.c include/resources.h include/res_conf.h
 	$(INFO) Compiling resource configuration module...
 	$(CC) -c res/config.c $(OPTIONS)
 
-states.o: ker/states.c include/states.h include/states_conf.h include/resources.h include/res_conf.h
+states.o: ker/states.c include/states.h include/states_conf.h\
+          include/resources.h include/res_conf.h
 	$(INFO) compiling kernel states module...
 	$(CC) -c ker/states.c $(OPTIONS)
 
@@ -233,5 +235,5 @@ include/tiles_conf_types.h: conf/tiles.conf conf/awk/tiles_conf_types.awk
 
 include/tiles_conf_groups.h: conf/tiles.conf conf/awk/tiles_conf_groups.awk
 	$(INFO) Creating tile groups configuration file...
-	$(GREP) conf/tiles.conf|$(AWK) -f conf/awk/tiles_conf_groups.awk >include/tiles_conf_groups.h
+	$(GREP) conf/tiles.conf|$(AWK) -f conf/awk/tiles_conf_groups.awk>include/tiles_conf_groups.h
 
