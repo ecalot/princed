@@ -36,159 +36,157 @@ compile.c: Princed Resources : DAT Compiler
 \***************************************************************/
 
 #include <string.h>
+#include "pr.h"
 #include "compile.h"
+
+#include "dat.h"
 #include "memory.h"
+#include "disk.h"
+
 #include "bmp.h"
 #include "mid.h"
 #include "wav.h"
 #include "pal.h"
 #include "plv.h"
-#include "disk.h"
-#include "pr.h"
+
+extern FILE* outputStream;
 
 /***************************************************************\
-|                     Dat compiling primitives                  |
+|                    Dat compiling primitive                    |
 \***************************************************************/
 
-char mBeginDatFile(FILE* *fp,const char* vFile) {
-	/*
-		Opens safely a dat file for writing mode and
-		reserves space for the headers
-	*/
-
-	if (writeOpen(vFile,fp)) {
-		fseek(*fp,6,SEEK_SET);
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
-void mAddFileToDatFile(FILE* fp, unsigned char* data, int size) {
-	/*
-		Adds a data resource to a dat file keeping
-		abstratly the checksum verifications
-	*/
-
-	//Declare variables
-	int            k        = size;
-	unsigned char  checksum = 0;
-	unsigned char* data2    = data;
-
-	//calculates the checksum
-	while (k--) checksum+=*(data2++);
-	checksum=~checksum;
-
-	//writes the checksum and the data content
-	fwrite(&checksum,1,1,fp);
-	fwrite(data,size,1,fp);
-}
-
-void mSetEndFile(FILE* fp, tResource* r[]) {
-	/*
-		Closes a dat file filling the index and other structures
-	*/
-	unsigned short int i=1;
-	unsigned short int totalItems=0;
-	unsigned short int size2=2;
-	unsigned long  int size1=ftell(fp);
-
-	//Write index
-	fwrite(&totalItems,2,1,fp); //Junk total items count to reserve 2 bytes
-	for (;i!=MAX_RES_COUNT;i++) {
-		if (r[i]!=NULL) {
-			//the file is in the archive, so I'll add it to the index
-			size2+=8;
-			totalItems++;
-			fwrite(&i,2,1,fp);
-			fwrite(&((*r[i]).offset),4,1,fp);
-			fwrite(&((*r[i]).size),2,1,fp);
-		}
-	}
-	fseek(fp,size1,SEEK_SET);
-	fwrite(&totalItems,2,1,fp); //Definitive total items count
-
-	//Write first 6 bytes header
-	fseek(fp,0,SEEK_SET);
-	fwrite(&size1,4,1,fp);
-	fwrite(&size2,2,1,fp);
-
-	//Closes the file and flushes the buffer
-	fclose(fp);
-}
-
-//Format detection function (private function, not in header file)
-int mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
-	//return 1 if ok, 0 if error
+/* Format detection function (private function, not in header file) */
+int mAddCompiledFileToDatFile(unsigned char* data, tResource* res,const char* vFile) {
+	/* return 1 	if ok, 0 	if error */
 	switch (res->type) {
-		case 1: //compile levels
-			return mFormatCompilePlv(*data,fp,res);
-		case 2: //compile bitmap
-			return mFormatCompileBmp(*data,fp,res);
-		case 3: //compile wave
-			return mFormatCompileWav(*data,fp,res);
-		case 7: //compile pcs
-		case 4: //compile midi
-			return mFormatCompileMid(*data,fp,res);
-		case 6: //compile palette
-			//TODO: make mFormatCompilePal and stop using char** for data
-			if (!mImportPalette(data,&((*res).size))) {
-				return 0;
-			}
-		case 5:
+		case RES_TYPE_LEVEL:
+			return mFormatImportPlv(data,res);
+		case RES_TYPE_IMAGE:
+			return mFormatImportBmp(data,res);
+		case RES_TYPE_WAVE:
+			return mFormatImportWav(data,res);
+		case RES_TYPE_MIDI:
+		case RES_TYPE_PCSPEAKER:
+			return mFormatImportMid(data,res);
+		case RES_TYPE_PALETTE:
+			return mFormatImportPal(data,res,vFile);
+		case RES_TYPE_BINARY:
 		default:
-			mAddFileToDatFile(fp,*data,(*res).size);
+			mWriteSetFileInDatFile(data,res->size);
 			break;
 	}
 	return 1;
 }
 
+#define freeResources \
+for (id=0;id<MAX_RES_COUNT;id++) {\
+	if (r[id]!=NULL) {\
+		freeAllocation(r[id]->desc);\
+		freeAllocation(r[id]->name);\
+		freeAllocation(r[id]->path);\
+		free(r[id]);\
+	}\
+}
+
+
 /***************************************************************\
-|                    M A I N   F U N C T I O N                  |
+|                   M A I N   F U N C T I O N                   |
 \***************************************************************/
 
-int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int opt, const char* vDatFileName) {
+int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int optionflag, const char* vDatFileName,const char* backupExtension) {
 	/*
 		Return values:
 			-1 File couldn't be open for writing
-			00 File succesfully compiled
+			00 File successfully compiled
 			positive number: number of missing files
 	*/
 
-	FILE* fp;
-	char vFileext[200];
+	char vFileext[MAX_FILENAME_SIZE];
+	int error=0;
 	int ok=0;
 	unsigned char* data;
-	unsigned short int i=1;
+	unsigned short int id=1;
 
-	if (!mBeginDatFile(&fp,vFiledat)) {
-		return -1; //File couldn't be open
-	}
+	if (!mWriteBeginDatFile(vFiledat,optionflag)) return -1; /* File couldn't be open */
 
-	//getUpperFolder(vUpperFile,vFiledat);
-
-	for (;i!=MAX_RES_COUNT;i++) {
-		if (r[i]!=NULL) {
-			if (opt&raw_flag) r[i]->type=0; //compile from raw
-			getFileName(vFileext,vDirExt,r[i],i,vFiledat,vDatFileName);
-			//the file is in the archive, so I'll add it to the main dat body
-			if (r[i]->size=(unsigned short)mLoadFileArray(vFileext,&data)) {
-				r[i]->offset=(unsigned short)ftell(fp);
-				if (!mAddCompiledFileToDatFile(fp,&data,r[i])) {
-					if (opt&verbose_flag) printf("'%s' has errors, skipped\n",getFileNameFromPath(vFileext));
-					ok++;
+	for (;id!=MAX_RES_COUNT;id++) {
+		if (r[id]!=NULL) {
+			if (hasFlag(raw_flag)) r[id]->type=0; /* compile from raw */
+			getFileName(vFileext,vDirExt,r[id],id,vFiledat,vDatFileName,optionflag,backupExtension);
+			/* the file is in the archive, so i'll add it to the main dat body */
+			if ((r[id]->size=((unsigned short)mLoadFileArray(vFileext,&data)))) {
+				mWriteInitResource(r+id);
+				if (!mAddCompiledFileToDatFile(data,r[id],vFileext)) {
+					if (hasFlag(verbose_flag)) printf(PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
+					error++;
 				} else {
-					if (opt&verbose_flag) printf("'%s' succesfully compiled\n",getFileNameFromPath(vFileext));
+					if (hasFlag(verbose_flag)) printf(PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
+					ok++;
 				}
 				free(data);
 			} else {
-				if (opt&verbose_flag) printf("'%s' not open, skipped\n",/*getFileNameFromPath(*/vFileext/*)*/);
-				ok++;
+				if (hasFlag(verbose_flag)) printf(PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
+				error++;
 			}
 		}
 	}
-	mSetEndFile(fp,r);
-	//TODO: if file size if 8, then erase it
-	if (opt&verbose_flag) printf("Compilation done\n");
-	return ok;
+	/* Close file. 	if empty, don't save */
+	mWriteCloseDatFile(r,!ok,optionflag,backupExtension);
+
+	/* Free allocated resources and dynamic strings */
+	freeResources;
+
+	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,error);
+	return error;
+}
+
+int partialCompile(const char* vFiledat, const char* vDirExt, tResource* r[], int optionflag, const char* vDatFileName,const char* backupExtension) {
+	char vFileext[MAX_FILENAME_SIZE];
+	int                error,ok=0;
+	int                indexNumber;
+	long int           id;
+	unsigned char*     data;
+	unsigned long  int size;
+	unsigned short int numberOfItems;
+
+	/* Initialize abstract variables to read this new DAT file */
+	if (error=mRWBeginDatFile(vFiledat,&numberOfItems)) return error;
+
+	/* main loop */
+	for (indexNumber=0;(indexNumber<numberOfItems);indexNumber++) {
+		id=mReadGetFileInDatFile(indexNumber,&data,&size);
+		if (id<0) return 0; /* Read error */
+		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
+		if (id>=MAX_RES_COUNT) return 0; /* A file with an ID out of range will be treated as invalid */
+
+		mWriteInitResource(r+id);
+		if (r[id]&&isInThePartialList(r[id]->path,id)) { /* If the resource was specified */
+			if (hasFlag(raw_flag)) r[id]->type=0; /* compile from raw */
+			getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension);
+			/* the file is in the archive, so i'll add it to the main dat body */
+			if ((r[id]->size=((unsigned short)mLoadFileArray(vFileext,&data)))) {
+				if (!mAddCompiledFileToDatFile(data,r[id],vFileext)) {
+					if (hasFlag(verbose_flag)) printf(PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
+					error++;
+				} else {
+					if (hasFlag(verbose_flag)) printf(PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
+					ok++;
+				}
+				free(data);
+			} else {
+				if (hasFlag(verbose_flag)) printf(PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
+				error++;
+			}
+		} else {
+			mWriteSetFileInDatFileIgnoreChecksum(data,size);
+		}
+	}
+	/* Free allocated resources and dynamic strings */
+	freeResources;
+
+	/* Close dat file */
+	mRWCloseDatFile(0);
+
+	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,error);
+	return error;
 }
