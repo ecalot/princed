@@ -46,7 +46,7 @@ Table of Contents
  This file was written thanks to the hard work on reverse engineering made
  by several people, see the credits section. In case you find any mistake
  in the text please report it. A copy of this document should be available
- in our official site at http://www.princed.com.ar
+ in our official site at http://www.princed.com.ar.
 
 
 2. Introduction
@@ -268,7 +268,7 @@ Table of Contents
   If the bit is a zero read the next two bytes as control bytes with the
   following format (RRRRRRSS SSSSSSSS):
    - 6  bits for the copy size number (R). Add 3 to this number.
-	      Range: 2 to 66
+        Range: 2 to 66
    - 10 bits for the slide position (S). Add 66 to this number.
         Range: 66 to 1090
    Then print in the slide window the next R bytes that are the same slide
@@ -304,9 +304,9 @@ Table of Contents
   
   /* LZG expansion algorithm sub function */
   unsigned char popBit(unsigned char *byte) {
-  	register unsigned char bit=(*byte)&1;
-  	(*byte)>>=1;
-  	return bit;
+    register unsigned char bit=(*byte)&1;
+    (*byte)>>=1;
+    return bit;
   }
   
   /* Expands LZ Groody algorithm. This is the core of PR.
@@ -315,55 +315,55 @@ Table of Contents
   int expandLzg(const unsigned char* input, int inputSize, 
                 unsigned char* output, int *outputSize) {
   
-  	int           loc, oCursor=0, iCursor=0;
-  	unsigned char maskbyte=0, rep, k;
+    int           loc, oCursor=0, iCursor=0;
+    unsigned char maskbyte=0, rep, k;
   
-  	/* clean output garbage */
-  	for(loc=LZG_MAX_MEMSIZE;loc--;output[loc]=0);
+    /* clean output garbage */
+    for(loc=LZG_MAX_MEMSIZE;loc--;output[loc]=0);
   
-  	/* main loop */
-  	while (iCursor<inputSize) {
-  		maskbyte=input[iCursor++];
-  		for (k=8;k&&(iCursor<inputSize);k--) {
-  			if (popBit(&maskbyte)) {
-  				output[oCursor++]=input[iCursor++]; /* copy input to output */
-  			} else {
-  				/*
-  				 * loc:
-  				 *  10 bits for the slide iCursorition (S). Add 66 to this number.
-  				 * rep:
-  				 *  6 bits for the repetition number (R). Add 3 to this number.
-  				 */
-  				loc= 66 + ((input[iCursor] & 0x03 /*00000011*/) <<8) + input[iCursor+1];
-  				rep= 3  + ((input[iCursor] & 0xfc /*11111100*/) >>2);
-  				
-  				iCursor+=2;
-  				
-  				while (rep--) { /* repeat pattern in output */
-  					loc=loc%LZG_WINDOW_SIZE; /* loc is in range 0-1023 */
+    /* main loop */
+    while (iCursor<inputSize) {
+      maskbyte=input[iCursor++];
+      for (k=8;k&&(iCursor<inputSize);k--) {
+        if (popBit(&maskbyte)) {
+          output[oCursor++]=input[iCursor++]; /* copy input to output */
+        } else {
+          /*
+           * loc:
+           *  10 bits for the slide iCursorition (S). Add 66 to this number.
+           * rep:
+           *  6 bits for the repetition number (R). Add 3 to this number.
+           */
+          loc= 66 + ((input[iCursor] & 0x03 /*00000011*/) <<8) + input[iCursor+1];
+          rep= 3  + ((input[iCursor] & 0xfc /*11111100*/) >>2);
+          
+          iCursor+=2;
+          
+          while (rep--) { /* repeat pattern in output */
+            loc=loc%LZG_WINDOW_SIZE; /* loc is in range 0-1023 */
   
-  					/*
-  					 * delta is ((loc-oCursor)%LZG_WINDOW_SIZE)
-  					 * this is the offset where the bytes will be looked for
-  					 * in the simple algorithm it is allways negative
-  					 * in bigger images it can be iCursoritive
-  					 * 
-  					 * this value is inside the range -1023 to 1023.
-  					 * if loc>oCursor the result is iCursoritive
-  					 * if loc<oCursor the result is negative
-  					 */
-  					
-  					output[oCursor]=output[oCursor+((loc-oCursor)%LZG_WINDOW_SIZE)];
+            /*
+             * delta is ((loc-oCursor)%LZG_WINDOW_SIZE)
+             * this is the offset where the bytes will be looked for
+             * in the simple algorithm it is allways negative
+             * in bigger images it can be iCursoritive
+             * 
+             * this value is inside the range -1023 to 1023.
+             * if loc>oCursor the result is iCursoritive
+             * if loc<oCursor the result is negative
+             */
+            
+            output[oCursor]=output[oCursor+((loc-oCursor)%LZG_WINDOW_SIZE)];
   
-  					oCursor++;
-  					loc++;
-  				}
-  			}
-  		}
-  	}
-  	
-  	*outputSize=oCursor;
-  	return maskbyte;
+            oCursor++;
+            loc++;
+          }
+        }
+      }
+    }
+    
+    *outputSize=oCursor;
+    return maskbyte;
   }
   
 4.3. Palettes
@@ -820,17 +820,20 @@ Table of Contents
                    Table 5.2: Mandatory Fields
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  Field name          Description
-  ~~~~~~~~~~          ~~~~~~~~~~~
-  EDITORNAME          The name of the editor used to save the file
-  EDITORVERS          The version of the editor used to save the file
-  AUTHOR              The author of the file
-  TITLE               A title for the level
-  DESCRIPTION         A description
-  TIMECREATED         The time when the file was created
-  TIMELASTMODIF       The time of the last modification to the file
-  ORIGINALFILENAME    The name of the original file name (levels.dat)
-
+  Field name           Description
+  ~~~~~~~~~~           ~~~~~~~~~~~
+  EDITORNAME           The name of the editor used to save the file
+  EDITORVERS           The version of the editor used to save the file
+  AUTHOR               The author of the file
+  TITLE                A title for the level
+  DESCRIPTION          A description
+  TIMECREATED          The time when the file was created
+  TIMELASTMODIF        The time of the last modification to the file
+  ORIGINALFILENAME     The name of the original file name (levels.dat)
+  LASTLEVELPOSITION    Optional. The last level number it was saved to
+  ORIGINALLEVELNUMBER  Optional. The level number it has when it was
+                       first exported
+ 
  The content values may be empty.
 
 5.2. Allowed Date format
