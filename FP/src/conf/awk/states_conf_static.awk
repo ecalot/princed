@@ -35,7 +35,7 @@ BEGIN {
 						printf("\t{esTrue,0}, /* condition number %d */\\\n",currentCondition)
 						conditions=currentCondition+1
 					}
-					currentCondition++;
+					currentCondition++
 					if ($5!=sprintf("%d",$5)) {
 						if (defines[$5]) {
 							result=sprintf("STATES_COND_%s /* %d */",$5,defines[$5])
@@ -88,14 +88,14 @@ BEGIN {
 				actionArray[currentAction,"moveType"]=moveType
 				actionArray[currentAction,"moveOffset"]=moveOffset
 				actionArray[currentAction,"lastComma"]=","
-				currentAction++;
+				currentAction++
 				currentState=""
 			}
 
 			startAnimation=currentAnimation
 			listType=""
 			conditions=0
-			$2=tolower($2);
+			$2=tolower($2)
 			if ($2 != "action") {
 				print "Error! \"$0\" should be an action."
 			}
@@ -120,7 +120,7 @@ END {
 	actionArray[currentAction,"moveType"]=moveType
 	actionArray[currentAction,"moveOffset"]=moveOffset
 	actionArray[currentAction,"lastComma"]=""
-	printf("\t{esTrue,0} /* the end */\\\n};\n\n#define STATES_ACTIONS {\\\n");
+	printf("\t{esTrue,0} /* the end */\\\n}\n\n#define STATES_ACTIONS {\\\n")
 
 	for (i=0;i<=currentAction;i++) {
 		nextStateId=stateList[actionArray[i,"nextState"]]
@@ -160,15 +160,15 @@ END {
 		)
 	}
 
-	printf("};\n\n#define STATES_ANIMATIONS {\\\n\t")
+	printf("}\n\n#define STATES_ANIMATIONS {\\\n\t")
 	coma=""
 	for (i=0;i<currentAnimation;i++) {
 		printf "%s%d",coma,arrayAnimation[i]
-		if (i%10==9) printf("\\\n\t");
+		if (i%10==9) printf("\\\n\t")
 		coma=","
 	}
 
-	printf("\\\n};\n\n#define STATES_LEVELS {")
+	printf("\\\n}\n\n#define STATES_LEVELS {")
 	coma=""
 	for (i=0;i<=latestLevel;i++) {
 		if (!arrayLevel[i]) {
@@ -178,7 +178,7 @@ END {
 		printf "%s%s",coma,arrayLevel[i]-1
 		coma=","
 	}
-	printf("};\n")
+	printf("}\n")
 
 }
 

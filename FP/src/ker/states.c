@@ -1,11 +1,16 @@
 #include "states.h"
 
+
+short* stateGetAnimation(int action,short* frames);
+
+static tsAction statesActionList[]=STATES_ACTIONS;
+
 /* public functions interface */
 tState createState(int level) {
 	tState start;
-	static statesLevelList=STATES_LEVEL_LIST;
-	start.animation=stateGetAnimation(levelStatesList[level],&(start.frame));
-	start.currentState=statesActionList[levelStatesList[level]].nextStateId;
+	static short statesLevelList[]=STATES_LEVELS;
+	start.animation=stateGetAnimation(statesLevelList[level],&(start.frame));
+	start.currentState=statesActionList[statesLevelList[level]].nextStateId;
 	return start;
 }
 
