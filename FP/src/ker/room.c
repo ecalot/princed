@@ -73,7 +73,9 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case T_FLOOR:
 	case T_TORCH:
 	case T_SWORD:
+	case T_POTION:
 	case T_SPIKES:
+	case T_BTN_RAISE:
 	case T_SKELETON:
 	case T_LOOSE:
 	case T_PILLAR:
@@ -81,10 +83,11 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasPillar=(result.code==T_PILLAR);
 		result.walkable=1;
 		result.block=0;
+		result.isPressable=(result.code==T_BTN_RAISE);
 		result.hasSkeleton=(result.code==T_SKELETON);
 		result.hasSpikes=(result.code==T_SPIKES);
 		result.hasTorch=(result.code==T_TORCH);
-		result.hasFloor=((result.code==T_FLOOR)|(result.code==T_TORCH)|(result.code==T_PILLAR)|(result.code==T_LOOSE));
+		result.hasFloor=((result.code==T_FLOOR)|(result.code==T_TORCH)|(result.code==T_PILLAR)|(result.code==T_LOOSE)|(result.code==T_POTION));
 		result.hasBrokenTile=(result.code==T_DEBRIS);
 		result.isWall=0;
 		result.hasSword=(result.code==T_SWORD);
@@ -92,6 +95,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case T_WALL:
 		result.hasPillar=0;
 		result.walkable=0;
+		result.isPressable=0;
 		result.hasSkeleton=0;
 		result.hasSpikes=0;
 		result.block=1;
@@ -105,6 +109,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	default:
 		result.hasPillar=0;
 		result.walkable=0;
+		result.isPressable=0;
 		result.hasSkeleton=0;
 		result.hasSpikes=0;
 		result.block=0;
@@ -148,6 +153,14 @@ void roomDrawBackground(tRoom* room) {
 					y*TILE_H
 				);
 			}
+			/* pressable/left */
+			if (left.isPressable) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[10],
+					(x-1)*TILE_W,
+					y*TILE_H-1
+				);
+			}
 			/* debris/left */
 			if (left.hasBrokenTile) {
 				outputDrawBitmap(
@@ -189,6 +202,14 @@ void roomDrawBackground(tRoom* room) {
 			if (tile.hasFloor) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[9],
+					(x-1)*TILE_W,
+					y*TILE_H-2
+				);
+			}
+			/* pressable/this */
+			if (tile.isPressable) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[((left.walkable)&&(!left.isPressable))?57:58],
 					(x-1)*TILE_W,
 					y*TILE_H-2
 				);
