@@ -141,7 +141,19 @@ void kidDraw(tKid kid) {
 
 int kidMove(tKid* kid,tKey key,tRoom* room) {
 #ifdef NEW_KERNEL
-	return stateUpdate(&key,kid,room);
+	short flags;
+	flags=stateUpdate(&key,kid,room);
+	if (flags&STATES_FLAG_P)
+		mapPressedTile(
+			room->level,
+			roomGetTile(room,(kid->location/10)+1,kid->floor+1),
+			room->id,
+			(kid->location/TILE_W)+1,
+			kid->floor+1
+		);
+	if (flags&STATES_FLAG_F)
+		kid->floor++;
+	return flags;
 #else
 	int result;
 	tTile tile;

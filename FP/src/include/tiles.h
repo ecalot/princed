@@ -35,7 +35,7 @@ tiles.h: FreePrince : Tile functions
 
 #include "tiles_conf.h"
 
-int isInGroup(unsigned char tile,short group);
+int isInGroup(unsigned char tile,unsigned char backtile,short group);
 
 #endif
 

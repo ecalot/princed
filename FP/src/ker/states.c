@@ -5,10 +5,7 @@
 #include "kid.h" /* DIR_LEFT DIR_RIGHT */
 
 void debugShowFlag(short optionflag) {
-	if (optionflag&STATES_FLAG_U) printf("ScreenUp ");
-	if (optionflag&STATES_FLAG_H) printf("ScreenLeft ");
-	if (optionflag&STATES_FLAG_J) printf("ScreenRight ");
-	if (optionflag&STATES_FLAG_N) printf("ScreenDown ");
+	if (optionflag&STATES_FLAG_F) printf("Falling ");
 	if (optionflag&STATES_FLAG_P) printf("PressFloor ");
 	if (optionflag&STATES_FLAG_C) printf("PressCeiling ");
 	if (optionflag&STATES_FLAG_S) printf("Sound");
@@ -79,23 +76,23 @@ int evaluateCondition(int condition,tKey* key, tKid* kid, tRoom* room) {
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esMapUp:
 		DefaultFalse(room);
-		return isInGroup(room->fore[thisTile-12],c.argument)?
+		return isInGroup(room->fore[thisTile-12],room->back[thisTile-12],c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esMapDown:
 		DefaultFalse(room);
-		return isInGroup(room->fore[thisTile+12],c.argument)?
+		return isInGroup(room->fore[thisTile+12],room->back[thisTile+12],c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esMapForward:
 		DefaultFalse(room);
-		return isInGroup(room->fore[thisTile+((kid->direction==DIR_LEFT)?-1:1)],c.argument)?
+		return isInGroup(room->fore[thisTile+((kid->direction==DIR_LEFT)?-1:1)],room->back[thisTile+((kid->direction==DIR_LEFT)?-1:1)],c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esMapBack:
 		DefaultFalse(room);
-		return isInGroup(room->fore[thisTile+((kid->direction==DIR_LEFT)?1:-1)],c.argument)?
+		return isInGroup(room->fore[thisTile+((kid->direction==DIR_LEFT)?1:-1)],room->back[thisTile+((kid->direction==DIR_LEFT)?1:-1)],c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esMapOn:
 		DefaultFalse(room);
-		return isInGroup(room->fore[thisTile],c.argument)?
+		return isInGroup(room->fore[thisTile],room->back[thisTile],c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esForwardTileNearerThan:
 		DefaultFalse(kid);
