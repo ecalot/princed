@@ -47,16 +47,19 @@ kernel.c: FreePrince : Main Kernel
  * Main game control function
  */
 
+tObject kid;
+
 int playgame(int optionflag,int level) {
 	/* Create objects */
 	tKey    key=inputCreateKey();
-	/*TODO: use a map.c function that reads this information and creates the kid*/
-	tObject kid=objectCreate(30,1,DIR_RIGHT,stateKidInLevel(/*level*/1),RES_IMG_ALL_KID,1);
 	tData*  resMap=resLoad(RES_MAP|level);
 	tMap*   map=(tMap*)resMap->pFrames;
 	tRoom   room;
 	tRoomId roomId;
 	
+	/*TODO: use a map.c function that reads this information and creates the kid*/
+	kid=objectCreate(30,1,DIR_RIGHT,stateKidInLevel(/*level*/1),RES_IMG_ALL_KID,1);
+
 	/* Game loop here */
 	
 	/* Initialize kid and room in the map */
@@ -152,6 +155,7 @@ int playgame(int optionflag,int level) {
  * Main function
  */
 
+
 int kernel(int optionflag,int level) {
 /* levels=-1 is default
  * levels from 0 to n is the level number
@@ -192,7 +196,7 @@ int kernel(int optionflag,int level) {
 		}
 	} while(!quit);
 
-	objectFree();
+	objectFree(kid);
 	inputStopTimer();
 	outputStop();
 	return 0;

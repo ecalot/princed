@@ -119,18 +119,19 @@ tMenuOption playAnimation(int id) {
 			
 			/* move objects */
 			for (i=0;i<activet;i++) {
-				int exitCode=0;
 				/*TODO: detect exits */
 				if (statesAlive[i]) {
+					int exitCode;
 		  		exitCode=objectMove(ta+i,nullKey,NULL);
-		  		objectDraw(ta[i]);
-				}
-			
-				/* detect exited states and destroy them */
-				if (exitCode<0) { /* exit code detected */
-					printf("exit Code detected: i=%d exit=%d \n",i,exitCode);
-					objectFree(ta[i]);
-					statesAlive[i]=0; /* remember it is destroyed */
+
+					/* detect exited states and destroy them */
+					if (exitCode<0) { /* exit code detected */
+						printf("exit Code detected: i=%d exit=%d \n",i,exitCode);
+						objectFree(ta[i]);
+						statesAlive[i]=0; /* remember it is destroyed */
+					} else {
+		  			objectDraw(ta[i]);
+					}
 				}
 			}
 			

@@ -68,7 +68,7 @@ LINKEROPTIONS = $(LINKERRELEASE)
 # main file #
 #############
 
-$(EXEFILE): check $(OBJFILES)
+$(EXEFILE): $(OBJFILES)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
 	$(LINKER) $(LINKEROPTIONS) -o $(EXEFILE) $(OBJFILES) $(LIBS) $(LINKEROPTIONS)
@@ -106,7 +106,7 @@ build: clean $(EXEFILE)
 
 all: build
 
-install: download build
+install: checks download build
 
 headers: $(GENERATEDRESHEADERS) $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)\
          $(GENERATEDOTHHEADERS)
