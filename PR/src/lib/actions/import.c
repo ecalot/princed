@@ -116,14 +116,14 @@ char mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
 		case 2: //compile bitmap
 			return mFormatCompileBmp(*data,fp,res);
 		case 3: //compile wave
-			mFormatCompileWav(*data,fp,res);
-			break;
+			return mFormatCompileWav(*data,fp,res);
 		case 4: //compile midi
-			mFormatCompileMid(*data,fp,res);
-			break;
+			return mFormatCompileMid(*data,fp,res);
 		case 6: //compile palette
 			//TODO: make mFormatCompilePal and stop using char** for data
-			mImportPalette(data,&((*res).size));
+			if (!mImportPalette(data,&((*res).size))) {
+				return 0;
+			}
 		case 1:
 		case 5:
 		default:
@@ -137,6 +137,7 @@ char mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
 |                    M A I N   F U N C T I O N                  |
 \***************************************************************/
 //TODO: delete this function
+/*
 char mSaveFile(char* vFile,unsigned char *d, int s) {
 	FILE *fp;
 
@@ -148,7 +149,7 @@ char mSaveFile(char* vFile,unsigned char *d, int s) {
 		return 1;
 	}
 }
-
+*/
 int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
 	/*
 		Return values:

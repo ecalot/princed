@@ -91,7 +91,9 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
   char* cursorData  = data;
   char* counter;
   char* cursorPix   = (*img).pix;
-  char* imgEnd      = (*img).pix+((*img).size>>1)-1;
+  char* imgEnd      = (*img).pix+(
+		(((*img).width+1)>>1)*(img->height)
+	);
 
   while (cursorPix<imgEnd) {
 		//Step 1: Create counter
@@ -99,9 +101,9 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
 
 		//Step 2: Look and copy the string until a repeated byte is found
 		while ((cursorPix<imgEnd)&&(*cursorPix!=*(cursorPix+1))&&((*counter)!=127)) {
-			cursorPix++;
+			cursorPix++; //TODO idem
 			(*counter)++;
-			*(cursorData)=*(cursorPix-1);
+			*(cursorData)=       *(cursorPix-1);
 			cursorData++;
 		}
 
@@ -112,7 +114,7 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
 				(*counter)--;
 			}
 			cursorPix++; //TODO poner esta linea abajo
-			*(cursorData)=*(cursorPix-1); //Print repeated char
+			*(cursorData)=     *(cursorPix-1); //Print repeated char
 			cursorData++;
 		}
 	}
