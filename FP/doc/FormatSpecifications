@@ -926,7 +926,7 @@ Table of Contents
  Reverse Engineering:
   Indexes . . . . . . . . . . . . . . . . . . . . . . . . . Enrique Calot
   Levels . . . . . . . . . . . . . . . . . . . . . . . . .  Enrique Calot
-  Tiles  . . . . . . . . . . . . . . . . . . . . . . . . .  Brendon James
+                                                            Brendon James
   Images . . . . . . . . . . . . . . . . . . . . . . .  Tammo Jan Dijkema
   RLE Compression . . . . . . . . . . . . . . . . . . . Tammo Jan Dijkema
   LZG Compression . . . . . . . . . . . . . . . . . . . . . Anke Balderer
@@ -939,7 +939,7 @@ Table of Contents
 9. License
    ~~~~~~~
 
-      Copyright (c)  2004  Princed Project Team
+      Copyright (c)  2004, 2005 The Princed Project Team
       Permission is granted to copy, distribute and/or modify this document
       under the terms of the GNU Free Documentation License, Version 1.2
       or any later version published by the Free Software Foundation;
