@@ -131,6 +131,43 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 /* door drawing */
 #define drawGateTop(x,y,frame) outputDrawBitmap(roomGfx.environment->pFrames[35-((frame)&7)],x,y)
 
+typedef enum {layTritop,layTribot,layBase}tLooseLayer;
+void drawLoose(int x, int y, int frame,tLooseLayer layer) {
+	static char looseAnimation[]={1,0,2,2,0,0,0,2,2,2,2};
+	int base,tritop,tribot;
+	if (frame<11) {
+		switch(looseAnimation[frame]) {
+			case 1:
+				base=43;
+				tritop=41;
+				tribot=39;
+				break;
+			case 2:
+				base=44;
+				tritop=42;
+				tribot=40;
+				break;
+			case 0:
+			default:
+				base=14;
+				tritop=13;
+				tribot=12;
+				break;
+		}
+		switch(layer) {
+			case layTritop:
+				e(tritop-3,x,y);
+				break;
+			case layTribot:
+				e(tribot-3,x,y);
+				break;
+			case layBase:
+				e(base-3,x,y);
+				break;
+		}
+	}
+}
+
 void drawGate(int x, int y, int frame) {
 	/* frames are from 0 to 46, 0 is open; 46 is closed */
 	register int i;
@@ -207,7 +244,8 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	}
 	/* normal/left */
 	if (isIn(left,TILES_FLOOR)) 
-		e(10,(x-1)*TILE_W+0,y*TILE_H+2);
+		/*e(10,(x-1)*TILE_W+0,y*TILE_H+2);*/
+		drawLoose((x-1)*TILE_W+0,y*TILE_H+2,(room->level->time)%11,layTritop);
 	/* exit_left/left */
 	if (isIn(left,TILE_EXIT_RIGHT)) 
 		e(7,(x-1)*TILE_W+0,y*TILE_H+2);
@@ -264,7 +302,8 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		e(17,(x-1)*TILE_W+24,y*TILE_H+0);
 	/* normal/this */
 	if (isIn(tile,TILES_FLOOR)) 
-		e(9,(x-1)*TILE_W+0,y*TILE_H+0);
+		drawLoose((x-1)*TILE_W+0,y*TILE_H+0,(room->level->time)%11,layTribot);
+		/*e(9,(x-1)*TILE_W+0,y*TILE_H+0);*/
 	/* exit_left/this */
 	if (isIn(tile,TILE_EXIT_RIGHT)) 
 		e(5,(x-1)*TILE_W+0,y*TILE_H+0);
@@ -320,7 +359,8 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 			/* TODO: drop has resource 59 for unpressed/raise 47? checkgame */
 			e(59,(x-1)*TILE_W+0,y*TILE_H+(buttonIsNormal(tile)?3:4));
 		} else {
-			e(11,(x-1)*TILE_W+0,y*TILE_H+3);
+			drawLoose((x-1)*TILE_W+0,y*TILE_H+3,(room->level->time)%11,layBase);
+			/*e(11,(x-1)*TILE_W+0,y*TILE_H+3);*/
 		}
 	} else {
 	/* wall */
