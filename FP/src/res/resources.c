@@ -62,16 +62,68 @@ for (id=0;id<MAX_RES_COUNT;id++) {\
  * Resource creation
  */
 
-void res_rememberPalette(tMemory data) {}
+tData* res_createData(int nFrames,int type) {
+	tData* result;
+	/* TODO: send those lines to res_createData*/
+	result=(tData*)malloc(sizeof(tData));
+	
+	//switch {
+	result->type=eImages;//res_getVirtualTypeFromReal(res_getIdxType);
+	//nFrames--;
+	//}
+	
+	result->pFrames=(void**)malloc(nFrames*sizeof(void*));
+	result->frames=nFrames;
+	return result;
+}
 
 /* Using the type and the array data this function will return the resources in void* fromat */
-void* res_createResource(tMemory data,int type) {
+void res_createFrames(tMemory data,int type,void** returnValue,int number) {
 	tMemory* result;
-	/* TODO: data->array must be copied or it wont be available after the file is closed */
-	result=(tMemory*)malloc(sizeof(tMemory)); /* both sides are void* :)  */
-	*result=(tMemory)data;
-	printf("res_createResource: Allocating frame[?]=? (type %d)\n",type);
-	return (void*)result;
+	static tImage image;
+	
+	switch (type) {
+		case RES_TYPE_IMG_TR_LEFT:
+		case RES_TYPE_IMG_TR_RIGHT:
+		case RES_TYPE_IMG_BL_LEFT:
+		case RES_TYPE_IMG_BL_RIGHT:
+			if (!number) {
+				//loadPalette;
+				if (data.size!=100) {
+					printf("Fatal error: res_createFrames: invalid palette\n");
+					exit(1);
+				}
+				memcpy(image.pal,data.array+1,16);
+				printf("res_createFrames: Remembering palette\n",number,type);
+				return;
+			} else {
+				number--;
+			}
+			mExpandGraphic(data.array,&image,data.size);
+			/* TODO: the result must be an object created in output module: 
+			 * result=outputLoadBitmap(
+			 *   image.pix,image.widthInBytes*image.height,image.pal,image.height,image.width,
+			 *   (type==RES_TYPE_IMG_TR_RIGHT||type==RES_TYPE_IMG_BL_RIGHT),
+			 *   (type==RES_TYPE_IMG_TR_RIGHT||type==RES_TYPE_IMG_TR_LEFT)
+			 * );
+			 */
+			result=(tMemory*)malloc(sizeof(tMemory)); /* both sides are void* :)  */
+			*result=(tMemory)data;
+			printf("res_createFrames: Allocating frame[%d]=? (image type %d)\n",number,type);
+			break;
+		case RES_TYPE_SND_MIDI:
+		case RES_TYPE_SND_WAVE:
+		case RES_TYPE_IMG_PALETTED:
+		case RES_TYPE_LVL:
+			result=(tMemory*)malloc(sizeof(tMemory)); /* both sides are void* :)  */
+			/* TODO: data->array must be copied or it wont be available after the file is closed */
+			*result=(tMemory)data;
+			printf("res_createFrames: Allocating resource[%d]=@%p (type %d, size %d)\n",number,type,data.array,data.size);
+			
+			break;
+	}
+
+	returnValue[number]=(void*)result;
 }
 
 /*
@@ -119,7 +171,7 @@ int res_getDataByArray(short int* id,int maxItems,void** result,int ids,int type
 				&(data.size)
 			);
 			if (gotId==id[i]) {
-				result[i]=(void*)res_createResource(data,type);
+				res_createFrames(data,type,result,i);
 				i++;
 			}
 		}
@@ -187,22 +239,17 @@ tData* resLoad(int id) {
 		return NULL;
 	}
 
-	result=(tData*)malloc(sizeof(tData));
-	result->pFrames=(void**)malloc(nFrames*sizeof(void*));
-	//result->pFrames[0]=(tMemory*)malloc(nFrames*sizeof(tMemory));
-	
-	result->frames=nFrames;
-	result->type=eImages;//res_getVirtualTypeFromReal(res_getIdxType);
+	/* Create a tData object with pFrames empty*/
+	result=res_createData(nFrames,res_getIdxType);
 
+	/* Fill pFrames into tData object */
 	if (!res_getDataByArray(frames,numberOfItems,result->pFrames,nFrames,res_getIdxType)) {
 		printf("Fatal Error: resLoad: resource file invalid!\n");
 		free(frames);
-		//free(result->pFrames[0]);
 		free(result->pFrames);
 		free(result);
 		return NULL;
 	}
-
 	
 	//mReadCloseDatFile();
 	free(frames);
