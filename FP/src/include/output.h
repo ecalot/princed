@@ -47,7 +47,9 @@ playWav(tWave sound); /* Starts the reproduction of the sample and returns */
 playMid(tMidi music); /* Starts the music reproduction and returns */
 
 /* Graph */
-drawBitmap(tImage image, int x, int y);
+void* loadBitmap(unsigned char* data, int h,int w);
+void freeBitmap(void* image);
+void drawBitmap(void* image,int x, int y);
 clearScreen();
 
 /* Initialization */
