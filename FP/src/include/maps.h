@@ -1,5 +1,5 @@
 
-
+#include "map_defs.h"
 
 int levelUse(void* level);
 /* Sets the level for future use using the resource given
