@@ -1,4 +1,4 @@
-Princed Resources Editor V0.8 beta
+Princed Resources V0.9
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -20,7 +20,7 @@ This program is open source under the GNU General Public License terms
   - Coded type header verification
   - Solved several bugs.
  * PR 0.2 Alpha
-  - Added classifing dat type feature
+  - Added classifying dat type feature
   - Added support to import .bmp files
   - Implemented CGI output support for UNIX versions
   - Source files were abstracted
@@ -28,7 +28,7 @@ This program is open source under the GNU General Public License terms
   - Added modifiers -x[rnu] -c[r]
   - Added pr.dll compiling
   - Bitmaps aren't upside down anymore 
-  - Images bigger than 256 pixels lenght or width now are recognized
+  - Images bigger than 256 pixels length or width now are recognized
   - Improved decompression algorithm in bigger images
   - Optimized bitmap handling
   - Solved bugs in bitmap format
@@ -56,24 +56,35 @@ This program is open source under the GNU General Public License terms
   - Source ported to several compilers and platforms
  * PR 0.8 beta
   - Abstracted disk functions into one module
-  - Added PC Speaker sound clasification
+  - Added PC Speaker sound classification
   - Added compression algorithms B0 and B2. Before that it was only working B1.
   - Coded a base directory creator for files
   - Coded a parser and the resources tree in xml. 
-  - Coded inheritance of owner's attribures to tag childs
+  - Coded inheritance of owner's attributes to tag child
   - Coded linking from an id to a palette
   - Coded the compression algorithm selector to optimize the bitmap compiled dat files
   - Coded unknown extracted files saved in unknown.xml
+ * PR v0.9
+  - Abstracted output
+  x Coded detector of dat file in relative path (e.g. pr dat/dungeon.dat -x l)
+  - Dropped old code (txt parser and directory parsing functions)
+  x Improved B1/B2 compressor
+  x Improved resources.xml
+  x Tested and stable
+  x Works in all dat files
+  x Set, if applicable, POP2 in the father folder of the unknown.xml file
+  x Code full extractor (looks for all files in a speficied tag and children 
+    and makes a list calling to addIfNotRepeated, then calls PR extract
+    fucntion for each file in the list)
  
 
 2) ToDo List
  i)   Add full pop2 support
  ii)  Code the compression algorithms (B3, B4) to optimize the bitmap compiled dat files
  iii) Add a C++ class to use PR
- iv)  Abstract output
+
 
 3) Future Versions:
-  PR v0.9:      tested and stable
   PR v1.0:      First optimized & stable version for win32 and unix based systems
   PR v1.1:      added iii
   PR v1.5:      added ii

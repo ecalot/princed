@@ -1,15 +1,34 @@
-Princed Resources Handler V0.8 beta
+Princed Resources V0.9
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
 
 1) Unix-based OS compiling:
 
-GCC with the C99 standard will work:
+GCC will work:
 
--shell-2.05b$ gcc -std=c99 pr.c -o pr
+-shell-2.05b$ make
+Compiling import module...
+Compiling compression module...
+Compiling export module...
+Compiling main module...
+Compiling resource manager module...
+Compiling extra tasks module...
+Compiling disk access functions...
+Compiling xml parsing module...
+Compiling xml search features...
+Compiling bitmap files support (bmp)...
+Compiling midi audio files support (mid)...
+Compiling JASC palette support (pal)...
+Compiling digital wave audio support (wav)...
+Linking files...
+Program successfully compiled
+
+Please read readme.txt for syntax information
+
+-shell-2.05b$ cd bin
 -shell-2.05b$ ./pr
-Princed resources (PR) V0.8 beta
+Princed resources (PR) V0.9
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 
@@ -17,20 +36,19 @@ Syntax:
  pr datfile option [extract dir]
 
 Valid options:
- -x[rnus] for extract
+ -x[rn] for extract
   r: raw extraction
   n: don't extract
-  u: update res file in case there were records
-  s: don't save res file
- -c for compile
+ -c[r] for compile
   r: raw compiling
  -d for type
- -t to clear the resource file.
 -shell-2.05b$
 
 2) Dos/Win32 Console compiling
 
-LCC will work
+You can use the VC workspace file: pr.dsw and build the project (selecting Build/Set active configuration...), setting up Dll or Release compilation modes and pressing F7.
+
+LCC should also work, use Makefile.lcc.
 
 3) CVS download
 
@@ -54,7 +72,7 @@ U PR/zip/prlib.zip
 U PR/zip/prvbdll.zip
 -shell-2.05b$
 
-4) Need assistanse?
+4) Need assistance?
  Just ask here http://sourceforge.net/tracker/?func=add&group_id=91915&atid=598846
 
 5) Bug reporting?
