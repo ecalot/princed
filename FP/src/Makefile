@@ -20,12 +20,7 @@ INCLUDE = -Iinclude/
 DEFINES = -DOS=\"$(OS)\" $(LINUX) 
 OPTIONS = $(INCLUDE) $(DEFINES)
 
-OBJFILES = main.o kernel.o resources.o dat.o disk.o compress.o output.o
-#\
-#resources.o disk.o\
-#           dat.o main.o\
-#           $(SRC2)
-
+OBJFILES = main.o kernel.o resources.o dat.o disk.o compress.o output.o maps.o
 
 EXEFILE  = bin/freeprince
 
@@ -52,23 +47,19 @@ all: $(EXEFILE)
 
 #files
 
-#compress.o: compress.c
-#	$(INFO) Compiling compression module...
-#	$(CC) -c compress.c $(OPTIONS)
-
 main.o: main.c include/kernel.h include/main.h
 	$(INFO) Compiling command line parser...
 	$(CC) -c main.c $(OPTIONS)
 
-resources.o: res/resources.c
+resources.o: res/resources.c include/resources.h include/compress.h include/dat.h include/disk.h
 	$(INFO) Compiling main resource manager module...
 	$(CC) -c res/resources.c $(OPTIONS)
 
-disk.o: res/disk.c
+disk.o: res/disk.c include/memory.h include/disk.h include/resources.h
 	$(INFO) Compiling resource disk access library...
 	$(CC) -c res/disk.c $(OPTIONS)
 
-dat.o: res/dat.c
+dat.o: res/dat.c include/disk.h include/dat.h
 	$(INFO) Compiling resource dat editing library...
 	$(CC) -c res/dat.c $(OPTIONS)
 
@@ -76,11 +67,15 @@ kernel.o: ker/kernel.c include/kernel.h include/resources.h include/output.h
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
-compress.o: res/compress.c
+compress.o: res/compress.c include/compress.h include/memory.h include/disk.h
 	$(INFO) Compiling resource compression module...
 	$(CC) -c res/compress.c $(OPTIONS)
 
-output.o: out/output.c
+maps.o: res/maps.c include/maps.h
+	$(INFO) Compiling resource map handling module...
+	$(CC) -c res/maps.c $(OPTIONS)
+
+output.o: out/output.c include/resources.h
 	$(INFO) Compiling main output module...
 	$(CC) -c out/output.c $(OPTIONS)
 
