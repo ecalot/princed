@@ -244,7 +244,9 @@ void resFree(tData* res) {
 	} else if (res->type==eLevels) {
 		mapFreeLevel((tMap*)(res->pFrames)); /* free the map */
 	}
+#ifdef RESOURCESDEBUG
 	fprintf(stderr,"ResFree activated\n");
+#endif
 	free(res); /* free the resource structure */
 }
 

@@ -90,7 +90,6 @@ tMenuOption playAnimation(int id) {
 		while(reprocessInput) {
 		if (!inputGetEvent(&key)) {
 			/* key pressed */
-			printf("key pressed\n");
 		 	/*  if there is an action      and  the action wasn't control key */
 			if (key.actionPerformed!=none  &&   !(inputGetCtrl(key.status)&&key.actionPerformed==other))
 				return getAction(key);
@@ -202,77 +201,12 @@ tMenuOption sleep(int ticks) {
 	return menuNone;
 }
 
-#define goodBye {resFree(main_title);return result;}
-	
 tMenuOption showTitles() {
 /* Show the titles animation
  * returns 0 if the user has finished the animations with quit
  * returns 1 if the user has selected to load a saved game 
  * returns 2 if the user has selected to start the game
  */
-#define testing
-#ifdef testing
-	printf("Starting animation testing\n");
-				
 	return playAnimation(ANIMS_ID_PRESENTATION);
-#else
-	tData *main_title;
-	/*tData *main_text;*/
-	tMenuOption result;
-
-	main_title = resLoad(RES_IMG_MAIN_BACKGROUND);
-	if (! main_title) {
-		printf("The resource couldn't be loaded!\n");
-		return menuQuit;
-	}
-	outputClearScreen();
-	/* The main background */
-	outputDrawBitmap(main_title->pFrames[0], 0, 200);
-	outputUpdateScreen();
-	result=sleep(12);
-	if (result!=menuNone) goodBye;
-	/* The presents */
-	outputDrawBitmap(main_title->pFrames[1], 100, 100);
-	outputUpdateScreen();
-	result=sleep(12);
-	if (result!=menuNone) goodBye;
-	/* The author*/
-	outputClearScreen();
-	outputDrawBitmap(main_title->pFrames[0], 0, 200);
-	outputDrawBitmap(main_title->pFrames[2], 100, 100);
-	outputUpdateScreen();
-	result=sleep(12);
-	if (result!=menuNone) goodBye;
-	/* The game name*/
-	outputClearScreen();
-	outputDrawBitmap(main_title->pFrames[0], 0, 200);
-	outputDrawBitmap(main_title->pFrames[3], 30, 70);
-	outputDrawBitmap(main_title->pFrames[4], 30, 190);
-	outputUpdateScreen();
-	/*SDL_Delay(1050);*/
-	result=sleep(12);
-	if (result!=menuNone) goodBye;
-
-	/*
-	 * The outputDraw doesn't support the text files yet
-	 * 
-	main_text = resLoad(RES_IMG_TEXT_BACKGROUND);
-	if (! main_text) {
-		printf("The resource couldn't be loaded!\n");
-		return menuQuit;
-	}
-	*/
-	/* The presents */
-	/*
-	outputDrawBitmap(main_text->pFrames[0], 0, 0);
-	outputDrawBitmap(main_text->pFrames[1], 0, 0);
-	outputUpdateScreen();
-	*/
-	do {
-		result=sleep(1000);
-	} while (result==menuNone);
-
-	goodBye;
-#endif
 }	
 

@@ -555,7 +555,9 @@ void roomKidChangedFloor(tRoom* room, tObject* kid) {
 	tTile aux;
 	int i,j;
 
+#ifdef ROOMDEBUG
 	printf("kid had changed the floor. Guards and choppers may be allerted.\n");
+#endif
 	for (j=1;j<4;j++) {
 		for (i=1;i<10;i++) {
 			if (isIn((aux=roomGetTile(room,i,j)),TILE_CHOPPER)) {

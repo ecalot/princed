@@ -40,6 +40,8 @@ maps.c: Freeprince : Map handling library
 
 #define slevel(field) (map->field)
 
+/* #define DEBUGMAPS */
+
 void* mapLoadLevel(tMemory level) {
 	tMap* map=(tMap*)malloc(sizeof(tMap));
 	int i,j;
@@ -113,7 +115,9 @@ void* mapLoadLevel(tMemory level) {
 				map->back[i*30+j]=gateInRoom;
 				map->screenGates[i][gateInRoom]=map->gates+gates;
 				auxGates[i*30+j]=map->gates+gates;
+#ifdef DEBUGMAPS
 				fprintf(stderr,"mapLoadLevel: Loading gate: indexed=%d gate pointer=%p\n",i,(void*)auxGates[i*30+j]);
+#endif
 				map->gates[gates++]=newGate;
 				gateInRoom++;
 			/*} else if (((map->fore[i*30+j]&0x1f)==TILE_BTN_RAISE)||((map->fore[i*30+j]&0x1f)==TILE_BTN_DROP)) {*/
@@ -124,7 +128,9 @@ void* mapLoadLevel(tMemory level) {
 				newPressable.type=((map->fore[i*30+j]&0x1f)==TILE_BTN_RAISE)?eRaise:eDrop;
 				map->back[i*30+j]=pressableInRoom;
 				map->screenPressables[i][pressableInRoom]=map->pressables+pressables;
+#ifdef DEBUGMAPS
 				fprintf(stderr,"mapLoadLevel: Creating button: indexed=%d,%d btn pointer=%p\n",i,pressableInRoom,(void*)(map->pressables+pressables));
+#endif
 				map->pressables[pressables++]=newPressable;
 				pressableInRoom++;
 			} else if (isInGroup(map->fore[i*30+j],0,TILES_CHOPPER_SPIKE)) {
@@ -135,7 +141,9 @@ void* mapLoadLevel(tMemory level) {
 				newDanger.action=((map->fore[i*30+j]&0x1f)==TILE_CHOPPER)?eChoInactive:eSpiDown;
 				map->back[i*30+j]=dangerInRoom;
 				map->screenDangers[i][dangerInRoom]=map->dangers+dangers;
+#ifdef DEBUGMAPS
 				fprintf(stderr,"mapLoadLevel: Creating danger tile: indexed=%d,%d btn pointer=%p\n",i,dangerInRoom,(void*)(map->dangers+dangers));
+#endif
 				map->dangers[dangers++]=newDanger;
 				dangerInRoom++;
 			}
@@ -147,7 +155,6 @@ void* mapLoadLevel(tMemory level) {
 		pressableInRoom=0;
 		dangerInRoom=0;
 	}
-printf("Map in memory\n");
 
 	/* read event list from file and convert it into the event array in memory */
 	for (i=0;i<256;i++) {
@@ -161,7 +168,7 @@ printf("Map in memory\n");
 		map->events[i].gate=auxGates[(S-1)*30+L]; /* in case of error null is assigned */
 	}
 	free(auxGates);
-printf("Map loaded\n");
+	
 	return (void*)map;
 }
 
@@ -313,7 +320,9 @@ void  mapStart(tMap* map, tObject* kid, tRoomId *roomId, int level) {
 	/* kid->x,y */
 	static char environments[]=MAP_ENVIRONMENTS;
 	*roomId=slevel(start)[0];
+#if defined DEBUGMAPS || 1
 	printf("mapStart: binding kid to map in room %d using the %d environment\n",*roomId,environments[level]);
+#endif
 	slevel(time)=0;
 	roomLoadGfx(/*environments[level]?RES_IMG_ENV_PALACE:*/RES_IMG_ENV_DUNGEON);
 }
