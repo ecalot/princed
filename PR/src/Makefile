@@ -110,17 +110,17 @@ $(XMLFILE): resources.xml.gz
 	$(MAKEDIR) bin
 	$(GZIP) -cd resources.xml.gz >bin/resources.xml
 
-import.o: lib/import.c
+import.o: lib/actions/import.c
 	$(INFO) Compiling import module...
-	$(CC) -c lib/import.c $(OPTIONS)
+	$(CC) -c lib/actions/import.c $(OPTIONS)
 
-memory.o: lib/memory.c
+memory.o: lib/layers/memory.c
 	$(INFO) Compiling memory manager...
-	$(CC) -c lib/memory.c $(OPTIONS)
+	$(CC) -c lib/layers/memory.c $(OPTIONS)
 
-export.o: lib/export.c
+export.o: lib/actions/export.c
 	$(INFO) Compiling export module...
-	$(CC) -c lib/export.c $(OPTIONS)
+	$(CC) -c lib/actions/export.c $(OPTIONS)
 
 compress.o: lib/compression/main.c
 	$(INFO) Compiling compression module...
@@ -158,9 +158,9 @@ resources.o: lib/resources.c
 	$(INFO) Compiling resource manager module...
 	$(CC) -c lib/resources.c $(OPTIONS)
 
-classify.o: lib/classify.c
+classify.o: lib/actions/classify.c
 	$(INFO) Compiling classification module...
-	$(CC) -c lib/classify.c $(OPTIONS)
+	$(CC) -c lib/actions/classify.c $(OPTIONS)
 
 parse.o: lib/xml/parse.c
 	$(INFO) Compiling XML parsing module...
@@ -170,13 +170,13 @@ search.o: lib/xml/search.c
 	$(INFO) Compiling XML search features...
 	$(CC) -c lib/xml/search.c $(OPTIONS)
 
-disk.o: lib/disk.c
+disk.o: lib/layers/disk.c
 	$(INFO) Compiling disk access library...
-	$(CC) -c lib/disk.c $(OPTIONS)
+	$(CC) -c lib/layers/disk.c $(OPTIONS)
 
-dat.o: lib/dat.c
+dat.o: lib/layers/dat.c
 	$(INFO) Compiling DAT editing library...
-	$(CC) -c lib/dat.c $(OPTIONS)
+	$(CC) -c lib/layers/dat.c $(OPTIONS)
 
 bmp.o: lib/formats/bmp.c
 	$(INFO) Compiling bitmap files support \(bmp\)...
