@@ -35,6 +35,8 @@ maps.c: Freeprince : Map handling library
 
 #include "map_defs.h"
 
+#include "room.h"
+
 typedef enum {eLeft=0,eRight=1,eUp=2,eDown=3}tDirection;
 
 int levelUse(void* level);
@@ -43,6 +45,7 @@ int levelUse(void* level);
  *
  * Return 0 on success
  */
+tTile levelGetTile(tRoom* room,int x, int y);
 
 int levelGetScreenWalls(unsigned char* data,unsigned char* borders);
 /* nt levelGetRoom (tRoom* room); */

@@ -91,8 +91,9 @@ tTile levelGetTile(tRoom* room,int x, int y) {
 
 	fore=room->fore[x+12*y];
 	back=room->back[x+12*y];
+	result.code=fore&0x1F;
 	
-	switch (fore) { /* TODO: use arrays and a better algorithm */
+	switch (result.code) { /* TODO: use arrays and a better algorithm */
 	case T_EMPTY:
 		result.walkable=0;
 		result.block=0;
@@ -108,11 +109,11 @@ tTile levelGetTile(tRoom* room,int x, int y) {
 	case T_DEBRIS:
 		result.walkable=1;
 		result.block=0;
-		result.hasTorch=(fore==T_TORCH);
+		result.hasTorch=(result.code==T_TORCH);
 		result.hasFloor=1;
-		result.hasBrokenTile=(fore==T_DEBRIS);
+		result.hasBrokenTile=(result.code==T_DEBRIS);
 		result.isWall=0;
-		result.hasSword=(fore==T_SWORD);
+		result.hasSword=(result.code==T_SWORD);
 		break;
 	case T_WALL:
 		result.walkable=0;

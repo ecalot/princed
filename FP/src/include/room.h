@@ -34,7 +34,6 @@ room.h: FreePrince : Draw Screen
 #ifndef _ROOM_H_
 #define _ROOM_H_
 
-#include "maps.h"
 
 typedef char tRoomId;
 typedef unsigned char tTileId;
@@ -61,9 +60,10 @@ typedef struct {
 	int isWall;
 	int hasSword;
 
+	char code;
 } tTile;
 
-void drawScreen(/*tRoom room, */int layer); /* TODO: rename it to roomDraw */
+void drawScreen(/*tRoom room, */int layer,int level); /* TODO: rename it to roomDraw */
 
 #endif
 

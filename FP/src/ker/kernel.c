@@ -50,7 +50,7 @@ int playgame(int optionflag,int level) {
 	tKid   kid=kidCreate();
 
 /* Game loop here */
-	drawScreen(4);
+	drawScreen(4,level);
 /* Level loop here */
 	outputClearScreen(); /* TODO: send to drawScreen(0) */
 	/*drawScreen(0); TODO: try to optimize what to draw */
@@ -67,11 +67,11 @@ int playgame(int optionflag,int level) {
 			
 			/* Drawing functions */
 			outputClearScreen(); /* TODO: send to drawScreen(0) */
-			drawScreen(0);
-			drawScreen(1);
-			drawScreen(2);
+			drawScreen(0,0);
+			drawScreen(1,0);
+			drawScreen(2,0);
 			kidDraw(kid);
-			drawScreen(3);
+			drawScreen(3,0);
 			outputUpdateScreen();
 		} else {
 			/* Action event */
