@@ -13,31 +13,31 @@ Table of Contents
 3.3. DAT writing primitives ........................................... 105
 4. DAT v1.0 Format Specifications ..................................... 114
 4.1. General file specs, index and checksums .......................... 117
-4.2. Images ........................................................... 184
-4.2.1 Headers ......................................................... 187
-4.2.2 Algorithms ...................................................... 210
-4.2.2.1 Run length encoding (RLE) ..................................... 226
-4.2.2.2 LZ variant (LZG) .............................................. 237
-4.3. Palettes ......................................................... 324
-4.4. Levels ........................................................... 331
-4.4.1 Unknown blocks .................................................. 362
-4.4.2 Room mapping .................................................... 379
-4.4.2.1 Wall drawing algorithm ........................................ 516
-4.4.3 Room linking .................................................... 583
-4.4.4 Guard handling .................................................. 599
-4.4.5 Starting Position ............................................... 640
-4.4.6 Door events ..................................................... 654
-4.5. Digital Waves .................................................... 698
-4.6. Midi music ....................................................... 715
-4.7. Internal PC Speaker .............................................. 718
-4.8. Binary files ..................................................... 723
-5. PLV v1.0 Format Specifications ..................................... 730
-5.1. User data ........................................................ 756
-5.2. Allowed Date format .............................................. 783
-6. The SAV v1.0 format ................................................ 797
-7. The HOF v1.0 format ................................................ 843
-8. Credits ............................................................ 866
-9. License ............................................................ 885
+4.2. Images ........................................................... 189
+4.2.1 Headers ......................................................... 193
+4.2.2 Algorithms ...................................................... 218
+4.2.2.1 Run length encoding (RLE) ..................................... 234
+4.2.2.2 LZ variant (LZG) .............................................. 246
+4.3. Palettes ......................................................... 333
+4.4. Levels ........................................................... 340
+4.4.1 Unknown blocks .................................................. 371
+4.4.2 Room mapping .................................................... 389
+4.4.2.1 Wall drawing algorithm ........................................ 526
+4.4.3 Room linking .................................................... 594
+4.4.4 Guard handling .................................................. 610
+4.4.5 Starting Position ............................................... 657
+4.4.6 Door events ..................................................... 671
+4.5. Digital Waves .................................................... 715
+4.6. Midi music ....................................................... 732
+4.7. Internal PC Speaker .............................................. 735
+4.8. Binary files ..................................................... 740
+5. PLV v1.0 Format Specifications ..................................... 747
+5.1. User data ........................................................ 773
+5.2. Allowed Date format .............................................. 800
+6. The SAV v1.0 format ................................................ 814
+7. The HOF v1.0 format ................................................ 860
+8. Credits ............................................................ 883
+9. License ............................................................ 903
 
 
 1. Preamble
@@ -150,18 +150,18 @@ Table of Contents
 
  Index structures:
 
- The DAT header: 6 bytes
-  Offset 0, size 4, type UL: Index offset (the location where the index
+ The DAT header: Size = 6 bytes
+  Offset 0, size 4, type UL: IndexOffset (the location where the index
                              begins)
   Offset 4, size 2, type US: IndexSize (the number of bytes the index has)
                              Note that the index size is 8*numberOfItems+2
 
- The DAT index: IndexSize bytes
-  Offset IndexSize, size 2, type US: NumberOfItems (resources count)
-  Offset IndexSize+2, size 8*NumberOfItems: The index (a list of
+ The DAT index: Size = IndexSize bytes
+  Offset IndexOffset, size 2, type US: NumberOfItems (resources count)
+  Offset IndexOffset+2, size 8*NumberOfItems: The index (a list of
                              NumberOfItems blocks of 8-bytes-index record)
 
- The 8-bytes-index record (one per item): 8 bytes
+ The 8-bytes-index record (one per item): Size = 8 bytes
   Relative offset 0, size 2, type US: Item ID
   Relative offset 2, size 4, type UL: Resource start absolute offset in
                                       file
@@ -176,14 +176,15 @@ Table of Contents
  should know what kind of item you are extracting.
 
  If you add (sum) the whole item data including checksum and take the less
- representative byte (modulus 256) you will get the sum of the file. This sum
- must be FF in hex (255 in UC or -1 in SC). If the sum is not FF, then adjust
- the checksum in order to set this value to the sum. The best way to do that is
- adding all the bytes in the item data (excluding the checksum) and inverting
- all the bits. The resulting byte will be the right checksum.
+ representative byte (modulus 256) you will get the sum of the file. This
+ sum must be FF in hex (255 in UC or -1 in SC). If the sum is not FF, then
+ adjust the checksum in order to set this value to the sum. The best way
+ to do that is adding all the bytes in the item data (excluding the
+ checksum) and inverting all the bits. The resulting byte will be the
+ right checksum.
 
- From now on the specification are special for each data type (that means we
- won't include the checksum byte anymore).
+ From now on the specification are special for each data type (that means
+ we won't include the checksum byte anymore).
 
 4.2. Images
  Images are stored compressed and have a header and a compressed data area.
@@ -211,15 +212,15 @@ Table of Contents
    3 LZG_LR (0011)
    4 LZG_UD (0100)
 
- The following data in the resource is the image compressed with the algorithm
- specified by those 4 bits.
+ The following data in the resource is the image compressed with the
+ algorithm specified by those 4 bits.
 
 4.2.2 Algorithms
  RAW_LR means that the data wasn't compressed, it is used for small images.
         The format is saved from left to right (LR) serializing a line to
-        the next integer byte if necessary. In case the image was 16 colors,
-        two pixels per byte (4bpp) will be used. In case the image was 2
-        colors, 8 pixels per byte (1bpp) will be used.
+        the next integer byte if necessary. In case the image was 16
+        colors, two pixels per byte (4bpp) will be used. In case the image
+        was 2 colors, 8 pixels per byte (1bpp) will be used.
  RLE_LR has a Run length encoding (RLE) algorithm, after uncompressed the
         image can be read as a RAW_LR.
  RLE_UD is the same as RLE_LR except that after uncompressed the bytes in
@@ -233,7 +234,8 @@ Table of Contents
 4.2.2.1 Run length encoding (RLE)
  The first byte is allways a control byte, the format is SC. If the control
  byte is negative, then the next byte must be repeated n times as the bit
- inverted control byte says, after the next byte (the one that was repeated)
+ inverted control byte says, after the next byte (the one that was
+ repeated)
  another control byte is stored.
  If the control byte is positive or zero just copy textual the next n bytes
  where n is the control byte plus one. After that, the next byte is the
@@ -883,6 +885,7 @@ Table of Contents
 
  This document:
   Writing . . . . . . . . . . . . . . . . . . . . . . . . . Enrique Calot
+  Corrections . . . . . . . . . . . . . . . . . . . . .  Patrik Jakobsson
 
  Reverse Engineering:
   Indexes . . . . . . . . . . . . . . . . . . . . . . . . . Enrique Calot
