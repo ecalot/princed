@@ -7,6 +7,8 @@
 #ifndef _STATES_CONF_
 #define _STATES_CONF_
 
+/* animation frame flag options */
+#include "states_conf_flags.h"
 /* condition properties */
 #include "states_conf_properties.h"
 /* state/action, animation and condition lists */

@@ -55,7 +55,8 @@ EXEFILE       = bin/freeprince
 GENERATEDRESHEADERS = include/res_conf_parts.h include/res_conf_files.h\
                       include/res_conf_types.h include/res_conf_mods.h\
                       include/res_conf_resources.h
-GENERATEDSTAHEADERS = include/states_conf_static.h include/states_conf_properties.h
+GENERATEDSTAHEADERS = include/states_conf_static.h include/states_conf_properties.h\
+                      include/states_conf_flags.h
 
 GENERATEDTILHEADERS = include/tiles_conf_types.h include/tiles_conf_groups.h
 
@@ -192,23 +193,23 @@ include/res_conf.h: $(GENERATEDRESHEADERS)
 
 include/res_conf_parts.h: conf/parts.conf conf/awk/res_conf_parts.awk
 	$(INFO) Creating resource id parts configuration file...
-	$(AWK) -f conf/awk/res_conf_parts.awk  conf/parts.conf>include/res_conf_parts.h
+	$(AWK) -f conf/awk/res_conf_parts.awk conf/parts.conf>include/res_conf_parts.h
 
 include/res_conf_files.h: conf/files.conf conf/awk/res_conf_files.awk
 	$(INFO) Creating resource dat files list configuration file...
-	$(AWK) -f conf/awk/res_conf_files.awk  conf/files.conf>include/res_conf_files.h
+	$(AWK) -f conf/awk/res_conf_files.awk conf/files.conf>include/res_conf_files.h
 
 include/res_conf_types.h: conf/types.conf conf/awk/res_conf_types.awk
 	$(INFO) Creating resource types configuration file...
-	$(AWK) -f conf/awk/res_conf_types.awk  conf/types.conf>include/res_conf_types.h
+	$(AWK) -f conf/awk/res_conf_types.awk conf/types.conf>include/res_conf_types.h
 
 include/res_conf_mods.h: conf/mods.conf conf/awk/res_conf_mods.awk
 	$(INFO) Creating resource modifiers configuration file...
-	$(AWK) -f conf/awk/res_conf_mods.awk  conf/mods.conf>include/res_conf_mods.h
+	$(AWK) -f conf/awk/res_conf_mods.awk conf/mods.conf>include/res_conf_mods.h
 
 include/res_conf_resources.h: conf/resources.conf conf/awk/res_conf_resources.awk
 	$(INFO) Creating resource list configuration file...
-	$(AWK) -f conf/awk/res_conf_resources.awk  conf/resources.conf>include/res_conf_resources.h
+	$(AWK) -f conf/awk/res_conf_resources.awk conf/resources.conf>include/res_conf_resources.h
 
 include/states_conf.h: $(GENERATEDSTAHEADERS)
 
@@ -218,7 +219,11 @@ include/states_conf_static.h: conf/states.conf conf/awk/states_conf_static.awk
 
 include/states_conf_properties.h: conf/statesproperties.conf conf/awk/states_conf_properties.awk
 	$(INFO) Creating states condition properties configuration file...
-	$(AWK) -f conf/awk/states_conf_properties.awk  conf/statesproperties.conf>include/states_conf_properties.h
+	$(AWK) -f conf/awk/states_conf_properties.awk conf/statesproperties.conf>include/states_conf_properties.h
+
+include/states_conf_flags.h: conf/flags.conf conf/awk/states_conf_flags.awk
+	$(INFO) Creating states frame flags configuration file...
+	$(AWK) -f conf/awk/states_conf_flags.awk conf/flags.conf>include/states_conf_flags.h
 
 include/tiles_conf.h: $(GENERATEDTILHEADERS)
 

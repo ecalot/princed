@@ -84,11 +84,13 @@ BEGIN {
 					if (match($1,/^[0-9]+-[0-9]*$/)) {
 						split($1,a,"-")
 						for (g=a[1];g<=a[2];g++) {
-							arrayAnimation[currentAnimation]=g
+							arrayAnimation[currentAnimation,"frame"]=g
+							arrayAnimation[currentAnimation,"flags"]=""
 							currentAnimation++
 						}
 					} else {
-						arrayAnimation[currentAnimation]=$1
+						arrayAnimation[currentAnimation,"frame"]=$1
+						arrayAnimation[currentAnimation,"flags"]=$2
 						currentAnimation++
 					}
 				} else if (listType == "level") {
@@ -198,7 +200,19 @@ END {
 	printf("}\n\n#define STATES_ANIMATIONS {\\\n\t")
 	coma=""
 	for (i=0;i<currentAnimation;i++) {
-		printf "%s%d",coma,arrayAnimation[i]
+		flags=arrayAnimation[i,"flags"]
+		if (flags!="") {
+			coma2=""
+			flagmask=""
+			for (j=1;j<=length(flags);j++) {
+				c=substr(flags,j,j+1)
+				flagmask=sprintf("%s%sSTATES_FLAG_%s",flagmask,coma2,toupper(c))
+				coma2="|"
+			}
+		} else {
+			flagmask="0"
+		}
+		printf "%s%d,%s",coma,arrayAnimation[i,"frame"],flagmask
 		if (i%10==9) printf("\\\n\t")
 		coma=","
 	}
