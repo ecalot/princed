@@ -31,6 +31,7 @@ main.c: FreePrince : Main function - parsing
 */
 
 #define _GNU_SOURCE
+#include <SDL/SDL.h> /* Mac OS X entry point redefinition */
 #include <unistd.h>
 #include <getopt.h>
 #include "kernel.h"
