@@ -105,15 +105,15 @@ void res_createFrames(tMemory data,int type,void** returnValue,int number) {
 				number--;
 			}
 			mExpandGraphic(data.array,&image,data.size);
-			/* TODO: the result must be an object created in output module: 
-			 * result=outputLoadBitmap(
-			 *   image.pix,image.widthInBytes*image.height,image.pal,image.height,image.width,
-			 *   (type==RES_TYPE_IMG_TR_RIGHT||type==RES_TYPE_IMG_BL_RIGHT),
-			 *   (type==RES_TYPE_IMG_TR_RIGHT||type==RES_TYPE_IMG_TR_LEFT)
-			 * );
-			 */
-			result=(tMemory*)malloc(sizeof(tMemory)); /* both sides are void* :)  */
-			*result=(tMemory)data;
+			/* TODO: the result must be an object created in output module: */
+			result=(void*)outputLoadBitmap(
+				image.pix,image.widthInBytes*image.height,image.pal,image.height,image.width,
+				(type==RES_TYPE_IMG_TR_RIGHT||type==RES_TYPE_IMG_BL_RIGHT),
+				(type==RES_TYPE_IMG_TR_RIGHT||type==RES_TYPE_IMG_TR_LEFT)
+			);
+			 
+			//result=(tMemory*)malloc(sizeof(tMemory)); /* both sides are void* :)  */
+			//*result=(tMemory)data;
 			printf("res_createFrames: Allocating frame[%d]=? (image type %d)\n",number,type);
 			break;
 		case RES_TYPE_SND_MIDI:
