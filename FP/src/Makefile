@@ -56,7 +56,7 @@ all: $(EXEFILE)
 #	$(INFO) Compiling compression module...
 #	$(CC) -c compress.c $(OPTIONS)
 
-main.o: main.c
+main.o: main.c include/kernel.h include/main.h
 	$(INFO) Compiling command line parser...
 	$(CC) -c main.c $(OPTIONS)
 
@@ -72,7 +72,7 @@ dat.o: res/dat.c
 	$(INFO) Compiling resource dat editing library...
 	$(CC) -c res/dat.c $(OPTIONS)
 
-kernel.o: ker/kernel.c
+kernel.o: ker/kernel.c include/kernel.h include/resources.h include/output.h
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
