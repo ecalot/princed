@@ -122,9 +122,9 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 
 	/* Write headers */
 	ok=ok&&fwrite(PLV_HEADER_A,PLV_HEADER_A_SIZE,1,target);
-	ok=ok&&fwrite(&level,1,1,target);
-	ok=ok&&fwrite(&numberOfFieldPairs,4,1,target);
-	ok=ok&&fwrite(&size,1,4,target);
+	ok=ok&&fwritechar(&level,target);
+	ok=ok&&fwritelong(&numberOfFieldPairs,target);
+	ok=ok&&fwritelong(&size,target);
 
 	/* Write block 1: raw data without ignoring checksum */
 	ok=ok&&fwrite(data,size,1,target);
@@ -139,7 +139,7 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 		sizeof(PLV_FOOT_ORIG_FILE)+	strlen(filename)+1
 	);
 
-	ok=ok&&fwrite(&block2size,4,1,target);
+	ok=ok&&fwritelong(&block2size,target);
 
 	/* Write block 2 */
 	ok=ok&&fwrite(PLV_FOOT_EDITOR,sizeof(PLV_FOOT_EDITOR),1,target);
@@ -172,10 +172,13 @@ int mFormatImportPlv(unsigned char* data, tResource *res) {
 	/* jump to size */
 	pos=data+PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE;
 	/* read size and jump to data */
+	/*
 	res->size=*(pos++);
 	res->size+=(*(pos++))<<8;
 	res->size+=(*(pos++))<<16;
 	res->size+=(*(pos++))<<24;
+	*/
+	res->size=array2long(pos);pos+=4;
 
 	/* integrity check 2 */
 	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE+res->size) return 0;
