@@ -65,7 +65,7 @@ GENERATEDSTAHEADERS = include/states_conf_static.h include/states_conf_propertie
 
 GENERATEDTILHEADERS = include/tiles_conf_types.h include/tiles_conf_groups.h
 
-GENERATEDOTHHEADERS = include/walls_conf.h include/anims_conf.h
+GENERATEDOTHHEADERS = include/walls_conf.h include/anims_conf.h include/text_conf.h
 
 #Use this to temporary remove an option
 OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
