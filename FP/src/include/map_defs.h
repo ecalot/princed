@@ -89,66 +89,87 @@ Len	Offs	BlockName & Description
 #define MAPS_sLeft		0
 #define MAPS_sRight		1
 
-/* Definicion de cosas: */
+#define T_EMPTY 0x00           /* 00000 free    */
+#define T_FLOOR 0x01           /* 00001 free    */
+#define T_SPIKES 0x02          /* 00010 spike   */
+#define T_PILLAR 0x03          /* 00011 none    */
+#define T_GATE 0x04            /* 00100 gate    */
+#define T_BTN_STUCK 0x05       /* 00101 none    */
+#define T_BTN_DROP 0x06        /* 00110 event   */
+#define T_TAPESTRY 0x07        /* 00111 tapest  */
+#define T_BP_TOP 0x08          /* 01000 none    */
+#define T_BP_BOTTOM 0x09       /* 01001  none   */
+#define T_POTION 0x0A          /* 01010 potion  */
+#define T_LOOSE 0x0B           /* 01011 none    */
+#define T_TAPESTRY_TOP 0x0C    /* 01100 ttop    */
+#define T_MIRROR 0x0D          /* 01101 none    */
+#define T_DEBRIS 0x0E          /* 01110 none    */
+#define T_BTN_RAISE 0x0F       /* 01111 event   */
+#define T_EXIT_LEFT 0x10       /* 10000 none    */
+#define T_EXIT_RIGHT 0x11      /* 10001 none    */
+#define T_CHOPPER 0x12         /* 10010 chomp   */
+#define T_TORCH 0x13           /* 10011 none    */
+#define T_WALL 0x14            /* 10100 wall    */
+#define T_SKELETON 0x15        /* 10101 none    */
+#define T_SWORD 0x16           /* 10110 none    */
+#define T_BALCONY_LEFT 0x17    /* 10111 none    */
+#define T_BALCONY_RIGHT 0x18   /* 11000 none    */
+#define T_LATTICE_PILLAR 0x19  /* 11001 none    */
+#define T_LATTICE_SUPPORT 0x1A /* 11010 none    */
+#define T_LATTICE_SMALL 0x1B   /* 11011 none    */
+#define T_LATTICE_LEFT 0x1C    /* 11100 none    */
+#define T_LATTICE_RIGHT 0x1D   /* 11101 none    */
+#define T_TORCH_DEBRIS 0x1E    /* 11110 none    */
+#define T_NULL 0x1F            /* 11111 none    */
+/*
+  none   0x00 This value is used allways for this group
+  free   0x00 +Nothing -Blue line
+  free   0x01 +Spot1   -No blue line
+  free   0x02 +Spot2   -Diamond
+  free   0x03 Window
+  free   0xFF +Spot3   -Blue line?
+  spike  0x00 Normal (allows animation)
+  spike  0x01 Barely Out
+  spike  0x02 Half Out
+  spike  0x03 Fully Out
+  spike  0x04 Fully Out
+  spike  0x05 Out?
+  spike  0x06 Out?
+  spike  0x07 Half Out?
+  spike  0x08 Barely Out?
+  spike  0x09 Disabled
+  gate   0x00 Closed
+  gate   0x01 Open
+  tapest 0x00 -With Lattice
+  tapest 0x01 -Alternative Design
+  tapest 0x02 -Normal
+  tapest 0x03 -Black
+  potion 0x00 Empty
+  potion 0x01 Health point
+  potion 0x02 Life
+  potion 0x03 Feather Fall
+  potion 0x04 Invert
+  potion 0x05 Poison
+  potion 0x06 Open
+  ttop   0x00 -With lattice
+  ttop   0x01 -Alernative design
+  ttop   0x02 -Normal
+  ttop   0x03 -Black
+  ttop   0x04 -Black
+  ttop   0x05 -With alternative design and bottom
+  ttop   0x06 -With bottom
+  ttop   0x07 -With window
+  chomp  0x00 Normal
+  chomp  0x01 Half Open
+  chomp  0x02 Closed
+  chomp  0x03 Partially Open
+  chomp  0x04 Extra Open
+  chomp  0x05 Stuck Open
+  wall   0x00 +Normal  -Blue line
+  wall   0x01 +Normal  -No Blue line
+*/
 
-/* WALLS */
-#define MAPS_OBJ_ANT_1 0x13
-#define MAPS_OBJ_ANT_2 0x33
-#define MAPS_OBJ_BAL_1 0x01
-#define MAPS_OBJ_BAL_2 0x11
-#define MAPS_OBJ_BAL_3 0x21
-#define MAPS_OBJ_BAL_D 0x26
-#define MAPS_OBJ_BAL_U 0x2f
-#define MAPS_OBJ_BFLO  0x0b
-#define MAPS_OBJ_BRA_1 0x1e
-#define MAPS_OBJ_BRA_2 0x3e
-#define MAPS_OBJ_BRT_1 0x0e
-#define MAPS_OBJ_BRT_2 0x2e
-#define MAPS_OBJ_CDB_D 0x28
-#define MAPS_OBJ_CDB_U 0x09
-#define MAPS_OBJ_COL_1 0x03
-#define MAPS_OBJ_COL_2 0x23
-#define MAPS_OBJ_ESP_1 0x16
-#define MAPS_OBJ_ESP_2 0x36
-#define MAPS_OBJ_ESQU  0x15
-#define MAPS_OBJ_FREE  0x00
-#define MAPS_OBJ_PAR_1 0x14
-#define MAPS_OBJ_PAR_2 0x34
-#define MAPS_OBJ_PIN_1 0x02
-#define MAPS_OBJ_PIN_2 0x22
-#define MAPS_OBJ_PLV_L 0x30
-#define MAPS_OBJ_PLV_R 0x31
-#define MAPS_OBJ_POS_1 0x0a
-#define MAPS_OBJ_POS_2 0x2a
-#define MAPS_OBJ_PUE_1 0x24
-#define MAPS_OBJ_PUE_U 0x0c
-#define MAPS_OBJ_SIER  0x32
-#define MAPS_OBJ_VEN_L 0x37
-#define MAPS_OBJ_VEN_R 0x38
-
-/* BACKS */
-#define MAPS_BCK_VEN_R 0x00
-#define MAPS_BCK_BRK_1 0x01
-#define MAPS_BCK_BRK_2 0x02
-#define MAPS_BCK_BRK_3 0xFF
-#define MAPS_BCK_VEN_1 0x03
-#define MAPS_BCK_PUE_U 0x01
-#define MAPS_BCK_PUE_D 0x02
-#define MAPS_BCK_POS_G 0x01
-#define MAPS_BCK_POS_C 0x02
-#define MAPS_BCK_POS_W 0x03
-#define MAPS_BCK_POS_I 0x04
-#define MAPS_BCK_POS_A 0x05
-#define MAPS_BCK_ALF_1 0x00
-#define MAPS_BCK_ALF_2 0x01
-#define MAPS_BCK_ALF_3 0x02
-#define MAPS_BCK_PIN_1 0x00
-#define MAPS_BCK_PIN_2 0x01
-#define MAPS_BCK_PIN_3 0x02
-#define MAPS_BCK_PIN_4 0x03
-
-
-#define MAP_B_NONE 0
+#define MAP_B_NONE T_EMPTY
 #define MAP_F_WALL 0
 #define MAP_F_FREE 0
 
