@@ -85,7 +85,45 @@ int levelUse(void* level) {
 }
 
 tTile levelGetTile(tRoom* room,int x, int y) {
-	tTile result;
+	tTile   result;
+	tTileId fore;
+	tModId  back;
+
+	fore=room->fore[x+12*y];
+	back=room->back[x+12*y];
+	
+	switch (fore) { /* TODO: use arrays and a better algorithm */
+	case T_EMPTY:
+		result.walkable=0;
+		result.block=0;
+		result.hasTorch=0;
+		result.hasFloor=0;
+		result.hasBrokenTile=0;
+		result.isWall=0;
+		result.hasSword=0;
+		break;
+	case T_FLOOR:
+	case T_TORCH:
+	case T_SWORD:
+	case T_DEBRIS:
+		result.walkable=1;
+		result.block=0;
+		result.hasTorch=(fore==T_TORCH);
+		result.hasFloor=1;
+		result.hasBrokenTile=(fore==T_DEBRIS);
+		result.isWall=0;
+		result.hasSword=(fore==T_SWORD);
+		break;
+	case T_WALL:
+		result.walkable=0;
+		result.block=1;
+		result.hasTorch=0;
+		result.hasFloor=0;
+		result.hasBrokenTile=0;
+		result.isWall=1;
+		result.hasSword=0;
+		break;
+	}
 	return result;
 }
 

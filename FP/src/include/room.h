@@ -37,6 +37,8 @@ room.h: FreePrince : Draw Screen
 #include "maps.h"
 
 typedef char tRoomId;
+typedef unsigned char tTileId;
+typedef unsigned char tModId;
 
 typedef struct {
 	tRoomId        id;
