@@ -31,6 +31,7 @@ resources.h: Princed Resources : Resource Handler headers
 */
 
 #include <SDL/SDL.h>
+#include <stdlib.h>
 #include "kernel.h"
 #include "resources.h"
 #include "output.h"
@@ -46,7 +47,7 @@ int kernel(int optionflag,int level) {
 	tData* testResource;
 	SDL_Surface *screen, *test;
 	SDL_Event e;
-	int i;
+	/* int i; */
 	
 	screen = outputInit();
 
