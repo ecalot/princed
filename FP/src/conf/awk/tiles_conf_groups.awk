@@ -34,9 +34,17 @@
 
 $0 !~ /^[ ]*(#.*|tile .*|[ ]*)$/ {
 	for (i=1;i<=NF;i++) {
-		if (!total[$i]) total[$i]=0
-		groups[$i,total[$i]]=tile
-		total[$i]++;
+		group=$i
+		back=0
+		if (group ~ /@/) {
+			split(group,a,"@")
+			group=a[1]
+			back=a[2]+1
+		}
+		if (!total[group]) total[group]=0
+		groups[group,total[group]]=tile
+		backs[group,total[group]]=back
+		total[group]++;
 	}
 }
 
@@ -47,9 +55,15 @@ END {
 	for (group in total) {
 		offsets[group]=offset
 		for (i=0;i<total[group];i++) {
-			printf "%s%s+1",coma,groups[group,i]
-			coma=","
-			offset++
+			if (backs[group,total[group]]) { #if there is a back selected add them
+				printf "%s%s+1,%d",coma,groups[group,i]+128,backs[group,total[group]]
+				coma=","
+				offset+=2
+			} else {
+				printf "%s%s+1",coma,groups[group,i]
+				coma=","
+				offset++
+			}
 			if (offset%5==0) printf("\\\n")
 		}
 		printf ",0"
