@@ -149,7 +149,8 @@ room.o: ker/room.c include/room.h include/resources.h include/res_conf.h
 	$(CC) -c ker/room.c $(OPTIONS)
 
 kid.o: ker/kid.c include/kid.h include/resources.h include/res_conf.h\
-       include/states.h include/states_conf.h include/res_conf.h\
+       include/states.h include/states_conf.h $(GENERATEDRESHEADERS)\
+			 $(GENERATEDTILHEADERS) include/res_conf.h\
        include/types.h include/tiles.h include/tiles_conf.h
 	$(INFO) Compiling kernel kid object...
 	$(CC) -c ker/kid.c $(OPTIONS)
@@ -181,12 +182,13 @@ config.o: res/config.c include/resources.h include/res_conf.h
 
 states.o: ker/states.c include/states.h include/states_conf.h\
           include/resources.h include/res_conf.h include/types.h\
-					include/tiles.h include/tiles_conf.h
-	$(INFO) compiling kernel states module...
+					include/tiles.h include/tiles_conf.h $(GENERATEDRESHEADERS)\
+					$(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)
+	$(INFO) Compiling kernel states module...
 	$(CC) -c ker/states.c $(OPTIONS)
 
 tiles.o: res/tiles.c include/tiles.h include/tiles_conf.h
-	$(INFO) compiling resource tile classification module...
+	$(INFO) Compiling resource tile classification module...
 	$(CC) -c res/tiles.c $(OPTIONS)
 
 

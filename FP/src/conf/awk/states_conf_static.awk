@@ -65,17 +65,24 @@ BEGIN {
 		moveType=tolower($1)
 # conditions option
 	} else if (listType == "conditions") {
+		#ignore "none"
 		if ($1=="none") next
+		#if there is a new group add a "break"
 		if (oldType != listType ) {
 			oldType=listType
 			currentCondition++
 			printf("\t{esLast,0}, /* condition number %d */\\\n",currentCondition)
 			conditions=currentCondition+1
 		}
+		#add condition
 		currentCondition++
 		if ($2!=sprintf("%d",$2)) {
 			if (1) {      #defines[$2]) {
-				result=sprintf("STATES_COND_%s /* %d */",$2,0) #defines[$2])
+				if ($1~/^Map/) {
+					result=sprintf("TG_%s",$2,0)
+				} else {
+					result=sprintf("STATES_COND_%s",$2,0)
+				}
 			} else {
 				if ($2) {
 					printf("Parsing error in states.conf: Condition modifier '%s' not recognized on uncommented line %d.\n",$2,NR)>"/dev/stderr"
