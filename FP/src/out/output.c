@@ -77,18 +77,17 @@ outputLoadBitmap(const unsigned char* data, int size,
   * information ti build it invert is 0 when no invertion is needed and 
   * non-zero when an inversion is performed	*/
 
-	/* Dummy function */
 	SDL_Surface* result;
 	int i,j;
 	SDL_Color colors[256];
-																				        
+
 	/* Fill colors with color information */
 	for(i=0;i<256;i++) {
 		colors[i].r=i;
 		colors[i].g=255-i;
 		colors[i].b=255-i;
 	}
-	
+
 	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
 	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n", invert, firstColorTransparent, size);
 
@@ -157,7 +156,7 @@ SDL_Surface *outputInit()
 	SDL_Color colors[256];
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
 	atexit(outputStop);
-																				        
+
 	/* Fill colors with color information */
 	for(i=0;i<256;i++) {
 		colors[i].r=255-i;
