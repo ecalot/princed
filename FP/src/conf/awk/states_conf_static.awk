@@ -32,6 +32,9 @@ BEGIN {
 	currentCondition=-1
 	currentAction=-1
 	exitNextState=-1
+
+	exitError=0
+
 	printf("#define STATES_MOVETYPES_ABSOLUTEONSTART 0\n")
 	printf("#define STATES_MOVETYPES_ABSOLUTEONSTOP 1\n")
 	printf("#define STATES_MOVETYPES_RELATIVETURN 2\n")
@@ -133,6 +136,7 @@ function addExit (name) {
 	} else if (listType == "level") {
 		if (arrayLevel[$1]) {
 			printf("Parsing error in %s: Redeclaration of level '%d' on line %d.\n",FILENAME,$1,FNR)>"/dev/stderr"
+			exitError=23
 			exit 23
 		} else {
 			arrayLevel[$1]=currentAction+1 #i'm adding 1 to leave the 0 as "not set"
@@ -144,6 +148,7 @@ function addExit (name) {
 	} else if (listType == "guardskill") {
 		if (arrayGuard[$1]) {
 			printf("Parsing error in %s: Redeclaration of guard skill '%d' on line %d.\n",FILENAME,$1,FNR)>"/dev/stderr"
+			exitError=25
 			exit 25
 		} else {
 			arrayGuard[$1]=currentAction+1 #i'm adding 1 to leave the 0 as "not set"
@@ -166,14 +171,21 @@ function addExit (name) {
 /^\t[^\t# ].*$/ {
 	actionArray[currentAction,"description"]=rememberAction
 	actionArray[currentAction,"isFirstInState"]=currentState
-	if ((currentAnimation)&&(currentAnimation==startAnimation)) {
+	if ((priorActionLine)&&(currentAnimation==startAnimation)) {
 		printf("Parsing error in %s: Missing action animation from line %d to line %d.\n",FILENAME,priorActionLine,FNR-1)>"/dev/stderr"
+		exitError=27
 		exit 27
 	}
 	actionArray[currentAction,"animationStart"]=startAnimation
 	actionArray[currentAction,"animationSize"]=currentAnimation-startAnimation
 	actionArray[currentAction,"conditionStart"]=conditions
 	actionArray[currentAction,"nextState"]=nextState
+	if ((priorActionLine)&&(!nextState)) {
+		printf("Parsing error in %s: Missing next state in action from line %d to line %d.\n",FILENAME,priorActionLine,FNR-1)>"/dev/stderr"
+		exitError=28
+		exit 28
+	}
+	nextState=""
 	actionArray[currentAction,"moveType"]=moveType
 	actionArray[currentAction,"moveOffset"]=moveOffset
 	actionArray[currentAction,"lastComma"]=","
@@ -206,11 +218,12 @@ function addExit (name) {
 }
 
 END {
+	if (exitError) exit exitError
 	actionArray[currentAction,"description"]=rememberAction
 	actionArray[currentAction,"isFirstInState"]=currentState
 	if ((currentAnimation)&&(currentAnimation==startAnimation)) {
 		printf("Parsing error in %s: Missing action animation from line %d to line %d.\n",FILENAME,priorActionLine,FNR-1)>"/dev/stderr"
-		exit 27
+		exit 29
 	}
 	actionArray[currentAction,"animationStart"]=startAnimation
 	actionArray[currentAction,"animationSize"]=currentAnimation-startAnimation
