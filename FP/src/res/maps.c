@@ -1,3 +1,124 @@
+/*  FreePrince - POP1 remake
+    Copyright (C) 2003,2004 Princed Development Team
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+    The authors of this program may be contacted at http://forum.princed.com.ar
+*/
+
+/*
+maps.c: Freeprince : Map handling library
+¯¯¯¯¯¯
+ Copyright 2003,2004 Princed Development Team
+  Created: 24 Mar 2003
+
+  Author: Enrique Calot <ecalot.cod@princed.com.ar>
+
+ Note:
+  DO NOT remove this copyright notice
+*/
+
+#include "maps.h"
+
+static unsigned char* slevel;
+static int sscreen;
+
+//Privates
+
+void maps_getStartPosition(char* pantalla, char* p, char *b,tDirection *sentido,tDirection *sentido2) {
+	int valor;
+
+	*pantalla =slevel[MAPS_BLOCK_OFFSET_START_POSITION];
+	valor     =slevel[MAPS_BLOCK_OFFSET_START_POSITION+1];
+	*b        =(valor%10);
+	*p        =(valor/10);
+	*sentido  =(slevel[MAPS_BLOCK_OFFSET_START_POSITION+2])?eRight:eLeft;
+	*sentido2 =(slevel[MAPS_BLOCK_OFFSET_START_POSITION+6])?eRight:eLeft;
+}
+
+//Publics
+
+int levelUse(void* level) {
+/* Sets the level for future use using the resource given
+ * Initializes the position in the beginning of the level
+ *
+ * Return 0 on success
+ */
+	
+	//Remember level
+	slevel=level;
+
+	//Set start screen
+	sscreen=slevel[MAPS_BLOCK_OFFSET_START_POSITION];
+
+	printf("levelUse: using new level\n");	
+	return level==NULL;
+}
+
+int levelGetScreenWalls(unsigned char* data,unsigned char* borders) {
+/* This will save a screen map into data.
+ * 
+ * data is a pre-allocated array with 10x3=30 bytes with the screen map
+ * dumped over it in left-to-right/upper-to-lower oreder. 
+ *
+ * borders is another pre-allocated array with 10 upper bytes, 10 bottom
+ * bytes, 3 left-side bytes, 3 right-side bytes and 4 bytes for the
+ * corners. This is another 30 bytes. The order has to be determined!
+ * In case the screen doesn't exist the 0x00 (free foreground) byte will
+ * be returned for the bottom and right sides, the wall foreground for
+ * the left side and the simple tile byte for the top side.
+ */
+
+	memcpy(data,slevel+MAPS_BLOCK_OFFSET_WALL+30*(sscreen-1),30);
+	return 0;
+}
+
+int levelGetScreenItems(unsigned char* data,unsigned char* borders) {
+/* This will save a screen map modifiers into data.
+ *
+ * data and borders are in the same form as Walls but they contain
+ * additional modifiers that must be defined in maps.h.
+ * e.g. MAPS_ITEMS_DOOROPEN 0x01
+ */
+
+	memcpy(data,slevel+MAPS_BLOCK_OFFSET_BACK+30*(sscreen-1),30);
+	return 0;
+}
+
+int levelMoveScreen(tDirection direction) {
+/* Moves the position screen that is inside the library
+ *
+ * Returns 0 id the screen didn't exist and the screen id
+ * in case the screen was moved
+ */
+ 
+	return sscreen=slevel[MAPS_BLOCK_OFFSET_LINK+((sscreen-1)*4)+direction]; 
+}
+
+int levelGetGuards(/* TODO: add modifiers */);
+int levelGetDoorMap(/* TODO: idem */);
+
+int levelGetStarPosition(int* screen, int* position); /* TODO: define
+		         position as an int or using x,y coordinate system*/
+
+int levelGetInformation(int* thisScreen, char* UDLRscreens, char* cornerScreens);
+/* TODO: define the format of cornerscreens */
+
+
+#ifdef OLD_MAP_SRC
+
 /***************************************************************\
 |                           Prototipos                          |
 \***************************************************************/
@@ -442,15 +563,6 @@ void mSetDebugPosition(tLevel* lev,char pantalla, char p, char b,char sentido) {
 	mSetArray(lev,dp,MAPS_BLOCK_OFFSET_START_POSITION+4,2,MAPS_BLOCK_OFFSET_VALIDATOR_LINK);
 }
 
-void mGetStartPosition(tLevel* lev,char* pantalla, char* p, char *b,char *sentido,char *sentido2) {
-	*pantalla =(*lev).levelArray[MAPS_BLOCK_OFFSET_START_POSITION];
-	char valor=(*lev).levelArray[MAPS_BLOCK_OFFSET_START_POSITION+1];
-	*b        =(valor%10);
-	*p        =(valor/10);
-	*sentido  =((*lev).levelArray[MAPS_BLOCK_OFFSET_START_POSITION+2])?1:0;
-	*sentido2 =((*lev).levelArray[MAPS_BLOCK_OFFSET_START_POSITION+6])?1:0;
-}
-
 void mSetStartPosition(tLevel* lev,char pantalla, char p, char b,char sentido,char sentido2) {
 	unsigned char valor=pantalla;
 	int location=MAPS_BLOCK_OFFSET_START_POSITION;
@@ -491,10 +603,6 @@ void mSetWall  (tLevel* lev,char pantalla,char p,char b,char valor) {
 	(*lev).levelArray[location]=valor;
 }
 
-char mGetWall (tLevel* lev,char pantalla,char p,char b) {
-	return (*lev).levelArray[MAPS_BLOCK_OFFSET_WALL+30*(pantalla-1)+10*p+b];
-}
-
 void mSetBack (tLevel* lev,char pantalla,char p,char b,char valor) {
 	int location=MAPS_BLOCK_OFFSET_BACK+30*(pantalla-1)+10*p+b;
 
@@ -502,21 +610,6 @@ void mSetBack (tLevel* lev,char pantalla,char p,char b,char valor) {
 	(*lev).levelArray[location]=valor;
 }
 
-char mGetBack (tLevel* lev,char pantalla,char p,char b) {
-	return (*lev).levelArray[MAPS_BLOCK_OFFSET_BACK+30*(pantalla-1)+10*p+b];
-}
-
-void mSetLink (tLevel* lev,char pantalla,char tipo,char valor) {
-	if ((pantalla<25) && (pantalla) && (valor<25)) {
-		int location=(MAPS_BLOCK_OFFSET_LINK+((pantalla-1)*4)+tipo);
-		(*lev).levelArray[MAPS_BLOCK_OFFSET_VALIDATOR_LINK]+=(*lev).levelArray[location]-valor;
-		(*lev).levelArray[location]=valor;
-	}
-}
-
-char mGetLink (tLevel* lev,char pantalla,char tipo) {
-	return (*lev).levelArray[MAPS_BLOCK_OFFSET_LINK+((pantalla-1)*4)+tipo];
-}
 
 /***************************************************************\
 |                   Abstract Guard Handling                     |
@@ -868,3 +961,4 @@ char mSaveDAT(char* vFile,tLevel* lev) {
   return 1;
 }
 
+#endif
