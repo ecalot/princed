@@ -101,13 +101,7 @@ typedef struct {
 } tRoom;
 
 typedef struct {
-	/* Physical attributes */
-	int walkable;
-	int block;
-	
 	/* Graphical arributes */
-	int hasBigPillar;
-	int isExit;
 	void* moreInfo;
 	int bricks;
 

@@ -91,12 +91,8 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		if (y==4) roomId=room->links[eDown];
 		if (x==11)roomId=room->links[eRight];
 		result.bricks=0;
-		result.hasBigPillar=0;
 		if (roomId<24)
 			result.moreInfo=room->level->screenGates[roomId-1][result.back];
-		result.walkable=1;
-		result.isExit=(result.code==TILE_EXIT_LEFT)?1:((result.code==TILE_EXIT_RIGHT)?2:0);
-		result.block=0;
 		break;
 	case TILE_BTN_RAISE:
 	case TILE_BTN_DROP:
@@ -106,13 +102,9 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		if (y==4) roomId=room->links[eDown];
 		if (x==11)roomId=room->links[eRight];
 		result.bricks=0;
-		result.hasBigPillar=0;
-		result.walkable=1;
 		/* the case that a button is in tile 0 should never happen, but we'll care about it just in case */
 		if (roomId<24)
 			result.moreInfo=room->level->screenPressables[roomId-1][result.back];
-		result.isExit=0;
-		result.block=0;
 		break;
 	case TILE_FLOOR:
 	case TILE_TORCH:
@@ -128,43 +120,17 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case TILE_PILLAR:
 	case TILE_DEBRIS:
 		result.bricks=(result.code==TILE_FLOOR)?result.back:0;
-		result.hasBigPillar=(result.code==TILE_BP_BOTTOM);
-		result.walkable=1;
-		result.isExit=(result.code==TILE_EXIT_LEFT)?1:((result.code==TILE_EXIT_RIGHT)?2:0);
-		result.block=0;
 		break;
 	case TILE_WALL:
 		result.bricks=0;
-		result.hasBigPillar=0;
-		result.walkable=0;
-		result.isExit=0;
-		result.block=1;
 		break;
 	case TILE_EMPTY:
 	case TILE_TAPESTRY_TOP:
 	case TILE_BP_TOP:
 	default:
-		result.hasBigPillar=(result.code==TILE_BP_TOP)*2;
 		result.bricks=result.back;
-		result.walkable=0;
-		result.isExit=0;
-		result.block=0;
 		break;
 	}
-	/*isIn(result,TILES_PILLAR)=isIn(result,TILES_PILLAR);
-	isIn(result,TILES_CHOPPER)=isIn(result,TILES_CHOPPER);
-	isIn(result,TILES_POTION)=isIn(result,TILES_POTION);
-	isIn(result,TILES_SPIKES)=isIn(result,TILES_SPIKES);
-	isIn(result,TILES_BROKENTILE)=isIn(result,TILES_BROKENTILE);
-	isIn(result,TILES_FLOOR)=isIn(result,TILES_FLOOR);
-	isIn(result,TILES_GATEFRAME)=isIn(result,TILES_GATEFRAME);
-	isIn(result,TILES_SKELETON)=isIn(result,TILES_SKELETON);
-	isIn(result,TILES_SWORD)=isIn(result,TILES_SWORD);
-	isIn(result,TILES_TORCH)=isIn(result,TILES_TORCH);
-	isIn(result,TILES_DOOR)=isIn(result,TILES_DOOR);
-	isIn(result,TILES_PRESSABLE)=isIn(result,TILES_PRESSABLE);
-	isIn(result,TILES_RAISE)=isIn(result,TILES_RAISE);
-	isIn(result,TILES_WALL)=isIn(result,TILES_WALL);*/
 	return result;
 }
 
@@ -274,7 +240,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		);
 	}
 	/* exit_left/left */
-	if (left.isExit==2) {
+	if (isIn(left,TILE_EXIT_RIGHT)) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[7],
 			(x-1)*TILE_W,
@@ -290,20 +256,19 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		);
 	}
 	/* pillar_big_up/left */
-	if (left.hasBigPillar) {
-		if (left.hasBigPillar==1) {
+	if (isIn(left,TILE_BP_BOTTOM)) {
 			outputDrawBitmap(
 				roomGfx.environment->pFrames[83],
 				(x-1)*TILE_W,
 				y*TILE_H+2
 			);
-		} else {
+	}
+	if (isIn(left,TILE_BP_TOP)) {
 			outputDrawBitmap(
 				roomGfx.environment->pFrames[85],
 				(x-1)*TILE_W,
 				y*TILE_H+3
 			);
-		}
 	}
 	/* pressable/left */
 	if (isIn(left,TILES_PRESSABLE)) {
@@ -406,21 +371,20 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		);
 	}
 	/* exit_left/this */
-	if (tile.isExit) {
-		if (tile.isExit==2) {
+	if (isIn(tile,TILE_EXIT_RIGHT)) {
 			outputDrawBitmap(
 				roomGfx.environment->pFrames[5],
 				(x-1)*TILE_W,
 				y*TILE_H
 			);
-		} else {
+	}
+	if (isIn(tile,TILE_EXIT_LEFT)) {
 			outputDrawBitmap(
 				roomGfx.environment->pFrames[9],
 				(x-1)*TILE_W,
 				y*TILE_H
 			);
 			drawExit(x*TILE_W+8,(y-1)*TILE_H-1,((tGate*)tile.moreInfo)->frame);
-		}
 	}
 	/* pillar/this */
 	if (isIn(tile,TILES_PILLAR)) {
@@ -431,26 +395,25 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		);
 	}
 	/* big_pillar/this */
-	if (tile.hasBigPillar) {
-		if (tile.hasBigPillar==1) {
+	if (isIn(tile,TILE_BP_BOTTOM)) {
 			outputDrawBitmap(
 				roomGfx.environment->pFrames[82],
 				(x-1)*TILE_W,
 				y*TILE_H
 			);
-		} else {
+	}
+	if (isIn(tile,TILE_BP_TOP)) {
 			outputDrawBitmap(
 				roomGfx.environment->pFrames[87],
 				(x-1)*TILE_W+8,
 				y*TILE_H+3
 			);
-		}
 	}
 	/* pressable/this */
 	if (isIn(tile,TILES_PRESSABLE)) {
 		if (isIn(tile,TILES_RAISE)) {
 			outputDrawBitmap(
-				roomGfx.environment->pFrames[(((tPressable*)tile.moreInfo)->action==eNormal)?(58-((left.walkable)&&(!isIn(left,TILES_RAISE)))):58],
+				roomGfx.environment->pFrames[(((tPressable*)tile.moreInfo)->action==eNormal)?(58-((isIn(left,TILES_WALKABLE))&&(!isIn(left,TILES_RAISE)))):58],
 				(x-1)*TILE_W,
 				y*TILE_H+((((tPressable*)tile.moreInfo)->action==eNormal)?0:1)
 			);
@@ -517,7 +480,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
 	
 	/* normal */
-	if (tile.walkable) {
+	if (isIn(tile,TILES_WALKABLE)) {
 		if (isIn(tile,TILES_PRESSABLE)) {
 			outputDrawBitmap( /* TODO: drop has resource 59 for unpressed/reise 47? check game */
 				roomGfx.environment->pFrames[59],
@@ -575,7 +538,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 			/*	drawGateTop(x*TILE_W,(y-1)*TILE_H+3,((tGate*)tile.moreInfo)->frame);*/
 			}
 			/* big_pillar/left */
-			if (dleft.hasBigPillar==2) {
+			if (isIn(dleft,TILE_BP_TOP)) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[86],
 					(x-1)*TILE_W,
@@ -601,9 +564,16 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 		}
 	}
 	/* upper objects */
-	if (tile.isExit) {
+	if (isIn(tile,TILE_EXIT_LEFT)) {
 				outputDrawBitmap(
-			roomGfx.environment->pFrames[(tile.isExit==1)?6:8],
+			roomGfx.environment->pFrames[6],
+			x*TILE_W,
+			(y-1)*TILE_H+3
+		);
+	}
+	if (isIn(tile,TILE_EXIT_RIGHT)) {
+				outputDrawBitmap(
+			roomGfx.environment->pFrames[8],
 			x*TILE_W,
 			(y-1)*TILE_H+3
 		);
@@ -623,7 +593,7 @@ void drawForePanel(tRoom* room,int x, int y) {
 		);
 	}
 	/* big pillar */
-	if (tile.hasBigPillar==1) {
+	if (isIn(tile,TILE_BP_BOTTOM)) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[84],
 			x*TILE_W-24,
