@@ -27,6 +27,7 @@ pr.c: Main source file for Princed Resources
 	Authors
 	 Coding & main routines
 	  Enrique Calot
+	  Santiago Zamora
 
 	 Graphic compression algorithms
 	  Tammo Jan Dijkema
@@ -46,7 +47,7 @@ pr.c: Main source file for Princed Resources
   DO NOT remove this copyright notice
 */
 
-//Headers
+/* Headers */
 #include <stdio.h>
 #include <string.h>
 
@@ -64,6 +65,9 @@ pr.c: Main source file for Princed Resources
 #ifndef DLL
  #ifdef UNIX
   #include <unistd.h>
+  #ifndef LINUX
+   #include "getopt.h"
+  #endif
  #else
   #include "getopt.h"
  #endif
@@ -73,24 +77,34 @@ pr.c: Main source file for Princed Resources
 |                      Main working functions                   |
 \***************************************************************/
 
-int prExportDat(const char* vDatFile, const char* vDirName, const char* vResFile) {
-	return prExportDatOpt(vDatFile,vDirName,vResFile,0,NULL,NULL,"");
+FILE* outputStream=NULL;
+
+#ifdef DLL
+void prSetOutput(FILE* output) {
+	outputStream=output;
 }
+#endif
+
+#ifdef DLL
+int prExportDat(const char* vDatFile, const char* vDirName, const char* vResFile) {
+	outputStream=stdout;
+	return prExportDatOpt(vDatFile,vDirName,vResFile,export_flag,NULL,NULL,NULL);
+}
+#endif
 
 int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char* vDatFileName,const char* datAuthor, const char* backupExtension) {
 	/*
 		Arguments:
 			char* vDatFile        - full Path to the dat file;
-			                        if file use it, if dir, perform it for
+			                        if file use it, if directory, perform it for
 			                        all files
 			char* vDirName        - full Path to the extracting folder
 			                        (doesn't need to exist)
 			char* vResFile        - full Path to the resources XML file
-			                        (resources.xml by default)
-			                        No NULL
+			                        NULL is the default file resources.xml
 			char opt              - program options, see below
-			char * vDatFileName   - name of the file to be extracted
-			                        NULL means predict it from vDatFile (DISABLED!!!)
+			char* vDatFileName    - name of the file to be extracted
+			                        NULL means predict it from vDatFile
 			const char* datAuthor - Author's name when extracting PLV's,
 			                        NULL is default
 			const char* backupExtension
@@ -104,9 +118,9 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 			verbose_flag   - explain what is being done
 			recursive_flag - searches for all dat files (only if vDatFile
 			                 is not a dat file and vDatFileName is NULL)
-x			force_flag     - default option, you cannot disable it,
+			force_flag     - default option, you cannot disable it,
 			                 so please make a backup of your files
-x			backup_flag    - backup your files
+			backup_flag    - backup your files
 
 
 		Return values:
@@ -120,37 +134,59 @@ x			backup_flag    - backup your files
 			-7 XML File not found
 	*/
 
-	//Declare variables
+	/* Declare variables */
 	tResource* r[MAX_RES_COUNT];
 	int a;
-	const char defaultXmlFile[]=RES_XML_RESOURC_XML;
-	//Set default values
-	if (vResFile==NULL) vResFile=defaultXmlFile; //TODO: Send to prMain or main
+	const char* aux;
+	char* currentDatFileName;
+	char* currentDatFile;
 
-	//Parse XML and extract the file //TODO: XML parser outside the function
-	a=parseFile(vResFile,vDatFileName,r);
-	if (a<0) return a-3; //parsing errors
-	a=extract(vDatFile,vDirName,r,opt,vDatFileName,datAuthor);
-	return a; //extracting errors/no errors
+	currentDatFile=strallocandcopy(vDatFileName);
+
+	parseGivenPath(currentDatFile);
+
+	if (vDatFileName==NULL) { /* if no special dat file was specified, a path parsed will be used */
+		aux=getFileNameFromPath(vDatFile);
+	} else {
+		aux=currentDatFile;
+	}
+	currentDatFileName=strallocandcopy(aux);
+
+	/* Parse XML and export the file */
+	a=parseFile(vResFile,currentDatFileName,r);
+	if (a<0) {
+		/* parsing errors */
+		a-=3;
+	} else {
+		/* exporting errors/no errors */
+		a=extract(vDatFile,vDirName,r,opt,currentDatFileName,datAuthor,backupExtension);
+	}
+	free(currentDatFileName);
+	free(currentDatFile);
+	freePartialList();
+
+	return a;
 }
 
+#ifdef DLL
 int prImportDat(const char* vDatFile, const char* vDirName, const char* vResFile) {
-	return prImportDatOpt(vDatFile,vDirName,vResFile,0,NULL,"");
+	outputStream=stdout;
+	return prImportDatOpt(vDatFile,vDirName,vResFile,0,NULL,NULL);
 }
+#endif
 
 int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char* vDatFileName, const char* backupExtension) {
 	/*
 		Arguments:
 			char* vDatFile        - full Path to the dat file;
-			                        if file use it, if dir, perform it for
+			                        if file use it, if directory, perform it for
 			                        all files
 			char* vDirName        - full Path to the extracting folder
 			                        (doesn't need to exist)
 			char* vResFile        - full Path to the resources XML file
 			                        (resources.xml by default)
-			                        No NULL
 			char opt              - program options, see below
-			char * vDatFileName   - name of the file to be extracted
+			char *vDatFileName    - name of the file to be extracted
 			                        NULL means predict it from vDatFile
 			const char* backupExtension
 			                      - If backup_flag is set, the string to attach
@@ -161,9 +197,9 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 			verbose_flag   - explain what is being done
 			recursive_flag - searches for all dat files (only if vDatFile
 			                 is not a dat file and vDatFileName is NULL)
-x			force_flag     - default option, you cannot disable it,
-			                 so please make a backup of your files
-x			backup_flag    - backup your files
+			force_flag     - If not set and the file exists it will prompt
+			                 for action
+			backup_flag    - backup your files
 
 
 		Return values:
@@ -172,146 +208,149 @@ x			backup_flag    - backup your files
 			-3 No memory
 			-4 XML Attribute not recognized
 			-5 XML File not found
-			00 File succesfully compiled
+			00 File successfully imported
 			positive number: number of missing files
 	*/
 
-	//Declare variables
+	/* Declare variables */
 	tResource* r[MAX_RES_COUNT];
 	int a;
-	const char defaultXmlFile[]=RES_XML_RESOURC_XML;
+	const char* aux;
+	char* currentDatFileName;
 
-	//Set default values
-	if (vResFile==NULL) vResFile=defaultXmlFile;
+	if (vDatFileName==NULL) { /* if no special dat file was specified, a path parsed will be used */
+		aux=getFileNameFromPath(vDatFile);
+	} else {
+		aux=vDatFileName;
+	}
+	currentDatFileName=strallocandcopy(aux);
 
-	//Parse XML and compile files
-	a=parseFile     (vResFile,vDatFileName,r);
-	if (a<0) return a-1;
-	a=compile (vDatFile, vDirName,r,opt,vDatFileName);
+	/* Parse XML and import files */
+	a=parseFile(vResFile,currentDatFileName,r);
+	if (a<0) {
+		/* parsing errors */
+		a-=1;
+	} else {
+		/* importing errors/no errors */
+		a=compile (vDatFile, vDirName,r,opt,currentDatFileName,backupExtension);
+	}
+	free(currentDatFileName);
 	return a;
 }
-
 
 /***************************************************************\
 |                     M A I N   P R O G R A M                   |
 \***************************************************************/
 
-void syntax(FILE* output) {
-	fprintf(output,PARSING_HELP);
+void syntax() {
+	fprintf(outputStream,PARSING_HELP);
 }
 
-int prMain(int* pOption, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor,FILE* output) {
+int prMain(int optionflag, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor,FILE* output) {
 
-	//declare variables
-	int returnValue=1;
-	char* currentDatFileName;
-	const char* aux;
+	/* declare variables */
+	int returnValue;
 
-	if (datfilename==NULL) {
-		aux=getFileNameFromPath(datfile);
-	} else {
-		aux=datfilename;
-	}
+	outputStream=output;
 
-	currentDatFileName=strallocandcopy(aux);
-
-	//do selected tasks
-	if (optionflag&export_flag) {
+	/* do selected tasks */
+	if (hasFlag(export_flag)) { /* Export file */
 		char* array[]=PR_TEXT_EXPORT_ARRAY;
-		fprintf(output,"Extracting '%s' to '%s' with %04x\r\n",datfile,dirName,optionflag);
-		returnValue=prExportDatOpt(datfile,dirName,resFile,optionflag,currentDatFileName,datAuthor,extension);
+		fprintf(output,PR_TEXT_TASK_EXTRACT,datfile,dirName);
+		returnValue=prExportDatOpt(datfile,dirName,resFile,optionflag,datfilename,datAuthor,extension);
 		fprintf(output,PR_TEXT_RESULT,array[-returnValue],returnValue);
-	}	else if (optionflag&classify_flag) {
+	}	else if (hasFlag(classify_flag)) { /* Classify file */
 		char* array[]=PR_TEXT_CLASSIFY_ARRAY;
-		fprintf(output,"Classifing '%s'\r\n",datfile);
+		fprintf(output,PR_TEXT_TASK_CLASSIFY,datfile);
 		returnValue=prVerifyDatType(datfile);
-		fprintf(output,PR_TEXT_RESULT,array[2+returnValue],returnValue);
-	}	else if (optionflag&import_flag) {
+		if (hasFlag(cgi_flag)) {
+			fprintf(output,PR_CGI_TEXT2,returnValue);
+		} else {
+			fprintf(output,PR_TEXT_RESULT,array[2+returnValue],returnValue);
+		}
+	}	else if (hasFlag(import_flag)) { /* Import file */
 		char* array[]=PR_TEXT_IMPORT_ARRAY;
-		fprintf(output,"Compiling '%s' from '%s' with %04x\r\n",datfile,dirName,optionflag);
-		returnValue=prImportDatOpt(datfile,dirName,resFile,optionflag,currentDatFileName,extension);
+		fprintf(output,PR_TEXT_TASK_COMPILE,datfile,dirName);
+		returnValue=prImportDatOpt(datfile,dirName,resFile,optionflag,datfilename,extension);
 		if (returnValue<=0) {
 			fprintf(output,PR_TEXT_RESULT,array[-returnValue],returnValue);
 		} else {
 			fprintf(output,PR_TEXT_RESULT_ERR,returnValue);
 		}
 	} else {
-		syntax(output);
+		syntax();
 		returnValue=-1;
 	}
-	if (currentDatFileName) free(currentDatFileName);
+
 	return returnValue;
 }
 
-//Main program
 #ifndef DLL
 
 /***************************************************************\
 |             Standard executable specific functions            |
 \***************************************************************/
 
-int prStart(int* pOption, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor,FILE* output) {
+int prStart(int optionflag, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor,FILE* output) {
 	int result=1;
+	whatIs selectedFile;
+	outputStream=output;
 
-	//Do CGI tasks
-	if (optionflag&cgi_flag) {
-		optionflag&=(~classify_flag);
-		if (!(optionflag&first_flag)) {
-			fprintf(output,PR_CGI_TEXT1);
-			optionflag|=first_flag;
-		}
-		if (optionflag==cgi_flag) {
-			fprintf(output,PR_CGI_TEXT2,prVerifyDatType(datfile));
-			return 1;
-		} else {
-			optionflag=help_flag;
-		}
-	}
-
-	//Show about
-	if (!(optionflag&first_flag)) {
+	/* Show about or cgi stuff */
+	if (hasFlag(cgi_flag)) {
+		fprintf(output,PR_CGI_TEXT1);
+	} else {
 		fprintf(output,PR_ABOUT);
-		optionflag|=first_flag;
 	}
 
-	//If bad syntax or help screen requested
-	if (optionflag&help_flag) {
-		syntax(output);
+	/* Show version screen if requested */
+	if (hasFlag(version_flag)) {
+		fprintf(output,PARSING_ABOUT);
 		return -1;
 	}
 
-	//If version asked, stop
-	if (optionflag&version_flag) {
+	/* If bad syntax or help screen requested */
+	if (hasFlag(help_flag)) {
+		syntax();
 		return -1;
 	}
 
-	//Perform tasks depending on the argument
-	if (optionflag&import_flag) {
-		//Check out the xml file to get the files to me compiled
+	/* Perform tasks depending on the argument */
+	if (hasFlag(import_flag)) {
+		/* We have to import something, let's see what the parameters are */
 		if (datfile==NULL) {
-			fprintf(output,"Importing all valid dat files from the currect directory\n");
-			importDir(dirName,resFile,pOption,extension,".",output);
-		} else if (isDir(datfile)!=eFile) {
-			fprintf(output,"Importing all valid files from given directory\n");
-			importDir(dirName,resFile,pOption,extension,datfile,output);
-		} else {
-			result=prMain(pOption,extension,dirName,resFile,datfile,datfilename,datAuthor,output);
+			/* no files? let's use the whole current directory */
+			fprintf(output,PR_TEXT_IMPORTING_CURRENT);
+			importDir(dirName,resFile,optionflag,extension,".",output);
+		} else if ((selectedFile=isDir(datfile))!=eFile) {
+			fprintf(output,PR_TEXT_IMPORTING_GIVEN);
+			if ((selectedFile==eDirectory)||(isntADatFile(getFileNameFromPath(datfile),resFile))) {
+				/* it's a directory or doesn't exist (but it's not a dat file) */
+				importDir(dirName,resFile,optionflag,extension,datfile,output);
+			} else {
+				/* it doesn't exist but it's a dat file */
+				result=prMain(optionflag,extension,dirName,resFile,datfile,datfilename,datAuthor,output);
+			}
+		} else { /* it's only one existent file */
+			result=prMain(optionflag,extension,dirName,resFile,datfile,datfilename,datAuthor,output);
 		}
 	} else {
-
-		//Recursive testing for export/classify
+		/* We have to export/classify something, perhaps we'll need to use somerecursive functions */
 		if (datfile==NULL) {
+			/* If nothing, let's use the current dir and check for all the files there */
 			fprintf(output,PR_TEXT_SCANNING_CURRENT);
-			recurseDirectory(".",pOption,extension,dirName,resFile,datfilename,datAuthor,output);
-		} else if (isDir(datfile)==eDirectory) {
+			recurseDirectory(".",optionflag,extension,dirName,resFile,datfilename,datAuthor,output);
+		} else if ((selectedFile=isDir(datfile))==eDirectory) {
+			/* If it's a directory, let's check for all the files there */
 			fprintf(output,PR_TEXT_SCANNING_GIVEN);
-			recurseDirectory(datfile,pOption,extension,dirName,resFile,datfilename,datAuthor,output);
-		} else if (isDir(datfile)==eNotFound) {
+			recurseDirectory(datfile,optionflag,extension,dirName,resFile,datfilename,datAuthor,output);
+		} else if (selectedFile==eNotFound) {
+			/* If the file doesn't exist, print an error and exit */
 			fprintf(output,PR_TEXT_FILE_NOT_FOUND,datfile);
-			return 0;
+			result=0;
 		} else {
-
-			result=prMain(pOption,extension,dirName,resFile,datfile,datfilename,datAuthor,output);
+			/* If it is a file, just do the tasks for it */
+			result=prMain(optionflag,extension,dirName,resFile,datfile,datfilename,datAuthor,output);
 		}
 	}
 
@@ -324,98 +363,111 @@ int prStart(int* pOption, const char* extension,const char* dirName,const char* 
 \***************************************************************/
 
 int main (int argc, char **argv) {
-	//declare variables
-	char* datFileName=NULL;
+	/* declare variables */
 	char  dirName[MAX_FILENAME_SIZE]=".";
-	char  extension[MAX_EXTENSION_SIZE]=DEFAULT_BACKUP_EXTENSION;
-	char  resFile[MAX_FILENAME_SIZE]=RES_XML_RESOURC_XML;
+	char* datAuthor  =NULL;
+	char* datFileName=NULL;
 	char* datFilePath=NULL;
-	char* datAuthor=NULL;
+	char* extension  =NULL;
+	char* resFile    =NULL;
 	int   c;
-	int   flag=0;
+	int   optionflag=0;
 
-	//Parse options
-	while (1) {
+	/* Parse command line options */
+	do {
 		static struct option long_options[] = PARSING_OPTIONS;
-
-		/* getopt_long stores the option index here. */
 		int junk = 0;
-		c = getopt_long (argc, argv, PARSING_CHARS,long_options,&junk);
 
-		/* Detect the end of the options. */
-		if (c == -1) break;
-
+		c = getopt_long(argc,argv,PARSING_CHARS,long_options,&junk);
 		switch (c) {
 				case 'c':
-					if (flag&(classify_flag|export_flag)) flag|=help_flag;
-					flag|=import_flag;
+				case 'i':
+					if (hasFlag(classify_flag|export_flag)) setFlag(help_flag);
+					setFlag(import_flag);
 					if (optarg) strncpy(dirName,optarg,MAX_FILENAME_SIZE);
 					break;
+				case 'g':
+					setFlag(cgi_flag); /* if cgi, a classify must be performed */
 				case 'd':
-					if (flag&(import_flag|export_flag)) flag|=help_flag;
-					flag|=classify_flag;
+					if (hasFlag(import_flag|export_flag)) setFlag(help_flag);
+					setFlag(classify_flag);
 					break;
 				case 'x':
 				case 'e':
-					if (flag&(classify_flag|import_flag)) flag|=help_flag;
-					flag|=export_flag;
+					if (hasFlag(classify_flag|import_flag)) setFlag(help_flag);
+					setFlag(export_flag);
 					if (optarg) strncpy(dirName,optarg,MAX_FILENAME_SIZE);
 					break;
 				case 'b':
-					flag|=backup_flag;
-					if (optarg) strncpy(extension,optarg,MAX_FILENAME_SIZE);
+					setFlag(backup_flag);
+					freeAllocation(extension);
+					extension=strallocandcopy(optarg);
 					break;
 				case 'f':
-					flag|=force_flag;
+					setFlag(force_flag);
 					break;
-				case 'g':
-					flag|=cgi_flag;
-					break;
-				case 'm':
-					strncpy(resFile,optarg,MAX_FILENAME_SIZE);
+				case 's':
+					freeAllocation(resFile);
+					resFile=strallocandcopy(optarg);
 					break;
 				case 'r':
-					flag|=raw_flag;
+#ifndef PR_IGNORE_RAW_OPTION
+					setFlag(raw_flag);
 					break;
+#endif
 				case 'R':
-					flag|=recursive_flag;
+					setFlag(recursive_flag);
 					break;
 				case 't':
-					if (datFileName!=NULL) free(datFileName);
+					freeAllocation(datFileName);
 					datFileName=strallocandcopy(optarg);
 					break;
 				case 'a':
-					if (datAuthor!=NULL) free(datAuthor);
+					freeAllocation(datAuthor);
 					datAuthor=strallocandcopy(optarg);
 					break;
 				case 'v':
-					flag|=verbose_flag;
-					break;
-				case 1:
-					flag|=version_flag;
+					setFlag(verbose_flag);
 					break;
 				case 2:
-					flag|=unknown_flag;
+					setFlag(unknown_flag);
+				case -1:
 					break;
+				case 1:
+					setFlag(version_flag);
 				default:
-					flag|=help_flag;
+					setFlag(help_flag);
+		}
+	} while (c!=-1);
+
+	if (optind < argc) {
+		int size;
+		datFilePath=strallocandcopy(argv[optind]);
+		/* Erase the last "/" if exists. TODO: send to parseGivenPath  */
+		size=strlen(datFilePath);
+		if (size>0) {
+			size--;
+			if (isDirSep(datFilePath,size)) datFilePath[size]=0;
 		}
 	}
 
-	if (optind < argc) {
-		datFilePath=argv[optind];
-	}
+	/* At least one of these options must be selected, if not, the user needs help! */
+	if (!(hasFlag(import_flag|export_flag|classify_flag))) setFlag(help_flag);
 
-	if (!flag) flag=help_flag;
+	parseGivenPath(datFilePath);
 
-	//Run main program
-fld("a");
-	prStart(&flag,extension,dirName,resFile,datFilePath,datFileName,datAuthor,stdout);
-fld("b");
-	//Free memory and exit
-	if (datAuthor!=NULL) free(datAuthor);
-	if (datFileName!=NULL) free(datFileName);
-  return 0;
+	/* Run main program */
+	prStart(optionflag,extension,dirName,resFile,datFilePath,datFileName,datAuthor,stdout);
+
+	/* Free memory and exit */
+	freePartialList();
+	freeAllocation(datAuthor);
+	freeAllocation(datFileName);
+	freeAllocation(datFilePath);
+	freeAllocation(extension);
+	freeAllocation(resFile);
+
+	return 0;
 }
 
 #endif
@@ -425,8 +477,9 @@ fld("b");
 \***************************************************************/
 
 #ifdef SO
-//When compiling in Unix SO libraries
+/* When compiling in Unix SO libraries */
 void start() {}
 #endif
+
 
 

@@ -21,11 +21,13 @@
 /*
 extract.c: Princed Resources : DAT Extractor
 ¯¯¯¯¯¯¯¯¯
- Copyright 2003 Princed Development Team
+ Copyright 2003, 2004 Princed Development Team
   Created: 24 Aug 2003
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
   Version: 1.01 (2003-Oct-23)
+  Version: 1.20 (2004-Mar-07)
+  Version: 1.30 (2004-Mar-15)
 
  Note:
   DO NOT remove this copyright notice
@@ -33,10 +35,10 @@ extract.c: Princed Resources : DAT Extractor
 
 #include <stdio.h>
 #include <string.h>
-
 #include "pr.h"
 
 #include "extract.h"
+#include "dat.h"
 #include "disk.h"
 #include "memory.h"
 
@@ -46,184 +48,140 @@ extract.c: Princed Resources : DAT Extractor
 #include "plv.h"
 #include "mid.h"
 
+extern FILE* outputStream;
+
 /***************************************************************\
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
 
-
-
+#define initializePaletteList \
+for (id=0;id<MAX_RES_COUNT;id++) {\
+	if (r[id]!=NULL) {\
+		r[id]->palAux=NULL;\
+	}\
+}
 
 /***************************************************************\
-|                     M A I N   E X T R A C T                   |
+|                    M A I N   E X T R A C T                    |
 \***************************************************************/
+
 
 /*
 	Extracts a dat file
 	For parameter documentation, see pr.c
 */
 
-int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int task, const char* vDatFileName, const char* vDatAuthor) {
+int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int optionflag, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension) {
+	char               vFileext[MAX_FILENAME_SIZE];
+	int                indexNumber;
+	int                ok;
+	long int           id;
+	tImage             image; /* this is used to make a persistent palette */
+	unsigned char*     data;
+	unsigned long  int size;
+	unsigned short int numberOfItems;
+	unsigned short int paletteId=0;
 
-	//Variables
-	char          vFileext[260];
-	FILE*         fp;
-	int           ok,pop1;
+	/* Initialize abstract variables to read this new DAT file */
+	if (ok=mReadBeginDatFile(&numberOfItems,vFiledat)) return ok;
 
-	if (ok=((fp=fopen(vFiledat,"rb"))!=NULL)) {
-		//loop variables
-		unsigned long  int indexOffset;
-		unsigned short int indexSize,numberOfItems;
-		unsigned char*     index;
-		int                ofk=0;
-		int                k;
+	/* Initializes the palette list */
+	initializePaletteList;
 
-		//if header ok, new variables
-		char               recordSize;
-		char               type=0;
-		tImage             image; //this is used to make a persistent palette
-		unsigned char*     data;
-		unsigned long  int size,offset;
-		unsigned short int id;
-		unsigned short int paletteId=0;
+	/* main loop */
+	ok=1;
+	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
+		id=mReadGetFileInDatFile(indexNumber,&data,&size);
 
-		//verify dat format
-		ok    = fread(&indexOffset,4,1,fp);
-		ok=ok&& fread(&indexSize,2,1,fp);
-		ok=ok&& !fseek(fp,indexOffset,SEEK_SET);
-		ok=ok&& fread(&numberOfItems,2,1,fp);
-		pop1=((numberOfItems*8+2)==indexSize);
+		if (id<0) return -3; /* Read error */
+		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
+		if (id>=MAX_RES_COUNT) return -3; /* A file with an ID out of range will be treated as invalid */
 
-		if (!pop1) { //verify if pop2
-			ofk=numberOfItems*6+2+(numberOfItems-2)*13;
-			numberOfItems=((indexSize-6-(numberOfItems*6)-((numberOfItems-2)*13))/11);
-		}
-		recordSize=pop1?8:11;
-		if (!ok) {
-			fclose(fp);
-			return -3; //this is not a valid prince dat file
-		}
-		if ((index=getMemory(indexSize-2))==NULL) {
-			fclose(fp);
-			return -2; //no memory
-		}
+		/* set resource information on this index entry */
+		if (mReadInitResource(r+id,data,size)) return -2;
 
-		ok=fread(index,indexSize-2,1,fp);
+		if ((r[id]->type==RES_TYPE_PALETTE)||isInThePartialList(r[id]->path,id)) { /* If the resource was specified or is a palette, do the tasks */
+			if (!(hasFlag(unknown_flag))) { /* If unknown flag is set do nothing but generate the unknown.xml file */
+				if (hasFlag(raw_flag)) r[id]->type=0; /* If "extract as raw" is set, type is 0 */
 
-		//Initializes the palette list
-		for (id=0;id<MAX_RES_COUNT;id++) {
-			if (r[id]!=NULL) {
-				r[id]->palAux=NULL;
-			}
-		}
-
-		//main loop
-		for (k=0;ok&&(k<numberOfItems);k++) {
-			//for each archived file the index is read
-			id=index[ofk+k*recordSize]+256*index[ofk+k*recordSize+1];
-			offset=index[ofk+k*recordSize+2]+256*index[ofk+k*recordSize+3]+256*256*index[ofk+k*recordSize+4]+256*256*256*index[ofk+k*recordSize+5];
-			size=index[ofk+k*recordSize+6]+256*index[ofk+k*recordSize+7]+1;
-			if (!pop1) {
-				ok=ok&&(index[ofk+k*recordSize+8]==0x40)&&(!index[ofk+k*recordSize+9])&&(!index[ofk+k*recordSize+10]);
-			}
-			ok=ok&&((data=getMemory(size))!=NULL);
-			ok=ok&&(!fseek(fp,offset,SEEK_SET));
-			ok=ok&&fread(data,size,1,fp);
-			if (!ok) return -3;
-			//End of index reading
-
-			//set resource information on this index entry
-			if (r[id]==NULL) {
-				r[id]=(tResource*)malloc(sizeof(tResource));
-				if (r[id]==NULL) return -2; //no memory
-				r[id]->path=NULL;
-				r[id]->palAux=NULL;
-				r[id]->desc=NULL;
-				r[id]->title=NULL;
-				r[id]->palette=0;
-				r[id]->number=0;
-				r[id]->size=(unsigned short int)size;
-				r[id]->offset=(unsigned short)offset;
-				r[id]->type=verifyHeader(data,(unsigned short int)size);
-			} else { //If resource type is invalid or 0, the type will be decided by PR
-				if (!(r[id]->type)) r[id]->type=verifyHeader(data,(unsigned short int)size);
-			}
-
-			if (!(task&unknown_flag)) { //If unknown flag is set do nothing but generate the unknown.xml file
-				//select type
-				if (task&raw_flag) (*(r[id])).type=0; //If "extract as raw" is set, type is 0
-
-				//save file
-				getFileName(vFileext,vDirExt,r[id],id,vFiledat,vDatFileName);
-
-				if (task&verbose_flag) printf("Extracting '%s'...\n",getFileNameFromPath(vFileext));
+				/* get save file name (if unknown document it in the xml) */
+				getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension);
 
 				switch (r[id]->type) {
-					case 1:
-						ok=ok&&mFormatExtractPlv(data,vFileext,size,r[id]->number,vDatFileName,r[id]->title,r[id]->desc,vDatAuthor);
+					case RES_TYPE_LEVEL:
+						ok=ok&&mFormatExportPlv(data,vFileext,size,r[id]->number,vDatFileName,r[id]->name,r[id]->desc,vDatAuthor,optionflag,backupExtension);
 						break;
-					case 5:
-					case 0: //Raw files
-						ok=ok&&writeData(data,1,vFileext,size); //Ignore checksum
+					case RES_TYPE_BINARY: /* Binary files */
+					case RES_TYPE_RAW: /* Raw files */
+						ok=ok&&writeData(data,1,vFileext,size,optionflag,backupExtension); /* Ignore checksum */
 						break;
-					case 6: //save and remember palette file
-						//This will remember the palette for the next images
-						r[id]->palAux=(unsigned char*)malloc(size);
+					case RES_TYPE_PALETTE: /* save and remember palette file */
+						/* This will remember the palette for the next images */
+						r[id]->palAux=getMemory(size);
 						memcpy(r[id]->palAux,data,size);
-						if (!paletteId) { //In case there is no loaded palettes, then load immediately the first found palette to clear garbage
-							mLoadPalette(data,&image);
+						if (!paletteId) { /* In case there is no loaded palettes load immediately the first found palette to clear garbage */
+							mLoadPalette(data,image);
 							paletteId=id;
 						}
-						//This will extract the palette
-						ok=ok&&mFormatExtractPal(&data,vFileext,size);
+						/* This will export the palette */
+						if (isInThePartialList(r[id]->path,id))  /* If the palette was specified extract it */
+							ok=ok&&mFormatExportPal(data,vFileext,size,optionflag,backupExtension);
 						break;
-					case 7: //save pcs file
-					case 4:	//save midi file
-						ok=ok&&mFormatExtractMid(data,vFileext,size);
+					case RES_TYPE_PCSPEAKER: /* save pcs file */
+					case RES_TYPE_MIDI:	/* save midi file */
+						ok=ok&&mFormatExportMid(data,vFileext,size,optionflag,backupExtension);
 						break;
-					case 3: //save wav file
-						ok=ok&&mFormatExtractWav(data,vFileext,size);
+					case RES_TYPE_WAVE: /* save wav file */
+						ok=ok&&mFormatExportWav(data,vFileext,size,optionflag,backupExtension);
 						break;
-					case 2: //save image
-						//Palette handling
-
-						if (r[id]->palette!=paletteId) { //The palette isn't the already loaded
-							if (r[id]->palette) { //We need a palette
+					case RES_TYPE_IMAGE: /* save image */
+						/* Palette handling */
+						if (r[id]->palette!=paletteId) { /* The palette isn't the already loaded */
+							if (r[id]->palette) { /* We need a palette */
 								/*
 									We need a palette and it is not the palette we have loaded in memory
 									So a new palette is going to be loaded.
 								*/
-								if ((r[r[id]->palette]->palAux)!=NULL) { //If this palette wasn't loaded, it becomes loaded
-									mLoadPalette(r[r[id]->palette]->palAux,&image);
-									paletteId=r[id]->palette; //sets the new palette loaded
+								if ((r[r[id]->palette]->palAux)!=NULL) { /* If this palette wasn't loaded, it becomes loaded */
+									mLoadPalette(r[r[id]->palette]->palAux,image);
+									paletteId=r[id]->palette; /* sets the new palette loaded */
 								}
 							}
 						}
-
-						//Extract bitmap
-						ok=ok&&mFormatExtractBmp(data,vFileext,size,image);
+						/* Export bitmap */
+						ok=ok&&mFormatExportBmp(data,vFileext,size,image,optionflag,backupExtension);
 						break;
 				}
-			}
-			if (data!=NULL) free(data);
-		}
-		fclose(fp);
-
-		//Free allocated palettes and descriptions
-		for (id=0;id<MAX_RES_COUNT;id++) {
-			if (r[id]!=NULL) {
-				if (r[id]->palAux!=NULL) {
-					free (r[id]->palAux);
+				/* Verbose information */
+				if (hasFlag(verbose_flag)) {
+					if (ok) {
+						fprintf(outputStream,PR_TEXT_EXPORT_WORKING,getFileNameFromPath(vFileext));
+					} else {
+						fprintf(outputStream,PR_TEXT_EXPORT_ERROR,getFileNameFromPath(vFileext));
+					}
 				}
-				if (r[id]->desc!=NULL) {
-					free (r[id]->palAux);
-				}
+			} else {
+				/* if the dat file is unknown, add it in the xml */
+				getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension);
 			}
+			//freeAllocation(data);
 		}
-
-		//Close unknownXML
-		endUnknownXml();
-		return ok-1;
-	} else {
-		return -1; //file could not be open
 	}
+
+	/* Free allocated resources, dynamic strings and the index */
+	for (id=0;id<MAX_RES_COUNT;id++) {
+		if (r[id]!=NULL) {
+			freeAllocation(r[id]->palAux);
+			freeAllocation(r[id]->desc);
+			freeAllocation(r[id]->name);
+			freeAllocation(r[id]->path);
+			free(r[id]);
+		}
+	}
+	mReadCloseDatFile();
+
+	/* Close unknownXML */
+	endUnknownXml(optionflag,backupExtension);
+	return ok-1;
 }
+

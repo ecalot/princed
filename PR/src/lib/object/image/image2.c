@@ -19,13 +19,14 @@
 */
 
 /*
-compress.c: Princed Resources : Image Compressor
+compress.c: Princed Resources : Image Compression Library
 ¯¯¯¯¯¯¯¯¯¯
- Copyright 2003 Princed Development Team
+ Copyright 2003, 2004 Princed Development Team
   Created: 24 Aug 2003
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
   Version: 1.01 (2003-Oct-23)
+  Version: 2.00 (2004-Mar-07)
 
  Note:
   DO NOT remove this copyright notice
@@ -39,71 +40,125 @@ compress.c: Princed Resources : Image Compressor
 #include <string.h>
 #include "compress.h"
 #include "memory.h"
-
-//reserved memory for the Lzx algorithm
-#define MAX_MOD_SIZE_IN_LZX 32001                     /* 38401 */
-//modulus to be used in the 10 bits of the algorithm
-#define MAX_MXD_SIZE_IN_LZX 0x400
+#include "pr.h"
 
 /***************************************************************\
-|                Compression algorithm handling                 |
+|                        Image transpose                        |
 \***************************************************************/
 
-//Determines where the transposed byte must be saved
-int transpose(int x,int n,int m) {
-	return ((x%m)*((n+1)/2))+(int)(x/m);
+/* Determines where the transposed byte must be saved */
+int transpose(int x,int w,int h) {
+	return ((x%h)*(w))+(int)(x/h);
 }
 
-//B3 and B4 expansion algorithm sub function
+void transposeImage(tImage* image,int size) {
+	unsigned char* outputaux=getMemory(size);
+	int cursor=0;
+
+	while (cursor<size) {outputaux[transpose(cursor,image->widthInBytes,image->height)]=image->pix[cursor];cursor++;}
+	free(image->pix);
+	image->pix=outputaux;
+}
+
+void antiTransposeImage(tImage* image,int size) {
+	unsigned char* outputaux=getMemory(size);
+	int cursor=0;
+
+	while (cursor<size) {outputaux[cursor]=image->pix[transpose(cursor,image->widthInBytes,image->height)];cursor++;}
+	free(image->pix);
+	image->pix=outputaux;
+}
+
+/***************************************************************\
+|                    Uncompression algorithms                   |
+\***************************************************************/
+
+/* LZG expansion algorithm sub function */
 unsigned char popBit(unsigned char *byte) {
-  unsigned char bit=(unsigned char)((*byte)&1);
-  (*byte)>>=1;
-  return bit;
+	unsigned char bit=(unsigned char)((*byte)&1);
+	(*byte)>>=1;
+	return bit;
 }
 
-//Expands B3/B4 algorithm
-void expandLzx(unsigned /* note: if error remove signed */char* array,tImage* img, int *i,int cursor, int virtualSize) {
+/* Expands LZ Groody algorithm. This is the core of PR */
+int expandLzg(const unsigned char* array, int arraySize, tImage* image, int imageSize) {
 	char k;
-	int pos,h;
+	int location,h,cursor=0,pos=0;
 	unsigned char maskbyte,rep;
 
-	for(pos=0;pos<MAX_MXD_SIZE_IN_LZX;(*img).pix[pos]=0,pos++); //clean output garbage
-	while (cursor<virtualSize) {
-		maskbyte=array[*i];(*i)++;
-		for (k=8;k&&(cursor<virtualSize);k--) {
+	if ((image->pix=getMemory(/*imageSize*/MAX_MOD_SIZE_IN_LZG))==NULL) return COMPRESS_RESULT_FATAL; /* reserve memory */
+	for(location=0;location<MAX_MOD_SIZE_IN_LZG;image->pix[location]=0,location++); /* clean output garbage */
+
+	/* main loop */
+	while (cursor<imageSize) {
+		maskbyte=array[pos++];
+		for (k=8;k&&(cursor<imageSize);k--) {
 			if (popBit(&maskbyte)) {
-				(*img).pix[cursor]=array[*i];(*i)++;cursor++;
+				image->pix[cursor++]=array[pos++];
 			} else {
-				pos=66+((0x100)*((rep=array[*i])&3))+(unsigned char)array[(*i)+1];(*i)+=2;
+				location=66+(((rep=array[pos])&3)<<8)+(unsigned char)array[pos+1];pos+=2;
 				rep=(unsigned char)((rep>>2)+3);
-				while (rep--) { //Be careful in big images
-					h=cursor/MAX_MXD_SIZE_IN_LZX-(pos%MAX_MXD_SIZE_IN_LZX>cursor%MAX_MXD_SIZE_IN_LZX);
-					(*img).pix[cursor]=(*img).pix[((h<0)?0:h)*MAX_MXD_SIZE_IN_LZX+pos%MAX_MXD_SIZE_IN_LZX];cursor++;pos++;
+				while (rep--) { /* Be careful in big images */
+					h=cursor/MAX_MXD_SIZE_IN_LZG-((location%MAX_MXD_SIZE_IN_LZG)>(cursor%MAX_MXD_SIZE_IN_LZG));
+					image->pix[cursor++]=image->pix[((h<0)?0:h)*MAX_MXD_SIZE_IN_LZG+(location++)%MAX_MXD_SIZE_IN_LZG];
+
+//					h=((cursor-(location&0x3FF))&(~0x3FF));
+//					image->pix[cursor]=image->pix[((h<0)?0:h)+(location&0x3FF)];
+	//				cursor++;location++;
 				}
 			}
 		}
 	}
+	return ((pos==arraySize)&(cursor==imageSize))-1; /* WARNING or SUCCESS */
 }
 
-//Compress B1/B2 algorithm
+/* Expands RLE algorithm */
+int expandRle(const unsigned char* array, int arraySize, tImage* image, int imageSize) {
+	int cursor=0;
+	register signed char rep;
+	int pos=0;
+
+	if ((image->pix=getMemory(imageSize+128))==NULL) return COMPRESS_RESULT_FATAL; /* reserve memory */
+
+	/* main loop */
+	while (cursor<imageSize) {
+		rep=(signed char)(array[pos++]);
+		if (rep<0) {
+			/* Negative */
+			while (rep++) image->pix[cursor++]=array[pos];
+			pos++;
+		} else {
+			/* Positive */
+			rep=~rep;
+			while (rep++) image->pix[cursor++]=array[pos++];
+		}
+	}
+	return ((pos==arraySize)&(cursor==imageSize))-1; /* WARNING or SUCCESS */
+}
+
+/***************************************************************\
+|                    Compression algorithms                     |
+\***************************************************************/
+
+/* Compress using the Run Length Encoding algorithm */
 void compressRle(unsigned char* data,tImage* img,int *dataSize) {
-	//Declare pointers
+	/* Declare pointers */
 	unsigned char* cursorData  = data;
 	char*          counter;
-	unsigned char* cursorPix   = (*img).pix;
-	unsigned char* imgEnd      = (*img).pix+(*dataSize);
+	unsigned char* cursorPix   = img->pix;
+	unsigned char* imgEnd      = img->pix+(*dataSize);
 
 	while (cursorPix<imgEnd) {
-		//Step 1: Create counter
+		/* Step 1: Create counter */
 		*(counter=(char*)(cursorData++))=-1;
 
-		//Step 2: Look and copy the string until a repeated byte is found
+		/* Step 2: Look and copy the string until a repeated byte is found */
 		while (
 			(cursorPix<imgEnd)&&
 			(
 				(*cursorPix!=*(cursorPix+1))||
 				(
-					(*cursorPix==*(cursorPix+1))&&
+					/*(*cursorPix==*(cursorPix+1))&&*/
 					((cursorPix+1)<imgEnd)&&
 					(*cursorPix!=*(cursorPix+2))
 				)
@@ -116,169 +171,154 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
 			cursorData++;
 		}
 
-		//Step 3: If there was a repeated string, let's ignore it and add the cursor with the repetitions
+		/* Step 3: If there was a repeated string, let's ignore it and add the cursor with the repetitions */
 		if (*counter==-1) {
-			while ((cursorPix<imgEnd)&&(*cursorPix==(*(cursorPix+1)))&&((*counter)!=-128)) {
+			while ((cursorPix+1<imgEnd)&&(*cursorPix==(*(cursorPix+1)))&&((*counter)!=-128)) {
 				cursorPix++;
 				(*counter)--;
 			}
 
-			*(cursorData)=*(cursorPix); //Print repeated char
+			*(cursorData)=*(cursorPix); /* Print repeated char */
 			cursorPix++;
 			cursorData++;
 		}
 	}
+
 	*(cursorData++)=0;
 	*(cursorData++)=*(cursorPix);
-	*dataSize=(int)((long int)cursorData-(long int)data); //Note: casted to long for portability with 64 bits architectures
+	*dataSize=(int)((long int)cursorData-(long int)data)-2; /* Note: casted to long for portability with 64 bits architectures */
 }
 
-//Expands an array into an image
-int mExpandGraphic(unsigned char* array,tImage *image, int virtualSize) {
-	/*
-		Reads array and extracts tImage
-		returns the next image address or -1 in case of error
+/***************************************************************\
+|               Main compress and expand graphics               |
+\***************************************************************/
 
+/*
 		Header info:
-		 char checksum, short int height, short int width, (char)0, char compressionType
-		 normaly: (* ignored types)
-		 checksum* - height - 00 - width - 00 - 00* - compression type
+		 1 byte  - checksum           char checksum
+		 2 bytes - height             short int height
+		 2 bytes - width              short int width
+		 1 byte  - 00                 (char)0
+		 1 byte  - compression type   unsigned char compressionType
+*/
+
+/* Expands an array into an image */
+int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes) {
+	/*
+		Reads data and extracts tImage
+		returns the next image address or -1 in case of error
 	*/
 
-  int cursor=0;
-  int i=1;
+	int imageSizeInBytes;
+	int result;
 
-  //Get memory for the image
-	image->height=((unsigned char)array[(i)])+256*((unsigned char)array[(i+1)]) ;
-	i=i+2;
-	image->width =((unsigned char)array[(i)])+256*((unsigned char)array[(i+1)]);
-	i=i+2;
-	(*image).size  =(*image).height*(*image).width;
-	virtualSize=(((*image).height*((*image).width+((*image).width&1)))>>1);
-	i++;
+	data++;
+	image->height=((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;
+	image->width =((unsigned char)data[0])+((unsigned char)data[1]<<8);data+=2;
 
-  switch ((unsigned char)array[i++]) {
-		case PG_COMP_RAW: //No Compression Algorithm
-		  if (((*image).pix=getMemory(virtualSize))==NULL) return -1;
-		  while (cursor<virtualSize) {
-				(*image).pix[cursor++]=array[i++];
-			}
+	if (*(data++)) return -1; /* Verify format */
+	image->type=(unsigned char)(*(data++));
+	dataSizeInBytes-=7;
+
+	if (image->type&0xB0) {
+		image->widthInBytes=(image->width+1)/2;
+	} else {
+		image->widthInBytes=(image->width+7)/8;
+	}
+	imageSizeInBytes=image->widthInBytes*image->height;
+
+	switch (getAlgor(image->type)) {
+		case COMPRESS_RAW: /* No Compression Algorithm */
+			if ((image->pix=getMemory(imageSizeInBytes))==NULL) return COMPRESS_RESULT_FATAL;
+			memcpy(image->pix,data,imageSizeInBytes);
+			result=COMPRESS_RESULT_SUCCESS;
 			break;
-		case PG_COMP_RLE_LR: //RLE Left to Right Compression Algorithm
-		  if (((*image).pix=getMemory(virtualSize))==NULL) return -1;
-		  while (cursor<virtualSize) {
-				if ((signed char)array[i]<0) {
-					//negative
-					while (array[i]++) (*image).pix[(cursor++)]=array[i+1];
-					i+=2;
-				} else {
-					//Positive
-					signed char cx=(signed char)(array[i++]+1);
-					while (cx--) (*image).pix[(cursor++)]=array[i++];
-				}
-			}
+		case COMPRESS_RLE_LR: /* RLE Left to Right Compression Algorithm */
+			result=expandRle(data,dataSizeInBytes,image,imageSizeInBytes);
 			break;
-		case PG_COMP_RLE_UD: //RLE Up to Down Compression Algorithm
-		  if (((*image).pix=getMemory(virtualSize))==NULL) return -1;
-		  while (cursor<virtualSize) {
-				if ((signed char)array[i]<0) {
-					//negative
-					while (array[i]++) (*image).pix[(transpose(cursor++,(*image).width,(*image).height))]=array[i+1];
-					i+=2;
-				} else {
-					//Positive
-					signed char cx=(signed char)(array[i++]+1);
-					while (cx--) (*image).pix[transpose(cursor++,(*image).width,(*image).height)]=array[i++];
-				}
-			}
+		case COMPRESS_RLE_UD: /* RLE Up to Down Compression Algorithm */
+			result=expandRle(data,dataSizeInBytes,image,imageSizeInBytes);
+			if (result==COMPRESS_RESULT_FATAL) return COMPRESS_RESULT_FATAL;
+			transposeImage(image,imageSizeInBytes);
 			break;
-		case PG_COMP_LZX_LR: //LZ Groody Up to Down Version Compression Algorithm
-		  if (((*image).pix=getMemory(MAX_MOD_SIZE_IN_LZX))==NULL) return -1;
-			expandLzx(array,image,&i,cursor,virtualSize);
+		case COMPRESS_LZG_LR: /* LZ Groody Left to Right Compression Algorithm */
+			result=expandLzg(data,dataSizeInBytes,image,imageSizeInBytes);
 			break;
-		case PG_COMP_LZX_UD: //LZ Groody Left to Right Version Compression Algorithm
-		  if (((*image).pix=getMemory(MAX_MOD_SIZE_IN_LZX))==NULL) return -1;
-			{
-			unsigned char* outputaux=getMemory(virtualSize);
-			expandLzx(array,image,&i,cursor,virtualSize);
-			//Transpose
-		  while (cursor<virtualSize) outputaux[transpose(cursor,(*image).width,(*image).height)]=(*image).pix[cursor++];
-			free((*image).pix);
-			(*image).pix=outputaux;
-			}
+		case COMPRESS_LZG_UD: /* LZ Groody Up to Down Compression Algorithm */
+			result=expandLzg(data,dataSizeInBytes,image,imageSizeInBytes);
+			if (result==COMPRESS_RESULT_FATAL) return COMPRESS_RESULT_FATAL;
+			transposeImage(image,imageSizeInBytes);
 			break;
 		default:
-		 return -1;
+			result=COMPRESS_RESULT_FATAL;
+			break;
 	}
-	return i;
+	return result; /* Ok */
 }
 
-#define COMPRESS_WORKING_ALGORITHMS 3
-
-//Compress an image into an array
-int mCompressGraphic(unsigned char* data,tImage* i, int* size) {
-	//Declare variables
+/* Compress an image into binary data */
+int mCompressGraphic(unsigned char* data,tImage* image, int* dataSizeInBytes) {
+	/* Declare variables */
+	unsigned char* compressed     [COMPRESS_WORKING_ALGORITHMS];
 	int            compressedSize [COMPRESS_WORKING_ALGORITHMS];
 	int            algorithm;
-	int            cursor;
-	int            virtualsize;
-	unsigned char* compressed     [COMPRESS_WORKING_ALGORITHMS];
-	unsigned char* outputaux;
+	int            i;
+	int            imageSizeInBytes;
 
-	//Initialize variables
-	virtualsize=(((i->width)+1)>>1)*i->height;
-	outputaux=getMemory(virtualsize);
-	for (cursor=0;cursor<COMPRESS_WORKING_ALGORITHMS;cursor++) compressedSize[cursor]=virtualsize;
-	cursor=0;
+	/* Initialize variables */
+	imageSizeInBytes=image->widthInBytes*image->height;
+	for (i=0;i<COMPRESS_WORKING_ALGORITHMS;i++) compressedSize[i]=imageSizeInBytes;
 
-	//B0
-	compressed[0]=getMemory(compressedSize[0]);
-	memcpy(compressed[0],i->pix,compressedSize[0]);
+	/*
+		Perform all compressions
+	*/
 
-	//B1
-	compressed[1]=getMemory(10*virtualsize+50); //This will reserve 10*(image size)+50 bytes, to allocate the compressed file
-	compressRle(compressed[1],i,&(compressedSize[1]));
+	/* COMPRESS_RAW */
+	compressed[COMPRESS_RAW]=getMemory(compressedSize[COMPRESS_RAW]);
+	memcpy(compressed[COMPRESS_RAW],image->pix,compressedSize[COMPRESS_RAW]);
 
-	//B2
-	compressed[2]=getMemory(10*virtualsize+50); //This will reserve 10*(image size)+50 bytes, to allocate the compressed file
-	//Transpose
-  while (cursor<=virtualsize) {
-		outputaux[cursor]=i->pix[transpose(cursor,i->width,i->height)];
-		cursor++;
-	}
-	free(i->pix);
-	i->pix=outputaux;
-	compressRle(compressed[2],i,&(compressedSize[2]));
+	/* COMPRESS_RLE_LR */
+	compressed[COMPRESS_RLE_LR]=getMemory(10*imageSizeInBytes+50); /* This will reserve 10*(image size)+50 bytes, to allocate the compressed file */
+	compressRle(compressed[COMPRESS_RLE_LR],image,&(compressedSize[COMPRESS_RLE_LR]));
 
-	/*Process results*/
+	/* COMPRESS_RLE_UD */
+	compressed[COMPRESS_RLE_UD]=getMemory(10*imageSizeInBytes+50); /* This will reserve 10*(image size)+50 bytes, to allocate the compressed file */
+	antiTransposeImage(image,imageSizeInBytes);
+	compressRle(compressed[COMPRESS_RLE_UD],image,&(compressedSize[COMPRESS_RLE_UD]));
 
-	//Select the best compression (find minimum)
-	*size=compressedSize[0];
-	algorithm=0;
-	for (cursor=1;cursor<3;cursor++) {
-		if ((*size)>compressedSize[cursor]) {
-			(*size)=compressedSize[cursor];
-			algorithm=cursor;
+	/*
+		Process results
+	*/
+
+	/* Select the best compression (find minimum) */
+	*dataSizeInBytes=compressedSize[COMPRESS_RAW];
+	algorithm=COMPRESS_RAW;
+	for (i=COMPRESS_RLE_LR;i<COMPRESS_WORKING_ALGORITHMS;i++) {
+		if ((*dataSizeInBytes)>compressedSize[i]) {
+			(*dataSizeInBytes)=compressedSize[i];
+			algorithm=i;
 		}
 	}
 
-	//Copy the best algorithm in the compressed data
-	memcpy(data+6,compressed[algorithm],*size);
-	(*size)+=6;
+	/* Copy the best algorithm in the compressed data */
+	memcpy(data+6,compressed[algorithm],*dataSizeInBytes);
+	(*dataSizeInBytes)+=6;
 
-	//Write header
-	//(16 bits)height (Intel short int format)
-	data[0]=i->height;
-	data[1]=i->height>>8;
-	//(16 bits)width (Intel short int format)
-	data[2]=i->width;
-	data[3]=i->width>>8;
-	//(12 bits)000000001011+(4 bits)algorithm
+	/*
+		Write header
+	*/
+
+	/* (16 bits)height (Intel short int format) */
+	data[0]=image->height;
+	data[1]=image->height>>8;
+	/* (16 bits)width (Intel short int format) */
+	data[2]=image->width;
+	data[3]=image->width>>8;
+	/* (8 bits)00000000+(4 bits)palette type+(4 bits)algorithm */
 	data[4]=0;
-	data[5]=0xB0+algorithm;
+	data[5]=image->type|algorithm;
 
-	//Free all compression attempts
-	for (cursor=0;cursor<COMPRESS_WORKING_ALGORITHMS;cursor++) free(compressed[cursor]);
-
+	/* Free all compression attempts */
+	for (i=COMPRESS_RAW;i<COMPRESS_WORKING_ALGORITHMS;i++) free(compressed[i]);
 	return 1;
 }

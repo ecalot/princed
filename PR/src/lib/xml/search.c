@@ -36,8 +36,9 @@ xmlsearch.c: Princed Resources : specific xml handling functions
 \***************************************************************/
 #include <stdio.h> /* only on debugging purposes */
 
-//Includes
-#include "xml.h"
+/* Includes */
+#include "pr.h"
+#include "xmlparse.h"
 #include "resources.h"
 #include "xmlsearch.h"
 #include "memory.h"
@@ -49,19 +50,137 @@ xmlsearch.c: Princed Resources : specific xml handling functions
 
 #define ptoi(p) ((p!=NULL)?atoi(p):0)
 
-tTag* searchTree(tTag* t,const char* datFile, const char* id) {
+#define keepStringAttribute(attribute) r[id]->attribute=strallocandcopy(t->attribute)
+#define keepIntAttribute(attribute,type) r[id]->attribute=(type)ptoi(t->attribute);
+
+void workTag(const tTag* t,void* pass) {
+	/*
+		If the tag matches, it is converted to resource and added to the array
+	*/
+
+	/* Declare variables */
+	unsigned short id;
+	const char* datFile=((tPassWork*)pass)->datFile;
+	tResource** r=((tPassWork*)pass)->r;
+
+	/* Skipping conditions */
+	if (!equalsIgnoreCase(t->file,datFile))   return; /* If it doesn't belong to the given dat file */
+	if (!(id=(unsigned short)ptoi(t->value))) return; /* If there was not id or id contained wrong values */
+	if (!equalsIgnoreCase(t->tag,"item"))     return; /* If the tag isn't an item */
+
+	/* Process tag and copy values to resource */
+	/* Create Resource */
+	if (r[id]!=NULL) return;
+	r[id]=(tResource*)malloc(sizeof(tResource));
+	if (r[id]==NULL) return;
+
+	/* Get string itemtype and convert into the itemtypeId */
+	r[id]->type=0;
+#ifndef IGNORERESOURCEFUNCTIONS
+	if (t->itemtype!=NULL) { /* NULL tells the extractor that the type must be auto detected */
+		int i=RES_TYPECOUNT;
+		while((!r[id]->type)&&(i--))
+			if (equalsIgnoreCase(t->itemtype,getExtDesc(i)))
+				r[id]->type=i;
+		/* If error it returns 0 and the verifyHeader will try to detect the type */
+	}
+#endif
+
+	/* Copy palette, number, title, desc and path */
+	keepIntAttribute(palette,unsigned short);  /* Transforms the char* palette into a short ID value, if 0 or error no palette is needed */
+	keepIntAttribute(number,unsigned char);    /* Transforms the char* levelnumer/number attribute into a char value, if error, demo level is used */
+	keepStringAttribute(name);  /* only for plv */
+	keepStringAttribute(desc);  /* only for plv */
+	keepStringAttribute(path);
+}
+
+void workTree(const tTag* t,void* pass, void (*function)(const tTag*,void*)) {
+	/*
+		Runs the given function for each matching tag
+	*/
+	tTag* children;
+
+	if (t!=NULL) {
+		if (t->file!=NULL) (*function)(t,pass);
+		children=t->child;
+
+		while (children!=NULL) {
+			workTree(children,pass,function);
+			children=children->next;
+		}
+	}
+}
+
+/****************************************************************\
+|                       File List Primitives                     |
+\****************************************************************/
+
+static tListNode* list=NULL;
+
+void addFileToList(const tTag* t,void* junk) {
+	/*
+		Adds the file to the list only once
+	*/
+	tListNode* node=list;
+
+	/* Verify if the file exists */
+	while (node) {
+		if (equalsIgnoreCase(node->file,t->file)) /* If file was in the list, do nothing */
+			return;
+		node=node->next;
+	}
+	/* Add new node */
+	node=(tListNode*)malloc(sizeof(tListNode));
+
+	/* Use LIFO because its more probable to get a file with the same name */
+	node->file=strallocandcopy(t->file);
+	node->next=list;
+	list=node;
+}
+
+char* getFileFromList() {
+	/*
+		Returns and removes one random file from the list
+	*/
+	char* result;
+	tListNode* aux;
+	if (list) {
+		/* Remember node values */
+		aux=list;
+		result=list->file;
+		/* move one position */
+		list=list->next;
+		/* free node */
+		free(aux);
+
+		return result;
+	} else {
+		return NULL;
+	}
+}
+
+/****************************************************************\
+|                       Compare two XML files                    |
+\****************************************************************/
+
+#ifdef DO_NOT_IGNORE_COMPARATION
+
+static int compareStatisticsOk=0;
+static int compareStatisticsTotals=0;
+static int compareStatisticsWarnings=0;
+extern FILE* outputStream;
+
+const tTag* searchTree(const tTag* t,const char* datFile, const char* id) {
 	/* tTag*
 		tag pointer if found
 		NULL if not found
 	*/
 	tTag* children;
-	tTag* result;
+	const tTag* result;
 
 	if (t!=NULL) {
 		if (((t->file)!=NULL)&&((t->value)!=NULL)) {
-			if ((equalsIgnoreCase(t->file,datFile))&&(equalsIgnoreCase(t->value,id))) {
-				return t;
-			}
+			if ((equalsIgnoreCase(t->file,datFile))&&(equalsIgnoreCase(t->value,id))) return t;
 		}
 		children=t->child;
 
@@ -75,147 +194,48 @@ tTag* searchTree(tTag* t,const char* datFile, const char* id) {
 	return NULL;
 }
 
-void workTag(const tTag* t, tResource* r[]) {
-	//Declare variables
-	unsigned short id;
-	unsigned short size;
-	int i;
+void compareXmlFileForTag(const tTag* tag,void* pass) {
+	const tTag* modified;
+	const tTag* result;
 
-	id=(unsigned short)ptoi(t->value);
-	if (!id) return; //If there was not id or id contained wrong values, skip
+	modified=((tPassCompare*)pass)->tag;
 
-	//Process tag and copy values to resource
-	//Create Resource
-	if (r[id]!=NULL) return;
-	r[id]=(tResource*)malloc(sizeof(tResource));
-	if (r[id]==NULL) return;
-
-	//Get type and palette from tag
-	if (t->itemtype==NULL) {
-		r[id]->type=0;
-	} else {
-		for (i=0;i<8;i++) if (equalsIgnoreCase(t->itemtype,getExtDesc(i))) {r[id]->type=i;break;}
-	}
-	if (i==8) r[id]->type=(char)atoi(t->itemtype); //If error it returns 0 and the verifyHeader will try to detect the type
-	r[id]->palette=(unsigned short)ptoi(t->palette); //Transforms the char* palette into a short ID value, if 0 or error no palette is needed
-	r[id]->number=(unsigned char)ptoi(t->number); //Transforms the char* levelnumer/number attribute into a char value, if error, demo level is used
-
-	//Title and description (only supported in level plv format
-	if (t->desc!=NULL) {
-		size=strlen(t->desc)+1;
-		r[id]->desc=(char*)malloc(size);
-		if (r[id]->desc==NULL) return;
-		memcpy(r[id]->desc,t->desc,size);
-	} else {
-		r[id]->desc=NULL;
-	}
-
-	if (t->name!=NULL) {
-		size=strlen(t->name)+1;
-		r[id]->title=(char*)malloc(size);
-		if (r[id]->title==NULL) return;
-		memcpy(r[id]->title,t->name,size);
-	} else {
-		r[id]->title=NULL;
-	}
-
-	//get external and copy it to the resource path
-	if (t->external!=NULL) {
-		size=strlen(t->external)+1;
-		r[id]->path=(char*)malloc(size);
-		if (r[id]->path!=NULL) memcpy(r[id]->path,t->external,size);
-	} else {
-		r[id]->path=NULL;
-	}
-}
-
-void workTree(const tTag* t,const char* datFile, tResource* r[]) {
-	/*
-		Runs workTag for each matching tag
-	*/
-	tTag* children;
-
-	if (t!=NULL) {
-		if (t->file!=NULL) {
-			if (equalsIgnoreCase(t->file,datFile)) {
-				workTag(t,r);
+	if ((tag->file)&&(tag->value)) {
+		result=searchTree(modified,tag->file,tag->value);
+		if (!result) {
+			fprintf(outputStream,"Error: Item not found: '%s@%s'\n",tag->value,tag->file);
+			fprintf(outputStream,"-> <item value=\"%s\" path=\"%s\" itemtype=\"%s\" palette=\"%s\">%s</item>\n",
+				tag->value,
+				tag->path,
+				tag->itemtype,
+				tag->palette,
+				tag->desc
+			);
+		} else {
+			fprintf(outputStream,"Item found: '%s@%s' %s\n",tag->value,tag->file,result->file);
+			if (!equalsIgnoreCase(tag->itemtype,result->itemtype)) {
+				compareStatisticsWarnings++;
+				fprintf(outputStream,"Warning: Type mismatch in '%s@%s' (%s!=%s)\n",tag->value,tag->file,tag->itemtype,result->itemtype);
 			}
+			compareStatisticsOk++;
 		}
-		children=t->child;
-
-		while (children!=NULL) {
-			workTree(children,datFile,r);
-			children=children->next;
-		}
+		compareStatisticsTotals++;
 	}
 }
 
-void getFiles(const tTag* t) {
-	/*
-		Runs addFileToList for all tags
-	*/
-	tTag* children;
+void compareXmlFile(tTag* modified,tTag* original) {
+	tPassCompare pass;
+	pass.tag=modified;
 
-	if (t!=NULL) {
-		if (t->file!=NULL)
-			addFileToList(t->file);
-		children=t->child;
-
-		while (children!=NULL) {
-			getFiles(children);
-			children=children->next;
-		}
-	}
+	workTree(original,&pass,compareXmlFileForTag);
+	fprintf(outputStream,"Statistics:\n Totals: %d\n Working: %d (%5.2f%%)\n Warnings: %d\n Missing: %d (%5.2f%%)\n",
+		compareStatisticsTotals,
+		compareStatisticsOk,(float)(100*(float)compareStatisticsOk/compareStatisticsTotals),
+		compareStatisticsWarnings,
+		compareStatisticsTotals-compareStatisticsOk,(float)(100*(float)(compareStatisticsTotals-compareStatisticsOk)/compareStatisticsTotals)
+	);
 }
 
-/****************************************************************\
-|                       File List Primitives                     |
-\****************************************************************/
+#endif
 
-static tListNode* list=NULL;
 
-void addFileToList(const char* file) {
-	/*
-		Adds the file to the list only once
-	*/
-	tListNode* node=list;
-	tListNode* old=NULL;
-	//Verify if the file exists
-	while (node) {
-		if (equalsIgnoreCase(node->file,file)) //If file was in the list, do nothing
-			return;
-		old=node;
-		node=node->next;
-	}
-	//Add new node
-	node=(tListNode*)malloc(sizeof(tListNode));
-
-	if (old!=NULL) {
-		old->next=node;
-	} else {
-		list=node;
-	}
-	node->file=strallocandcopy(file);
-	node->next=NULL;
-}
-
-char* getFileFromList() {
-	/*
-		Returns and removes one random file from the list
-	*/
-	char* result;
-	tListNode* aux;
-	if (list) {
-		//Remember node values
-		aux=list;
-		result=list->file;
-		//move one position
-		list=list->next;
-		//free node
-		free(aux);
-		return result;
-	} else {
-		return NULL;
-	}
-	return result;
-}
