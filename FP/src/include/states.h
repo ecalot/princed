@@ -51,7 +51,8 @@ typedef struct {
 short stateUpdate(tKey* key, tKid* kid,tRoom* room);
 
 /* Create a State depending on the level */
-tState createState(int level);
+int stateKidInLevel(int level);
+tState createState(short stateId);
 
 #include "states_conf.h"
 

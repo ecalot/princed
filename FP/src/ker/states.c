@@ -70,11 +70,15 @@ void stateGetAnimation(int action,tState *state/*short *frames,short** flags,flo
 }
 
 /* public functions interface */
-tState createState(int level) {
-	tState start;
+int stateKidInLevel(int level) {
 	static short statesLevelList[]=STATES_LEVELS;
-	stateGetAnimation(statesLevelList[level],&start);
-	start.currentState=statesActionList[statesLevelList[level]].nextStateId;
+	return statesLevelList[level];
+}
+
+tState createState(short stateId) {
+	tState start;
+	stateGetAnimation(stateId,&start);
+	start.currentState=statesActionList[stateId].nextStateId;
 	return start;
 }
 
