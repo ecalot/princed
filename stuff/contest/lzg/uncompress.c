@@ -41,7 +41,7 @@ int expandLzg(const unsigned char* input, int inputSize,
 	unsigned char maskbyte=0, rep, k;
 
 	/* clean output garbage */
-	for(loc=LZG_MAX_MEMSIZE;loc--;output[loc]=0);
+	for(loc=LZG_WINDOW_SIZE;loc--;output[loc]=0);
 
 	/* main loop */
 	while (iCursor<inputSize) {
@@ -49,6 +49,7 @@ int expandLzg(const unsigned char* input, int inputSize,
 		for (k=8;k&&(iCursor<inputSize);k--) {
 			if (popBit(&maskbyte)) {
 				output[oCursor++]=input[iCursor++]; /* copy input to output */
+printf("print %02x@input(%d)\n",output[oCursor-1],iCursor-1);
 			} else {
 				/*
 				 * loc:
@@ -76,6 +77,7 @@ int expandLzg(const unsigned char* input, int inputSize,
 					 */
 					
 					output[oCursor]=output[oCursor+((loc-oCursor)%LZG_WINDOW_SIZE)];
+					printf("print %02x@%d delta=%d oCursor=%d\n",output[oCursor],oCursor+((loc-oCursor)%LZG_WINDOW_SIZE),((loc-oCursor)%LZG_WINDOW_SIZE),oCursor);
 
 					oCursor++;
 					loc++;
