@@ -84,28 +84,33 @@ int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int option
 
 	/* Initialize abstract variables to read this new DAT file */
 	if (!mReadBeginDatFile(&numberOfItems,vFiledat)) return -1;
-
+fld("a");
 	/* Initializes the palette list */
 	initializePaletteList;
+fld("b");
 
 	/* main loop */
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
-		id=mReadGetFileInDatFile(indexNumber,&data,&size);
+		id=mReadFileInDatFile(indexNumber,&data,&size);
+fld("c");
+printf("*K) id=%d size=%d %d:%d:%d:%d:%d:%d\n",id,size,data[0],data[1],data[2],data[3],data[4],data[5]);
 
 		if (id<0) return -3; /* Read error */
 		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
 		if (id>=MAX_RES_COUNT) return -3; /* A file with an ID out of range will be treated as invalid */
+fld("d");
 
 		/* set resource information on this index entry */
 		if (mReadInitResource(r+id,data,size)) return -2;
-
+fld("e");
+printf("z->%d\n",r[id]->type);
 		if ((r[id]->type==RES_TYPE_PALETTE)||isInThePartialList(r[id]->path,id)) { /* If the resource was specified or is a palette, do the tasks */
 			if (!(hasFlag(unknown_flag))) { /* If unknown flag is set do nothing but generate the unknown.xml file */
 				if (hasFlag(raw_flag)) r[id]->type=0; /* If "extract as raw" is set, type is 0 */
 
 				/* get save file name (if unknown document it in the xml) */
 				getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension);
-
+fld("f");
 				switch (r[id]->type) {
 					case RES_TYPE_LEVEL:
 						ok=ok&&mFormatExportPlv(data,vFileext,size,r[id]->number,vDatFileName,r[id]->name,r[id]->desc,vDatAuthor,optionflag,backupExtension);
@@ -128,13 +133,16 @@ int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int option
 						break;
 					case RES_TYPE_PCSPEAKER: /* save pcs file */
 					case RES_TYPE_MIDI:	/* save midi file */
+printf("a->%d\n",ok);
 						ok=ok&&mFormatExportMid(data,vFileext,size,optionflag,backupExtension);
+printf("b->%d\n",ok);
 						break;
 					case RES_TYPE_WAVE: /* save wav file */
 						ok=ok&&mFormatExportWav(data,vFileext,size,optionflag,backupExtension);
 						break;
 					case RES_TYPE_IMAGE: /* save image */
 						/* Palette handling */
+fld("Z1");
 						if (r[id]->palette!=paletteId) { /* The palette isn't the already loaded */
 							if (r[id]->palette) { /* We need a palette */
 								/*
@@ -148,7 +156,9 @@ int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int option
 							}
 						}
 						/* Export bitmap */
+fld("Z2");
 						ok=ok&&mFormatExportBmp(data,vFileext,size,image,optionflag,backupExtension);
+fld("Z3");
 						break;
 				}
 				/* Verbose information */

@@ -51,7 +51,7 @@ int mFormatImportMid(unsigned char* data, tResource *res) {
 	file[0]=(unsigned char)((res->type==4)?2:0); /* Now should be 0x02: First character must be a 0x01 (wav type in dat) */
 	memcpy(file+1,data,res->size);
 	res->size++;
-	mWriteSetFileInDatFile(file,res->size);
+	mWriteFileInDatFile(file,res->size);
 	free(file);
 	return 1;
 }

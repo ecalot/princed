@@ -187,7 +187,7 @@ int mFormatImportPlv(unsigned char* data, tResource *res) {
 	if (!checkSum(pos,res->size)) return 0;
 
 	/* save data */
-	mWriteSetFileInDatFileIgnoreChecksum(pos,res->size--);
+	mWriteFileInDatFileIgnoreChecksum(pos,res->size--);
 
 	return 1;
 }

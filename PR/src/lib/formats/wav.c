@@ -70,6 +70,6 @@ int mFormatImportWav(unsigned char* data, tResource *res) {
 	res->size-=(--i);
 	while ((i==4||i==5||i==6||i==7||i==40||i==41||i==42||i==43||(data[i]==wav[i]))&&(i--));
 	data[sizeof(wav)-1]=1; /* First character must be a 0x01 (wav type in dat) */
-	if (i==-1) mWriteSetFileInDatFile(data+sizeof(wav)-1,res->size);
+	if (i==-1) mWriteFileInDatFile(data+sizeof(wav)-1,res->size);
 	return 1;
 }

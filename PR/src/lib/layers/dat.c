@@ -38,10 +38,13 @@ dat.c: Princed Resources : DAT library
 #include "resources.h"
 #include "disk.h"
 #include "memory.h"
+#include "dat.h"
 
 /***************************************************************\
 |                     DAT reading primitives                    |
 \***************************************************************/
+
+#ifdef PR_DAT_INCLUDE_DATREAD
 
 char               recordSize;
 int                ofk=0;
@@ -100,14 +103,16 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	return 1;
 }
 
-int mReadGetFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
-	int ok=1; /* TODO: rename mReadGet* for mRead* and mWriteSet for mWrite */
+int mReadFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
+	int ok=1; /* TODO: rename mRead* for mRead* and mWrite for mWrite */
 	unsigned short int id;
 
 	/* for each archived file the index is read */
-	id=    (indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8);
-	offset=(indexPointer[ofk+k*recordSize+2])+(indexPointer[ofk+k*recordSize+3]<<8)+(indexPointer[ofk+k*recordSize+4]<<16)+(indexPointer[ofk+k*recordSize+5]<<24);
-	*size= (indexPointer[ofk+k*recordSize+6])+(indexPointer[ofk+k*recordSize+7]<<8)+1;
+	id=    array2short(indexPointer+ofk+k*recordSize);//(indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8);
+	printf("a ver: %d %d\n",id,(indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8));
+	
+	offset=array2long(indexPointer+ofk+k*recordSize+2);//indexPointer[ofk+k*recordSize+2])+(indexPointer[ofk+k*recordSize+3]<<8)+(indexPointer[ofk+k*recordSize+4]<<16)+(indexPointer[ofk+k*recordSize+5]<<24);
+	*size= array2short(indexPointer+ofk+k*recordSize+6);//indexPointer[ofk+k*recordSize+6])+(indexPointer[ofk+k*recordSize+7]<<8)+1;
 	if ((!pop1)&&(!(indexPointer[ofk+k*recordSize+8]==0x40)&&(!indexPointer[ofk+k*recordSize+9])&&(!indexPointer[ofk+k*recordSize+10]))) return -1;
 	if (offset+indexSize>readDatFileSize) return -1;
 	*data=readDatFile+offset;
@@ -132,11 +137,13 @@ int mReadInitResource(tResource** res,const unsigned char* data,long size) {
 	}
 	return 0;
 }
+#endif
 
 /***************************************************************\
 |                     DAT Writing primitives                    |
 \***************************************************************/
 
+#ifdef PR_DAT_INCLUDE_DATWRITE
 FILE* writeDatFile;
 
 int mWriteBeginDatFile(const char* vFile, int optionflag) {
@@ -149,7 +156,6 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 			 0 File couldn't be open
 
 	*/
-
 	if (writeOpen(vFile,&writeDatFile,optionflag|backup_flag)) {
 		fseek(writeDatFile,6,SEEK_SET);
 		return 1;
@@ -161,11 +167,15 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 void mWriteInitResource(tResource** res) {
 	if ((*res)==NULL) {
 		(*res)=(tResource*)malloc(sizeof(tResource));
+		(*res)->path=NULL;
+		(*res)->palAux=NULL;
+		(*res)->desc=NULL;
+		(*res)->name=NULL;
 	}
 	(*res)->offset=(unsigned long)ftell(writeDatFile);
 }
 
-void mWriteSetFileInDatFile(unsigned char* data, int size) {
+void mWriteFileInDatFile(const unsigned char* data, int size) {
 	/*
 		Adds a data resource to a dat file keeping
 		abstractly the checksum ver	ifications
@@ -174,18 +184,18 @@ void mWriteSetFileInDatFile(unsigned char* data, int size) {
 	/* Declare variables */
 	int            k        = size;
 	unsigned char  checksum = 0;
-	unsigned char* dataAux  = data;
+	const unsigned char* dataAux  = data;
 
 	/* calculates the checksum */
 	while (k--) checksum+=*(dataAux++);
 	checksum=~checksum;
 
 	/* writes the checksum and the data content */
-	fwrite(&checksum,1,1,writeDatFile);
+	fwritechar(&checksum,writeDatFile);
 	fwrite(data,size,1,writeDatFile);
 }
 
-void mWriteSetFileInDatFileIgnoreChecksum(unsigned char* data, int size) {
+void mWriteFileInDatFileIgnoreChecksum(unsigned char* data, int size) {
 	fwrite(data,size,1,writeDatFile);
 }
 
@@ -199,33 +209,36 @@ void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const char* 
 	unsigned long  int size1=ftell(writeDatFile);
 
 	/* Write index */
-	fwrite(&totalItems,2,1,writeDatFile); /* Junk total items count to reserve 2 bytes */
+	fwriteshort(&totalItems,writeDatFile); /* Junk total items count to reserve 2 bytes */
 	for (;id!=MAX_RES_COUNT;id++) {
 		if (r[id]!=NULL) {
 			/* the file is in the archive, so i'll add it to the index */
 			totalItems++;
-			fwrite(&id,2,1,writeDatFile);
-			fwrite(&(r[id]->offset),4,1,writeDatFile);
-			fwrite(&(r[id]->size),2,1,writeDatFile);
+			fwriteshort(&id,writeDatFile);
+			fwritelong(&(r[id]->offset),writeDatFile);
+			fwriteshort(&(r[id]->size),writeDatFile);
 		}
 	}
 	size2+=totalItems<<3;
 	fseek(writeDatFile,size1,SEEK_SET);
-	fwrite(&totalItems,2,1,writeDatFile); /* Definitive total items count */
+	fwriteshort(&totalItems,writeDatFile); /* Definitive total items count */
 
 	/* Write first 6 bytes header */
 	fseek(writeDatFile,0,SEEK_SET);
-	fwrite(&size1,4,1,writeDatFile);
-	fwrite(&size2,2,1,writeDatFile);
+	fwritelong(&size1,writeDatFile);
+	fwriteshort(&size2,writeDatFile);
 
 	/* Closes the file and flushes the buffer */
 	writeClose(writeDatFile,dontSave,optionflag,backupExtension);
 }
+#endif
 
 /***************************************************************\
 |                       DAT R/W primitives                      |
 \***************************************************************/
 
+#ifdef PR_DAT_INCLUDE_DATREAD
+#ifdef PR_DAT_INCLUDE_DATWRITE
 int mRWBeginDatFile(const char* vFile, unsigned short int *numberOfItems, int optionflag) {
 	if (!mReadBeginDatFile(numberOfItems,vFile)) return -2;
 	if (!mWriteBeginDatFile(vFile,optionflag)) {
@@ -234,10 +247,5 @@ int mRWBeginDatFile(const char* vFile, unsigned short int *numberOfItems, int op
 	}
 	return 0;
 }
-
-
-
-
-
-
-
+#endif
+#endif

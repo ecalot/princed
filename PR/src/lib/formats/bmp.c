@@ -41,6 +41,8 @@ bmp.c: Princed Resources : BMP file support
 #include "memory.h"
 #include "dat.h"
 
+extern FILE* outputStream;
+
 int mFormatExportBmp(const unsigned char* data, const char *vFileext,unsigned long int size,tImage image,int optionflag, const char* backupExtension) {
 	/*
 		This function will expand the data into an image structure,
@@ -50,15 +52,19 @@ int mFormatExportBmp(const unsigned char* data, const char *vFileext,unsigned lo
 		      keep the right palette.
 	*/
 	int result;
+fld("ZA1");
 
 	/* Expand graphic and check results */
 	result=mExpandGraphic(data,&image,size);
+printf("0) %d+%d*%d,%d\n",image.pix,image.height,image.widthInBytes,image.widthInBytes);
 	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
-		printf (PR_TEXT_EXPORT_BMP_WARN);
+		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);
 	if (result==COMPRESS_RESULT_FATAL) return 0;
+fld("ZA2");
 
 	/* Write bitmap */
 	mWriteBitMap(image,vFileext,optionflag,backupExtension);
+fld("ZA3");
 
 	/* free bitmap */
 	free(image.pix);
@@ -69,14 +75,15 @@ int mFormatExportBmp(const unsigned char* data, const char *vFileext,unsigned lo
 int mFormatImportBmp(unsigned char* data, tResource *res) {
 	int size;
 	tImage img;
-	unsigned char aux[32700];
+	unsigned char* aux;
 
 	if (!mReadBitMap(&img,data,res->size)) return 0;
-	mCompressGraphic(aux,&img,&size);
+	mCompressGraphic(&aux,&img,&size);
+	mWriteFileInDatFile(aux,size);
 	free(img.pix);
-	mWriteSetFileInDatFile(aux,size);
-	res->size=(unsigned short)size; /* this was a bug (added to debug ;) ironic, don't you think? */
-	/* Note: after the debugging we realized this line was missing so this is not a bug anymore*/
+	free(aux);
+	res->size=(unsigned short)size;
+
 	return 1;
 }
 
@@ -100,9 +107,11 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	const unsigned long int zero=0;
 	char lineSerialization;
 	FILE* bitmap;
-
+fld("alpha");
 	/* open file */
 	if (!writeOpen(vFile,&bitmap,optionflag)) return 0;
+fld("beta");
+printf("a) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes);
 
 	/* initialize variables */
 	width=img.width;
@@ -114,23 +123,26 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	r=(g=(b=(unsigned char*)&extra)+1)+1;
 	lineSerialization=(-img.widthInBytes)&3;
 	filesize=offset+(img.widthInBytes+lineSerialization)*height;
+printf("b) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes);
+fld("gamma");
 
 	/* Write header */
-	fwrite("BM"       ,2,1,bitmap);    /* Magic identifier            */
-	fwrite(&filesize  ,4,1,bitmap);    /* File size in bytes          */
-	fwrite(&zero      ,4,1,bitmap);    /* reserved                    */
-	fwrite(&offset    ,4,1,bitmap);    /* Offset to image data, bytes */
-	fwrite(&headerSize,4,1,bitmap);    /* Header size in bytes        */
-	fwrite(&width     ,4,1,bitmap);    /* Width of image              */
-	fwrite(&height    ,4,1,bitmap);    /* Height of image             */
-	fwrite(&planes    ,2,1,bitmap);    /* Number of colour planes     */
-	fwrite(&bits      ,2,1,bitmap);    /* Bits per pixel              */
-	fwrite(&zero      ,4,1,bitmap);    /* Compression type (0=none)   */
-	fwrite(&zero      ,4,1,bitmap);    /* Image size in bytes         */
-	fwrite(&extra     ,4,1,bitmap);    /* Pixels per meter x          */
-	fwrite(&extra     ,4,1,bitmap);    /* Pixels per meter y          */
-	fwrite(&colours   ,4,1,bitmap);    /* Number of colours           */
-	fwrite(&zero      ,4,1,bitmap);    /* Important colours           */
+	fwrite     ("BM",2,1   ,bitmap);    /* Magic identifier            */
+	fwritelong (&filesize  ,bitmap);    /* File size in bytes          */
+	fwritelong (&zero      ,bitmap);    /* reserved                    */
+	fwritelong (&offset    ,bitmap);    /* Offset to image data, bytes */
+	fwritelong (&headerSize,bitmap);    /* Header size in bytes        */
+	fwritelong (&width     ,bitmap);    /* Width of image              */
+	fwritelong (&height    ,bitmap);    /* Height of image             */
+	fwriteshort(&planes    ,bitmap);    /* Number of colour planes     */
+	fwriteshort(&bits      ,bitmap);    /* Bits per pixel              */
+	fwritelong (&zero      ,bitmap);    /* Compression type (0=none)   */
+	fwritelong (&zero      ,bitmap);    /* Image size in bytes         */
+	fwritelong (&extra     ,bitmap);    /* Pixels per meter x          */
+	fwritelong (&extra     ,bitmap);    /* Pixels per meter y          */
+	fwritelong (&colours   ,bitmap);    /* Number of colours           */
+	fwritelong (&zero      ,bitmap);    /* Important colours           */
+fld("delta");
 
 	/* Write ColorTable */
 	if (colours==2) {
@@ -142,17 +154,23 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 			*r=(unsigned char)(img.pal[x++]<<2);  /* Red   */
 			*g=(unsigned char)(img.pal[x++]<<2);  /* Green */
 			*b=(unsigned char)(img.pal[x++]<<2);  /* Blue  */
-			fwrite(&extra,4,1,bitmap);    /* 24-bit Color value */
+			fwritelong (&extra,bitmap);    /* 24-bit Color value */
 		}
 	}
+fld("epsilon");
 
 	/* Write data */
 	while (img.height--) {
+fld("e1");
+printf("c) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes);
 		fwrite(img.pix+img.height*img.widthInBytes,img.widthInBytes,1,bitmap);
+fld("e2");
 		fwrite(&zero,lineSerialization,1,bitmap);
 	}
+fld("zeta");
 
 	writeCloseOk(bitmap,optionflag,backupExtension);
+fld("etha");
 	return 1;
 }
 
@@ -173,8 +191,8 @@ int mReadBitMap(tImage* image,unsigned char* data, int size) {
 	ok    = size>50;
 	ok=ok&& data[0]=='B' && data[1]=='M';
 	/* Read sizes from header */
-	width=(unsigned short)(data[18]+(data[19]<<8));
-	height=(unsigned short)(data[22]+(data[23]<<8));
+	width=(unsigned short)array2short(data+18);
+	height=(unsigned short)array2short(data+22);
 	bits=(unsigned short)(data[28]);
 
 	/* Save sizes into image */
@@ -194,7 +212,7 @@ int mReadBitMap(tImage* image,unsigned char* data, int size) {
 
 	/* Validate image and file size; get memory to allocate the image */
 	ok=ok&& (filesize==size);
-	ok=ok&& (	(image->pix=getMemory(height*image->widthInBytes)) != NULL	);
+	ok=ok&& (	(image->pix=getMemory(height*image->widthInBytes*2)) != NULL	);
 	/* if validations==wrong */
 	if (!ok) {
 		freeAllocation(image->pix);

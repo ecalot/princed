@@ -52,7 +52,7 @@ mWriteCloseDatFile(r,dontSave,optionflag,backupExtension)
 #ifdef PR_DAT_INCLUDE_DATREAD
 /* DAT reading primitives */
 int  mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFile);
-int  mReadGetFileInDatFile(int indexNumber,unsigned char* *data,unsigned long  int *size);
+int  mReadFileInDatFile(int indexNumber,unsigned char* *data,unsigned long  int *size);
 int  mReadInitResource(tResource** res,const unsigned char* data,long size);
 void mReadCloseDatFile();
 #endif
@@ -60,8 +60,8 @@ void mReadCloseDatFile();
 #ifdef PR_DAT_INCLUDE_DATWRITE
 /* DAT writing primitives */
 int  mWriteBeginDatFile(const char* vFile, int optionflag);
-void mWriteSetFileInDatFile(const unsigned char* data, int size);
-void mWriteSetFileInDatFileIgnoreChecksum(unsigned char* data,int size);
+void mWriteFileInDatFile(const unsigned char* data, int size);
+void mWriteFileInDatFileIgnoreChecksum(unsigned char* data,int size);
 void mWriteInitResource(tResource** res);
 void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const char* backupExtension);
 #endif

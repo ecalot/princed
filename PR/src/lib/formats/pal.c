@@ -135,7 +135,7 @@ int mFormatImportPal(unsigned char* data, tResource *res,const char* vFile) {
 	}
 
 	/* save and free palette */
-	mWriteSetFileInDatFile(pal,res->size=100);
+	mWriteFileInDatFile(pal,res->size=100);
 	free(pal);
 
 	return 1;
