@@ -131,11 +131,11 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 
 	/* Write footers */
 	block2size=(
-		sizeof(PLV_FOOT_EDITOR)+	strlen(vDatAuthor)+1+
-		sizeof(PLV_FOOT_TITLE)+	strlen(title)+1+
-		sizeof(PLV_FOOT_DESC)+	strlen(desc)+1+
-		sizeof(PLV_FOOT_TCREAT)+	sizeOfNow+
-		sizeof(PLV_FOOT_TMODIF)+	sizeOfNow+
+		sizeof(PLV_FOOT_EDITOR)+	  strlen(vDatAuthor)+1+
+		sizeof(PLV_FOOT_TITLE)+	    strlen(title)+1+
+		sizeof(PLV_FOOT_DESC)+	    strlen(desc)+1+
+		sizeof(PLV_FOOT_TCREAT)+	  sizeOfNow+
+		sizeof(PLV_FOOT_TMODIF)+	  sizeOfNow+
 		sizeof(PLV_FOOT_ORIG_FILE)+	strlen(filename)+1
 	);
 
@@ -164,30 +164,32 @@ int mFormatImportPlv(unsigned char* data, tResource *res) {
 	/* declare variables */
 	unsigned char* pos;
 	unsigned long int oldSize=res->size;
-
+fld("a");
 	/* integrity check 1 */
 	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE) return 0;
 	/* if (memcmp(data,PLV_HEADER_A,PLV_HEADER_A_SIZE)) return 0; */
 
+fld("b");
 	/* jump to size */
 	pos=data+PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE;
 	/* read size and jump to data */
-	/*
-	res->size=*(pos++);
-	res->size+=(*(pos++))<<8;
-	res->size+=(*(pos++))<<16;
-	res->size+=(*(pos++))<<24;
-	*/
+
 	res->size=array2long(pos);pos+=4;
 
+fld("c");
 	/* integrity check 2 */
 	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE+res->size) return 0;
 
+fld("d-");
 	/* verify checksum */
+
+/* TODO: uncomment this line and validate checksums in plvs */
 	if (!checkSum(pos,res->size)) return 0;
 
+fld("e");
 	/* save data */
 	mWriteFileInDatFileIgnoreChecksum(pos,res->size--);
 
+fld("f");
 	return 1;
 }
