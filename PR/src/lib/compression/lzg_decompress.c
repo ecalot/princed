@@ -30,6 +30,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 /* modulus to be used in the 10 bits of the algorithm */
 #define LZG_WINDOW_SIZE    0x400 /* =1024=1<<10 */
@@ -43,10 +44,11 @@ unsigned char popBit(unsigned char *byte) {
 
 /* Expands LZ Groody algorithm. This is the core of PR */
 int expandLzg(const unsigned char* input, int inputSize, 
-               unsigned char* output, int *outputSize) {
+               unsigned char** output2, int *outputSize) {
 
 	int           loc, oCursor=0, iCursor=0;
 	unsigned char maskbyte=0, rep, k;
+	unsigned char output[65000];
 
 	/* initialize the first 1024 bytes of the window with zeros */
 	for(oCursor=0;oCursor<LZG_WINDOW_SIZE;output[oCursor++]=0);
@@ -82,10 +84,11 @@ int expandLzg(const unsigned char* input, int inputSize,
 	}
 	
 	/* ignore the first 1024 bytes */
-	for(iCursor=LZG_WINDOW_SIZE;iCursor<oCursor;iCursor++)
-		output[iCursor-LZG_WINDOW_SIZE]=output[iCursor];
-
 	*outputSize=oCursor-LZG_WINDOW_SIZE;
-	return maskbyte;
+	*output2=malloc(*outputSize);
+	for(iCursor=LZG_WINDOW_SIZE;iCursor<oCursor;iCursor++)
+		(*output2)[iCursor-LZG_WINDOW_SIZE]=output[iCursor];
+
+	return (!maskbyte)-1;
 }
 

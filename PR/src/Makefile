@@ -50,7 +50,7 @@ else
   LINKERRELEASE = -s
 endif
 
-FILES    = import.o compress.o export.o resources.o tasks.o disk.o\
+FILES    = import.o export.o resources.o tasks.o disk.o\
            dat.o bmp.o mid.o pal.o wav.o plv.o\
            memory.o pr.o
 

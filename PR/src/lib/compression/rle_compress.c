@@ -41,7 +41,7 @@ void compressRle(const unsigned char* input, int inputSize,
 	unsigned char* cursorData        = output;
 	char*          counter;
 	const unsigned char* cursorPix   = input;
-	const unsigned char* imgEnd      = input+(*outputSize);
+	const unsigned char* imgEnd      = input+inputSize;
 
 	while (cursorPix<imgEnd) {
 		/* Step 1: Create counter */

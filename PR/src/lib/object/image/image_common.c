@@ -47,14 +47,17 @@ compress.c: Princed Resources : Image Compression Library
 |                Internal compression prototypes                |
 \***************************************************************/
 
+/* compress and sets the bytes */
 void compressLzg(const unsigned char* input, int inputSize, 
                  unsigned char* output, int *outputSize);
 void compressRle(const unsigned char* input, int inputSize, 
                  unsigned char* output, int *outputSize);
+
+/* uncompress and allocates output */
 int expandLzg(const unsigned char* input, int inputSize, 
-               unsigned char* output, int *outputSize);
+               unsigned char** output, int *outputSize);
 int expandRle(const unsigned char* input, int inputSize, 
-               unsigned char* output, int *outputSize);
+               unsigned char** output, int *outputSize);
 
 /***************************************************************\
 |                        Image transpose                        |
@@ -67,18 +70,20 @@ int transpose(int x,int w,int h) {
 
 void transposeImage(tImage* image,int size) {
 	unsigned char* outputaux=getMemory(size);
-	int cursor=0;
+	int cursor;
 
-	while (cursor<size) {outputaux[transpose(cursor,image->widthInBytes,image->height)]=image->pix[cursor];cursor++;}
+	for (cursor=0;cursor<size;cursor++) 
+		outputaux[transpose(cursor,image->widthInBytes,image->height)]=image->pix[cursor];
 	free(image->pix);
 	image->pix=outputaux;
 }
 
 void antiTransposeImage(tImage* image,int size) {
 	unsigned char* outputaux=getMemory(size);
-	int cursor=0;
+	int cursor;
 
-	while (cursor<size) {outputaux[cursor]=image->pix[transpose(cursor,image->widthInBytes,image->height)];cursor++;}
+	for (cursor=0;cursor<size;cursor++) 
+		outputaux[cursor]=image->pix[transpose(cursor,image->widthInBytes,image->height)];
 	free(image->pix);
 	image->pix=outputaux;
 }
@@ -124,28 +129,29 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 
 	switch (getAlgor(image->type)) {
 		case COMPRESS_RAW: /* No Compression Algorithm */
+						/* TODO: use dataSize */
 			if ((image->pix=getMemory(imageSizeInBytes))==NULL) return COMPRESS_RESULT_FATAL;
 			memcpy(image->pix,data,imageSizeInBytes);
 			result=COMPRESS_RESULT_SUCCESS;
 			break;
 		case COMPRESS_RLE_LR: /* RLE Left to Right Compression Algorithm */
-			result=expandRle(data,dataSizeInBytes,image,imageSizeInBytes);
+			result=expandRle(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
 			break;
 		case COMPRESS_RLE_UD: /* RLE Up to Down Compression Algorithm */
-			result=expandRle(data,dataSizeInBytes,image,imageSizeInBytes);
+			result=expandRle(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
 			if (result==COMPRESS_RESULT_FATAL) return COMPRESS_RESULT_FATAL;
 			transposeImage(image,imageSizeInBytes);
 			break;
 		case COMPRESS_LZG_LR: /* LZ Groody Left to Right Compression Algorithm */
-			result=expandLzg(data,dataSizeInBytes,image,imageSizeInBytes);
+			result=expandLzg(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
 			break;
 		case COMPRESS_LZG_UD: /* LZ Groody Up to Down Compression Algorithm */
-			result=expandLzg(data,dataSizeInBytes,image,imageSizeInBytes);
+			result=expandLzg(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
 			if (result==COMPRESS_RESULT_FATAL) return COMPRESS_RESULT_FATAL;
 			transposeImage(image,imageSizeInBytes);
 			break;
 		default:
-			result=COMPRESS_RESULT_FATAL;
+			result=COMPRESS_RESULT_FATAL; /* unknown algorithm */
 			break;
 	}
 	return result; /* Ok */
@@ -162,24 +168,76 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 
 	/* Initialize variables */
 	imageSizeInBytes=image->widthInBytes*image->height;
-	for (i=0;i<COMPRESS_WORKING_ALGORITHMS;i++) compressedSize[i]=imageSizeInBytes;
+	for (i=0;i<COMPRESS_WORKING_ALGORITHMS;i++) compressedSize[i]=imageSizeInBytes; /* TODO: remove this line */
 
 	/*
 		Perform all compressions
 	*/
 
-	/* COMPRESS_RAW */
-	compressed[COMPRESS_RAW]=getMemory(compressedSize[COMPRESS_RAW]);
-	memcpy(compressed[COMPRESS_RAW],image->pix,compressedSize[COMPRESS_RAW]);
 
-	/* COMPRESS_RLE_LR */
-	compressed[COMPRESS_RLE_LR]=getMemory((10*imageSizeInBytes+50)); /* This will reserve 10*(image size)+50 bytes, to allocate the compressed file */
-	compressRle(compressed[COMPRESS_RLE_LR],image,&(compressedSize[COMPRESS_RLE_LR]));
+	/* Forward compression */
+	
+	/* COMPRESS_RAW
+	 * The allocation size is the image size.
+	 * The algorithm is hardcoded.
+	 * There is no need to code a transposed version because
+	 * we have no compression to improve.
+	 */
+	compressed[COMPRESS_RAW]=getMemory(imageSizeInBytes);
+	compressedSize[COMPRESS_RAW]=imageSizeInBytes;
+	memcpy(compressed[COMPRESS_RAW],image->pix,imageSizeInBytes);
+
+	/* COMPRESS_RLE_LR
+	 * If all the uncompressed data has a big enthropy, there
+	 * will be a control byte for a block of 127 bytes.
+	 * The allocation size has a maximum value of the image
+	 * size plus a byte each 127 bytes.
+	 * This is accoted by 2*n+50
+	 */
+	compressed[COMPRESS_RLE_LR]=getMemory((2*imageSizeInBytes+50)); 
+	compressRle(
+		image->pix,imageSizeInBytes,
+		compressed[COMPRESS_RLE_LR],&(compressedSize[COMPRESS_RLE_LR])
+	);
+
+	/* COMPRESS_LZG_LR 
+	 * If all the uncompressed data has a big enthropy, there
+	 * will be a maskbyte for a block of 8 bytes.
+	 * The allocation size has a maximum value of the image
+	 * size plus a byte in 8.
+	 * Additionally, this compressor needs 1024 bytes extra
+	 * allocated.
+	 * This is accoted by 2*n+1050
+	 */
+	compressed[COMPRESS_LZG_LR]=getMemory((2*imageSizeInBytes+1050));
+	compressLzg(
+		image->pix,imageSizeInBytes,
+		compressed[COMPRESS_LZG_LR],&(compressedSize[COMPRESS_LZG_LR])
+	);
+	
+
+	/* Transposed compression
+	 * Transposition is used to test the same compression
+	 * algorithms with other input in order to get a better
+	 * compression.
+	 * The following algorithms will be the same as above, but
+	 * using the image matrix transposed.
+	 */
+	antiTransposeImage(image,imageSizeInBytes);
 
 	/* COMPRESS_RLE_UD */
-	compressed[COMPRESS_RLE_UD]=getMemory(10*imageSizeInBytes+50); /* This will reserve 10*(image size)+50 bytes, to allocate the compressed file */
-	antiTransposeImage(image,imageSizeInBytes);
-	compressRle(compressed[COMPRESS_RLE_UD],image,&(compressedSize[COMPRESS_RLE_UD]));
+	compressed[COMPRESS_RLE_UD]=getMemory(2*imageSizeInBytes+50);
+	compressRle(
+		image->pix,imageSizeInBytes,
+		compressed[COMPRESS_RLE_UD],&(compressedSize[COMPRESS_RLE_UD])
+	);
+
+	/* COMPRESS_LZG_UD */
+	compressed[COMPRESS_LZG_UD]=getMemory(2*imageSizeInBytes+1050);
+	compressLzg(
+		image->pix,imageSizeInBytes,
+		compressed[COMPRESS_LZG_UD],&(compressedSize[COMPRESS_LZG_UD])
+	);
 
 	/*
 		Process results

@@ -42,7 +42,7 @@ compress.c: Princed Resources : Image Compressor headers
 #define COMPRESS_LZG_LR 0x03
 #define COMPRESS_LZG_UD 0x04
 
-#define COMPRESS_WORKING_ALGORITHMS 3
+#define COMPRESS_WORKING_ALGORITHMS 5
 
 #define COMPRESS_RESULT_FATAL   -2
 #define COMPRESS_RESULT_WARNING -1
