@@ -38,7 +38,7 @@ LINKERRELEASE = -s
 #Binary code files
 OBJFILES      = main.obj kernel.obj resources.obj dat.obj disk.obj compress.obj \
                 output.obj maps.obj config.obj room.obj titles.obj \
-                input.obj kid.obj\
+                input.obj kid.obj states.obj tiles.obj\
                 $(SRC2)
 EXEFILE       = bin\freeprince.exe
 
@@ -120,6 +120,16 @@ maps.obj: res\maps.c include\maps.h
 output.obj: out\output.c include\resources.h include\res_conf.h
 	$(INFO) Compiling main output module...
 	$(CC) $(OPTIONS) -c out\output.c
+
+states.obj: ker/states.c include/states.h include/states_conf.h\
+          include/resources.h include/res_conf.h include/types.h\
+					include/tiles.h include/tiles_conf.h
+	$(INFO) Compiling kernel states module...
+	$(CC) $(OPTIONS) -c ker\states.c 
+
+tiles.obj: res/tiles.c include/tiles.h include/tiles_conf.h
+	$(INFO) Compiling resource tile classification module...
+	$(CC) $(OPTIONS) -c res\tiles.c
 
 input.obj: out\input.c include\input.h
 	$(INFO) Compiling main input module...
