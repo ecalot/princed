@@ -45,7 +45,6 @@ int kernel(int optionflag,int level) {
  * must be called optionflag
  */
 	
-	tData* testResource;
 	SDL_Surface *screen, *test;
 	SDL_Event e;
 	int i;
