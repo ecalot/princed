@@ -57,6 +57,7 @@ typedef struct {
 	int hasTorch;
 	int hasSkeleton;
 	int isExit;
+	int isGate;
 	int bricks;
 	int isPressable;
 	int hasSpikes;
