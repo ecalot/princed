@@ -61,6 +61,7 @@ typedef struct {
 	int hasBigPillar;
 	int isExit;
 	int isGate;
+	int gateStatus;
 	int bricks;
 	int isPressable;
 	int hasSpikes;

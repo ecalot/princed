@@ -92,6 +92,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasPillar=(result.code==T_PILLAR);
 		result.hasBigPillar=(result.code==T_BP_BOTTOM);
 		result.isGate=(result.code==T_GATE);
+		result.gateStatus=(!back)*47; /* only important if tile is gate*/
 		result.walkable=1;
 		result.hasChopper=(result.code==T_CHOPPER);
 		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);
@@ -157,6 +158,21 @@ tTile roomGetTile(tRoom* room,int x, int y) {
  * Drawing functions
  */
 
+/* door drawing */
+#define drawGateTop(x,y,frame) outputDrawBitmap(roomGfx.environment->pFrames[35-((frame)&7)],x,y)
+
+void drawGate(int x, int y, int frame) {
+	/* frames are from 0 to 46, 0 is open 46 is closed
+	 */
+	register int i;
+	register const int mod=frame&7;
+	/* Upper part */
+	outputDrawBitmap(roomGfx.environment->pFrames[27-mod],x,y+mod);
+	for (i=8;i<=frame;i+=8)
+		outputDrawBitmap(roomGfx.environment->pFrames[20],x,y+i+mod);
+	outputDrawBitmap(roomGfx.environment->pFrames[18],x,y+i+mod+4);
+}
+
 /* main panel block */
 void drawBackPanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
@@ -179,6 +195,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			(x-1)*TILE_W,
 			y*TILE_H+2
 		);
+		drawGate((x-1)*TILE_W,(y-1)*TILE_H+3,tile.gateStatus);
 	}
 	/* normal/left */
 	if (left.hasFloor) {
@@ -449,6 +466,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 					(x-1)*TILE_W,
 					y*TILE_H+3
 				);
+		drawGateTop(x*TILE_W,(y-1)*TILE_H+3,tile.gateStatus);
 			}
 			/* big_pillar/left */
 			if (dleft.hasBigPillar==2) {
@@ -617,7 +635,7 @@ void roomDrawBackground(tRoom* room) {
 	int x,y;
 	
 	for (x=1;x<11;x++) {
-		drawBackBottomTile(room,x,0);
+	drawBackBottomTile(room,x,0);
 		for (y=1;y<4;y++) {
 			drawBackPanel(room,x,y);
 			drawBackBottomTile(room,x,y);
