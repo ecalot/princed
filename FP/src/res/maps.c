@@ -331,7 +331,7 @@ tRoom mapGetRoom(tMap* map, tRoomId roomAux) {
 
 void  mapStart(tMap* map, tObject* kid, tRoomId *roomId, int level) {
 	/* kid->x,y */
-	static char environments[]=MAP_ENVIRONMENTS;
+	/*static char environments[]=MAP_ENVIRONMENTS;*/
 	*roomId=slevel(start)[0];
 #if defined DEBUGMAPS
 	printf("mapStart: binding kid to map in room %d using the %d environment\n",*roomId,environments[level]);
