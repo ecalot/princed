@@ -111,7 +111,7 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 }
 
 int mReadFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
-	int ok=1; /* TODO: rename mRead* for mRead* and mWrite for mWrite */
+	int ok=1; 
 	unsigned short int id;
 
 	/* for each archived file the index is read */

@@ -147,20 +147,15 @@ void addFileToOpenFilesList(const char* fileName,int hasBackup) {
 
 	tOpenFiles* newNode;
 
-
 	/* Create the new node and fill in the fields */
 	newNode=(tOpenFiles*)malloc(sizeof(tOpenFiles));
 	newNode->next=openFilesList;
 	newNode->name=strallocandcopy(fileName);
 
 	if (hasBackup) {
-
 		newNode->size=mLoadFileArray(fileName,&(newNode->content));
-
 	} else {
-
 		newNode->size=0;
-
 	}
 	openFilesList=newNode;
 }
@@ -227,6 +222,8 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 				fp=fopen(aux,"wb");
 				if (fp==NULL) return -2;
 				fwrite(content,1,size,fp);
+				fclose(fp);
+			} else {
 				fclose(fp);
 			}
 		}
@@ -416,7 +413,7 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 		/* get file size */
 		fseek(fp,0,SEEK_END);
 		aux=ftell(fp);
-		if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(unsigned char*)malloc(sizeof(char)*aux))==NULL) ) ) {
+		if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(unsigned char*)malloc(aux+1))==NULL) ) ) {
 			/* if the file was null or bigger than the max size or couldn't allocate the file in memory */
 			fclose(fp);
 			return 0;
@@ -424,6 +421,7 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 			/* if the file was successfully open */
 			fseek(fp,0,SEEK_SET);
 			aux=fread (*array,1,aux,fp);
+			(*array)[aux]=0;
 			fclose(fp);
 			return aux;
 		}
