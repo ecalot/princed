@@ -84,6 +84,12 @@ int levelUse(void* level) {
 	return level==NULL;
 }
 
+tTile levelGetTile(tRoom* room,int x, int y) {
+	tTile result;
+	return result;
+}
+
+
 tRoom levelGetRoom(tRoomId roomId) {
 	tRoom result;
 	tRoomId roomAux;
