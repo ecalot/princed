@@ -87,7 +87,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasSkeleton=(result.code==T_SKELETON);
 		result.hasSpikes=(result.code==T_SPIKES);
 		result.hasTorch=(result.code==T_TORCH);
-		result.hasFloor=((result.code==T_FLOOR)|(result.code==T_TORCH)|(result.code==T_PILLAR)|(result.code==T_LOOSE)|(result.code==T_POTION));
+		result.hasFloor=((result.code==T_FLOOR)|(result.code==T_TORCH)|(result.code==T_LOOSE)|(result.code==T_POTION));
 		result.hasBrokenTile=(result.code==T_DEBRIS);
 		result.isWall=0;
 		result.hasSword=(result.code==T_SWORD);
@@ -153,6 +153,14 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			y*TILE_H
 		);
 	}
+	/* pillar/left */
+	if (left.hasPillar) {
+		outputDrawBitmap(
+			roomGfx.environment->pFrames[44],
+			(x-1)*TILE_W,
+			y*TILE_H
+		);
+	}
 	/* pressable/left */
 	if (left.isPressable) {
 		outputDrawBitmap(
@@ -208,6 +216,14 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			y*TILE_H-2
 		);
 	}
+	/* pillar/this */
+	if (tile.hasPillar) {
+		outputDrawBitmap(
+			roomGfx.environment->pFrames[43],
+			(x-1)*TILE_W,
+			y*TILE_H-2
+		);
+	}
 	/* pressable/this */
 	if (tile.isPressable) {
 		outputDrawBitmap(
@@ -224,7 +240,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			y*TILE_H-2
 		);
 	}
-	/* spikes/left */
+	/* spikes/this */
 	if (tile.hasSpikes) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[101],
@@ -288,7 +304,7 @@ void drawForePanel(tRoom* room,int x, int y) {
 	if (tile.hasPillar) {
 		outputDrawBitmap(
 			roomGfx.environment->pFrames[46],
-			x*TILE_W-20,
+			x*TILE_W-24,
 			y*TILE_H-2
 		);
 	}
