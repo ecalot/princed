@@ -1,11 +1,30 @@
-use:
- - listypes: to see a list of valid .def file types
- - makedat: to compile .def resources
+Format of .def files:
 
-0: image (the first number is a pelette) | black is transparent
-1: mirrored image (idem) | black is transparent
-2: 0 but black is black
-3: 1 but black is black
-4: midi
-5: wave
-6: level
+[FILE]
+[TYPE]
+[number 1]
+[number 2]
+[number 3]
+...
+
+Where FILE is the dat file where the resource is and type is the
+resource type according to "type" program.
+
+use:
+ - ./type [ACTION]
+  where ACTION is
+	 - list: to see a list of valid .def file types
+	 - add: to add a new type
+	 - del: to remove a type
+	 - ren: to rename a type (not tested)
+ - ./makedat
+  to compile all .def resources in def file
+
+Both scripts will save the output files in the result directory.
+There are symbolic links from the places where those files are
+needed. This means that every time you run a makedat, the binary
+version of freeprince has their resources updated too.
+
+Note: a new build compilation is needed because the .h files are
+different now. Use "make build" in the freeprince src directory.
+
