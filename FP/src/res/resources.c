@@ -168,6 +168,7 @@ tData* resLoad(long id) {
 			int has_L=((mask&RES_MODS_HAS_L)?1:0);
 			int has_R=((mask&RES_MODS_HAS_R)?1:0);
 			int down,left,right;
+			int invert=((mask&(RES_MODS_INVERT))==(RES_MODS_INVERT));
 
 			result=(tData*)malloc(sizeof(tData));
 			result->frames=total-2; /* drop filename and palette */
@@ -206,7 +207,7 @@ tData* resLoad(long id) {
 				printf("resLoad: Allocating an image framed %d by offsets d=%d,l=%d,r=%d\n",total,down,left,right);
 				result->pFrames[total]=(void*)outputLoadBitmap(
 					image.pix,image.widthInBytes*image.height,pal,image.height,image.width,
-					(mask&(RES_MODS_RIGHT))==(RES_MODS_RIGHT),1
+					invert,1/*,down,invert?right:left*/
         );
 
 				/* free intermediate image data */
