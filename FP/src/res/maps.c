@@ -342,7 +342,7 @@ void  mapStart(tMap* map, tObject* kid, tRoomId *roomId, int level) {
 
 /* TODO: This is part of the kernel, it needs to be moved */
 int   mapMove(tMap* map) {
-	int i,refresh;
+	int i,refresh=0;
 	slevel(time)++;
 	if (slevel(time)==1000) slevel(time)=0;
 
