@@ -33,8 +33,10 @@ input.h: Free Prince : Input devices handling
 #ifndef _INPUT_H_
 #define _INPUT_H_
 
-typeDef key
+typedef struct {...} tKey
 
-tKey getKey();
+tKey getInput();
+/* Returns the next input (either from the keyboard or joystick or whatever) */
+
 
 #endif

@@ -21,6 +21,11 @@
 /*
 resources.h: Free Prince : Output Devices Handler
 ¯¯¯¯¯¯¯¯¯¯¯
+
+ Description: 
+ 	Platform and device independent functions for handling output
+	(text, graphics, sound, music...).
+
  Copyright 2004 Princed Development Team
   Created: 23 Mar 2004
 
@@ -34,15 +39,15 @@ resources.h: Free Prince : Output Devices Handler
 #define _OUTPUT_H_
 
 /* Text Primitives*/
-drawText(const char* text);
-drawMessage(const char* text);
+drawText(const char* text, int x, int y);
+drawMessage(const char* text); 
 
 /* Sound */
-playWav(tWave sound);
+playWav(tWave sound); /* Starts the reproduction of the sample and returns */
 playMid(tMidi music); /* Starts the music reproduction and returns */
 
 /* Graph */
-drawBitmap(tImage image);
+drawBitmap(tImage image, int x, int y);
 clearScreen();
 
 /* Initialization */

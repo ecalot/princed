@@ -33,12 +33,17 @@ resources.h: Free Prince : Resource Handler
 #ifndef _RESOURCES_H_
 #define _RESOURCES_H_
 
-int resOpenFile(const char* file);
-resCloseFile(int fd);
+int resOpenFile(const char* file); 
+	/* Opens file, loads the data into memory, closes the file and
+	 * returns an ID number (data descriptor) for the new structure. */
+resCloseFile(int dd); /* dd = data descriptor */
+	/* Frees the data from memory. */
 resCloseAllFiles();
 
-tMidi resGetMidi(int fd,int resId);
-tWave resGetWave(int fd,int resId);
-tImage resGetImage(int df, int resId);
+/* Functions for getting data previously loaded into memory. Each dd points
+ * to an array of elements, and resId indicates the index in this array. */
+tMidi resGetMidi(int dd, int resId);
+tWave resGetWave(int dd, int resId);
+tImage resGetImage(int dd, int resId);
 
 #endif
