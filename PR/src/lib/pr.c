@@ -54,6 +54,9 @@ pr.c: Main source file for Princed Resources
 #include "compile.h"
 #include "tasks.h"
 
+#include "bmp.h"
+#include "memory.h"
+
 //functions
 
 int prExportDat(char* vDatFile, char* vDirName, char* vResFile) {
@@ -80,9 +83,10 @@ int prExportDatOpt(char* vDatFile, char* vDirName, char* vResFile,char opt) {
 	tResource* r[65536];
 	int a;
 	parseFile (vResFile,r);
-	//printf("kkkkkkkkkkk: %x\n",opt);
 	a=extract(vDatFile, vDirName,r,opt);
+	printf("termine B %d\n",a);
 	if (!(opt&8)) generateFile(vResFile,r);
+	printf("termine C %d\n",a);
 	return a;
 }
 
@@ -177,7 +181,7 @@ int main(int argc, char* argv[]) {
 				}
 			}
 			printf("Extracting '%s' to '%s' with %d\r\n",argv[1],dir,option);
-			printf("Result: %d\r\n",returnValue=prExportDatOpt(argv[1],dir,"resources.txt",option));
+			printf("Result: %d\r\n",returnValue=prExportDatOpt(argv[1],dir,"resources.txt",(char)option));
 			break;
 		case 'd': // get type of file.dat
 			printf("Classifing '%s'\r\n",argv[1]);
@@ -193,7 +197,7 @@ int main(int argc, char* argv[]) {
 					}
 				}
 			printf("Compiling '%s' from '%s' with %d\r\n",argv[1],dir,option);
-			printf("Result: %d\r\n",returnValue=prImportDatOpt(argv[1],dir,"resources.txt",option));
+			printf("Result: %d\r\n",returnValue=prImportDatOpt(argv[1],dir,"resources.txt",(char)option));
 			break;
 		case 't': // none --> resource.txt (destroy resource table)
 			printf("Clearing 'resources.txt'\r\n");

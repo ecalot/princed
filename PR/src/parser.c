@@ -3,7 +3,6 @@
 \****************************************************************/
 
 #ifndef PARSER_DEFINED
-
 #define PARSER_DEFINED
 
 #include "parser.h"
@@ -135,5 +134,4 @@ char matchesIn(char* text,char* mask) {
 }
 
 #endif
-
 

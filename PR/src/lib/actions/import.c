@@ -32,11 +32,11 @@ void mAddFileToDatFile(FILE* fp, char* data, int size) {
 	int k;
 	for (k=0;k<size;k++) checksum+=data[k];
 	checksum=~checksum;
-printf("llega X1\n");
+printf("mAddFileToDatFile: llega X1 size=%d\n",size);
 	//writes the header and the midi sound
 	fwrite(&checksum,1,1,fp);
 	fwrite(data,size,1,fp);
-printf("llega X2\n");
+printf("mAddFileToDatFile: llega X2\n");
 
 }
 
@@ -58,10 +58,10 @@ int mCreateIndexInDatFile(FILE* fp, tResource* r[], char* vUpperFile) {
 	int k=2;
 	unsigned short int tot=0;
 	unsigned short int junk=0;
+	unsigned short int i=0;
 	int pos=ftell(fp);
 
 	fwrite(&tot,2,1,fp);
-	unsigned short int i=0;
 	for (;i!=65535;i++) {
 		if (r[i]!=NULL) {
 			if (equals((*r[i]).file,vUpperFile)) {
@@ -81,34 +81,39 @@ int mCreateIndexInDatFile(FILE* fp, tResource* r[], char* vUpperFile) {
 }
 
 //Format detection function
-void mAddCompiledFileToDatFile(FILE* fp,unsigned char* data, tResource *res) {
+void mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
+			printf("llega G size=%d\n",res->size);
+
 	switch ((*res).type) {
 		case 2: //compile bitmap
-			//printf("llega 1\n");
-			if (!mFormatCompileBmp(data,fp,res)) {
+			printf("llega 1\n");
+			printf("bitmap size in=%d\n",res->size);
+			if (!mFormatCompileBmp(*data,fp,res)) {
 				printf("Error!!\n");
 			}
+			printf("bitmap size out=%d\n",res->size);
 			break;
 		case 3: //compile wave
-			mFormatCompileWav(data,fp,res);
+			mFormatCompileWav(*data,fp,res);
 			break;
 		case 4: //compile midi
 			//send to mid
 			{
 			unsigned char* file;
-			file=getMemory(++(*res).size);
+			file=getMemory((*res).size);
 			file[0]=(*res).type-2;
-			memcpy(file+1,data,(*res).size-1);
+			memcpy(file+1,*data,(*res).size);
+			(*res).size++;
 			mAddFileToDatFile(fp,file,(*res).size);
 			free(file);
 			}
 			break;
 		case 6:
-			mImportPalette(&data,&((*res).size));
+			mImportPalette(data,&((*res).size));
 		case 1:
 		case 5:
 		default:
-			mAddFileToDatFile(fp,data,(*res).size);
+			mAddFileToDatFile(fp,*data,(*res).size);
 			break;
 	}
 }
@@ -139,39 +144,38 @@ char mSaveFile(char* vFile,unsigned char *d, int s) {
 */
 int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
 	FILE* fp;
+	char vUpperFile[200];
+	char vFileext[200];
+	unsigned char* data;
+	int ok=0;
+	unsigned short int i=0;
 
 	if (!mBeginDatFile(&fp,vFiledat)) {
 		printf("Error opening the file.\r\n");
 		return -1;
 	}
 
-	char vUpperFile[200];
-	char vFileext[200];
-	unsigned char* data;
-	int ok=0;
-
 	getUpperFolder(vUpperFile,vFiledat);
 
-	unsigned short int i=0;
 	for (;i!=65535;i++) {
 		if (r[i]!=NULL) {
 			if (equals((*r[i]).file,vUpperFile)) {
-				getFileName(vFileext,vDirExt,(opt&1)?(*(r[i])).type:0,i);
+				getFileName(vFileext,vDirExt,(char)((opt&1)?((*(r[i])).type):0),i);
 				//the file is in the archive, so I'll add it to the main dat body
 				if ((*r[i]).size=mLoadFileArray(vFileext,&data)) {
-					(*r[i]).offset=ftell(fp);
-					mAddCompiledFileToDatFile(fp,data,r[i]);
+					(*r[i]).offset=(unsigned short)ftell(fp);
+					mAddCompiledFileToDatFile(fp,&data,r[i]);
 
+					{
+						char sss[300];
+						sprintf(sss,"r1\\bmp%05d.raw",i);
+printf("size: id=%d size=%d %02x %02x %02x %02x %02x %02x %02x\n",i,r[i]->size,data[0],data[1],data[2],data[3],data[4],data[5],data[6]);
 
-						//char sss[300];
-						//sprintf(sss,"bmp%05d.raw",i);
-/*if ((r[i]->type==2)&&(r[i]->size>10)) {
-printf("size: %d %02x %02x %02x %02x %02x %02x %02x\n",r[i]->size,data[0],data[1],data[2],data[3],data[4],data[5],data[6]);
-}*/
-					//mSaveFile(sss,data,r[i]->size);
-
+					mSaveFile(sss,data,r[i]->size);
+					}
 
 					free(data);
+					printf("libere ok\n");
 				} else {
 					ok++;
 				}

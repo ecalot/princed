@@ -1,6 +1,6 @@
 
 
-//Needed files
+//Includes
 #include <stdio.h>
 #include <stdlib.h>
 #include "pr.h"
@@ -62,12 +62,11 @@ char verifyHeader(char* array, int size) {
 //Parse line
 void parseResource(tResource* r[], char* line) {
 	//declare variables
-	int i=0;
+	int                i=0;
+	int                k=0;
 	unsigned short int id,ty;
-	int k=0;
 
 	//Begin parsing
-
 	for (;!(line[k]=='\r'||line[k]=='\n'||(!line[k]));k++);
 	line[k]=0;
 
@@ -88,7 +87,7 @@ void parseResource(tResource* r[], char* line) {
 		} else {
 			(*(r[id])).desc=NULL;
 		}
-		(*(r[id])).type=ty;
+		(*(r[id])).type=(char)ty;
 	}
 }
 
@@ -102,7 +101,6 @@ char parseFile(char* vFile,tResource* r[]) {
 	//declare variables
 	char parsing=0;
 	char line[MAX_LINE_SIZE];
-	char token[MAX_LINE_SIZE];
 	char B[]=BEGIN_TABLE;
 	char E[]=END_TABLE;
 	FILE* fp;
@@ -141,6 +139,9 @@ char generateFile(char* vFile,tResource* r[]) {
 	char none[]="";
 	FILE* fp;
 	FILE* source;
+	int id=0;
+
+//printf("hola vengo a generar el archivo\n");
 
 	if ((fp=fopen("res.tmp","wt"))!=NULL) {
 		//insert headers
@@ -160,19 +161,26 @@ char generateFile(char* vFile,tResource* r[]) {
 			}
 		}
 
+//printf("se abrio res.tmp y se parseó el principio\n");
+
 		//insert main body file
 		fputs(B,fp);
 		fputs("\n",fp);
-		int id=0;
+////printf("r -> A\n");
+
 		for (;id<65536;id++) {
+////printf("r -> B %d %p\n",id,r[id]);
+
 			if (r[id]!=NULL) {
-				if ((*(r[id])).desc==NULL) {
+				if (1||((*(r[id])).desc==NULL)) { //todo see this line
+////printf("r -> G %d %p\n",id,r[id]);
 					if ((*(r[id])).coms==NULL) {
 						sprintf(coms,none);
 					} else {
 						sprintf(coms," #",(*(r[id])).coms);
 					}
 				} else {
+////printf("r -> E %d %p\n",id,r[id]);
 					if ((*(r[id])).coms==NULL) {
 						sprintf(coms," %s",(*(r[id])).desc);
 					} else {
@@ -191,6 +199,8 @@ char generateFile(char* vFile,tResource* r[]) {
 		}
 		fputs("\n",fp);
 		fputs(E,fp);
+
+//printf("se inserto el cuerpo de los recursos\n");
 
 		//insert footers
 		if (source!=NULL) {
@@ -283,6 +293,7 @@ int mLoadFileArray(char* vFile,unsigned char** array) {
 			//if the filewas succesfully open
 			fseek(fp,0,SEEK_SET);
 			aux=fread (*array,1,aux,fp);
+			//printf("que me decis a mi, yo devolvi %d\n",aux);
 			fclose(fp);
 			return aux;
 		}

@@ -1,7 +1,3 @@
-/***************************************************************\
-|                  I M P L E M E N T A T I O N                  |
-\***************************************************************/
-
 #include <stdio.h>
 #include "extract.h"
 #include "memory.h"
@@ -9,6 +5,10 @@
 #include "wav.h"
 #include "pal.h"
 #include "mid.h"
+
+/***************************************************************\
+|                  I M P L E M E N T A T I O N                  |
+\***************************************************************/
 
 char writeData(unsigned char* data, int ignoreChars, char* vFileext, int size) {
 	FILE*              target;
@@ -53,13 +53,13 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 		unsigned short int id;
 		unsigned long int  size,offset;
 		unsigned char*     data;
-		FILE*              target;
+//		FILE*              target;
 		char               type=0;
 		char               recordSize;
 		char               aux[260];
 		tImage             image; //this is used to make a persistent palette
 		char               isntImageSet=1;
-	//printf("kkkkkkkkkkk: %x\n",task);
+	////printf("kkkkkkkkkkk: %x\n",task);
 
 		//verify dat format
 		ok    = fread(&indexOffset,4,1,fp);
@@ -71,7 +71,7 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 		if (!pop1) { //verify if pop2
 			ofk=numberOfItems*6+2+(numberOfItems-2)*13;
 			numberOfItems=((indexSize-6-(numberOfItems*6)-((numberOfItems-2)*13))/11);
-//printf("verificando pop2: numberOfItems=%d, indexSize=%d\r\n",numberOfItems,indexSize);
+////printf("verificando pop2: numberOfItems=%d, indexSize=%d\r\n",numberOfItems,indexSize);
 		}
 		recordSize=pop1?8:11;
 		if (!ok) {
@@ -91,21 +91,19 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 		for (k=0;ok&&(k<numberOfItems);k++) {
 			//for each archived file
 			id=index[ofk+k*recordSize]+256*index[ofk+k*recordSize+1];
-			//printf("jajaK %d %d %d %d\n",index[ofk+k*recordSize+2],index[ofk+k*recordSize+3],index[ofk+k*recordSize+4],index[ofk+k*recordSize+5]);
 			offset=index[ofk+k*recordSize+2]+256*index[ofk+k*recordSize+3]+256*256*index[ofk+k*recordSize+4]+256*256*256*index[ofk+k*recordSize+5];
 			size=index[ofk+k*recordSize+6]+256*index[ofk+k*recordSize+7]+1;
 			if (!pop1) {
-				printf("jajaA %d\r\n",ok);
-//printf("verificando pop2: %d, k=%d, record size=%d\r\n",size,k,recordSize);
+				//printf("jajaA %d\r\n",ok);
 				ok=ok&&(index[ofk+k*recordSize+8]==0x40)&&(!index[ofk+k*recordSize+9])&&(!index[ofk+k*recordSize+10]);
-				printf("jajaB %d\r\n",ok);
+				//printf("jajaB %d\r\n",ok);
 			}
 			ok=ok&&((data=getMemory(size))!=NULL);
-				printf("jajaC %d offset=%d\r\n",ok,offset);
+				//printf("jajaC %d offset=%d\r\n",ok,offset);
 			ok=ok&&(!fseek(fp,offset,SEEK_SET));
-				printf("jajaD %d\r\n",ok);
+				//printf("jajaD %d\r\n",ok);
 			ok=ok&&fread(data,size,1,fp);
-				printf("jajaE %d\r\n",ok);
+				//printf("jajaEd %d\r\n",ok);
 			if (!ok) return -3;
 
 			//For the moment rebuilt option will be mandatory:
@@ -122,7 +120,7 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 			if (r[id]==NULL) {
 				r[id]=(tResource*)malloc(sizeof(tResource));
 				(*(r[id])).size=(unsigned short int)size;
-				(*(r[id])).offset=offset;
+				(*(r[id])).offset=(unsigned short)offset;
 				sprintf((*(r[id])).file,aux);
 				(*(r[id])).desc=NULL;
 				(*(r[id])).coms=NULL;
@@ -134,7 +132,6 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 				if (task&4) (*(r[id])).type=0;
 				//save file
 				getFileName(vFileext,vDirExt,(*(r[id])).type,id);
-printf("voy por %s\n",vFileext);
 				switch ((*(r[id])).type) {
 					case 1:
 					case 5:
@@ -147,7 +144,6 @@ printf("voy por %s\n",vFileext);
 							mLoadPalette(data,&image);
 							isntImageSet=0;
 						}
-printf("paso el load palette\n");
 						ok=ok&&mFormatExtractPal(&data,vFileext,size);
 						break;
 					case 4:	//save midi file
@@ -158,12 +154,15 @@ printf("paso el load palette\n");
 						break;
 					case 2: //save image
 						ok=ok&&mFormatExtractBmp(data,vFileext,size,image);
+						//printf("sali\n");
 						break;
 				}
 			}
 			if (data!=NULL) free(data);
+			//printf("libere data que no era nula\n");
 		}
 		fclose(fp);
+		//printf("termine A %d\n",ok);
 		return ok;
 	} else {
 		return -1; //file could not be open

@@ -2,24 +2,30 @@
 #include <stdio.h>
 #include "tasks.h"
 #include "memory.h"
+#include "resources.h"
+
+/***************************************************************\
+|                    Get the type of a DAT file                 |
+\***************************************************************/
 
 int prVerifyDatType(char* vFiledat) {
 
 	//Variables
-	FILE*         fp;
-  char          ok;
-  int 					k;
+	FILE*              fp;
+  char               ok;
+  int 					     k;
 
-	//if header ok, new variables
+	//variables in case header is ok
 	unsigned short int offset;
-	unsigned long int  size;
+	unsigned long  int size;
 	unsigned char*     data;
 	unsigned char      type=5;
 
 	//loop variables
-	unsigned long int indexOffset;
-	unsigned short int indexSize,val,numberOfItems;
-	unsigned char* index;
+	unsigned long  int indexOffset;
+	unsigned short int indexSize;
+	unsigned short int numberOfItems;
+	unsigned char*     index;
 
 
 	if (ok=((fp=fopen(vFiledat,"rb"))!=NULL)) {
@@ -38,7 +44,7 @@ int prVerifyDatType(char* vFiledat) {
 			indexOffset+=indexSize;
 			fseek(fp,0,SEEK_END);
 			printf("jaaaj %d %d\r\n",indexOffset,ftell(fp));
-			ok=(ftell(fp)==indexOffset)?11:0; //see if it is a pop2 file
+			ok=(((unsigned long)ftell(fp))==indexOffset)?11:0; //see if it is a pop2 file
 			fclose(fp);
 			return ok; //this is a pop2 dat file or invalid
 		}
