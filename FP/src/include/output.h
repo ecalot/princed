@@ -53,8 +53,16 @@ typedef struct tPalette{
 
 /* Text Primitives*/
 void outputDrawText(int x, int y, const char *fmt, ...);
-void outputDrawMessage(const char* fmt, ...); 
+void outputDrawMessage(int frames, const char* fmt, ...);
+/* This function will print in the default message space
+ * the given message.
+ * This message will be displayed a specified number of updates.
+ * if frames is 5, then the message will last for 5 outputUpdates()
+ * if frames is 0 (infinity), the the message will be displayed
+ * until outputClearLastMessage() is called.
+ */
 
+				
 /* Sound */
 void outputPlayWav(tMemory sound); /* Starts the reproduction of the sample and returns */
 void outputPlayMid(tMemory music); /* Starts the music reproduction and returns */

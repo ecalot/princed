@@ -14,7 +14,7 @@ int main (int argc, char *argv[])
 	
 	outputDrawText (55, 20, "ABCD 123456 &/$#    000", 26);
 	
-	outputDrawMessage ("hola, que %s.", "tal");
+	outputDrawMessage (36,"hola, que %s.", "tal");
 
 	outputUpdateScreen();
 

@@ -50,6 +50,8 @@ output.c: Free Prince : Output Devices Handler
 /* Main screen object */
 SDL_Surface *screen;
 
+/* Text functions */
+
 #define CHAR_SIZE 12
 
 typedef struct _valid_chars {
@@ -120,12 +122,25 @@ unsigned int outputGetTextHeight (const char *txt)
 	return font->h;
 }
 
-#define OUTPUT_TEXT_CENTERED_X -1
+static char messageBuffer[512]="";
+static unsigned int messageFrames=0;
+	
+/* If vsnprintf is allowed in the standard use it */													
+#if defined __USE_BSD || defined __USE_ISOC99 || defined __USE_UNIX98
+/* ISO/IEC 9899:1999 */
+#define fillBuffer(buffer,fmt,ap) va_start (ap, fmt);\
+ vsnprintf (buffer, sizeof(buffer), fmt, ap);\
+ va_end (ap)
+#else
+/* ANSI X3.159-1989 (`ANSI C') and ISO/IEC 9899:1999 (`ISO C99') */
+#define fillBuffer(buffer,fmt,ap) va_start (ap, fmt);\
+ vsprintf (buffer, fmt, ap);\
+ va_end (ap)
+#endif
 
 /* Text Primitives*/
-void outputvDrawText(int x, int y, const char *fmt, va_list ap)
+void outputsDrawText(int x, int y, const char *buffer)
 {
-	char buffer[1024];
 	unsigned char *s;
 	SDL_Rect from, to;
 	int current_x;
@@ -135,24 +150,8 @@ void outputvDrawText(int x, int y, const char *fmt, va_list ap)
 		return;
 	}
 
-	if (fmt == NULL) return;
-	memset (buffer, 0, sizeof(buffer));
-	
-	/* If vsnprintf is allowed in the standard use it */													
-#if defined __USE_BSD || defined __USE_ISOC99 || defined __USE_UNIX98
-	/* ISO/IEC 9899:1999 */
-	vsnprintf (buffer, sizeof(buffer), fmt, ap);
-#else
-	/* ANSI X3.159-1989 (`ANSI C') and ISO/IEC 9899:1999 (`ISO C99') */
-	vsprintf (buffer, fmt, ap);
-#endif
-
 	s = (unsigned char*)buffer;
-	if (x==OUTPUT_TEXT_CENTERED_X) {
-		current_x = (DEF_SCREEN_WIDTH-outputGetTextWidth(buffer))/2;
-	} else {
-		current_x = x;
-	}
+	current_x = x;
 	while ((*s) != '\0') {
 		if (valid_chars[*s].is_valid) {
 			from.x = valid_chars[*s].x;
@@ -175,22 +174,25 @@ void outputvDrawText(int x, int y, const char *fmt, va_list ap)
 void outputDrawText(int x, int y, const char *fmt, ...)
 {
 	va_list ap;
-	va_start (ap, fmt);
-	outputvDrawText(x,y,fmt,ap);
-	va_end (ap);
+	char buffer[512];
+	fillBuffer(buffer,fmt,ap);
+	outputsDrawText(x,y,buffer);
 }
 
-void outputDrawMessage(const char* fmt, ...)
+void outputDrawMessage(int frames, const char* fmt, ...)
 {
 	va_list ap;
-	va_start (ap, fmt);
-	outputvDrawText(OUTPUT_TEXT_CENTERED_X,DEF_SCREEN_HEIGHT-CHAR_SIZE,fmt,ap);
-	va_end (ap);
+	fillBuffer(messageBuffer,fmt,ap);
+	if (frames) frames++; /* if not infinite, increase by one */
+	messageFrames=frames;
 }
 
 void outputClearLastMessage()
 {
+	messageBuffer[0]=0;
 }
+
+/* End of text functions */
 
 /* Sound */
 void outputPlayWav(tMemory sound) {} /* Starts the reproduction of the sample and returns */
@@ -336,6 +338,11 @@ void outputClearScreen()
 
 void outputUpdateScreen() 
 {
+	/* check out for messages */
+	if (messageFrames==1) outputClearLastMessage();
+	if (messageFrames) messageFrames--;
+	outputsDrawText((DEF_SCREEN_WIDTH-outputGetTextWidth(messageBuffer))/2,DEF_SCREEN_HEIGHT-CHAR_SIZE,messageBuffer);
+
 	SDL_Flip(screen);
 }
 
