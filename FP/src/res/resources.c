@@ -237,12 +237,14 @@ tData* resLoad(long id) {
 
 void resFree(tData* res) {
 	if (res->type==eImages) {
-		while (res->frames) {
+		while (res->frames) { /* free all frames */
 			outputFreeBitmap(res->pFrames[--(res->frames)]);
 		}
+		free(res->pFrames); /* free the frame list */
+	} else if (res->type==eLevels) {
+		mapFreeLevel((tMap*)(res->pFrames)); /* free the map */
 	}
 	fprintf(stderr,"ResFree activated\n");
-	free(res->pFrames);
-	free(res);
+	free(res); /* free the resource structure */
 }
 

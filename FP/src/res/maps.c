@@ -358,7 +358,16 @@ void  mapPressedTile(tMap* map, tTile tile, int s, int x, int y) {
 	}
 }
 
-
+void  mapFreeLevel(tMap* map) {
+	int i;
+	for (i=0;i<24;i++) {
+		free(map->screenGates[i]);
+		free(map->screenPressables[i]);
+	}
+	free(map->gates);
+	free(map->pressables);
+	free(map);
+}
 
 
 

@@ -44,7 +44,7 @@ maps.c: Freeprince : Map handling library
 
 /* called from reources */
 void* mapLoadLevel(tMemory level);
-void  mapDestroy(tMap* map);
+void  mapFreeLevel(tMap* map);
 
 /* called from the kernel */
 tRoom mapGetRoom(tMap* map, tRoomId roomId);
