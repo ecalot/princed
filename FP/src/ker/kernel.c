@@ -59,7 +59,8 @@ int kernel(int optionflag,int level) {
 	);
 	
 	for (i=0;i<testResource->frames;i++) {
-		//printf("frame %d: ",i);
+		/* Note: for the moment there is a testing abstraction violation here */
+		printf("frame %d: size=%d\n",i,((tMemory*)(testResource->pFrames[i]))->size);
 	}
 	
 	return 0;
