@@ -258,6 +258,8 @@ void resFree(tData* res) {
 			outputFreeBitmap(res->pFrames[--(res->frames)]);
 		}
 	}
+	printf("ResFree activated\n");
+	free(res->pFrames);
 	free(res);
 }
 
