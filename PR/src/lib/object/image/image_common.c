@@ -152,16 +152,17 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
 
 	while (cursorPix<imgEnd) {
 		/* Step 1: Create counter */
-		*(counter=(char*)(cursorData++))=-1;
+		counter=(char*)(cursorData++);
+		*counter=-1;
 
-		/* Step 2: Look and copy the string until a repeated byte is found */
+		/* Step 2: Look and copy the string until more than two repeated bytes are found */
 		while (
-			(cursorPix<imgEnd)&&
+			(cursorPix+1<imgEnd)&&  /* bugfix: reads one more */
 			(
 				(*cursorPix!=*(cursorPix+1))||
 				(
-					/*(*cursorPix==*(cursorPix+1))&&*/
-					((cursorPix+1)<imgEnd)&&
+					/* (*cursorPix==*(cursorPix+1))&& */
+					((cursorPix+2)<imgEnd)&& /* bugfix: reads one more */
 					(*cursorPix!=*(cursorPix+2))
 				)
 			)&&
@@ -185,10 +186,14 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
 			cursorData++;
 		}
 	}
-
-	*(cursorData++)=0;
-	*(cursorData)=*(cursorPix);
-	*dataSize=(int)((long int)cursorData-(long int)data)-1; /* Note: casted to long for portability with 64 bits architectures */
+	/* Write the last char 
+	if ((*counter)>0) {
+		*(cursorData++)=0;
+		*(cursorData)= ||||||| 0xff |||||  *(cursorPix); |||||||
+	} else {
+		(*counter)--;
+	}*/
+	*dataSize=(int)((long int)cursorData-(long int)data); /* Note: casted to long for portability with 64 bits architectures */
 }
 
 /***************************************************************\
@@ -213,21 +218,16 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 
 	int imageSizeInBytes;
 	int result;
-/* printf("+K) %d:%d:%d:%d:%d:%d\n",data[0],data[1],data[2],data[3],data[4],data[5]); */
 
 	data++;
 	image->height=array2short(data);
 	data+=2;
 	image->width =array2short(data);
 	data+=2;
-/* printf("K) %d;%d\n",image->width,image->height); */
 
-fld("XX");
 	if (*(data++)) return COMPRESS_RESULT_FATAL; /* Verify format */
-fld("YY");
 	image->type=(unsigned char)(*(data++));
 	dataSizeInBytes-=7;
-/* printf("K) %d+%d*%d,%d\n",image->pix,image->height,image->widthInBytes,image->widthInBytes); */
 	if (image->type&0xB0) {
 		image->widthInBytes=(image->width+1)/2;
 	} else {
@@ -261,7 +261,6 @@ fld("YY");
 			result=COMPRESS_RESULT_FATAL;
 			break;
 	}
-/* printf("-K) %d+%d*%d,%d\n",image->pix,image->height,image->widthInBytes,image->widthInBytes); */
 	return result; /* Ok */
 }
 
