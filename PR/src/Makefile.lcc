@@ -1,0 +1,51 @@
+pr.exe: compile.obj compress.obj extract.obj parser.obj pr.obj resources.obj tasks.obj formats/bmp.obj formats/mid.obj formats/pal.obj formats/wav.obj
+	@echo Linking files...
+	@lcclnk pr.obj compile.obj compress.obj extract.obj parser.obj resources.obj tasks.obj formats\bmp.obj formats/mid.obj formats/pal.obj formats/wav.obj
+	@echo Program succesfully compiled
+	@echo
+	@echo Please read readme.txt for syntax information
+	@echo
+	
+parser.obj: parser.c
+	@echo Compiling parsing library...
+	@lcc parser.obj parser.c -Iinclude
+
+compile.obj: compile.c
+	@echo Compiling import module...
+	@lcc compile.c -Iinclude
+
+extract.obj: extract.c
+	@echo Compiling export module...
+	@lcc extract.c -Iinclude
+
+compress.obj: compress.c
+	@echo Compiling compression module...
+	@lcc compress.c -Iinclude
+
+pr.obj: pr.c
+	@echo Compiling main module...
+	@lcc pr.c -Iinclude
+
+resources.obj: resources.c
+	@echo Compiling resource manager module...
+	@lcc resources.c -Iinclude
+
+tasks.obj: tasks.c
+	@echo Compiling extra tasks module...
+	@lcc tasks.c -Iinclude
+
+bmp.obj: formats\bmp.c
+	@echo Compiling bitmap files support (bmp)...
+	@lcc formats\bmp.c -Iinclude
+
+mid.obj: formats\mid.c
+	@echo Compiling midi audio files support (mid)...
+	@lcc formats\mid.c -Iinclude
+
+pal.obj: formats\pal.c
+	@echo Compiling JASC palette support (pal)...
+	@lcc formats\pal.c -Iinclude
+
+wav.obj: formats\wav.c
+	@echo Compiling digital wave audio support (wav)...
+	@lcc formats\wav.c -Iinclude
