@@ -382,7 +382,9 @@ void  mapMove(tMap* map) {
 	}
 
 	/* check out and update all the spikes and choppers */
+#ifdef DEBUGMAPS
 	printf("chopper act=%d tim=%d fra=%d\n",map->dangers[i].time,map->dangers[i].action,map->dangers[i].frame);
+#endif
 	for (i=0;i<slevel(totalDangers);i++) { 
 		switch (map->dangers[i].action) {
 		case eSpiUp:

@@ -31,29 +31,46 @@ tiles.c: FreePrince : Tile functions
 */
 
 #include "tiles.h"
+#include <stdio.h> /* NULL */
 
-int isInGroup(unsigned char tile,unsigned char backtile,short group) {
+int evaluate(tTile tile,int type) { /* type is the number in the modifier */
+	if (!tile.moreInfo) {
+		printf("Tile Error: trying to use a tile that hasn't extra information\n");
+		return 0;
+	}
+	TILES_MACROS_CASE(type,tile)
+}
+
+int isIn(tTile tile,short group) {
 	static unsigned char tileList[]=TILE_GROUP_LIST;
 	unsigned char* i;
 	int docontinue;
 
-	tile=tile&0x1F; /* get the last 5 bits and clear the beginning */
-	if (group<32) return (tile==group);
+	tile.code=tile.code&0x1F; /* get the last 5 bits and clear the beginning */
+	if (group<32) return (tile.code==group);
 	i=tileList+(group-32);
-	tile++;
+	tile.code++;
 	do {
 		docontinue=0;
-		while ((*i)&&(((*i)&0x7f)!=tile)) i+=((*i)&0x80)?2:1;
-		if ((*i)&0x80) {
+		while ((*i)&&(((*i)&0x3f)!=tile.code)) i+=((*i)&0xC0)?2:1;
+		if ((*i)&0x80) { /* compare against the back */
 			i++;
-			if ((*i)==(backtile+1)) return 1;
+			if ((*i)==(tile.back+1)) return 1;
+			docontinue=1;
+		} else if ((*i)&0x40) { /* compare against the function */
+			i++;
+			if (evaluate(tile,*i)) return 1;
 			docontinue=1;
 		}
 	} while (docontinue);
 	return *i; /* returns non-zero if true and zero if false */
 }
 
-int isIn(tTile tile,short group) {
-	return isInGroup(tile.code,tile.back,group);
+int isInGroup(unsigned char fore,unsigned char back,short group) {
+	tTile t;
+	t.code=fore;
+	t.back=back;
+	t.moreInfo=NULL;
+	return isIn(t,group);
 }
 

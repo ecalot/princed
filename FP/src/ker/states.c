@@ -36,6 +36,7 @@ states.c: FreePrince : State object
 #include <stdio.h> /* For debug purposes */
 #include "object.h" /* DIR_LEFT DIR_RIGHT */
 
+#ifdef DEBUGSTATES
 void debugShowFlag(short optionflag) {
 	if (optionflag&STATES_FLAG_F) printf("Falling ");
 	if (optionflag&STATES_FLAG_P) printf("PressFloor ");
@@ -43,6 +44,7 @@ void debugShowFlag(short optionflag) {
 	if (optionflag&STATES_FLAG_S) printf("Sound");
 	printf("\n");
 }
+#endif
 
 #define STATES_STEPS_PER_TILE TILE_W 
 /* Private static state graph */
@@ -60,7 +62,9 @@ void stateGetAnimation(int action,tState *state/*short *frames,short** flags,flo
 	state->animation=(short*)malloc(sizeof(short)*i);
 	state->steps=(short*)malloc(sizeof(short)*i);
 	state->flags=(short*)malloc(sizeof(short)*i);
+#ifdef DEBUGSTATES
 	printf("* Animsize=%d Animstart=%d. (new animation allocated) Next:\n",i,a->animStart);
+#endif
 	state->step=(float)(totaloffset)/(float)(i); /* this is the full step to be used in case a non step walk is set TODO: delete this system */
 	while (i--) {
 		(state->animation)[i]=*(j++); /* the first short is the frame */
@@ -200,10 +204,12 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 	flags         =current->flags    [current->frame];
 	steps         =current->steps    [current->frame];
 	
-	/* BEGIN DEBUG */
+	/* BEGIN DEBUGSTATES */
+#ifdef DEBUGSTATES
 	printf("stateUpdate: animation=%d steps=%d ",current->image,steps);
 	debugShowFlag(flags);
-	/* END DEBUG */
+#endif
+	/* END DEBUGSTATES */
 	
 	if (!current->frame) {
 		int action;
@@ -218,7 +224,9 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 		stateGetAnimation(action,current);
 			/* Remember the state where we are now */
 		current->currentState=statesActionList[action].nextStateId;
+#ifdef DEBUGSTATES
 		printf("NEW STATE: action=%d next=%d\n",action,current->currentState);
+#endif
 			/* Move the kid (turn+traslate) */
 		switch(statesActionList[action].moveType) {
 		case STATES_MOVETYPES_ABSOLUTEONSTART:
@@ -256,13 +264,17 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 				to=alternate(j,i);
 				if (j%2) {
 					/* the first frames are ok, so I'll fix the last frames */
+#ifdef DEBUGSTATES
 					printf("from=%d to=%d ok\n",from,to);
+#endif
 					current->animation[to]=current->animation[from];
 					current->flags[to]=current->flags[from];
 					current->steps[to]=current->steps[from];
 				}
 			}
+#ifdef DEBUGSTATES
 			printf("total frames=%d number of frames to be used=%d. wanted movement=%d movement to be performed=%d\n",current->frame,i,statesActionList[action].moveOffset,accumulate);
+#endif
 			current->frame=i; /* now the last frames are moved, crop the animation */
 			break;
 			}
@@ -283,19 +295,6 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 	
 	kid->location+=(kid->direction==DIR_LEFT)?-steps:steps;
 
-/*
-	{
-		int jj;
-		for (jj=0;jj<5;jj++) {
-
-			printf("%d=>",alternate(jj,10));
-			printf("%d ",alternate(jj,5));
-		}
-		printf("\n");
-	}
-*/
-
-	
 	if (current->frame==1&&current->currentState<0) return current->currentState; /* if last frame of the last state, return exit code */
 	return flags;
 }

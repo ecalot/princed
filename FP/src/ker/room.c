@@ -500,7 +500,9 @@ int roomPress(tRoom* room, tObject* obj) {
 	}
 
 	/* Loose tiles */
+#ifdef DEBUGROOM
 	printf("s=%d x=%d y=%d\n",s,x,y);
+#endif
 	if (isIn(tile,TILE_LOOSE)) {
 		map->fore[(s-1)*30+(x-1)+(y-1)*10]=TILE_EMPTY;
 		refresh=1; /* room changed, refresh it */

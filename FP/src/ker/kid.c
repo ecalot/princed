@@ -83,7 +83,6 @@ int kidMove(tObject* kid,short flags,tRoom* room) {
 	
 	if (flags&STATES_FLAG_P)
 		refresh=roomPress(room,kid);
-printf("f era %d. ",kid->floor);
 	if (flags&STATES_FLAG_F) {
 		kid->floor++;
 		roomKidChangedFloor(room,kid);
@@ -92,7 +91,6 @@ printf("f era %d. ",kid->floor);
 		kid->floor--;
 		roomKidChangedFloor(room,kid);
 	}
-printf("f pasa a ser %d\n",kid->floor);
 	return kidVerifyRoom(kid,room,refresh);
 }
 

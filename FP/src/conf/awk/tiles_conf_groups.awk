@@ -36,14 +36,28 @@ $0 !~ /^[ ]*(#.*|tile .*|[ ]*)$/ {
 	for (i=1;i<=NF;i++) {
 		group=$i
 		back=0
+		info=0
+		info2=0
 		if (group ~ /@/) {
 			split(group,a,"@")
-			group=a[1]
-			back=a[2]+1
+			if (a[2] ~ /^[0-9]+$/) {
+				group=a[1]
+				back=a[2]+1
+			} else if (a[2] ~ /^[A-Z][a-z]+$/) {
+				group=a[1]
+				info=a[2]
+				info2=a[3]
+			} else {
+				#error
+				printf("Parsing error in tiles.conf: Syntax error at %s modifier in line %d.\n",a[1],NR)>"/dev/stderr"
+				exit 50
+			}
 		}
 		group=toupper(group)
 		if (!total[group]) total[group]=0
 		groups[group,total[group]]=tile
+		infos[group,total[group]]=info
+		info2s[group,total[group]]=info2
 		backs[group,total[group]]=back
 		total[group]++;
 	}
@@ -52,19 +66,25 @@ $0 !~ /^[ ]*(#.*|tile .*|[ ]*)$/ {
 END {
 	offset=0
 	coma=""
+	infocount=0
 	printf "#define TILE_GROUP_LIST {"
 	for (group in total) {
 		offsets[group]=offset
 		for (i=0;i<total[group];i++) {
 			if (backs[group,i]) { #if there is a back selected add them
 				printf "%s(unsigned char)(%s+129),%d",coma,groups[group,i],backs[group,i]-1
-				coma=","
+				offset+=2
+			} else if (infos[group,i]) { #if there is info selected add them
+				infocount++
+				printf "%s(unsigned char)(%s+65),%d",coma,groups[group,i],infocount
+				arrinfos[infocount]=infos[group,i]
+				arrinfo2s[infocount]=info2s[group,i]
 				offset+=2
 			} else {
 				printf "%s%s+1",coma,groups[group,i]
-				coma=","
 				offset++
 			}
+			coma=","
 			if (offset%5==0) printf("\\\n")
 		}
 		printf ",0"
@@ -72,8 +92,23 @@ END {
 		if (offset%5==0) printf("\\\n")
 	}
 	printf "}\n"
+	#add the TILES_* group defines
 	for (group in offsets) {
 		printf "#define TILES_%s %d\n",group,offsets[group]+32
 	}
+	#add the TILES_MACRO_?_* macro defines
+	printf "\n"
+	for (i=1;i<=infocount;i++) {
+		printf "#define TILES_MACRO_1_%d(a) ((t%s*)((a).moreInfo))\n",i,arrinfos[i]
+		printf "#define TILES_MACRO_2_%d(info) (%s)\n",i,arrinfo2s[i]
+		printf "#define TILES_MACRO_x_%d(tile) TILES_MACRO_2_%d(TILES_MACRO_1_%d(tile))\n",i,i,i
+	}
+	#add the TILES_MACROS_CASE define
+	printf "\n"
+	printf "#define TILES_MACROS_CASE(type,tile) switch (type) {\\\n"
+	for (i=1;i<=infocount;i++) {
+		printf "\tcase %d:return TILES_MACRO_x_%d(tile);\\\n",i,i
+	}
+	printf "\tdefault:return 0;\\\n}\n\n"
 }
 
