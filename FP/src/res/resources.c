@@ -59,10 +59,7 @@ tData* res_createData(int nFrames,int type) {
 	result=(tData*)malloc(sizeof(tData));
 	
 	switch (type) {
-		case RES_TYPE_IMG_TR_LEFT:
-		case RES_TYPE_IMG_TR_RIGHT:
-		case RES_TYPE_IMG_BL_LEFT:
-		case RES_TYPE_IMG_BL_RIGHT:
+		case RES_TYPE_IMG:
 			result->type=eImages;/*res_getVirtualTypeFromReal(res_getIdxType);*/
 			nFrames--;
 			break;
@@ -74,7 +71,7 @@ tData* res_createData(int nFrames,int type) {
 }
 
 /* Using the type and the array data this function will return the resources in void* fromat */
-void res_createFrames(tMemory data,int type,void** returnValue,int number) {
+void res_createFrames(tMemory data,int type,void** returnValue,int number,int mask) {
 	tMemory* result;
 	static tImage image;
 	static tPalette palette;
@@ -82,10 +79,7 @@ void res_createFrames(tMemory data,int type,void** returnValue,int number) {
 	palette.color=(tColor*)image.pal;
 
 	switch (type) {
-		case RES_TYPE_IMG_TR_LEFT:
-		case RES_TYPE_IMG_TR_RIGHT:
-		case RES_TYPE_IMG_BL_LEFT:
-		case RES_TYPE_IMG_BL_RIGHT:
+		case RES_TYPE_IMG:
 			if (!number) {
 				if (data.size!=100) {
 					printf("Fatal error: res_createFrames: invalid palette\n");
@@ -101,8 +95,8 @@ void res_createFrames(tMemory data,int type,void** returnValue,int number) {
 			/* TODO: the result must be an object created in output module: */
 			result=(void*)outputLoadBitmap(
 				image.pix,image.widthInBytes*image.height,palette,image.height,image.width,
-				(type==RES_TYPE_IMG_TR_RIGHT||type==RES_TYPE_IMG_BL_RIGHT),
-				(type==RES_TYPE_IMG_TR_RIGHT||type==RES_TYPE_IMG_TR_LEFT)
+				res_modIsRight(mask),
+				1
 			);
 			 
 			printf("res_createFrames: Allocating frame[%d]=? (image type %d)\n",number,type);
@@ -147,7 +141,7 @@ int res_getDataById(int id,int maxItems,tMemory* result) {
 	return (gotId==id); /* 1 if the id was found, 0 if not */
 }
 
-int res_getDataByArray(short int* id,int maxItems,void** result,int ids,int type) {
+int res_getDataByArray(short int* id,int maxItems,void** result,int ids,int type,int mask) {
 	/* This function looks for a data resource in a dat file optimizing the search knowing
 	 * that the id's starts in 0
 	 */
@@ -169,7 +163,7 @@ int res_getDataByArray(short int* id,int maxItems,void** result,int ids,int type
 				(unsigned long *)&(data.size)
 			);
 			if (gotId==id[i]) {
-				res_createFrames(data,type,result,i);
+				res_createFrames(data,type,result,i,mask);
 				i++;
 			}
 		}
@@ -191,7 +185,7 @@ int res_getDataByArray(short int* id,int maxItems,void** result,int ids,int type
  * Public functions
  * */
 
-tData* resLoad(int id) {
+tData* resLoad(long id) {
 				
 	/* Initialize abstract variables to read this new DAT file */
 	unsigned short int numberOfItems;
@@ -205,7 +199,7 @@ tData* resLoad(int id) {
 
 	/* READ INDEX */
 	if (!mReadBeginDatFile(&numberOfItems,"index.dat")) return NULL;
-	if (!res_getDataById(id,DATA_END_ITEMS,&index)) {
+	if (!res_getDataById(res_modGetId(id),DATA_END_ITEMS,&index)) {
 		printf("Fatal Error: resLoad: index could not be read!\n");
 		return NULL;
 	}
@@ -242,7 +236,7 @@ tData* resLoad(int id) {
 	result=res_createData(nFrames,res_getIdxType);
 
 	/* Fill pFrames into tData object */
-	if (!res_getDataByArray(frames,numberOfItems,result->pFrames,nFrames,res_getIdxType)) {
+	if (!res_getDataByArray(frames,numberOfItems,result->pFrames,nFrames,res_getIdxType,res_modGetMask(id))) {
 		printf("Fatal Error: resLoad: resource file invalid!\n");
 		free(frames);
 		free(result->pFrames);

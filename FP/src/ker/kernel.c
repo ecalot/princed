@@ -46,10 +46,10 @@ int control(int optionflag,int level) {
 	tData* animation;
 	tData* fondo;
 	
-	runningAnimation[0]=resLoad(RES_ANIM_RUN_LEFT);
-	runningAnimation[1]=resLoad(RES_ANIM_RUN_RIGHT);
-	runningAnimation[2]=resLoad(RES_ANIM_JUMPRUN_LEFT);
-	runningAnimation[3]=resLoad(RES_ANIM_JUMPRUN_RIGHT);
+	runningAnimation[0]=resLoad(RES_ANIM_RUN);
+	runningAnimation[1]=resLoad(RES_ANIM_RUN|RES_MOD_RIGHT);
+	runningAnimation[2]=resLoad(RES_ANIM_JUMPRUN);
+	runningAnimation[3]=resLoad(RES_ANIM_JUMPRUN|RES_MOD_RIGHT);
 	fondo=resLoad(RES_IMG_BACKGROUND);
 	if (!fondo) {
 		printf("The resource couldn't be loaded!\n");
