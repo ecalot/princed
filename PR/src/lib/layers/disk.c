@@ -497,16 +497,16 @@ int recurseDirectory(const char* path,int optionflag, const char* extension,cons
 int macfreads (void* bigEndian,FILE* file) {
 	unsigned short int littleEndian;
 	unsigned char* lit_e=(unsigned char*)&littleEndian;
-	unsigned char* big_e=(unsigned char*)&bigEndian;
+	unsigned char* big_e=(unsigned char*)bigEndian;
 	int result=fread(lit_e,2,1,file);
 	big_e[0]=lit_e[1];
 	big_e[1]=lit_e[0];
 	return result;
 }
 int macfreadl (void* bigEndian,FILE* file) {
-	unsigned short int littleEndian;
+	unsigned long int littleEndian;
 	unsigned char* lit_e=(unsigned char*)&littleEndian;
-	unsigned char* big_e=(unsigned char*)&bigEndian;
+	unsigned char* big_e=(unsigned char*)bigEndian;
 	int result=fread(lit_e,4,1,file);
 	big_e[0]=lit_e[3];
 	big_e[1]=lit_e[2];
@@ -516,23 +516,25 @@ int macfreadl (void* bigEndian,FILE* file) {
 }
 int macfwrites(const void* var,FILE* file) {
 	unsigned short int littleEndian;
-	unsigned short int bigEndian=*(unsigned short int*)(&var);
+	unsigned short int bigEndian=*(unsigned short int*)(var);
 	unsigned char* lit_e=(unsigned char*)&littleEndian;
 	unsigned char* big_e=(unsigned char*)&bigEndian;
 	lit_e[0]=big_e[1];
 	lit_e[1]=big_e[0];
+printf("written short=%04x==%04x\n",littleEndian,bigEndian);
 	return fwrite(lit_e,2,1,file);
 }
 
 int macfwritel(const void* var,FILE* file) {
-	unsigned short int littleEndian;
-	unsigned short int bigEndian=*(unsigned short int*)(&var);
+	unsigned long int littleEndian;
+	long int bigEndian=*(long int*)(var);
 	unsigned char* lit_e=(unsigned char*)&littleEndian;
 	unsigned char* big_e=(unsigned char*)&bigEndian;
 	lit_e[0]=big_e[3];
 	lit_e[1]=big_e[2];
 	lit_e[2]=big_e[1];
 	lit_e[3]=big_e[0];
+printf("2) written long=%08x==%08x %d==%d\n",littleEndian,bigEndian,littleEndian,bigEndian);
 	return fwrite(lit_e,4,1,file);
 }
 
