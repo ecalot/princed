@@ -33,22 +33,33 @@ config.c: Free Prince : Configuration Handler
 #include "config.h"
 #include "freeprince.h"
 #include <stdlib.h>
+#include "resources.h"
 
-typedef struct {
-	int size;
-	void* value;
-}tConfigStructure;
-
-static tConfigStructure options[CONFIG_MAX_ITEMS];
+static tMemory options[CONFIG_MAX_ITEMS];
 
 int configInit() {
-	int i;
-	
-	for (i=0;i<CONFIG_MAX_ITEMS;i++) {
-		options[i].size=-1;
-		options[i].value=NULL;
+	int id;
+	unsigned char* aux;
+					
+	for (id=0;id<CONFIG_MAX_ITEMS;id++) {
+		options[id].size=-1;
+		options[id].array=NULL;
 	}
 
+	/* READ INDEX */
+	if (!mReadBeginDatFile(&id,FP_CONFIG_FILE)) return -1;
+	for (id=0;id<DATA_END_ITEMS;id++) {
+		if (res_getDataById(id,DATA_END_ITEMS,options+id)) {
+			aux=options[id].array;
+			options[id].array=malloc(options[id].size);
+			memcpy(options[id].array,aux,options[id].size);
+		} else {
+			return -3;
+		}
+	}
+
+	mReadCloseDatFile();
+	return 0;
 }
 
 void configStop() {
@@ -56,24 +67,24 @@ void configStop() {
 	int i;
 
 	for (i=0;i<CONFIG_MAX_ITEMS;i++) {
-		if (options[i].value) free(options[i].value);
+		if (options[i].array) free(options[i].array);
 	}
 }
 
 void configSet(int id, void* data,int size) {
-	if (options[id].value) free(options[id].value);
-	options[id].value=(void*)malloc(size);
-	memcpy(options[id].value,data,size);
+	if (options[id].array) free(options[id].array);
+	options[id].array=(void*)malloc(size);
+	memcpy(options[id].array,data,size);
 	options[id].size=size;
 }
 
 void* configGet(int id) {
-	return options[id].value;
+	return (void*)options[id].array;
 }
 
 void* configGetArray(int id,int *size) {
 	*size=options[id].size;
-	return options[id].value;
+	return options[id].array;
 }
 
 void configSync() {
