@@ -20,7 +20,7 @@ INCLUDE = -Iinclude/
 DEFINES = -DOS=\"$(OS)\" $(LINUX) 
 OPTIONS = $(INCLUDE) $(DEFINES)
 
-OBJFILES = main.o kernel.o resources.o dat.o disk.o compress.o output.o maps.o
+OBJFILES = main.o kernel.o resources.o dat.o disk.o compress.o output.o maps.o config.o
 
 EXEFILE  = bin/freeprince
 
@@ -78,4 +78,8 @@ maps.o: res/maps.c include/maps.h
 output.o: out/output.c include/resources.h
 	$(INFO) Compiling main output module...
 	$(CC) -c out/output.c $(OPTIONS)
+
+config.o: res/config.c include/resources.h
+	$(INFO) Compiling resource configuration module...
+	$(CC) -c res/config.c $(OPTIONS)
 
