@@ -66,6 +66,7 @@ void outputDrawBitmap(SDL_Surface *screen, void* image,int x, int y);
 	*/
 
 void outputClearScreen(SDL_Surface *screen);
+void outputUpdateScreen(SDL_Surface *screen);
  /* Crears the screen
 	*/
 

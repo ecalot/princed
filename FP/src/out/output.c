@@ -98,6 +98,7 @@ void* outputLoadBitmap(const unsigned char* data, int size,
 	int i,j;
 	Uint32 rmask, gmask, bmask, amask;
 
+	/*return (void*)SDL_LoadBMP("s.bmp");*/
 	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
 	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n",
 			invert, firstColorTransparent, size);
@@ -114,7 +115,7 @@ void* outputLoadBitmap(const unsigned char* data, int size,
 	amask = 0xff000000;
 #endif
 
-	result = SDL_CreateRGBSurface(0, w, h, 8, rmask, gmask, bmask, amask);
+	result = SDL_CreateRGBSurface(0, w, h, 16, rmask, gmask, bmask, amask);
 	if (!result)
 	{
 		fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
@@ -144,10 +145,10 @@ void* outputLoadBitmap(const unsigned char* data, int size,
 		}
 	}
 
-	for (i = 0; i < w; i++) {
-		for (j = 0; j < h; j++) {
-			putpixel(result, i, j, 
-					SDL_MapRGB(result->format, 0xff, 0xff, 0x00));
+	for (i = 0; i < result->w; i++) {
+		for (j = 0; j < result->h; j++) {
+			putpixel(result, i, j, 0xFFFF00);
+					/*SDL_MapRGB(result->format, 0xff, 0xff, 0x00));*/
 		}
 	}
 	
@@ -169,10 +170,18 @@ void outputDrawBitmap(SDL_Surface *screen, void* image, int x, int y) {
 /* Draws an abstract image */
 	SDL_Surface *s = (SDL_Surface *)image;
 	/* SDL_Rect destrect = {x, y, s->w, s->h};*/ 
+	if (SDL_MUSTLOCK(screen)) 
+		SDL_LockSurface(screen);
 	SDL_BlitSurface(s, NULL, screen, NULL);
+	if (SDL_MUSTLOCK(screen)) 
+		SDL_UnlockSurface(screen);
 }
 
 void outputClearScreen(SDL_Surface *screen) {
+}
+
+void outputUpdateScreen(SDL_Surface *screen) {
+	SDL_Flip(screen);
 }
 
 /* Initialization */
@@ -180,7 +189,7 @@ SDL_Surface *outputInit()
 {
 	SDL_Init(SDL_INIT_TIMER | SDL_INIT_VIDEO);
 	atexit(outputStop);
-	return SDL_SetVideoMode(320, 200, 8, 0);
+	return SDL_SetVideoMode(320, 200, 8, SDL_ANYFORMAT|SDL_DOUBLEBUF);
 }
 
 void outputStop()
