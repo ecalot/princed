@@ -77,7 +77,10 @@ tData* res_createData(int nFrames,int type) {
 void res_createFrames(tMemory data,int type,void** returnValue,int number) {
 	tMemory* result;
 	static tImage image;
-	
+	static tPalette palette;
+	palette.colors=16; /* TODO: detect when it is 2 colors */
+	palette.color=(tColor*)image.pal;
+
 	switch (type) {
 		case RES_TYPE_IMG_TR_LEFT:
 		case RES_TYPE_IMG_TR_RIGHT:
@@ -97,7 +100,7 @@ void res_createFrames(tMemory data,int type,void** returnValue,int number) {
 			mExpandGraphic(data.array,&image,data.size);
 			/* TODO: the result must be an object created in output module: */
 			result=(void*)outputLoadBitmap(
-				image.pix,image.widthInBytes*image.height,image.pal,image.height,image.width,
+				image.pix,image.widthInBytes*image.height,palette,image.height,image.width,
 				(type==RES_TYPE_IMG_TR_RIGHT||type==RES_TYPE_IMG_BL_RIGHT),
 				(type==RES_TYPE_IMG_TR_RIGHT||type==RES_TYPE_IMG_TR_LEFT)
 			);

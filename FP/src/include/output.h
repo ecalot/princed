@@ -40,6 +40,17 @@ output.h: Free Prince : Output Devices Handler
 
 #include <SDL/SDL.h>	/* SDL stuff */
 
+typedef struct tColor{
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
+}tColor;
+
+typedef struct tPalette{
+	int     colors;
+	tColor* color;
+}tPalette;
+
 /* Text Primitives*/
 void outputDrawText(int x, int y, const char *fmt, ...);
 void outputDrawMessage(const char* fmt, ...); 
@@ -51,7 +62,7 @@ void outputPlayMid(tMemory music); /* Starts the music reproduction and returns 
 /* Graph */
 
  /* Graph: Primitives for resources module */
-void* outputLoadBitmap(const unsigned char* data, int size, const unsigned char* palette, int h,int w,int invert, int firstColorTransparent);
+void* outputLoadBitmap(const unsigned char* data, int size, const tPalette palette, int h,int w,int invert, int firstColorTransparent);
 	/* Returns an abstract object allocated in memory using the data information ti build it
 	* invert is 0 when no invertion is needed and non-zero when an inversion is performed
 	*/

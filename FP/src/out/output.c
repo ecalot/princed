@@ -70,7 +70,7 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 /* Graphics: Primitives for resources module */
 void*
 outputLoadBitmap(const unsigned char* data, int size, 
-		const unsigned char* palette, int h, int w, int invert, 
+		const tPalette palette, int h, int w, int invert, 
 		int firstColorTransparent)
 {
  /* Returns an abstract object allocated in memory using the data 
@@ -79,24 +79,28 @@ outputLoadBitmap(const unsigned char* data, int size,
 
 	SDL_Surface* result;
 	int i,j;
-	SDL_Color colors[256];
+	SDL_Color* colors;
+
+	colors=(SDL_Color*)malloc(sizeof(SDL_Color)*palette.colors);
 
 	/* Fill colors with color information */
-	for(i=0;i<256;i++) {
-		colors[i].r=i;
-		colors[i].g=255-i;
-		colors[i].b=255-i;
+	for(i=0;i<palette.colors;i++) {
+		colors[i].r=palette.color[i].r<<2;
+		colors[i].g=palette.color[i].g<<2;
+		colors[i].b=palette.color[i].b<<2;
 	}
 
 	printf("outputLoadBitmap: I'm creating an SDL structure :p\n");
 	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n", invert, firstColorTransparent, size);
 
 	result = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 8, 0, 0, 0, 0);
+	SDL_SetColorKey(result, SDL_SRCCOLORKEY, 0);
+	printf("%d\n",firstColorTransparent);
 	if (!result) {
 		fprintf(stderr, "CreateRGBSurface failed: %s\n", SDL_GetError());
 		return NULL;
 	}
-	SDL_SetPalette(result, SDL_LOGPAL, colors, 0, 256);
+	SDL_SetPalette(result, SDL_LOGPAL, colors, 0, palette.colors);
 
 	w = (w + 1) / 2;
 
@@ -108,9 +112,10 @@ outputLoadBitmap(const unsigned char* data, int size,
 		}
 	}
 
-	for (i = 0; i < result->w; i++) {
+	for (i = 0; i < w; i++) {
 		for (j = 0; j < result->h; j++) {
-			putpixel(result, i, j, *(data+j+i*size));
+			putpixel(result, i<<1, j, (data[i+j*w])>>4);
+			putpixel(result, (i<<1)+1, j, (data[i+j*w])&0x0f);
 		}
 	}
 	
@@ -118,6 +123,7 @@ outputLoadBitmap(const unsigned char* data, int size,
 		SDL_UnlockSurface(result);
 	}
 
+	free(colors);
 	return (void*)result;
 }
 

@@ -47,8 +47,9 @@ int kernel(int optionflag,int level) {
 	
 	SDL_Surface *screen /* , *test */;
 	SDL_Event e;
-	int i;
+	int i,x;
 	tData* testResource;
+	tData* fondo;
 	
 	screen = outputInit();
 
@@ -58,6 +59,7 @@ int kernel(int optionflag,int level) {
 	}
 
 	testResource=resLoad(RES_ANIM_RUN_LEFT);
+	fondo=resLoad(RES_IMG_BACKGROUND);
 	if (!testResource) {
 		printf("The resource couldn't be loaded!\n");
 		exit(1);
@@ -70,16 +72,19 @@ int kernel(int optionflag,int level) {
 	);
 
 	i=0;
+	x=380;
 	while (1) {
 		if (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) break;
 		}
 		outputClearScreen(screen);
-		outputDrawBitmap(screen, testResource->pFrames[i], 30, 30);
+		outputDrawBitmap(screen, fondo->pFrames[0], 0, 0);
+		outputDrawBitmap(screen, testResource->pFrames[i], x, 141);
 		outputUpdateScreen(screen);
 		i++;
 		SDL_Delay(50);
-		if (i>13) i =0;
+		x--;
+		if (i>10) i =0;
 	}
 
 	outputStop();
