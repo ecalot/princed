@@ -258,7 +258,7 @@ END {
 	for (i=0;i<currentAnimation;i++) {
 		flags=arrayAnimation[i,"flags"]
 		steps=arrayAnimation[i,"steps"]
-		if (flags!="") {
+		if (flags ~ /[a-z]+/) {
 			coma2=""
 			flagmask=""
 			for (j=1;j<=length(flags);j++) {

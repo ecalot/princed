@@ -144,6 +144,8 @@ int evaluateState(int state, tKey* key, tKid* kid, tRoom* room) {
 	return i;
 }
 
+#define alternate(i,n) (((i)%2)?(n-(((i)+1)>>1)):((i)>>1))
+
 /* This function should return the image frame and actions to be performed by this call
  * returns the animation number corresponding to this frame */
 short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
@@ -180,9 +182,19 @@ short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 		printf("NEW STATE: action=%d next=%d\n",action,current->currentState);
 			/* Move the kid (turn+traslate) */
 		/* TODO: code absolutestepsforward and relativestepsforward*/
+	/*	switch(statesActionList[action].moveType) {
+		case STATES_MOVETYPES_ABSOLUTEONSTART:
+			break;
+		case STATES_MOVETYPES_ABSOLUTEONSTOP:
+			break;
+		case STATES_MOVETYPES_RELATIVETURN:
+			break;
+		case STATES_MOVETYPES_RELATIVE:
+			break;
+		}*/
 		if (kid->direction==DIR_LEFT) {
 			/*current->step=-current->step;*/
-			steps=-steps;
+			/*steps=-steps;*/
 			switch(statesActionList[action].moveType) {
 			case STATES_MOVETYPES_RELATIVE:
 				/*kid->location-=statesActionList[action].moveOffset;*/
@@ -212,7 +224,22 @@ short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 		current->acumLocation=kid->location;
 	}
 	/*current->acumLocation+=current->step;*/
+	steps=(kid->direction==DIR_LEFT)?steps:-steps;
 	kid->location+=steps; /*current->acumLocation;*/
+
+
+	{
+		int jj;
+		for (jj=0;jj<5;jj++) {
+
+			printf("%d=>",alternate(jj,10));
+			printf("%d ",alternate(jj,5));
+		}
+		printf("\n");
+	}
+
+
+	
 	if (current->currentState<0) return current->currentState; /* if last state return exit code */
 	return flags;
 }
