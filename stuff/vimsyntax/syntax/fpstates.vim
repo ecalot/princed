@@ -1,9 +1,9 @@
 " Vim syntax file
 " Language:	FreePrince states file
 " Maintainer:	Diego Essaya <dessaya@fi.uba.ar>
-" Last Change:	$Date: 2004-10-30 00:19:29 $
+" Last Change:	$Date: 2004-10-30 01:28:04 $
 " URL: http://www.fp.princed.com.ar/
-" $Revision: 1.1 $
+" $Revision: 1.2 $
 
 " For version 5.x: Clear all syntax items
 " For version 6.x: Quit when a syntax file was already loaded
@@ -19,7 +19,7 @@ syntax match fpComment /#.*$/ contains=fpTodo
 syntax match fpTodo /\<TODO\>/ contained
 syntax match fpState /^\S\+:/me=e-1
 syntax match fpAction /^\taction\>/ms=s+1 nextgroup=fpTitle skipwhite
-syntax match fpTitle /.*/ contained
+syntax match fpTitle /[^#]*/ contained
 syntax match fpProps /^\t\t\(conditions\|next\|steps\|animation\|level\|guardskill\|mark\)\>/ms=s+2
 syntax match fpIdent /^\t\t\t\S\+/ms=s+3 nextgroup=fpValue skipwhite contains=fpNumber,fpOp
 syntax match fpValue /\w\+/ contained
