@@ -75,15 +75,26 @@ typedef struct {
 } tPressable;
 
 typedef struct {
+	int frame;
+} tDanger;
+
+typedef struct {
 	tRoomId        links[ 4*24];
 	unsigned char  fore [24*30];
 	unsigned char  back [24*30];
+	
 	tGate**        screenGates[24];
 	tGate*         gates;
 	int            totalGates;
+	
 	tPressable**   screenPressables[24];
 	tPressable*    pressables;
 	int            totalPressables;
+	
+	tDanger**      screenDangers[24];
+	tDanger*       dangers;
+	int            totalDangers;
+	
 	tEvent         events[256];
 	int            time;
 	unsigned char  start[3];

@@ -47,6 +47,8 @@ void* mapLoadLevel(tMemory level) {
 	int gateInRoom=0;
 	int pressables=0;
 	int pressableInRoom=0;
+	int dangers=0;
+	int dangerInRoom=0;
 	tGate** auxGates=malloc(sizeof(tGate*)*24*30);
 	
 	/* copy maps, links and start position */
@@ -55,15 +57,20 @@ void* mapLoadLevel(tMemory level) {
 	memcpy(map->start,level.array+MAPS_BLOCK_OFFSET_START_POSITION,3);
 	memcpy(map->links,level.array+MAPS_BLOCK_OFFSET_LINK,4*24);
 
-	/* generate and load gate structures */
+	/* generate and load tPressable and tGate structures */
 	for (i=0;i<24;i++) { /* count gates and create gate tree middle nodes */
 		for (j=0;j<30;j++) {
-			if (((map->fore[i*30+j]&0x1f)==TILE_GATE)||((map->fore[i*30+j]&0x1f)==TILE_EXIT_LEFT)) {
+/*			if (((map->fore[i*30+j]&0x1f)==TILE_GATE)||((map->fore[i*30+j]&0x1f)==TILE_EXIT_LEFT)) {*/
+			if (isInGroup(map->fore[i*30+j],0,TILES_GATES)) {
 				gateInRoom++;
 				gates++;
-			} else if (((map->fore[i*30+j]&0x1f)==TILE_BTN_RAISE)||((map->fore[i*30+j]&0x1f)==TILE_BTN_DROP)) {
+			} else if (isInGroup(map->fore[i*30+j],0,TILES_PRESSABLE)) {
+/*			} else if (((map->fore[i*30+j]&0x1f)==TILE_BTN_RAISE)||((map->fore[i*30+j]&0x1f)==TILE_BTN_DROP)) {*/
 				pressableInRoom++;
 				pressables++;
+			} else if (isInGroup(map->fore[i*30+j],0,TILES_CHOPPER_SPIKE)) {
+				dangerInRoom++;
+				dangers++;
 			}
 		}
 		if (gateInRoom) {
@@ -76,19 +83,29 @@ void* mapLoadLevel(tMemory level) {
 		} else {
 			map->screenPressables[i]=NULL;
 		}
+		if (dangerInRoom) {
+			map->screenDangers[i]=malloc(dangerInRoom*sizeof(tDanger*));
+		} else {
+			map->screenDangers[i]=NULL;
+		}
 		gateInRoom=0;
 		pressableInRoom=0;
+		dangerInRoom=0;
 	}
 	/* create gates sctucture */
 	map->gates=malloc(gates*sizeof(tGate));
 	map->totalGates=gates;
 	map->pressables=malloc(pressables*sizeof(tPressable));
 	map->totalPressables=pressables;
+	map->dangers=malloc(gates*sizeof(tGate));
+	map->totalDangers=dangers;
 	gates=0;
 	pressables=0;
+	dangers=0;
 	for (i=0;i<24;i++) {
 		for (j=0;j<30;j++) {
-			if (((map->fore[i*30+j]&0x1f)==TILE_GATE)||((map->fore[i*30+j]&0x1f)==TILE_EXIT_LEFT)) {
+			if (isInGroup(map->fore[i*30+j],0,TILES_GATES)) {
+			/*if (((map->fore[i*30+j]&0x1f)==TILE_GATE)||((map->fore[i*30+j]&0x1f)==TILE_EXIT_LEFT)) {*/
 				tGate newGate;
 				newGate.frame=map->back[i*30+j];
 				newGate.action=map->back[i*30+j]?eClose:eOpen;
@@ -99,7 +116,8 @@ void* mapLoadLevel(tMemory level) {
 				fprintf(stderr,"mapLoadLevel: Loading gate: indexed=%d gate pointer=%p\n",i,(void*)auxGates[i*30+j]);
 				map->gates[gates++]=newGate;
 				gateInRoom++;
-			} else if (((map->fore[i*30+j]&0x1f)==TILE_BTN_RAISE)||((map->fore[i*30+j]&0x1f)==TILE_BTN_DROP)) {
+			/*} else if (((map->fore[i*30+j]&0x1f)==TILE_BTN_RAISE)||((map->fore[i*30+j]&0x1f)==TILE_BTN_DROP)) {*/
+			} else if (isInGroup(map->fore[i*30+j],0,TILES_PRESSABLE)) {
 				tPressable newPressable;
 				newPressable.event=map->events+map->back[i*30+j];
 				newPressable.action=eNormal;
@@ -109,13 +127,28 @@ void* mapLoadLevel(tMemory level) {
 				fprintf(stderr,"mapLoadLevel: Creating button: indexed=%d,%d btn pointer=%p\n",i,pressableInRoom,(void*)(map->pressables+pressables));
 				map->pressables[pressables++]=newPressable;
 				pressableInRoom++;
+			} else if (isInGroup(map->fore[i*30+j],0,TILES_CHOPPER_SPIKE)) {
+				tDanger newDanger;
+/*			TODO: initialize the tDanger object
+ * 			newDanger.frame=;
+				newDanger.action=eNormal;
+				newDanger.type=((map->fore[i*30+j]&0x1f)==TILE_CHOPPER)?eChopper:eSpikes;*/
+				map->back[i*30+j]=dangerInRoom;
+				map->screenDangers[i][dangerInRoom]=map->dangers+dangers;
+				fprintf(stderr,"mapLoadLevel: Creating button: indexed=%d,%d btn pointer=%p\n",i,dangerInRoom,(void*)(map->dangers+dangers));
+				map->dangers[dangers++]=newDanger;
+				dangerInRoom++;
 			}
 		}
 		if (!gateInRoom) map->screenGates[i]=NULL;
 		if (!pressableInRoom) map->screenPressables[i]=NULL;
+		if (!dangerInRoom) map->screenDangers[i]=NULL;
 		gateInRoom=0;
 		pressableInRoom=0;
+		dangerInRoom=0;
 	}
+
+	/* read event list from file and convert it into the event array in memory */
 	for (i=0;i<256;i++) {
 		unsigned char byte1=level.array[MAPS_BLOCK_OFFSET_GATE_1+i];
 		unsigned char byte2=level.array[MAPS_BLOCK_OFFSET_GATE_2+i];

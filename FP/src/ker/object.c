@@ -53,7 +53,7 @@ void objectFree(tObject obj) {
 	if (obj.gfxCache[DIR_RIGHT]) resFree(obj.gfxCache[DIR_RIGHT]);
 }
 
-/* TODO: make a function in maps.c that calls this one */
+/* TODO: make a function in maps.c that calls this one for the kid */
 tObject objectCreate(int location, int floor, int direction, int stateId, unsigned long resId,int cacheMirror) {
 	tObject object;
 
