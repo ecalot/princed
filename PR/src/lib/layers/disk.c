@@ -55,21 +55,23 @@ disk.c: Princed Resources : Disk Access & File handling functions
 \***************************************************************/
 
 //Repair folders
-void repairFolders(char* a) {
+const char *repairFolders(const char* a) {
 	int i,k;
+	static char result[260];
 
-	for (i=0,k=0;a[i];) {
+	for (i=0,k=0;a[i]&&(k<260);) {
 		if (isDirSep(a,i)) {
-			a[k]=DIR_SEPARATOR;
+			result[k]=DIR_SEPARATOR;
 			i++;
 			while (isDirSep(a,i)) i++;
 		} else {
-			a[k]=a[i];
+			result[k]=a[i];
 			i++;
 		}
 		k++;
 	}
-	a[k]=0;
+	result[k]=0;
+	return result;
 }
 
 
@@ -102,7 +104,7 @@ int makebase(const char* p) {
 	return a;
 }
 
-char writeOpen(char* vFileext, FILE* *fp) {
+char writeOpen(const char* vFileext, FILE* *fp) {
 	/*
 		Opens vFileext for write access
 		 if the path does't exist it is created
@@ -115,12 +117,13 @@ char writeOpen(char* vFileext, FILE* *fp) {
 		 0 if error
 		 1 if ok
 	*/
+	const char* file;
 
 	//Create base dir and save file
-	repairFolders(vFileext);
-	if (makebase(vFileext)) return 0;
+	file=repairFolders(vFileext);
+	makebase(file);
 
-	return ((*fp=fopen(vFileext,"wb"))!=NULL);
+	return ((*fp=fopen(file,"wb"))!=NULL);
 }
 
 
@@ -166,7 +169,7 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 	int  aux;
 
 	//Open the file
-	if ((fp=fopen(vFile,"rb"))==NULL) {
+	if ((fp=fopen(repairFolders(vFile),"rb"))==NULL) {
 		return 0;
 	} else {
 		//get file size
@@ -199,7 +202,7 @@ char mSaveRaw(const char* vFile,const unsigned char* output, int size) {
   FILE * pFile;
 
 	if (!size) return 0;
-  if ((pFile=fopen(vFile,"wb"))==NULL) return 0;
+  if (!writeOpen(vFile,&pFile)) return 0;
 
   fwrite (output, 1, size, pFile);
   fclose (pFile);
@@ -238,5 +241,20 @@ char mDiskVealidateFileHeader(unsigned char* text, int size, FILE* fp) {
 	return (i==size); //0 if the compare for was stopped before end reached
 }
 
+const char* getFileNameFromPath(const char* path) {
+	/*
+		If you give a path you get the filename,
+		if you give a filename, you get the same filename
+	*/
+	int size;
+	size=strlen(path);
+	while (size) {
+		if (isDirSep(path,size)) {
+			return path+size+1;
+		}
+		size--;
+	}
+	return path;
+}
 
 

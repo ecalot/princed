@@ -40,7 +40,7 @@ tasks.c: Princed Resources : Other DAT file handling tasks
 |                    Get the type of a DAT file                 |
 \***************************************************************/
 
-int prVerifyDatType(char* vFiledat) {
+int prVerifyDatType(const char* vFiledat) {
 
 	//Variables
 	FILE*              fp;

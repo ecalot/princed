@@ -82,6 +82,7 @@ void workTag(const tTag* t, tResource* r[]) {
 	int i;
 
 	id=(unsigned short)ptoi(t->value);
+	if (!id) return; //If there was not id or id contained wrong values, skip
 
 	//Process tag and copy values to resource
 	//Create Resource
@@ -97,6 +98,26 @@ void workTag(const tTag* t, tResource* r[]) {
 	}
 	if (i==8) r[id]->type=(char)atoi(t->itemtype); //If error it returns 0 and the verifyHeader will try to detect the type
 	r[id]->palette=(unsigned short)ptoi(t->palette); //Transforms the char* palette into a short ID value, if 0 or error no palette is needed
+	r[id]->number=(unsigned char)ptoi(t->number); //Transforms the char* levelnumer/number attribute into a char value, if error, demo level is used
+
+	//Title and description (only supported in level plv format
+	if (t->desc!=NULL) {
+		size=strlen(t->desc)+1;
+		r[id]->desc=(char*)malloc(size);
+		if (r[id]->desc==NULL) return;
+		memcpy(r[id]->desc,t->desc,size);
+	} else {
+		r[id]->desc=NULL;
+	}
+
+	if (t->name!=NULL) {
+		size=strlen(t->name)+1;
+		r[id]->title=(char*)malloc(size);
+		if (r[id]->title==NULL) return;
+		memcpy(r[id]->title,t->name,size);
+	} else {
+		r[id]->title=NULL;
+	}
 
 	//get external and copy it to the resource path
 	if (t->external!=NULL) {

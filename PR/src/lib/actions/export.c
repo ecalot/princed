@@ -43,6 +43,7 @@ extract.c: Princed Resources : DAT Extractor
 #include "bmp.h"
 #include "wav.h"
 #include "pal.h"
+#include "plv.h"
 #include "mid.h"
 
 /***************************************************************\
@@ -66,7 +67,7 @@ extract.c: Princed Resources : DAT Extractor
 		5 - 1&4
 */
 
-int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
+int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int task, const char* vDatFileName) {
 
 	//Variables
 	char          vFileext[260];
@@ -136,33 +137,36 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 			ok=ok&&fread(data,size,1,fp);
 			if (!ok) return -3;
 
-			//For the moment rebuilt option will be comented
-//	task|=2;
-
 			//set resource information on this index entry
 			if (r[id]==NULL) {
 				r[id]=(tResource*)malloc(sizeof(tResource));
 				if (r[id]==NULL) return -2; //no memory
 				r[id]->path=NULL;
 				r[id]->palAux=NULL;
+				r[id]->desc=NULL;
+				r[id]->title=NULL;
 				r[id]->palette=0;
-				(*(r[id])).size=(unsigned short int)size;
-				(*(r[id])).offset=(unsigned short)offset;
-				(*(r[id])).type=verifyHeader(data,(unsigned short int)size);
-			} else {
+				r[id]->number=0;
+				r[id]->size=(unsigned short int)size;
+				r[id]->offset=(unsigned short)offset;
+				r[id]->type=verifyHeader(data,(unsigned short int)size);
+			} else { //If resource type is invalid or 0, the type will be decided by PR
 				if (!(r[id]->type)) r[id]->type=verifyHeader(data,(unsigned short int)size);
 			}
 
-			if (task&1) { //If "extract to file" is set
+			if (!(task&unknown_flag)) { //If unknown flag is set do nothing but generate the unknown.xml file
 				//select type
-				if (task&4) (*(r[id])).type=0; //If "extract as raw" is set type is 0
+				if (task&raw_flag) (*(r[id])).type=0; //If "extract as raw" is set type is 0
 
 
 				//save file
 				getFileName(vFileext,vDirExt,r[id],id,vFiledat);
+				if (task&verbose_flag) printf("Extracting '%s'...\n",getFileNameFromPath(vFileext));
 
-				switch ((*(r[id])).type) {
+				switch (r[id]->type) {
 					case 1:
+						ok=ok&&mFormatExtractPlv(data,vFileext,size,r[id]->number,vDatFileName,r[id]->title,r[id]->desc);
+						break;
 					case 5:
 					case 0: //Raw files
 						ok=ok&&writeData(data,1,vFileext,size); //Ignore checksum
@@ -209,10 +213,13 @@ int extract(char* vFiledat,char* vDirExt, tResource* r[], char task) {
 		}
 		fclose(fp);
 
-		//Free allocated palettes
+		//Free allocated palettes and descriptions
 		for (id=0;id<MAX_RES_COUNT;id++) {
 			if (r[id]!=NULL) {
 				if (r[id]->palAux!=NULL) {
+					free (r[id]->palAux);
+				}
+				if (r[id]->desc!=NULL) {
 					free (r[id]->palAux);
 				}
 			}

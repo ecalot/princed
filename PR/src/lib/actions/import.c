@@ -42,6 +42,7 @@ compile.c: Princed Resources : DAT Compiler
 #include "mid.h"
 #include "wav.h"
 #include "pal.h"
+#include "plv.h"
 #include "disk.h"
 #include "pr.h"
 
@@ -49,10 +50,13 @@ compile.c: Princed Resources : DAT Compiler
 |                  Dat compiling primitives                     |
 \***************************************************************/
 
-char mBeginDatFile(FILE* *fp,char* vFile) {
-	//opens a file and reserves space for the headers
-	*fp=fopen(vFile,"wb");
-	if (*fp!=NULL) {
+char mBeginDatFile(FILE* *fp,const char* vFile) {
+	/*
+		Opens safely a dat file for writing mode and
+		reserves space for the headers
+	*/
+
+	if (writeOpen(vFile,fp)) {
 		fseek(*fp,6,SEEK_SET);
 		return 1;
 	} else {
@@ -61,61 +65,69 @@ char mBeginDatFile(FILE* *fp,char* vFile) {
 }
 
 void mAddFileToDatFile(FILE* fp, char* data, int size) {
-	//calculates the checksum of a file
-	unsigned char checksum=0;
-	int k;
-	for (k=0;k<size;k++) checksum+=data[k];
+	/*
+		Adds a data resource to a dat file keeping
+		abstratly the checksum verifications
+	*/
+
+	//Declare variables
+	int            k        = size;
+	unsigned char  checksum = 0;
+	unsigned char* data2    = data;
+
+	//calculates the checksum
+	while (k--) checksum+=*(data2++);
 	checksum=~checksum;
+
 	//writes the checksum and the data content
 	fwrite(&checksum,1,1,fp);
 	fwrite(data,size,1,fp);
 }
 
-void mSetEndFile(FILE* fp,int sizeOfIndex) {
-	//sets the headers
-	short int size1,zero,size2;
-	fseek(fp,0,SEEK_END);
-	size1=ftell(fp)-(size2=sizeOfIndex);
-	zero=0;
-	fseek(fp,0,SEEK_SET);
-	fwrite(&size1,2,1,fp);
-	fwrite(&zero,2,1,fp);
-	fwrite(&size2,2,1,fp);
-	fclose(fp);
-}
+void mSetEndFile(FILE* fp, tResource* r[]) {
+	/*
+		Closes a dat file filling the index and other structures
+	*/
+	unsigned short int i=1;
+	unsigned short int totalItems=0;
+	unsigned short int size2=2;
+	unsigned long  int size1=ftell(fp);
 
-int mCreateIndexInDatFile(FILE* fp, tResource* r[]) {
-	//Add extra text at the end of the file
-	unsigned short int i=0;
-	unsigned short int junk=0;
-	unsigned short int tot=0;
-	int k=2;
-	int pos=ftell(fp);
-
-	fwrite(&tot,2,1,fp);
-	for (;i!=MAX_RES_COUNT;i++) { //TODO: add define MAX_RES_COUNT
+	//Write index
+	fwrite(&totalItems,2,1,fp); //Junk total items count to reserve 2 bytes
+	for (;i!=MAX_RES_COUNT;i++) {
 		if (r[i]!=NULL) {
-				//the file is in the archive, so I'll add it to the index
-				k+=8;
-				tot++;
-				fwrite(&i,2,1,fp);
-				fwrite(&((*r[i]).offset),2,1,fp);
-				fwrite(&junk,2,1,fp);
-				fwrite(&((*r[i]).size),2,1,fp);
+			//the file is in the archive, so I'll add it to the index
+			size2+=8;
+			totalItems++;
+			fwrite(&i,2,1,fp);
+			fwrite(&((*r[i]).offset),4,1,fp);
+			fwrite(&((*r[i]).size),2,1,fp);
 		}
 	}
-	fseek(fp,pos,SEEK_SET);
-	fwrite(&tot,2,1,fp);
-	return k;
+	fseek(fp,size1,SEEK_SET);
+	fwrite(&totalItems,2,1,fp); //Definitive total items count
+
+	//Write first 6 bytes header
+	fseek(fp,0,SEEK_SET);
+	fwrite(&size1,4,1,fp);
+	fwrite(&size2,2,1,fp);
+
+	//Closes the file and flushes the buffer
+	fclose(fp);
 }
 
 //Format detection function (private function, not in header file)
 char mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
-	switch ((*res).type) {
+	//return 1 if ok, 0 if error
+	switch (res->type) {
+		case 1: //compile levels
+			return mFormatCompilePlv(*data,fp,res);
 		case 2: //compile bitmap
 			return mFormatCompileBmp(*data,fp,res);
 		case 3: //compile wave
 			return mFormatCompileWav(*data,fp,res);
+		case 7: //compile pcs
 		case 4: //compile midi
 			return mFormatCompileMid(*data,fp,res);
 		case 6: //compile palette
@@ -123,7 +135,6 @@ char mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
 			if (!mImportPalette(data,&((*res).size))) {
 				return 0;
 			}
-		case 1:
 		case 5:
 		default:
 			mAddFileToDatFile(fp,*data,(*res).size);
@@ -136,7 +147,7 @@ char mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
 |                    M A I N   F U N C T I O N                  |
 \***************************************************************/
 
-int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
+int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int opt, const char* vDatFileName) {
 	/*
 		Return values:
 			-1 File couldn't be open for writing
@@ -148,7 +159,7 @@ int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
 	char vFileext[200];
 	int ok=0;
 	unsigned char* data;
-	unsigned short int i=0;
+	unsigned short int i=1;
 
 	if (!mBeginDatFile(&fp,vFiledat)) {
 		return -1; //File couldn't be open
@@ -158,19 +169,25 @@ int compile(char* vFiledat, char* vDirExt, tResource* r[], char opt) {
 
 	for (;i!=MAX_RES_COUNT;i++) {
 		if (r[i]!=NULL) {
-				getFileName(vFileext,vDirExt,r[i],i,vFiledat);
-				//the file is in the archive, so I'll add it to the main dat body
-				if ((*r[i]).size=mLoadFileArray(vFileext,&data)) {
-					(*r[i]).offset=(unsigned short)ftell(fp);
-					if (!mAddCompiledFileToDatFile(fp,&data,r[i])) {
-						ok++;
-					}
-					free(data);
-				} else {
+			if (opt&raw_flag) r[i]->type=0; //compile from raw
+			getFileName(vFileext,vDirExt,r[i],i,vDatFileName);
+			//the file is in the archive, so I'll add it to the main dat body
+			if (r[i]->size=mLoadFileArray(vFileext,&data)) {
+				r[i]->offset=(unsigned short)ftell(fp);
+				if (!mAddCompiledFileToDatFile(fp,&data,r[i])) {
+					if (opt&verbose_flag) printf("'%s' has errors, skipped\n",getFileNameFromPath(vFileext));
 					ok++;
+				} else {
+					if (opt&verbose_flag) printf("'%s' succesfully compiled\n",getFileNameFromPath(vFileext));
 				}
+				free(data);
+			} else {
+				if (opt&verbose_flag) printf("'%s' not open, skipped\n",getFileNameFromPath(vFileext));
+				ok++;
+			}
 		}
 	}
-	mSetEndFile(fp,mCreateIndexInDatFile(fp,r));
+	mSetEndFile(fp,r);
+	if (opt&verbose_flag) printf("Compilation done\n");
 	return ok;
 }

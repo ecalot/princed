@@ -77,6 +77,7 @@ tTag* getTagStructure() {
 	t->type=NULL;
 	t->value=NULL;
 	t->version=NULL;
+	t->number=NULL;
 
 	return t;
 }
@@ -95,6 +96,7 @@ void freeTagStructure(tTag* t) {
 	freeAllocation(t->type);
 	freeAllocation(t->value);
 	freeAllocation(t->version);
+	freeAllocation(t->number);
 	free(t);
 }
 
@@ -118,6 +120,8 @@ int attribFill(char* attr,char* val, tTag* t) {
 	FillAttr(t->type,"type");
 	FillAttr(t->value,"value");
 	FillAttr(t->version,"version");
+	FillAttr(t->number,"levelnumber"); //levelnumber is a number alias
+	FillAttr(t->number,"number");
 
 	return 0;
 }
@@ -448,7 +452,7 @@ void showTag(int n,tTag* t) {
 
 #endif
 
-tTag* parseXmlFile(char* vFile,int* error) {
+tTag* parseXmlFile(const char* vFile,int* error) {
 	/* error may take the following values:
 		-1 Parse error
 		-2 No memory
