@@ -60,6 +60,7 @@ BEGIN {
 					moveOffset=$5
 					moveType=tolower($4)
 				} else if (listType == "conditions") {
+					if ($4=="none") next
 					if (oldType != listType ) {
 						oldType=listType
 						currentCondition++

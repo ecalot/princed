@@ -10,7 +10,8 @@ INDEXER    = @cd ..;./install; cd src
 DOWNLOADER = @cd ..;./install -d; cd src
 REMOVER    = @rm -f
 AWK        = awk
-GREP       = @grep -v -e '^[[:space:]]*\(none[[:space:]]*\|\#.*\)\{0,1\}$$'
+GREP       = @cat
+#@grep -v -e '^[[:space:]]*\(none[[:space:]]*\|\#.*\)\{0,1\}$$'
 
 #####################
 # Operating Systems #
@@ -107,7 +108,8 @@ checkgrep:
 clean:
 	$(INFO) Erasing temporary object files...
 	$(REMOVER) $(OBJFILES) $(EXEFILE)\
-	           $(GENERATEDRESHEADERS) $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)
+	           $(GENERATEDRESHEADERS) $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)\
+						 $(SRC2)
 
 build: clean $(EXEFILE)
 

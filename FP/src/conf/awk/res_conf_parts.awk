@@ -33,7 +33,7 @@ BEGIN {
 	printf("\n/* parts */\n")
 } 
 
-{
+/^([ ]*[^# ].*)$/ {
 	start=offset
 	offset=end=$2+offset
 	printf (" /* %s, size=%d */\n#define res_get_part_%s(a) (((a)>>%d)&0x%08x)\n#define res_set_part_%s(a) (((a)&0x%08x)<<%d)\n",\

@@ -28,7 +28,7 @@
 #  DO NOT remove this copyright notice
 #
 
-/^[ ]*tile .*$/ {
+/^[ ]*tile / {
 	a=""
 	i=15-length($2)
 	while(i--) a=sprintf(" %s",a)
