@@ -210,3 +210,14 @@ getopt1.o: ports/getopt1.c
 	$(INFO) Porting the Unix-like getopt function \(second part\)...
 	$(CC) $(OPTIONS) -c ports/getopt1.c
 
+#python
+python.o: addons/python.c
+	$(INFO) Building the python interfaces
+	$(CC) -pthread -fno-strict-aliasing -DNDEBUG -g -O3 -Wall -fPIC -I/usr/include/python2.3 -c addons/python.c $(INCLUDE)
+	
+pylib: python.o $(LIBOBJ)
+	$(INFO) Building the python module
+	$(MAKEDIR) addons/python
+	$(CC) -pthread -shared python.o $(LIBOBJ) -o addons/python/pr.so
+
+
