@@ -232,7 +232,7 @@ int fileDirGetFilesImport(tFileDir2* list1,tFileDir2* files,const char* resfile,
 		free(opt);
 		free(file);
 	}
-	printf("fils=%d dirs=%d\n",fils,dirs);
+
 	if (dirs>1) {
 		while ((file=filedir_pop(&(files->filenames)))) free(file); /* empty list */
 		return -20;

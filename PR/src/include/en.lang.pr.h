@@ -43,7 +43,7 @@ pr.h: Princed Resources : English language strings
 #define PR_CGI_TEXT2              "Result: %02d type\n"
 
 #define PR_TEXT_RESULT            "Result: %s (%d)\n"
-#define PR_TEXT_RESULT_ERR        "Result: %d files with errors\n"
+#define PR_TEXT_RESULT_ERR        "Result: %d files with errors (%d)\n"
 
 #define PR_TEXT_FILE_NOT_FOUND    "Result: File or directory '%s' not found\n"
 

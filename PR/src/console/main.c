@@ -197,19 +197,26 @@ int main (int argc, char **argv) {
 					/* import */
 					fprintf(outputStream,PR_TEXT_TASK_COMPILE,file,dirName);
 					result=prImportDatOpt(file,dirName,resFile,optionflag,dat,extension);
+					if (result>0) {
+						fprintf(outputStream,PR_TEXT_RESULT_ERR,result,result);
+					} else {
+						fprintf(outputStream,PR_TEXT_RESULT,importErrors[-result],result);
+					}
 				} else if (hasFlag(export_flag)) {
 					/* export */
 					fprintf(outputStream,PR_TEXT_TASK_EXTRACT,file,dirName);
 					result=prExportDatOpt(file,dirName,resFile,optionflag,dat,datAuthor,extension);
+					fprintf(outputStream,PR_TEXT_RESULT,exportErrors[-result],result);
 				} else {
 					/* classify */
 					fprintf(outputStream,PR_TEXT_TASK_CLASSIFY,file);
 					result=prVerifyDatType(file);
+					fprintf(outputStream,PR_TEXT_RESULT,classifyErrors[result+2],result);
 				}
-				printf("file: %s '%s' result=%d\n",file,dat,result);
 				free(file);
 				free(datfile);
 			}
+			fprintf(outputStream,"\n");
 			break;
 		default:
 			fprintf(stderr,"Error, check the xml file\n");
