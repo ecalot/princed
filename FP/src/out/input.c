@@ -71,6 +71,8 @@ int editAction(tKey* key,SDLKey k) {
 		case SDLK_l:
 			key->actionPerformed=passLevel;
 			break;
+		default:
+			break;
 		}
 	}
 	/* Normal actions */
