@@ -50,7 +50,7 @@ disk.c: Princed Resources : Disk Access & File handling functions
 
 #include "resources.h"
 
-#ifdef UNIX
+#ifndef WIN32
   #define defmkdir(a) mkdir (a,(mode_t)0755)
 #else
 	/*#include <direct.h> wasn't it dirent? */
