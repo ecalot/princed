@@ -8,12 +8,13 @@ SDONE="[$LGREEN Done$NO_COLOR ]"
 SOK="[$LGREEN  OK $NO_COLOR ]"
 SFAIL="[$LRED Fail$NO_COLOR ]"
 
-number=50
+numberstart=50
 
 #initializes output files
+number=$numberstart
 echo -n "Generating header and xml files            "
 cp -f result/data.h result/data.h.bak 2>/dev/null >/dev/null
->result/data.h
+echo -e "/* data.h: Auto generated file header for resources */\n">result/data.h
 cat xml/gen1.xml > xml/resources.xml
 
 #process and add all definitions to the xml and h files
@@ -26,8 +27,7 @@ do
 	number=`expr $number + 1`
 done
 cat xml/gen2.xml >> xml/resources.xml
-echo -e "\n#define DATA_MAX_ITEMS $number" >> result/data.h
-
+echo -e "\n#define DATA_START_ITEMS $numberstart\n#define DATA_END_ITEMS $number" >> result/data.h
 echo -e "$SOK"
 
 #generate the dat file using the proceced indexes and the xml file
