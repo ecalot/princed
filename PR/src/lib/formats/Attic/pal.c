@@ -44,6 +44,8 @@ pal.c: Princed Resources : JASC PAL files support
 |                 Jasc Palette handling functions               |
 \***************************************************************/
 
+static const char* enter="\r\n";
+
 //Public functions
 char mFormatExtractPal(unsigned char** data, char *vFileext,unsigned long int size) {
 	//Convert palette from POP format to JASC format
@@ -61,31 +63,37 @@ char mImportPalette(unsigned char** data, unsigned short *size) {
 	unsigned char* pal2;
 	char* data2;
 	//unsigned short int parsed;
-	unsigned char r,g,b;
+	unsigned int r;
+	unsigned int g;
+	unsigned int b;
 	int i=0;
 	int k=16;
 
 	//check size
 	if (*size<130) return 0;
 
+	//verify jasc pal header
+	while (palh[i]==(*data)[i++]);
+	if (i!=sizeof(palh)) return 0; //palette differs with headers
+
+	//Allocate palette
 	pal=getMemory(100);
 
 	//set palette with sample
 	memcpy(pal,pals,100);
 	pal2=pal+4;
 
-	//verify jasc pal header
-	while (palh[i]==(*data)[i++]);
-	if (i!=sizeof(palh)) return 0; //pallete differs with headers
-
 	//set current values
-	data2=strtok((char*)(*data)+sizeof(palh),"\r\n");
+	data2=strtok((char*)(*data)+sizeof(palh)-1,enter);
 	while (k--) {
+		printf("%s -",data2);
 		if (!sscanf(data2,"%d %d %d",&r,&g,&b)) return 0;
+		/* Those lines mean a loss of data (palettes colors are saved in the nearest multiple of 4) */
 		*(pal2++)=(unsigned char)((r+2)>>2);
 		*(pal2++)=(unsigned char)((g+2)>>2);
 		*(pal2++)=(unsigned char)((b+2)>>2);
-		data2=strtok(NULL,"\r\n");
+		//printf("-> %03d %03d %03d \n",r,g,b);
+		data2=strtok(NULL,enter);
 	}
 
 	//free old data and set new
@@ -104,7 +112,7 @@ void mExportPalette(unsigned char** data, unsigned long int *size) {
 
 	for (i=0;i<16;i++) {
 		strcpy((char*)aux,(char*)pal);
-		sprintf((char*)pal,"%s%d %d %d\r\n",aux,(*data)[(i*3)+5]<<2,(*data)[(i*3)+6]<<2,(*data)[(i*3)+7]<<2);
+		sprintf((char*)pal,"%s%d %d %d%s",aux,(*data)[(i*3)+5]<<2,(*data)[(i*3)+6]<<2,(*data)[(i*3)+7]<<2,enter);
 	}
 	for (i=0;pal[i];i++);
 	free(*data);
