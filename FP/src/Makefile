@@ -18,9 +18,11 @@ endif
 #Compiler options
 INCLUDE = -Iinclude/
 DEFINES = -DOS=\"$(OS)\" $(LINUX) 
-OPTIONS = $(INCLUDE) $(DEFINES)
+OPTIONS = $(INCLUDE) $(DEFINES) -g -Wall -ansi -pedantic 
+# -O2 for release
 
 OBJFILES = main.o kernel.o resources.o dat.o disk.o compress.o output.o maps.o config.o
+LIBS     = -lSDL -lpthread
 
 EXEFILE  = bin/freeprince
 
@@ -29,7 +31,7 @@ EXEFILE  = bin/freeprince
 $(EXEFILE): $(OBJFILES)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
-	$(CC) $(OPTIONS) -o $(EXEFILE) $(OBJFILES) -O2
+	$(CC) $(OPTIONS) -o $(EXEFILE) $(OBJFILES) $(LIBS)
 	$(INFO) Program successfully compiled
 	$(INFO)
 	$(INFO) Please read readme.txt for syntax information
