@@ -98,7 +98,7 @@ outputLoadBitmap(const unsigned char* data, int size,
 	int i,j;
 	SDL_Color* colors;
 
-	loadedSurface=(tSurface*)malloc(sizeof(tSurface*));
+	loadedSurface=(tSurface*)malloc(sizeof(tSurface));
 	colors=(SDL_Color*)malloc(sizeof(SDL_Color)*palette.colors);
 
 	/* Fill colors with color information */
