@@ -1,19 +1,17 @@
-
+/*
 
 tsCondition stateGetCondition(tsState state, int number);
-/* Returns a condition number "number" or NULL if there are no more conditions */
+* Returns a condition number "number" or NULL if there are no more conditions *
 
 tsConditionType stateGetConditionType(tsCondition condition);
-/* returns condition type */
+* returns condition type *
 
 int stateEvaluateKeyCondition(tKey* keyState);
 int stateEvaluateMapCondition(tRoom* room,int x, int y);
-/* returns 0 if the condition if false for the current position or keys */
+ returns 0 if the condition if false for the current position or keys 
 
 tsAction stateGetAction(tsCondition condition);
-/* get the action related to the given condition to be performed in case that it is true */
-
-
+ get the action related to the given condition to be performed in case that it is true */
 
 /* Start here */
 
@@ -30,6 +28,8 @@ void updateState(tState* current,tKid* kid,tMap* map,tKey* key); /* This functio
 																													and actions to be performed by this call */
 
 /* privates */
+
+#include "states_conf.h"
 
 tsAction createInitialState(tKid* kid,tMap* map); 
 tsAction evaluateState(tState* current,tKid* kid,tMap* map); 

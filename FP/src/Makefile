@@ -53,10 +53,10 @@ OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
                 input.o kid.o
 EXEFILE       = bin/freeprince
 
-GENERATEDHEADERS = include/res_conf_parts.h include/res_conf_files.h\
-                   include/res_conf_types.h include/res_conf_mods.h\
-                   include/res_conf_resources.h include/states_static.h\
-                   include/states_properties.h
+GENERATEDRESHEADERS = include/res_conf_parts.h include/res_conf_files.h\
+                      include/res_conf_types.h include/res_conf_mods.h\
+                      include/res_conf_resources.h
+GENERATEDSTAHEADERS = include/states_conf_static.h include/states_conf_properties.h
 
 #Use this to temporary remove an option
 OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
@@ -79,7 +79,7 @@ $(EXEFILE): $(OBJFILES)
 
 clean:
 	$(INFO) Erasing temporary object files...
-	$(REMOVER) $(OBJFILES) $(EXEFILE) $(GENERATEDHEADERS) 
+	$(REMOVER) $(OBJFILES) $(EXEFILE) $(GENERATEDRESHEADERS) $(GENERATEDSTAHEADERS)
 
 build: clean $(EXEFILE)
 
@@ -153,7 +153,7 @@ config.o: res/config.c include/resources.h include/res_conf.h
 	$(CC) -c res/config.c $(OPTIONS)
 
 #AWK scripts: header generation
-include/res_conf.h: $(GENERATEDHEADERS)
+include/res_conf.h: $(GENERATEDRESHEADERS)
 
 include/res_conf_parts.h: conf/parts.conf conf/awk/res_conf_parts.awk
 	$(INFO) Creating resource id parts configuration file...
@@ -175,11 +175,13 @@ include/res_conf_resources.h: conf/resources.conf conf/awk/res_conf_resources.aw
 	$(INFO) Creating resource list configuration file...
 	$(GREP) conf/resources.conf|$(AWK) -f conf/awk/res_conf_resources.awk >include/res_conf_resources.h
 
-include/states_conf_static.h: conf/states.conf conf/awk/states_static.awk
-	$(INFO) Creating states list configuration file...
-	$(GREP) conf/states.conf|sed -e 's/^\t\t\t/- - - /g' -e 's/^\t\t/- - /g' -e 's/^\t/- /g' -e 's/:$$//g'|$(AWK) -f conf/awk/states_static.awk>include/states_static.h
+include/states_conf.h: $(GENERATEDSTAHEADERS)
 
-include/states_conf_properties.h: conf/statesproperties.conf conf/awk/states_properties.awk
-	$(INFO) Creating states properties configuration file...
-	$(GREP) conf/statesproperties.conf|$(AWK) -f conf/awk/states_properties.awk >include/states_properties.h:
+include/states_conf_static.h: conf/states.conf conf/awk/states_conf_static.awk
+	$(INFO) Creating states list configuration file...
+	$(GREP) conf/states.conf|sed -e 's/^\t\t\t/- - - /g' -e 's/^\t\t/- - /g' -e 's/^\t/- /g' -e 's/:$$//g'|$(AWK) -f conf/awk/states_conf_static.awk>include/states_conf_static.h
+
+include/states_conf_properties.h: conf/statesproperties.conf conf/awk/states_conf_properties.awk
+	$(INFO) Creating states condition properties configuration file...
+	$(GREP) conf/statesproperties.conf|$(AWK) -f conf/awk/states_conf_properties.awk >include/states_conf_properties.h:
 
