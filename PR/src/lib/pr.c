@@ -58,17 +58,16 @@ pr.c: Main source file for Princed Resources
 #include "compile.h"
 #include "tasks.h"
 
-#include "memory.h" /* getMemory, free */
+#include "memory.h"    /* getMemory, free */
 #include "disk.h"      /* getFileNameFromPath */
 
 #ifndef DLL
  #ifdef UNIX
-  #include <stduni.h>
+  #include <unistd.h>
  #else
   #include "getopt.h"
  #endif
 #endif
-
 
 //functions
 
@@ -132,7 +131,6 @@ x			backup_flag    - backup your files
 	a=parseFile     (vResFile,vDatFileName,r);
 	if (a<0) return a-3; //parsing errors
 	a=extract(vDatFile, vDirName,r,opt,vDatFileName);
-	printf("-3 es error: %d\n",a);
 	return a; //extracting errors/no errors
 }
 
@@ -199,45 +197,61 @@ x			backup_flag    - backup your files
                     M A I N   P R O G R A M
        *******************************************************/
 
-
-
-//Main program
-#ifndef DLL
-void syntax() {
-	printf(PARSING_HELP);
+void syntax(FILE* output) {
+	fprintf(output,PARSING_HELP);
 }
 
-int prMain(int option, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor) {
+int prMain(int* pOption, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor,FILE* output) {
 
 	//declare variables
 	int returnValue=1;
 
 	//Do CGI tasks
-	if (option&cgi_flag) {
-		option&=(~classify_flag);
-		printf(PR_CGI_TEXT1);
-		if (option==cgi_flag) {
-			printf(PR_CGI_TEXT2,prVerifyDatType(datfile));
+	if (optionflag&cgi_flag) {
+		optionflag&=(~classify_flag);
+		if (!(optionflag&first_flag)) {
+			fprintf(output,PR_CGI_TEXT1);
+			optionflag|=first_flag;
+		}
+		if (optionflag==cgi_flag) {
+			fprintf(output,PR_CGI_TEXT2,prVerifyDatType(datfile));
 			return 1;
 		} else {
-			option=help_flag;
+			optionflag=help_flag;
 		}
 	}
 
-	printf(PR_ABOUT);
+	//Show about
+	if (!(optionflag&first_flag)) {
+		fprintf(output,PR_ABOUT);
+		optionflag|=first_flag;
+	}
+
+	//Recursive testing
+	if (datfile==NULL) {
+		fprintf(output,"Scanning dat files in current directory\n");
+		recurseDirectory(".",pOption,extension,dirName,resFile,datfile,datfilename,datAuthor,output);
+		return 1;
+	} else if (isDir(datfile)) {
+		fprintf(output,"Scanning dat files un given directory\n");
+		recurseDirectory(datfile,pOption,extension,dirName,resFile,datfile,datfilename,datAuthor,output);
+		return 1;
+	}
+
 
 	//If bad syntax or help screen requested
-	if (option&help_flag) {
-		syntax();
+	if (optionflag&help_flag) {
+		syntax(output);
 		return -1;
 	}
 
-	if ((datfile==NULL)||option&version_flag) { //TODO use the recursive option and/or generic datfile
+	//If version asked, stop
+	if (optionflag&version_flag) {
 		return -1;
 	}
 
 	//do selected tasks
-	if (option&export_flag) {
+	if (optionflag&export_flag) {
 		char* array[]={
 			"Ok",
 			"Error accessing the file DAT", /* DAT or extracted */
@@ -247,10 +261,10 @@ int prMain(int option, const char* extension,const char* dirName,const char* res
 			"Memory error in parsing",
 			"XML Attribute not recognized",
 			"XML File not found"};
-		printf("Extracting '%s' to '%s' with %04x\r\n",datfile,dirName,option);
-		returnValue=prExportDatOpt(datfile,dirName,resFile,option,NULL,datAuthor,extension);
-		printf(PR_TEXT_RESULT,array[-returnValue],returnValue);
-	}	else if (option&classify_flag) {
+		fprintf(output,"Extracting '%s' to '%s' with %04x\r\n",datfile,dirName,optionflag);
+		returnValue=prExportDatOpt(datfile,dirName,resFile,optionflag,NULL,datAuthor,extension);
+		fprintf(output,PR_TEXT_RESULT,array[-returnValue],returnValue);
+	}	else if (optionflag&classify_flag) {
 		char* array[]={
 			"Memory error",
 			"File not found or no access error",
@@ -264,10 +278,10 @@ int prMain(int option, const char* extension,const char* dirName,const char* res
 			"PC Speaker dat file",
 			"\0","\0","\0",
 			"Pop2 dat files"};
-		printf("Classifing '%s'\r\n",datfile);
+		fprintf(output,"Classifing '%s'\r\n",datfile);
 		returnValue=prVerifyDatType(datfile);
-		printf(PR_TEXT_RESULT,array[2+returnValue],returnValue);
-	}	else if (option&import_flag) {
+		fprintf(output,PR_TEXT_RESULT,array[2+returnValue],returnValue);
+	}	else if (optionflag&import_flag) {
 		char* array[]={
 			"File succesfully compiled",
 			"DAT File couldn't be open for writing",
@@ -275,19 +289,22 @@ int prMain(int option, const char* extension,const char* dirName,const char* res
 			"No memory",
 			"XML Attribute not recognized",
 			"XML File not found"};
-		printf("Compiling '%s' from '%s' with %04x\r\n",datfile,dirName,option);
-		returnValue=prImportDatOpt(datfile,dirName,resFile,option,NULL,extension);
+		fprintf(output,"Compiling '%s' from '%s' with %04x\r\n",datfile,dirName,optionflag);
+		returnValue=prImportDatOpt(datfile,dirName,resFile,optionflag,NULL,extension);
 		if (returnValue<=0) {
-			printf(PR_TEXT_RESULT,array[-returnValue],returnValue);
+			fprintf(output,PR_TEXT_RESULT,array[-returnValue],returnValue);
 		} else {
-			printf(PR_TEXT_RESULT_ERR,returnValue);
+			fprintf(output,PR_TEXT_RESULT_ERR,returnValue);
 		}
 	} else {
-		syntax();
+		syntax(output);
 		return -1;
 	}
 	return returnValue;
 }
+
+//Main program
+#ifndef DLL
 
 int main (int argc, char **argv) {
 	//declare variables
@@ -342,7 +359,7 @@ int main (int argc, char **argv) {
 					flag|=raw_flag;
 					break;
 				case 'R':
-					flag|=force_flag;
+					flag|=recursive_flag;
 					break;
 				case 't': {
 					int size;
@@ -373,7 +390,7 @@ int main (int argc, char **argv) {
 	if (!flag) flag=help_flag;
 
 	//Run main program
-	prMain(flag,extension,dirName,resFile,datFilePath,datFileName,datAuthor);
+	prMain(&flag,extension,dirName,resFile,datFilePath,datFileName,datAuthor,stdout);
 
 	//Free memory and exit
 	if (datAuthor!=NULL) free(datAuthor);

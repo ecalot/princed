@@ -39,12 +39,16 @@ disk.c: Princed Resources : Disk Access & File handling functions
 #include <string.h>
 #include "pr.h"
 #include "disk.h"
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #ifdef UNIX
-	#include <sys/types.h>
-	#include <sys/stat.h>
 	#define defmkdir(a) mkdir (a,(mode_t)0755)
+	#include <dirent.h>
 #else
 	#include <direct.h>
+	#include "dirent.h"
 	#define defmkdir(a) mkdir (a)
 #endif
 
@@ -257,4 +261,78 @@ const char* getFileNameFromPath(const char* path) {
 	return path;
 }
 
+int isDir(const char *path) {
+	/*
+		1 if nombre is a directory
+		0 if nombre isn't a directory or doesn't exist
+	*/
+	struct stat buf;
 
+	if(stat(path,&buf)==-1) return 0;
+	return (S_IFDIR&buf.st_mode);
+}
+
+int recurseDirectory(const char* path,int* pOption, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor,FILE* output) {
+	/*
+		Searchs for all .dat files in the directory
+		if recursive flag is set searchs over the dubdirectories
+		if verbose flag is set shows some messages in the screen
+		when .dat files are found it runs prMain form each of them
+	*/
+
+	//Declare variables
+	char*          recursive;
+	struct dirent* directoryStructure;
+	DIR*           dir;
+
+	//Opens directory
+	if ((dir = opendir(path))==NULL) {
+		return 0;
+	}
+
+	//Shows some messages
+	if ((optionflag&recursive_flag)&&(optionflag&verbose_flag)) { //Only recurse if recursive and verbose flags are set
+		printf("Processing '%s'...\n",path);
+	}
+
+	//Main cicle: while there are still more files left
+	while ((directoryStructure = readdir(dir))!=NULL) {
+		if /* Don't look over the system directories */
+			(!(
+				!strcmp(directoryStructure->d_name,".")||
+				!strcmp(directoryStructure->d_name,"..")
+		)) {
+			//Declare variables
+			int sizeOfPath=strlen(path);
+			int sizeOfFile=strlen(directoryStructure->d_name);
+
+			//Generate recursive path
+			recursive=getMemory(sizeOfPath+1+sizeOfFile);
+			memcpy(recursive,path,sizeOfPath);
+			recursive[sizeOfPath]=DIR_SEPARATOR;
+			memcpy(recursive+sizeOfPath+1,directoryStructure->d_name,sizeOfFile+1);
+
+			/*
+				If recursive path is a directory and recursive flag is set recurse into it
+				if recursive path is a directory and recursive flag wasn't set, just ignore
+				if recursive path is not a directory and is a dat file, do prMain
+				if recursive path is not a directory and is not a dat file, ignore
+			*/
+			if (isDir(recursive)) {
+				if (optionflag&recursive_flag) { //Only recurse if recursive flag is set
+					recurseDirectory(recursive,pOption,extension,dirName,resFile,datfile,datfilename,datAuthor,output);
+				}
+			} else {
+				char aux[]=".dat";
+				if (sizeOfFile>4) {
+					if (!strcmp(aux,directoryStructure->d_name+sizeOfFile-4)) {
+						prMain(pOption,extension,dirName,resFile,recursive,directoryStructure->d_name,datAuthor,output);
+					}
+				}
+			}
+			//Free all allocated mem
+			free(recursive);
+		}
+	}
+	return 1;
+}
