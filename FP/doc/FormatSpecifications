@@ -237,7 +237,7 @@ backupExtension);
  16     2287    unknown II
  2      2303    0F 09 (2319)
 
- All leves has a size of 2305, except in the original game, that the potion
+ All levels has a size of 2305, except in the original game, that the potion
  level has a size of 2304 (may be it was wrong trimmed).
 
 4.4.1 Unknown blocks
@@ -248,7 +248,7 @@ backupExtension);
 
  Unknown I may corrupt the level if edited.
 
- We belive unknown IV has something to do with the start position, but we
+ We believe unknown IV has something to do with the start position, but we
  don't know about it.
 
  As unknown III were all zeros for each level in the original set, it was a
@@ -262,7 +262,7 @@ backupExtension);
  blocks involved here are "wall" and "background"
 
  In a level you can store a maximum of 24 screens (also called rooms) of 30
- tiles each, having three stages of 10 tiles each. Screens are numered from
+ tiles each, having three stages of 10 tiles each. Screens are numbered from
  1 to 24 (not 0 to 23) because the 0 was reserved special cases.
 
  The wall and background blocks have 24 sub-blocks inside. Those sub-blocks
@@ -270,7 +270,7 @@ backupExtension);
  the sub-block staring in 0 corresponds to the screen 1 and the sub-block
  starting in 690 corresponds to the screen 24. 
  It is reserved 1 byte from the wall block and one from the background block
- for each tile. To locate the appropiate tile you have to do the following
+ for each tile. To locate the appropriate tile you have to do the following
  calculation: tile=(screen-1)*30+tileOffset where tileOffset is a number
  from 0 to 29 that means a tile from 0 to 9 if in the upper stage, from
  10 to 19 if in the middle stage and 20 to 29 if in the bottom stage.
@@ -290,7 +290,7 @@ backupExtension);
   0x00 0     Free space
   0x01 0     Floor 1
   0x11 0     Floor 2
-  0x21 0     Floor above cols
+  0x21 0     Floor above columns
   0x14 0     Wall 1
   0x34 0     Wall 2
   0x13 0     Floor w/torch 1  
@@ -298,12 +298,12 @@ backupExtension);
   0x03 0     Column 1   
   0x23 0     Column 2   
   0x09 0     2 story column top
-  0x28 0     2 story col. bottom
+  0x28 0     2 story column bottom
   0x24 1     Door
   0x0e 0     Broken floor 1
   0x2e 0     Broken floor 2
-  0x1e 0     Broken fl w/torch 1
-  0x3e 0     Broken fl w/torch 2
+  0x1e 0     Broken floor w/torch 1
+  0x3e 0     Broken floor w/torch 2
   0x0b 0     Loose floor
   0x0a 2     Potion 1
   0x2a 2     Potion 2    
@@ -316,9 +316,9 @@ backupExtension);
   0x31 F     Level door right
   0x37 F     Big window left
   0x38 F     Big window right
-  0x32 0     Guillotine 
-  0x16 0     Sword Lev 1
-  0x36 0     Sword Lev 12
+  0x32 0     Chopper
+  0x16 0     Sword Level 1
+  0x36 0     Sword Level 12
   0x15 0     Floor w/Skeleton
   
  The background part of the tile stores a modification or attribute of the
@@ -347,7 +347,7 @@ backupExtension);
   0xnn 3     Door trigger nn (*)
   0x00 4     White carpet
   0x01 4     Plain red carpet
-  0x02 4     Red carpet w/drawin
+  0x02 4     Red carpet w/drawing
   0x00 5     Spikes in (**)
   0x01 5     Spikes going out 1
   0x02 5     Spikes going out 2 
@@ -360,7 +360,7 @@ backupExtension);
  The initial spike state is stored. Only type 0 allows the spike animation.
 
  Upper door slot (4):
- The type of the carpet is stored in the palace enviornment.
+ The type of the carpet is stored in the palace environment.
 
 4.4.3 Room linking
  This section describes the links block.
@@ -369,14 +369,14 @@ backupExtension);
  is stored. There is no screen mapping, just screen linking.
 
  The links block has 24 sub-blocks of 4 bytes each. All those sub-blocks
- has its own correspondance with a screen (the block starting at 0 is
+ has its own correspondence with a screen (the block starting at 0 is
  related to the screen 1 and the block starting at with 92 is related to
  screen 24).
  Each block of 4 bytes stores the links this screen links to reserving one
  byte per each side in the order left (0), right (1), up (2), down (3).
  The number 0 is used when there is no screen there.
  Cross links should be made to allow the kid passing from a screen to
- another and then comming back to the same screen but it's not a must.
+ another and then coming back to the same screen but it's not a must.
 
 4.4.4 Guard handling
  This section specifies the blocks: guard_location, guard_direction,
@@ -420,7 +420,7 @@ backupExtension);
  specifications.
 
 4.4.6 Door events 
- This section explains how the doors are handled and speficies the blocks
+ This section explains how the doors are handled and specifies the blocks
  door I and II.
 
  First of all he have to define what an event line is in this file. An event
@@ -436,7 +436,7 @@ backupExtension);
  Each event line has an ID from 0 to 255. An event has the ID of the first
  event line in it.
 
- In section 4.4.2 it is explined how a door trigger is associated to an
+ In section 4.4.2 it is explained how a door trigger is associated to an
  event ID. Those are the tiles that starts the event depending on what are
  them: closers or openers.
 
@@ -505,4 +505,3 @@ Just raw sound
       with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
       Texts.  A copy of the license is included in the section entitled "GNU
       Free Documentation License".
-
