@@ -85,6 +85,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case T_LOOSE:
 	case T_PILLAR:
 	case T_DEBRIS:
+		result.hasGateFrame=0;
 		result.bricks=(result.code==T_FLOOR)?back:0;
 		result.hasPillar=(result.code==T_PILLAR);
 		result.isGate=(result.code==T_GATE);
@@ -101,6 +102,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasSword=(result.code==T_SWORD);
 		break;
 	case T_WALL:
+		result.hasGateFrame=0;
 		result.bricks=0;
 		result.hasPillar=0;
 		result.walkable=0;
@@ -119,6 +121,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case T_EMPTY:
 	case T_TAPESTRY_TOP:
 	default:
+		result.hasGateFrame=(result.code==T_TAPESTRY_TOP);
 		result.bricks=back;
 		result.hasPillar=0;
 		result.walkable=0;
@@ -263,6 +266,14 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			y*TILE_H
 		);
 	}
+	/* gate_frame/this */
+	if (tile.hasGateFrame) {
+		outputDrawBitmap(
+			roomGfx.environment->pFrames[17],
+			(x-1)*TILE_W+24,
+			y*TILE_H
+		);
+	}
 	/* normal/this */
 	if (tile.hasFloor) {
 		outputDrawBitmap(
@@ -364,8 +375,25 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 				y*TILE_H+3
 			);
 		} else {
-	/* empty */
 			tTile dleft=roomGetTile(room,x-1,y+1);
+	/* gate_frame/this */
+			if (tile.hasGateFrame) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[42],
+					(x-1)*TILE_W,
+					y*TILE_H+3
+				);
+			}
+	/* gate/left */
+			if (dleft.isGate) {
+				outputDrawBitmap(
+					roomGfx.environment->pFrames[16],
+					(x-1)*TILE_W,
+					y*TILE_H+3
+				);
+			}
+
+	/* empty */
 			if (dleft.hasPillar) {
 				outputDrawBitmap(
 					roomGfx.environment->pFrames[45],
