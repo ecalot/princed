@@ -1,0 +1,1 @@
+ls cmp|sed -e 's/\([0-9]*\).cmp/\1/'|while read i; do ./uncompress cmp/$i.cmp roo/$i.roo>/dev/null; diff raw/$i.raw roo/$i.roo;done
