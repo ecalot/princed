@@ -63,7 +63,7 @@ const char *repairFolders(const char* a) {
 	int i,k;
 	static char result[MAX_FILENAME_SIZE];
 
-	for (i=0,k=0;a[i]&&(k<MAX_FILENAME_SIZE);) {
+	for (i=0,k=0;(k<MAX_FILENAME_SIZE)&&a[i];) {
 		if (isDirSep(a,i)) {
 			result[k]=DIR_SEPARATOR;
 			i++;
