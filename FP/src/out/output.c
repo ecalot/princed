@@ -37,6 +37,7 @@ output.c: Free Prince : Output Devices Handler
 
 #include <SDL/SDL.h>
 #include <stdlib.h>    /* malloc */
+#include <stdarg.h>
 #include "resources.h" /* tMemory structure */
 #include "output.h"
 #include "kernel.h"    /* FP_VERSION */
@@ -47,9 +48,93 @@ output.c: Free Prince : Output Devices Handler
 /* Main screen object */
 SDL_Surface *screen;
 
+#define CHAR_SIZE 12
+
+typedef struct _valid_chars {
+	char is_valid; // Is character valid ?
+	int x;         // X pos in font image
+	int w;         // Width of letter
+} vChar;
+
+vChar valid_chars[255];
+
+static SDL_Surface *font = NULL;
+int font_init = 0;
+
+#define FONT_FILE "fonts.bmp"
+
+void initText ()
+{
+	int i;
+	char *chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 -:.;,<>\\/*!\"$%&/()=@^[]'\"-_";
+	int pos_x[92] = {0, 7, 14, 21, 28, 34, 40, 47, 54, 59, 66, 74, 80,
+		89, 96, 103, 110, 117, 124, 131, 138, 145, 152, 161, 168, 175, 184,
+		191, 198, 205, 212, 219, 225, 232, 239, 242, 247, 254, 257, 266, 
+		237, 280, 287, 294, 301, 308, 314, 321, 328, 337, 344, 351, 358,
+		365, 372, 379, 387, 394, 401, 408, 415, 422, 429, 433, 438, 441,
+		444, 448, 452, 458, 464, 473, 482, 490, 493, 499, 507, 516, 525,
+		534, 539, 544, 549, 556, 563, 568, 573, 578, 582, 588, 593, 600};
+
+	memset(valid_chars, 0, sizeof(valid_chars));
+
+	i = 0;
+	while (chars[i] != '\0') {
+		valid_chars[chars[i]].is_valid = 1;
+		valid_chars[chars[i]].x = pos_x[i];
+		valid_chars[chars[i]].w = pos_x[i+1] - pos_x[i];
+		i++;
+	}
+
+	/* Load Texture */
+	font = SDL_LoadBMP (FONT_FILE);
+	if (!font) {
+		fprintf (stderr, "CAN'T LOAD font.bmp!!!\n");
+		exit(1);
+	}
+	font_init = 1;
+}
+
 /* Text Primitives*/
 void outputDrawText(int x, int y, const char *fmt, ...)
 {
+	va_list ap;
+	char buffer[1024];
+	char *s;
+	SDL_Rect from, to;
+	int current_x;
+
+	if (!font_init) {
+		fprintf(stderr, "Font engine was not initialized!!. Maybe forgot call initText!\n");
+		return;
+	}
+
+	if (fmt == NULL) return;
+	memset (buffer, 0, sizeof(buffer));
+	va_start (ap, fmt);
+	vsprintf (buffer, fmt, ap);
+	va_end (ap);
+
+	s = buffer;
+	current_x = x;
+	while ((*s) != '\0') {
+		if (valid_chars[*s].is_valid) {
+			from.x = valid_chars[*s].x;
+			from.y = 0;
+			from.w = valid_chars[*s].w;
+			from.h = 12;
+
+			to.x = current_x;
+			to.y = y;
+			to.w = from.w;
+			to.h = from.h;
+			SDL_BlitSurface (font, &from, screen, &to);
+
+			printf ("X=%d , y=%d, w=%d\n", from.x, from.y, from.w);
+			current_x += valid_chars[*s].w;
+		}
+		s++;
+	}
+	printf ("\n");
 }
 
 void outputDrawMessage(const char* fmt, ...)
