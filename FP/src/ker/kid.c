@@ -78,10 +78,10 @@ int kidDrinkPotion(tObject* kid,tTile tile) {
 	if (isIn(tile,TILE_SWORD)) {
 	} else if (isIn(tile,TILES_HITPOINT)) {
 		kidGetHitPoint(kid);
-		outputBlinkScreen(3,1);
+		outputBlinkScreen(2,1);
 	} else if (isIn(tile,TILES_LIFE)) {
 		kidGetLife(kid);
-		outputBlinkScreen(3,1);
+		outputBlinkScreen(2,1);
 	} else if (isIn(tile,TILES_POISON)) {
 		return kidTakeHitPoint(kid);
 	}

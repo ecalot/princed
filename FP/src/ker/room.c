@@ -44,7 +44,9 @@ room.c: FreePrince : Room and Tile Object
 static struct {
 	tData* torch;
 	tData* environment;
-	tData* potionAnim;
+	tData* potionAnimRed;
+	tData* potionAnimGreen;
+	tData* potionAnimBlue;
 	tData* potionBase;
 } roomGfx;
 
@@ -58,7 +60,9 @@ void roomLoadGfx(long environment) {
 	 */
 	if (roomGfx.torch==NULL) {
 		roomGfx.torch=resLoad(RES_ANIM_TORCH);
-		roomGfx.potionAnim=resLoad(RES_ANIM_POTION|RES_MODS_BW|RES_MODS_RED);
+		roomGfx.potionAnimRed=resLoad(RES_ANIM_POTION|RES_MODS_BW|RES_MODS_RED);
+		roomGfx.potionAnimGreen=resLoad(RES_ANIM_POTION|RES_MODS_BW|RES_MODS_GREEN);
+		roomGfx.potionAnimBlue=resLoad(RES_ANIM_POTION|RES_MODS_BW|RES_MODS_BLUE);
 		roomGfx.potionBase=resLoad(RES_IMGS_POTION_BASE);
 	}
 }
@@ -67,7 +71,9 @@ void roomFree() {
 	if (roomGfx.environment) resFree(roomGfx.environment);
 	if (roomGfx.torch) {
 		resFree(roomGfx.torch);
-		resFree(roomGfx.potionAnim);
+		resFree(roomGfx.potionAnimRed);
+		resFree(roomGfx.potionAnimGreen);
+		resFree(roomGfx.potionAnimBlue);
 		resFree(roomGfx.potionBase);
 	}
 	roomGfx.torch=(roomGfx.environment=NULL);
@@ -255,6 +261,7 @@ void drawChopper(int x, int y, int frame, tChopperLayer layer) {
 void drawBackPanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
 	tTile left=roomGetTile(room,x-1,y);
+	int potSize;
 	/* LEFT (left,tile) */
 	
 	/* Wall/left */
@@ -270,7 +277,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		e(10,(x-1)*TILE_W+0,y*TILE_H+2);
 	/* loose moving/left */
 	if (isIn(left,TILES_LOOSEMOVING)) 
-		drawLoose((x-1)*TILE_W+0,y*TILE_H+2,(room->level->time)%11,layTritop);
+		drawLoose((x-1)*TILE_W+0,y*TILE_H+2,looseGetFrame(left),layTritop);
 	/* exit_left/left */
 	if (isIn(left,TILE_EXIT_RIGHT)) 
 		e(7,(x-1)*TILE_W+0,y*TILE_H+2);
@@ -330,7 +337,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 		e(9,(x-1)*TILE_W+0,y*TILE_H+0);
 	/* loose moving/this */
 	if (isIn(tile,TILES_LOOSEMOVING)) 
-		drawLoose((x-1)*TILE_W+0,y*TILE_H+0,(room->level->time)%11,layTribot);
+		drawLoose((x-1)*TILE_W+0,y*TILE_H+0,looseGetFrame(tile),layTribot);
 	/* exit_left/this */
 	if (isIn(tile,TILE_EXIT_RIGHT)) 
 		e(5,(x-1)*TILE_W+0,y*TILE_H+0);
@@ -368,12 +375,18 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	/* skeleton/this */
 	if (isIn(tile,TILES_SKELETON)) 
 		e(80,(x-1)*TILE_W+0,y*TILE_H+0);
-	/* potion/left */
-	if (isIn(left,TILES_POTION)) { /* animation */
-		outputDrawBitmap(roomGfx.potionAnim->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnim->frames)],(x-1)*TILE_W+3-15,y*TILE_H-15);
-/* base */
+	/* potion base/left */
+	if (isIn(left,TILES_SMALLPOTION))
 		outputDrawBitmap(roomGfx.potionBase->pFrames[0],(x-1)*TILE_W-15,y*TILE_H-4);
-	}
+	if ((potSize=5*isIn(left,TILES_BIGPOTION))) 
+		outputDrawBitmap(roomGfx.potionBase->pFrames[1],(x-1)*TILE_W-15,y*TILE_H-4);
+	/* potion animation/left */
+	if (isIn(left,TILES_REDPOTION))
+		outputDrawBitmap(roomGfx.potionAnimRed->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimRed->frames)],(x-1)*TILE_W+3-15,y*TILE_H-15-potSize);
+	if (isIn(left,TILES_GREENPOTION))
+		outputDrawBitmap(roomGfx.potionAnimGreen->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimGreen->frames)],(x-1)*TILE_W+3-15,y*TILE_H-15-potSize);
+	if (isIn(left,TILES_BLUEPOTION))
+		outputDrawBitmap(roomGfx.potionAnimBlue->pFrames[((room->level->time)+2*x+y)%(roomGfx.potionAnimBlue->frames)],(x-1)*TILE_W+3-15,y*TILE_H-15-potSize);
 }
 
 /* bottom panel block at background */
@@ -382,7 +395,7 @@ void drawBackBottomTile(tRoom* room,int x, int y) {
 	
 	/* loose moving */
 	if (isIn(tile,TILES_LOOSEMOVING)) {
-		drawLoose((x-1)*TILE_W+0,y*TILE_H+3,(room->level->time)%11,layBase);
+		drawLoose((x-1)*TILE_W+0,y*TILE_H+3,looseGetFrame(tile),layBase);
 	
 	/* normal */
 	} else if (isIn(tile,TILES_WALKABLE)) {
