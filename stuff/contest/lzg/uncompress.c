@@ -12,6 +12,8 @@
  * or it will be overwritten.
  *
  * This document is GPL
+ * Source Author: Enrique Calot
+ * Research: Tammo Jan Dijkemma, Anke Balderer, Enrique Calot
  */
 
 #include <stdio.h>
@@ -26,7 +28,7 @@
 
 /* LZG expansion algorithm sub function */
 unsigned char popBit(unsigned char *byte) {
-	unsigned char bit=(unsigned char)((*byte)&1);
+	register unsigned char bit=(*byte)&1;
 	(*byte)>>=1;
 	return bit;
 }
@@ -34,57 +36,54 @@ unsigned char popBit(unsigned char *byte) {
 /* Expands LZ Groody algorithm. This is the core of PR */
 void expandLzg(const unsigned char* input, int inputSize, 
 								unsigned char* output, int *outputSize) {
-	char k;
-	int location,cursor=0,pos=0;
-	unsigned char maskbyte,rep;
+	int           loc, oCursor=0, iCursor=0;
+	unsigned char maskbyte, rep, k;
 
-	/* output is an unsigned char[] sized 0x400 */
 	/* clean output garbage */
-	for(location=LZG_MAX_MEMSIZE;location--;output[location]=0);
+	for(loc=LZG_MAX_MEMSIZE;loc--;output[loc]=0);
 
 	/* main loop */
-	while (pos<inputSize) {
-		maskbyte=input[pos++];
-		for (k=8;k&&(pos<inputSize);k--) {
+	while (iCursor<inputSize) {
+		maskbyte=input[iCursor++];
+		for (k=8;k&&(iCursor<inputSize);k--) {
 			if (popBit(&maskbyte)) {
-				output[cursor++]=input[pos++]; /* copy input to output */
+				output[oCursor++]=input[iCursor++]; /* copy input to output */
 			} else {
 				/*
-				 * location:
-				 *  10 bits for the slide position (S). Add 66 to this number.
+				 * loc:
+				 *  10 bits for the slide iCursorition (S). Add 66 to this number.
 				 * rep:
 				 *  6 bits for the repetition number (R). Add 3 to this number.
 				 */
-				location= 66 + ((input[pos] & 0x03 /*00000011*/) <<8) + input[pos+1];
-				rep=      3  + ((input[pos] & 0xfc /*11111100*/) >>2);
+				loc= 66 + ((input[iCursor] & 0x03 /*00000011*/) <<8) + input[iCursor+1];
+				rep= 3  + ((input[iCursor] & 0xfc /*11111100*/) >>2);
 				
-				pos+=2;
+				iCursor+=2;
 				
 				while (rep--) { /* repeat pattern in output */
-					location=location%LZG_WINDOW_SIZE; /* location is in range 0-1023 */
+					loc=loc%LZG_WINDOW_SIZE; /* loc is in range 0-1023 */
 
 					/*
-					 * delta is ((location-cursor)%LZG_WINDOW_SIZE)
+					 * delta is ((loc-oCursor)%LZG_WINDOW_SIZE)
 					 * this is the offset where the bytes will be looked for
 					 * in the simple algorithm it is allways negative
-					 * in bigger images it can be positive
+					 * in bigger images it can be iCursoritive
 					 * 
 					 * this value is inside the range -1023 to 1023.
-					 * if location>cursor the result is positive
-					 * if location<cursor the result is negative
+					 * if loc>oCursor the result is iCursoritive
+					 * if loc<oCursor the result is negative
 					 */
 					
-					output[cursor]=output[cursor+((location-cursor)%LZG_WINDOW_SIZE)];
+					output[oCursor]=output[oCursor+((loc-oCursor)%LZG_WINDOW_SIZE)];
 
-					/* Increase both variables */
-					cursor++;
-					location++;
+					oCursor++;
+					loc++;
 				}
 			}
 		}
 	}
 
-	*outputSize=cursor;
+	*outputSize=oCursor;
 }
 
 /* END of page pasted part */
