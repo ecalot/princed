@@ -108,7 +108,6 @@ outputLoadBitmap(const unsigned char* data, int size,
 		colors[i].b=(palette.color[i].b<<2);
 	}
 
-	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d bottom=%d left=%d\n", invert, firstColorTransparent, size, bottom, left);
 	loadedSurface->left=left;
 	loadedSurface->bottom=bottom;
 	

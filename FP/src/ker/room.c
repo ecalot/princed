@@ -73,6 +73,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case T_FLOOR:
 	case T_TORCH:
 	case T_SWORD:
+	case T_CHOPPER:
 	case T_POTION:
 	case T_SPIKES:
 	case T_BP_BOTTOM:
@@ -92,13 +93,14 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasBigPillar=(result.code==T_BP_BOTTOM);
 		result.isGate=(result.code==T_GATE);
 		result.walkable=1;
+		result.hasChopper=(result.code==T_CHOPPER);
 		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);
 		result.block=0;
 		result.isPressable=(result.code==T_BTN_RAISE);
 		result.hasSkeleton=(result.code==T_SKELETON);
 		result.hasSpikes=(result.code==T_SPIKES);
 		result.hasTorch=(result.code==T_TORCH)|(result.code==T_TORCH_DEBRIS);
-		result.hasFloor=((result.code==T_FLOOR)|(result.code==T_TORCH)|(result.code==T_LOOSE)|(result.code==T_POTION)|(result.code==T_BTN_DROP)|(result.code==T_SWORD));
+		result.hasFloor=((result.code==T_FLOOR)|(result.code==T_TORCH)|(result.code==T_LOOSE)|(result.code==T_POTION)|(result.code==T_BTN_DROP)|(result.code==T_SWORD)|(result.code==T_CHOPPER));
 		result.hasBrokenTile=(result.code==T_DEBRIS)|(result.code==T_TORCH_DEBRIS);
 		result.isWall=0;
 		result.hasSword=(result.code==T_SWORD);
@@ -109,6 +111,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasPillar=0;
 		result.hasBigPillar=0;
 		result.walkable=0;
+		result.hasChopper=0;
 		result.isExit=0;
 		result.isGate=0;
 		result.isPressable=0;
@@ -132,6 +135,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.walkable=0;
 		result.isExit=0;
 		result.isGate=0;
+		result.hasChopper=0;
 		result.isPressable=0;
 		result.hasSkeleton=0;
 		result.hasSpikes=0;
@@ -263,6 +267,14 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			y*TILE_H-24
 		);
 	}
+	/* chopper/this */
+	if (tile.hasChopper) {
+		outputDrawBitmap(
+			roomGfx.environment->pFrames[91],
+			(x-1)*TILE_W,
+			y*TILE_H
+		);
+	}
 	/* empty_bricks/this */
 	if ((0<tile.bricks)&&(tile.bricks<4)&&(tile.code==T_EMPTY)) {
 		outputDrawBitmap(
@@ -359,6 +371,14 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			y*TILE_H
 		);
 	}
+	/* chopper/this /
+	if (tile.hasChopper) {
+		outputDrawBitmap(
+			roomGfx.environment->pFrames[9],
+			(x-1)*TILE_W,
+			y*TILE_H
+		);
+	}*/
 	/* spikes/this */
 	if (tile.hasSpikes) {
 		outputDrawBitmap(
