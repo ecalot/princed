@@ -20,7 +20,7 @@ INCLUDE = -Iinclude/
 DEFINES = -DOS=\"$(OS)\" $(LINUX) 
 OPTIONS = $(INCLUDE) $(DEFINES)
 
-OBJFILES = main.o kernel.o
+OBJFILES = main.o kernel.o resources.o dat.o disk.o compress.o output.o
 #\
 #resources.o disk.o\
 #           dat.o main.o\
@@ -61,18 +61,26 @@ main.o: main.c
 	$(CC) -c main.c $(OPTIONS)
 
 resources.o: res/resources.c
-	$(INFO) Compiling resource manager module...
+	$(INFO) Compiling main resource manager module...
 	$(CC) -c res/resources.c $(OPTIONS)
 
 disk.o: res/disk.c
-	$(INFO) Compiling disk access library...
+	$(INFO) Compiling resource disk access library...
 	$(CC) -c res/disk.c $(OPTIONS)
 
 dat.o: res/dat.c
-	$(INFO) Compiling dat editing library...
+	$(INFO) Compiling resource dat editing library...
 	$(CC) -c res/dat.c $(OPTIONS)
 
 kernel.o: ker/kernel.c
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
+
+compress.o: res/compress.c
+	$(INFO) Compiling resource compression module...
+	$(CC) -c res/compress.c $(OPTIONS)
+
+output.o: out/output.c
+	$(INFO) Compiling main output module...
+	$(CC) -c out/output.c $(OPTIONS)
 
