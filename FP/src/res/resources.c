@@ -204,7 +204,6 @@ tData* resLoad(long id) {
 				mExpandGraphic(raw.array,&image,raw.size);
 
 				/* convert image structure into blittable output surfaces */
-				printf("resLoad: Allocating an image framed %d by offsets d=%d,l=%d,r=%d\n",total,down,left,right);
 				result->pFrames[total]=(void*)outputLoadBitmap(
 					image.pix,image.widthInBytes*image.height,pal,image.height,image.width,
 					invert,1,down,invert?right:left
