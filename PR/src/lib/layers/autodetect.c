@@ -57,7 +57,7 @@ char verifyLevelHeader(char* array, int size) {
 char verifyImageHeader(char* array, int size) {
 	//return (size>6) && (!(((!array[1])||(array[2])||(!array[3])||(array[4])||(array[5])||(((unsigned char)array[6]&0xF0)!=0xB0))));
 	return (size>7) && (!array[5]) && (((unsigned char)array[6]&0xF0)==0xB0);
-	//todo: fix the expression
+	//TODO: fix the expression
 }
 
 char verifyPaletteHeader(char* array, int size) {
@@ -83,7 +83,7 @@ char verifyWaveHeader(char* array, int size) {
 
 char verifySpeakerHeader(char* array, int size) {
 	return
-		(size>2)&&(array[1]==0x00)
+		(size>2)&&(array[1]==0x00) /* &&!(size%3) */
 	;
 }
 
@@ -98,7 +98,7 @@ char verifyHeader(char* array, int size) {
 }
 
 const char* getExtDesc(int type) {
-	static const char extarraydesc[8][10]={"raw","level","image","wave","midi","unknown","palette","pcspeaker"};
+	static const char* extarraydesc[]=RES_FILE_TYPES;
 	return extarraydesc[type];
 }
 
@@ -108,12 +108,12 @@ const char* getExtDesc(int type) {
 
 //Initializes the resource table
 void emptyTable(tResource* r[]) {
-	int i=0;
-	for (;i<MAX_RES_COUNT;i++) r[i]=NULL;
+	int i=MAX_RES_COUNT;
+	while (i--) *(r++)=NULL;
 }
 
 //parse file
-char parseFile(char* vFile, char* datFile, tResource* r[]) {
+char parseFile(const char* vFile, const char* datFile, tResource* r[]) {
 
 	tTag* tree;
 	int error;
@@ -131,15 +131,13 @@ char parseFile(char* vFile, char* datFile, tResource* r[]) {
 static FILE* unknownXmlFile=NULL;
 
 void AddToUnknownXml(const char* vFiledat,unsigned short id,const char* ext,char type,const char* vDirExt,unsigned short pal) {
+	//Open file if not open
 	if (unknownXmlFile==NULL) {
-		char xmlFile[260];
+		char xmlFile[MAX_FILENAME_SIZE];
 		sprintf(xmlFile,RES_XML_UNKNOWN_PATH""RES_XML_UNKNOWN_XML,vDirExt,vFiledat);
-		//Create base dir
-		repairFolders(xmlFile);
-		makebase(xmlFile);
 
 		//Open file
-		if ((unknownXmlFile=fopen(xmlFile,"wt"))==NULL) return;
+		if (!writeOpen(xmlFile,&unknownXmlFile)) return;
 
 		//Save headers
 		if (type==6) pal=id;
@@ -147,7 +145,8 @@ void AddToUnknownXml(const char* vFiledat,unsigned short id,const char* ext,char
 			vFiledat,vFiledat,pal
 		);
 	}
-	//TODO: set itemtype in words
+
+	//Write item
 	fprintf(unknownXmlFile,RES_XML_UNKNOWN_ITEM,
 		id,id,ext,getExtDesc(type),id
 	); //To the xml output
@@ -161,11 +160,12 @@ void endUnknownXml() {
 }
 
 //Resources extra functions
-void getFileName(char* vFileext,char* vDirExt,tResource* r,short id,char* vFiledat) {
-	static const char extarray[8][4]={"raw","pet","bmp","wav","mid","ext","pal","pcs"};
+void getFileName(char* vFileext,const char* vDirExt,tResource* r,short id,const char* vFiledat) {
+	static const char extarray[8][4]=RES_FILE_EXTENSIONS;
 	const char* ext;
-	ext=extarray[((r->type<=7)&&(r->type>=0))?r->type:5];
+
 	if (r->path==NULL) {
+		ext=extarray[((r->type<=7)&&(r->type>=0))?r->type:5];
 		//set filename
 		sprintf(vFileext,RES_XML_UNKNOWN_PATH""RES_XML_UNKNOWN_FILES,vDirExt,vFiledat,id,ext);
 		AddToUnknownXml(vFiledat,id,ext,r->type,vDirExt,r->palette);
