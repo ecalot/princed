@@ -49,11 +49,11 @@ This program is open source under the GNU General Public License terms
   - Added full import bmp support
   - Solved palette import bug
  * PR 0.7
-  x Solved corrupted images on compression bug
-  - Source ported to several compilers and platforms
+  - Added Makefile
   - Moved PG module to compress.c and bmp.c
   - Moved midi support to mid.c
-  - Added Makefile
+  - Solved corrupted images on compression bug
+  - Source ported to several compilers and platforms
 
 
 2) ToDo List
@@ -62,16 +62,17 @@ This program is open source under the GNU General Public License terms
  iii) Add resources tree in xml. See the sample resources.xml and folder.xml
 parsing:
 
-typedef struct {
+typedef struct tTag {
  short int id;
+ tTag* child;
+ tTag* next;
  char* field1;
  char* field2;
 }tTag;
 
 tTag* getTagStructure(); //initializes
-freeTagStruct
+freeTagStructure(tTag* structure)
 int (0 if end) parseNext(char** pString, tTag* tag);
-
 
 
  iv)  Code the compression algorithms (B3, B4) to optimize the bitmap compiled dat files
