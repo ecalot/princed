@@ -52,19 +52,15 @@ int mFormatExportBmp(const unsigned char* data, const char *vFileext,unsigned lo
 		      keep the right palette.
 	*/
 	int result;
-fld("ZA1");
 
 	/* Expand graphic and check results */
 	result=mExpandGraphic(data,&image,size);
-/* printf("0) %d+%d*%d,%d\n",image.pix,image.height,image.widthInBytes,image.widthInBytes); */
 	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
 		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);
 	if (result==COMPRESS_RESULT_FATAL) return 0;
-fld("ZA2");
 
 	/* Write bitmap */
 	mWriteBitMap(image,vFileext,optionflag,backupExtension);
-fld("ZA3");
 
 	/* free bitmap */
 	free(image.pix);
@@ -107,11 +103,9 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	const unsigned long int zero=0;
 	char lineSerialization;
 	FILE* bitmap;
-fld("alpha");
+
 	/* open file */
 	if (!writeOpen(vFile,&bitmap,optionflag)) return 0;
-fld("beta");
-/* printf("a) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes); */
 
 	/* initialize variables */
 	width=img.width;
@@ -123,8 +117,6 @@ fld("beta");
 	r=(g=(b=(unsigned char*)&extra)+1)+1;
 	lineSerialization=(-img.widthInBytes)&3;
 	filesize=offset+(img.widthInBytes+lineSerialization)*height;
-/* printf("b) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes); */
-fld("gamma");
 
 	/* Write header */
 	fwrite     ("BM",2,1   ,bitmap);    /* Magic identifier            */
@@ -142,7 +134,6 @@ fld("gamma");
 	fwritelong (&extra     ,bitmap);    /* Pixels per meter y          */
 	fwritelong (&colours   ,bitmap);    /* Number of colours           */
 	fwritelong (&zero      ,bitmap);    /* Important colours           */
-fld("delta");
 
 	/* Write ColorTable */
 	if (colours==2) {
@@ -157,20 +148,14 @@ fld("delta");
 			fwritelong (&extra,bitmap);    /* 24-bit Color value */
 		}
 	}
-fld("epsilon");
 
 	/* Write data */
 	while (img.height--) {
-fld("e1");
-/* printf("c) %d+%d*%d,%d\n",img.pix,img.height,img.widthInBytes,img.widthInBytes); */
 		fwrite(img.pix+img.height*img.widthInBytes,img.widthInBytes,1,bitmap);
-fld("e2");
 		fwrite(&zero,lineSerialization,1,bitmap);
 	}
-fld("zeta");
 
 	writeCloseOk(bitmap,optionflag,backupExtension);
-fld("etha");
 	return 1;
 }
 
