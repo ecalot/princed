@@ -1,44 +1,47 @@
              
-                  Prince of Persia DAT File Format
-                           Specifications
+                             Prince of Persia
+                               File Formats
+                              Specifications
 
 Table of Contents
 ~~~~~ ~~ ~~~~~~~~
-1. Preamble ............................................................. 38
-2. Introduction ......................................................... 43
-3. Primitives ........................................................... 63
-3.1. DAT reading and writing primitives ................................. 68
-3.2. DAT reading primitives ............................................. 80
-3.3. DAT writing primitives ............................................. 87
-4. DAT v1.0 Format Specifications ....................................... 95
-4.1. General file specs, index and checksums ............................ 98
-4.2. Images ............................................................ 163
-4.2.1 Headers .......................................................... 166
-4.2.2 Algorithms ....................................................... 189
-4.2.2.1 Run length encoding (RLE) ...................................... 205
-4.2.2.2 LZ variant (LZG) ............................................... 216
-4.3. Palettes .......................................................... 294
-4.4. Levels ............................................................ 301
-4.4.1 Unknown blocks ................................................... 329
-4.4.2 Room mapping ..................................................... 346
-4.4.3 Room linking ..................................................... 452
-4.4.4 Guard handling ................................................... 468
-4.4.5 Starting Position ................................................ 495
-4.4.6 Door events ...................................................... 509
-4.5. Digital Waves ..................................................... 553
-4.6. Midi music ........................................................ 563
-4.7. Internal PC Speaker ............................................... 566
-4.8. Binary files ...................................................... 571
-5. PLV v1.0 Format Specifications ...................................... 577
-5.1. User data ......................................................... 599
-5.2. Allowed Date format ............................................... 623
-6. Credits ............................................................. 636
-7. License ............................................................. 653
+1. Preamble ............................................................. 39
+2. Introduction ......................................................... 46
+3. Primitives ........................................................... 69
+3.1. DAT reading and writing primitives ................................. 75
+3.2. DAT reading primitives ............................................. 87
+3.3. DAT writing primitives ............................................. 96
+4. DAT v1.0 Format Specifications ...................................... 104
+4.1. General file specs, index and checksums ........................... 107
+4.2. Images ............................................................ 172
+4.2.1 Headers .......................................................... 175
+4.2.2 Algorithms ....................................................... 198
+4.2.2.1 Run length encoding (RLE) ...................................... 214
+4.2.2.2 LZ variant (LZG) ............................................... 225
+4.3. Palettes .......................................................... 306
+4.4. Levels ............................................................ 313
+4.4.1 Unknown blocks ................................................... 344
+4.4.2 Room mapping ..................................................... 361
+4.4.3 Room linking ..................................................... 473
+4.4.4 Guard handling ................................................... 489
+4.4.5 Starting Position ................................................ 516
+4.4.6 Door events ...................................................... 530
+4.5. Digital Waves ..................................................... 574
+4.6. Midi music ........................................................ 587
+4.7. Internal PC Speaker ............................................... 590
+4.8. Binary files ...................................................... 595
+5. PLV v1.0 Format Specifications ...................................... 601
+5.1. User data ......................................................... 625
+5.2. Allowed Date format ............................................... 652
+6. Credits ............................................................. 665
+7. License ............................................................. 682
 
 1. Preamble
    ~~~~~~~~
- This file was written thanks to the reverse engineering made by several
- people, see the credits section.
+ This file was written thanks to the hard work on reverse engineering made
+ by several people, see the credits section. In case you find any mistake
+ in the text please report it. A copy of this document should be available
+ in our official site at http://www.princed.com.ar
 
 2. Introduction
    ~~~~~~~~~~~~
@@ -57,13 +60,17 @@ Table of Contents
  each resource through an ID and this ID is unique for the resource inside
  the file.
 
- Images stores their height and width but not their palette, so the palette
+ Images store their height and width but not their palette, so the palette
  is another resource and must be shared by a group of images.
+
+ PLV files are an extension defined to support a format with only one level
+ inside.
 
 3. Primitives
    ~~~~~~~~~~
  This section shows how the PR dat handling primitives works, this library
  is useful to access resources without having to worry about the format.
+ Here you can find the primitive chart of the dat.h library.
 
 3.1. DAT reading and writing primitives
  Opening a dat file for RW mode
@@ -75,13 +82,15 @@ Table of Contents
  );
  Return values are:
 
- int mRWCloseDatFile(dontSave)
+ int mRWCloseDatFile(dontSave);
 
 3.2. DAT reading primitives
- int  mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFile);
- int  mReadFileInDatFile(int indexNumber,unsigned char** data,unsigned long
-      int *size);
- int  mReadInitResource(tResource** res,const unsigned char* data,long size);
+ int  mReadBeginDatFile(unsigned short int *numberOfItems,
+      const char* vFile);
+ int  mReadFileInDatFile(int indexNumber,unsigned char** data,
+      unsigned long int *size);
+ int  mReadInitResource(tResource** res,const unsigned char* data,
+      long size);
  void mReadCloseDatFile();
 
 3.3. DAT writing primitives
@@ -236,6 +245,9 @@ Table of Contents
  This is the uncompression function source:
  (note that this is part of PR that is under the GPL license)
 
+                   Algorithm 4.1: LZG
+                   ~~~~~~~~~~~~~~~~~~
+
  /* A big number */
  #define MAX_MOD_SIZE_IN_LZG    32001
 
@@ -301,6 +313,9 @@ Table of Contents
 4.4. Levels
  This table has a summary of the blocks to be used in this section,
  you can referr it from the text below.
+
+                   Table 4.1: Level blocks
+                   ~~~~~~~~~~~~~~~~~~~~~~~
 
  Length Offset  Block Name
  ~~~~~~ ~~~~~~  ~~~~~~~~~~
@@ -372,6 +387,9 @@ Table of Contents
  tile in the game. The tiles listed are all the ones needed to make a level
  so the missing tiles have an equivalent in this list.
 
+                   Table 4.2: Foreground Walls
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   Code Group Description
   ~~~~ ~~~~~ ~~~~~~~~~~~
   0x00 0     Free space
@@ -411,6 +429,9 @@ Table of Contents
  The background part of the tile stores a modification or attribute of the
  wall part of the tile depending on what group it belongs. Those are not
  all the modifications in the game, there are more carpet styles, etc.
+
+                   Table 4.3: Background modifications
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Code Group Description
   ~~~~ ~~~~~ ~~~~~~~~~~~
@@ -551,14 +572,17 @@ Table of Contents
  Byte II has the form: s1 s2 s3  0  0  0  0  0
 
 4.5. Digital Waves
-Just raw sound
- Size of Format: 16
- Format: PCM
- Attributes: 8 bit, mono, unsigned
- Channels: 1
- Sample rate: 11025
- Bytes/Sec: 11025
- Block Align: 1
+ Read them as raw digital wave sound using the following specifications:
+
+                   Table 4.4: Wave Specifications
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  Size of Format: 16
+  Format: PCM
+  Attributes: 8 bit, mono, unsigned
+  Channels: 1
+  Sample rate: 11025
+  Bytes/Sec: 11025
+  Block Align: 1
  
 4.6. Midi music
  Standard midi files
@@ -575,20 +599,22 @@ Just raw sound
  format.
 
 5. PLV v1.0 Format Specifications
-
  PLV v1.0 files are defined in this table:
 
-  Size  Offset Description                  Type   Content
-  ~~~~  ~~~~~~ ~~~~~~~~~~~                  ~~~~   ~~~~~~~
+                   Table 5.1: PLV blocks
+                   ~~~~~~~~~~~~~~~~~~~~~
+
+   Size Offset Description                  Type   Content
+   ~~~~ ~~~~~~ ~~~~~~~~~~~                  ~~~~   ~~~~~~~
       7      0 Magic identifier             text   "POP_LVL"
       1      7 POP version                  UC     0x01
       1      8 PLV version                  UC     0x01
       1      9 Level Number                 UC
       4     10 Number of fields             BE
-      4     14 Block 1: Level size (B1)     BE     2306
-     B1     18 Block 1: Level code
+      4     14 Block 1: Level size (B1)     BE     2306/2305
+     B1     18 Block 1: Level code          -
       4  18+B1 Block 2: User data size (B2) BE
-     B2  22+B1 Block 2: User data
+     B2  22+B1 Block 2: User data           -
 
  Level code is the exact level as described in 4.4 including the checksum
  byte. Note that Level size also includes the checksum byte in the count.
@@ -606,6 +632,9 @@ Just raw sound
 
  There are mandatory pairs that must be included in all PLV files.
  Those are:
+
+                   Table 5.2: Mandatory Fields
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Field name          Description
   ~~~~~~~~~~          ~~~~~~~~~~~
