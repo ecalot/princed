@@ -47,10 +47,24 @@ xml.h: Princed Resources : xml handling functions header file
 |                   Tag Tree Searching Functions                 |
 \****************************************************************/
 
-
 tTag* searchTree(tTag* t,const char* datFile, const char* id);
 void workTag(const tTag* t, tResource* r[]);
 void workTree(const tTag* t,const char* datFile, tResource* r[]);
+
+//Searching Structures
+
+//File List Structure
+typedef struct tListNode {
+ char* file;
+ struct tListNode* next;
+}tListNode;
+
+//File List Functions
+void addFileToList(const char* file);
+void getFiles(const tTag* t);
+char* getFileFromList();
+
+
 
 #endif
 

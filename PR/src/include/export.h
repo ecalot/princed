@@ -17,6 +17,6 @@
 		8 - rebuild resources list
 */
 
-int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int task, const char* vDatFileName);
+int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int task, const char* vDatFileName, const char* vDatAuthor);
 
 #endif

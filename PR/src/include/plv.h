@@ -6,7 +6,7 @@
 #include "resources.h"
 
 char mFormatCompilePlv(unsigned char* data, FILE* fp, tResource *res);
-char mFormatExtractPlv(unsigned char* data, const char *vFileext,unsigned long int size,unsigned char level, const char* filename, const char* desc, const char* title);
+char mFormatExtractPlv(unsigned char* data, const char *vFileext,unsigned long int size,unsigned char level, const char* filename, const char* desc, const char* title, const char* vDatAuthor);
 
 //Dias de la semana y meses del anio
 #define DATE_WEEKDAYS "Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat"
@@ -16,12 +16,13 @@ char mFormatExtractPlv(unsigned char* data, const char *vFileext,unsigned long i
 #define PLV_HEADER_A_SIZE      sizeof(PLV_HEADER_A)-1
 #define PLV_HEADER_B           ":)"
 #define PLV_HEADER_B_SIZE      sizeof(PLV_HEADER_B)-1
-#define PLV_FOOT               "EDITORNAME\0PR\0EDITORVERS\0\x30.9\0AUTHOR\0Pr User\0TITLE"
+#define PLV_FOOT_EDITOR        "EDITORNAME\0PR\0EDITORVERS\0\x30.9\0AUTHOR"
+#define PLV_FOOT_TITLE         "TITLE"
 #define PLV_FOOT_DESC          "DESCRIPTION"
 #define PLV_FOOT_TCREAT        "TIMECREATED"
 #define PLV_FOOT_TMODIF        "TIMELASTMODIF"
 #define PLV_FOOT_ORIG_FILE     "ORIGINALFILENAME"
-#define PLV_HEADER_SIZE_OFFSET 1
+#define PLV_HEADER_SIZE_OFFSET PLV_HEADER_A_SIZE+PLV_HEADER_B_SIZE
 
 
 #endif

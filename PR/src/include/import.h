@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "resources.h"
 
-void mAddFileToDatFile(FILE* fp, char* data, int size);
+void mAddFileToDatFile(FILE* fp, unsigned char* data, int size);
 int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int opt, const char* vDatFileName);
 
 #endif

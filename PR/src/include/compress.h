@@ -22,7 +22,7 @@ typedef struct {
 //Prototypes:
 
 int mCompressGraphic(unsigned char* a,tImage* i, int* size);
-int mExpandGraphic(char* array,tImage *image, int size);
+int mExpandGraphic(unsigned char* array,tImage *image, int size);
 
 /*
 	Class future definitions

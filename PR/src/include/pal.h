@@ -16,6 +16,6 @@ char mImportPalette(unsigned char** data, unsigned short *size);
 void mExportPalette(unsigned char** data, unsigned long int *size);
 
 //This function will be obsolete
-void mLoadPalette(char* array,tImage *image);
+void mLoadPalette(unsigned char* array,tImage *image);
 
 #endif

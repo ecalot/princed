@@ -25,8 +25,10 @@ typedef struct {
 	char*     desc;
 }tResource;
 
+#include <stdio.h>
+
 //Verify  header
-char verifyHeader(char* array, int size);
+int verifyHeader(unsigned char* array, int size);
 
 /*
 	Headers may be:
@@ -46,17 +48,22 @@ char verifyHeader(char* array, int size);
 //Empty resource table
 void emptyTable(tResource* r[]);
 
-//parse file
-char parseFile(const char* vFile, const char* datFile, tResource* r[]);
 
 //Resources extras
 
-void getFileName(char* vFileext,const char* vDirExt,tResource* r,short id,const char* vFiledat);
+void getFileName(char* vFileext,const char* vDirExt,tResource* r,short id,const char* vFiledat, const char* vDatFileName);
 void getUpperFolder(char* aux, char* vFiledat);
 
 const char* getExtDesc(int type);
 
+//parse file and free parsed structure
+char parseFile(const char* vFile, const char* datFile, tResource* r[]);
+void freeParsedStructure();
+
 //In case there are unknown resources it closes the unknown XML output
 void endUnknownXml();
+
+//Search files for the Import feature
+int importDir(const char* directory, const char* vResFile, int* pOption, const char* backupExtension,const char* vDirectory,FILE* output);
 
 #endif
