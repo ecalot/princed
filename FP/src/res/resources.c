@@ -110,7 +110,7 @@ void res_createFrames(tMemory data,int type,void** returnValue,int number) {
 		case RES_TYPE_LVL:
 			result=(tMemory*)malloc(sizeof(tMemory)); /* both sides are void* :)  */
 			/* TODO: data->array must be copied or it wont be available after the file is closed */
-			*result=(tMemory)data;
+			*result=data;
 			printf("res_createFrames: Allocating resource[%d]\n",number);
 			
 			break;
@@ -249,7 +249,7 @@ tData* resLoad(int id) {
 	
 	mReadCloseDatFile();
 	free(frames);
-	printf("resLoad: returning result pointer 0x%p\n",result);
+	/* printf("resLoad: returning result pointer 0x%p\n",result); */
 	return result;
 }
 
