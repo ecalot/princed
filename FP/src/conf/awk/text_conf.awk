@@ -68,7 +68,7 @@ BEGIN {
 		state=waitingForTop
 		k++
 	} else {
-		printf("Error: Unexpected character")
+		printf("Error: Unexpected character")>"/dev/stderr"
 		exit 75
 	}
 }
@@ -78,7 +78,7 @@ BEGIN {
 		len=length($1)
 		state=0
 	} else {
-		printf("Error: Unexpected image beginning")
+		printf("Error: Unexpected image beginning")>"/dev/stderr"
 		exit 74
 	}
 }
@@ -87,7 +87,7 @@ BEGIN {
 	if (state>=0) {
 		l=length($0)
 		if (l!=len) {
-			printf("Error: the image length is not valid")
+			printf("Error: the image length is not valid")>"/dev/stderr"
 			exit 70
 		}
 		for (i=0;i<l-2;i++) {
@@ -100,7 +100,7 @@ BEGIN {
 		}
 		state++
 	} else {
-		printf("Error: unexpected image")
+		printf("Error: unexpected image")>"/dev/stderr"
 		exit 73
 	}
 }
@@ -109,7 +109,7 @@ BEGIN {
 	if (state>0) {
 		l=length($0)
 		if (l!=len) {
-			printf("Error: the image length is not valid")
+			printf("Error: the image length is not valid")>"/dev/stderr"
 			exit 70
 		}
 		offset+=l-2;
@@ -118,7 +118,7 @@ BEGIN {
 		list[k]=c
 		offs[k]=offset
 	} else {
-		printf("Error: Unexpected end of image")
+		printf("Error: Unexpected end of image")>"/dev/stderr"
 		exit 71
 	}
 }
@@ -130,7 +130,7 @@ BEGIN {
 
 END {
 	if (state!=waitingForChar) {
-		printf("Error: Unexpected end of file")
+		printf("Error: Unexpected end of file")>"/dev/stderr"
 		exit 76
 	}
 	
