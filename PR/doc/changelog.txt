@@ -128,22 +128,21 @@ Versions:
   - Optimizations
   - Other versions of POP 1 tested
  * PR v1.0
-  x Optimization
-  x Stable version for win32 and unix based systems
+  - Optimization
+  - Stable version for win32 and unix based systems
   - Use defines write8i(char,fp),write16i,write32i,read8i...
   - Checksum verification in PLV files
   x Set, if applicable, POP2 in the parent folder of the
     unknown.xml file
   - Fixed some memory leaks in xml parser
   - Solved bug in palette buffer initialization for autodetected images
+  x Code the compression algorithms Lzg to optimize compiled
+    bitmap dat files
 	
 2) ToDo List & Future Plans:
 
 * PR v1.1:
   x Add a C++ class to use PR
- * PR v1.5:
-  x Code the compression algorithms Lzg to optimize compiled
-    bitmap dat files
  * PR v2.0 beta:
   x Add full pop2 support
  * PR v2.0:
