@@ -65,10 +65,13 @@ void expandLzg(const unsigned char* array, int arraySize,
 					location=location%MAX_MXD_SIZE_IN_LZG; /* location is in range 0-1023 */
 
 					/*
-					 * if the image is stored in an array of 1024 x n bytes
-					 * "h" is the height and "location" is the width
+					 * delta is ((location-cursor)%MAX_MXD_SIZE_IN_LZG)
+					 * this is the correction factor for the complex algorithm
+					 * this value is inside the range -1023 to 1023.
+					 * if location>cursor the result is positive
+					 * if location<cursor the result is negative
 					 */
-					img[cursor]=img[cursor-((cursor-location)%MAX_MXD_SIZE_IN_LZG)];
+					img[cursor]=img[cursor+((location-cursor)%MAX_MXD_SIZE_IN_LZG)];
 
 					cursor++;
 					location++;
