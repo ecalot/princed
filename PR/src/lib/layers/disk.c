@@ -220,7 +220,9 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 		if (size) free(content);
 	}
 
-	return fclose(fp);
+	dontSave=fclose(fp);
+
+	return dontSave;
 }
 
 int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
@@ -338,6 +340,8 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 		Using the string in vFile, it opens the file and returns the
 		number of bytes	in it and the content of the file in array.
 		In case the file couldn't be open or memory allocated returns 0.
+		It will alloc an extra NULL byte at the end of the array so
+		the file may be treated as a string too.
 	*/
 
 	/* declare variables */
@@ -351,13 +355,15 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 		/* get file size */
 		fseek(fp,0,SEEK_END);
 		aux=ftell(fp);
-		if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(unsigned char*)malloc(sizeof(char)*aux))==NULL) ) ) {
+fld("mLoadFileArray: 1");
+		if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(unsigned char*)malloc(aux+1))==NULL) ) ) {
 			/* if the file was null or bigger than the max size or couldn't allocate the file in memory */
 			fclose(fp);
 			return 0;
 		} else {
 			/* if the file was successfully open */
 			fseek(fp,0,SEEK_SET);
+			(*array)[aux]=0;
 			aux=fread (*array,1,aux,fp);
 			fclose(fp);
 			return aux;
@@ -475,13 +481,12 @@ int recurseDirectory(const char* path,int optionflag, const char* extension,cons
 				if recursive path is not a directory and is not a dat file, ignore
 			*/
 			if (isDir(recursive)==eDirectory) {
-				if (hasFlag(recursive_flag)) { /* Only recourse if recursive flag is set */
+				if (hasFlag(recursive_flag)) { /* Only recurse if recursive flag is set */
 					recurseDirectory(recursive,optionflag,extension,dirName,resFile,datfilename,datAuthor,output);
 				}
 			} else {
-				char aux[]=".dat";
 				if (sizeOfFile>4) {
-					if (equalsIgnoreCase(aux,directoryStructure->d_name+sizeOfFile-4)) {
+					if (equalsIgnoreCase(".dat",directoryStructure->d_name+sizeOfFile-4)) {
 						prMain(optionflag,extension,dirName,resFile,recursive,directoryStructure->d_name,datAuthor,output);
 					}
 				}
@@ -490,6 +495,7 @@ int recurseDirectory(const char* path,int optionflag, const char* extension,cons
 			free(recursive);
 		}
 	}
+	closedir(dir);
 	return 1;
 }
 
