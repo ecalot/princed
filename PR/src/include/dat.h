@@ -36,24 +36,34 @@ dat.h: Princed Resources : DAT library headers
 
 #include "resources.h"
 
+#define PR_DAT_INCLUDE_DATREAD
+#define PR_DAT_INCLUDE_DATWRITE
+
+#ifdef PR_DAT_INCLUDE_DATREAD
+#ifdef PR_DAT_INCLUDE_DATWRITE
 /* DAT reading and writing primitives primitives */
 int mRWBeginDatFile(const char* vFile, unsigned short int *numberOfItems, int optionflag);
 #define mRWCloseDatFile(dontSave) \
 mReadCloseDatFile();\
 mWriteCloseDatFile(r,dontSave,optionflag,backupExtension)
+#endif
+#endif
 
-
+#ifdef PR_DAT_INCLUDE_DATREAD
 /* DAT reading primitives */
 int  mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFile);
 int  mReadGetFileInDatFile(int indexNumber,unsigned char* *data,unsigned long  int *size);
 int  mReadInitResource(tResource** res,const unsigned char* data,long size);
 void mReadCloseDatFile();
+#endif
 
+#ifdef PR_DAT_INCLUDE_DATWRITE
 /* DAT writing primitives */
 int  mWriteBeginDatFile(const char* vFile, int optionflag);
-void mWriteSetFileInDatFile(unsigned char* data, int size);
+void mWriteSetFileInDatFile(const unsigned char* data, int size);
 void mWriteSetFileInDatFileIgnoreChecksum(unsigned char* data,int size);
 void mWriteInitResource(tResource** res);
 void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const char* backupExtension);
+#endif
 
 #endif

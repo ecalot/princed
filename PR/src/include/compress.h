@@ -64,7 +64,7 @@ typedef struct {
 
 /* Prototypes */
 
-int mCompressGraphic(unsigned char* a,tImage* i, int* size);
+int mCompressGraphic(unsigned char** a,tImage* i, int* size);
 int mExpandGraphic(const unsigned char* array,tImage *image, int size);
 
 #define getCarry(a) ((a)>>6)

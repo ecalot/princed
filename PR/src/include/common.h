@@ -67,7 +67,7 @@ void prSetOutput(FILE* output);
 #endif
 
 /* Debug options */
-/* #define DEB_FLAG */
+#define DEB_FLAG
 /* #define MEM_CHECK */
 
 #ifdef MEM_CHECK
@@ -79,7 +79,6 @@ void prSetOutput(FILE* output);
 #include "memory.h"
  #define malloc(a) mymalloc(a,__FILE__,__LINE__)
  #define free(a) myfree(a,__FILE__,__LINE__)
-
 #endif
 
 #ifdef DEB_FLAG
@@ -97,8 +96,9 @@ void prSetOutput(FILE* output);
 \***************************************************************/
 
 #define PR_URL                    "http://www.princed.com.ar"
-#define PR_VERSION                "v1.0b-dev2"
+#define PR_VERSION                "v1.0-dev1"
 #define PR_COPY                   "(c) Copyright 2003, 2004 - Princed Development Team"
+
 /***************************************************************\
 |                         Other defines                         |
 \***************************************************************/
@@ -124,7 +124,33 @@ void prSetOutput(FILE* output);
 |                        L A N G U A G E                        |
 \***************************************************************/
 
-#include "english.h"
+#include "en.lang.pr.h"
+
+/* Credits */
+#define PARSING_ABOUT PR_TXT_AUTHORS": \n\
+   "PR_TXT_CODER"\n\
+    Enrique Calot\n\
+\n\
+   "PR_TXT_COD_ASSIST"\n\
+    Santiago Zamora\n\
+\n\
+   "PR_TXT_GFX_COMP"\n\
+    Tammo Jan Dijkema\n\
+    Enrique Calot\n\
+\n\
+   "PR_TXT_GFX_DEV"\n\
+    Tammo Jan Dijkema\n\
+    Anke Balderer\n\
+\n\
+   "PR_TXT_MID"\n\
+    Christian Lundheim\n\
+\n\
+   "PR_TXT_XML"\n\
+    Steven Fayers\n\
+\n\
+   "PR_TXT_TRANSLATION"\n\
+    "PR_TXT_ABOUT_TRANSLATOR"\n\
+\n"
 
 /***************************************************************\
 |                           Prototypes                          |

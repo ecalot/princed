@@ -34,11 +34,20 @@ memory.h: Princed Resources : Memory handling headers
 #ifndef _MEMORY_H_
 #define _MEMORY_H_
 
-#include <stdlib.h>
+/* #define MEM_CHECK */
 
+#include <stdlib.h>
 #define getMemory(size) ((unsigned char*)malloc(size))
 char* strallocandcopy(const char* text);
 #define freeAllocation(m) if ((m)!=NULL) free(m)
+
+#ifdef MEM_CHECK
+void myfree(void* a,char* fileName,int line);
+void* mymalloc(int size,char* fileName,int line);
+void showStats();
+#else
+#define showInfo(a)
+#endif
 
 #endif
 
