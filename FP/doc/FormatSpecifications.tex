@@ -5,36 +5,39 @@
 
 Table of Contents
 ~~~~~ ~~ ~~~~~~~~
-1. Preamble ............................................................. 39
-2. Introduction ......................................................... 46
-3. Primitives ........................................................... 69
-3.1. DAT reading and writing primitives ................................. 75
-3.2. DAT reading primitives ............................................. 87
-3.3. DAT writing primitives ............................................. 96
-4. DAT v1.0 Format Specifications ...................................... 104
-4.1. General file specs, index and checksums ........................... 107
-4.2. Images ............................................................ 172
-4.2.1 Headers .......................................................... 175
-4.2.2 Algorithms ....................................................... 198
-4.2.2.1 Run length encoding (RLE) ...................................... 214
-4.2.2.2 LZ variant (LZG) ............................................... 225
-4.3. Palettes .......................................................... 306
-4.4. Levels ............................................................ 313
-4.4.1 Unknown blocks ................................................... 344
-4.4.2 Room mapping ..................................................... 361
-4.4.3 Room linking ..................................................... 473
-4.4.4 Guard handling ................................................... 489
-4.4.5 Starting Position ................................................ 516
-4.4.6 Door events ...................................................... 530
-4.5. Digital Waves ..................................................... 574
-4.6. Midi music ........................................................ 587
-4.7. Internal PC Speaker ............................................... 590
-4.8. Binary files ...................................................... 595
-5. PLV v1.0 Format Specifications ...................................... 601
-5.1. User data ......................................................... 625
-5.2. Allowed Date format ............................................... 652
-6. Credits ............................................................. 665
-7. License ............................................................. 682
+1. Preamble ............................................................. 42
+2. Introduction ......................................................... 50
+3. Primitives ........................................................... 74
+3.1. DAT reading and writing primitives ................................. 80
+3.2. DAT reading primitives ............................................. 92
+3.3. DAT writing primitives ............................................ 101
+4. DAT v1.0 Format Specifications ...................................... 110
+4.1. General file specs, index and checksums ........................... 113
+4.2. Images ............................................................ 178
+4.2.1 Headers .......................................................... 181
+4.2.2 Algorithms ....................................................... 204
+4.2.2.1 Run length encoding (RLE) ...................................... 220
+4.2.2.2 LZ variant (LZG) ............................................... 231
+4.3. Palettes .......................................................... 312
+4.4. Levels ............................................................ 319
+4.4.1 Unknown blocks ................................................... 350
+4.4.2 Room mapping ..................................................... 367
+4.4.3 Room linking ..................................................... 479
+4.4.4 Guard handling ................................................... 495
+4.4.5 Starting Position ................................................ 522
+4.4.6 Door events ...................................................... 536
+4.5. Digital Waves ..................................................... 580
+4.6. Midi music ........................................................ 593
+4.7. Internal PC Speaker ............................................... 596
+4.8. Binary files ...................................................... 601
+5. PLV v1.0 Format Specifications ...................................... 608
+5.1. User data ......................................................... 632
+5.2. Allowed Date format ............................................... 659
+6. The SAV v1.0 format ................................................. 673
+7. The HOF v1.0 format ................................................. 718
+8. Credits ............................................................. 724
+9. License ............................................................. 741
+
 
 1. Preamble
    ~~~~~~~~
@@ -42,6 +45,7 @@ Table of Contents
  by several people, see the credits section. In case you find any mistake
  in the text please report it. A copy of this document should be available
  in our official site at http://www.princed.com.ar
+
 
 2. Introduction
    ~~~~~~~~~~~~
@@ -65,6 +69,7 @@ Table of Contents
 
  PLV files are an extension defined to support a format with only one level
  inside.
+
 
 3. Primitives
    ~~~~~~~~~~
@@ -100,6 +105,7 @@ Table of Contents
  void mWriteInitResource(tResource** res);
  void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const
       char* backupExtension);
+
 
 4. DAT v1.0 Format Specifications
    ~~~ ~~~~ ~~~~~~ ~~~~~~~~~~~~~~
@@ -598,6 +604,7 @@ Table of Contents
  saving n records of a 16-color-palette of 3 bytes in the specified palette
  format.
 
+
 5. PLV v1.0 Format Specifications
  PLV v1.0 files are defined in this table:
 
@@ -662,7 +669,59 @@ Table of Contents
  must be completed with 0.
  i.e. 2002-11-26 22:16:39
 
-6. Credits
+
+6. The SAV v1.0 format
+   ~~~ ~~~ ~~~~ ~~~~~~
+ SAV v1.0 saves kid level, lives and remaining time information in order to
+ restart the game from this position.
+
+ SAV files are 8 bytes length in the following format:
+ 
+                   Table 6.1: SAV blocks
+                   ~~~~~~~~~~~~~~~~~~~~~
+
+   Size Offset Description                  Type
+   ~~~~ ~~~~~~ ~~~~~~~~~~~                  ~~~~
+      2      0 Remaining minutes            LE   (i)
+      2      2 Remaining ticks              LE   (ii)
+      2      4 Current level                LE   (iii)
+      2      6 Current hit points           LE   (iv)
+
+ Remaining minutes (i)
+  Range values:
+   0     to 32766 for minutes
+   32767 to 65534 for NO TIME (but the time is stored)
+   65535 for game over
+
+ Remaining ticks (ii)
+  Seconds are stored in ticks, a tick is 1/12 seconds. To get the time in
+  seconds you have to divide the integer "Remaining ticks" by 12.
+
+  Range values:
+   0.000 to 59.916 seconds
+	                 (rounded by units of 83 milliseconds or 1/12 seconds)
+   0     to 719    ticks
+
+ Level (iii)
+  Range values:
+   1  to 12 for normal levels
+   13 for 12bis
+   14 for princess level
+   15 for potion level
+
+ Hit points (iv)
+  Range values:
+   0 for an immediate death
+   1 to 65535 lives
+
+
+7. The HOF v1.0 format
+   ~~~ ~~~ ~~~~ ~~~~~~
+ HOF files are used to save the Hall of Fame information. For the moment
+ just read hof.c to know the format.
+
+
+8. Credits
    ~~~~~~~
  This document:
   Writing . . . . . . . . . . . . . . . . . . . . . . . . . Enrique Calot
@@ -679,7 +738,7 @@ Table of Contents
   Definition . . . . . . . . . . . . . . . . . . . . . . .  Brendon James
                                                             Enrique Calot
 
-7. License
+9. License
    ~~~~~~~
       Copyright (c)  2004  Princed Project Team
       Permission is granted to copy, distribute and/or modify this document
