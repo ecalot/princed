@@ -44,6 +44,7 @@ void kidGetHitPoint(tObject *kid);
 int kidTakeHitPoint(tObject *kid);
 int kidMove(tObject* kid,short flags,tRoom* room);
 void kidKillHim(tObject *kid);
+void kidDrinkPotion(tObject* object,tTile tile);
 
 #endif
 

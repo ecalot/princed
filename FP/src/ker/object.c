@@ -102,7 +102,7 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 			}
 			if (flags&STATES_FLAG_D) {
 				tTile tile=roomGetTile(room,object->location/TILE_W,object->floor);
-				/*kidDrinkPotion(object,tile);*/
+				kidDrinkPotion(object,tile);
 				/* TODO: transform the tile into floor */
 			}
 			break;

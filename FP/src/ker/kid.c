@@ -41,6 +41,11 @@ kid.c: Free Prince : Kid object
 #define KID_LIVE_FILL 216
 #define KID_LIVE_EMPTY 217
 
+void kidDrinkPotion(tObject* object,tTile tile) {
+
+
+}
+
 void kidDrawLives(tObject *kid) {
 	int i;
 	static int blink=0;
