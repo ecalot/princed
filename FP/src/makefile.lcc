@@ -38,7 +38,7 @@ LINKERRELEASE = -s
 #Binary code files
 OBJFILES      = main.obj kernel.obj resources.obj dat.obj disk.obj compress.obj \
                 output.obj maps.obj config.obj room.obj titles.obj \
-                input.obj kid.obj states.obj tiles.obj\
+                input.obj kid.obj states.obj tiles.obj walls.obj anims.obj object.obj\
                 $(SRC2)
 EXEFILE       = bin\freeprince.exe
 
@@ -138,6 +138,21 @@ input.obj: out\input.c include\input.h
 config.obj: res\config.c include\resources.h include\res_conf.h
 	$(INFO) Compiling resource configuration module...
 	$(CC) $(OPTIONS) -c res\config.c
+
+walls.obj: res\walls.c include\walls.h include\walls_conf.h
+	$(INFO) Compiling wall algorithm module...
+	$(CC) $(OPTIONS) -c res\walls.c
+
+anims.obj: res\anims.c include\anims.h include\anims_conf.h
+	$(INFO) Compiling animation loader module...
+	$(CC) $(OPTIONS) -c res\anims.c
+	
+object.obj: ker\object.c include\object.h include\resources.h include\res_conf.h\
+       include\states.h include\res_conf.h\
+       include\types.h include\tiles.h include\tiles_conf.h include\output.h\
+       include\kid.h
+	$(INFO) Compiling kernel kid object support...
+	$(CC) $(OPTIONS) -c ker\object.c
 
 getopt.obj: ports\getopt.c
 	$(INFO) Porting the Unix-like getopt function (first part)...
