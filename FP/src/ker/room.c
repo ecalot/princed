@@ -63,10 +63,9 @@ void roomFree() {
 tTile roomGetTile(tRoom* room,int x, int y) {
 	tTile   result;
 	tTileId fore;
-	tModId  back;
 
 	fore=room->fore[x+12*y];
-	back=room->back[x+12*y];
+	result.back=room->back[x+12*y];
 	result.code=fore&0x1F;
 	
 	switch (result.code) { /* TODO: use arrays and a better algorithm */
@@ -108,7 +107,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	case T_PILLAR:
 	case T_DEBRIS:
 		result.hasGateFrame=0;
-		result.bricks=(result.code==T_FLOOR)?back:0;
+		result.bricks=(result.code==T_FLOOR)?result.back:0;
 		result.hasPillar=(result.code==T_PILLAR);
 		result.hasBigPillar=(result.code==T_BP_BOTTOM);
 		result.isGate=0;
@@ -116,7 +115,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 		result.hasChopper=(result.code==T_CHOPPER);
 		result.isExit=(result.code==T_EXIT_LEFT)?1:((result.code==T_EXIT_RIGHT)?2:0);
 		result.block=0;
-		result.isPressable=(result.code==T_BTN_RAISE);
+		result.isPressable=(result.code==T_BTN_RAISE)|(result.code==T_BTN_DROP);
 		result.hasSkeleton=(result.code==T_SKELETON);
 		result.hasSpikes=(result.code==T_SPIKES);
 		result.hasTorch=(result.code==T_TORCH)|(result.code==T_TORCH_DEBRIS);
@@ -150,7 +149,7 @@ tTile roomGetTile(tRoom* room,int x, int y) {
 	default:
 		result.hasGateFrame=(result.code==T_TAPESTRY_TOP);
 		result.hasBigPillar=(result.code==T_BP_TOP)*2;
-		result.bricks=back;
+		result.bricks=result.back;
 		result.hasPillar=0;
 		result.walkable=0;
 		result.isExit=0;

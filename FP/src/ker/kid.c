@@ -257,8 +257,10 @@ int kidMove(tKid* kid,tKey key,tRoom* room) {
 	}
 	tile=roomGetTile(room,(kid->location/TILE_W)+1,kid->floor+1);
 	if (!tile.walkable) {
-			fprintf(stderr,"kidMove: Tile not walkable, falling\n");
-			kid->floor++;
+		fprintf(stderr,"kidMove: Tile not walkable, falling\n");
+		kid->floor++;
+	} else {
+		mapPressedTile(room->level, tile, room->id, (kid->location/TILE_W)+1, kid->floor+1);
 	}
 	if (kid->floor<0) {
 		kid->floor=2;

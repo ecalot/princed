@@ -93,6 +93,7 @@ typedef struct {
 	int isWall;
 	int hasSword;
 
+	tModId back;
 	char code;
 } tTile;
 

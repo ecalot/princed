@@ -293,7 +293,14 @@ void  mapMove(tMap* map) {
 	if (slevel(time)==1000) slevel(time)=0;
 }
 
+void  mapPressedTile(tMap* map, tTile tile, int s, int x, int y) {
+		if (tile.isPressable) {
+			/* drop or raise button */
+			fprintf(stderr,"mapPressedTile: throw event %d\n",tile.back);
+		}
 
+
+}
 
 
 
