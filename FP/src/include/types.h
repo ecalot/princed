@@ -55,9 +55,7 @@ typedef struct {
 	unsigned char  back [24*30];
 	tGate**        screenGates[24];
 	tGate*         gates;
-	/*
-	 * Active door handling here
-	 * */
+	tEvent         events[256];
 	int time;
 	unsigned char start[3];
 } tMap;

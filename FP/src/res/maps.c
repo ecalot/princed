@@ -73,6 +73,8 @@ void* mapLoadLevel(tMemory level) {
 	int gates=0;
 	int gateInRoom=0;
 	int change=-1;
+	tGate** auxGates=malloc(sizeof(tGate*)*24*30);
+	
 	/* copy maps, links and start position */
 	memcpy(map->fore,level.array+MAPS_BLOCK_OFFSET_WALL,30*24);
 	memcpy(map->back,level.array+MAPS_BLOCK_OFFSET_BACK,30*24);
@@ -81,6 +83,7 @@ void* mapLoadLevel(tMemory level) {
 
 	/* generate and load gate structures */
 	for (i=0;i<30*24;i++) { /* count gates and create gate tree middle nodes */
+		auxGates[i]=NULL; /* clear array */
 		if ((map->fore[i]==T_GATE)||(map->fore[i]==T_EXIT_LEFT)) {
 			if (i/30!=change) {
 				printf("Screen %d has %d gates.",change,gateInRoom);
@@ -113,11 +116,21 @@ void* mapLoadLevel(tMemory level) {
 			newGate.action=map->back[i];
 			map->back[i]=gateInRoom;
 			map->screenGates[i/30][gateInRoom]=map->gates+gates;
+			auxGates[i]=map->gates+gates;
 			map->gates[gates++]=newGate;
 		}
 	}
-
-	
+	for (i=0;i<256;i++) {
+		unsigned char byte1=level.array[MAPS_BLOCK_OFFSET_GATE_1+i];
+		unsigned char byte2=level.array[MAPS_BLOCK_OFFSET_GATE_2+i];
+		int S,L,T;
+		S=((byte1>>5)&3)|((byte2>>3)&7);
+		L=byte1&31;
+		T=(byte1>>7)&1;
+		map->events[i].triggerNext=T;
+		map->events[i].gate=auxGates[(S-1)*30+L]; /* in case of error null is assigned */
+	}
+	free(auxGates);	
 	return (void*)map;
 }
 
