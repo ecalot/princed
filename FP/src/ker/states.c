@@ -54,7 +54,7 @@ tState createState(int level) {
 #define DefaultFalse(pointer) if (!pointer) return STATES_CONDRESULT_TRUE
 int evaluateCondition(int condition,tKey* key, tKid* kid, tRoom* room) {
 	tsCondition c=statesConditionList[condition];
-#define thisTile (kid->location/STATES_STEPS_PER_TILE+1+12*kid->floor)
+#define thisTile (kid->location/STATES_STEPS_PER_TILE+13+12*kid->floor)
 #define whereInTile ((kid->direction==DIR_LEFT)?(kid->location%STATES_STEPS_PER_TILE):STATES_STEPS_PER_TILE-(kid->location%STATES_STEPS_PER_TILE))
 	switch(c.type) {
 	case esKeyUp:
