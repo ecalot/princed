@@ -331,7 +331,8 @@ backupExtension);
  The guard_location part of a guard describes where in the screen the guard
  is located, this is a number from 0 to 29 if the guard is in the screen or
  30 if there is no guard in this screen. Other values are allowed but are
- equivalent to 30.
+ equivalent to 30. The number from 0 to 29 is in the location format
+ specified in section 4.4.2
  
  The guard_direction part describes where the guard looks at. If the value
  is 0, then the guard looks to the right, if the value is the hex FF (-1 or
@@ -379,6 +380,27 @@ backupExtension);
  In section 4.4.2 it is explined how a door trigger is associated to an
  event ID. Those are the tiles that starts the event depending on what are
  them: closers or openers.
+
+ How events are stored:
+ Each door block has 256 bytes, one per event line. Each event line is
+ located in an offset that is the event line ID, so event line 30 is
+ located in the byte 30 of each block.
+ There is a door I part of an event line and a door II part of it. We'll
+ define them as byte I and byte II.
+ You can find there: the door screen, the door location, and the
+ trigger-next flag. The format is the following:
+ 
+ Let's define:
+  Screen as S and it is a number from 1 to 24 (5 bits)
+	 S = s1 s2 s3 s4 s5 where sn is the bit n of the binary representation of S
+	Location as L and is a number from 0 to 29 (5 bits)
+	 L = l1 l2 l3 l4 l5 where ln is the bit n of the binary representation of L
+	 This number is according to the location format specifications.
+	Trigger-next as T and is a 0 or 1 (1 bit)
+   T = t1
+
+ Byte I  has the form: t1 s4 s5 l1 l2 l3 l4 l5
+ Byte II has the form: s1 s2 s3  0  0  0  0  0
 
 4.5. Digital Waves
 Just raw sound
