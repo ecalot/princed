@@ -19,9 +19,9 @@
 */
 
 /*
-resources.h: Princed Resources : Resource Handler headers
-¯¯¯¯¯¯¯¯¯¯¯
- Copyright 2003 Princed Development Team
+main.c: FreePrince : Main function - parsing
+¯¯¯¯¯¯
+ Copyright 2004, 2003 Princed Development Team
   Created: 24 Mar 2004
 
   Author: Endfhgfhgfhg <efghgfdht.cod@princed.com.ar>
@@ -30,37 +30,64 @@ resources.h: Princed Resources : Resource Handler headers
   DO NOT remove this copyright notice
 */
 
-#include "input.h"
-#include "interpreter.h"
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <getopt.h>
+#include "kernel.h"
 #include "main.h"
-#include "output.h"
-#include "parse.h"
-#include "resources.h"
+#include <stdio.h>
 
-int main(int argc,char** argv) {
-	tGame game;
-	int playing;
+/***************************************************************\
+|      Standard executable command line parsing function        |
+\***************************************************************/
 
-	/* Parse options */
-	game=parseFile("engine.dat");
-	if (!game) {
-		printf("Game couldn't be loaded\n");
-		return 0;
+int main (int argc, char **argv) {
+	/* declare variables */
+	int c;
+	int optionflag=0;
+	int junk = 0;
+
+	int level=-1;
+
+	/* Parse command line options */
+	do {
+		static struct option long_options[] = PARSING_OPTIONS;
+
+		c = getopt_long(argc,argv,PARSING_CHARS,long_options,&junk);
+		switch (c) {
+				case 'm':
+					setFlag(menu_flag);
+					break;
+				case 'l':
+					level=0;
+					if (optarg) level=atoi(optarg);
+					break;
+				case 't':
+					setFlag(megahit_flag);
+				case -1:
+					break;
+				case 1:
+					setFlag(version_flag);
+					break;
+				default:
+					setFlag(help_flag);
+					break;
+		}
+	} while (c!=-1);
+
+
+	/* Check syntax, help and version screens */
+	
+	if (hasFlag(help_flag)) {
+		fprintf(stderr,"This is a help screen\n");
+		exit(1);
 	}
 
-	/* Initialize Devices */
-	startGraphicMode();
+	if (hasFlag(version_flag)) {
+		fprintf(stderr,"This is a version screen\n");
+		exit(1);
+	}
 
-	/* Start interpreter */
-	if (!initGame(game)) return 0;
-
-	/* Main Loop */
-	while(performActions(getKey()));
-
-	/* End */
-	stopGraphicMode();
-	freeGame(game);
-	return 1;
+	/* Start kernel program */
+	return kernel(optionflag,level);
 }
-
-
