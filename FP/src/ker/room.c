@@ -246,7 +246,6 @@ void drawBackPanel(tRoom* room,int x, int y) {
 			(x-1)*TILE_W,
 			y*TILE_H+2
 		);
-		/*drawExit((x-2)*TILE_W+8,(y-1)*TILE_H-1,left.gateInfo->frame);*/
 	}
 	/* pillar/left */
 	if (left.hasPillar) {
@@ -381,6 +380,7 @@ void drawBackPanel(tRoom* room,int x, int y) {
 				(x-1)*TILE_W,
 				y*TILE_H
 			);
+			drawExit(x*TILE_W+8,(y-1)*TILE_H-1,tile.gateInfo->frame);
 		}
 	}
 	/* pillar/this */

@@ -40,10 +40,13 @@ typedef unsigned char tTileId;
 typedef unsigned char tModId;
 
 typedef enum {eOpenTimer,eOpen,eClose,eClosing,eOpening,eClosingFast}tGateAction;
+typedef enum {eJustPressed,eNormal,ePressed,eStuck}tPressableAction;
+typedef enum {eNormalGate,eExitGate}tGateType;
 
 typedef struct {
 	int time;
 	int frame;
+	tGateType type;
 	tGateAction action;
 } tGate;
 
@@ -51,6 +54,11 @@ typedef struct {
 	tGate* gate;
 	int triggerNext;
 } tEvent;
+
+typedef struct {
+	tEvent* event;
+	tPressableAction action;
+} tPressable;
 
 typedef struct {
 	tRoomId        links[4*24];

@@ -77,6 +77,7 @@ void* mapLoadLevel(tMemory level) {
 				tGate newGate;
 				newGate.frame=map->back[i*30+j];
 				newGate.action=map->back[i*30+j]?eClose:eOpen;
+				newGate.type=((map->fore[i*30+j]&0x1f)==T_GATE)?eNormalGate:eExitGate;
 				map->back[i*30+j]=gateInRoom;
 				map->screenGates[i][gateInRoom]=map->gates+gates;
 				auxGates[i*30+j]=map->gates+gates;
@@ -260,7 +261,10 @@ void  mapMove(tMap* map) {
 	slevel(time)++;
 	if (slevel(time)==1000) slevel(time)=0;
 	/* check out all the gates in the level */
+	
 	for (i=0;i<slevel(totalGates);i++) {
+		int maxFrames;
+		maxFrames=(map->gates[i].type==eNormalGate)?46:50;
 		switch (map->gates[i].action) {
 		case eOpenTimer:
 			if (map->gates[i].time) {
@@ -278,7 +282,7 @@ void  mapMove(tMap* map) {
 			}
 			break;
 		case eClosing:
-			if (map->gates[i].frame!=46) {
+			if (map->gates[i].frame!=maxFrames) {
 				map->gates[i].frame++;
 			} else {
 				map->gates[i].action=eClose;
@@ -286,13 +290,13 @@ void  mapMove(tMap* map) {
 			break;
 		case eClosingFast:
 			map->gates[i].frame+=30;
-			if (map->gates[i].frame>46) {
+			if (map->gates[i].frame>maxFrames) {
 				map->gates[i].action=eClose;
-				map->gates[i].frame=46;
+				map->gates[i].frame=maxFrames;
 			}
 			break;
 		case eClose:
-			map->gates[i].frame=46;
+			map->gates[i].frame=maxFrames;
 			break;
 		case eOpen:
 			map->gates[i].frame=0;
