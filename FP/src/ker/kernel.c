@@ -31,6 +31,7 @@ resources.h: Princed Resources : Resource Handler headers
 */
 
 #include "kernel.h"
+#include "resources.h"
 
 int kernel(int optionflag,int level) {
 /* levels=-1 is default
@@ -38,7 +39,29 @@ int kernel(int optionflag,int level) {
  *  
  * optionflag may be read using hasFlag(name_flag); Note that the variable must be called optionflag
  */
+	
+	tData* testResource;
+	int i;
+			
 	printf("Hello, I'm a dummy kernel, I was called to do the stuff\nwith '%x' options and go to the level '%d'\n",optionflag,level);
+	testResource=resLoad(RES_ANIM_RUN_LEFT);	
+	
+	/* How to use a resource */
+	if (!testResource) {
+		printf("The resource couldn't be loaded!\n");
+		exit(1);
+	}
+
+	printf("Resource number: %d. Frames: %d. Type: %d.\n",
+		RES_ANIM_RUN_LEFT,
+		testResource->frames,
+		testResource->type
+	);
+	
+	for (i=0;i<testResource->frames;i++) {
+		//printf("frame %d: ",i);
+	}
+	
 	return 0;
 }
 
