@@ -76,16 +76,15 @@ void* mapLoadLevel(tMemory level) {
 	return (void*)map;
 }
 
-tRoom mapGetRoom(tData* map, tRoomId roomId) {
+tRoom mapGetRoom(tData* map, tRoomId roomAux) {
 	tRoom result;
-	tRoomId roomAux;
 
 	/* SET room id*/
-	result.id=roomId;
+	result.id=roomAux;
 	result.level=map->pFrames;
 	
 	/* SET room links */
-	memcpy(result.links,slevel(links)+((roomId-1)*4),4);
+	memcpy(result.links,slevel(links)+((roomAux-1)*4),4);
 	/* up corners */
 	roomAux=result.links[2];
 	if (roomAux) {
@@ -178,8 +177,8 @@ tRoom mapGetRoom(tData* map, tRoomId roomId) {
 		memcpy(result.fore+1,slevel(fore)+30*(roomAux-1)+20,10);
 		memcpy(result.back+1,slevel(back)+30*(roomAux-1)+20,10);
 	} else {
-		memcpy(result.fore+1,"aaaa aaaa ",10); /* TODO: use tiles */
-		memcpy(result.back+1,"aaaa aaaa ",10); /* TODO: use tiles */
+		memcpy(result.fore+1,"\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01",10); /* TODO: use tiles */
+		memcpy(result.back+1,"\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01",10); /* TODO: use tiles */
 	}
 
 	/* Bottom room */
@@ -187,17 +186,17 @@ tRoom mapGetRoom(tData* map, tRoomId roomId) {
 		memcpy(result.fore+49,slevel(fore)+30*(roomAux-1)+0,10);
 		memcpy(result.back+49,slevel(back)+30*(roomAux-1)+0,10);
 	} else {
-		memcpy(result.fore+49,"aaaa aaaa ",10); /* TODO: use tiles */
-		memcpy(result.back+49,"aaaa aaaa ",10); /* TODO: use tiles */
+		memcpy(result.fore+49,"\0\0\0\0\0\0\0\0\0\0",10); /* TODO: use tiles */
+		memcpy(result.back+49,"\0\0\0\0\0\0\0\0\0\0",10); /* TODO: use tiles */
 	}
 
 	/* Main room */
-	memcpy(result.fore+13,slevel(fore)+30*(roomAux-1)+0,10);
-	memcpy(result.back+13,slevel(back)+30*(roomAux-1)+0,10);
-	memcpy(result.fore+25,slevel(fore)+30*(roomAux-1)+10,10);
-	memcpy(result.back+25,slevel(back)+30*(roomAux-1)+10,10);
-	memcpy(result.fore+37,slevel(fore)+30*(roomAux-1)+20,10);
-	memcpy(result.back+37,slevel(back)+30*(roomAux-1)+20,10);
+	memcpy(result.fore+13,slevel(fore)+30*(result.id-1)+0,10);
+	memcpy(result.back+13,slevel(back)+30*(result.id-1)+0,10);
+	memcpy(result.fore+25,slevel(fore)+30*(result.id-1)+10,10);
+	memcpy(result.back+25,slevel(back)+30*(result.id-1)+10,10);
+	memcpy(result.fore+37,slevel(fore)+30*(result.id-1)+20,10);
+	memcpy(result.back+37,slevel(back)+30*(result.id-1)+20,10);
 
 /* This will save a screen map into data.
  * 
@@ -224,6 +223,7 @@ tRoom mapGetRoom(tData* map, tRoomId roomId) {
 void  mapStart(tData* map, tKid* kid, tRoomId *roomId) {
 	/* kid->x,y */
 	*roomId=slevel(start)[0];
+	printf("mapStart: binding kid to map in room %d\n",*roomId);
 	roomLoadGfx(RES_IMG_ENV_DUNGEON);
 }
 
