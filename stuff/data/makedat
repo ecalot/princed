@@ -36,7 +36,7 @@ fi
 
 #initializes output files
 number=$numberstart
-echo -n "Generating header and xml files            "
+echo -n "Generating header and xml files              "
 cp -f result/data.h result/data.h.bak 2>/dev/null >/dev/null
 echo -e "/* data.h: Auto generated file header for resources */\n">result/data.h
 cat xml/gen1.xml > xml/resources.xml
@@ -86,7 +86,7 @@ else
 	echo -e "$SOK"
 
 	#generate the dat file using the proceced indexes and the xml file
-	echo -n "Generating dat file                        "
+	echo -n "Generating dat file                          "
 	bin/pr --import=index --force --backup=bak --resource=xml/resources.xml result 2>/dev/null >/dev/null
 	FAIL=$?
 	if [ $FAIL == 0 ] ; then
