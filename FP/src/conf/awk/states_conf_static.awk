@@ -31,10 +31,12 @@
 BEGIN {
 	currentCondition=-1
 	currentAction=-1
-	printf("#define STATES_MOVETYPES_RELATIVE 0\n")
-	printf("#define STATES_MOVETYPES_ABSOLUTEFORWARD 1\n\n")
-	printf("#define STATES_MOVETYPES_RELATIVETURN 2\n\n")
+	printf("#define STATES_MOVETYPES_ABSOLUTEONSTART 0\n")
+	printf("#define STATES_MOVETYPES_ABSOLUTEONSTOP 1\n")
+	printf("#define STATES_MOVETYPES_RELATIVETURN 2\n")
+	printf("#define STATES_MOVETYPES_RELATIVE 3\n")
 	printf("#define STATES_CONDITIONS {\\\n")
+
 #mawg property validation
 #	tmp="conf/statesproperties.conf"
 #	while ((getline line < tmp) > 0) {

@@ -132,9 +132,12 @@ tKid kidCreate() {
 }
 
 void kidDraw(tKid kid) {
+	void* image=kidGfx.kid[kid.direction]->pFrames[stateGetImage(kid)-1];
+	/* TODO: move this -1 to each script frame */
+	printf("w=%d\n",outputGetWidth(image));
 	outputDrawBitmap(
-		kidGfx.kid[kid.direction]->pFrames[stateGetImage(kid)-1], /* TODO: move this -1 to each script frame */
-		(kid.location*32)/10,
+		image, 
+		((kid.location*32)/10)-((kid.direction==DIR_LEFT)?0:outputGetWidth(image)),
 		58+kid.floor*TILE_H
 	);
 }

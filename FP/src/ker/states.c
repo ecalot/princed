@@ -181,51 +181,46 @@ short stateUpdate(tKey* key, tKid* kid,tRoom* room) {
 		current->currentState=statesActionList[action].nextStateId;
 		printf("NEW STATE: action=%d next=%d\n",action,current->currentState);
 			/* Move the kid (turn+traslate) */
-		/* TODO: code absolutestepsforward and relativestepsforward*/
-	/*	switch(statesActionList[action].moveType) {
+		switch(statesActionList[action].moveType) {
 		case STATES_MOVETYPES_ABSOLUTEONSTART:
+			/* AbsoluteOnStart (x)
+			 * Moves the kid x step units from the first forward tile change
+			 * and starts the animation there
+			 */
+
+			/* 1) move current location to the left tileChange */
+			kid->location-=(kid->location%STATES_STEPS_PER_TILE);
+			/* 2) if looking right add one tile to reach the right tileChange
+			 * 3) if looking right add x, if looking left substract x */
+			if (kid->direction!=DIR_LEFT)
+				kid->location+=STATES_STEPS_PER_TILE+statesActionList[action].moveOffset;
+			else
+				kid->location-=statesActionList[action].moveOffset;
 			break;
 		case STATES_MOVETYPES_ABSOLUTEONSTOP:
+			/* AbsoluteOnStop (x)
+			 * Deletes frames (in the middle) to make sure that, at the end of the animation,
+			 * the kid had moved only x step units from the first forward tile change
+			 * if there is a lack of movements by frame it stops before reaching it.
+			 */
+
 			break;
 		case STATES_MOVETYPES_RELATIVETURN:
+			/* relative but turning */
+			kid->direction=(kid->direction==DIR_LEFT)?DIR_RIGHT:DIR_LEFT;
+			kid->location+=(kid->direction==DIR_LEFT)?
+				-statesActionList[action].moveOffset:
+				statesActionList[action].moveOffset;
 			break;
 		case STATES_MOVETYPES_RELATIVE:
+				kid->location+=(kid->direction==DIR_LEFT)?
+				-statesActionList[action].moveOffset:
+				statesActionList[action].moveOffset;
 			break;
-		}*/
-		if (kid->direction==DIR_LEFT) {
-			/*current->step=-current->step;*/
-			/*steps=-steps;*/
-			switch(statesActionList[action].moveType) {
-			case STATES_MOVETYPES_RELATIVE:
-				/*kid->location-=statesActionList[action].moveOffset;*/
-				break;
-			case STATES_MOVETYPES_ABSOLUTEFORWARD:
-				kid->location=kid->location-(kid->location%STATES_STEPS_PER_TILE);
-				break;
-			case STATES_MOVETYPES_RELATIVETURN:
-				/*kid->location-=statesActionList[action].moveOffset;*/
-				kid->direction=DIR_RIGHT;
-				break;
-			}
-		} else {
-			switch(statesActionList[action].moveType) {
-			case STATES_MOVETYPES_RELATIVE:
-				/*kid->location+=statesActionList[action].moveOffset;*/
-				break;
-			case STATES_MOVETYPES_ABSOLUTEFORWARD:
-				kid->location=STATES_STEPS_PER_TILE+kid->location-(kid->location%STATES_STEPS_PER_TILE);
-				break;
-			case STATES_MOVETYPES_RELATIVETURN:
-				/*kid->location+=statesActionList[action].moveOffset;*/
-				kid->direction=DIR_LEFT;
-				break;
-			}
 		}
-		current->acumLocation=kid->location;
 	}
-	/*current->acumLocation+=current->step;*/
-	steps=(kid->direction==DIR_LEFT)?steps:-steps;
-	kid->location+=steps; /*current->acumLocation;*/
+	
+	kid->location+=(kid->direction==DIR_LEFT)?-steps:steps;
 
 
 	{

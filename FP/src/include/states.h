@@ -10,7 +10,8 @@ typedef enum {esLast=0,esKeyUp,esKeyDown,esKeyForward,esKeyBack,esKeyShift,esMap
 
 								
 typedef enum {esDangerous,esNone,esWalk,esPotion,esSword,esMirror,esNotApplicable=0}tsTileType;
-typedef enum {esRelative,esForwardTile,esRelativeTurn}tsMoveType; /*  */
+/*typedef enum {esRelative,esForwardTile,esRelativeTurn}tsMoveType;   */
+typedef char tsMoveType;
 
 typedef struct {
 	tsConditionType type;

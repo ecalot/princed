@@ -246,7 +246,8 @@ int outputGetHeight(void* image)
 
 int outputGetWidth(void* image)
 {
-	return ((SDL_Surface*)image)->w;
+	register tSurface* img=(tSurface*)image;
+	return img->surface->w;
 }
 
 /* Finish all output modes, including the screen mode */
