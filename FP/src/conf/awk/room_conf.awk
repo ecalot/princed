@@ -28,6 +28,32 @@
 #  DO NOT remove this copyright notice
 #
 
+function replace() {
+	if (match(value,/[a-z]+[!=]=TILE[A-Z_0-9]+/)) {
+		r=RSTART
+		l=RLENGTH
+		head=substr(value,1,r-1)
+		tail=substr(value,r+l)
+		middle=substr(value,r,l)
+		if (match(middle,/==/)) {	
+			r=RSTART
+			l=RLENGTH
+			val1=substr(middle,1,r-1)
+			val2=substr(middle,r+l)
+			not=""
+		} else {
+			match(middle,/!=/)
+			r=RSTART
+			l=RLENGTH
+			val1=substr(middle,1,r-1)
+			val2=substr(middle,r+l)
+			not="!"
+		}
+		value=sprintf("%s%sisIn(%s,%s)%s", head, not, val1, val2, tail)
+	} else {
+		keep=0
+	}
+}
 
 /^[\t ]*XX .*/ {
 	if (inIf) printf("}\n");
@@ -38,7 +64,10 @@
 /^[\t ]*cond / {
 	if (inIf) printf("}\\\n");
 	$1=""
-	printf("if (%s) {\\\n",$0)
+	value=$0
+	keep=1
+	while (keep) replace()
+	printf("if (%s) {\\\n",value)
 	inIf=1
 }
 
@@ -47,10 +76,12 @@
 	x=$2
 	y=$3
 	$1=$2=$3=""
-	r=$0
+	value=$0
+	keep=1
+	while (keep) replace()
 	comma=","
 	if ($0~/^[\t ]*$/) comma=""
-	printf("%s((x)+(%s),(y)+(%s)%s%s);\\\n",f,x,y,comma,r);
+	printf("%s((x)+(%s),(y)+(%s)%s%s);\\\n",f,x,y,comma,value);
 }
 
 END {
