@@ -171,43 +171,55 @@ tData* resLoad(long id) {
 			int invert=((mask&(RES_MODS_INVERT))==(RES_MODS_INVERT));
 
 			result=(tData*)malloc(sizeof(tData));
-			result->frames=total-2; /* drop filename and palette */
 			result->type=eImages;
-			result->pFrames=(void**)malloc(result->frames*sizeof(void*));
 
 			if (!mReadBeginDatFile(&numberOfItems,res_file[res_list[from]])) {
 				printf("Fatal Error: resLoad: level file not found!\n");
 				return NULL;
 			}
 
-			if(!res_getDataById(res_list[from+1],numberOfItems,&palette)) {
-				printf("Fatal Error: resLoad: palette not found!\n");
-				return NULL;
-			}
-
-			if (palette.size!=100) {
-      	printf("Fatal error: resLoad: invalid palette\n");
-        return NULL;
-      }
 			if (mask&RES_MODS_BW) { /* if black and white */
 				/* this palette is white, red, green, blue */
 				static const char bwpalettes[]=BW_COLORS;
 				static char       bwpalette[]={0,0,0,0,0,0};
- 		    memcpy(bwpalette,bwpalettes+3*((mask>>5)&3),3);
+ 		    memcpy(bwpalette+3,bwpalettes+3*((mask>>5)&3),3);
 	      pal.colors=2;
 				pal.color=(tColor*)bwpalette;
+				result->frames=total-1; /* drop filename */
+				fprintf(stderr,"Loading a BW image with palette %d-%d-%d,%d-%d-%d color=%d\n",
+												bwpalette[0],
+												bwpalette[1],
+												bwpalette[2],
+												bwpalette[3],
+												bwpalette[4],
+												bwpalette[5],
+												((mask>>5)&3)
+												);
 			} else {
-	      pal.colors=16;
- 		    pal.color=(tColor*)(palette.array+5);
+				from++;
+				if(!res_getDataById(res_list[from],numberOfItems,&palette)) {
+					printf("Fatal Error: resLoad: palette not found!\n");
+					return NULL;
+				}
+				if (palette.size!=100) {
+     			printf("Fatal error: resLoad: invalid palette\n");
+					return NULL;
+				}
+				pal.colors=16;
+				pal.color=(tColor*)(palette.array+5);
+				result->frames=total-2; /* drop filename and palette */
 			}
+			from++;
+			result->pFrames=(void**)malloc(result->frames*sizeof(void*));
 			for (total=0;total<result->frames;total++) {
-				if(!res_getDataById(res_list[from+2+total],numberOfItems,&raw)) {
+				if(!res_getDataById(res_list[from+total],numberOfItems,&raw)) {
 					printf("Fatal Error: resLoad: image not found!\n");
 					return NULL;
 				}
 
 				/* get the offsets to move the image */
-				getOffsets(&down,&left,&right,from,has_D,has_L,has_R,result->frames,total);
+				if (pal.colors==16) /* available only for 16 colors images */
+				getOffsets(&down,&left,&right,from+2,has_D,has_L,has_R,result->frames,total);
 				
 				/* expand raw image into an image structure */
 				mExpandGraphic(raw.array,&image,raw.size);

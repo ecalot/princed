@@ -41,6 +41,7 @@ room.c: FreePrince : Room and Tile Object
 static struct {
 	tData* torch;
 	tData* environment;
+	tData* potionAnim;
 } roomGfx;
 
 void roomLoadGfx(long environment) {
@@ -50,12 +51,16 @@ void roomLoadGfx(long environment) {
 	roomGfx.environment=resLoad(environment);
 	if (roomGfx.torch==NULL) {
 		roomGfx.torch=resLoad(RES_ANIM_TORCH);
+		roomGfx.potionAnim=resLoad(RES_ANIM_POTION|RES_MODS_BW|RES_MODS_RED);
 	}
 }
 
 void roomFree() {
 	if (roomGfx.environment) resFree(roomGfx.environment);
-	if (roomGfx.torch) resFree(roomGfx.torch);
+	if (roomGfx.torch) {
+		resFree(roomGfx.torch);
+		resFree(roomGfx.potionAnim);
+	}
 	roomGfx.torch=(roomGfx.environment=NULL);
 }
 
@@ -387,8 +392,9 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	/* torch/this */
 	if (tile.hasTorch) { /* animation */
 		outputDrawBitmap(
-			roomGfx.torch->pFrames[
-				(((tMap*)(room->level))->time+2*x+y)%(roomGfx.torch->frames)
+			roomGfx.potionAnim->pFrames[
+				/*(((tMap*)(room->level))->time+2*x+y)%(roomGfx.torch->frames)*/
+				(((tMap*)(room->level))->time+2*x+y)%(roomGfx.potionAnim->frames)
 			],
 			x*TILE_W+11,
 			y*TILE_H-39
