@@ -131,7 +131,7 @@ printf("ttest\n");
 				printf("Fatal Error: resLoad: palette not found!\n");
 				return NULL;
 			}
-			printf("hola %d\n",palette.size);
+			printf("hola %d\n",(long)palette.size);
 			if (palette.size!=100) {
       	printf("Fatal error: resLoad: invalid palette\n");
         return NULL;
