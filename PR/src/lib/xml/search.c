@@ -40,8 +40,8 @@ xmlsearch.c: Princed Resources : specific xml handling functions
 #include "xml.h"
 #include "resources.h"
 #include "xmlsearch.h"
+#include "memory.h"
 #include <string.h>
-#include <stdlib.h>
 
 /****************************************************************\
 |                   Tag Tree Searching Functions                 |
@@ -150,3 +150,72 @@ void workTree(const tTag* t,const char* datFile, tResource* r[]) {
 	}
 }
 
+void getFiles(const tTag* t) {
+	/*
+		Runs addFileToList for all tags
+	*/
+	tTag* children;
+
+	if (t!=NULL) {
+		if (t->file!=NULL)
+			addFileToList(t->file);
+		children=t->child;
+
+		while (children!=NULL) {
+			getFiles(children);
+			children=children->next;
+		}
+	}
+}
+
+/****************************************************************\
+|                       File List Primitives                     |
+\****************************************************************/
+
+static tListNode* list=NULL;
+
+void addFileToList(const char* file) {
+	/*
+		Adds the file to the list only once
+	*/
+	tListNode* node=list;
+	tListNode* old=NULL;
+	//Verify if the file exists
+	while (node) {
+		if (equalsIgnoreCase(node->file,file)) //If file was in the list, do nothing
+			return;
+		old=node;
+		node=node->next;
+	}
+	//Add new node
+	node=(tListNode*)malloc(sizeof(tListNode));
+
+	if (old!=NULL) {
+		old->next=node;
+	} else {
+		list=node;
+	}
+	node->file=strallocandcopy(file);
+	node->next=NULL;
+}
+
+char* getFileFromList() {
+	/*
+		Returns and removes one random file from the list
+	*/
+	char* result;
+	tListNode* aux;
+	if (list) {
+		//Remember node values
+		aux=list;
+		result=list->file;
+		//move one position
+		list=list->next;
+		//free node
+		free(aux);
+		return result;
+	} else {
+		return NULL;
+	}
+	return result;
+}

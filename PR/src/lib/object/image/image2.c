@@ -56,13 +56,13 @@ int transpose(int x,int n,int m) {
 
 //B3 and B4 expansion algorithm sub function
 unsigned char popBit(unsigned char *byte) {
-  unsigned char bit=(*byte)&1;
+  unsigned char bit=(unsigned char)((*byte)&1);
   (*byte)>>=1;
   return bit;
 }
 
 //Expands B3/B4 algorithm
-void expandLzx(char* array,tImage* img, int *i,int cursor, int virtualSize) {
+void expandLzx(unsigned /* note: if error remove signed */char* array,tImage* img, int *i,int cursor, int virtualSize) {
 	char k;
 	int pos,h;
 	unsigned char maskbyte,rep;
@@ -75,7 +75,7 @@ void expandLzx(char* array,tImage* img, int *i,int cursor, int virtualSize) {
 				(*img).pix[cursor]=array[*i];(*i)++;cursor++;
 			} else {
 				pos=66+((0x100)*((rep=array[*i])&3))+(unsigned char)array[(*i)+1];(*i)+=2;
-				rep=(rep>>2)+3;
+				rep=(unsigned char)((rep>>2)+3);
 				while (rep--) { //Be careful in big images
 					h=cursor/MAX_MXD_SIZE_IN_LZX-(pos%MAX_MXD_SIZE_IN_LZX>cursor%MAX_MXD_SIZE_IN_LZX);
 					(*img).pix[cursor]=(*img).pix[((h<0)?0:h)*MAX_MXD_SIZE_IN_LZX+pos%MAX_MXD_SIZE_IN_LZX];cursor++;pos++;
@@ -88,14 +88,14 @@ void expandLzx(char* array,tImage* img, int *i,int cursor, int virtualSize) {
 //Compress B1/B2 algorithm
 void compressRle(unsigned char* data,tImage* img,int *dataSize) {
 	//Declare pointers
-  char* cursorData  = data;
-  char* counter;
-  char* cursorPix   = (*img).pix;
-  char* imgEnd      = (*img).pix+(*dataSize);
+	unsigned char* cursorData  = data;
+	char*          counter;
+	unsigned char* cursorPix   = (*img).pix;
+	unsigned char* imgEnd      = (*img).pix+(*dataSize);
 
-  while (cursorPix<imgEnd) {
+	while (cursorPix<imgEnd) {
 		//Step 1: Create counter
-		*(counter=(cursorData++))=-1;
+		*(counter=(char*)(cursorData++))=-1;
 
 		//Step 2: Look and copy the string until a repeated byte is found
 		while (
@@ -134,7 +134,7 @@ void compressRle(unsigned char* data,tImage* img,int *dataSize) {
 }
 
 //Expands an array into an image
-int mExpandGraphic(char* array,tImage *image, int virtualSize) {
+int mExpandGraphic(unsigned char* array,tImage *image, int virtualSize) {
 	/*
 		Reads array and extracts tImage
 		returns the next image address or -1 in case of error
@@ -173,7 +173,7 @@ int mExpandGraphic(char* array,tImage *image, int virtualSize) {
 					i+=2;
 				} else {
 					//Positive
-					char cx=array[i++]+1;
+					signed char cx=(signed char)(array[i++]+1);
 					while (cx--) (*image).pix[(cursor++)]=array[i++];
 				}
 			}
@@ -187,7 +187,7 @@ int mExpandGraphic(char* array,tImage *image, int virtualSize) {
 					i+=2;
 				} else {
 					//Positive
-					char cx=array[i++]+1;
+					signed char cx=(signed char)(array[i++]+1);
 					while (cx--) (*image).pix[transpose(cursor++,(*image).width,(*image).height)]=array[i++];
 				}
 			}

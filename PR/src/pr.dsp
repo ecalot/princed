@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "include\\" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /FR /YX /c
+# ADD CPP /nologo /W2 /GX /O2 /I "include\\" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /FR /YX /c
 # ADD BASE RSC /l 0x2c0a /d "NDEBUG"
 # ADD RSC /l 0x2c0a /d "NDEBUG"
 BSC32=bscmake.exe
@@ -71,7 +71,7 @@ PostBuild_Cmds=del winbins\pr.exe	copy bin\pr.exe winbins\pr.exe >nul	scripts\up
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "include\\" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FR /YX /FD /GZ /c
+# ADD CPP /nologo /W4 /Gm /GX /ZI /Od /I "include\\" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FR /YX /FD /GZ /c
 # ADD BASE RSC /l 0x2c0a /d "_DEBUG"
 # ADD RSC /l 0x2c0a /d "_DEBUG"
 BSC32=bscmake.exe
@@ -227,7 +227,7 @@ DEP_CPP_WAV_C=\
 
 SOURCE=.\ports\dirent.c
 DEP_CPP_DIREN=\
-	".\include\dirent.h"\
+	".\include\direntwin.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -317,9 +317,10 @@ DEP_CPP_COMPR=\
 
 SOURCE=.\disk.c
 DEP_CPP_DISK_=\
-	".\include\dirent.h"\
+	".\include\direntwin.h"\
 	".\include\disk.h"\
 	".\include\pr.h"\
+	".\include\xml.h"\
 	
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
@@ -346,6 +347,19 @@ DEP_CPP_EXTRA=\
 	".\include\resources.h"\
 	".\include\wav.h"\
 	
+
+!IF  "$(CFG)" == "tasks - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "tasks - Win32 Dynamic Link Library"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\memory.c
 
 !IF  "$(CFG)" == "tasks - Win32 Release"
 
@@ -486,7 +500,7 @@ SOURCE=.\include\wav.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\include\dirent.h
+SOURCE=.\include\direntwin.h
 # End Source File
 # Begin Source File
 

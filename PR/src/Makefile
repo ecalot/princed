@@ -1,10 +1,10 @@
-bin/pr: compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o prlib.o
+bin/pr: compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o prlib.o memory.o
 	
 	@echo Linking files...
 	@mkdir -p bin
-	@gcc -o bin/pr compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o -s -O2
+	@gcc -o bin/pr compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o memory.o -s -O2
 	@echo Making dynamic library...
-	@gcc -o bin/pr.so compile.o compress.o extract.o prlib.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o -O2 -Llibc -shared -dynamic
+	@gcc -o bin/pr.so compile.o compress.o extract.o prlib.o resources.o tasks.o disk.o xml.o xmlsearch.o bmp.o mid.o pal.o wav.o plv.o memory.o -O2 -Llibc -shared -dynamic
 	@echo Program successfully compiled
 	@echo
 	@echo Please read readme.txt for syntax information
@@ -13,6 +13,10 @@ bin/pr: compile.o compress.o extract.o pr.o resources.o tasks.o disk.o xml.o xml
 compile.o: compile.c
 	@echo Compiling import module...
 	@gcc -c compile.c -Iinclude/
+
+memory.o: memory.c
+	@echo Compiling memory manager...
+	@gcc -c memory.c -Iinclude/
 
 extract.o: extract.c
 	@echo Compiling export module...

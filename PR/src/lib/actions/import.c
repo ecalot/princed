@@ -47,7 +47,7 @@ compile.c: Princed Resources : DAT Compiler
 #include "pr.h"
 
 /***************************************************************\
-|                  Dat compiling primitives                     |
+|                     Dat compiling primitives                  |
 \***************************************************************/
 
 char mBeginDatFile(FILE* *fp,const char* vFile) {
@@ -64,7 +64,7 @@ char mBeginDatFile(FILE* *fp,const char* vFile) {
 	}
 }
 
-void mAddFileToDatFile(FILE* fp, char* data, int size) {
+void mAddFileToDatFile(FILE* fp, unsigned char* data, int size) {
 	/*
 		Adds a data resource to a dat file keeping
 		abstratly the checksum verifications
@@ -118,7 +118,7 @@ void mSetEndFile(FILE* fp, tResource* r[]) {
 }
 
 //Format detection function (private function, not in header file)
-char mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
+int mAddCompiledFileToDatFile(FILE* fp,unsigned char** data, tResource *res) {
 	//return 1 if ok, 0 if error
 	switch (res->type) {
 		case 1: //compile levels
@@ -170,9 +170,9 @@ int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int opt, 
 	for (;i!=MAX_RES_COUNT;i++) {
 		if (r[i]!=NULL) {
 			if (opt&raw_flag) r[i]->type=0; //compile from raw
-			getFileName(vFileext,vDirExt,r[i],i,vDatFileName);
+			getFileName(vFileext,vDirExt,r[i],i,vFiledat,vDatFileName);
 			//the file is in the archive, so I'll add it to the main dat body
-			if (r[i]->size=mLoadFileArray(vFileext,&data)) {
+			if (r[i]->size=(unsigned short)mLoadFileArray(vFileext,&data)) {
 				r[i]->offset=(unsigned short)ftell(fp);
 				if (!mAddCompiledFileToDatFile(fp,&data,r[i])) {
 					if (opt&verbose_flag) printf("'%s' has errors, skipped\n",getFileNameFromPath(vFileext));
@@ -182,12 +182,13 @@ int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int opt, 
 				}
 				free(data);
 			} else {
-				if (opt&verbose_flag) printf("'%s' not open, skipped\n",getFileNameFromPath(vFileext));
+				if (opt&verbose_flag) printf("'%s' not open, skipped\n",/*getFileNameFromPath(*/vFileext/*)*/);
 				ok++;
 			}
 		}
 	}
 	mSetEndFile(fp,r);
+	//TODO: if file size if 8, then erase it
 	if (opt&verbose_flag) printf("Compilation done\n");
 	return ok;
 }

@@ -39,6 +39,7 @@ disk.c: Princed Resources : Disk Access & File handling functions
 #include <string.h>
 #include "pr.h"
 #include "disk.h"
+#include "xml.h" /* equalsIgnoreCase */
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -48,7 +49,7 @@ disk.c: Princed Resources : Disk Access & File handling functions
 	#include <dirent.h>
 #else
 	#include <direct.h>
-	#include "dirent.h"
+	#include "direntwin.h"
 	#define defmkdir(a) mkdir (a)
 #endif
 
@@ -179,7 +180,7 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 		//get file size
 		fseek(fp,0,SEEK_END);
 		aux=ftell(fp);
-		if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(char*)malloc(sizeof(char)*aux))==NULL) ) ) {
+		if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(unsigned char*)malloc(sizeof(char)*aux))==NULL) ) ) {
 			//if the file was null or bigger than the max size or couldn't allocate the file in memory
 			fclose(fp);
 			return 0;
@@ -261,18 +262,18 @@ const char* getFileNameFromPath(const char* path) {
 	return path;
 }
 
-int isDir(const char *path) {
+whatIs isDir(const char *path) {
 	/*
 		1 if nombre is a directory
 		0 if nombre isn't a directory or doesn't exist
 	*/
 	struct stat buf;
 
-	if(stat(path,&buf)==-1) return 0;
-	return (S_IFDIR&buf.st_mode);
+	if(stat(path,&buf)==-1) return eNotFound;
+	return (S_IFDIR&buf.st_mode)?eDirectory:eFile;
 }
 
-int recurseDirectory(const char* path,int* pOption, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor,FILE* output) {
+int recurseDirectory(const char* path,int* pOption, const char* extension,const char* dirName,const char* resFile, const char* datfilename,const char* datAuthor,FILE* output) {
 	/*
 		Searchs for all .dat files in the directory
 		if recursive flag is set searchs over the dubdirectories
@@ -318,14 +319,14 @@ int recurseDirectory(const char* path,int* pOption, const char* extension,const 
 				if recursive path is not a directory and is a dat file, do prMain
 				if recursive path is not a directory and is not a dat file, ignore
 			*/
-			if (isDir(recursive)) {
+			if (isDir(recursive)==eDirectory) {
 				if (optionflag&recursive_flag) { //Only recurse if recursive flag is set
-					recurseDirectory(recursive,pOption,extension,dirName,resFile,datfile,datfilename,datAuthor,output);
+					recurseDirectory(recursive,pOption,extension,dirName,resFile,datfilename,datAuthor,output);
 				}
 			} else {
 				char aux[]=".dat";
 				if (sizeOfFile>4) {
-					if (!strcmp(aux,directoryStructure->d_name+sizeOfFile-4)) {
+					if (equalsIgnoreCase(aux,directoryStructure->d_name+sizeOfFile-4)) {
 						prMain(pOption,extension,dirName,resFile,recursive,directoryStructure->d_name,datAuthor,output);
 					}
 				}
