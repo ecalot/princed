@@ -64,9 +64,23 @@
  *             Advance input pointer by 1.
  */
 
-#include <string.h>  /* memchr() */
 #include <stdio.h>
 #include "lzg_compress.h"
+
+/*#define LZG_REVERSE*/
+
+#ifdef LZG_REVERSE
+void *memrchr2(unsigned char *s, int c, size_t n) {
+	while (n--) {
+		if (s[n]==c) return s+n;
+	}
+	return NULL;
+}
+#define memsearch(a,b,c) memrchr2(a,b,c)
+#else
+#include <string.h>  /* memchr() */
+#define memsearch(a,b,c) memchr(a,b,c)
+#endif
 
 /* Window size */
 #define WIN_SIZE 1024
@@ -88,7 +102,7 @@ void search_best_pattern(unsigned char *input, int inputSize,
 
 	*best_pattern_len = 0;
 
-	while ((pattern = (unsigned char *)memchr(window, *input, window_len)))
+	while ((pattern = (unsigned char *)memsearch(window, *input, window_len)))
 	{
 		unsigned char *ic = input + 1;
 		unsigned char *wc = pattern + 1;
@@ -98,10 +112,10 @@ void search_best_pattern(unsigned char *input, int inputSize,
 		        (*ic == *wc) &&
 				pattern_len < MAX_PATTERN_SIZE)
 		{
-			ic++; wc++; pattern_len++;
+			ic++; wc++; pattern_len++; /* increase until the pattern is different */
 		}
 
-		if (pattern_len > *best_pattern_len)
+		if (pattern_len > *best_pattern_len) /* if it is the maximum, save it */
 		{
 			*best_pattern_len = pattern_len;
 			*best_pattern = pattern;
@@ -138,7 +152,7 @@ printf("maskbyte i=%d\n", *outputPos - 1);
 	}
 
 	**maskByte >>= 1;
-	**maskByte += b << 7;
+	**maskByte += b << 7; /* TODO: |= */
 	(*maskBit)++;
 }
 
