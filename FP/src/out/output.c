@@ -65,7 +65,7 @@ void* outputLoadBitmap(unsigned char* data, int size, unsigned char* palette, in
 	printf("outputLoadBitmap: invert=%d. transparent=%d. size=%d\n",invert,firstColorTransparent,size);
 
 	for (i=0;i<16;i++) {
-		printf("rgb[%d]=(%d,%d,%d) #%02x%02x%02x\n",i+1,palette[3*i],palette[3*i+1],palette[3*i+2],palette[3*i],palette[3*i+1],palette[3*i+2]);
+		printf("rgb[%d]=(%d,%d,%d) #%02x%02x%02x\n",i+1,palette[3*i],palette[3*i+1],palette[3*i+2],palette[3*i]<<2,palette[3*i+1]<<2,palette[3*i+2]<<2);
 	}
 
 	/* Notes:
