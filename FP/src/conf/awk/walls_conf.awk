@@ -145,7 +145,7 @@ function additem(base) {
 # Calculate bits         #
 ##########################
 
-func getbits(k) {
+function getbits(k) {
 	i=0
 	for (;k;i++) k=(k-k%2)/2
 	return i
