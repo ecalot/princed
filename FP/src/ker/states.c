@@ -50,54 +50,71 @@ tState createState(int level) {
 /* private functions */
 
 /* Evaluates a condition indexed in the condition table */
+#define DefaultTrue(pointer) if (pointer) return STATES_CONDRESULT_TRUE
+#define DefaultFalse(pointer) if (pointer) return STATES_CONDRESULT_TRUE
 int evaluateCondition(int condition,tKey* key, tKid* kid, tRoom* room) {
 	tsCondition c=statesConditionList[condition];
-	int thisTile=kid->location/STATES_STEPS_PER_TILE+1+12*kid->floor;
-	int whereInTile=(kid->direction==DIR_LEFT)?(kid->location%STATES_STEPS_PER_TILE):STATES_STEPS_PER_TILE-(kid->location%STATES_STEPS_PER_TILE);
+#define thisTile (kid->location/STATES_STEPS_PER_TILE+1+12*kid->floor)
+#define whereInTile ((kid->direction==DIR_LEFT)?(kid->location%STATES_STEPS_PER_TILE):STATES_STEPS_PER_TILE-(kid->location%STATES_STEPS_PER_TILE))
 	switch(c.type) {
 	case esKeyUp:
+		DefaultFalse(key);
 		return inputGetUp(key->status)? /* TODO: argument notPressed isn't supported */
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esKeyDown:
+		DefaultFalse(key);
 		return inputGetDown(key->status)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esKeyForward:
+		DefaultFalse(key);
 		return ((kid->direction==DIR_LEFT)?inputGetLeft(key->status):inputGetRight(key->status))?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esKeyBack:
+		DefaultFalse(key);
 		return ((kid->direction==DIR_LEFT)?inputGetRight(key->status):inputGetLeft(key->status))?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esKeyShift:
+		DefaultFalse(key);
 		return inputGetShift(key->status)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esMapUp:
+		DefaultFalse(room);
 		return isInGroup(room->fore[thisTile-12],c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esMapDown:
+		DefaultFalse(room);
 		return isInGroup(room->fore[thisTile+12],c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esMapForward:
+		DefaultFalse(room);
 		return isInGroup(room->fore[thisTile+((kid->direction==DIR_LEFT)?-1:1)],c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esMapBack:
+		DefaultFalse(room);
 		return isInGroup(room->fore[thisTile+((kid->direction==DIR_LEFT)?1:-1)],c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esMapOn:
+		DefaultFalse(room);
 		return isInGroup(room->fore[thisTile],c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esForwardTileNearerThan:
+		DefaultFalse(kid);
 		return (whereInTile<c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esForwardTileFartherThan:
+		DefaultFalse(kid);
 		return (whereInTile>c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esInScreen:
+		DefaultFalse(room);
 		return (room->id==c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esInLevel:
+		DefaultFalse(room);
 		return (room->level->levelNumber==c.argument)?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
 	case esForwardChangeToScreen:
+		DefaultFalse(kid);
 		return ((kid->direction==DIR_LEFT)&&(thisTile==1))
 			||((kid->direction==DIR_RIGHT)&&(thisTile==10))?
 			STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE;
