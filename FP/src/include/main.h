@@ -21,8 +21,8 @@
 /*
 resources.h: Princed Resources : Resource Handler headers
 ¯¯¯¯¯¯¯¯¯¯¯
- Copyright 2003 Princed Development Team
-  Created: 24 Mar 2004
+ Copyright 2003, 2004 Princed Development Team
+  Created: 16 Jun 2004
 
   Author: Endfhgfhgfhg <efghgfdht.cod@princed.com.ar>
 
@@ -33,6 +33,30 @@ resources.h: Princed Resources : Resource Handler headers
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
+/***************************************************************\
+|                   Command Line specific options               |
+\***************************************************************/
 
+#define PARSING_OPTIONS {\
+{"menu",        no_argument,       0,'m'},\
+{"megahit",     no_argument,       0,'t'},\
+{"version",     no_argument,       0,1},\
+{"help",        no_argument,       0,'?'},\
+{"level",   required_argument,     0,'l'},\
+{0, 0, 0, 0}\
+}
+/*
+{"export",      optional_argument, 0,'x'},\
+{"backup",      optional_argument, 0,'b'},\
+{"force",       no_argument,       0,'f'},\
+{"cgi",         no_argument,       0,'g'},\
+{"resource",    required_argument, 0,'s'}\
+{"recursive",   no_argument,       0,'R'},\
+{"datfile",     required_argument, 0,'t'},\
+{"unknown",     no_argument,       0,2},\
+{"verbose",     no_argument,       0,'v'},\
+*/
+
+#define PARSING_CHARS    "mtl::?"
 
 #endif
