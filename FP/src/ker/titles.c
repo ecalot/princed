@@ -50,30 +50,29 @@ typedef struct {
 
 /* New source */
 tMenuOption playAnimation(int id) {
-	int qf,qt,qo,i;
-	animFixedimg* f;
-	animState* t;
-	animSound* o;
-	titleFixedimg* fa;
-	tObject* ta;
-	animSound* oa;
+	/* Declare variables */
+	int qf,            qt,              qo,                 i;
+	animFixedimg*  f;  animState* t;    animSound* o;
+	titleFixedimg* fa; tObject*   ta; /*animSound* oa;*/
+	int activef=0;     int activet=0; /*int activeo=0;*/
+	int totalf,        totalt,          totalo;
+	
 	tKey key=inputCreateKey();
 	tKey nullKey=inputCreateKey();
-	int activef=0;
-	int activet=0;
-	/*int activeo=0;*/
-	int totalf,totalt,totalo;
-	tObject* object;
-	
+
+	/* Initialize animation and allocate memory */
 	animStart(id,&totalf,&totalt,&totalo);
 	fa=(titleFixedimg*)malloc(totalf*sizeof(titleFixedimg));
 	ta=(tObject*)malloc(totalt*sizeof(tObject));
-	oa=(animSound*)malloc(totalo*sizeof(animSound));
-	
+	/*oa=(animSound*)malloc(totalo*sizeof(animSound));*/
+
+	/* main animation kernel loop */
 	while (animGetFrame(&qf,&qt,&qo,f,t,o)) {
-		if (inputGetEvent(&key)) {
+		printf("f%d t%d o%d ",qf,qt,qo);
+		if (!inputGetEvent(&key)) {
 			/* key pressed */
 			printf("key pressed\n");
+			return menuQuit;
 		} else {
 			/* create new images/objects/sounds */
 			for (i=0;i<qf;i++) { /*images*/
@@ -104,7 +103,7 @@ tMenuOption playAnimation(int id) {
 			for (i=0;i<activet;i++) {
 				/*TODO: detect exits */
 	  		objectMove(ta+i,nullKey,NULL);
-	  		/*objectDraw(ta+i);*/
+	  		objectDraw(ta[i]);
 			}
 			/* The top layer */
 			for (i=0;i<activef;i++) {
@@ -115,11 +114,13 @@ tMenuOption playAnimation(int id) {
 
 			/* exited states and caducied backgrounds destruction */
 			for (i=0;i<activef;i++) {
+				printf("checking img=%d duration=%d\n",i,fa[i].duration);
 				if (fa[i].duration) { /* if not 0 (infinite) */
 					fa[i].duration--;
 					if (!fa[i].duration) { /* time is over for this images */
 						activef--;
 						resFree(fa[i].img);
+						printf("salio %d\n",i);
 						fa[i]=fa[activef];
 					}
 				}
@@ -127,8 +128,10 @@ tMenuOption playAnimation(int id) {
 		}
 	}
 	/*void objectDraw(tObject kid);*/
-	for (i=0;i<activef;i++) objectFree(object[i]);
-	free(object);
+	for (i=0;i<activef;i++) objectFree(ta[i]);
+	free(fa);
+	free(ta);
+	/*free(oa);*/
 	return menuQuit;
 }
 
@@ -171,7 +174,14 @@ tMenuOption showTitles() {
  * returns 1 if the user has selected to load a saved game 
  * returns 2 if the user has selected to start the game
  */
-
+/*#define testing*/
+#ifdef testing
+	printf("Starting animation testing\n");
+				
+	playAnimation(ANIMS_ID_PRESENTATION);
+	printf("Finishing animation testing\n");
+	return menuQuit;
+#else
 	tData *main_title;
 	/*tData *main_text;*/
 	tMenuOption result;
@@ -229,5 +239,6 @@ tMenuOption showTitles() {
 	} while (result==menuNone);
 
 	goodBye;
+#endif
 }	
 

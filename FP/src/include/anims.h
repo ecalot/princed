@@ -41,8 +41,8 @@ anims.h: FreePrince : Animation functions
 typedef struct {
 	unsigned short frame;
 	unsigned long res;
-	unsigned char layer;
 	unsigned short duration;
+	unsigned char layer;
 	unsigned short x;
 	unsigned short y;
 } animFixedimg;

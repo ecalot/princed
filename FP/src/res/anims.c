@@ -72,19 +72,21 @@ int animGetFrame(int* qf,int* qt,int* qo, animFixedimg* f,animState* t, animSoun
 	while (rec.fixedimgSize&&fixedimg[rec.fixedimgStart].frame==frame) {
 		rec.fixedimgSize--;
 		rec.fixedimgStart++;
-		*qf++;
+		(*qf)++;
+		printf("entro %d\n",*qf);
 	}
 	while (rec.stateSize&&state[rec.stateStart].frame==frame) {
 		rec.stateSize--;
 		rec.stateStart++;
-		*qf++;
+		(*qf)++;
 	}
 	while (rec.soundSize&&sound[rec.soundStart].frame==frame) {
 		rec.soundSize--;
 		rec.soundStart++;
-		*qf++;
+		(*qf)++;
 	}
 	frame++;
+	printf("frame=%d\n",frame);
 	return frame!=rec.animSize;
 }
 

@@ -62,7 +62,11 @@ BEGIN {
 	if (toupper($4)=="INFINITE") $4=0
 	f["duration" totalfixedimg]=$4/1
 	f["layer" totalfixedimg]=toupper($5)
+	if (tolower($6)=="right") $6=320 #here will be the screen width size
+	if (tolower($6)=="left") $6=0
 	f["x" totalfixedimg]=$6/1
+	if (tolower($7)=="bottom") $7=200 #here will be the screen height size
+	if (tolower($7)=="top") $7=0
 	f["y" totalfixedimg]=$7/1
 	animation["sizef" animcount]++
 	halt
@@ -81,6 +85,7 @@ BEGIN {
 	if ($6=="up") $6=1
 	if ($6=="middle") $6=2
 	if ($6=="center") $6=2
+	if ($6=="centre") $6=2
 	if ($6=="down") $6=3
 	t["floor" totalstate]=$6/1
 	if ($7=="no") $7=0
@@ -130,7 +135,7 @@ END {
 	coma=""
 	printf("#define ANIMS_FIXEDIMG {")
 	for (i=1;i<=totalfixedimg;i++) {
-		printf("%s\\\n\t{/*frame*/ (unsigned short)%d,/*res*/ (unsigned long)RES_%s, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_%s, /*x,y*/ (unsigned short)%d,(unsigned short)%d}",coma,f["frame" i],f["res" i],f["layer" i],f["x" i],f["y" i])
+		printf("%s\\\n\t{/*frame*/ (unsigned short)%d,/*res*/ (unsigned long)RES_%s, /*duration*/ %d, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_%s, /*x,y*/ (unsigned short)%d,(unsigned short)%d}",coma,f["frame" i],f["res" i],f["duration" i],f["layer" i],f["x" i],f["y" i])
 		coma=","
 	}
 	printf("\\\n}\n\n")
