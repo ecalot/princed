@@ -5,3 +5,6 @@ res_conf_mods.h
 res_conf_resources.h
 states_conf_static.h
 states_conf_properties.h
+tiles_conf_types.h
+tiles_conf_groups.h
+
