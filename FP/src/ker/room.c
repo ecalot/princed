@@ -392,9 +392,8 @@ void drawBackPanel(tRoom* room,int x, int y) {
 	/* torch/this */
 	if (tile.hasTorch) { /* animation */
 		outputDrawBitmap(
-			roomGfx.potionAnim->pFrames[
-				/*(((tMap*)(room->level))->time+2*x+y)%(roomGfx.torch->frames)*/
-				(((tMap*)(room->level))->time+2*x+y)%(roomGfx.potionAnim->frames)
+			roomGfx.torch->pFrames[
+				((room->level->time)+2*x+y)%(roomGfx.torch->frames)
 			],
 			x*TILE_W+11,
 			y*TILE_H-39
