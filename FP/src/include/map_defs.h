@@ -89,38 +89,8 @@ Len	Offs	BlockName & Description
 #define MAPS_sLeft		0
 #define MAPS_sRight		1
 
-#define T_EMPTY 0x00           /* 00000 free    */
-#define T_FLOOR 0x01           /* 00001 free    */
-#define T_SPIKES 0x02          /* 00010 spike   */
-#define T_PILLAR 0x03          /* 00011 none    */
-#define T_GATE 0x04            /* 00100 gate    */
-#define T_BTN_STUCK 0x05       /* 00101 none    */
-#define T_BTN_DROP 0x06        /* 00110 event   */
-#define T_TAPESTRY 0x07        /* 00111 tapest  */
-#define T_BP_BOTTOM 0x08       /* 01000 none    */
-#define T_BP_TOP 0x09          /* 01001 none    */
-#define T_POTION 0x0A          /* 01010 potion  */
-#define T_LOOSE 0x0B           /* 01011 none    */
-#define T_TAPESTRY_TOP 0x0C    /* 01100 ttop    */
-#define T_MIRROR 0x0D          /* 01101 none    */
-#define T_DEBRIS 0x0E          /* 01110 none    */
-#define T_BTN_RAISE 0x0F       /* 01111 event   */
-#define T_EXIT_LEFT 0x10       /* 10000 none    */
-#define T_EXIT_RIGHT 0x11      /* 10001 none    */
-#define T_CHOPPER 0x12         /* 10010 chomp   */
-#define T_TORCH 0x13           /* 10011 none    */
-#define T_WALL 0x14            /* 10100 wall    */
-#define T_SKELETON 0x15        /* 10101 none    */
-#define T_SWORD 0x16           /* 10110 none    */
-#define T_BALCONY_LEFT 0x17    /* 10111 none    */
-#define T_BALCONY_RIGHT 0x18   /* 11000 none    */
-#define T_LATTICE_PILLAR 0x19  /* 11001 none    */
-#define T_LATTICE_SUPPORT 0x1A /* 11010 none    */
-#define T_LATTICE_SMALL 0x1B   /* 11011 none    */
-#define T_LATTICE_LEFT 0x1C    /* 11100 none    */
-#define T_LATTICE_RIGHT 0x1D   /* 11101 none    */
-#define T_TORCH_DEBRIS 0x1E    /* 11110 none    */
-#define T_NULL 0x1F            /* 11111 none    */
+#include "tiles.h"
+
 /*
   none   0x00 This value is used allways for this group
   free   0x00 +Nothing -Blue line
