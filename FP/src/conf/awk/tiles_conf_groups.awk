@@ -75,10 +75,20 @@ END {
 				printf "%s(unsigned char)(%s+129),%d",coma,groups[group,i],backs[group,i]-1
 				offset+=2
 			} else if (infos[group,i]) { #if there is info selected add them
-				infocount++
-				printf "%s(unsigned char)(%s+65),%d",coma,groups[group,i],infocount
-				arrinfos[infocount]=infos[group,i]
-				arrinfo2s[infocount]=info2s[group,i]
+				in1=infos[group,i]
+				in2=info2s[group,i]
+				if (findInfo[in1,in2]) { #if there is another pair of info and info2
+				                         #equal, use this number
+					result=findInfo[in1,in2]
+				} else { #if not, add it
+					infocount++
+					result=infocount
+					arrinfos[result]=in1
+					arrinfo2s[result]=in2
+					findInfo[in1,in2]=result
+				}
+
+				printf "%s(unsigned char)(%s+65),%d",coma,groups[group,i],result
 				offset+=2
 			} else {
 				printf "%s%s+1",coma,groups[group,i]
