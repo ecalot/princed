@@ -578,17 +578,17 @@ Just raw sound
 
  PLV v1.0 files are defined in this table:
 
-	Size  Offset Description                  Type   Content
-	~~~~  ~~~~~~ ~~~~~~~~~~~                  ~~~~   ~~~~~~~
-	    7      0 Magic identifier             text   "POP_LVL"
-	    1      7 POP version                  UC     0x01
-	    1      8 PLV version                  UC     0x01
-	    1      9 Level Number                 UC
-	    4     10 Number of fields             BE
-	    4     14 Block 1: Level size (B1)     BE     2306
-	   B1     18 Block 1: Level code
-	    4  18+B1 Block 2: User data size (B2) BE
-	   B2  22+B1 Block 2: User data
+  Size  Offset Description                  Type   Content
+  ~~~~  ~~~~~~ ~~~~~~~~~~~                  ~~~~   ~~~~~~~
+      7      0 Magic identifier             text   "POP_LVL"
+      1      7 POP version                  UC     0x01
+      1      8 PLV version                  UC     0x01
+      1      9 Level Number                 UC
+      4     10 Number of fields             BE
+      4     14 Block 1: Level size (B1)     BE     2306
+     B1     18 Block 1: Level code
+      4  18+B1 Block 2: User data size (B2) BE
+     B2  22+B1 Block 2: User data
 
  Level code is the exact level as described in 4.4 including the checksum
  byte. Note that Level size also includes the checksum byte in the count.
@@ -608,15 +608,15 @@ Just raw sound
  Those are:
 
   Field name          Description
-	~~~~~~~~~~          ~~~~~~~~~~~
+  ~~~~~~~~~~          ~~~~~~~~~~~
   EDITORNAME          The name of the editor used to save the file
-	EDITORVERS          The version of the editor used to save the file
-	AUTHOR              The author of the file
-	TITLE               A title for the level
-	DESCRIPTION         A description
-	TIMECREATED         The time when the file was created
-	TIMELASTMODIF       The time of the last modification to the file
-	ORIGINALFILENAME    The name of the original file name (levels.dat)
+  EDITORVERS          The version of the editor used to save the file
+  AUTHOR              The author of the file
+  TITLE               A title for the level
+  DESCRIPTION         A description
+  TIMECREATED         The time when the file was created
+  TIMELASTMODIF       The time of the last modification to the file
+  ORIGINALFILENAME    The name of the original file name (levels.dat)
 
  The content values may be empty.
 
@@ -648,7 +648,7 @@ Just raw sound
  
  PLV v1.0:
   Definition . . . . . . . . . . . . . . . . . . . . . . .  Brendon James
-	                                                          Enrique Calot
+                                                            Enrique Calot
 
 7. License
    ~~~~~~~
