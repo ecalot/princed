@@ -145,19 +145,24 @@ int kidMove(tKid* kid,tKey key,tRoom* room) {
 #ifdef NEW_KERNEL
 	/* advance state and get the flag, then interpret the flag and do the events */
 	short flags;
+	int refresh=0;
 	flags=stateUpdate(&key,kid,room);
 	if (flags&STATES_FLAG_P)
-		mapPressedTile(
+		refresh=mapPressedTile(
 			room->level,
 			roomGetTile(room,(kid->location/10)+1,kid->floor+1),
 			room->id,
-			(kid->location/TILE_W)+1,
+			(kid->location/10)+1,
 			kid->floor+1
 		);
 	if (flags&STATES_FLAG_F)
 		kid->floor++;
 	if (flags&STATES_FLAG_U)
 		kid->floor--;
+
+	if (refresh) { /* room was changed and needs to be refreshed */
+		*room=mapGetRoom(room->level,room->id);
+	}
 	return flags;
 #else
 	int result;
@@ -303,7 +308,7 @@ int kidMove(tKid* kid,tKey key,tRoom* room) {
 		fprintf(stderr,"kidMove: Tile not walkable, falling\n");
 		kid->floor++;
 	} else {
-		mapPressedTile(room->level, tile, room->id, (kid->location/TILE_W)+1, kid->floor+1);
+		mapPressedTile(room->level, tile, room->id, (kid->location/10)+1, kid->floor+1);
 	}
 	if (kid->floor<0) {
 		kid->floor=2;
