@@ -5,38 +5,38 @@
 
 Table of Contents
 ~~~~~ ~~ ~~~~~~~~
-1. Preamble ............................................................. 42
-2. Introduction ......................................................... 51
-3. Primitives ........................................................... 76
-3.1. DAT reading and writing primitives ................................. 83
-3.2. DAT reading primitives ............................................. 95
-3.3. DAT writing primitives ............................................ 104
-4. DAT v1.0 Format Specifications ...................................... 113
-4.1. General file specs, index and checksums ........................... 116
-4.2. Images ............................................................ 183
-4.2.1 Headers .......................................................... 186
-4.2.2 Algorithms ....................................................... 209
-4.2.2.1 Run length encoding (RLE) ...................................... 225
-4.2.2.2 LZ variant (LZG) ............................................... 236
-4.3. Palettes .......................................................... 317
-4.4. Levels ............................................................ 324
-4.4.1 Unknown blocks ................................................... 355
-4.4.2 Room mapping ..................................................... 372
-4.4.3 Room linking ..................................................... 508
-4.4.4 Guard handling ................................................... 524
-4.4.5 Starting Position ................................................ 565
-4.4.6 Door events ...................................................... 579
-4.5. Digital Waves ..................................................... 623
-4.6. Midi music ........................................................ 640
-4.7. Internal PC Speaker ............................................... 643
-4.8. Binary files ...................................................... 648
-5. PLV v1.0 Format Specifications ...................................... 655
-5.1. User data ......................................................... 681
-5.2. Allowed Date format ............................................... 708
-6. The SAV v1.0 format ................................................. 722
-7. The HOF v1.0 format ................................................. 768
-8. Credits ............................................................. 791
-9. License ............................................................. 810
+1. Preamble ............................................................ 42
+2. Introduction ........................................................ 51
+3. Primitives .......................................................... 76
+3.1. DAT reading and writing primitives ................................ 83
+3.2. DAT reading primitives ............................................ 95
+3.3. DAT writing primitives ........................................... 104
+4. DAT v1.0 Format Specifications ..................................... 113
+4.1. General file specs, index and checksums .......................... 116
+4.2. Images ........................................................... 183
+4.2.1 Headers ......................................................... 186
+4.2.2 Algorithms ...................................................... 209
+4.2.2.1 Run length encoding (RLE) ..................................... 225
+4.2.2.2 LZ variant (LZG) .............................................. 236
+4.3. Palettes ......................................................... 317
+4.4. Levels ........................................................... 324
+4.4.1 Unknown blocks .................................................. 355
+4.4.2 Room mapping .................................................... 372
+4.4.3 Room linking .................................................... 508
+4.4.4 Guard handling .................................................. 524
+4.4.5 Starting Position ............................................... 565
+4.4.6 Door events ..................................................... 579
+4.5. Digital Waves .................................................... 623
+4.6. Midi music ....................................................... 640
+4.7. Internal PC Speaker .............................................. 643
+4.8. Binary files ..................................................... 648
+5. PLV v1.0 Format Specifications ..................................... 655
+5.1. User data ........................................................ 681
+5.2. Allowed Date format .............................................. 708
+6. The SAV v1.0 format ................................................ 722
+7. The HOF v1.0 format ................................................ 768
+8. Credits ............................................................ 791
+9. License ............................................................ 810
 
 
 1. Preamble
@@ -580,11 +580,11 @@ Table of Contents
  This section explains how the doors are handled and specifies the blocks
  door I and II.
 
- First of all he have to define what an event line is in this file. An event
- line is a link to a door that will be activated. If the event was triggered
- with the action close, then the event will close the door, if the action
- was open then the event will open the door. An event line has also a flag
- to trigger the next event line or not.
+ First of all he have to define what an event line is in this file. An
+ event line is a link to a door that will be activated. If the event was
+ triggered with the action close, then the event will close the door, if
+ the action was open then the event will open the door. An event line has
+ also a flag to trigger the next event line or not.
  An event is defined as a list of event lines, from the first to the last.
  The last must have the trigger-next-event-line flag off. This is like a
  list of doors that performs an action.
