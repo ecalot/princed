@@ -50,12 +50,13 @@ LINKERRELEASE =
 #Binary code files
 OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
                 output.o maps.o config.o room.o titles.o \
-								input.o kid.o
+                input.o kid.o
 EXEFILE       = bin/freeprince
 
 GENERATEDHEADERS = include/res_conf_parts.h include/res_conf_files.h\
                    include/res_conf_types.h include/res_conf_mods.h\
-                   include/res_conf_resources.h include/states_static.h
+                   include/res_conf_resources.h include/states_static.h\
+                   include/states_properties.h
 
 #Use this to temporary remove an option
 OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
@@ -177,4 +178,8 @@ include/res_conf_resources.h: conf/resources.conf conf/awk/res_conf_resources.aw
 include/states_static.h: conf/states.conf conf/awk/states_static.awk
 	$(INFO) Creating states list configuration file...
 	$(GREP) conf/states.conf|sed -e 's/^\t\t\t/- - - /g' -e 's/^\t\t/- - /g' -e 's/^\t/- /g' -e 's/:$$//g'|$(AWK) -f conf/awk/states_static.awk>include/states_static.h
+
+include/states_properties.h: conf/statesproperties.conf conf/awk/states_properties.awk
+	$(INFO) Creating states properties configuration file...
+	$(GREP) conf/statesproperties.conf|$(AWK) -f conf/awk/states_properties.awk >include/states_properties.h:
 

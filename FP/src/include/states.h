@@ -21,7 +21,7 @@ tsAction stateGetAction(tsCondition condition);
 struct tState { /* The state object: only struct that is not static to the state class */
 	int frame; /* when zero, animation is released and the next state is taken */
 	void** animation;
-	tsState* currentState;
+	tsAction* currentState;
 }
 
 /* public functions interface */
@@ -34,11 +34,11 @@ void updateState(tState* current,tKid* kid,tMap* map,tKey* key); /* This functio
 tsAction createInitialState(tKid* kid,tMap* map); 
 tsAction evaluateState(tState* current,tKid* kid,tMap* map); 
 
-typedef enum {esKeyUp,esKeyDown,esKeyForward,esKeyBack,esShift,esMapUp,esMapDown,esMapForward,esMapBack,esMapIn,esForwardTileNearerThan,esForwardTileFarThan,esInScreen,esInLevel,esForwardChangeToScreen,esLast=0}tsConditionType;
+typedef enum {esKeyUp,esKeyDown,esKeyForward,esKeyBack,esShift,esMapUp,esMapDown,esMapForward,esMapBack,esMapOn,esForwardTileNearerThan,esForwardTileFartherThan,esInScreen,esInLevel,esForwardChangeToScreen,esLast=0}tsConditionType;
 
 
 typedef enum {esDangerous,esNone,esWalk,esPotion,esSword,esMirror,esNotApplicable=0}tsTileType;
-typedef enum {esRelative,esForwardTile}tsMoveOffset;
+typedef enum {esRelative,esForwardTile}tsMoveType; /*  */
 
 struct tsCondition {
 	tsConditionType type;
@@ -51,10 +51,10 @@ struct tsCondition {
 }
 
 struct tsAction {
-	short tsConditionPointer;
-	tsMoveOffset moveOffset;
-	char	moveUnits;
-	short tsStatePointer;
+	short        tsConditionId; /* Id of the first condition to be evaluated */
+	tsMoveType   moveType; /* absolute or relative */
+	char         moveOffset; /* amount of moving units the kid will move depending on the offset type */
+	short        tsNextStateId; /* Id of the first action of the next state */
 }
 
 
