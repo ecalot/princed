@@ -47,7 +47,7 @@ BEGIN {
 	}
 	close(tmp)
 	currentAnimation=0
-	latestLevel=-1
+	greatestLevel=-1
 	first=0
 }
 
@@ -96,12 +96,22 @@ BEGIN {
 					}
 				} else if (listType == "level") {
 					if (arrayLevel[$1]) {
-						printf("Parsing error in states.conf: Redeclaration of level '%d' in uncommented line %d.\n",$1,NR)>"/dev/stderr"
+						printf("Parsing error in states.conf: Redeclaration of level '%d' on line %d.\n",$1,NR)>"/dev/stderr"
 						exit 23
 					} else {
 						arrayLevel[$1]=currentAction+1
-						if ($1>latestLevel) {
-							latestLevel=$1
+						if ($1>greatestLevel) {
+							greatestLevel=$1
+						}
+					}
+				} else if (listType == "guardskill") {
+					if (arrayGuard[$1]) {
+						printf("Parsing error in states.conf: Redeclaration of guard skill '%d' on line %d.\n",$1,NR)>"/dev/stderr"
+						exit 25
+					} else {
+						arrayGuard[$1]=currentAction+1
+						if ($1>greatestSkill) {
+							greatestSkill=$1
 						}
 					}
 				}
@@ -220,15 +230,25 @@ END {
 
 	printf("\\\n}\n\n#define STATES_LEVELS {")
 	coma=""
-	for (i=0;i<=latestLevel;i++) {
+	for (i=0;i<=greatestLevel;i++) {
 		if (!arrayLevel[i]) {
-			printf("Parsing error in states.conf: Level number %d is defined but level %d is not.\n",latestLevel,i)>"/dev/stderr"
+			printf("Parsing error in states.conf: Level number %d is defined but level %d is not.\n",greatestLevel,i)>"/dev/stderr"
 			exit 24
 		}
 		printf "%s%s",coma,arrayLevel[i]-1
 		coma=","
 	}
-	printf("}\n")
+	printf("}\n\n#define STATES_GUARDS {")
+	coma=""
+	for (i=0;i<=greatestGuard;i++) {
+		if (!arrayGuard[i]) {
+			printf("Parsing error in states.conf: Guard skill %d is defined but skill %d is not.\n",greatestGuard,i)>"/dev/stderr"
+			exit 26
+		}
+		printf "%s%s",coma,arrayGuard[i]-1
+		coma=","
+	}
+printf("}\n")
 
 }
 
