@@ -68,12 +68,12 @@ typedef struct tTag {
  * freeTagStructure
  * parseStructure
  * parseXmlFile
+ * prClassifyDat
  * prExportDat
  * prExportDatOpt
  * prImportDat
  * prImportDatOpt
  * prSetOutput
- * prVerifyDatType
  * resourceTreeGetChild
  * resourceTreeGetInfo
  * resourceTreeGetNext
