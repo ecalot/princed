@@ -14,8 +14,12 @@ short* stateGetAnimation(int action,short *frames) {
 	short* j=statesAnimationList+a->animStart;
 	/* TODO: depending on relative and absolute crop the middle frames */
 	*frames=i;
+	i<<=1;
 	result=(short*)malloc(sizeof(short)*i);
-	while (i--) result[i]=*(j++);
+	while (i) {
+		result[i--]=*(j++);
+		result[i--]=*(j++); /* result[i] is a flag and doesn't have to be evaluated */
+	}
 	return result;
 }
 
@@ -107,8 +111,9 @@ int evaluateState(int state, tKey* key, tKid* kid, tRoom* room) {
 
 /* This function should return the image frame and actions to be performed by this call
  * returns the animation number corresponding to this frame */
-int stateUpdate(tState* current,tKey* key, tKid* kid,tRoom* room) {
-	int imageFrame=statesAnimationList[current->animation[current->frame]];
+int stateUpdate(tState* current,tKey* key, tKid* kid,tRoom* room,short* flags) {
+	int imageFrame=statesAnimationList[current->animation[(current->frame<<1)+0]];
+	*flags        =statesAnimationList[current->animation[(current->frame<<1)+1]];
 	if (current->frame) {
 		current->frame--;
 	} else {
