@@ -67,10 +67,15 @@ tData* res_createData(int nFrames,int type) {
 	/* TODO: send those lines to res_createData*/
 	result=(tData*)malloc(sizeof(tData));
 	
-	//switch {
-	result->type=eImages;//res_getVirtualTypeFromReal(res_getIdxType);
-	//nFrames--;
-	//}
+	switch (type) {
+		case RES_TYPE_IMG_TR_LEFT:
+		case RES_TYPE_IMG_TR_RIGHT:
+		case RES_TYPE_IMG_BL_LEFT:
+		case RES_TYPE_IMG_BL_RIGHT:
+			result->type=eImages;//res_getVirtualTypeFromReal(res_getIdxType);
+			nFrames--;
+			break;
+	}
 	
 	result->pFrames=(void**)malloc(nFrames*sizeof(void*));
 	result->frames=nFrames;
