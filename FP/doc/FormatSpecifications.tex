@@ -118,13 +118,15 @@ Table of Contents
 
  Stored values:
  Lets define the numbers as:
-  LE - Little endian: 16 bits, storing two groups of 8 bits ordered from
-       the less representative to the most representative without sign.
+  US - Unsigned Short: Little endian, 16 bits, storing two groups of 8 bits
+       ordered from the less representative to the most representative
+       without sign.
        i.e. 65534 is FFFE in hex and is stored FE FF (1111 1110 1111 1111)
        Range: 0 to 65535
        2 bytes
-  BE - Big endian: 32 bits, storing four groups of 8 bits each ordered from
-       the less representative to the most representative without sign.
+  UL - Unsigned long: Little endian, 32 bits, storing four groups of 8 bits
+       each ordered from the less representative to the most representative
+       without sign.
        i.e. 65538 is 00010002 in hex and is stored 02 00 01 00
        (0000 0010 0000 0000 0000 0001 0000 0000)
        Range: 0 to 2^32-1
@@ -143,20 +145,20 @@ Table of Contents
 
  Index structures:
  The DAT header: 6 bytes
-  Offset 0, size 4, type BE: Index offset (the location where the offset
+  Offset 0, size 4, type UL: Index offset (the location where the offset
                              begins)
-  Offset 4, size 2, type LE: IndexSize (the number of bytes the index has)
+  Offset 4, size 2, type US: IndexSize (the number of bytes the index has)
                              Note that the index size is 8*numberOfItems+2
 
  The DAT index header: 2 bytes
-  Offset IndexSize, size 2, type LE: NumberOfItems (resources count)
+  Offset IndexSize, size 2, type US: NumberOfItems (resources count)
   Offset IndexSize+2, size 8*NumberOfItems: The index (a list of
                               NumberOfItems blocks of 8-bytes-index record)
 
  The 8-bytes-index record: 8 bytes
-  Relative offset 0, size 2, type LE: Item ID
-  Relative offset 2, size 4, type BE: Resource start absolute offset
-  Relative offset 6, size 2, type LE: Size of the item (not including
+  Relative offset 0, size 2, type US: Item ID
+  Relative offset 2, size 4, type UL: Resource start absolute offset
+  Relative offset 6, size 2, type US: Size of the item (not including
                                       checksums)
 
  Checksum byte:
@@ -180,8 +182,8 @@ Table of Contents
 
 4.2.1 Headers
  The 6-bytes-image header: 6 bytes
-  Relative offset 0, size 2, type LE: Height
-  Relative offset 2, size 2, type BE: Width 
+  Relative offset 0, size 2, type US: Height
+  Relative offset 2, size 2, type UL: Width 
   Relative offset 4, size 2: Information
 
  Information is a set of bits where:
@@ -617,10 +619,10 @@ Table of Contents
       1      7 POP version                  UC     0x01
       1      8 PLV version                  UC     0x01
       1      9 Level Number                 UC
-      4     10 Number of fields             BE
-      4     14 Block 1: Level size (B1)     BE     2306/2305
+      4     10 Number of fields             UL
+      4     14 Block 1: Level size (B1)     UL     2306/2305
      B1     18 Block 1: Level code          -
-      4  18+B1 Block 2: User data size (B2) BE
+      4  18+B1 Block 2: User data size (B2) UL
      B2  22+B1 Block 2: User data           -
 
  Level code is the exact level as described in 4.4 including the checksum
@@ -682,10 +684,10 @@ Table of Contents
 
    Size Offset Description                  Type
    ~~~~ ~~~~~~ ~~~~~~~~~~~                  ~~~~
-      2      0 Remaining minutes            LE   (i)
-      2      2 Remaining ticks              LE   (ii)
-      2      4 Current level                LE   (iii)
-      2      6 Current hit points           LE   (iv)
+      2      0 Remaining minutes            US   (i)
+      2      2 Remaining ticks              US   (ii)
+      2      4 Current level                US   (iii)
+      2      6 Current hit points           US   (iv)
 
  Remaining minutes (i)
   Range values:
@@ -720,7 +722,7 @@ Table of Contents
  HOF files are used to save the Hall of Fame information.
 
  All HOF v1.0 files have a size of 176 bytes. The first 2 bytes belongs to
- the record count. The format is LE. The maximum number of records allowed
+ the record count. The format is US. The maximum number of records allowed
  is 6, so the second byte is allways 0x00.
  Following those bytes there is an array of records. This array has a full
  size of 29 bytes distributed according to the following table.
@@ -731,8 +733,8 @@ Table of Contents
    Size Offset Description                  Type
    ~~~~ ~~~~~~ ~~~~~~~~~~~                  ~~~~
      25      0 Player name                  text
-      2     25 Remaining minutes            LE (similar to SAV format)
-      2     27 Remaining ticks              LE (similar to SAV format)
+      2     25 Remaining minutes            US (similar to SAV format)
+      2     27 Remaining ticks              US (similar to SAV format)
 
  In case there is no record, the 29 bytes spaces must be filled with zeros
  in order to complete the whole file and give it the size of 2+29*6 = 176.
