@@ -35,6 +35,6 @@
 	b=""
 	i=9-length($4)
 	while(i--) b=sprintf(" %s",b)
-	printf ("#define T_%s 0x%02x %s /* %2d %s%s */\n",$2,$3,a,$3,$4,b)
+	printf ("#define TILE_%s 0x%02x %s /* %2d %s%s */\n",toupper($2),$3,a,$3,$4,b)
 }
 

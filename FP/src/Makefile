@@ -155,7 +155,7 @@ kernel.o: ker/kernel.c include/kernel.h include/resources.h\
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
 room.o: ker/room.c include/room.h include/resources.h include/res_conf.h\
-        include/walls_conf.h
+        include/walls_conf.h $(GENERATEDTILHEADERS)
 	$(INFO) Compiling kernel room object...
 	$(CC) -c ker/room.c $(OPTIONS)
 

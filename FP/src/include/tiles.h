@@ -33,9 +33,11 @@ tiles.h: FreePrince : Tile functions
 #ifndef _TILES_H_
 #define _TILES_H_
 
+#include "types.h"
 #include "tiles_conf.h"
 
 int isInGroup(unsigned char tile,unsigned char backtile,short group);
+int isIn(tTile tile,short group);
 
 #endif
 

@@ -29,6 +29,6 @@
 #
 
 /^([ ]*[^# ].*)$/ {
-	printf("#define STATES_COND_%s %d\n",$1,$2)
+	printf("#define STATES_COND_%s %d\n",toupper($1),$2)
 }
 

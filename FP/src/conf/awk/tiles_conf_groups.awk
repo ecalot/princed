@@ -29,7 +29,7 @@
 #
 
 /^[ ]*tile .*$/ {
-	tile=sprintf("T_%s",$2)
+	tile=sprintf("TILE_%s",$2)
 }
 
 $0 !~ /^[ ]*(#.*|tile .*|[ ]*)$/ {
@@ -41,6 +41,7 @@ $0 !~ /^[ ]*(#.*|tile .*|[ ]*)$/ {
 			group=a[1]
 			back=a[2]+1
 		}
+		group=toupper(group)
 		if (!total[group]) total[group]=0
 		groups[group,total[group]]=tile
 		backs[group,total[group]]=back
@@ -51,7 +52,7 @@ $0 !~ /^[ ]*(#.*|tile .*|[ ]*)$/ {
 END {
 	offset=0
 	coma=""
-	printf "#define TILES_GROUP_LIST {"
+	printf "#define TILE_GROUP_LIST {"
 	for (group in total) {
 		offsets[group]=offset
 		for (i=0;i<total[group];i++) {
@@ -72,7 +73,7 @@ END {
 	}
 	printf "}\n"
 	for (group in offsets) {
-		printf "#define TG_%s %d\n",group,offsets[group]
+		printf "#define TILES_%s %d\n",group,offsets[group]
 	}
 }
 

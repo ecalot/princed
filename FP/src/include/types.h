@@ -106,27 +106,13 @@ typedef struct {
 	int block;
 	
 	/* Graphical arributes */
-	int hasTorch;
-	int hasGateFrame;
-	int hasSkeleton;
-	int hasChopper;
 	int hasBigPillar;
 	int isExit;
-	int isRaise;
-	int isGate;
 	void* moreInfo;
 	int bricks;
-	int isPressable;
-	int hasSpikes;
-	int hasPotion;
-	int hasPillar;
-	int hasFloor;
-	int hasBrokenTile;
-	int isWall;
-	int hasSword;
 
 	tModId back;
-	char code;
+	unsigned char code;
 } tTile;
 
 typedef struct {

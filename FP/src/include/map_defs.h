@@ -140,7 +140,7 @@ Len	Offs	BlockName & Description
 */
 
 #define MAP_B_NONE 0
-#define MAP_F_WALL T_WALL
-#define MAP_F_FREE T_EMPTY
+#define MAP_F_WALL TILE_WALL
+#define MAP_F_FREE TILE_EMPTY
 
 #endif

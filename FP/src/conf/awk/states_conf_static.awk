@@ -82,9 +82,9 @@ BEGIN {
 		if ($2!=sprintf("%d",$2)) {
 			#if (1) {      #defines[$2]) {
 				if ($1~/^Map/) {
-					result=sprintf("TG_%s",$2,0)
+					result=sprintf("TILES_%s",toupper($2),0)
 				} else {
-					result=sprintf("STATES_COND_%s",$2,0)
+					result=sprintf("STATES_COND_%s",toupper($2),0)
 				}
 			#} else {
 			#

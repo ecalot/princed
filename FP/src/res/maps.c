@@ -36,6 +36,7 @@ maps.c: Freeprince : Map handling library
 #include "room.h"
 #include "kid.h"
 #include "types.h"
+#include "tiles.h"
 
 #define slevel(field) (map->field)
 
@@ -57,10 +58,10 @@ void* mapLoadLevel(tMemory level) {
 	/* generate and load gate structures */
 	for (i=0;i<24;i++) { /* count gates and create gate tree middle nodes */
 		for (j=0;j<30;j++) {
-			if (((map->fore[i*30+j]&0x1f)==T_GATE)||((map->fore[i*30+j]&0x1f)==T_EXIT_LEFT)) {
+			if (((map->fore[i*30+j]&0x1f)==TILE_GATE)||((map->fore[i*30+j]&0x1f)==TILE_EXIT_LEFT)) {
 				gateInRoom++;
 				gates++;
-			} else if (((map->fore[i*30+j]&0x1f)==T_BTN_RAISE)||((map->fore[i*30+j]&0x1f)==T_BTN_DROP)) {
+			} else if (((map->fore[i*30+j]&0x1f)==TILE_BTN_RAISE)||((map->fore[i*30+j]&0x1f)==TILE_BTN_DROP)) {
 				pressableInRoom++;
 				pressables++;
 			}
@@ -87,22 +88,22 @@ void* mapLoadLevel(tMemory level) {
 	pressables=0;
 	for (i=0;i<24;i++) {
 		for (j=0;j<30;j++) {
-			if (((map->fore[i*30+j]&0x1f)==T_GATE)||((map->fore[i*30+j]&0x1f)==T_EXIT_LEFT)) {
+			if (((map->fore[i*30+j]&0x1f)==TILE_GATE)||((map->fore[i*30+j]&0x1f)==TILE_EXIT_LEFT)) {
 				tGate newGate;
 				newGate.frame=map->back[i*30+j];
 				newGate.action=map->back[i*30+j]?eClose:eOpen;
-				newGate.type=((map->fore[i*30+j]&0x1f)==T_GATE)?eNormalGate:eExitGate;
+				newGate.type=((map->fore[i*30+j]&0x1f)==TILE_GATE)?eNormalGate:eExitGate;
 				map->back[i*30+j]=gateInRoom;
 				map->screenGates[i][gateInRoom]=map->gates+gates;
 				auxGates[i*30+j]=map->gates+gates;
 				fprintf(stderr,"mapLoadLevel: Loading gate: indexed=%d gate pointer=%p\n",i,(void*)auxGates[i*30+j]);
 				map->gates[gates++]=newGate;
 				gateInRoom++;
-			} else if (((map->fore[i*30+j]&0x1f)==T_BTN_RAISE)||((map->fore[i*30+j]&0x1f)==T_BTN_DROP)) {
+			} else if (((map->fore[i*30+j]&0x1f)==TILE_BTN_RAISE)||((map->fore[i*30+j]&0x1f)==TILE_BTN_DROP)) {
 				tPressable newPressable;
 				newPressable.event=map->events+map->back[i*30+j];
 				newPressable.action=eNormal;
-				newPressable.type=((map->fore[i*30+j]&0x1f)==T_BTN_RAISE)?eRaise:eDrop;
+				newPressable.type=((map->fore[i*30+j]&0x1f)==TILE_BTN_RAISE)?eRaise:eDrop;
 				map->back[i*30+j]=pressableInRoom;
 				map->screenPressables[i][pressableInRoom]=map->pressables+pressables;
 				fprintf(stderr,"mapLoadLevel: Creating button: indexed=%d,%d btn pointer=%p\n",i,pressableInRoom,(void*)(map->pressables+pressables));
@@ -347,19 +348,19 @@ void  mapMove(tMap* map) {
 
 int mapPressedTile(tMap* map, tTile tile, int s, int x, int y) {
 	int refresh=0;
-	if (tile.isPressable) {
+	if (isIn(tile,TILES_PRESSABLE)) {
 		tEvent* event;
 		((tPressable*)tile.moreInfo)->action=eJustPressed;
 		/* drop or raise button */
 		event=((tPressable*)tile.moreInfo)->event;
 		fprintf(stderr,"mapPressedTile: throw event from button %d event:%p\n",tile.back,(void*)event);
 		do {
-			event->gate->action=tile.isRaise?eOpening:eClosingFast;
+			event->gate->action=isIn(tile,TILES_RAISE)?eOpening:eClosingFast;
 		} while	((event++)->triggerNext);
 	}
 	printf("s=%d x=%d y=%d\n",s,x,y);
-	if (tile.code==T_LOOSE) {
-		map->fore[(s-1)*30+(x-1)+(y-1)*10]=T_EMPTY;
+	if (tile.code==TILE_LOOSE) {
+		map->fore[(s-1)*30+(x-1)+(y-1)*10]=TILE_EMPTY;
 		refresh=1; /* room changed, refresh it */
 	}
 	return refresh;

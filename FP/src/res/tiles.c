@@ -33,7 +33,7 @@ tiles.c: FreePrince : Tile functions
 #include "tiles.h"
 
 int isInGroup(unsigned char tile,unsigned char backtile,short group) {
-	static unsigned char tileList[]=TILES_GROUP_LIST;
+	static unsigned char tileList[]=TILE_GROUP_LIST;
 	unsigned char* i=tileList+group;
 	int docontinue;
 	tile=tile&0x1F; /* get the last 5 bits and clear the beginning */
@@ -48,5 +48,9 @@ int isInGroup(unsigned char tile,unsigned char backtile,short group) {
 		}
 	} while (docontinue);
 	return *i; /* returns non-zero if true and zero if false */
+}
+
+int isIn(tTile tile,short group) {
+	return isInGroup(tile.code,tile.back,group);
 }
 
