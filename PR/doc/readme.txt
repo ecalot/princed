@@ -58,21 +58,19 @@ Type 05:
 
 
 Type 06:
- For the bitmaps palettes we are using the Jasc Pal format (Not Microsoft pal  format)
+ For the bitmaps palettes we are using the Jasc Pal format (Not Microsoft pal format)
  Recommended editor: Paint Shop Pro.
 
 2) Bugs:
- As Princed Resource Editor Releases are still unestable versions, bugs are very common, 
- and we are attempting to fix as many as possible.  After that we will release 
- the beta version and after that the final version.
- This program was published because lots of people asked for it in this
- unstable state, so do not expect the program to be flexible with the
- file format, program syntax, etc.
+ This is the first stable release, we hadn't tested enough as to say it has no bugs,
+ and tehre are also lots known bugs. This program was only tested using vdungeon.dat
+ so we know there are bugs in other dat files but we can't solve them very fast.
+ It is recommended to upgrade to the next stable when it is released.
 
 3) Syntax:
  The command syntax is very easy:
  
- pr -mainoption[suboptions] optionParameters
+ pr [datfile] -mainoption[suboptions] optionParameters
  
  where mainoption must be:
   
@@ -80,18 +78,18 @@ Type 06:
    to clear the resource file
  -k [resFile] [optionalDirectory]
    to kill an extracion
- -x[rnuso] DatFile [optionalDirectory] [resFile]
+ -x[rnuso] [optionalDirectory] [resFile]
    for extract
   r: raw extraction
   n: don't extract
   u: update res file in case there were records
   s: don't save res file
   o: to specify ResFile
- -c[ro] DatFile [optionalDirectory] [resFile]
+ -c[ro] [optionalDirectory] [resFile]
    for compile
   r: raw compiling
   o: to specify ResFile
- -d DatFile
+ -d
    for type
  -h
    for help
@@ -103,7 +101,7 @@ Type 06:
  
  Syntax samples:
  
- C:\PRINCED\PR> pr -x dat\vdungeon.dat ext
+ C:\PRINCED\PR> pr dat\vdungeon.dat -x ext
  
  This will extract the bitmaps and palettes allocated in   C:\princed\pr\dat\vdungeon.dat into the c:\princed\pr\ext. 
  Note: ext must exist.
@@ -125,6 +123,6 @@ Type 06:
  Note: c:\princed\pr\compiled must exist.
  
 4) New versions
- It's strongly recommended that you download a newer stable version of this  program as soon as it comes available in the official url (http://www.princed.com.ar)
+ It's strongly recommended that you download a newer stable version of this program as soon as it comes available in the official url (http://www.princed.com.ar)
 
 Please enjoy using Princed Resource Editor!
