@@ -243,7 +243,10 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 \***************************************************************/
 
 void syntax() {
-	fprintf(outputStream,PARSING_HELP);
+	fprintf(outputStream,PARSING_HELP_BEGIN);
+	fprintf(outputStream,PARSING_HELP_PART1);
+	fprintf(outputStream,PARSING_HELP_PART2);
+	fprintf(outputStream,PARSING_HELP_PART3);
 }
 
 int prMain(int optionflag, const char* extension,const char* dirName,const char* resFile,const char* datfile, const char* datfilename,const char* datAuthor,FILE* output) {

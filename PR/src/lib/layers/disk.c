@@ -50,7 +50,7 @@ extern FILE* outputStream;
 	#define defmkdir(a) mkdir (a,(mode_t)0755)
 	#include <dirent.h>
 	#include <termios.h>
-	//#include <curses.h>
+	/*#include <curses.h>*/
 	#include <unistd.h>
 	#include <fcntl.h>
 	#define osIndepGetCharacter() getchar()

@@ -62,18 +62,13 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	unsigned char* readDatFilePoint;
 
 	/* Open file */
-	//if ((((readDatFile=(fopen(vFiledat,"rb")))==NULL))) return -1; /* file could not be open */
 	readDatFileSize=mLoadFileArray(vFiledat,&readDatFile);
-printf("q\n");
 	if (!readDatFileSize) return -1;
-printf("w\n");
 	if (readDatFileSize<=6) return -1;
-printf("e\n");
 
 	readDatFilePoint=readDatFile;
 
 	/* verify dat format */
-	//ok    = fread(&indexOffset,4,1,readDatFile);
 	indexOffset=array2long(readDatFilePoint);
 	readDatFilePoint+=4;
 	indexSize=array2short(readDatFilePoint);
@@ -87,7 +82,6 @@ printf("e\n");
 	indexPointer=readDatFile+indexOffset;
 	*numberOfItems=array2short(indexPointer);
 	indexPointer+=2;
-//printf("w %d %d\n",*numberOfItems,indexSize);
 	pop1=(((*numberOfItems)*8+2)==indexSize);
 
 	if (!pop1) { /* verify if pop2 */
@@ -97,7 +91,6 @@ printf("e\n");
 		ofk=0;
 	}
 	recordSize=pop1?8:11;
-//printf("k %d\n",recordSize);
 
 	return 0;
 }
@@ -110,9 +103,7 @@ int mReadGetFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
 	id=    (indexPointer[ofk+k*recordSize])+(indexPointer[ofk+k*recordSize+1]<<8);
 	offset=(indexPointer[ofk+k*recordSize+2])+(indexPointer[ofk+k*recordSize+3]<<8)+(indexPointer[ofk+k*recordSize+4]<<16)+(indexPointer[ofk+k*recordSize+5]<<24);
 	*size= (indexPointer[ofk+k*recordSize+6])+(indexPointer[ofk+k*recordSize+7]<<8)+1;
-	//printf("kkx %d %d %d\n",id,offset,*size);
 	if (!pop1) ok=(indexPointer[ofk+k*recordSize+8]==0x40)&&(!indexPointer[ofk+k*recordSize+9])&&(!indexPointer[ofk+k*recordSize+10]);
-	//ok=ok&&((*data=getMemory(*size))!=NULL);
 	*data=readDatFile+offset;
 	return ok?id:-1;
 }

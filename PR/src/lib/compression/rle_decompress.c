@@ -101,10 +101,11 @@ int expandLzg(const unsigned char* array, int arraySize, tImage* image, int imag
 				while (rep--) { /* Be careful in big images */
 					h=cursor/MAX_MXD_SIZE_IN_LZG-((location%MAX_MXD_SIZE_IN_LZG)>(cursor%MAX_MXD_SIZE_IN_LZG));
 					image->pix[cursor++]=image->pix[((h<0)?0:h)*MAX_MXD_SIZE_IN_LZG+(location++)%MAX_MXD_SIZE_IN_LZG];
-
-//					h=((cursor-(location&0x3FF))&(~0x3FF));
-//					image->pix[cursor]=image->pix[((h<0)?0:h)+(location&0x3FF)];
-	//				cursor++;location++;
+/*
+					h=((cursor-(location&0x3FF))&(~0x3FF));
+					image->pix[cursor]=image->pix[((h<0)?0:h)+(location&0x3FF)];
+					cursor++;location++;
+*/
 				}
 			}
 		}

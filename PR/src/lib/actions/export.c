@@ -164,7 +164,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int option
 				/* if the dat file is unknown, add it in the xml */
 				getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension);
 			}
-			//freeAllocation(data);
+			/*freeAllocation(data);*/
 		}
 	}
 
