@@ -164,25 +164,23 @@ function addExit (name) {
 }
 #1 tab (action)
 /^\t[^\t# ].*$/ {
-#	if (first) {
-		actionArray[currentAction,"description"]=rememberAction
-#		if (currentState) {
-			actionArray[currentAction,"isFirstInState"]=currentState
-#		} else {
-#			actionArray[currentAction,"isFirstInState"]=priorState
-#			priorState=""
-#		}
-		actionArray[currentAction,"animationStart"]=startAnimation
-		actionArray[currentAction,"animationSize"]=currentAnimation-startAnimation
-		actionArray[currentAction,"conditionStart"]=conditions
-		actionArray[currentAction,"nextState"]=nextState
-		actionArray[currentAction,"moveType"]=moveType
-		actionArray[currentAction,"moveOffset"]=moveOffset
-		actionArray[currentAction,"lastComma"]=","
-		currentState=""
-#	} else {
-#		first=1
-#	}
+	actionArray[currentAction,"description"]=rememberAction
+	actionArray[currentAction,"isFirstInState"]=currentState
+	if ((currentAnimation)&&(currentAnimation==startAnimation)) {
+		printf("Parsing error in %s: Missing action animation from line %d to line %d.\n",FILENAME,priorActionLine,FNR-1)>"/dev/stderr"
+		exit 27
+	}
+	actionArray[currentAction,"animationStart"]=startAnimation
+	actionArray[currentAction,"animationSize"]=currentAnimation-startAnimation
+	actionArray[currentAction,"conditionStart"]=conditions
+	actionArray[currentAction,"nextState"]=nextState
+	actionArray[currentAction,"moveType"]=moveType
+	actionArray[currentAction,"moveOffset"]=moveOffset
+	actionArray[currentAction,"lastComma"]=","
+	currentState=""
+
+	#remember prior action line in case the animation is empty
+	priorActionLine=FNR
 
 	currentAction++
 	startAnimation=currentAnimation
@@ -210,6 +208,10 @@ function addExit (name) {
 END {
 	actionArray[currentAction,"description"]=rememberAction
 	actionArray[currentAction,"isFirstInState"]=currentState
+	if ((currentAnimation)&&(currentAnimation==startAnimation)) {
+		printf("Parsing error in %s: Missing action animation from line %d to line %d.\n",FILENAME,priorActionLine,FNR-1)>"/dev/stderr"
+		exit 27
+	}
 	actionArray[currentAction,"animationStart"]=startAnimation
 	actionArray[currentAction,"animationSize"]=currentAnimation-startAnimation
 	actionArray[currentAction,"conditionStart"]=conditions
