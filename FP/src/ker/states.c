@@ -309,6 +309,8 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 #ifdef DEBUGSTATES
 			printf("total frames=%d number of frames to be used=%d. wanted movement=%d movement to be performed=%d\n",current->frame,i,statesActionList[action].moveOffset,accumulate);
 #endif
+			/* force at least one animation */
+			if (!i) i=1;
 			current->frame=i; /* now the last frames are moved, crop the animation */
 			break;
 			}
