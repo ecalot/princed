@@ -82,6 +82,49 @@ int res_getDataById(int id,int maxItems,tMemory* result) {
 static const short res_list[]=RES_LIST;
 static const char* res_file[]=RES_FILES;
 
+void getOffsets(int *down, int *left, int *right, int from, int hasD, int hasL, int hasR,int total, int resource) {
+	const unsigned short* list;
+	short d,l,r;
+	int resourceInShorts=resource>>1;
+	total++;
+	total>>=1;
+	/* set the start of the list to the start od the offsets */
+	list=(const unsigned short*)(res_list+from-total*(hasD+hasL+hasR));
+
+	/* set the values */
+	if (hasD) {
+		d=list[resourceInShorts];
+		if (resource&1) {
+			*down=(d>>8)-64;
+		} else {
+			*down=(d&0xff)-64;
+		}
+	} else {
+		*down=0;
+	}
+	if (hasL) {
+		l=list[resourceInShorts+total*hasD];
+		if (resource&1) {
+			*left=(l>>8)-64;
+		} else {
+			*left=(l&0xff)-64;
+		}
+	} else {
+		*left=0;
+	}
+	if (hasR) {
+		r=list[resourceInShorts+total*(hasD+hasL)];
+		if (resource&1) {
+			*right=(r>>8)-64;
+		} else {
+			*right=(r&0xff)-64;
+		}
+	} else {
+		*right=0;
+	}
+}
+
+
 /**
  * Public functions
  * */
@@ -121,6 +164,10 @@ tData* resLoad(long id) {
 			tMemory palette;
       tImage image;
       tPalette pal;
+			int has_D=((mask&RES_MODS_HAS_D)?1:0);
+			int has_L=((mask&RES_MODS_HAS_L)?1:0);
+			int has_R=((mask&RES_MODS_HAS_R)?1:0);
+			int down,left,right;
 
 			result=(tData*)malloc(sizeof(tData));
 			result->frames=total-2; /* drop filename and palette */
@@ -149,10 +196,14 @@ tData* resLoad(long id) {
 					return NULL;
 				}
 
+				/* get the offsets to move the image */
+				getOffsets(&down,&left,&right,from,has_D,has_L,has_R,result->frames,total);
+				
 				/* expand raw image into an image structure */
 				mExpandGraphic(raw.array,&image,raw.size);
 
 				/* convert image structure into blittable output surfaces */
+				printf("resLoad: Allocating an image framed %d by offsets d=%d,l=%d,r=%d\n",total,down,left,right);
 				result->pFrames[total]=(void*)outputLoadBitmap(
 					image.pix,image.widthInBytes*image.height,pal,image.height,image.width,
 					(mask&(RES_MODS_RIGHT))==(RES_MODS_RIGHT),1
