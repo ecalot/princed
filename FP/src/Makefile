@@ -47,7 +47,8 @@ LINKERRELEASE =
 #Binary code files
 OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
                 output.o maps.o config.o room.o titles.o \
-                input.o kid.o states.o tiles.o walls.o anims.o
+                input.o kid.o states.o tiles.o walls.o anims.o\
+								object.o
 EXEFILE       = bin/freeprince
 
 GENERATEDRESHEADERS = include/res_conf_parts.h include/res_conf_files.h\
@@ -159,12 +160,18 @@ room.o: ker/room.c include/room.h include/resources.h include/res_conf.h\
 	$(INFO) Compiling kernel room object...
 	$(CC) -c ker/room.c $(OPTIONS)
 
-kid.o: ker/kid.c include/kid.h include/resources.h include/res_conf.h\
-       include/states.h $(GENERATEDRESHEADERS)\
-			 $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) include/res_conf.h\
+kid.o: ker/kid.c include/kid.h include/states.h $(GENERATEDSTAHEADERS) \
+       $(GENERATEDTILHEADERS) include/res_conf.h\
        include/types.h include/tiles.h include/tiles_conf.h
 	$(INFO) Compiling kernel object support...
 	$(CC) -c ker/kid.c $(OPTIONS)
+
+object.o: ker/object.c include/kid.h include/resources.h include/res_conf.h\
+       include/states.h $(GENERATEDRESHEADERS)\
+			 $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS) include/res_conf.h\
+       include/types.h include/tiles.h include/tiles_conf.h include/output.h
+	$(INFO) Compiling kernel kid object support...
+	$(CC) -c ker/object.c $(OPTIONS)
 
 titles.o: ker/titles.c include/resources.h include/res_conf.h\
           include/anims_conf.h $(GENERATEDSTAHEADERS) $(GENERATEDRESHEADERS)\

@@ -19,7 +19,7 @@
 */
 
 /*
-kid.h: Free Prince : Kid and other objects
+object.h: Free Prince : Objects
 ¯¯¯¯¯
  Copyright 2004 Princed Development Team
   Created: 19 Jul 2004
@@ -33,12 +33,9 @@ kid.h: Free Prince : Kid and other objects
 #include "kid.h"
 #include "output.h"
 #include "resources.h" /* resLoad/resFree */
-#include "room.h"
-#include "maps.h" /* getTile */
+#include "maps.h" /* mapGetRoom getTile */
 #include <stdio.h> /* NULL */
 #include "states.h"
-
-#define NEW_KERNEL
 
 void loadGfx(int storeMirrored, tData** gfxCache, unsigned long resId) {
 	gfxCache[DIR_LEFT]=resLoad(resId);
@@ -67,48 +64,6 @@ tObject objectCreate(int location, int floor, int direction, int stateId, unsign
 	return object;
 }
 
-int kidVerifyRoom(tObject *kid,tRoom *room) {
-	/* if the kid is out of the screen we need to change the screen and put
-	 * the kid back again on it
-	 * PRE: tObject *kid is a kid
-	 */
-	
-	int refresh=0;
-	
-	/* The kid is down */
-	if (kid->floor==4) {
-		kid->floor=0;
-		room->id=room->links[eDown];
-		refresh=1;
-	}
-	
-	/* The kid is up */
-	if (kid->floor==-1) {
-		printf("pasó: kf=0 ahora es 3, cambio el id del room y refresco\n");
-		kid->floor=2;
-		room->id=room->links[eUp];
-		refresh=1;
-	}
-
-	/* The kid is left */
-	if (kid->location<0) {
-		kid->location+=TILE_W*10;
-		room->id=room->links[eLeft];
-		refresh=1;
-	}
-
-	/* The kid is right */
-	if (kid->location>TILE_W*10) {
-		kid->location-=TILE_W*10;
-		room->id=room->links[eRight];
-		refresh=1;
-	}
-
-	return refresh;
-}
-	
-#define object_getLocation(object,image) ((object).location/*-(outputGetWidth(image)>>1)*/)
-
 void objectDraw(tObject object) {
 	void* image=object.gfxCache[object.direction]->pFrames[stateGetImage(object)-1];
 	/* TODO: move this -1 to each script frame */
@@ -119,29 +74,6 @@ void objectDraw(tObject object) {
 	);
 }
 
-int kidMove(tObject* kid,short flags,tRoom* room) {
-	int refresh=0;
-	int x;
-	
-	x=object_getLocation(*kid,kid->gfxCache[kid->direction]->pFrames[stateGetImage(*kid)-1])/TILE_W;
-	
-	if (flags&STATES_FLAG_P)
-		refresh=mapPressedTile(
-			room->level,
-			roomGetTile(room,x+1,kid->floor+1),
-			room->id,
-			x+1,
-			kid->floor+1
-		);
-printf("f era %d. ",kid->floor);
-	if (flags&STATES_FLAG_F)
-		kid->floor++;
-	if (flags&STATES_FLAG_U)
-		kid->floor--;
-printf("f pasa a ser %d\n",kid->floor);
-	return kidVerifyRoom(kid,room)||refresh;
-}
-	
 int objectMove(tObject* object,tKey key,tRoom* room) {
 	/* advance state and get the flag, then interpret the flag and do the events */
 	short flags;

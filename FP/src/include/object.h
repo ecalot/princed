@@ -40,12 +40,16 @@ kid.h: Free Prince : Kid and other object
 #define DIR_LEFT  1
 #define DIR_RIGHT 0
 
+#define object_getLocation(object,image) ((object).location/*-(outputGetWidth(image)>>1)*/)
+
 #include "types.h"
 
 tObject objectCreate(int location, int floor, int direction, int stateId, unsigned long resId, int cacheMirror, tObjectType type);
 void objectDraw(tObject obj);
 int  objectMove(tObject* obj,tKey key,tRoom* room);
 void objectFree(tObject obj);
+
+int kidMove(tObject* kid,short flags,tRoom* room);
 
 #endif
 
