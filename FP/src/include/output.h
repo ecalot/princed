@@ -43,8 +43,8 @@ void outputDrawText(const char* text, int x, int y);
 void outputDrawMessage(const char* text); 
 
 /* Sound */
-void outputPlayWav(tWave sound); /* Starts the reproduction of the sample and returns */
-void outputPlayMid(tMidi music); /* Starts the music reproduction and returns */
+void outputPlayWav(tMemory sound); /* Starts the reproduction of the sample and returns */
+void outputPlayMid(tMemory music); /* Starts the music reproduction and returns */
 
 /* Graph */
 
