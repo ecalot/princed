@@ -284,4 +284,7 @@ include/anims_conf.h: conf/anims.conf conf/awk/anims_conf.awk
 	$(INFO) Binding animation indexes to the source...
 	$(AWK) -f conf/awk/anims_conf.awk conf/anims.conf>include/anims_conf.h
 
+include/text_conf.h: conf/alphabet.conf conf/awk/text_conf.awk
+	$(INFO) Generating font alphabet...
+	$(AWK) -f conf/awk/text_conf.awk conf/alphabet.conf>include/text_conf.h
 
