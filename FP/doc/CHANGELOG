@@ -5,11 +5,16 @@ Versions
  - Dummy Kernel
 
 * 0.2
- - Room drawing
- - Rebuilt kernel
  - Hard Coded Movements support
+ - Hard Coded titles and presentations
+ - Quick & dirty kernel
+ - Room drawing
  - Tested OS X and Windows ports
  - Window Caption
 
 * 0.3
- - Reboult kernel to support configuration files
+ - Object state system
+ - Rebuilt kernel to support configuration files
+ - Rebuilt tile handling library
+ - Tested BSD port
+ - Titles and presentations sent to a configuration file
