@@ -51,12 +51,23 @@ tObject kid;
 
 int playgame(int optionflag,int level) {
 	/* Create objects */
-	tKey    key=inputCreateKey();
-	tData*  resMap=resLoad(RES_MAP|level);
-	tMap*   map=(tMap*)resMap->pFrames;
+	tKey    key;
+	tData*  resMap;
+	tMap*   map;
 	tRoom   room;
 	tRoomId roomId;
-	int death=0;
+	int notReset;
+	int flags;
+	int timeDead;
+	
+while (1) {	
+	/* Initialize */
+	key=inputCreateKey();
+	resMap=resLoad(RES_MAP|level);
+	map=(tMap*)resMap->pFrames;
+	notReset=1;
+	flags=0;
+	timeDead=0;
 	
 	/*TODO: use a map.c function that reads this information and creates the kid*/
 	kid=objectCreate(30,1,DIR_RIGHT,stateKidInLevel(level),RES_IMG_ALL_KID,1,oKid);
@@ -69,7 +80,7 @@ int playgame(int optionflag,int level) {
 	room=mapGetRoom(map,roomId);
 	
 	/* Level loop here */
-	while (death>=0) {
+	while (notReset) {
 		if (inputGetEvent(&key)) {
 			/* Time event */
 
@@ -78,7 +89,7 @@ int playgame(int optionflag,int level) {
 			 * TODO: send to the real place where
 			 * the key is interpreted in kid object
 			 */
-			death=objectMove(&kid,key,&room);
+			flags=objectMove(&kid,key,&room);
 			mapMove(map);
 			/* Drawing functions */
 			outputClearScreen(); /* TODO: send to drawBackground() */
@@ -86,6 +97,16 @@ int playgame(int optionflag,int level) {
 			kidDrawLives(&kid);
 			objectDraw(kid);
 			roomDrawForeground(&room);
+			/* if dead */
+			if (flags&STATES_FLAG_X) timeDead++;	
+			if (timeDead==20) outputDrawMessage(120,"Press Button to Continue");
+			if (timeDead==160) outputDrawMessage(10,"Press Button to Continue");
+			if (timeDead==180) outputDrawMessage(10,"Press Button to Continue");
+			if (timeDead==200) outputDrawMessage(10,"Press Button to Continue");
+			if (timeDead==210) {
+				resFree(resMap);
+				return 0;
+			}
 			outputUpdateScreen();
 		} else {
 			/* Action event */
@@ -118,11 +139,22 @@ int playgame(int optionflag,int level) {
 				resFree(resMap);
 				level++;
 				level%=16;
-				resMap=resLoad(RES_MAP|level);
+/*				resMap=resLoad(RES_MAP|level);
 				map=(tMap*)resMap->pFrames;
 				mapStart(map,&kid,&roomId,level);
 				room=mapGetRoom(map,roomId);
-				outputDrawMessage(24,"Cheat: Pass to level %d\n",level);
+				outputDrawMessage(24,"Cheat: Pass to level %d\n",level);*/
+				notReset=0;
+				break;
+			case buttonPressed:
+				if (!(flags&STATES_FLAG_X))
+					break; /* break if not dead */
+			case reload:
+				notReset=0;
+				break;
+			case addLive:
+				break;
+			case addHitPoint:
 				break;
 			case showVersion:
 				outputDrawMessage(24,"FreePrince v"FP_VERSION"\n");
@@ -135,6 +167,8 @@ int playgame(int optionflag,int level) {
 					room.links[eUp],
 					room.links[eDown]
 				);
+				break;
+			case pause:
 				break;
 			case showMoreScreens:
 				outputDrawMessage(24,"S%d AL%d AR%d BL%d BR%d\n",
@@ -150,21 +184,22 @@ int playgame(int optionflag,int level) {
 			}
 		}
 	}
-	switch (death) {
+/*	switch (death) {
 	case STATE_EXIT_CODE_SPIKED:
-		outputDrawMessage(1,"You are spiked! Press a key\n");
+		outputDrawMessage(1,"You are spiked! Press a key");
 		break;
 	case STATE_EXIT_CODE_SPLASH:
-		outputDrawMessage(1,"Splashh! Explicit content censored!\n");
+		outputDrawMessage(1,"Splashh! Explicit content censored!");
 		break;
-/*	case STATE_EXIT_CODE_CHOMPED:
-		outputDrawMessage(1,"You are dead! Press a key\n");
-		break;*/
+	case STATE_EXIT_CODE_CHOMPED:
+		outputDrawMessage(1,"You are dead! Press a key");
+		break;
 	}	
 	outputUpdateScreen();
 	inputPause();
-	return playgame(optionflag,level); /* TODO: fix this recursivity */
-/*	return 0;*/
+	return playgame(optionflag,level); * TODO: fix this recursivity */
+}
+	return 0;
 }
 
 /*

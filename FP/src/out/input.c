@@ -113,12 +113,19 @@ int editAction(tKey* key,SDLKey k) {
 			key->actionPerformed=takeTime;
 			break;
 		default:
+			key->actionPerformed=buttonPressed;
 			break;
 		}
 	}
 	/* Normal actions */
 	if (!(key->status)) {
 		switch (k) {
+		case SDLK_ESCAPE:
+			key->actionPerformed=pause;
+			break;
+		case SDLK_RETURN:
+			key->actionPerformed=buttonPressed;
+			break;
 		case SDLK_r:
 			key->actionPerformed=resurrect;
 			break;

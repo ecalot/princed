@@ -68,6 +68,11 @@ int kidTakeHitPoint(tObject *kid) {
 	return --kid->hitPoints;
 }				
 
+void kidKillHim(tObject *kid) {
+	/* Returns 0 if death or the number of remaining hit points if not */
+	kid->hitPoints=0;
+}				
+
 /* Room stuff */
 				
 int kidVerifyRoom(tObject *kid,tRoom *room,int refresh) {

@@ -43,6 +43,7 @@ void kidGetLive(tObject *kid);
 void kidGetHitPoint(tObject *kid);
 int kidTakeHitPoint(tObject *kid);
 int kidMove(tObject* kid,short flags,tRoom* room);
+void kidKillHim(tObject *kid);
 
 #endif
 
