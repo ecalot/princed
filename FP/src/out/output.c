@@ -46,8 +46,14 @@ output.c: Free Prince : Output Devices Handler
 
 #include "text_conf.h" /* TODO: use text.h */
 
-#define DEF_SCREEN_WIDTH 320
+#define DEF_SCREEN_WIDTH  320
 #define DEF_SCREEN_HEIGHT 200
+
+typedef struct {
+	int bottom;
+	int left;
+	SDL_Surface* surface;
+} tSurface;
 
 /* Main screen object */
 SDL_Surface *screen;
@@ -75,23 +81,38 @@ void initText ()
 	static unsigned char chars[] = TEXT_CHARS;
 	static int pos_x[] = TEXT_POS;
 	static unsigned char fonts[] = TEXT_IMG;
+	tSurface* aux;
+	tPalette pal;
+	tColor col[2];
+	tColor white={0,0,0};
+	tColor parameter={255,255,255};
+
+	col[0]=white;
+	col[1]=parameter;
+
+	pal.colors=2;
+	pal.color=col;
 				
 	memset(valid_chars, 0, sizeof(valid_chars));
 
 	i = 0;
 	while (chars[i] != '\0') {
-		valid_chars[(unsigned char)chars[i]].is_valid = 1;
-		valid_chars[(unsigned char)chars[i]].x = pos_x[i];
-		valid_chars[(unsigned char)chars[i]].w = pos_x[i+1] - pos_x[i];
+		valid_chars[chars[i]].is_valid = 1;
+		valid_chars[chars[i]].x = pos_x[i];
+		valid_chars[chars[i]].w = pos_x[i+1] - pos_x[i];
 		i++;
 	}
 
 	/* Load Texture */
-	font = SDL_LoadBMP (FONT_FILE);
+/*	font = SDL_LoadBMP (FONT_FILE);
 	if (!font) {
 		fprintf (stderr, "CAN'T LOAD " FONT_FILE "!\n");
 		exit(1);
-	}
+	}*/
+	aux=outputLoadBitmap(fonts,TEXT_IMG_SIZE,pal,TEXT_IMG_W,TEXT_IMG_W,0,1,0,0);
+
+	font=aux->surface;
+					
 	font_init = 1;
 }
 
@@ -207,21 +228,14 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
 	*p = pixel;
 }
 
-typedef struct {
-	int bottom;
-	int left;
-	SDL_Surface* surface;
-} tSurface;
-
 
 /* Graphics: Primitives for resources module */
-void*
-outputLoadBitmap(const unsigned char* data, int size, 
+void* outputLoadBitmap(const unsigned char* data, int size, 
 		const tPalette palette, int h, int w, int invert, 
 		int firstColorTransparent, int bottom, int left)
 {
  /* Returns an abstract object allocated in memory using the data 
-  * information ti build it invert is 0 when no invertion is needed and 
+  * information to build it. invert is 0 when no invertion is needed and 
   * non-zero when an inversion is performed	*/
 
 	tSurface* loadedSurface;

@@ -155,5 +155,7 @@ END {
 	}
 	printf("}\n")
 	printf("#define TEXT_IMG_SIZE %d\n",img)
+	printf("#define TEXT_IMG_H %d\n",maxSize)
+	printf("#define TEXT_IMG_W %d\n",offset)
 }
 
