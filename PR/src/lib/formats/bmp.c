@@ -87,10 +87,6 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 
 	/* declare variables */
 	int a;
-	int x;
-	unsigned char* b;
-	unsigned char* g;
-	unsigned char* r;
 	unsigned short int bits;
 	unsigned short int planes=1;
 	unsigned long int colours;
@@ -99,6 +95,7 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	unsigned long int headerSize;
 	unsigned long int height;
 	unsigned long int offset;
+	unsigned char color;
 	unsigned long int width;
 	const unsigned long int zero=0;
 	char lineSerialization;
@@ -114,7 +111,6 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	colours=1<<bits;
 	headerSize=40;
 	offset=54+(colours<<2);
-	r=(g=(b=(unsigned char*)&extra)+1)+1;
 	lineSerialization=(-img.widthInBytes)&3;
 	filesize=offset+(img.widthInBytes+lineSerialization)*height;
 
@@ -141,11 +137,14 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 		fwrite(FORMATS_BMP_PALETTE_BW,8,1,bitmap);    /* 24-bit palette: #000000, #FFFFFF */
 	} else {
 		/* Colours */
-		for (a=0,x=0;a<colours;a++) {
-			*r=(unsigned char)(img.pal[x++]<<2);  /* Red   */
-			*g=(unsigned char)(img.pal[x++]<<2);  /* Green */
-			*b=(unsigned char)(img.pal[x++]<<2);  /* Blue  */
-			fwritelong (&extra,bitmap);    /* 24-bit Color value */
+		for (a=0;a<colours;a++) {
+			color=img.pal[3*a+2]<<2;
+			fwritechar(&color,bitmap); /* Blue  */
+			color=img.pal[3*a+1]<<2;
+			fwritechar(&color,bitmap); /* Green */
+			color=img.pal[3*a+0]<<2;
+			fwritechar(&color,bitmap); /* Red   */
+			fwritechar(&zero ,bitmap); /* alpha */
 		}
 	}
 
@@ -205,7 +204,12 @@ int mReadBitMap(tImage* image,unsigned char* data, int size) {
 	}
 
 	/* Serialize bitmap-->raw array */
-	while (height--) memcpy(image->pix+(x++)*image->widthInBytes,data+offset+height*serializedWidth,image->widthInBytes);
+	while (height--)
+		memcpy(
+			image->pix+(x++)*image->widthInBytes,
+			data+offset+height*serializedWidth,
+			image->widthInBytes
+		);
 
 	return 1;
 }
