@@ -1,4 +1,4 @@
-Princed Resources v1.0 beta-2
+Princed Resources v1.0-dev1
 (c) Copyright 2003 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -12,33 +12,42 @@ Resource Editor.
  supported versions of the formats to allow maximum compatibility. 
  As we haven't got enough time to code the program we decided to support
  only those kinds of formats, and let the user make the necessary
- conversions.
+ conversions. See the table above and specifications for more information.
 
-Resource Types:
+Supported Resource Types:
  Name       Extension  Description
-
- level      plv        Prince of Persia level
- image      bmp        Graphic in windows bitmap format
- wave       wav        Wave digital audio sounds
- midi       mid        Game music in midi format
+ ~~~~       ~~~~~~~~~  ~~~~~~~~~~~
  binary     bin        Binary files
+ image      bmp        Graphic in windows bitmap format
+ level      plv        Prince of Persia level
+ midi       mid        Game music in midi format
  palette    pal        Image palette in the Jasc format
  pcspeaker  pcs        Internal PC Speaker Sounds
+ wave       wav        Wave digital audio sounds
 
-Type "level":
+Levels:
+ * Type "level":
  We decided to give Level files the extension ".plv".  These files
  can be edited in RoomShaker from version 1.66 and Princed V3.
  PV3 can also edit the whole levels.dat file.
- Recommended editor: RoomShaker.
+ Format supported by: RoomShaker.
 
-Type "image":
+Images:
+ * Type "image":
  We use Windows Bitmaps (BMP) to extract the files.
  The file specifications are:
   - 16 color-palette in paletted images and a 2 color-palette in B/W images
   - No compression.
- Recommended editor: Paint Shop Pro, but even MS Paint works.
- 
-Type "wave":
+ Format supported by: The Gimp, ImageMagick (command line conversor),
+                      Paint Shop Pro, any other image editor.
+
+ * Type "palette":
+ For the bitmap palettes we are using the Jasc Pal format (Not Microsoft
+  .pal format)
+ Format supported by: Paint Shop Pro.
+
+Sound:
+ * Type "wave":
  For digital audio we are using the standard .wav format.
  The file specifications are:
   - Size of Format: 16
@@ -48,31 +57,28 @@ Type "wave":
   - Sample rate: 11025
   - Bytes/Sec: 11025
   - Block Align: 1
- Recommended editors: GoldWave, CoolEdit. 
+ Format supported by: SoX (command line conversor), GoldWave,
+                      CoolEdit (editors).
 
-Type "midi":
+ * Type "midi":
  For musical instrument digital interface we are using the standard midi
  format (mid) and type 0 midi format.
  The file specifications are:
   - Unknown (see standard MIDI specifications)
- Recommended editor: Power Tracks.
+ Format supported by: Power Tracks.
 
-Type "binary":
+Binary:
+ * Type "binary":
  Some binary garbage or untested stuff.
- Recommended editor: xvi32 or any other hex editor.
+ Format supported by: xvi32 or any other hex editor.
 
-Type "palette":
- For the bitmap palettes we are using the Jasc Pal format (Not Microsoft
-  .pal format)
- Recommended editor: Paint Shop Pro.
-
-Type "pcspeaker":
+ * Type "pcspeaker":
  For the internal PC Speaker sound we are using binary data saved in pcs
-  format
+ format.
  The formas is saved this way:
   2 unique bytes for headers
   3 bytes per note (2 for frequency and 1 for duration)
- Recommended editor: xvi32 or any other hex editor.
+ Format supported by: not supported yet, use xvi32 or any other hex editor.
 
 2) Bugs:
  All known bugs were solved. If you find a bug (program crashes, corrupted
@@ -109,11 +115,11 @@ Type "pcspeaker":
 
 5) Requirements
   
-  25127199 bytes in ram are approx required for a normal full directory task
+  Approximately 25Mb in RAM are required for a normal full directory task
   
   Recomended:
    AMD K6-II at 350Mhz or higher
-   32 Mb ram
+   32 Mb RAM
 
 6) Credits
 
@@ -137,9 +143,15 @@ Type "pcspeaker":
  Resources.xml edition
   Steven Fayers
 
-To see Translation Credits type pr --version for the version you want to see the credits
-Pr is also using some GPL compatible and GPL components made by «Kevlin Henney» (dirent
-stucture port for windows) and «the Free Software Foundation, Inc.» (getopt parsing
-functions ports).
+Type pr --version to see translation credits for an specific language 
+Pr is also using some GPL compatible and GPL components made by
+«Kevlin Henney» (dirent stucture port for windows) and «the Free Software
+Foundation, Inc.» (getopt parsing functions ports).
+Special thanks to:
+ - the authors of Valgrind and GDB for the great debugging features.
+ - the authors of GCC and LCC for making excelent free compilers.
+ - SourceForge.net for the home page hosting and the development
+   enviornment provided.
 
 Please enjoy using Princed Resource Editor!
+
