@@ -73,9 +73,9 @@ int res_getData(int id,int maxItems,tMemory* result) {
 	int indexNumber;
 	
 	/* main loop */
-	for (indexNumber=id;indexNumber+1==id;indexNumber++) {
-		if (indexNumber==maxItems) indexNumber=0; /* reset the counter */
-		gotId=mReadFileInDatFile(indexNumber,&(result->array),&(result->size));
+	for (indexNumber=0;indexNumber<maxItems;indexNumber++) {
+		gotId=mReadFileInDatFile((indexNumber+id-DATA_START_ITEMS)%maxItems,&(result->array),&(result->size));
+		//printf("Debug: res_getData: indexNumber=%d gotId=%d id=%d\n",indexNumber,gotId,id);
 		if (gotId==id) break;
 	}
 	
