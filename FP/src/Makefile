@@ -6,8 +6,6 @@ CC         = @gcc
 LINKER     = @gcc
 INFO       = @echo
 MAKEDIR    = @mkdir -p
-INDEXER    = @cd ..;./install; cd src
-DOWNLOADER = @cd ..;./install -d; cd src
 REMOVER    = @rm -f
 AWK        = @awk
 
@@ -49,7 +47,7 @@ LINKERRELEASE =
 #Binary code files
 OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
                 output.o maps.o config.o room.o titles.o \
-                input.o kid.o states.o tiles.o
+                input.o kid.o states.o tiles.o walls.o
 EXEFILE       = bin/freeprince
 
 GENERATEDRESHEADERS = include/res_conf_parts.h include/res_conf_files.h\
@@ -100,11 +98,11 @@ clean:
 	$(INFO) Erasing temporary object files...
 	$(REMOVER) $(OBJFILES) $(EXEFILE)\
 	           $(GENERATEDRESHEADERS) $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)\
-						 $(SRC2)
+						 $(SRC2) include/walls_conf.h
 
 build: clean $(EXEFILE)
 
-all: index build
+all: build
 
 install: download build
 
@@ -149,7 +147,7 @@ kernel.o: ker/kernel.c include/kernel.h include/resources.h include/res_conf.h i
 	$(INFO) Compiling main kernel...
 	$(CC) -c ker/kernel.c $(OPTIONS)
 
-room.o: ker/room.c include/room.h include/resources.h include/res_conf.h
+room.o: ker/room.c include/room.h include/resources.h include/res_conf.h include/walls_conf.h
 	$(INFO) Compiling kernel room object...
 	$(CC) -c ker/room.c $(OPTIONS)
 
@@ -192,10 +190,13 @@ states.o: ker/states.c include/states.h include/states_conf.h\
 	$(INFO) Compiling kernel states module...
 	$(CC) -c ker/states.c $(OPTIONS)
 
-tiles.o: res/tiles.c include/tiles.h include/tiles_conf.h
+tiles.o: res/tiles.c include/tiles.h include/tiles_conf.h 
 	$(INFO) Compiling resource tile classification module...
 	$(CC) -c res/tiles.c $(OPTIONS)
 
+walls.o: res/walls.c include/walls.h include/walls_conf.h
+	$(INFO) Compiling wall algorithm module...
+	$(CC) -c res/walls.c $(OPTIONS)
 
 #AWK scripts: header generation
 include/res_conf.h: $(GENERATEDRESHEADERS)
@@ -243,4 +244,8 @@ include/tiles_conf_types.h: conf/tiles.conf conf/awk/tiles_conf_types.awk
 include/tiles_conf_groups.h: conf/tiles.conf conf/awk/tiles_conf_groups.awk
 	$(INFO) Creating tile groups configuration file...
 	$(AWK) -f conf/awk/tiles_conf_groups.awk conf/tiles.conf>include/tiles_conf_groups.h
+
+include/walls_conf.h: conf/walls.conf conf/awk/walls_conf.awk
+	$(INFO) Creating wall algorithm randomization file...
+	$(AWK) -f conf/awk/walls_conf.awk conf/walls.conf>include/walls_conf.h
 

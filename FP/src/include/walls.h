@@ -19,30 +19,23 @@
 */
 
 /*
-room.h: FreePrince : Draw Screen
+walls.h: FreePrince : Walls functions
 ¯¯¯¯¯¯
- Copyright 2004 Princed Development Team
-  Created: 21 Jul 2004
+ Copyright 2005 Princed Development Team
+  Created: 3 Jan 2005
 
-  Authores: Diego Essaya <dessaya.cod@princed.com.ar>
-	          Enrique Calot <ecalot.cod@princed.com.ar>
+  Author: Enrique Calot <ecalot.cod@princed.com.ar>
 
  Note:
   DO NOT remove this copyright notice
 */
 
-#ifndef _ROOM_H_
-#define _ROOM_H_
+#ifndef _WALLS_H_
+#define _WALLS_H_
 
-#define TILE_W 32
-#define TILE_H 63
+#include "walls_conf.h"
 
-#include "types.h"
-
-tTile roomGetTile(tRoom* room,int x, int y);
-void roomDrawBackground(tRoom* room);
-void roomDrawForeground(tRoom* room);
-void roomLoadGfx(long environment); /* Only to initialize environment by mapStart */
+int wallGet(unsigned short env,unsigned short loc,unsigned short tab,unsigned short n); 
 
 #endif
 

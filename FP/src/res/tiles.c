@@ -30,10 +30,7 @@ tiles.c: FreePrince : Tile functions
   DO NOT remove this copyright notice
 */
 
-#ifndef _TILES_H_
-#define _TILES_H_
-
-#include "tiles_conf.h"
+#include "tiles.h"
 
 int isInGroup(unsigned char tile,unsigned char backtile,short group) {
 	static unsigned char tileList[]=TILES_GROUP_LIST;
@@ -52,6 +49,4 @@ int isInGroup(unsigned char tile,unsigned char backtile,short group) {
 	} while (docontinue);
 	return *i; /* returns non-zero if true and zero if false */
 }
-
-#endif
 

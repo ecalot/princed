@@ -19,30 +19,29 @@
 */
 
 /*
-room.h: FreePrince : Draw Screen
-¯¯¯¯¯¯
- Copyright 2004 Princed Development Team
-  Created: 21 Jul 2004
+tiles.c: FreePrince : Wall generation algorithm functions
+¯¯¯¯¯¯¯
+ Copyright 2005 Princed Development Team
+  Created: 3 Jan 2005
 
-  Authores: Diego Essaya <dessaya.cod@princed.com.ar>
-	          Enrique Calot <ecalot.cod@princed.com.ar>
+  Author: Enrique Calot <ecalot.cod@princed.com.ar>
 
  Note:
   DO NOT remove this copyright notice
 */
 
-#ifndef _ROOM_H_
-#define _ROOM_H_
+#include "walls.h"
 
-#define TILE_W 32
-#define TILE_H 63
+int wallGet(unsigned short env,unsigned short loc,unsigned short tab,unsigned short n) {
+	static unsigned long wallList[WALL_COUNT_TABLES][WALL_SIZE_TABLES]=WALL_ARRAYS;
 
-#include "types.h"
+	if (!tab) {
+		return 0;
+	}	else {
+		register unsigned short t=WALL_gettab(tab);
+		register unsigned short value=wallList[WALL_getenvloctab(env,loc,t)][n];
+		return (value>>WALL_getinc(tab))&((1<<WALL_getsiz(tab))-1);
+	}
+}
 
-tTile roomGetTile(tRoom* room,int x, int y);
-void roomDrawBackground(tRoom* room);
-void roomDrawForeground(tRoom* room);
-void roomLoadGfx(long environment); /* Only to initialize environment by mapStart */
-
-#endif
 
