@@ -59,9 +59,11 @@ BEGIN {
 	totalfixedimg++
 	f["frame" totalfixedimg]=$1/1
 	f["res" totalfixedimg]=toupper($3)
-	f["layer" totalfixedimg]=toupper($4)
-	f["x" totalfixedimg]=$5/1
-	f["y" totalfixedimg]=$6/1
+	if (toupper($4)=="INFINITE") $4=0
+	f["duration" totalfixedimg]=$4/1
+	f["layer" totalfixedimg]=toupper($5)
+	f["x" totalfixedimg]=$6/1
+	f["y" totalfixedimg]=$7/1
 	animation["sizef" animcount]++
 	halt
 }
@@ -115,7 +117,7 @@ END {
 	coma=""
 	printf("#define ANIMS_FIXEDIMG {")
 	for (i=1;i<=totalfixedimg;i++) {
-		printf("%s\\\n\t{/*frame*/ (unsigned short)%d,/*res*/ (unsigned short)RES_%s, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_%s, /*x,y*/ (unsigned short)%d,(unsigned short)%d}",coma,f["frame" i],f["res" i],f["layer" i],f["x" i],f["y" i])
+		printf("%s\\\n\t{/*frame*/ (unsigned short)%d,/*res*/ (unsigned long)RES_%s, /*layer*/ (unsigned char)ANIMS_LAYERTYPE_%s, /*x,y*/ (unsigned short)%d,(unsigned short)%d}",coma,f["frame" i],f["res" i],f["layer" i],f["x" i],f["y" i])
 		coma=","
 	}
 	printf("\\\n}\n\n")
@@ -124,7 +126,7 @@ END {
 	coma=""
 	printf("#define ANIMS_STATE {")
 	for (i=1;i<=totalstate;i++) {
-		printf("%s\\\n\t{/*frame*/ %d,/*res*/ RES_%s, /*state*/ STATE_MARKS_%s}",coma,t["frame" i],t["res" i],t["state" i])
+		printf("%s\\\n\t{/*frame*/ %d,/*res*/ (unsigned long)RES_%s, /*state*/ STATE_MARKS_%s}",coma,t["frame" i],t["res" i],t["state" i])
 		coma=","
 	}
 	printf("\\\n}\n\n")
@@ -133,7 +135,7 @@ END {
 	coma=""
 	printf("#define ANIMS_SOUND {")
 	for (i=1;i<=totalsound;i++) {
-		printf("%s\\\n\t{/*frame*/ %d,/*res*/ RES_%s, /*type*/ anims_enum_%s}",coma,o["frame" i],o["res" i],o["type" i])
+		printf("%s\\\n\t{/*frame*/ %d,/*res*/ (unsigned long)RES_%s, /*type*/ anims_enum_%s}",coma,o["frame" i],o["res" i],o["type" i])
 		coma=","
 	}
 	printf("\\\n}\n\n")

@@ -165,7 +165,8 @@ kid.o: ker/kid.c include/kid.h include/resources.h include/res_conf.h\
 	$(INFO) Compiling kernel kid object...
 	$(CC) -c ker/kid.c $(OPTIONS)
 
-titles.o: ker/titles.c include/resources.h include/res_conf.h
+titles.o: ker/titles.c include/resources.h include/res_conf.h\
+          include/anims_conf.h $(GENERATEDSTAHEADERS) $(GENERATEDRESHEADERS)
 	$(INFO) Compiling kernel titles module...
 	$(CC) -c ker/titles.c $(OPTIONS)
 
@@ -174,7 +175,8 @@ compress.o: res/compress.c include/compress.h include/memory.h \
 	$(INFO) Compiling resource compression module...
 	$(CC) -c res/compress.c $(OPTIONS)
 
-maps.o: res/maps.c include/maps.h include/map_defs.h include/tiles.h include/tiles_conf.h
+maps.o: res/maps.c include/maps.h include/map_defs.h include/tiles.h\
+        include/tiles_conf.h
 	$(INFO) Compiling resource map handling module...
 	$(CC) -c res/maps.c $(OPTIONS)
 
