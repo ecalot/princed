@@ -35,7 +35,7 @@ unsigned char popBit(unsigned char *byte) {
 void expandLzg(const unsigned char* array, int arraySize, 
 								unsigned char* img, int *imageSize) {
 	char k;
-	int location,h,cursor=0,pos=0;
+	int location,cursor=0,pos=0;
 	unsigned char maskbyte,rep;
 
 	/* img is an unsigned char[] sized 0x400 */
@@ -68,7 +68,7 @@ void expandLzg(const unsigned char* array, int arraySize,
 					 * if the image is stored in an array of 1024 x n bytes
 					 * "h" is the height and "location" is the width
 					 */
-					img[cursor]=img[(cursor-location)-((cursor-location)%MAX_MXD_SIZE_IN_LZG)+location];
+					img[cursor]=img[cursor-((cursor-location)%MAX_MXD_SIZE_IN_LZG)];
 
 					cursor++;
 					location++;
