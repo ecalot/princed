@@ -57,7 +57,7 @@ endif
 OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
                 output.o maps.o config.o room.o titles.o \
                 input.o kid.o states.o tiles.o walls.o anims.o\
-                object.o
+                object.o $(SRC2)
 EXEFILE       = bin/freeprince
 
 GENERATEDRESHEADERS = include/res_conf_parts.h include/res_conf_files.h\
@@ -82,7 +82,7 @@ LINKEROPTIONS = $(LINKERRELEASE)
 $(EXEFILE): $(OBJFILES)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
-	$(LINKER) $(LINKEROPTIONS) -o $(EXEFILE) $(OBJFILES) $(LIBS) $(LINKEROPTIONS) $(SRC2)
+	$(LINKER) $(LINKEROPTIONS) -o $(EXEFILE) $(OBJFILES) $(LIBS) $(LINKEROPTIONS)
 	$(INFO) Program successfully compiled
 
 ###################
