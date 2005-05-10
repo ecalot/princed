@@ -82,7 +82,7 @@ LINKEROPTIONS = $(LINKERRELEASE)
 $(EXEFILE): $(OBJFILES)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
-	$(LINKER) $(LINKEROPTIONS) -o $(EXEFILE) $(OBJFILES) $(LIBS) $(LINKEROPTIONS)
+	$(LINKER) $(LINKEROPTIONS) -o $(EXEFILE) $(OBJFILES) $(LIBS) $(LINKEROPTIONS) $(SRC2)
 	$(INFO) Program successfully compiled
 
 ###################
