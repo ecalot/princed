@@ -8,56 +8,51 @@ INFO       = @echo
 MAKEDIR    = @mkdir -p
 REMOVER    = @rm -f
 AWK        = @awk
+TAR        = tar
 
 #####################
 # Operating Systems #
 #####################
 
-OS      := $(shell uname)
-ifeq ($(OS),Linux)
-  LINUX = -DLINUX
-  OS    = GNU/Linux
-  SRC2  =
-else
-  LINUX = -DNOLINUX
-  SRC2  = getopt.o getopt1.o
-endif
-
+OS         = $(shell uname)
+GETOPTSRC  =
+GETOPTENABLED  =
+#non GNU unix systems should uncomment the following two lines
+#GETOPTSRC  = getopt.o getopt1.o
+#GETOPTENABLED  = -DENABLE_GETOPT
 
 ####################
 # Compiler options #
 ####################
 
 #Libraries: include path and linked libs
-INCLUDE       = -Iinclude/
+INCLUDE       = -Iinclude/ -Iports/include
 LIBS          = $(shell sdl-config --libs --cflags)
 #but if you have problems porting to BSD use:
 #LIBS         = -L/usr/local/lib -lSDL-1.1 -pthread 
 
 #Defines
 FS            = -DOUTPUT_FULLSCREEN
-DEFINES       = -DOS=\"$(OS)\" $(LINUX) $(FS)
+DEFINES       = -DOS=\"$(OS)\" $(FS) $(GETOPTENABLED)
 
 #Release type
-TYPE          = Debug
+
 # RELEASE may be:
 #  -g -Wall -ansi -pedantic        for debug
 #  -O2                             for release
 # LINKERRELEASE may be:
 #  -s                              for release
-ifeq ($(TYPE),Debug)
   RELEASE       = -g -Wall -ansi -pedantic 
   LINKERRELEASE =
-else
-  RELEASE       = -O2 
-  LINKERRELEASE = -s
-endif
+
+#  RELEASE       = -O2 
+#  LINKERRELEASE = -s
 
 #Binary code files
 OBJFILES      = main.o kernel.o resources.o dat.o disk.o compress.o \
                 output.o maps.o config.o room.o titles.o \
                 input.o kid.o states.o tiles.o walls.o anims.o\
-                object.o $(SRC2)
+                object.o $(GETOPTSRC)
 EXEFILE       = bin/freeprince
 
 GENERATEDRESHEADERS = include/res_conf_parts.h include/res_conf_files.h\
@@ -70,6 +65,8 @@ GENERATEDTILHEADERS = include/tiles_conf_types.h include/tiles_conf_groups.h
 
 GENERATEDOTHHEADERS = include/walls_conf.h include/anims_conf.h include/text_conf.h\
                       include/room_conf.h
+
+PACKAGE             = freeprince.tar.bz2
 
 #Use this to temporary remove an option
 OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
@@ -89,7 +86,12 @@ $(EXEFILE): $(OBJFILES)
 # program checks  #
 ###################
 
-.PHONY: checks checkcompiler checkawk clean build it run vg install download downloadmore all headers
+.PHONY: checks checkcompiler checkawk clean build it run vg install download downloadmore all headers package
+
+package: clean headers
+	$(INFO) Creating package...
+	@$(TAR) czf /tmp/a.tbz .. 2>/dev/null
+	@mv /tmp/a.tbz $(PACKAGE) 
 
 checks: checkcompiler checksdl checkawk
 
@@ -113,7 +115,7 @@ clean:
 	$(INFO) Erasing temporary object files...
 	$(REMOVER) $(OBJFILES) $(EXEFILE) $(GENERATEDRESHEADERS)\
 	           $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)\
-	           $(SRC2) $(GENERATEDOTHHEADERS)
+	           $(GETOPTSRC) $(GENERATEDOTHHEADERS) $(PACKAGE)
 
 build: clean $(EXEFILE)
 
@@ -127,12 +129,12 @@ headers: $(GENERATEDRESHEADERS) $(GENERATEDSTAHEADERS) $(GENERATEDTILHEADERS)\
 download:
 	$(MAKEDIR) bin
 	$(INFO) Downloading data art files...
-	@wget http://fp.princed.com.ar/freeprince.script -O - -nv 2>/dev/null|tar xjC bin
+	@wget http://fp.princed.com.ar/freeprince.script -O - -nv 2>/dev/null|$(TAR) xjC bin
 
 downloadmore:
 	$(MAKEDIR) bin
 	$(INFO) Downloading extra files...
-	@wget http://fp.princed.com.ar/freeprince2.script -O - -nv 2>/dev/null|tar xjC bin
+	@wget http://fp.princed.com.ar/freeprince2.script -O - -nv 2>/dev/null|$(TAR) xjC bin
 
 run:
 	@cd bin;./freeprince;cd ..
@@ -301,3 +303,13 @@ include/text_conf.h: conf/alphabet.conf conf/awk/text_conf.awk
 include/room_conf.h: conf/room.conf conf/awk/room_conf.awk
 	$(INFO) Generating room drawing code...
 	$(AWK) -f conf/awk/room_conf.awk conf/room.conf>include/room_conf.h
+
+#ports
+getopt.o: ports/getopt.c
+	$(INFO) Porting the Unix-like getopt function \(first part\)...
+	$(CC) $(OPTIONS) -c ports/getopt.c
+
+getopt1.o: ports/getopt1.c
+	$(INFO) Porting the Unix-like getopt function \(second part\)...
+	$(CC) $(OPTIONS) -c ports/getopt1.c
+
