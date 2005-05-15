@@ -30,10 +30,16 @@ main.c: FreePrince : Main function - parsing
   DO NOT remove this copyright notice
 */
 
-#define _GNU_SOURCE
 #include <SDL/SDL.h> /* Mac OS X entry point redefinition */
 #include <unistd.h>
+
+#ifdef ENABLE_GETOPT
+#include "getopt.h"
+#else
+#define _GNU_SOURCE
 #include <getopt.h>
+#endif
+
 #include "kernel.h"
 #include "main.h"
 #include <stdio.h>
