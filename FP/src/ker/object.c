@@ -32,7 +32,7 @@ object.h: Free Prince : Objects
 
 #include "kid.h"
 #include "output.h"
-#include "resources.h" /* resLoad/resFree */
+#include "resources.h" /* resLoad resFree */
 #include "maps.h" /* mapGetRoom getTile */
 #include <stdio.h> /* NULL */
 #include "states.h"
@@ -86,6 +86,8 @@ void objectDraw(tObject* object) {
 	);
 }
 
+/* event triggered when an object is moved */
+
 int objectMove(tObject* object,tKey key,tRoom* room) {
 	/* advance state and get the flag, then interpret the flag and do the events */
 	short flags;
@@ -93,18 +95,17 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 	int x;
 	int y;
 	tTile tile;
-	
+
 	flags=stateUpdate(&key,object,room);
 
 	if (room==NULL) return flags; /* exits if it is not associated to a room */
 
-	
 	/* a static variable type in the tObject determinates what object is it about.
 	 * This is to simulate polymorphism.
 	 * call a function that performs all the actions knowing the room,
 	 * the object and the flags. Returns refresh.
 	 */
-	
+
 	switch (object->type) {
 		case oKid:
 			/* Move the kid */
@@ -112,7 +113,7 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 			/* Calculate the new positions */
 			x=object->location/TILE_W;
 			y=object->floor;
-			
+
 			if (refresh) *room=mapGetRoom(room->level,room->id);
 			refresh=0;
 			tile=roomGetTile(room,x+1,y+1);
@@ -125,7 +126,7 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 				      stateUpdate(NULL,object,room); /* move again the to the interrupted state */
 				flags=stateUpdate(NULL,object,room); /* move again to the absoluteOnStart state */
 			}
-			
+
 			/* Check if the object must fall down */
 			if (flags&STATES_FLAG_P) {
 				if (!isIn(tile,TILES_WALKABLE)) { /* INTERRUPTION */
@@ -157,10 +158,10 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 			refresh=0;
 			break;
 	}
-	
-	if (refresh) { /* room map was changed and needs to be refreshed */
+
+	if (refresh) /* room map was changed and needs to be refreshed */
 		*room=mapGetRoom(room->level,room->id);
-	}
+
 	return flags;
 }
 

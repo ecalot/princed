@@ -25,7 +25,7 @@ kernel.c: FreePrince : Main Kernel
   Created: 16 Jun 2004
 
   Authores: Diego Essaya <dessaya.cod@princed.com.ar>
-	          Enrique Calot <ecalot.cod@princed.com.ar>
+            Enrique Calot <ecalot.cod@princed.com.ar>
 
  Note:
   DO NOT remove this copyright notice
@@ -33,15 +33,15 @@ kernel.c: FreePrince : Main Kernel
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "kernel.h"
-#include "resources.h"
-#include "output.h"
 #include "input.h"
-#include "titles.h"
-#include "states.h" /* stateKidInLevel */
-#include "object.h"
-#include "room.h"
+#include "kernel.h"
 #include "maps.h"
+#include "object.h"
+#include "output.h"
+#include "resources.h"
+#include "room.h"
+#include "states.h" /* stateKidInLevel */
+#include "titles.h"
 
 /*
  * Main game control function
@@ -102,6 +102,7 @@ int playgame(int optionflag,int level) {
 					timeDead++;	
 					kidKillHim(&kid);
 				}
+				/* hardcoded blinking message */
 				if (timeDead==20) outputDrawMessage(120,"Press Button to Continue");
 				if (timeDead==160) outputDrawMessage(10,"Press Button to Continue");
 				if (timeDead==180) outputDrawMessage(10,"Press Button to Continue");
@@ -233,7 +234,7 @@ int kernel(int optionflag,int level) {
 		}
 	} while(!quit);
 
-	objectFree(&kid); /*TODO: exiting from the story will cause a game crash because this object wasn't allocated*/
+	objectFree(&kid); /*TODO: exiting from the story will cause a game crash because this object wasn't allocated */
 	inputStopTimer();
 	outputStop();
 	return 0;

@@ -25,19 +25,19 @@ states.c: FreePrince : State object
   Created: 16 Oct 2004
 
   Authors:  Enrique Calot <ecalot.cod@princed.com.ar>
-	    Rodrigo Campos Catelin <rodrigocc@gmail.com>
+            Rodrigo Campos Catelin <rodrigocc@gmail.com>
  Note:
   DO NOT remove this copyright notice
 */
 
 #include "states.h"
-#include <stdlib.h>
-#include "tiles.h" /* isIn & groups */
-#include <stdio.h> /* For debug purposes */
+#include <stdlib.h> /* malloc free */
+#include "tiles.h" /* isIn "group definitions" */
 #include "object.h" /* DIR_LEFT DIR_RIGHT */
 #include "room.h" /* getTile */
 
 #ifdef DEBUGSTATES
+#include <stdio.h> /* For debug purposes */
 void debugShowFlag(short optionflag) {
 	if (optionflag&STATES_FLAG_F) printf("Falling ");
 	if (optionflag&STATES_FLAG_P) printf("PressFloor ");
@@ -53,7 +53,8 @@ static tsAction statesActionList[]=STATES_ACTIONS;
 static short statesAnimationList[]=STATES_ANIMATIONS;
 static tsCondition statesConditionList[]=STATES_CONDITIONS;
 
-void state_GetAnimation(int action,tState *state/*short *frames,short** flags,float* offsets*/) {
+void state_GetAnimation(int action,tState *state) {
+	/* TODO: check this function, it may not work in 64 bits architectures*/
 	tsAction* a=statesActionList+action;
 	short i=a->animSize;
 	short* j=statesAnimationList+(a->animStart*4);
@@ -120,7 +121,7 @@ void stateReset(tState* state, short stateId) {
 
 #define statesCondRet(a) return (a)?STATES_CONDRESULT_TRUE:STATES_CONDRESULT_FALSE
 
-/* Memory interpreter */
+/* Memory structure interpreter */
 int evaluateCondition(int condition,tKey* key, tObject* kid, tRoom* room) {
 	tsCondition c=statesConditionList[condition];
 	switch(c.type) {
@@ -221,6 +222,7 @@ int evaluateState(int state, tKey* key, tObject* kid, tRoom* room) {
 /* This function should return the image frame and actions to be performed by this call
  * returns the animation number corresponding to this frame */
 short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
+	/* TODO: check this function, it may not work in 64 bits architectures*/
 	tState* current=&(kid->action);
 	/*static float step;
 	static float acumLocation;*/
@@ -336,7 +338,8 @@ short stateUpdate(tKey* key, tObject* kid,tRoom* room) {
 	
 	kid->location+=(kid->direction==DIR_LEFT)?-steps:steps;
 
-	if (current->frame==1&&current->currentState<0) return current->currentState; /* if last frame of the last state, return exit code */
+	if ((current->frame==1) && (current->currentState<0))
+		return current->currentState; /* if this is the last frame of the last state, return exit code */
 	return flags;
 }
 

@@ -135,7 +135,7 @@ int wallGetCase(tTile left, tTile tile, tTile right) {
 #define wallCase(a) (cases==(a))
 
 /*
- * Drawing functions
+ * Hardcoded Drawing functions
  */
 
 #define drawAll(x,y,a) outputDrawBitmap(roomGfx.environment->pFrames[a],(x),(y))
@@ -279,6 +279,11 @@ void drawChopper(int x, int y, int frame, tChopperLayer layer) {
 
 /* End of special drawings */
 
+/*
+ * Those are the three hook functions:
+ *  hook functions are a layer between the drawing loop and the generated headers
+ */
+
 /* main panel block */
 void drawBackPanel(tRoom* room,int x, int y) {
 	tTile tile=roomGetTile(room,x,y);
@@ -348,6 +353,8 @@ int roomPress(tRoom* room, tObject* obj) {
 	 * returns 0 if the room didn't change, 1 if it did
 	 */
 
+	/* Hardcoded behaviors activated when the kid presses a floor */
+				
 	int x=(obj->location/TILE_W)+1;
 	int y=obj->floor+1;
 	tTile tile=roomGetTile(room,x,y);
@@ -357,7 +364,7 @@ int roomPress(tRoom* room, tObject* obj) {
 	enum {border,nearborder,nearbordernotlooking,middle} where;
 	int i;
 
-	/* buttons */
+	/* Hardcoded buttons behavior */
 	if (isIn(tile,TILES_PRESSABLE)) {
 		tEvent* event;
 		((tPressable*)tile.moreInfo)->action=eJustPressed;
@@ -371,14 +378,14 @@ int roomPress(tRoom* room, tObject* obj) {
 		} while	((event++)->triggerNext);
 	}
 
-	/* Loose tiles */
+	/* Loose tiles behavior */
 #ifdef DEBUGROOM
 	printf("s=%d x=%d y=%d\n",s,x,y);
 #endif
   if (isIn(tile,TILES_LOOSENORMAL)) 
 		touchLoose(tile);
 	
-	/* spikes */
+	/* Hardcoded spikes behavior */
 	/* there are 7 possibilities to be */
 #define WHERE_NEAR 6
 #define WHERE_IN 3
@@ -402,12 +409,21 @@ int roomPress(tRoom* room, tObject* obj) {
 			/* spikes left in this floor */
 			tDanger* danger=aux.moreInfo;
 			danger->action=eSpiUp;
-		} else if ((y<3)&&isIn(roomGetTile(room,x+i,y),TILE_EMPTY)&&isIn(aux=roomGetTile(room,x+i,y+1),TILES_SPIKES)) {
+		} else if (
+				(y<3) &&
+				isIn(roomGetTile(room,x+i,y),TILE_EMPTY) &&
+				isIn(aux=roomGetTile(room,x+i,y+1),TILES_SPIKES)
+			) {
 			/* spikes left in the lower floor, there is
 			 * a space so you can fall down */
 			tDanger* danger=aux.moreInfo;
 			danger->action=eSpiUp;
-		} else if ((y<2)&&isIn(roomGetTile(room,x+i,y),TILE_EMPTY)&&isIn(roomGetTile(room,x+i,y+1),TILE_EMPTY)&&isIn(aux=roomGetTile(room,x+i,y+2),TILES_SPIKES)) {
+		} else if (
+				(y<2) &&
+				isIn(roomGetTile(room,x+i,y),TILE_EMPTY) &&
+				isIn(roomGetTile(room,x+i,y+1),TILE_EMPTY) &&
+				isIn(aux=roomGetTile(room,x+i,y+2),TILES_SPIKES)
+			) {
 			/* spikes left in the 2 level lower floor, there are
 			 * spaces so you can fall down */
 			tDanger* danger=aux.moreInfo;
@@ -420,6 +436,8 @@ int roomPress(tRoom* room, tObject* obj) {
 }
 
 void roomKidChangedFloor(tRoom* room, tObject* kid) {
+	/* Hardcoded behaviors activated when the floor changes */
+				
 	/* Choppers */
 	tTile aux;
 	int i,j;
@@ -427,6 +445,7 @@ void roomKidChangedFloor(tRoom* room, tObject* kid) {
 #ifdef ROOMDEBUG
 	printf("kid had changed the floor. Guards and choppers may be allerted.\n");
 #endif
+	/* Hardcoded chomper behavior */
 	for (j=1;j<4;j++) {
 		for (i=1;i<10;i++) {
 			if (isIn((aux=roomGetTile(room,i,j)),TILE_CHOPPER)) {

@@ -40,6 +40,7 @@ titles.c: FreePrince : Titles, animation and presentation
 #include "anims.h"
 #include "object.h"
 
+/* private structures */
 typedef struct {
 	tData*        img;
 	unsigned char layer;
@@ -180,27 +181,6 @@ tMenuOption playAnimation(int id) {
 	/*free(sndArray);*/
 	return menuQuit;
 }
-
-/* Old source */
-#if 0
-tMenuOption sleep(int ticks) {
-	/* Wait ticks or a key is pressed if an action is thrown process it */
-	tKey key=inputCreateKey();
-	while (ticks) {
-		ticks=inputDelay(&key,ticks);
-		if (
-			/* there are ticks remaining (a non-temporal action was thrown) */
-			ticks &&
-	 		/* there is an action */
-			key.actionPerformed!=none &&
-			/* the action wasn't control key */
-			!(inputGetCtrl(key.status) && key.actionPerformed==other)
-			) 
-			return getAction(key); /* return the results of this action */ 
-	}
-	return menuNone;
-}
-#endif
 
 tMenuOption showTitles() {
 /* Show the titles animation
