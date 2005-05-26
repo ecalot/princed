@@ -57,7 +57,9 @@ void roomLoadGfx(long environment) {
 	}
 	roomGfx.environment=resLoad(environment);
 	/* TODO: make potion base depend on the environment.
-	 *       create a typedef tEnvironment and use a switch
+	 *       create a typedef enum tEnvironment and use a switch
+	 *       move the environment types to environment.conf
+	 *       and create environment.h
 	 */
 	if (roomGfx.torch==NULL) {
 		roomGfx.torch=resLoad(RES_ANIM_TORCH);
@@ -82,45 +84,37 @@ void roomFree() {
 	roomGfx.torch=(roomGfx.environment=NULL);
 }
 
+tRoomId getRoomId(tRoom* room,int x, int y,tRoomId roomId) {
+		if (y==0) roomId=room->links[eUp];
+		if (x==0) roomId=room->links[eLeft];
+		if (y==4) roomId=room->links[eDown];
+		if (x==11)roomId=room->links[eRight];
+		/* TODO: add corners down here: */
+		return roomId;
+}
+
 /* room */
 tTile roomGetTile(tRoom* room,int x, int y) {
 	tTile   result;
-	tRoomId roomId;
 	
 	result.back=room->back[x+12*y];
 	result.code=room->fore[x+12*y]&0x1F;
 	result.moreInfo=NULL;
 	
-	/* TODO: use a tile group: special, with GATES, PRESSABLE, SPIKES,
-	 * CHOPPER.
-	 */
-	roomId=room->id;
 
-	if ((!roomId)||(roomId>24)) {
+	if ((!room->id)||(room->id>24)) {
 		fprintf(stderr,"Assert: kid outside the map\n");					
 		exit(1);
 	}
 						
 	if (isIn(result,TILES_GATES)) { 
-		if (y==0)	roomId=room->links[eUp];
-		if (x==0) roomId=room->links[eLeft];
-		if (y==4) roomId=room->links[eDown];
-		if (x==11)roomId=room->links[eRight];
-		result.moreInfo=room->level->screenGates[roomId-1][result.back];
+		result.moreInfo=room->level->screenGates[getRoomId(room,x,y,room->id)-1][result.back];
 	} else if (isIn(result,TILES_PRESSABLE)) {
-		if (y==0)	roomId=room->links[eUp]; /*TODO: validate corners */
-		if (x==0) roomId=room->links[eLeft];
-		if (y==4) roomId=room->links[eDown];
-		if (x==11)roomId=room->links[eRight];
-		/* the case that a button is in tile 0 should never happen, but we'll care about it just in case */
-		result.moreInfo=room->level->screenPressables[roomId-1][result.back];
+		result.moreInfo=room->level->screenPressables[getRoomId(room,x,y,room->id)-1][result.back];
 	} else if (isIn(result,TILES_CHOPPER_SPIKE)) {
-		if (y==0)	roomId=room->links[eUp]; /*TODO: validate corners */
-		if (x==0) roomId=room->links[eLeft];
-		if (y==4) roomId=room->links[eDown];
-		if (x==11)roomId=room->links[eRight];
-		result.moreInfo=room->level->screenDangers[roomId-1][result.back];
+		result.moreInfo=room->level->screenDangers[getRoomId(room,x,y,room->id)-1][result.back];
 	}
+
 	return result;
 }
 
