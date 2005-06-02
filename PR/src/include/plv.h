@@ -74,14 +74,16 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 /* Format stuff */
 #define PLV_HEADER_A           "POP_LVL\x01\x01"
 #define PLV_HEADER_A_SIZE      9
-#define PLV_HEADER_B           "\x08\0\0"
+#define PLV_HEADER_B           "\x09\0\0"
 #define PLV_HEADER_B_SIZE      4
-#define PLV_FOOT_EDITOR        "EDITORNAME\0PR\0EDITORVERS\0"PR_VERSION"\0AUTHOR"
-#define PLV_FOOT_TITLE         "TITLE"
-#define PLV_FOOT_DESC          "DESCRIPTION"
-#define PLV_FOOT_TCREAT        "TIMECREATED"
-#define PLV_FOOT_TMODIF        "TIMELASTMODIF"
-#define PLV_FOOT_ORIG_FILE     "ORIGINALFILENAME"
+
+#define PLV_FOOT_EDITOR        "Editor Name\0PR\0Editor Version\0"PR_VERSION"\0Level Author"
+#define PLV_FOOT_TITLE         "Level Title"
+#define PLV_FOOT_DESC          "Level Description"
+#define PLV_FOOT_TCREAT        "Time Created"
+#define PLV_FOOT_TMODIF        "Time Last Modified"
+#define PLV_FOOT_ORIG_FILE     "Original Filename"
+#define PLV_FOOT_LEV_NUM_ORIG  "Original Level Number"
 #define PLV_HEADER_SIZE_OFFSET PLV_HEADER_A_SIZE+PLV_HEADER_B_SIZE
 
 #define PLV_DEFAULT_AUTHOR     "PR user"

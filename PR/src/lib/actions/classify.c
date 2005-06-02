@@ -122,7 +122,7 @@ int prClassify(const char* fileName) {
 				/* prince.exe v1.0 THG : 42 */ {622612442,123335},
 				{0,0}
 			};
-			unsigned long checkSum;
+			unsigned long checkSum=0;
 			int i;
 			result=40; /* generic exe file */
 			/* Now I'll try to recognize some known exe files */

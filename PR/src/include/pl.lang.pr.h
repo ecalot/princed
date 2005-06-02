@@ -43,7 +43,7 @@ pr.h: Princed Resources : English language strings
 #define PR_CGI_TEXT2              "Wynik: typ %02d\n"
 
 #define PR_TEXT_RESULT            "Wynik: %s (%d)\n"
-#define PR_TEXT_RESULT_ERR        "Wynik: %d plikow z bledami\n"
+#define PR_TEXT_RESULT_ERR        "Wynik: %d plikow z bledami (%d)\n"
 
 #define PR_TEXT_FILE_NOT_FOUND    "Wynik: Plik lub sciezka '%s' nie istnieje\n"
 
@@ -66,6 +66,7 @@ pr.h: Princed Resources : English language strings
 #define PR_TEXT_IMPORT_SUCCESS    "'%s' zostal zimportowany\n"
 #define PR_TEXT_IMPORT_ERRORS     "'%s' ma bledy, pominieto\n"
 #define PR_TEXT_IMPORT_DONE       "Importowanie zakonczone, %d plikow zimportowanych bez bledow, %d plikow z bledami\n"
+#define PR_TEXT_IMPORT_PLV_WARN   "Ostrzezenie: Plik PLV jest uszkodzony\n"
 
 #define PR_TEXT_EXPORT_WORKING    "'%s' zostal zeksportowany\n"
 #define PR_TEXT_EXPORT_ERROR      "'%s' ma bledy, przerwano...\n"
@@ -117,11 +118,22 @@ pr.h: Princed Resources : English language strings
 #else
 #define PARSING_RAW ""
 #endif
-#define PARSING_HELP_BEGIN "Uzycie:\n  pr [-x[EXPORTDIR]|-i[IMPORTDIR]|-d] [DATFILEPATH]\n  pr [OPTIONS] [DATFILEPATH]\n\n  Obowiazkowe argumenty dla dlugich opcji sa obowiazkowe dla krotkich opcji takze.\n\n"
-#define PARSING_HELP_PART1 "   -i, -c, --import[=DIRNAME] importuj z DIRNAME do wskazanego pliku dat\n   -d, --classify             zwroc rodzaj pliku dat\n   -x, -e, --export[=DIRNAME] eksportuj dany plik dat do DIRNAME\n\n"
-#define PARSING_HELP_PART2 "   -a, --setauthor=NAME       ustaw swoje imie w ekstraktowanych plikach plv\n   -b, --backup[=EXTENSION]   zdubluj moje pliki\n   -f, --force                nadpisuj pliki bez pytania\n   -g, --cgi                  uruchom jako CGI i ustaw naglowki mime\n   -h, -?, --help             wyswietl ta pomoc i wyjdz\n   -s, --resource=RESFILE     uzywaj wlasnych zasobow xml\n"PARSING_RAW
+#define PARSING_HELP_BEGIN "Uzycie:\n  pr [-x[EXPORTDIR]|-i[IMPORTDIR]|-d] [DATFILEPATH]\n  pr [OPTIONS] [DATFILEPATH]\n\n  Obowiazkowe argumenty dla dlugich opcji sa takze konieczne przy krotkich opcjach.\n\n"
+#define PARSING_HELP_PART1 "   -i, -m, --import[=DIRNAME] importuj z DIRNAME do wskazanego pliku dat\n   -c, --classify             zwroc rodzaj pliku dat\n   -e, -x, --export[=DIRNAME] eksportuj zawartosc danego pliku dat do DIRNAME\n\n"
+#define PARSING_HELP_PART2 "   -a, --setauthor=NAME       ustaw dane autora w pliku plv\n   -b, --backup[=EXTENSION]   wykonaj kopie plikow\n   -f, --force                nadpisuj pliki bez pytania\n   -g, --cgi                  uruchom jako CGI i ustaw naglowki mime\n   -h, -?, --help             wyswietl pomoc i zakoncz dzialanie aplikacji\n   -s, --resource=RESFILE     uzyj wlasnego pliku zasobow xml\n"PARSING_RAW
 
-#define PARSING_HELP_PART3 "   -R, --recursive            szukaj wszystkich plikow dat (tylko gdy\n                              DATFILEPATH nie jest plikiem dat)\n   -t, --datfile=DATFILE      ustaw plik dat, z ktorego beda odczytane\n                              zasoby inne niz w pliku orginalnym\n       --unknown              generuj nieznany plik dat bez\n                              potwierdzania zadnej ekstrakcji\n   -v, --verbose              wyjasnij co jest robione\n       --version              podaj informacje o wersji i wyjdz\n\n"
+#define PARSING_HELP_PART3 "   -R, --recursive            szukaj wszystkich plikow dat (tylko gdy\n                              DATFILEPATH nie jest plikiem dat)\n\
+   -t, --datfile=DATFILE      ustaw plik dat, z ktorego beda odczytane\n\
+                              zasoby inne niz w pliku orginalnym\n\
+   -z, --compression-level=N  oznacza poziom kompresji wyrazony cyfra z przedzialu\n\
+                              od 1 do 7. Wartosc 1 oznacza szybka, slaba kompresje,\n"
+
+#define PARSING_HELP_PART4 "\
+                              natomiast wartosc 7 duza kompresje, przy jednoczesnym\n\
+                              spadku szybkosci.\n\
+       --unknown              generuj nieokreslony plik dat bez koniecznosci potwierdzenia\n\
+   -v, --verbose              wyjasnij, co aktualnie wykonuje aplikacja\n\
+       --version              podaj aktualna wersje aplikacji i zakoncz jej dzialanie\n\n"
 
 #define PR_TXT_AUTHORS           "Autorzy"
 #define PR_TXT_CODER             "Kodowanie i g³ówne algorytmy"
@@ -131,5 +143,5 @@ pr.h: Princed Resources : English language strings
 #define PR_TXT_MID               "Tworca formatu muzycznego MID"
 #define PR_TXT_XML               "Edycja zasobow XML-a"
 #define PR_TXT_TRANSLATION       "Tlumaczenie"
-#define PR_TXT_ABOUT_TRANSLATOR  "Piotr Kochanek"
+#define PR_TXT_ABOUT_TRANSLATOR  "Piotr Kochanek\n    Patryk Matuszewski"
 

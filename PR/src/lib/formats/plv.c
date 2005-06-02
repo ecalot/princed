@@ -98,10 +98,11 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 	int ok;
 	unsigned char sizeOfNow;
 	char* now;
+	char levelnum[10];
 	const char* nullString="";
 	static const char* author=PLV_DEFAULT_AUTHOR;
 	unsigned long int block2size;
-	const unsigned long int numberOfFieldPairs=8;
+	const unsigned long int numberOfFieldPairs=10;
 
 	/* Get current time */
 	now=getDate();
@@ -114,6 +115,7 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 	if (desc==NULL) desc=nullString;
 	if (title==NULL) title=nullString;
 	if (vDatAuthor==NULL) vDatAuthor=author;
+	sprintf(levelnum,"%d",level);
 
 	/* Writing file */
 
@@ -131,12 +133,13 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 
 	/* Write footers */
 	block2size=(
-		sizeof(PLV_FOOT_EDITOR)+	  strlen(vDatAuthor)+1+
-		sizeof(PLV_FOOT_TITLE)+	    strlen(title)+1+
-		sizeof(PLV_FOOT_DESC)+	    strlen(desc)+1+
-		sizeof(PLV_FOOT_TCREAT)+	  sizeOfNow+
-		sizeof(PLV_FOOT_TMODIF)+	  sizeOfNow+
-		sizeof(PLV_FOOT_ORIG_FILE)+	strlen(filename)+1
+		sizeof(PLV_FOOT_EDITOR)+	     strlen(vDatAuthor)+1+
+		sizeof(PLV_FOOT_TITLE)+	       strlen(title)+1+
+		sizeof(PLV_FOOT_DESC)+	       strlen(desc)+1+
+		sizeof(PLV_FOOT_TCREAT)+	     sizeOfNow+
+		sizeof(PLV_FOOT_TMODIF)+	     sizeOfNow+
+		sizeof(PLV_FOOT_ORIG_FILE)+	   strlen(filename)+1,
+		sizeof(PLV_FOOT_LEV_NUM_ORIG)+ strlen(levelnum)+1
 	);
 
 	ok=ok&&fwritelong(&block2size,target);
@@ -148,12 +151,14 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 	ok=ok&&fwrite(title,strlen(title)+1,1,target);
 	ok=ok&&fwrite(PLV_FOOT_DESC,sizeof(PLV_FOOT_DESC),1,target);
 	ok=ok&&fwrite(desc,strlen(desc)+1,1,target);
+	ok=ok&&fwrite(PLV_FOOT_ORIG_FILE,sizeof(PLV_FOOT_ORIG_FILE),1,target);
+	ok=ok&&fwrite(filename,strlen(filename)+1,1,target);
 	ok=ok&&fwrite(PLV_FOOT_TCREAT,sizeof(PLV_FOOT_TCREAT),1,target);
 	ok=ok&&fwrite(now,sizeOfNow,1,target);
 	ok=ok&&fwrite(PLV_FOOT_TMODIF,sizeof(PLV_FOOT_TMODIF),1,target);
 	ok=ok&&fwrite(now,sizeOfNow,1,target);
-	ok=ok&&fwrite(PLV_FOOT_ORIG_FILE,sizeof(PLV_FOOT_ORIG_FILE),1,target);
-	ok=ok&&fwrite(filename,strlen(filename)+1,1,target);
+	ok=ok&&fwrite(PLV_FOOT_LEV_NUM_ORIG,sizeof(PLV_FOOT_LEV_NUM_ORIG),1,target);
+	ok=ok&&fwrite(levelnum,strlen(levelnum)+1,1,target);
 
 	/* Close file and return */
 	ok=ok&&(!writeCloseOk(target,optionflag,backupExtension));
