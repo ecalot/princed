@@ -21,7 +21,7 @@
 /*
 extract.c: Princed Resources : DAT Extractor
 ¯¯¯¯¯¯¯¯¯
- Copyright 2003, 2004 Princed Development Team
+ Copyright 2003-2005 Princed Development Team
   Created: 24 Aug 2003
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
