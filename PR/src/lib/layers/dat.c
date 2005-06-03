@@ -68,6 +68,7 @@ unsigned char*     readDatFile;
 int                readDatFileSize;
 
 /* private functions */
+/* todo: move to datindex.c */
 
 int dat_cursorNext(tIndexCursor* r) {
 	if (r->popVersion==pop1) {
@@ -119,6 +120,63 @@ tIndexCursor dat_initPop2IndexCursor(unsigned char* highData,int highDataSize) {
 	r.currentMasterItem=0;
 	r.currentSlaveItem=0;
 	r.currentRecord=r.highData+array2short(r.highData+6)+2;
+	
+	return r;
+}
+
+int dat_cursorMove(tIndexCursor* r,int pos) {
+	if (r->popVersion==pop1) {
+		/* POP1 */
+		if (r->slaveItems>pos) return 0;
+		r->currentSlaveItem=pos;
+		r->currentRecord=r->highData+8*pos+2;
+		return 1;
+	} else {
+		/* POP2 */
+		int i;
+		for (i=0;i<r->masterItems;i++) {
+			/* read how many items are in the slave index number i */
+			int itemCount=array2short(r->highData+array2short(r->highData+6+6*i));
+			if (pos<itemCount) {
+				/* Great! we found it */
+				
+				/* remember the new slave index name */
+				strncpy(r->slaveIndexName,(char*)(r->highData+2+6*i),4);
+						
+				/* remember the new slave index size */
+				r->slaveItems=itemCount;
+							
+				/* jump to next index */
+				r->currentMasterItem=i;
+				r->currentSlaveItem=pos;
+				r->currentRecord=r->highData+array2short(r->highData+6+6*r->currentMasterItem)+2;
+				return 1;
+			}
+			pos-=itemCount;
+		}
+		return 0; /* we had read all the master index and we didn't read the pos */
+	}
+}
+				
+#define dat_readCursorGetIndexName(r) (r.slaveIndexName)
+#define dat_readCursorGetId(r)        (array2short(r.currentRecord))
+#define dat_readCursorGetOffset(r)    (array2long(r.currentRecord+2))
+#define dat_readCursorGetSize(r)      (array2short(r.currentRecord+6))
+#define dat_readCursorGetFlags(r)     ((r.popVersion==pop1)?(1<<31):(r.currentRecord[7]<<24|r.currentRecord[8]<<16|r.currentRecord[9]))
+
+tIndexCursor dat_initPop1IndexCursor(unsigned char* highData,int highDataSize) {
+	tIndexCursor r;
+	r.popVersion=pop1;
+	r.highData=highData;
+	r.highDataSize=highDataSize;
+	r.slaveItems=array2short(highData);
+
+	/* remember the first slave index name */
+	strcpy(r.slaveIndexName,"POP1");
+	
+	/* jump to the first index */
+	r.currentSlaveItem=0;
+	r.currentRecord=r.highData+2;
 	
 	return r;
 }
