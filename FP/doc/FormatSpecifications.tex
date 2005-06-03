@@ -34,14 +34,14 @@ Table of Contents
 5. DAT v2.0 Format Specifications ..................................... 787
 5.1. General file specs, index and checksums .......................... 790
 5.2. The master index ................................................. 817
-5.3. The slave indexes ................................................ 854
-6. PLV v1.0 Format Specifications ..................................... 864
-6.1. User data ........................................................ 890
-6.2. Allowed Date format .............................................. 920
-7. The SAV v1.0 format ................................................ 934
-8. The HOF v1.0 format ................................................ 980
-9. Credits ........................................................... 1003
-10. License .......................................................... 1023
+5.3. The slave indexes ................................................ 855
+6. PLV v1.0 Format Specifications ..................................... 875
+6.1. User data ........................................................ 901
+6.2. Allowed Date format .............................................. 931
+7. The SAV v1.0 format ................................................ 945
+8. The HOF v1.0 format ................................................ 991
+9. Credits ........................................................... 1014
+10. License .......................................................... 1034
 
 
 1. Preamble
@@ -789,7 +789,7 @@ Table of Contents
 
 5.1. General file specs, index and checksums
  POP2 DAT files aren't much different from their predecessors from POP1.
- The format is simmilar in almost each way. The main difference is in the
+ The format is similar in almost each way. The main difference is in the
  index. As DAT v1.0 used an index in the high data, the DAT v2.0 indexes
  are two level encapsulated inside a high data. So there is an index of
  indexes.
@@ -806,7 +806,7 @@ Table of Contents
            (the number of bytes the highData has)
            Note that HighDataOffset+HighDataSize=file size
 
- This is simmilar to DAT v1.0 format, except that the index area is now
+ This is similar to DAT v1.0 format, except that the index area is now
  called high data.
 
  The high data part of the file contains multiple encapsulated indexes.
@@ -815,17 +815,18 @@ Table of Contents
  Slave indexes are the real file contents index.
 
 5.2. The master index
- The master index:
-  - Offset HighDataOffset,   size 2, type US: NumberOfSections
+ The master index is made with:
+  - Offset HighDataOffset,   size 2, type US: NumberOfSlaveIndexes
            (the number of the high data sections)
-  - Offset HighDataOffset+2, size NumberOfItems*6: The master index record
-           (a list of NumberOfSections blocks of 6-bytes-length index record
-           each corresponding to one slave index)
+  - Offset HighDataOffset+2, size NumberOfSlaveIndexes*6: The master index record
+           (a list of NumberOfSlaveIndexes blocks of 6-bytes-length index
+           record each corresponding to one slave index)
 
  The 6-bytes-length index record (one per item): Size = 6 bytes
-  - Relative offset 0, size 4, type sting: 4 ASCII characters denoting the section ID
-  - Relative offset 4, size 2, type US: Section offset
-           (section offset relative to HighDataOffset)
+  - Relative offset 0, size 4, type sting: 4 ASCII bytes string denoting
+           the section ID
+  - Relative offset 4, size 2, type US: SlaveIndexOffset
+           (slave index offset relative to HighDataOffset)
 
  From the end of the DAT High Data index to the end of the file there is
  the High Data section contents (where the HighDataOffset relative offsets
@@ -835,30 +836,40 @@ Table of Contents
  less than 4 bytes, the hex 0x00 is used. We will denote it with the
  cardinal # symbol.
 
-                   Table 5.1: Section IDs strings
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                   Table 5.1: Section ID strings
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   ID   Sizes           Type
-   ~~   ~~~~~           ~~~~
-   CEIP 13
-   CLAP 13 to 24
-   DNS# 343 to 2906
-   LPHS 13
-   MARF 13
-   PAHS variant         This is the encapsulated file content index
-   SLAP 13 to 24
-   SQES 2576            Used in the midi sequence file
-   TSUC 24 to 123
-   #### 13
+   ID   Size in records Type
+   ~~   ~~~~~~~~~~~~~~~ ~~~~
+   CEIP 1
+   CLAP 1 or 2
+   DNS# variant
+   LPHS 1
+   MARF 1
+   PAHS variant         This is the main encapsulated file content index
+   SLAP 1 or 2
+   SQES variant         Used in the midi sequence file
+   TSUC variant
+   #### 1
    
 5.3. The slave indexes
- All encapsulated sections are indexes. The first 2 bytes are an US
- indicating the number of items in this index.
- Each record has 11 bytes length:
-  2 for the ID
-  4 for the file absolute offset
-  2 for the size
-  3 bytes are: 40 00 00 for PAHS
+ All encapsulated sections are indexes.
+ The slave index is made with:
+  - Offset SlaveIndexOffset,   size 2, type US: NumberOfItems
+           (the number of the records referring to the file data)
+  - Offset SlaveIndexOffset+2, size NumberOfItems*11: The slave index record
+           (a list of NumberOfItems blocks of 11-bytes-length index record
+           each corresponding to one slave index)
+
+ The 11-bytes-length slave index record (one per item): Size = 11 bytes
+  - Relative offset 0, size 2, type US: Item ID
+  - Relative offset 2, size 4, type UL: Resource start
+           (absolute offset in file)
+  - Relative offset 6, size 2, type US: Size of the item
+           (not including the checksum byte)
+  - Relative offset 8, size 3, type binary: A flags mask
+           (in PAHS indexes it's allways 0x40 0x00 0x00;
+           in others 0x00 0x00 0x00)
 
 
 6. PLV v1.0 Format Specifications
