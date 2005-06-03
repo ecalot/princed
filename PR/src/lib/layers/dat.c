@@ -45,6 +45,19 @@ dat.c: Princed Resources : DAT library
 
 #ifdef PR_DAT_INCLUDE_DATREAD
 
+typedef struct {
+	tPopVersion        popVersion;
+	unsigned char*     highData;
+	int                highDataSize;
+	int                masterItems;
+	int                slaveItems;
+	char               recordSize;
+	char               slaveIndexName[5];
+	int                currentMasterItem;
+	int                currentSlaveItem;
+	unsigned char*     currentRecord;
+} tIndexCursor;
+
 char               recordSize;
 tPopVersion        popVersion;
 unsigned char*     indexPointer;
@@ -55,6 +68,60 @@ unsigned char*     readDatFile;
 int                readDatFileSize;
 
 /* private functions */
+
+int dat_cursorNext(tIndexCursor* r) {
+	if (r->popVersion==pop1) {
+		/* POP1 */
+		if (r->currentSlaveItem==r->slaveItems) return 0;
+		r->currentSlaveItem++;
+		r->currentRecord+=8;
+	} else {
+		/* POP2 */
+		if (r->currentSlaveItem==r->slaveItems) {
+			if (r->currentMasterItem==r->masterItems) {
+				return 0; /* its over */
+			}
+			
+			/* remember the new slave index name */
+			strncpy(r->slaveIndexName,(char*)(r->highData+2+6*r->currentMasterItem),4);
+			
+			/* remember the new slave index size */
+			r->slaveItems=array2short(r->highData+array2short(r->highData+6+6*r->currentMasterItem));
+							
+			/* jump to next index */
+			r->currentMasterItem++;
+			r->currentSlaveItem=0;
+			r->currentRecord=r->highData+array2short(r->highData+6+6*r->currentMasterItem)+2;
+
+		} else {
+			r->currentSlaveItem++;
+			r->currentRecord+=11;
+		}
+	}
+	return 1;
+}
+
+tIndexCursor dat_initPop2IndexCursor(unsigned char* highData,int highDataSize) {
+	tIndexCursor r;
+	r.popVersion=pop2;
+	r.highData=highData;
+	r.highDataSize=highDataSize;
+	r.masterItems=array2short(highData);
+
+	/* remember the first slave index name */
+	strncpy(r.slaveIndexName,(char*)(highData+2),4);
+	r.slaveIndexName[4]=0; /* now it is a null terminated string */
+			
+	/* remember the first slave index size */
+	r.slaveItems=array2short(highData+array2short(highData+6));
+							
+	/* jump to the first index */
+	r.currentMasterItem=0;
+	r.currentSlaveItem=0;
+	r.currentRecord=r.highData+array2short(r.highData+6)+2;
+	
+	return r;
+}
 
 tPopVersion detectPopVersion(int highArea,int highAreaSize) {
 	const unsigned char* cursor;
@@ -103,7 +170,7 @@ tPopVersion detectPopVersion(int highArea,int highAreaSize) {
 			indexSize=sizeOfSection;
 			recordSize=11;
 		}
-		
+		/* TODO: check if short(startOfSection)*11+2==sizeOfSection*/	
 	}
 	
 	return pop2;
@@ -172,13 +239,15 @@ int mReadFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
 	id=    array2short(indexPointer+k*recordSize);
 	offset=array2long(indexPointer+k*recordSize+2);
 	*size= array2short(indexPointer+k*recordSize+6)+1;
-	
+
+#ifdef CHECK_POP2_PAHS_INTEGRITY
 	if ( /* pop2 integrity check */
 		(popVersion==pop2) &&
 		(!(indexPointer[k*recordSize+8]==0x40) &&
 		(!indexPointer[k*recordSize+9]) &&
 		(!indexPointer[k*recordSize+10])
 	)) return -1;
+#endif
 
 	if (offset>indexOffset) return -1; /* a resourse offset is allways before the index offset */
 	*data=readDatFile+offset;
