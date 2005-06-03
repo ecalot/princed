@@ -211,7 +211,6 @@ int main (int argc, char **argv) {
 				} else {
 					/* classify */
 					result=prClassifyDat(file);
-					printf("result=%d\n",result);
 					fprintf(outputStream,PR_TEXT_RESULT,classifyErrors[result+2],result);
 				}
 				free(file);

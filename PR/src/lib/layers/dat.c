@@ -21,7 +21,7 @@
 /*
 dat.c: Princed Resources : DAT library
 ¯¯¯¯¯
- Copyright 2004 Princed Development Team
+ Copyright 2004,2005 Princed Development Team
   Created: 15 Mar 2004
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
@@ -46,7 +46,6 @@ dat.c: Princed Resources : DAT library
 #ifdef PR_DAT_INCLUDE_DATREAD
 
 char               recordSize;
-int                ofk=0;
 tPopVersion        popVersion;
 unsigned char*     indexPointer;
 unsigned long  int indexOffset;
