@@ -31,13 +31,16 @@ Table of Contents
 4.6. Midi music ....................................................... 768
 4.7. Internal PC Speaker .............................................. 771
 4.8. Binary files ..................................................... 776
-5. PLV v1.0 Format Specifications ..................................... 783
-5.1. User data ........................................................ 809
-5.2. Allowed Date format .............................................. 839
-6. The SAV v1.0 format ................................................ 853
-7. The HOF v1.0 format ................................................ 899
-8. Credits ............................................................ 922
-9. License ............................................................ 942
+5. DAT v2.0 Format Specifications ..................................... 114
+5.1. General file specs, index and checksums .......................... 117
+5.2. The PAHS encapsulated section .................................... 783
+6. PLV v1.0 Format Specifications ..................................... 783
+6.1. User data ........................................................ 809
+6.2. Allowed Date format .............................................. 839
+7. The SAV v1.0 format ................................................ 853
+8. The HOF v1.0 format ................................................ 899
+9. Credits ............................................................ 922
+10. License ........................................................... 942
 
 
 1. Preamble
@@ -780,12 +783,78 @@ Table of Contents
  palette format.
 
 
-5. PLV v1.0 Format Specifications
+5. DAT v2.0 Format Specifications
+   ~~~ ~~~~ ~~~~~~ ~~~~~~~~~~~~~~
+
+
+5.1. General file specs, index and checksums
+ POP2 DAT files aren't much different from their predecessors from POP1. The
+ format is simmilar in almost each way. The main difference is in the index.
+ DAT v2.0 indexes are encapsulated inside a high data.
+
+ We will use the same conventions than in the prior chapter.
+ The checksum validations are still the same.
+
+ High data structures:
+
+ The DAT header: Size = 6 bytes
+  - Offset 0, size 4, type UL: HighDataOffset
+           (the location where the highData begins)
+  - Offset 4, size 2, type US: HighDataSize
+           (the number of bytes the highData has)
+           Note that HighDataOffset+HighDataSize=file size
+
+ This is simmilar to DAT v1.0 format, except that the index is now called
+ high data.
+
+ The high data part of the file contains multiple encapsulated sections. Each
+ of those section is indexed in a high data index. The file contents index
+ may be only a section encapsulated in the high data.
+
+ The DAT High Data index: Size = HighDataSize bytes
+  - Offset HighDataOffset,   size 2, type US: NumberOfSections
+           (the number of the high data sections)
+  - Offset HighDataOffset+2, size NumberOfItems*6: The high data sections index
+           (a list of NumberOfSections blocks of 6-bytes-length index record)
+
+ The 6-bytes-length index record (one per item): Size = 6 bytes
+  - Relative offset 0, size 4, type sting: 4 ASCII characters denoting the section ID
+  - Relative offset 4, size 2, type US: Section offset
+           (section offset relative to HighDataOffset)
+
+ From the end of the DAT High Data index to the end of the file there is the High Data
+ section contents (where the HighDataOffset relative offsets points to).
+
+ There are different 4 bytes ASCII strings section IDs.
+
+                   Table 5.1: Section IDs strings
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   ID   Sizes           Type
+   ~~   ~~~~~           ~~~~
+   CEIP 13
+   CLAP 13 to 24
+   DNS. 343 to 2906
+   LPHS 13
+   MARF 13
+   PAHS variant         This is the encapsulated file content index
+   SLAP 13 to 24
+   SQES 2576            Used in the midi sequence file
+   TSUC 24 to 123
+   .... 13
+ 	
+
+5.2. The PAHS encapsulated section
+
+TODO
+
+
+6. PLV v1.0 Format Specifications
    ~~~ ~~~~ ~~~~~~ ~~~~~~~~~~~~~~
 
  PLV v1.0 files are defined in this table:
 
-                   Table 5.1: PLV blocks
+                   Table 6.1: PLV blocks
                    ~~~~~~~~~~~~~~~~~~~~~
 
    Size Offset Description                  Type   Content
@@ -806,7 +875,7 @@ Table of Contents
  PLV version is 1 for PLV v1.0.
  Only one level may be saved in a PLV, the level number is saved inside.
 
-5.1. User data
+6.1. User data
 
  User data is a block of extensible information, Number of fields is the
  count of each field/value information pair. A pair is saved in the
@@ -817,7 +886,7 @@ Table of Contents
  There are mandatory pairs that must be included in all PLV files.
  Those are:
 
-                   Table 5.2: Mandatory Fields
+                   Table 6.2: Mandatory Fields
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Field name              Description
@@ -836,7 +905,7 @@ Table of Contents
  The content values may be empty. There is no need to keep an order within
  the fields.
 
-5.2. Allowed Date format
+6.2. Allowed Date format
  To make easy time parsing the time format must be very strict.
  There are only two allowed formats: with seconds and without.
  With seconds the format is "YYYY-MM-DD HH:II:SS"
@@ -850,7 +919,7 @@ Table of Contents
  i.e. 2002-11-26 22:16:39
 
 
-6. The SAV v1.0 format
+7. The SAV v1.0 format
    ~~~ ~~~ ~~~~ ~~~~~~
 
  SAV v1.0 saves kid level, lives and remaining time information in order to
@@ -858,7 +927,7 @@ Table of Contents
 
  SAV files are 8 bytes length in the following format:
 
-                   Table 6.1: SAV blocks
+                   Table 7.1: SAV blocks
                    ~~~~~~~~~~~~~~~~~~~~~
 
    Size Offset Description                  Type
@@ -896,7 +965,7 @@ Table of Contents
    1 to 65535 lives
 
 
-7. The HOF v1.0 format
+8. The HOF v1.0 format
    ~~~ ~~~ ~~~~ ~~~~~~
  HOF files are used to save the Hall of Fame information.
 
@@ -906,7 +975,7 @@ Table of Contents
  Following those bytes there is an array of records. This array has a full
  size of 29 bytes distributed according to the following table.
 
-                   Table 7.1: HOF blocks
+                   Table 8.1: HOF blocks
                    ~~~~~~~~~~~~~~~~~~~~~
 
    Size Offset Description                  Type
@@ -919,7 +988,7 @@ Table of Contents
  in order to complete the whole file and give it the size of 2+29*6 = 176.
 
 
-8. Credits
+9. Credits
    ~~~~~~~
 
  This document:
@@ -939,8 +1008,8 @@ Table of Contents
   Definition . . . . . . . . . . . . . . . . . . . . . . .  Brendon James
                                                             Enrique Calot
 
-9. License
-   ~~~~~~~
+10. License
+    ~~~~~~~
 
       Copyright (c)  2004, 2005 The Princed Project Team
       Permission is granted to copy, distribute and/or modify this document
@@ -949,4 +1018,16 @@ Table of Contents
       with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
       Texts.  A copy of the license is included in the section entitled
       "GNU Free Documentation License".
+
+
+
+
+
+
+
+
+
+
+
+
 
