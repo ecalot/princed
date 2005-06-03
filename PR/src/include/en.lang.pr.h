@@ -98,7 +98,13 @@ pr.h: Princed Resources : English language strings
 "Graphic DAT file",\
 "Internal PC Speaker dat file",\
 NULL,NULL,NULL,\
-"Pop2 dat file"}
+"invalid Pop2 dat file",\
+"Pop2 level file",\
+"Pop2 graphic dat file",\
+"Pop2 wav dat file",\
+"Pop2 midi dat file",\
+"Pop2 valid dat file",\
+"Pop2 graphic dat file"}
 
 #define PR_TEXT_IMPORT_ARRAY {\
 "File successfully imported",\

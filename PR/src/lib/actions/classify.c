@@ -43,8 +43,6 @@ tasks.c: Princed Resources : Classify a DAT file
 |                    Get the type of a DAT file                 |
 \***************************************************************/
 
-/*extern int pop1;*/
-
 #define READ_ERROR {mReadCloseDatFile();return 0;}
 
 int prClassifyDat(const char* vFiledat) {
