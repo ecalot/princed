@@ -36,7 +36,15 @@ dat.h: Princed Resources : DAT library headers
 
 #include "resources.h"
 
-#define MAX_RES_COUNT            25000
+#define MAX_RES_COUNT            65000
+
+typedef enum {
+	none=0,
+	pop1=1,
+	pop2=2
+} tPopVersion;
+
+tPopVersion mReadGetVersion();
 
 #define PR_DAT_INCLUDE_DATREAD
 #define PR_DAT_INCLUDE_DATWRITE

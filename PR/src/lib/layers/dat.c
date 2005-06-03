@@ -47,13 +47,74 @@ dat.c: Princed Resources : DAT library
 
 char               recordSize;
 int                ofk=0;
-int                pop1;
+tPopVersion        popVersion;
 unsigned char*     indexPointer;
 unsigned long  int indexOffset;
 unsigned long  int offset;
 unsigned short int indexSize;
 unsigned char*     readDatFile;
 int                readDatFileSize;
+
+/* private functions */
+
+tPopVersion detectPopVersion(int highArea,int highAreaSize) {
+	const unsigned char* cursor;
+	unsigned short numberOfRecords;
+
+	/* create cursor */
+	cursor=readDatFile+highArea;
+
+	/* read number of records */
+	numberOfRecords=array2short(cursor);cursor+=2;
+	
+	/* check pop1: if there are numberOfRecords records sized 8 and 2 bytes for the short numberOfRecords */
+	if ((numberOfRecords*8+2)==highAreaSize) {
+		indexPointer=readDatFile+highArea;
+		indexSize=highAreaSize;
+		recordSize=8;
+		return pop1;
+	}
+
+	/* check pop2: if there are numberOfRecords records sized 6 and 2 bytes for the short numberOfRecords */
+	if ((numberOfRecords*6+2)>=highAreaSize) return none;
+	printf("pop2 detected with %d high sections\n",numberOfRecords);
+	recordSize=0;
+	for (;numberOfRecords;numberOfRecords--,cursor+=6) {
+		int startOfSection;
+		int endOfSection;
+		int sizeOfSection;
+
+		/* calculate section size and offset */
+		if (numberOfRecords==1) { /* the last section size is calculated using the highAreaSize */
+			endOfSection=highAreaSize;
+		} else {
+			endOfSection=array2short(cursor+10);
+		}
+		startOfSection=array2short(cursor+4);
+		sizeOfSection=endOfSection-startOfSection;
+		
+		/* check section integrity */
+		if (sizeOfSection<0) return none;
+		
+		printf("Section %c%c%c%c starts at %d, ends at %d and length %d\n",cursor[0],cursor[1],cursor[2],cursor[3],startOfSection,endOfSection,sizeOfSection);
+		
+		/* check for the PAHS section */	
+		if (!strncmp("PAHS",(char*)cursor,4)) { /* TODO: send to define */
+			indexPointer=readDatFile+highArea+startOfSection;
+			indexSize=sizeOfSection;
+			recordSize=11;
+		}
+		
+	}
+	
+	return pop2;
+}
+
+/* public functions */
+
+tPopVersion mReadGetVersion() {
+	return popVersion;
+}
 
 void mReadCloseDatFile() {
 	free(readDatFile);
@@ -72,32 +133,34 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	/* Open file */
 	readDatFileSize=mLoadFileArray(vFiledat,&readDatFile);
 	if (!readDatFileSize) return -2;
-	if (readDatFileSize<=6) {free(readDatFile);return -1;}
+	if (readDatFileSize<=6) {
+		free(readDatFile);
+		return -1;
+	}
 
 	readDatFilePoint=readDatFile;
 
-	/* verify dat format */
+	/* read header  */
 	indexOffset=array2long(readDatFilePoint);
 	readDatFilePoint+=4;
 	indexSize=array2short(readDatFilePoint);
 
+	/* verify dat format: the index offset belongs to the file and the file size is the index size plus the index offset */
 	if ((indexOffset>readDatFileSize)&&((indexOffset+indexSize)!=readDatFileSize)) {
 		free(readDatFile);
 		return -1; /* this is not a valid prince dat file */
 	}
 
-	indexPointer=readDatFile+indexOffset;
+	/* read the high data to detect pop version and set up the indexPointer, indexSize and recordSize */
+	popVersion=detectPopVersion(indexOffset,indexSize);
+
+	/* pop version check */
+	if (popVersion==none) return -1;
+	if (!recordSize) {*numberOfItems=0; return 0;} /* valid dat file without an index */
+	
+	/* read numberOfItems */
 	*numberOfItems=array2short(indexPointer);
 	indexPointer+=2;
-	pop1=(((*numberOfItems)*8+2)==indexSize);
-
-	if (!pop1) { /* verify if pop2 */
-		ofk=(*numberOfItems)*6+2+((*numberOfItems)-2)*13;
-		(*numberOfItems)=((indexSize-6-((*numberOfItems)*6)-(((*numberOfItems)-2)*13))/11);
-	} else {
-		ofk=0;
-	}
-	recordSize=pop1?8:11;
 
 	return 0;
 }
@@ -107,12 +170,20 @@ int mReadFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
 	unsigned short int id;
 
 	/* for each archived file the index is read */
-	id=    array2short(indexPointer+ofk+k*recordSize);
-	offset=array2long(indexPointer+ofk+k*recordSize+2);
-	*size= array2short(indexPointer+ofk+k*recordSize+6)+1;
-	if ((!pop1)&&(!(indexPointer[ofk+k*recordSize+8]==0x40)&&(!indexPointer[ofk+k*recordSize+9])&&(!indexPointer[ofk+k*recordSize+10]))) return -1;
-	if (offset+indexSize>readDatFileSize) return -1;
+	id=    array2short(indexPointer+k*recordSize);
+	offset=array2long(indexPointer+k*recordSize+2);
+	*size= array2short(indexPointer+k*recordSize+6)+1;
+	
+	if ( /* pop2 integrity check */
+		(popVersion==pop2) &&
+		(!(indexPointer[k*recordSize+8]==0x40) &&
+		(!indexPointer[k*recordSize+9]) &&
+		(!indexPointer[k*recordSize+10])
+	)) return -1;
+
+	if (offset>indexOffset) return -1; /* a resourse offset is allways before the index offset */
 	*data=readDatFile+offset;
+
 	return ok?id:-1;
 }
 

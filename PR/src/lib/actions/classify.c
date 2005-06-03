@@ -43,7 +43,7 @@ tasks.c: Princed Resources : Classify a DAT file
 |                    Get the type of a DAT file                 |
 \***************************************************************/
 
-extern int pop1;
+/*extern int pop1;*/
 
 #define READ_ERROR {mReadCloseDatFile();return 0;}
 
@@ -54,9 +54,12 @@ int prClassifyDat(const char* vFiledat) {
 	unsigned long  int size;
 	int                type=RES_TYPE_BINARY;
 	unsigned short int numberOfItems;
+	tPopVersion        popVersion;
 
 	/* Initialize abstract variables to read this new DAT file */
 	if ((id=mReadBeginDatFile(&numberOfItems,vFiledat))) return id+1; /* -1 if not found or empty, 0 if invalid */
+
+	popVersion=mReadGetVersion();
 
 	/* main loop */
 	for (id=0,indexNumber=0;(indexNumber<numberOfItems)&&(type==RES_TYPE_BINARY);indexNumber++) {
@@ -68,7 +71,7 @@ int prClassifyDat(const char* vFiledat) {
 	}
 
 	mReadCloseDatFile();
-	return pop1?type:(type+10);
+	return (popVersion==pop1)?type:(type+10);
 }
 
 typedef struct {

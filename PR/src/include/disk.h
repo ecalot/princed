@@ -91,8 +91,8 @@ int recurseDirectory(const char* path,int recursive, void* pass, void (*function
 
 /* array2vars*/
 
-#define array2short(a) ((*(a)))+((*((a)+1))<<8)
-#define array2long(a)  ((*(a)))+((*((a)+1))<<8)+((*((a)+2))<<16)+((*((a)+3))<<24)
+#define array2short(a) (((*(a)))+((*((a)+1))<<8))
+#define array2long(a)  (((*(a)))+((*((a)+1))<<8)+((*((a)+2))<<16)+((*((a)+3))<<24))
 
 #ifdef MACOS
 #define freadshort(var,file)  macfreads ((var),file)
