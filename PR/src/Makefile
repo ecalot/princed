@@ -73,7 +73,7 @@ LINKEROPTIONS = $(LINKERRELEASE)
 
 #main file
 
-$(EXEFILE): $(EXEOBJ)
+$(EXEFILE): $(EXEOBJ) $(XMLFILE)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
 	$(CC) $(OPTIONS) -o $(EXEFILE) $(EXEOBJ)  -o $@
@@ -108,10 +108,10 @@ lib: $(LIBOBJ)
 
 #files
 
-$(XMLFILE): resources.xml.gz
+$(XMLFILE): xml/resources.xml
 	$(INFO) Copying resources...
 	$(MAKEDIR) bin
-	$(CP) xml/resources.xml $(XMLFILE)
+	$(COPY) xml/resources.xml $(XMLFILE)
 
 .import.o: lib/actions/import.c
 	$(INFO) Compiling import module...
