@@ -148,6 +148,7 @@ Versions:
   - Coded file type detection to detect dat subtypes, sav, hof and exe
     subtypes.
   x Finish python interface
+	+ Rewritten DAT indexing layer to support pop2
 
 2) ToDo List & Future Plans:
 
