@@ -46,7 +46,7 @@ disk.h: Princed Resources : Disk Access & File handling functions headers
 /* #define DISK_ALLWAYS_FORCE   */
 
 /* 64 Kb */
-#define SIZE_OF_FILE     256*1024
+#define SIZE_OF_FILE     (1200*1024)
 #define MAX_FILENAME_SIZE        260
 
 /* Path defines */

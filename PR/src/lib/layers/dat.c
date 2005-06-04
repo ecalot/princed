@@ -51,21 +51,16 @@ typedef struct {
 	int                highDataSize;
 	int                masterItems;
 	int                slaveItems;
-	char               recordSize;
-	char               slaveIndexName[5];
 	int                currentMasterItem;
 	int                currentSlaveItem;
 	unsigned char*     currentRecord;
+	char               slaveIndexName[5];
 } tIndexCursor;
 
-char               recordSize;
-tPopVersion        popVersion;
-unsigned char*     indexPointer;
-unsigned long  int indexOffset;
-unsigned long  int offset;
-unsigned short int indexSize;
+/* TODO: use statics */
 unsigned char*     readDatFile;
 int                readDatFileSize;
+tIndexCursor       readIndexCursor;
 
 /* private functions */
 /* todo: move to datindex.c */
@@ -127,7 +122,7 @@ tIndexCursor dat_initPop2IndexCursor(unsigned char* highData,int highDataSize) {
 int dat_cursorMove(tIndexCursor* r,int pos) {
 	if (r->popVersion==pop1) {
 		/* POP1 */
-		if (r->slaveItems>pos) return 0;
+		if (r->slaveItems<=pos) return 0;
 		r->currentSlaveItem=pos;
 		r->currentRecord=r->highData+8*pos+2;
 		return 1;
@@ -149,7 +144,7 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 				/* jump to next index */
 				r->currentMasterItem=i;
 				r->currentSlaveItem=pos;
-				r->currentRecord=r->highData+array2short(r->highData+6+6*r->currentMasterItem)+2;
+				r->currentRecord=r->highData+array2short(r->highData+6+6*r->currentMasterItem)+2+pos*11;
 				return 1;
 			}
 			pos-=itemCount;
@@ -162,7 +157,8 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 #define dat_readCursorGetId(r)        (array2short(r.currentRecord))
 #define dat_readCursorGetOffset(r)    (array2long(r.currentRecord+2))
 #define dat_readCursorGetSize(r)      (array2short(r.currentRecord+6))
-#define dat_readCursorGetFlags(r)     ((r.popVersion==pop1)?(1<<31):(r.currentRecord[7]<<24|r.currentRecord[8]<<16|r.currentRecord[9]))
+#define dat_readCursorGetFlags(r)     ((r.popVersion==pop1)?(1<<31):(r.currentRecord[8]<<16|r.currentRecord[9]<<8|r.currentRecord[10]))
+#define dat_readCursorGetVersion(r)     (r.popVersion)
 
 tIndexCursor dat_initPop1IndexCursor(unsigned char* highData,int highDataSize) {
 	tIndexCursor r;
@@ -181,28 +177,26 @@ tIndexCursor dat_initPop1IndexCursor(unsigned char* highData,int highDataSize) {
 	return r;
 }
 
-tPopVersion detectPopVersion(int highArea,int highAreaSize) {
+tPopVersion detectPopVersion(unsigned char* highArea,int highAreaSize,unsigned short int *numberOfItems) {
 	const unsigned char* cursor;
 	unsigned short numberOfRecords;
 
 	/* create cursor */
-	cursor=readDatFile+highArea;
+	cursor=highArea;
 
 	/* read number of records */
 	numberOfRecords=array2short(cursor);cursor+=2;
-	
+
 	/* check pop1: if there are numberOfRecords records sized 8 and 2 bytes for the short numberOfRecords */
 	if ((numberOfRecords*8+2)==highAreaSize) {
-		indexPointer=readDatFile+highArea;
-		indexSize=highAreaSize;
-		recordSize=8;
+		*numberOfItems=numberOfRecords;
 		return pop1;
 	}
 
 	/* check pop2: if there are numberOfRecords records sized 6 and 2 bytes for the short numberOfRecords */
+	*numberOfItems=0;
 	if ((numberOfRecords*6+2)>=highAreaSize) return none;
 	printf("pop2 detected with %d high sections\n",numberOfRecords);
-	recordSize=0;
 	for (;numberOfRecords;numberOfRecords--,cursor+=6) {
 		int startOfSection;
 		int endOfSection;
@@ -222,22 +216,35 @@ tPopVersion detectPopVersion(int highArea,int highAreaSize) {
 		
 		printf("Section %c%c%c%c starts at %d, ends at %d and length %d\n",cursor[0],cursor[1],cursor[2],cursor[3],startOfSection,endOfSection,sizeOfSection);
 		
-		/* check for the PAHS section */	
-		if (!strncmp("PAHS",(char*)cursor,4)) { /* TODO: send to define */
-			indexPointer=readDatFile+highArea+startOfSection;
-			indexSize=sizeOfSection;
-			recordSize=11;
-		}
-		/* TODO: check if short(startOfSection)*11+2==sizeOfSection*/	
+		if ((array2short(highArea+startOfSection)*11+2)!=sizeOfSection) return none;
+		*numberOfItems+=array2short(highArea+startOfSection);
 	}
 	
 	return pop2;
 }
 
+tIndexCursor dat_createCursor(unsigned char* indexOffset,int indexSize,unsigned short int* numberOfItems) {
+	tPopVersion   popVersion;
+	tIndexCursor cursor;
+	cursor.popVersion=none;
+
+	/* read the high data to detect pop version and set up the number of items */
+	popVersion=detectPopVersion(indexOffset,indexSize,numberOfItems);
+
+	switch (popVersion) {
+	case pop1:
+		return dat_initPop1IndexCursor(indexOffset,indexSize);
+	case pop2:
+		return dat_initPop2IndexCursor(indexOffset,indexSize);
+	default:
+		return cursor;
+	}
+}
+	
 /* public functions */
 
 tPopVersion mReadGetVersion() {
-	return popVersion;
+	return readIndexCursor.popVersion;
 }
 
 void mReadCloseDatFile() {
@@ -251,8 +258,8 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 			-2 File not found or empty
 			0 Ok
 	*/
-
-	unsigned char* readDatFilePoint;
+	unsigned long  int indexOffset;
+	unsigned short int indexSize;
 
 	/* Open file */
 	readDatFileSize=mLoadFileArray(vFiledat,&readDatFile);
@@ -262,12 +269,9 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 		return -1;
 	}
 
-	readDatFilePoint=readDatFile;
-
 	/* read header  */
-	indexOffset=array2long(readDatFilePoint);
-	readDatFilePoint+=4;
-	indexSize=array2short(readDatFilePoint);
+	indexOffset=array2long(readDatFile);
+	indexSize=array2short(readDatFile+4);
 
 	/* verify dat format: the index offset belongs to the file and the file size is the index size plus the index offset */
 	if ((indexOffset>readDatFileSize)&&((indexOffset+indexSize)!=readDatFileSize)) {
@@ -275,42 +279,35 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 		return -1; /* this is not a valid prince dat file */
 	}
 
-	/* read the high data to detect pop version and set up the indexPointer, indexSize and recordSize */
-	popVersion=detectPopVersion(indexOffset,indexSize);
+	/* create cursor */
+	readIndexCursor=dat_createCursor(readDatFile+indexOffset,indexSize,numberOfItems);
 
 	/* pop version check */
-	if (popVersion==none) return -1;
-	if (!recordSize) {*numberOfItems=0; return 0;} /* valid dat file without an index */
+	if (!dat_readCursorGetVersion(readIndexCursor)) return -1;
 	
-	/* read numberOfItems */
-	*numberOfItems=array2short(indexPointer);
-	indexPointer+=2;
-
 	return 0;
 }
 
-int mReadFileInDatFile(int k,unsigned char* *data,unsigned long  int *size) {
-	int ok=1;
+int mReadFileInDatFile(int k,unsigned char* *data,unsigned long int *size, unsigned long int *flags,char* *index) {
 	unsigned short int id;
+	unsigned long  int offset;
 
+	if (!dat_cursorMove(&readIndexCursor,k)) return -2; /* -2 means: out of range */
+	
 	/* for each archived file the index is read */
-	id=    array2short(indexPointer+k*recordSize);
-	offset=array2long(indexPointer+k*recordSize+2);
-	*size= array2short(indexPointer+k*recordSize+6)+1;
+	id=    dat_readCursorGetId        (readIndexCursor);
+	offset=dat_readCursorGetOffset    (readIndexCursor);
+	*size= dat_readCursorGetSize      (readIndexCursor);
+	*flags=dat_readCursorGetFlags     (readIndexCursor);
+	*index=dat_readCursorGetIndexName (readIndexCursor);
 
-#ifdef CHECK_POP2_PAHS_INTEGRITY
-	if ( /* pop2 integrity check */
-		(popVersion==pop2) &&
-		(!(indexPointer[k*recordSize+8]==0x40) &&
-		(!indexPointer[k*recordSize+9]) &&
-		(!indexPointer[k*recordSize+10])
-	)) return -1;
-#endif
+	/* if (offset>indexOffset) return -1; * a resourse offset is allways before the index offset TODO: move this check to detect pop version*/
+	(*size)++; /* add the checksum */
 
-	if (offset>indexOffset) return -1; /* a resourse offset is allways before the index offset */
+printf("DEBUG: id=%d offset=%lu size=%lu flags=0x%08x index=%s\n",id,offset,*size,(int)(*flags),*index);
 	*data=readDatFile+offset;
 
-	return ok?id:-1;
+	return id;
 }
 
 int mReadInitResource(tResource** res,const unsigned char* data,long size) {

@@ -81,6 +81,8 @@ int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int option
 	unsigned long  int size;
 	unsigned short int numberOfItems;
 	signed long    int bufferedPalette=0;
+	unsigned long int  flags;
+	char*              indexName;
 
 	/* Initialize abstract variables to read this new DAT file */
 	if (mReadBeginDatFile(&numberOfItems,vFiledat)) return -1;
@@ -90,7 +92,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int option
 
 	/* main loop */
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
-		id=mReadFileInDatFile(indexNumber,&data,&size);
+		id=mReadFileInDatFile(indexNumber,&data,&size,&flags,&indexName);
 
 		if (id<0) return -3; /* Read error */
 		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */

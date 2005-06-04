@@ -53,6 +53,8 @@ int prClassifyDat(const char* vFiledat) {
 	int                type=RES_TYPE_BINARY;
 	unsigned short int numberOfItems;
 	tPopVersion        popVersion;
+	unsigned long int  flags;
+	char*              indexName;
 
 	/* Initialize abstract variables to read this new DAT file */
 	if ((id=mReadBeginDatFile(&numberOfItems,vFiledat))) return id+1; /* -1 if not found or empty, 0 if invalid */
@@ -61,7 +63,7 @@ int prClassifyDat(const char* vFiledat) {
 
 	/* main loop */
 	for (id=0,indexNumber=0;(indexNumber<numberOfItems)&&(type==RES_TYPE_BINARY);indexNumber++) {
-		id=mReadFileInDatFile(indexNumber,&data,&size);
+		id=mReadFileInDatFile(indexNumber,&data,&size,&flags,&indexName);
 		if (id<0) READ_ERROR; /* Read error */
 		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
 		if (id>=MAX_RES_COUNT) READ_ERROR; /* A file with an ID out of range will be treated as invalid */

@@ -156,14 +156,16 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResource* r[], in
 	long int           id;
 	unsigned char*     data;
 	unsigned long  int size;
+	unsigned long  int flags;
 	unsigned short int numberOfItems;
+	char*              indexName;
 
 	/* Initialize abstract variables to read this new DAT file */
 	if ((error=mRWBeginDatFile(vFiledat,&numberOfItems,optionflag))) return error;
 
 	/* main loop */
 	for (indexNumber=0;(indexNumber<numberOfItems);indexNumber++) {
-		id=mReadFileInDatFile(indexNumber,&data,&size);
+		id=mReadFileInDatFile(indexNumber,&data,&size,&flags,&indexName);
 		
 		/* Validations */
 		if (id<0) {
