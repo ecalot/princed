@@ -8,7 +8,7 @@ INFO       = @echo
 MAKEDIR    = @mkdir -p
 REMOVER    = @rm -f
 GZIP       = @gzip
-COPY       = @cp -f
+COPY       = @ln -f
 
 #####################
 # Operating Systems #

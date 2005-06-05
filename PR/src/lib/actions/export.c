@@ -106,7 +106,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int option
 				if (hasFlag(raw_flag)) r[id]->type=0; /* If "extract as raw" is set, type is 0 */
 
 				/* get save file name (if unknown document it in the xml) */
-				getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension);
+				getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension,indexName);
 
 				switch (r[id]->type) {
 					case RES_TYPE_LEVEL:
@@ -174,7 +174,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResource* r[], int option
 				}
 			} else {
 				/* if the dat file is unknown, add it in the xml */
-				getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension);
+				getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension,indexName);
 			}
 			/*freeAllocation(data);*/
 		}

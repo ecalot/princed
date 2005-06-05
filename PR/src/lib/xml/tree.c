@@ -272,7 +272,7 @@ int parseFile(const char* vFile, const char* datFile, tResource* r[]) {
 /* Resources output to xml functions. Private+abstract variable */
 static FILE* unknownXmlFile=NULL;
 
-void AddToUnknownXml(const char* vFiledatWithPath,unsigned short id,const char* ext,char type,const char* vDirExt,unsigned short pal,const char* vFiledat,int optionflag,int count) {
+void AddToUnknownXml(const char* vFiledatWithPath,unsigned short id,const char* ext,char type,const char* vDirExt,unsigned short pal,const char* vFiledat,int optionflag,int count,const char* indexName) {
 	/* Open file if not open */
 	if (unknownXmlFile==NULL) {
 		char xmlFile[MAX_FILENAME_SIZE];
@@ -290,7 +290,7 @@ void AddToUnknownXml(const char* vFiledatWithPath,unsigned short id,const char* 
 
 	/* Write item */
 	fprintf(unknownXmlFile,RES_XML_UNKNOWN_ITEM,
-		id,getExtDesc(type),count,ext,getExtDesc(type),getExtDesc(type),count
+		id,indexName,getExtDesc(type),count,ext,getExtDesc(type),getExtDesc(type),count
 	); /* To the xml output */
 }
 
@@ -310,7 +310,7 @@ void endUnknownXml(int optionflag, const char* backupExtension) {
 |                   Resources extra functions                   |
 \***************************************************************/
 
-void getFileName(char* vFileext,const char* vDirExt,tResource* r,unsigned short id,const char* vFiledat, const char* vDatFileName,int optionflag, const char* backupExtension) {
+void getFileName(char* vFileext,const char* vDirExt,tResource* r,unsigned short id,const char* vFiledat, const char* vDatFileName,int optionflag, const char* backupExtension,const char* indexName) {
 	static const char* extarray[]=RES_FILE_EXTENSIONS;
 	int pos;
 
@@ -320,7 +320,7 @@ void getFileName(char* vFileext,const char* vDirExt,tResource* r,unsigned short 
 
 		/* set filename */
 		sprintf(vFileext,RES_XML_UNKNOWN_PATH""RES_XML_UNKNOWN_FILES,vDirExt,vDatFileName,getExtDesc(pos),typeCount[pos],extarray[pos]);
-		AddToUnknownXml(vDatFileName,id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,typeCount[pos]);
+		AddToUnknownXml(vDatFileName,id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,typeCount[pos],indexName);
 	} else {
 		/* set filename */
 		sprintf(vFileext,"%s/%s",vDirExt,r->path);

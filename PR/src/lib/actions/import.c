@@ -111,7 +111,7 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResource* r[], int o
 	for (;id!=MAX_RES_COUNT;id++) {
 		if (r[id]!=NULL) {
 			if (hasFlag(raw_flag)) r[id]->type=0; /* compile from raw */
-			getFileName(vFileext,vDirExt,r[id],id,vFiledat,vDatFileName,optionflag,backupExtension);
+			getFileName(vFileext,vDirExt,r[id],id,vFiledat,vDatFileName,optionflag,backupExtension,"POP1");
 			/* the file is in the archive, so i'll add it to the main dat body */
 			if ((r[id]->size=((unsigned short)mLoadFileArray(vFileext,&data)))) {
 				mWriteInitResource(r+id);
@@ -181,7 +181,7 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResource* r[], in
 		mWriteInitResource(r+id);
 		if (r[id]&&isInThePartialList(r[id]->path,id)) { /* If the resource was specified */
 			if (hasFlag(raw_flag)) r[id]->type=0; /* compile from raw */
-			getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension);
+			getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension,"POP1");
 
 			/* the file is in the archive, so i'll add it to the main dat body */
 			if ((r[id]->size=((unsigned long)mLoadFileArray(vFileext,&data)))) {

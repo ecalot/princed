@@ -39,7 +39,7 @@ resources.h: Princed Resources : Resource Handler headers
 #define RES_XML_UNKNOWN_PATH  "%s/unknown/%s/"
 #define RES_XML_UNKNOWN_FILES "%s%02d.%s"
 #define RES_XML_UNKNOWN_START "<?xml version=\"1.0\" ?>\n<resources version=\"generated\">\n <folder name=\"unknown\" path=\"%s\" file=\"%s\" palette=\"%d\">\n"
-#define RES_XML_UNKNOWN_ITEM  "  <item value=\"%d\" path=\""RES_XML_UNKNOWN_FILES"\" itemtype=\"%s\">Unknown %s %d</item>\n"
+#define RES_XML_UNKNOWN_ITEM  "  <item value=\"%d\" index=\"%s\" path=\""RES_XML_UNKNOWN_FILES"\" itemtype=\"%s\">Unknown %s %d</item>\n"
 #define RES_XML_UNKNOWN_END   " </folder>\n</resources>\n"
 
 /* File extensions */
@@ -123,7 +123,7 @@ int checkSum(const unsigned char* data,int size);
 void emptyTable(tResource* r[]);
 
 /* Resources extras */
-void getFileName(char* vFileext,const char* vDirExt,tResource* r,unsigned short id,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension);
+void getFileName(char* vFileext,const char* vDirExt,tResource* r,unsigned short id,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension,const char* indexName);
 void getUpperFolder(char* aux, char* vFiledat);
 
 const char* getExtDesc(int type);
