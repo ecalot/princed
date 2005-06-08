@@ -48,21 +48,20 @@ dat.c: Princed Resources : DAT library
 #ifdef PR_DAT_INCLUDE_DATREAD
 
 typedef struct {
-	tPopVersion        popVersion;
-	unsigned char*     highData;
-	int                highDataSize;
-	int                masterItems;
-	int                slaveItems;
-	int                currentMasterItem;
-	int                currentSlaveItem;
-	unsigned char*     currentRecord;
-	char               slaveIndexName[5];
+	tPopVersion         popVersion;
+	unsigned char*      highData;
+	int                 highDataSize;
+	int                 masterItems;
+	int                 slaveItems;
+	int                 currentMasterItem;
+	int                 currentSlaveItem;
+	unsigned char*      currentRecord;
+	char                slaveIndexName[5];
 } tIndexCursor;
 
-/* TODO: use statics */
-unsigned char*     readDatFile;
-int                readDatFileSize;
-tIndexCursor       readIndexCursor;
+static unsigned char* readDatFile;
+static int            readDatFileSize;
+static tIndexCursor   readIndexCursor;
 
 /* private functions */
 /* todo: move to datindex.c */
@@ -231,64 +230,48 @@ tPopVersion detectPopVersion(unsigned char* highArea,int highAreaSize,unsigned s
 	return pop2;
 }
 
-/* the cursor create functions */
+/* the cursor create function */
 
-/* TODO: abstract the cursor library from pop version, merge pop1 & pop2 create */
-
-tIndexCursor dat_initPop2IndexCursor(unsigned char* highData,int highDataSize) {
+tIndexCursor dat_createCursor(unsigned char* highData,int highDataSize,unsigned short int* numberOfItems) {
 	tIndexCursor r;
-	r.popVersion=pop2;
-	r.highData=highData;
-	r.highDataSize=highDataSize;
-	r.masterItems=array2short(highData);
-
-	/* remember the first slave index name */
-	strncpy(r.slaveIndexName,(char*)(highData+2),4);
-	r.slaveIndexName[4]=0; /* now it is a null terminated string */
-
-	/* remember the first slave index size */
-	r.slaveItems=array2short(highData+array2short(highData+6));
-
-	/* jump to the first index */
-	r.currentMasterItem=0;
-	r.currentSlaveItem=0;
-	r.currentRecord=r.highData+array2short(r.highData+6)+2;
-
-	return r;
-}
-
-tIndexCursor dat_initPop1IndexCursor(unsigned char* highData,int highDataSize) {
-	tIndexCursor r;
-	r.popVersion=pop1;
-	r.highData=highData;
-	r.highDataSize=highDataSize;
-	r.slaveItems=array2short(highData);
-
-	/* remember the first slave index name */
-	strcpy(r.slaveIndexName,"POP1");
-
-	/* jump to the first index */
-	r.currentSlaveItem=0;
-	r.currentRecord=r.highData+2;
-
-	return r;
-}
-
-tIndexCursor dat_createCursor(unsigned char* indexOffset,int indexSize,unsigned short int* numberOfItems) {
-	tPopVersion   popVersion;
-	tIndexCursor cursor;
-	cursor.popVersion=none;
 
 	/* read the high data to detect pop version and set up the number of items */
-	popVersion=detectPopVersion(indexOffset,indexSize,numberOfItems);
+	r.popVersion=detectPopVersion(highData,highDataSize,numberOfItems);
 
-	switch (popVersion) {
+	switch (r.popVersion) {
 	case pop1:
-		return dat_initPop1IndexCursor(indexOffset,indexSize);
+		r.highData=highData;
+		r.highDataSize=highDataSize;
+		r.slaveItems=array2short(highData);
+
+		/* remember the first slave index name */
+		strcpy(r.slaveIndexName,"POP1");
+
+		/* jump to the first index */
+		r.currentSlaveItem=0;
+		r.currentRecord=r.highData+2;
+
+		return r;
 	case pop2:
-		return dat_initPop2IndexCursor(indexOffset,indexSize);
+		r.highData=highData;
+		r.highDataSize=highDataSize;
+		r.masterItems=array2short(highData);
+
+		/* remember the first slave index name */
+		strncpy(r.slaveIndexName,(char*)(highData+2),4);
+		r.slaveIndexName[4]=0; /* now it is a null terminated string */
+
+		/* remember the first slave index size */
+		r.slaveItems=array2short(highData+array2short(highData+6));
+
+		/* jump to the first index */
+		r.currentMasterItem=0;
+		r.currentSlaveItem=0;
+		r.currentRecord=r.highData+array2short(r.highData+6)+2;
+
+		return r;
 	default:
-		return cursor;
+		return r;
 	}
 }
 
