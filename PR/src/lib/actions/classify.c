@@ -45,6 +45,8 @@ tasks.c: Princed Resources : Classify a DAT file
 
 #define READ_ERROR {mReadCloseDatFile();return 0;}
 
+/* TODO: centralize all return values in defines. Change the interfaces. */
+
 int prClassifyDat(const char* vFiledat) {
 	int                indexNumber;
 	int                type=RES_TYPE_BINARY;
