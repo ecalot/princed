@@ -78,7 +78,7 @@ int mAddCompiledFileToDatFile(tResource* res,const char* vFile) {
 	return 1;
 }
 
-/* TODO: code the free resources into reslist.c */
+/* TODO: code the free resources into reslist.c that includes the pointed char*'s */
 #define freeResources \
 for (id=0;id<MAX_RES_COUNT;id++) {\
 	if (r[id]!=NULL) {\
@@ -172,7 +172,6 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 		}
 /*		if (res->id.value==0xFFFF) continue; * Tammo Jan Bug fix TODO: move to the dat layer? */
 
-/*		mWriteInitResource(r+id);*/
 #if 0 /* TODO: recode this based on extract function */
 		if (r[id]&&isInThePartialList(r[id]->path,id)) { /* If the resource was specified */
 			if (hasFlag(raw_flag)) r[id]->type=0; /* compile from raw */
