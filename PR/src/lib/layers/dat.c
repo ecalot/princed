@@ -105,14 +105,16 @@ int dat_cursorNextIndex(tIndexCursor* r) {
 int dat_cursorNext(tIndexCursor* r) {
 	if (r->popVersion==pop1) {
 		/* POP1 */
+		r->currentSlaveItem++;
+		r->currentRecord+=8;
 		if (r->currentSlaveItem==r->slaveItems) {
 			return 0;
 		} else {
-			r->currentSlaveItem++;
-			r->currentRecord+=8;
 		}
 	} else {
 		/* POP2 */
+			r->currentSlaveItem++;
+			r->currentRecord+=11;
 		if (r->currentSlaveItem==r->slaveItems) {
 			return dat_cursorNextIndex(r);
 #if 0
@@ -132,8 +134,6 @@ int dat_cursorNext(tIndexCursor* r) {
 			r->currentRecord=r->highData+array2short(r->highData+6+6*r->currentMasterItem)+2;
 #endif
 		} else {
-			r->currentSlaveItem++;
-			r->currentRecord+=11;
 		}
 	}
 	return 1;
@@ -157,12 +157,18 @@ void dat_cursorFirst(tIndexCursor* r) {
 int dat_cursorMoveId(tIndexCursor* r, tResourceId id) {
 	dat_cursorFirst(r);
 	/* first try to find the index name */
+printf("antes de entrar al ciclo 1 current=%d, total=%d\n",r->currentSlaveItem,r->slaveItems);
+
 	do {
 		if (!strcmp(r->slaveIndexName,id.index)) {
 			/* the same index */
+printf("antes de entrar al ciclo 2 current=%d, total=%d\n",r->currentSlaveItem,r->slaveItems);
 			do {
+printf("entro al ciclo 2 current=%d, total=%d\n",r->currentSlaveItem,r->slaveItems);
 				if (strcmp(r->slaveIndexName,id.index)) return 0; /* in case we are passed */
-				if (array2short(r->currentRecord)==id.value) return 1; /* found! */
+printf("safo del strcmp current=%d, total=%d\n",r->currentSlaveItem,r->slaveItems);
+				if (array2short(r->currentRecord)==id.value) return 1; /* found! */ /* TODO: check for segmentation faults here */
+printf("safo del id.value current=%d, total=%d\n",r->currentSlaveItem,r->slaveItems);
 			} while (dat_cursorNext(r));
 			return 0; /* id not found */
 		}
