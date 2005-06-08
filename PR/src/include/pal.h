@@ -48,6 +48,6 @@ int mFormatImportPal(tResource *res,const char* vFile);
 	if (popversion==pop1)\
 		memcpy(((image).pal),((array)+5),(16*3));\
 	else\
-		memcpy(((image).pal),(array),(16*3))
+		memcpy(((image).pal),((array)+1),(16*3))
 
 #endif
