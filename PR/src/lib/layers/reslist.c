@@ -92,7 +92,7 @@ void resourceListAddInfo(tResourceList* r,tResource* res) {
 		res->palette.value=0;
 		memset(res->palette.index,0,5);
 		res->number=0;
-		res->type=verifyHeader(res->data,res->size); /* TODO: send the verifyHeader to the export module */
+		res->type=0;
 	} else { 
 		const tResource* resInfo=list_getCursor(r);
 		/* copy only the list information */
@@ -103,11 +103,7 @@ void resourceListAddInfo(tResourceList* r,tResource* res) {
 		res->palette=resInfo->palette;
 		res->number=resInfo->number;
 		/* If resource type is invalid or 0, the type will be decided by PR */
-		if (!resInfo->type) {
-			res->type=verifyHeader(res->data,res->size);
-		} else {
-			res->type=resInfo->type;
-		}
+		res->type=resInfo->type;
 	}
 }
 
