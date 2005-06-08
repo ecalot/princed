@@ -1,4 +1,4 @@
-Princed Resources v1.0
+Princed Resources v1.1
 (c) Copyright 2003-2005, Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -133,7 +133,7 @@ Versions:
   - Changed console program interface (-c for classify and -m for import)
   - Checksum verification in PLV files
   + Coded the compression algorithms Lzg to optimize compiled
-    bitmap dat files
+    bitmap dat files (B3 and B4)
   - Fixed palette saving in OS X
   - Fixed some memory leaks in xml parser
   - Optimization
@@ -149,6 +149,10 @@ Versions:
     subtypes.
   x Finish python interface
 	+ Rewritten DAT indexing layer to support pop2
+	- Rewritten resource handling using dynamic structures
+	- Added pop2 palette support
+	- Improved resources.xml. Now it works in bird.dat
+	x Centralize all the return values in defines
 
 2) ToDo List & Future Plans:
 
