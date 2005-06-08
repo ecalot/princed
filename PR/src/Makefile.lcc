@@ -37,7 +37,7 @@ LINKERRELEASE = -s
 
 FILES    = import.obj export.obj resources.obj classify.obj disk.obj\
            dat.obj bmp.obj mid.obj pal.obj wav.obj plv.obj\
-           memory.obj pr.obj
+           memory.obj pr.obj list.obj reslist.obj
 
 XML      = parse.obj search.obj
 COMPRESS = compress.obj lzg_compress.obj lzg_uncompress.obj rle_compress.obj rle_uncompress.obj 
@@ -163,6 +163,14 @@ disk.obj: lib\layers\disk.c
 dat.obj: lib\layers\dat.c
 	$(INFO) Compiling DAT editing library...
 	$(CC) $(OPTIONS) -c lib\layers\dat.c
+
+list.obj: lib\layers\list.c
+	$(INFO) Compiling list implementation...
+	$(CC) $(OPTIONS) -c lib\layers\list.c
+
+reslist.obj: lib\layers\reslist.c
+	$(INFO) Compiling resource list module...
+	$(CC) $(OPTIONS) -c lib\layers\reslist.c
 
 bmp.obj: lib\formats\bmp.c
 	$(INFO) Compiling bitmap files support (bmp)...
