@@ -142,7 +142,7 @@ int dat_cursorMoveId(tIndexCursor* r, tResourceId id) {
 			/* the same index */
 			do {
 				if (strcmp(r->slaveIndexName,id.index)) return 0; /* in case we are passed */
-				if (array2short(r->currentRecord)==id.value) return 1; /* found! */ /* TODO: check for segmentation faults here */
+				if (array2short(r->currentRecord)==id.value) return 1; /* found! */
 			} while (dat_cursorNext(r));
 			return 0; /* id not found */
 		}
@@ -322,10 +322,7 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	return 0;
 }
 
-int mReadFileInDatFileId(tResource* res) {
-	if (!dat_cursorMoveId(&readIndexCursor,res->id)) return 0; /* 0 means index not found */
-	/* TODO: use a function for common parts */
-
+void dat_readRes(tResource* res) {
 	/* for each archived file the index is read */
 	res->id.value=        dat_readCursorGetId        (readIndexCursor);
 	strncpy(res->id.index,dat_readCursorGetIndexName (readIndexCursor),5);
@@ -333,30 +330,20 @@ int mReadFileInDatFileId(tResource* res) {
 	res->size=            dat_readCursorGetSize      (readIndexCursor);
 	res->flags=           dat_readCursorGetFlags     (readIndexCursor);
 
-	/* if (offset>indexOffset) return -1; * a resourse offset is allways before the index offset TODO: move this check to detect pop version*/
 	res->size++; /* add the checksum */
 
 	res->data=readDatFile+res->offset;
+}
 
+int mReadFileInDatFileId(tResource* res) {
+	if (!dat_cursorMoveId(&readIndexCursor,res->id)) return 0; /* 0 means index not found */
+	dat_readRes(res);
 	return 1;
-
 }
 
 int mReadFileInDatFile(tResource* res, int k) {
-
 	if (!dat_cursorMove(&readIndexCursor,k)) return 0; /* 0 means out of range */
-
-	/* for each archived file the index is read */
-	res->id.value=        dat_readCursorGetId        (readIndexCursor);
-	strncpy(res->id.index,dat_readCursorGetIndexName (readIndexCursor),5);
-	res->offset=          dat_readCursorGetOffset    (readIndexCursor);
-	res->size=            dat_readCursorGetSize      (readIndexCursor);
-	res->flags=           dat_readCursorGetFlags     (readIndexCursor);
-
-	/* if (offset>indexOffset) return -1; * a resourse offset is allways before the index offset TODO: move this check to detect pop version*/
-	res->size++; /* add the checksum */
-	res->data=readDatFile+res->offset;
-
+	dat_readRes(res);
 	return 1;
 }
 

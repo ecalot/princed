@@ -78,17 +78,6 @@ int mAddCompiledFileToDatFile(tResource* res,const char* vFile) {
 	return 1;
 }
 
-/* TODO: code the free resources into reslist.c that includes the pointed char*'s */
-#define freeResources \
-for (id=0;id<MAX_RES_COUNT;id++) {\
-	if (r[id]!=NULL) {\
-		freeAllocation(r[id]->desc);\
-		freeAllocation(r[id]->name);\
-		freeAllocation(r[id]->path);\
-		free(r[id]);\
-	}\
-}
-
 /***************************************************************\
 |                   M A I N   F U N C T I O N                   |
 \***************************************************************/
