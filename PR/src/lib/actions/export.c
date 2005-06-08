@@ -79,7 +79,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	if (mReadBeginDatFile(&numberOfItems,vFiledat)) return -1;
 
 	/* initialize palette buffer */
-	paletteBuffer=resourceListCreate();
+	paletteBuffer=resourceListCreate(1);
 	/* initialize the default palette */
 	memcpy(image.pal,DEFAULT_PALETTE,SIZE_OF_PALETTE);
 	

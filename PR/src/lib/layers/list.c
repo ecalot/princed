@@ -36,10 +36,11 @@ list.c: Princed Resources : Ordered Read-Only list implementarion
 #include <string.h> /* memcpy */
 #include "list.h"
 
-tList list_create(int dataSize,int dataCmp(const void*,const void*)) {
+tList list_create(int dataSize,int dataCmp(const void*,const void*),void dataFree(void* a)) {
 	tList r;
 	r.size=dataSize;
 	r.cmp=dataCmp;
+	r.free=dataFree;
 	r.cursor=NULL;
 	r.first=NULL;
 	return r;
@@ -83,6 +84,7 @@ void list_drop(tList *list) {
 	list->cursor=list->first;
 	while (list->cursor) {
 		aux=list->cursor->next;
+		list->free(list->cursor->data);
 		free(list->cursor->data);
 		free(list->cursor);
 		list->cursor=aux;

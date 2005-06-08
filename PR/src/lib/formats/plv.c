@@ -170,6 +170,7 @@ extern FILE* outputStream;
 int mFormatImportPlv(tResource *res) {
 	/* declare variables */
 	unsigned char* pos;
+	unsigned char* posAux;
 	unsigned long int oldSize=res->size;
 
 	/* integrity check 1 */
@@ -190,8 +191,10 @@ int mFormatImportPlv(tResource *res) {
 		fprintf(outputStream,PR_TEXT_IMPORT_PLV_WARN);
 
 	/* save data */
+	posAux=res->data;
 	res->data=pos;
 	mWriteFileInDatFileIgnoreChecksum(res); /* TODO: check res->size-- */
+	res->data=posAux;
 	
 	return 1;
 }

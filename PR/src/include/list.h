@@ -47,10 +47,11 @@ typedef struct node {
 typedef struct {
 	int size;
 	int (*cmp)(const void*,const void*);
+	void (*free)(void* a);
 	tListNode *cursor,*first;
 }tList;
 
-tList list_create(int dataSize,int dataCmp(const void*,const void*));
+tList list_create(int dataSize,int dataCmp(const void*,const void*),void dataFree(void* a));
 void  list_insert(tList *list,const void* data);
 void  list_drop(tList *list);
 void  list_nextCursor(tList* list);

@@ -46,7 +46,7 @@ void printr(const tResource* record); /* for debug purposes */
 int resIdCmp(tResourceId a,tResourceId b);
 int resCmp(const void* a,const void* b);
 void resourceListDrop(tResourceList* r);
-tResourceList resourceListCreate();
+tResourceList resourceListCreate(int isCopy);
 void resourceListAdd(tResourceList* r,const tResource* res);
 void resourceListDebugPrint(tResourceList* r);
 void resourceListAddInfo(tResourceList* r,tResource* res);

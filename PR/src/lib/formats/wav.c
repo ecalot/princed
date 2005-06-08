@@ -64,6 +64,7 @@ int mFormatExportWav(const unsigned char* data, char *vFileext,unsigned long int
 int mFormatImportWav(tResource *res) {
 	unsigned char wav[]=WAVE_HEADER;
 	int i=sizeof(wav);
+	unsigned char* posAux=res->data;
 
 	if (res->size<=i) return 0;
 	res->size-=(--i);
@@ -71,6 +72,7 @@ int mFormatImportWav(tResource *res) {
 	(res->data)[sizeof(wav)-1]=1; /* First character must be a 0x01 (wav type in dat) */
 	res->data+=sizeof(wav)-1;
 	if (i==-1) mWriteFileInDatFile(res);
+	res->data=posAux;
 	return 1;
 }
 

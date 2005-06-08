@@ -54,7 +54,6 @@ pr.c: Main source file for Princed Resources library
 #include "common.h"
 
 #include "compress.h"
-#include "dat.h" /* MAX_RES_COUNT */
 
 #include "export.h"
 #include "import.h"
@@ -126,7 +125,7 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	char* currentDatFileName;
 	char* currentDatFile;
 
-	r=resourceListCreate();
+	r=resourceListCreate(0);
 
 	currentDatFile=strallocandcopy(vDatFile);
 
@@ -206,7 +205,7 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	char* currentDatFileName;
 	char* currentDatFile;
 
-	r=resourceListCreate();
+	r=resourceListCreate(0);
 
 	currentDatFile=strallocandcopy(vDatFile);
 

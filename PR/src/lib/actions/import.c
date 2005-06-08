@@ -126,7 +126,7 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
 					ok++;
 				}
-				/*free(data);*/
+				free(newRes.data);
 			} else {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
 				error++;

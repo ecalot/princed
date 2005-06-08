@@ -134,7 +134,7 @@ $(XMLFILE): xml/resources.xml
 	$(CC) $(OPTIONS) -c lib/layers/reslist.c -o $@
 
 .compress.o: lib/compression/main.c
-	$(INFO) Compiling compression module...
+	$(INFO) Compiling main compression library...
 	$(CC) $(OPTIONS) -c lib/compression/main.c -o .compress.o -o $@
 
 .lzg_compress.o: lib/compression/lzg_compress.c

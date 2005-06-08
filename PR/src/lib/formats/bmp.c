@@ -73,6 +73,7 @@ int mFormatImportBmp(tResource *res) {
 	tImage img;
 
 	if (!mReadBitMap(&img,res->data,res->size)) return 0;
+	free(res->data);
 	mCompressGraphic(&(res->data),&img,(int*)&(res->size));
 	mWriteFileInDatFile(res);
 	free(img.pix);

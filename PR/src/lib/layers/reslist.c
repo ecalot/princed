@@ -34,6 +34,7 @@ reslist.c: Princed Resources : Ordered Read-Only list implementarion
 /* Defines */
 #include "reslist.h"
 #include <string.h> /* strncmp */
+#include "memory.h" /* freeAllocation */
 #include <stdio.h> /* debug */
 
 /* resource list layer (that uses the abstract list layer primitives) */
@@ -50,12 +51,22 @@ int resCmp(const void* a,const void* b) {
 	return resIdCmp(((tResource*)a)->id,((tResource*)b)->id);
 }
 
+void resFree(void* a) {
+	tResource* res=a;
+	freeAllocation(res->desc);
+	freeAllocation(res->name);
+	freeAllocation(res->path);
+}
+
+void resFreeDummy(void* a) {
+}
+
 void resourceListDrop(tResourceList* r) {
 	list_drop(r);
 }
 
-tResourceList resourceListCreate() {
-	return list_create(sizeof(tResource),resCmp);
+tResourceList resourceListCreate(int isCopy) {
+	return list_create(sizeof(tResource),resCmp,isCopy?resFreeDummy:resFree);
 }
 
 void resourceListAdd(tResourceList* r,const tResource* res) {
@@ -85,7 +96,6 @@ void resourceListDebugPrint(tResourceList* r) {
 void resourceListAddInfo(tResourceList* r,tResource* res) {
 	if (!list_moveCursor(r,res)) {
 		res->path=NULL;
-		res->palAux=NULL;
 		res->desc=NULL;
 		res->name=NULL;
 		res->palette.value=0;
@@ -96,7 +106,6 @@ void resourceListAddInfo(tResourceList* r,tResource* res) {
 		const tResource* resInfo=list_getCursor(r);
 		/* copy only the list information */
 		res->path=resInfo->path;
-		res->palAux=resInfo->palAux;
 		res->desc=resInfo->desc;
 		res->name=resInfo->name;
 		res->palette=resInfo->palette;

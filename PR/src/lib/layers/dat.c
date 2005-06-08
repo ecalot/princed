@@ -382,7 +382,7 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 	*/
 	if (writeOpen(vFile,&writeDatFile,optionflag|backup_flag)) {
 		short fill=0;
-		resIndex=resourceListCreate();
+		resIndex=resourceListCreate(1);
 		fwriteshort(&fill,writeDatFile); /* Fill the file with 6 starting null bytes */
 		fwriteshort(&fill,writeDatFile); /* Fill the file with 6 starting null bytes */
 		fwriteshort(&fill,writeDatFile); /* Fill the file with 6 starting null bytes */
@@ -391,18 +391,6 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 		return 0;
 	}
 }
-/*
-void mWriteInitResource(tResource** res) {
-	if ((*res)==NULL) {
-		(*res)=(tResource*)malloc(sizeof(tResource));
-		(*res)->path=NULL;
-		(*res)->palAux=NULL;
-		(*res)->desc=NULL;
-		(*res)->name=NULL;
-	}
-	(*res)->offset=(unsigned long)ftell(writeDatFile);
-}
-*/
 
 void dat_write(const tResource* res,unsigned long off) {
 	tResource insert;

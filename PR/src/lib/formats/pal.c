@@ -138,7 +138,6 @@ int mFormatImportPal(tResource *res,const char* vFile) {
 	free(res->data);
 	res->data=pal;
 	mWriteFileInDatFile(res);
-	free(pal);
 
 	return 1;
 }

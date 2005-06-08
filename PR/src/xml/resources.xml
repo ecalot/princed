@@ -768,7 +768,7 @@ resources.xml: Princed Resources : Resource tree
    <folder name="fighting" path="fighting" itemtype="image" palette="700">
     <item value="700" path="sword.pal" itemtype="palette">Unknown Resource number 700</item>
     <item value="701" path="sword01.bmp">Image sword01 (701)</item>
-    <item value="702" path="sword02">Image sword02 (702)</item>
+    <item value="702" path="sword02.bmp">Image sword02 (702)</item>
     <item value="703" path="sword03.bmp">Image sword03 (703)</item>
     <item value="704" path="sword04.bmp">Image sword04 (704)</item>
     <item value="705" path="sword05.bmp">Image sword05 (705)</item>

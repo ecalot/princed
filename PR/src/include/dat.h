@@ -34,8 +34,6 @@ dat.h: Princed Resources : DAT library headers
 #ifndef _DAT_H_
 #define _DAT_H_
 
-#define MAX_RES_COUNT            65000 /* TODO grep if this constant still exists */
-
 /* types */
 typedef struct {
 	unsigned short int value;
@@ -49,10 +47,9 @@ typedef struct {
 	unsigned long int  offset; /* Used internally in dat.c to remember the offset */
 	unsigned char      number; /* Used for level number */
 	char               type;
-	char*              path;
-	unsigned char*     palAux;
-	char*              name;
 	char*              desc;
+	char*              name;
+	char*              path;
 	unsigned char*     data;
 	unsigned long      flags;
 }tResource;
