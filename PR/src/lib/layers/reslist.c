@@ -82,7 +82,6 @@ void resourceListDebugPrint(tResourceList* r) {
 	list_firstCursor(r);
 }
 
-#include "resources.h" /* verifyHeader TODO: set 0 and autodetect type 0 in extraction time */
 void resourceListAddInfo(tResourceList* r,tResource* res) {
 	if (!list_moveCursor(r,res)) {
 		res->path=NULL;
