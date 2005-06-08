@@ -247,16 +247,13 @@ int parseFile(const char* vFile, const char* datFile, tResourceList *r) {
 	tTag* structure;
 
 	/* Generate xml structure if doesn't exist */
-printf("DEBUG: a punto de leer la estructura xml\n");
 	if ((error=parseStructure(vFile,&structure))) return error;
-printf("DEBUG: termine de leer la estructura xml\n");
 
 	/* Use the xml structure to Generate the resource structure of the file */
 	/*emptyTable(r);*/
 	pass.datFile=datFile;
 	pass.r=r;
 	workTree(structure,&pass,workTag);
-printf("DEBUG: termine de crear la resList a aprtir del datfile\n");
 
 	/* All done */
 	return 0;
