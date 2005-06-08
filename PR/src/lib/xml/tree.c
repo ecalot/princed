@@ -82,7 +82,7 @@ int verifyMidiHeader(const unsigned char *array, int size) {
 
 int verifyWaveHeader(const unsigned char *array, int size) {
 	return
-		(size>1)&&(array[1]==0x01)
+		(size>1)&&(array[1]==0x01)&&((size%3)==2)
 	;
 }
 
