@@ -87,13 +87,13 @@ int dat_cursorNextIndex(tIndexCursor* r) {
 		if (r->currentMasterItem==r->masterItems) {
 			return 0; /* its over */
 		}
-			
+
 		/* remember the new slave index name */
 		strncpy(r->slaveIndexName,(char*)(r->highData+2+6*r->currentMasterItem),4);
-			
+
 		/* remember the new slave index size */
 		r->slaveItems=array2short(r->highData+array2short(r->highData+6+6*r->currentMasterItem));
-							
+
 		/* jump to next index */
 		r->currentMasterItem++;
 		r->currentSlaveItem=0;
@@ -107,34 +107,14 @@ int dat_cursorNext(tIndexCursor* r) {
 		/* POP1 */
 		r->currentSlaveItem++;
 		r->currentRecord+=8;
-		if (r->currentSlaveItem==r->slaveItems) {
+		if (r->currentSlaveItem==r->slaveItems)
 			return 0;
-		} else {
-		}
 	} else {
 		/* POP2 */
 			r->currentSlaveItem++;
 			r->currentRecord+=11;
-		if (r->currentSlaveItem==r->slaveItems) {
+		if (r->currentSlaveItem==r->slaveItems)
 			return dat_cursorNextIndex(r);
-#if 0
-			if (r->currentMasterItem==r->masterItems) {
-				return 0; /* its over */
-			}
-			
-			/* remember the new slave index name */
-			strncpy(r->slaveIndexName,(char*)(r->highData+2+6*r->currentMasterItem),4);
-			
-			/* remember the new slave index size */
-			r->slaveItems=array2short(r->highData+array2short(r->highData+6+6*r->currentMasterItem));
-							
-			/* jump to next index */
-			r->currentMasterItem++;
-			r->currentSlaveItem=0;
-			r->currentRecord=r->highData+array2short(r->highData+6+6*r->currentMasterItem)+2;
-#endif
-		} else {
-		}
 	}
 	return 1;
 }
@@ -148,7 +128,7 @@ void dat_cursorFirst(tIndexCursor* r) {
 	} else {
 		r->currentRecord=r->highData+2;
 	}
-	
+
 	/* jump to the first index */
 	r->currentMasterItem=0;
 	r->currentSlaveItem=0;
@@ -157,18 +137,13 @@ void dat_cursorFirst(tIndexCursor* r) {
 int dat_cursorMoveId(tIndexCursor* r, tResourceId id) {
 	dat_cursorFirst(r);
 	/* first try to find the index name */
-printf("antes de entrar al ciclo 1 current=%d, total=%d\n",r->currentSlaveItem,r->slaveItems);
 
 	do {
 		if (!strcmp(r->slaveIndexName,id.index)) {
 			/* the same index */
-printf("antes de entrar al ciclo 2 current=%d, total=%d\n",r->currentSlaveItem,r->slaveItems);
 			do {
-printf("entro al ciclo 2 current=%d, total=%d\n",r->currentSlaveItem,r->slaveItems);
 				if (strcmp(r->slaveIndexName,id.index)) return 0; /* in case we are passed */
-printf("safo del strcmp current=%d, total=%d\n",r->currentSlaveItem,r->slaveItems);
 				if (array2short(r->currentRecord)==id.value) return 1; /* found! */ /* TODO: check for segmentation faults here */
-printf("safo del id.value current=%d, total=%d\n",r->currentSlaveItem,r->slaveItems);
 			} while (dat_cursorNext(r));
 			return 0; /* id not found */
 		}
@@ -191,14 +166,14 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 			int itemCount=array2short(r->highData+array2short(r->highData+6+6*i));
 			if (pos<itemCount) {
 				/* Great! we found it */
-				
+
 				/* remember the new slave index name */
 				strncpy(r->slaveIndexName,(char*)(r->highData+2+6*i),4);
 				r->slaveIndexName[4]=0; /* now it is a null terminated string */
-						
+
 				/* remember the new slave index size */
 				r->slaveItems=itemCount;
-							
+
 				/* jump to next index */
 				r->currentMasterItem=i;
 				r->currentSlaveItem=pos;
@@ -232,7 +207,6 @@ tPopVersion detectPopVersion(unsigned char* highArea,int highAreaSize,unsigned s
 	/* check pop2: if there are numberOfRecords records sized 6 and 2 bytes for the short numberOfRecords */
 	*numberOfItems=0;
 	if ((numberOfRecords*6+2)>=highAreaSize) return none;
-	printf("pop2 detected with %d high sections\n",numberOfRecords);
 	for (;numberOfRecords;numberOfRecords--,cursor+=6) {
 		int startOfSection;
 		int endOfSection;
@@ -246,23 +220,21 @@ tPopVersion detectPopVersion(unsigned char* highArea,int highAreaSize,unsigned s
 		}
 		startOfSection=array2short(cursor+4);
 		sizeOfSection=endOfSection-startOfSection;
-		
+
 		/* check section integrity */
 		if (sizeOfSection<0) return none;
-		
-		printf("Section %c%c%c%c starts at %d, ends at %d and length %d\n",cursor[0],cursor[1],cursor[2],cursor[3],startOfSection,endOfSection,sizeOfSection);
-		
+
 		if ((array2short(highArea+startOfSection)*11+2)!=sizeOfSection) return none;
 		*numberOfItems+=array2short(highArea+startOfSection);
 	}
-	
+
 	return pop2;
 }
 
 /* the cursor create functions */
 
 /* TODO: abstract the cursor library from pop version, merge pop1 & pop2 create */
- 
+
 tIndexCursor dat_initPop2IndexCursor(unsigned char* highData,int highDataSize) {
 	tIndexCursor r;
 	r.popVersion=pop2;
@@ -273,15 +245,15 @@ tIndexCursor dat_initPop2IndexCursor(unsigned char* highData,int highDataSize) {
 	/* remember the first slave index name */
 	strncpy(r.slaveIndexName,(char*)(highData+2),4);
 	r.slaveIndexName[4]=0; /* now it is a null terminated string */
-			
+
 	/* remember the first slave index size */
 	r.slaveItems=array2short(highData+array2short(highData+6));
-							
+
 	/* jump to the first index */
 	r.currentMasterItem=0;
 	r.currentSlaveItem=0;
 	r.currentRecord=r.highData+array2short(r.highData+6)+2;
-	
+
 	return r;
 }
 
@@ -294,11 +266,11 @@ tIndexCursor dat_initPop1IndexCursor(unsigned char* highData,int highDataSize) {
 
 	/* remember the first slave index name */
 	strcpy(r.slaveIndexName,"POP1");
-	
+
 	/* jump to the first index */
 	r.currentSlaveItem=0;
 	r.currentRecord=r.highData+2;
-	
+
 	return r;
 }
 
@@ -319,7 +291,7 @@ tIndexCursor dat_createCursor(unsigned char* indexOffset,int indexSize,unsigned 
 		return cursor;
 	}
 }
-	
+
 /* public functions */
 
 tPopVersion mReadGetVersion() {
@@ -363,7 +335,7 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 
 	/* pop version check */
 	if (!dat_readCursorGetVersion(readIndexCursor)) return -1;
-	
+
 	return 0;
 }
 
@@ -384,13 +356,13 @@ int mReadFileInDatFileId(tResource* res) {
 	res->data=readDatFile+res->offset;
 
 	return 1;
-	
+
 }
 
 int mReadFileInDatFile(tResource* res, int k) {
 
 	if (!dat_cursorMove(&readIndexCursor,k)) return 0; /* 0 means out of range */
-	
+
 	/* for each archived file the index is read */
 	res->id.value=        dat_readCursorGetId        (readIndexCursor);
 	strncpy(res->id.index,dat_readCursorGetIndexName (readIndexCursor),5);
@@ -449,7 +421,7 @@ void mWriteInitResource(tResource** res) {
 }
 */
 
-void dat_write(const tResource* res,unsigned long off) { 
+void dat_write(const tResource* res,unsigned long off) {
 	tResource insert;
 
 	/* do the magic */
@@ -459,7 +431,7 @@ void dat_write(const tResource* res,unsigned long off) {
 	insert.id=res->id;
 	insert.size=res->size;
 	insert.offset=off;
-	
+
 	/* TODO: use an abstract use of the list (at least macros in reslist.h) */
 	list_insert(&resIndex,&insert);
 }
@@ -512,7 +484,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 		fwriteshort(&(res->id.value),writeDatFile);
 		fwritelong(&(res->offset),writeDatFile);
 		fwriteshort(&(res->size),writeDatFile);
-					
+
 		list_nextCursor(&resIndex);
 	}
 
