@@ -88,13 +88,12 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 
 		if (!mReadFileInDatFile(&res,indexNumber)) return -3; /* Read error */
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
-		/*if (id>=MAX_RES_COUNT) return -3; * DEPRECATED due to new id handling.
-		 * A file with an ID out of range will be treated as invalid */
 
 		/* add to res more information from the resource list */
 		resourceListAddInfo(r,&res);
+		if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size); 
 		
-		if (/*(res.type==RES_TYPE_PALETTE)||*/isInThePartialList(res.path,res.id.value /*TODO: use res.id and code the index support to the partial list*/)) { /* If the resource was specified or is a palette, do the tasks */
+		if (isInThePartialList(res.path,res.id.value /*TODO: use res.id and code the index support to the partial list*/)) { /* If the resource was specified do the tasks */
 			if (!(hasFlag(unknown_flag))) { /* If unknown flag is set do nothing but generate the unknown.xml file */
 				if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
@@ -103,12 +102,11 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 
 				switch (res.type) {
 						case RES_TYPE_LEVEL:
-						/* TODO: ok=ok&& is ok= */
-						ok=ok&&mFormatExportPlv(res.data,vFileext,res.size,res.number,vDatFileName,res.name,res.desc,vDatAuthor,optionflag,backupExtension);
+						ok=mFormatExportPlv(res.data,vFileext,res.size,res.number,vDatFileName,res.name,res.desc,vDatAuthor,optionflag,backupExtension);
 						break;
 					case RES_TYPE_BINARY: /* Binary files */
 					case RES_TYPE_RAW: /* Raw files */
-						ok=ok&&writeData(res.data,1,vFileext,res.size,optionflag,backupExtension); /* Ignore checksum */
+						ok=writeData(res.data,1,vFileext,res.size,optionflag,backupExtension); /* Ignore checksum */
 						break;
 					case RES_TYPE_PALETTE: /* save and remember palette file */
 						/* This will remember the palette for the next images
@@ -117,15 +115,14 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 						bufferedPalette=res.id;
 						resourceListAdd(&paletteBuffer,&res);
 						/* This will export the palette */
-/*						if (isInThePartialList(res.path,res.id.value))  * If the palette was specified extract it */
-						ok=ok&&mFormatExportPal(res.data,vFileext,res.size,optionflag,backupExtension);
+						ok=mFormatExportPal(res.data,vFileext,res.size,optionflag,backupExtension);
 						break;
 					case RES_TYPE_PCSPEAKER: /* save pcs file */
 					case RES_TYPE_MIDI:	/* save midi file */
-						ok=ok&&mFormatExportMid(res.data,vFileext,res.size,optionflag,backupExtension);
+						ok=mFormatExportMid(res.data,vFileext,res.size,optionflag,backupExtension);
 						break;
 					case RES_TYPE_WAVE: /* save wav file */
-						ok=ok&&mFormatExportWav(res.data,vFileext,res.size,optionflag,backupExtension);
+						ok=mFormatExportWav(res.data,vFileext,res.size,optionflag,backupExtension);
 						break;
 					case RES_TYPE_IMAGE: /* save image */
 						/* Palette handling */
@@ -142,7 +139,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 						} /* else, good, the palette is buffered */
 						/* Export bitmap */
 
-						ok=ok&&mFormatExportBmp(res.data,vFileext,res.size,image,optionflag,backupExtension);
+						ok=mFormatExportBmp(res.data,vFileext,res.size,image,optionflag,backupExtension);
 
 						break;
 				}
