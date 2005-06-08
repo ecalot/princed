@@ -22,7 +22,7 @@
 pr.c: Main source file for Princed Resources library
 ¯¯¯¯
 	Princed Resources editor
-	(c) Copyright 2003, Princed Development Team
+	(c) Copyright 2003-2005 Princed Development Team
 
 	Authors
 	 Coding & main routines
@@ -120,11 +120,13 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	*/
 
 	/* Declare variables */
-	tResource* r[MAX_RES_COUNT];
+	tResourceList r;
 	int a;
 	const char* aux;
 	char* currentDatFileName;
 	char* currentDatFile;
+
+	r=resourceListCreate();
 
 	currentDatFile=strallocandcopy(vDatFile);
 
@@ -138,14 +140,15 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	currentDatFileName=strallocandcopy(aux);
 
 	/* Parse XML and export the file */
-	a=parseFile(vResFile,currentDatFileName,r);
+	a=parseFile(vResFile,currentDatFileName,&r);
 	if (a<0) {
 		/* parsing errors */
 		a-=3;
 	} else {
 		/* exporting errors/no errors */
-		a=extract(currentDatFile,vDirName,r,opt,currentDatFileName,datAuthor,backupExtension);
+		a=extract(currentDatFile,vDirName,&r,opt,currentDatFileName,datAuthor,backupExtension);
 	}
+	resourceListDrop(&r);
 	free(currentDatFileName);
 	free(currentDatFile);
 	freePartialList();
@@ -197,11 +200,13 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	*/
 
 	/* Declare variables */
-	tResource* r[MAX_RES_COUNT];
+	tResourceList r;
 	int a;
 	const char* aux;
 	char* currentDatFileName;
 	char* currentDatFile;
+
+	r=resourceListCreate();
 
 	currentDatFile=strallocandcopy(vDatFile);
 
@@ -215,14 +220,15 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	currentDatFileName=strallocandcopy(aux);
 
 	/* Parse XML and import files */
-	a=parseFile(vResFile,currentDatFileName,r);
+	a=parseFile(vResFile,currentDatFileName,&r);
 	if (a<0) {
 		/* parsing errors */
 		a-=2;
 	} else {
 		/* importing errors/no errors */
-		a=compile (currentDatFile, vDirName,r,opt,currentDatFileName,backupExtension);
+		a=compile (currentDatFile, vDirName,&r,opt,currentDatFileName,backupExtension);
 	}
+	resourceListDrop(&r);
 	free(currentDatFileName);
 	free(currentDatFile);
 	freePartialList();

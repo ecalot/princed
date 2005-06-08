@@ -56,28 +56,29 @@ extern FILE* outputStream;
 \***************************************************************/
 
 /* Format detection function (private function, not in header file) */
-int mAddCompiledFileToDatFile(unsigned char* data, tResource* res,const char* vFile) {
+int mAddCompiledFileToDatFile(tResource* res,const char* vFile) {
 	/* return 1 	if ok, 0 	if error */
 	switch (res->type) {
 		case RES_TYPE_LEVEL:
-			return mFormatImportPlv(data,res);
+			return mFormatImportPlv(res);
 		case RES_TYPE_IMAGE:
-			return mFormatImportBmp(data,res);
+			return mFormatImportBmp(res);
 		case RES_TYPE_WAVE:
-			return mFormatImportWav(data,res);
+			return mFormatImportWav(res);
 		case RES_TYPE_MIDI:
 		case RES_TYPE_PCSPEAKER:
-			return mFormatImportMid(data,res);
+			return mFormatImportMid(res);
 		case RES_TYPE_PALETTE:
-			return mFormatImportPal(data,res,vFile);
+			return mFormatImportPal(res,vFile);
 		case RES_TYPE_BINARY:
 		default:
-			mWriteFileInDatFile(data,res->size);
+			mWriteFileInDatFile(res);
 			break;
 	}
 	return 1;
 }
 
+/* TODO: code the free resources into reslist.c */
 #define freeResources \
 for (id=0;id<MAX_RES_COUNT;id++) {\
 	if (r[id]!=NULL) {\
@@ -92,7 +93,7 @@ for (id=0;id<MAX_RES_COUNT;id++) {\
 |                   M A I N   F U N C T I O N                   |
 \***************************************************************/
 
-int fullCompile(const char* vFiledat, const char* vDirExt, tResource* r[], int optionflag, const char* vDatFileName,const char* backupExtension) {
+int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension) {
 	/*
 		Return values:
 			-1 File couldn't be open for writing
@@ -103,45 +104,49 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResource* r[], int o
 	char vFileext[MAX_FILENAME_SIZE];
 	int error=0;
 	int ok=0;
-	unsigned char* data;
-	unsigned short int id=1;
+	const tResource* res;
+	tResource newRes;
 
 	if (!mWriteBeginDatFile(vFiledat,optionflag)) return -1; /* File couldn't be open */
-
-	for (;id!=MAX_RES_COUNT;id++) {
-		if (r[id]!=NULL) {
-			if (hasFlag(raw_flag)) r[id]->type=0; /* compile from raw */
-			getFileName(vFileext,vDirExt,r[id],id,vFiledat,vDatFileName,optionflag,backupExtension,"POP1");
+	
+	list_firstCursor(r);
+	while ((res=list_getCursor(r))) {
+		/* remember only id and type */
+		newRes.id=res->id;
+		newRes.type=res->type;
+	
+			if (hasFlag(raw_flag)) newRes.type=0; /* compile from raw */
+			getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension);
 			/* the file is in the archive, so i'll add it to the main dat body */
-			if ((r[id]->size=((unsigned short)mLoadFileArray(vFileext,&data)))) {
-				mWriteInitResource(r+id);
-				if (!mAddCompiledFileToDatFile(data,r[id],vFileext)) {
+			if ((newRes.size=((unsigned short)mLoadFileArray(vFileext,&newRes.data)))) {
+				if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {
 					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
 					error++;
 				} else {
 					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
 					ok++;
 				}
-				free(data);
+				/*free(data);*/
 			} else {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
 				error++;
 			}
-		}
+
+		list_nextCursor(r);
 	}
 
 	/* Close file. If empty, don't save */
-	mWriteCloseDatFile(r,!ok,optionflag,backupExtension);
+	mWriteCloseDatFile(!ok,optionflag,backupExtension);
 
 	/* Free allocated resources and dynamic strings */
-	freeResources;
+	/*freeResources;*/
 
 	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,error);
 	return error;
 }
 
 #define RW_ERROR {mRWCloseDatFile(1);return 0;}
-int partialCompile(const char* vFiledat, const char* vDirExt, tResource* r[], int optionflag, const char* vDatFileName,const char* backupExtension) {
+int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension) {
 	/*
 		Return values:
 			-2 Previous DAT file was invalid
@@ -150,35 +155,25 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResource* r[], in
 			positive number: number of missing files
 	*/
 
-	char vFileext[MAX_FILENAME_SIZE];
+	/*char vFileext[MAX_FILENAME_SIZE];*/
 	int                error,ok=0;
 	int                indexNumber;
-	long int           id;
-	unsigned char*     data;
-	unsigned long  int size;
-	unsigned long  int flags;
 	unsigned short int numberOfItems;
-	char*              indexName;
+	tResource          res;
 
 	/* Initialize abstract variables to read this new DAT file */
 	if ((error=mRWBeginDatFile(vFiledat,&numberOfItems,optionflag))) return error;
 
 	/* main loop */
 	for (indexNumber=0;(indexNumber<numberOfItems);indexNumber++) {
-		id=mReadFileInDatFile(indexNumber,&data,&size,&flags,&indexName);
-		
-		/* Validations */
-		if (id<0) {
+		if (!mReadFileInDatFile(&res,indexNumber)) {
 			mRWCloseDatFile(0);
 			RW_ERROR; /* Read error */
 		}
-		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
-		if (id>=MAX_RES_COUNT) { 
-			mRWCloseDatFile(0);
-			RW_ERROR; /* A file with an ID out of range will be treated as invalid */
-		}
+/*		if (res->id.value==0xFFFF) continue; * Tammo Jan Bug fix TODO: move to the dat layer? */
 
-		mWriteInitResource(r+id);
+/*		mWriteInitResource(r+id);*/
+#if 0 /* TODO: recode this based on extract function */
 		if (r[id]&&isInThePartialList(r[id]->path,id)) { /* If the resource was specified */
 			if (hasFlag(raw_flag)) r[id]->type=0; /* compile from raw */
 			getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension,"POP1");
@@ -201,19 +196,20 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResource* r[], in
 			r[id]->size=size-1;
 			mWriteFileInDatFileIgnoreChecksum(data,size);
 		}
+#endif
 	}
 
 	/* Close dat file */
 	mRWCloseDatFile(0);
 
 	/* Free allocated resources and dynamic strings */
-	freeResources;
+	/*freeResources;*/
 
 	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,error);
 	return error;
 }
 
-int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int optionflag, const char* vDatFileName,const char* backupExtension) {
+int compile(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension) {
 
 	if (partialListActive()) {
 		return partialCompile(vFiledat,vDirExt,r,optionflag,vDatFileName,backupExtension);

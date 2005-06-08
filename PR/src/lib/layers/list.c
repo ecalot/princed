@@ -33,9 +33,10 @@ list.c: Princed Resources : Ordered Read-Only list implementarion
 
 /* Defines */
 #include <stdlib.h>
+#include <string.h> /* memcpy */
 #include "list.h"
 
-tList list_create(int dataSize,int dataCmp(void*,void*)) {
+tList list_create(int dataSize,int dataCmp(const void*,const void*)) {
 	tList r;
 	r.size=dataSize;
 	r.cmp=dataCmp;
@@ -44,7 +45,7 @@ tList list_create(int dataSize,int dataCmp(void*,void*)) {
 	return r;
 }
 
-void list_insert(tList *list,void* data) {
+void list_insert(tList *list,const void* data) {
 	/* I will assume sequential access is very common,
 	 * so it is very possible that data is the next element.
 	 * I will check that and if not I'll start a sequential search */
@@ -53,7 +54,7 @@ void list_insert(tList *list,void* data) {
 	node->data=malloc(list->size);
 	memcpy(node->data,data,list->size);
 
-	if (!list->cursor) {
+	if (!list->first) {
 		/* insert first */
 		list->first=node;
 		node->next=NULL;
@@ -97,16 +98,15 @@ void list_firstCursor(tList* list) {
 	list->cursor=list->first;	
 } 
 
-int list_moveCursor(tList* list,void* data) {
-	if (!list->cursor) {
+int list_moveCursor(tList* list,const void* data) {
+	if (!list->first) {
 		return 0;
 	} else {
 		/* if the data was lower, start searching from the beginning */
-		if (list->cmp(list->cursor->data/*>*/,data)==GT) list->cursor=list->first;
+		if ((!list->cursor)||(list->cmp(list->cursor->data/*>*/,data)==GT)) list->cursor=list->first;
 		/* in case the first record is higher than the data, we will move the cursor to the first and return 0 */
 		if ((list->cursor==list->first) && (list->cmp(list->first->data/*>=*/,data)!=LT)) {
-			list->cursor=list->first;
-			return 0;
+			return list->cmp(list->first->data/*==*/,data)==EQ;
 		} else {
 			/* search until we find the first higher record or the end of the list */
 			while ((list->cursor->next) && (list->cmp(list->cursor->next->data/*>*/,data)!=GT)) 

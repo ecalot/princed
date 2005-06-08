@@ -32,50 +32,82 @@ reslist.c: Princed Resources : Ordered Read-Only list implementarion
 */
 
 /* Defines */
-#include "list.h"
+#include "reslist.h"
+#include <string.h> /* strncmp */
+#include <stdio.h> /* debug */
 
-/* app test */
+/* resource list layer (that uses the abstract list layer primitives) */
 
-int dataCmp(void* a,void* b) {
-	int ap,bp;
-	ap=*((int*)a);
-	bp=*((int*)b);
-
-	if (ap>bp) return GT;
-	if (ap<bp) return LT;
-	return EQ;	
+int resIdCmp(tResourceId a,tResourceId b) {
+	/* the number has the priority */
+	if (a.value>b.value) return GT;
+	if (a.value<b.value) return LT;
+	/* at this point, the numbers are the same, so the index name is the comparation */
+	return strncmp(a.index,b.index,4);	
 }
 
-
-int main(int a, char** b) {
-	tList lista;
-	const int* value;
-	int k;
-	int i;
-
-	lista=list_create(sizeof(int),dataCmp);
-
-	for (i=1;i<a;i++) {
-		k=atoi(b[i]);
-		list_insert(&lista,&k);
-	}
-
-	list_firstCursor(&lista);
-	while (value=list_getCursor(&lista)) {
-		printf("value: %d\n",*value);
-		list_nextCursor(&lista);
-	}
-
-	list_firstCursor(&lista);
-	k=100;
-	i=list_moveCursor(&lista,&k);
-	if (value=list_getCursor(&lista)) 
-		printf("value prior 100: %d %d\n",*value,i);
-	
-
-	printf("listo\n");
-	list_drop(&lista);
-	return 0;
+int resCmp(const void* a,const void* b) {
+	return resIdCmp(((tResource*)a)->id,((tResource*)b)->id);
 }
 
+void resourceListDrop(tResourceList* r) {
+	list_drop(r);
+}
+
+tResourceList resourceListCreate() {
+	return list_create(sizeof(tResource),resCmp);
+}
+
+void resourceListAdd(tResourceList* r,const tResource* res) {
+	/* first try to detect if the resource exists */
+	if (!list_moveCursor(r,res))
+		list_insert(r,res);
+}
+
+void printr(const tResource* record) {
+		printf("id=(%d,%s)\n",record->id.value,record->id.index);
+		printf("palette=(%d,%s)\n",record->palette.value,record->palette.index);
+		printf("size=%d offset=%lu\n",record->size,record->offset);
+		printf("number=%d type=%d\n",record->number,record->type);
+		printf("path='%s' name='%s' desc='%s'\n\n",record->path,record->name,record->desc);
+}
+
+void resourceListDebugPrint(tResourceList* r) {
+	const tResource* record;
+	list_firstCursor(r);
+	while ((record=list_getCursor(r))) {
+		printr(record);
+		list_nextCursor(r);
+	}
+	list_firstCursor(r);
+}
+
+#include "resources.h" /* verifyHeader TODO: set 0 and autodetect type 0 in extraction time */
+void resourceListAddInfo(tResourceList* r,tResource* res) {
+	if (!list_moveCursor(r,res)) {
+		res->path=NULL;
+		res->palAux=NULL;
+		res->desc=NULL;
+		res->name=NULL;
+		res->palette.value=0;
+		memset(res->palette.index,0,5);
+		res->number=0;
+		res->type=verifyHeader(res->data,res->size); /* TODO: send the verifyHeader to the export module */
+	} else { 
+		const tResource* resInfo=list_getCursor(r);
+		/* copy only the list information */
+		res->path=resInfo->path;
+		res->palAux=resInfo->palAux;
+		res->desc=resInfo->desc;
+		res->name=resInfo->name;
+		res->palette=resInfo->palette;
+		res->number=resInfo->number;
+		/* If resource type is invalid or 0, the type will be decided by PR */
+		if (!resInfo->type) {
+			res->type=verifyHeader(res->data,res->size);
+		} else {
+			res->type=resInfo->type;
+		}
+	}
+}
 

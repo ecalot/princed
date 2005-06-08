@@ -47,27 +47,22 @@ tasks.c: Princed Resources : Classify a DAT file
 
 int prClassifyDat(const char* vFiledat) {
 	int                indexNumber;
-	long int           id;
-	unsigned char*     data;
-	unsigned long  int size;
 	int                type=RES_TYPE_BINARY;
 	unsigned short int numberOfItems;
 	tPopVersion        popVersion;
-	unsigned long int  flags;
-	char*              indexName;
+	tResource          res;
+	int                ok;
 
 	/* Initialize abstract variables to read this new DAT file */
-	if ((id=mReadBeginDatFile(&numberOfItems,vFiledat))) return id+1; /* -1 if not found or empty, 0 if invalid */
+	if ((ok=mReadBeginDatFile(&numberOfItems,vFiledat))) return ok+1; /* -1 if not found or empty, 0 if invalid */
 
 	popVersion=mReadGetVersion();
 
 	/* main loop */
-	for (id=0,indexNumber=0;(indexNumber<numberOfItems)&&(type==RES_TYPE_BINARY);indexNumber++) {
-		id=mReadFileInDatFile(indexNumber,&data,&size,&flags,&indexName);
-		if (id<0) READ_ERROR; /* Read error */
-		if (id==0xFFFF) continue; /* Tammo Jan Bug fix */
-		if (id>=MAX_RES_COUNT) READ_ERROR; /* A file with an ID out of range will be treated as invalid */
-		type=verifyHeader(data,size);
+	for (indexNumber=0;(indexNumber<numberOfItems)&&(type==RES_TYPE_BINARY);indexNumber++) {
+		if (!mReadFileInDatFile(&res,indexNumber)) READ_ERROR; /* Read error */
+		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
+		type=verifyHeader(res.data,res.size);
 	}
 
 	mReadCloseDatFile();

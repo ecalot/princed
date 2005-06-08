@@ -34,9 +34,28 @@ dat.h: Princed Resources : DAT library headers
 #ifndef _DAT_H_
 #define _DAT_H_
 
-#include "resources.h"
+#define MAX_RES_COUNT            65000 /* TODO grep if this constant still exists */
 
-#define MAX_RES_COUNT            65000
+/* types */
+typedef struct {
+	unsigned short int value;
+	char               index[5];
+}tResourceId;
+
+typedef struct {
+	tResourceId        id;
+	tResourceId        palette;
+	unsigned short int size;
+	unsigned long int  offset; /* Used internally in dat.c to remember the offset */
+	unsigned char      number; /* Used for level number */
+	char               type;
+	char*              path;
+	unsigned char*     palAux;
+	char*              name;
+	char*              desc;
+	unsigned char*     data;
+	unsigned long      flags;
+}tResource;
 
 typedef enum {
 	none=0,
@@ -55,25 +74,26 @@ tPopVersion mReadGetVersion();
 int mRWBeginDatFile(const char* vFile, unsigned short int *numberOfItems, int optionflag);
 #define mRWCloseDatFile(dontSave) \
 mReadCloseDatFile();\
-mWriteCloseDatFile(r,dontSave,optionflag,backupExtension)
+mWriteCloseDatFile(dontSave,optionflag,backupExtension)
 #endif
 #endif
 
 #ifdef PR_DAT_INCLUDE_DATREAD
 /* DAT reading primitives */
 int  mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFile);
-int  mReadFileInDatFile(int indexNumber,unsigned char* *data,unsigned long int *size, unsigned long int *flags,char* *indexName);
-int  mReadInitResource(tResource** res,const unsigned char* data,long size);
+int  mReadFileInDatFile(tResource* res, int k);
+int mReadFileInDatFileId(tResource* res);
+/*int  mReadInitResource(tResource** res,const unsigned char* data,long size);*/
 void mReadCloseDatFile();
 #endif
 
 #ifdef PR_DAT_INCLUDE_DATWRITE
 /* DAT writing primitives */
 int  mWriteBeginDatFile(const char* vFile, int optionflag);
-void mWriteFileInDatFile(const unsigned char* data, int size);
-void mWriteFileInDatFileIgnoreChecksum(unsigned char* data,int size);
-void mWriteInitResource(tResource** res);
-void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const char* backupExtension);
+void mWriteFileInDatFile(const tResource* res);
+void mWriteFileInDatFileIgnoreChecksum(const tResource* res);
+/*void mWriteInitResource(tResource** res);*/
+void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension);
 #endif
 
 #endif

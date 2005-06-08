@@ -39,10 +39,20 @@ xmlsearch.c: Princed Resources : specific xml handling functions
 /* Includes */
 #include "common.h"
 #include "xmlparse.h"
-#include "resources.h"
+#include "reslist.h" /* only to add to the list */
 #include "xmlsearch.h"
 #include "memory.h"
 #include <string.h>
+
+void str5uppercpy (char* dst,const char* src) {
+	int i;
+	for (i=0;(i<4)&&(*src);i++) {
+		*dst=((*src>='a')&&(*src<='z'))?*src&0xDF:*src;
+		src++;
+		dst++;
+	}
+	*dst=0;
+}
 
 /****************************************************************\
 |                   Tag Tree Searching Functions                 |
@@ -50,48 +60,56 @@ xmlsearch.c: Princed Resources : specific xml handling functions
 
 #define ptoi(p) ((p!=NULL)?atoi(p):0)
 
-#define keepStringAttribute(attribute) r[id]->attribute=strallocandcopy(t->attribute)
-#define keepIntAttribute(attribute,type) r[id]->attribute=(type)ptoi(t->attribute);
-
+#define keepStringAttribute(attribute) res.attribute=strallocandcopy(t->attribute)
+#define keepIntAttribute(attribute,type) res.attribute=(type)ptoi(t->attribute);
+#define keepIdAttributes(attribute,idnum,idindex) res.attribute.value=(unsigned short int)ptoi(t->idnum);\
+                                             if (t->idindex) str5uppercpy(res.attribute.index,t->idindex);\
+																	           else res.attribute.index[0]=0
+																	 
+#define keepIdAttributesElse(attribute,idnum,idindex,idelse) res.attribute.value=(unsigned short int)ptoi(t->idnum);\
+                                             if (t->idindex) str5uppercpy(res.attribute.index,t->idindex);\
+																	           else str5uppercpy(res.attribute.index,t->idelse)
 void workTag(const tTag* t,void* pass) {
 	/*
 		If the tag matches, it is converted to resource and added to the array
 	*/
 
 	/* Declare variables */
-	unsigned short id;
 	const char* datFile=((tPassWork*)pass)->datFile;
-	tResource** r=((tPassWork*)pass)->r;
+	tResourceList* r=((tPassWork*)pass)->r;
+	tResource res;
 
 	/* Skipping conditions */
 	if (!equalsIgnoreCase(t->file,datFile))   return; /* If it doesn't belong to the given dat file */
-	if (!(id=(unsigned short)ptoi(t->value))) return; /* If there was not id or id contained wrong values */
+	if (!t->value) return;                            /* If there was not number id */
+	if (!t->index) return;                            /* If there was not index id */
 	if (!equalsIgnoreCase(t->tag,"item"))     return; /* If the tag isn't an item */
 
-	/* Process tag and copy values to resource */
-	/* Create Resource */
-	if (r[id]!=NULL) return;
-	r[id]=(tResource*)malloc(sizeof(tResource));
-	if (r[id]==NULL) return;
+	/* Process tag and copy values to resource: */
 
 	/* Get string itemtype and convert into the itemtypeId */
-	r[id]->type=0;
+	res.type=0;
 #ifndef IGNORERESOURCEFUNCTIONS
-	if (t->itemtype!=NULL) { /* NULL tells the extractor that the type must be auto detected */
+	if (t->itemtype!=NULL) { /* NULL tells the extractor that the type should be auto detected */
 		int i=RES_TYPECOUNT;
-		while((!r[id]->type)&&(i--))
+		while((!res.type)&&(i--))
 			if (equalsIgnoreCase(t->itemtype,getExtDesc(i)))
-				r[id]->type=i;
+				res.type=i;
 		/* If error it returns 0 and the verifyHeader will try to detect the type */
 	}
 #endif
 
-	/* Copy palette, number, title, desc and path */
-	keepIntAttribute(palette,unsigned short);  /* Transforms the char* palette into a short ID value, if 0 or error no palette is needed */
+	/* Copy id and palette id */	
+	keepIdAttributes(id,value,index);
+	keepIdAttributesElse(palette,palette,paletteindex,index);
+	
+	/* Copy number, title, desc and path */
 	keepIntAttribute(number,unsigned char);    /* Transforms the char* levelnumer/number attribute into a char value, if error, demo level is used */
-	keepStringAttribute(name);  /* only for plv */
 	keepStringAttribute(desc);  /* only for plv */
+	keepStringAttribute(name);  /* only for plv */
 	keepStringAttribute(path);
+
+	resourceListAdd(r,&res);
 }
 
 void workTree(const tTag* t,void* pass, void (*function)(const tTag*,void*)) {

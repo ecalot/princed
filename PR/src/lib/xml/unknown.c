@@ -239,27 +239,24 @@ int checkSum(const unsigned char* data,int size) {
 |                     Parsing resource file                     |
 \***************************************************************/
 
-/* Initializes the resource table */
-void emptyTable(tResource* r[]) {
-	int i=MAX_RES_COUNT;
-	while (i--) *(r++)=NULL;
-}
-
 /* parse file */
-int parseFile(const char* vFile, const char* datFile, tResource* r[]) {
+int parseFile(const char* vFile, const char* datFile, tResourceList *r) {
 	/* Declare error variable */
 	int error;
 	tPassWork pass;
 	tTag* structure;
 
 	/* Generate xml structure if doesn't exist */
+printf("DEBUG: a punto de leer la estructura xml\n");
 	if ((error=parseStructure(vFile,&structure))) return error;
+printf("DEBUG: termine de leer la estructura xml\n");
 
 	/* Use the xml structure to Generate the resource structure of the file */
-	emptyTable(r);
+	/*emptyTable(r);*/
 	pass.datFile=datFile;
 	pass.r=r;
 	workTree(structure,&pass,workTag);
+printf("DEBUG: termine de crear la resList a aprtir del datfile\n");
 
 	/* All done */
 	return 0;
@@ -272,7 +269,8 @@ int parseFile(const char* vFile, const char* datFile, tResource* r[]) {
 /* Resources output to xml functions. Private+abstract variable */
 static FILE* unknownXmlFile=NULL;
 
-void AddToUnknownXml(const char* vFiledatWithPath,unsigned short id,const char* ext,char type,const char* vDirExt,unsigned short pal,const char* vFiledat,int optionflag,int count,const char* indexName) {
+void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,char type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count) {
+	/* TODO: use lowercase for .index values */
 	/* Open file if not open */
 	if (unknownXmlFile==NULL) {
 		char xmlFile[MAX_FILENAME_SIZE];
@@ -284,13 +282,13 @@ void AddToUnknownXml(const char* vFiledatWithPath,unsigned short id,const char* 
 		/* Save headers */
 		if (type==6) pal=id;
 		fprintf(unknownXmlFile,RES_XML_UNKNOWN_START,
-			vFiledat,vFiledatWithPath,pal
+			vFiledat,vFiledatWithPath,pal.value,pal.index
 		);
 	}
 
 	/* Write item */
 	fprintf(unknownXmlFile,RES_XML_UNKNOWN_ITEM,
-		id,indexName,getExtDesc(type),count,ext,getExtDesc(type),getExtDesc(type),count
+		id.value,id.index,getExtDesc(type),count,ext,getExtDesc(type),getExtDesc(type),count
 	); /* To the xml output */
 }
 
@@ -310,7 +308,7 @@ void endUnknownXml(int optionflag, const char* backupExtension) {
 |                   Resources extra functions                   |
 \***************************************************************/
 
-void getFileName(char* vFileext,const char* vDirExt,tResource* r,unsigned short id,const char* vFiledat, const char* vDatFileName,int optionflag, const char* backupExtension,const char* indexName) {
+void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag, const char* backupExtension) {
 	static const char* extarray[]=RES_FILE_EXTENSIONS;
 	int pos;
 
@@ -320,7 +318,7 @@ void getFileName(char* vFileext,const char* vDirExt,tResource* r,unsigned short 
 
 		/* set filename */
 		sprintf(vFileext,RES_XML_UNKNOWN_PATH""RES_XML_UNKNOWN_FILES,vDirExt,vDatFileName,getExtDesc(pos),typeCount[pos],extarray[pos]);
-		AddToUnknownXml(vDatFileName,id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,typeCount[pos],indexName);
+		AddToUnknownXml(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,typeCount[pos]);
 	} else {
 		/* set filename */
 		sprintf(vFileext,"%s/%s",vDirExt,r->path);

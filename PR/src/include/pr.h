@@ -53,6 +53,7 @@ typedef struct tTag {
 	char* itemtype;
 	char* name;
 	char* palette;
+	char* paletteindex;
 	char* type;
 	char* value;
 	char* index;

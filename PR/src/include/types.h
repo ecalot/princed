@@ -19,22 +19,36 @@
 */
 
 /*
-extract.h: Princed Resources : DAT Extractor headers
+reslist.h: Princed Resources : Resource list
 ¯¯¯¯¯¯¯¯¯
- Copyright 2003 Princed Development Team
-  Created: 24 Aug 2003
+ Copyright 2005 Princed Development Team
+  Created: 05 Jun 2005
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
-  Version: 1.01 (2003-Oct-23)
+  Version: 1.00 (2005-Jun-05)
 
  Note:
   DO NOT remove this copyright notice
 */
 
-#ifndef _EXTARCT_H_
-#define _EXTRACT_H_
+#ifndef _RESLIST_H_
+#define _RESLIST_H_
 
-#include "resources.h"
+#include "list.h" /* tList */
 
-int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int task, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension);
+#define tResourceList tList
+
+#include "dat.h" /* tResourceId & tResource */
+/* TODO: fix header dependencies */
+
+void printr(const tResource* record); /* for debug purposes */
+
+int resIdCmp(tResourceId a,tResourceId b);
+int resCmp(const void* a,const void* b);
+void resourceListDrop(tResourceList* r);
+tResourceList resourceListCreate();
+void resourceListAdd(tResourceList* r,const tResource* res);
+void resourceListDebugPrint(tResourceList* r);
+void resourceListAddInfo(tResourceList* r,tResource* res);
+
 #endif

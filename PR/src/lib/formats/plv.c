@@ -167,17 +167,17 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 
 extern FILE* outputStream;
 
-int mFormatImportPlv(unsigned char* data, tResource *res) {
+int mFormatImportPlv(tResource *res) {
 	/* declare variables */
 	unsigned char* pos;
 	unsigned long int oldSize=res->size;
 
 	/* integrity check 1 */
 	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE) return 0;
-	if (memcmp(data,PLV_HEADER_A,PLV_HEADER_A_SIZE)) return 0;
+	if (memcmp(res->data,PLV_HEADER_A,PLV_HEADER_A_SIZE)) return 0;
 
 	/* jump to size */
-	pos=data+PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE;
+	pos=res->data+PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE;
 
 	/* read size and jump to data */
 	res->size=array2long(pos);pos+=4;
@@ -190,7 +190,8 @@ int mFormatImportPlv(unsigned char* data, tResource *res) {
 		fprintf(outputStream,PR_TEXT_IMPORT_PLV_WARN);
 
 	/* save data */
-	mWriteFileInDatFileIgnoreChecksum(pos,res->size--);
+	res->data=pos;
+	mWriteFileInDatFileIgnoreChecksum(res); /* TODO: check res->size-- */
 	
 	return 1;
 }

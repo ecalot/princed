@@ -80,7 +80,7 @@ int mFormatExportPal(const unsigned char* data, char *vFileext,unsigned long int
 	return i;
 }
 
-int mFormatImportPal(unsigned char* data, tResource *res,const char* vFile) {
+int mFormatImportPal(tResource *res,const char* vFile) {
 
 	/* declare variables */
 	unsigned char* pals;
@@ -102,7 +102,7 @@ int mFormatImportPal(unsigned char* data, tResource *res,const char* vFile) {
 	if ((res->size)<130) return 0;
 
 	/* verify jasc pal header */
-	while (palh[i]==(data)[i++]);
+	while (palh[i]==(res->data)[i++]);
 	if (i!=sizeof(palh)) return 0; /* palette differs with headers */
 
 	/* Read sample */
@@ -123,7 +123,7 @@ int mFormatImportPal(unsigned char* data, tResource *res,const char* vFile) {
 	if (sample1) free(pals1);
 
 	/* set current values */
-	data2=strtok((char*)(data)+sizeof(palh)-1,enter);
+	data2=strtok((char*)(res->data)+sizeof(palh)-1,enter);
 	while (k--) {
 		if (!sscanf(data2,"%d %d %d",&r,&g,&b)) return 0;
 		/* Those lines mean a loss of data (palette colors are saved in the nearest multiple of 4) */
@@ -134,7 +134,10 @@ int mFormatImportPal(unsigned char* data, tResource *res,const char* vFile) {
 	}
 
 	/* save and free palette */
-	mWriteFileInDatFile(pal,res->size=100);
+	res->size=100;
+	free(res->data);
+	res->data=pal;
+	mWriteFileInDatFile(res);
 	free(pal);
 
 	return 1;

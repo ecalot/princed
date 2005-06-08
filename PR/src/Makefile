@@ -53,7 +53,7 @@ endif
 
 FILES    = .import.o .export.o .resources.o .classify.o .disk.o\
            .dat.o .bmp.o .mid.o .pal.o .wav.o .plv.o\
-           .memory.o .pr.o
+           .memory.o .pr.o .list.o .reslist.o
 
 XML      = .parse.o .search.o
 COMPRESS = .compress.o .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o 
@@ -124,6 +124,14 @@ $(XMLFILE): xml/resources.xml
 .export.o: lib/actions/export.c
 	$(INFO) Compiling export module...
 	$(CC) $(OPTIONS) -c lib/actions/export.c -o $@
+
+.list.o: lib/layers/list.c
+	$(INFO) Compiling list implementation...
+	$(CC) $(OPTIONS) -c lib/layers/list.c -o $@
+
+.reslist.o: lib/layers/reslist.c
+	$(INFO) Compiling resource list module...
+	$(CC) $(OPTIONS) -c lib/layers/reslist.c -o $@
 
 .compress.o: lib/compression/main.c
 	$(INFO) Compiling compression module...

@@ -37,7 +37,7 @@ mid.h: Princed Resources : MIDI files support headers
 #include <stdio.h>
 #include "resources.h"
 
-int mFormatImportMid(unsigned char* data, tResource *res);
+int mFormatImportMid(tResource *res);
 int mFormatExportMid(const unsigned char* data, char *vFileext,unsigned long int size,int optionflag,const char* backupExtension);
 
 #endif

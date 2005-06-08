@@ -41,7 +41,7 @@ bmp.h: Princed Resources : BMP file support headers
 #define FORMATS_BMP_PALETTE_BW "\x00\x00\x00\0\xFF\xFF\xFF"
 
 int mFormatExportBmp(const unsigned char* data, const char *vFileext,unsigned long int size,tImage image,int optionflag,const char* backupExtension);
-int mFormatImportBmp(unsigned char* data, tResource *res);
+int mFormatImportBmp(tResource *res);
 int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupExtension);
 int mReadBitMap(tImage* img,unsigned char* data, int size); /* Note: this will ignore the palette */
 

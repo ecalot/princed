@@ -38,7 +38,7 @@ resources.h: Princed Resources : Resource Handler headers
 
 #define RES_XML_UNKNOWN_PATH  "%s/unknown/%s/"
 #define RES_XML_UNKNOWN_FILES "%s%02d.%s"
-#define RES_XML_UNKNOWN_START "<?xml version=\"1.0\" ?>\n<resources version=\"generated\">\n <folder name=\"unknown\" path=\"%s\" file=\"%s\" palette=\"%d\">\n"
+#define RES_XML_UNKNOWN_START "<?xml version=\"1.0\" ?>\n<resources version=\"generated\">\n <folder name=\"unknown\" path=\"%s\" file=\"%s\" palette=\"%d\" paletteindex=\"%s\">\n"
 #define RES_XML_UNKNOWN_ITEM  "  <item value=\"%d\" index=\"%s\" path=\""RES_XML_UNKNOWN_FILES"\" itemtype=\"%s\">Unknown %s %d</item>\n"
 #define RES_XML_UNKNOWN_END   " </folder>\n</resources>\n"
 
@@ -60,18 +60,6 @@ resources.h: Princed Resources : Resource Handler headers
 
 #define RES_TYPECOUNT         8
 
-/* types */
-typedef struct {
-	unsigned short int palette;
-	unsigned short int size;
-	unsigned long int  offset; /* Used internally in dat.c to remember the offset */
-	unsigned char      number; /* Used for level number */
-	char               type;
-	char*              path;
-	unsigned char*     palAux;
-	char*              name;
-	char*              desc;
-}tResource;
 
 /* Id list for partial manipulation */
 typedef enum {eString,eValue}tResIdType;
@@ -90,8 +78,8 @@ typedef struct {
 }tResIdList;
 
 void parseGivenPath(char* path);
-int partialListActive();
-int isInThePartialList(const char* file, int value);
+int  partialListActive();
+int  isInThePartialList(const char* file, int value);
 void freePartialList();
 
 /* Includes */
@@ -112,24 +100,20 @@ int verifyHeader(const unsigned char* array, int size);
 	 07 Internal Speaker Sounds
 */
 
-/***************************************************************\
-|                       File format handling                    |
-\***************************************************************/
+#include "dat.h" /* tResource */
+#include "reslist.h" /* tResourceList */
 
 /* CheckSum verification */
 int checkSum(const unsigned char* data,int size);
 
-/* Empty resource table */
-void emptyTable(tResource* r[]);
-
 /* Resources extras */
-void getFileName(char* vFileext,const char* vDirExt,tResource* r,unsigned short id,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension,const char* indexName);
+void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension);
 void getUpperFolder(char* aux, char* vFiledat);
 
 const char* getExtDesc(int type);
 
 /* parse xml file */
-int parseFile(const char* vFile, const char* datFile, tResource* r[]);
+int parseFile(const char* vFile, const char* datFile, tResourceList *r);
 
 /* In case there are unknown resources it closes the unknown XML output */
 void endUnknownXml();

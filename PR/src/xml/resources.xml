@@ -1405,7 +1405,7 @@ resources.xml: Princed Resources : Resource tree
   <item value="2015" number="15" path="potions.plv">Potions level</item>
  </folder>
 
- <folder index="pahs" name="the pop2 bird guard" file="bird.dat" itemtype="image" path="bird" palette="750">
+ <folder index="pahs" name="the pop2 bird guard" file="bird.dat" itemtype="image" path="bird" palette="750" paletteindex="clap">
   <item value="750" index="mark" path="binary01.bin" itemtype="binary">Unknown binary 1</item>
   <item value="750" index="clap" path="binary02.bin" itemtype="binary">Unknown binary 2</item>
   <item value="750" index="slap" path="bird.pal" itemtype="palette">The bird palette</item>

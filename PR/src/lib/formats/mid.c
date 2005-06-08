@@ -44,14 +44,15 @@ int mFormatExportMid(const unsigned char* data, char *vFileext,unsigned long int
 	return writeData(data,2,vFileext,size,optionflag,backupExtension);
 }
 
-int mFormatImportMid(unsigned char* data, tResource *res) {
+int mFormatImportMid(tResource *res) {
 	unsigned char* file;
 
 	file=getMemory(res->size+1);
 	file[0]=(unsigned char)((res->type==4)?2:0); /* Now should be 0x02: First character must be a 0x01 (wav type in dat) */
-	memcpy(file+1,data,res->size);
+	memcpy(file+1,res->data,res->size);
 	res->size++;
-	mWriteFileInDatFile(file,res->size);
-	free(file);
+	free(res->data);
+	res->data=file;
+	mWriteFileInDatFile(res);
 	return 1;
 }

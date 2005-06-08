@@ -37,6 +37,6 @@ compile.h: Princed Resources : DAT Compiler headers
 #include <stdio.h>
 #include "resources.h"
 
-int compile(const char* vFiledat, const char* vDirExt, tResource* r[], int opt, const char* vDatFileName,const char* backupExtension);
+int compile(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension);
 
 #endif

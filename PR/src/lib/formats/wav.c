@@ -61,14 +61,16 @@ int mFormatExportWav(const unsigned char* data, char *vFileext,unsigned long int
 	return ok;
 }
 
-int mFormatImportWav(unsigned char* data, tResource *res) {
+int mFormatImportWav(tResource *res) {
 	unsigned char wav[]=WAVE_HEADER;
 	int i=sizeof(wav);
 
 	if (res->size<=i) return 0;
 	res->size-=(--i);
-	while ((i==4||i==5||i==6||i==7||i==40||i==41||i==42||i==43||(data[i]==wav[i]))&&(i--));
-	data[sizeof(wav)-1]=1; /* First character must be a 0x01 (wav type in dat) */
-	if (i==-1) mWriteFileInDatFile(data+sizeof(wav)-1,res->size);
+	while ((i==4||i==5||i==6||i==7||i==40||i==41||i==42||i==43||((res->data)[i]==wav[i]))&&(i--));
+	(res->data)[sizeof(wav)-1]=1; /* First character must be a 0x01 (wav type in dat) */
+	res->data+=sizeof(wav)-1;
+	if (i==-1) mWriteFileInDatFile(res);
 	return 1;
 }
+

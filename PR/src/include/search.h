@@ -62,7 +62,7 @@ char* getFileFromList();
 /* Abstract passing structures */
 typedef struct tPassWork {
 	const char* datFile;
-	tResource** r;
+	tResourceList* r;
 }tPassWork;
 
 typedef struct tPassCompare {

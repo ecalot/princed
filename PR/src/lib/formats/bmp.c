@@ -68,16 +68,14 @@ int mFormatExportBmp(const unsigned char* data, const char *vFileext,unsigned lo
 }
 
 
-int mFormatImportBmp(unsigned char* data, tResource *res) {
+int mFormatImportBmp(tResource *res) {
 	int size;
 	tImage img;
-	unsigned char* aux;
 
-	if (!mReadBitMap(&img,data,res->size)) return 0;
-	mCompressGraphic(&aux,&img,&size);
-	mWriteFileInDatFile(aux,size);
+	if (!mReadBitMap(&img,res->data,res->size)) return 0;
+	mCompressGraphic(&(res->data),&img,(int*)&(res->size));
+	mWriteFileInDatFile(res);
 	free(img.pix);
-	free(aux);
 	res->size=(unsigned short)size;
 
 	return 1;

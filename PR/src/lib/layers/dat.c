@@ -39,6 +39,8 @@ dat.c: Princed Resources : DAT library
 #include "common.h"
 #include "dat.h"
 
+#include "reslist.h"
+
 /***************************************************************\
 |                     DAT reading primitives                    |
 \***************************************************************/
@@ -65,15 +67,55 @@ tIndexCursor       readIndexCursor;
 /* private functions */
 /* todo: move to datindex.c */
 
+/* the cursor get functions */
+
+#define dat_readCursorGetIndexName(r) (r.slaveIndexName)
+#define dat_readCursorGetId(r)        (array2short(r.currentRecord))
+#define dat_readCursorGetOffset(r)    (array2long(r.currentRecord+2))
+#define dat_readCursorGetSize(r)      (array2short(r.currentRecord+6))
+#define dat_readCursorGetFlags(r)     ((r.popVersion==pop1)?(1<<31):(r.currentRecord[8]<<16|r.currentRecord[9]<<8|r.currentRecord[10]))
+#define dat_readCursorGetVersion(r)     (r.popVersion)
+
+/* the cursor move functions */
+
+int dat_cursorNextIndex(tIndexCursor* r) {
+	if (r->popVersion==pop1) {
+		/* POP1 */
+		return 0;
+	} else {
+		/* POP2 */
+		if (r->currentMasterItem==r->masterItems) {
+			return 0; /* its over */
+		}
+			
+		/* remember the new slave index name */
+		strncpy(r->slaveIndexName,(char*)(r->highData+2+6*r->currentMasterItem),4);
+			
+		/* remember the new slave index size */
+		r->slaveItems=array2short(r->highData+array2short(r->highData+6+6*r->currentMasterItem));
+							
+		/* jump to next index */
+		r->currentMasterItem++;
+		r->currentSlaveItem=0;
+		r->currentRecord=r->highData+array2short(r->highData+6+6*r->currentMasterItem)+2;
+	}
+	return 1;
+}
+
 int dat_cursorNext(tIndexCursor* r) {
 	if (r->popVersion==pop1) {
 		/* POP1 */
-		if (r->currentSlaveItem==r->slaveItems) return 0;
-		r->currentSlaveItem++;
-		r->currentRecord+=8;
+		if (r->currentSlaveItem==r->slaveItems) {
+			return 0;
+		} else {
+			r->currentSlaveItem++;
+			r->currentRecord+=8;
+		}
 	} else {
 		/* POP2 */
 		if (r->currentSlaveItem==r->slaveItems) {
+			return dat_cursorNextIndex(r);
+#if 0
 			if (r->currentMasterItem==r->masterItems) {
 				return 0; /* its over */
 			}
@@ -88,7 +130,7 @@ int dat_cursorNext(tIndexCursor* r) {
 			r->currentMasterItem++;
 			r->currentSlaveItem=0;
 			r->currentRecord=r->highData+array2short(r->highData+6+6*r->currentMasterItem)+2;
-
+#endif
 		} else {
 			r->currentSlaveItem++;
 			r->currentRecord+=11;
@@ -97,26 +139,35 @@ int dat_cursorNext(tIndexCursor* r) {
 	return 1;
 }
 
-tIndexCursor dat_initPop2IndexCursor(unsigned char* highData,int highDataSize) {
-	tIndexCursor r;
-	r.popVersion=pop2;
-	r.highData=highData;
-	r.highDataSize=highDataSize;
-	r.masterItems=array2short(highData);
-
-	/* remember the first slave index name */
-	strncpy(r.slaveIndexName,(char*)(highData+2),4);
-	r.slaveIndexName[4]=0; /* now it is a null terminated string */
-			
-	/* remember the first slave index size */
-	r.slaveItems=array2short(highData+array2short(highData+6));
-							
-	/* jump to the first index */
-	r.currentMasterItem=0;
-	r.currentSlaveItem=0;
-	r.currentRecord=r.highData+array2short(r.highData+6)+2;
+void dat_cursorFirst(tIndexCursor* r) {
+	if (r->popVersion==pop2) {
+		/* remember the first slave index name */
+		strncpy(r->slaveIndexName,(char*)(r->highData+2),4);
+		r->slaveIndexName[4]=0; /* now it is a null terminated string */
+		r->currentRecord=r->highData+array2short(r->highData+6)+2;
+	} else {
+		r->currentRecord=r->highData+2;
+	}
 	
-	return r;
+	/* jump to the first index */
+	r->currentMasterItem=0;
+	r->currentSlaveItem=0;
+}
+
+int dat_cursorMoveId(tIndexCursor* r, tResourceId id) {
+	dat_cursorFirst(r);
+	/* first try to find the index name */
+	do {
+		if (!strcmp(r->slaveIndexName,id.index)) {
+			/* the same index */
+			do {
+				if (strcmp(r->slaveIndexName,id.index)) return 0; /* in case we are passed */
+				if (array2short(r->currentRecord)==id.value) return 1; /* found! */
+			} while (dat_cursorNext(r));
+			return 0; /* id not found */
+		}
+	} while (dat_cursorNextIndex(r));
+	return 0; /* index name not found */
 }
 
 int dat_cursorMove(tIndexCursor* r,int pos) {
@@ -137,6 +188,7 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 				
 				/* remember the new slave index name */
 				strncpy(r->slaveIndexName,(char*)(r->highData+2+6*i),4);
+				r->slaveIndexName[4]=0; /* now it is a null terminated string */
 						
 				/* remember the new slave index size */
 				r->slaveItems=itemCount;
@@ -152,30 +204,8 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 		return 0; /* we had read all the master index and we didn't read the pos */
 	}
 }
-				
-#define dat_readCursorGetIndexName(r) (r.slaveIndexName)
-#define dat_readCursorGetId(r)        (array2short(r.currentRecord))
-#define dat_readCursorGetOffset(r)    (array2long(r.currentRecord+2))
-#define dat_readCursorGetSize(r)      (array2short(r.currentRecord+6))
-#define dat_readCursorGetFlags(r)     ((r.popVersion==pop1)?(1<<31):(r.currentRecord[8]<<16|r.currentRecord[9]<<8|r.currentRecord[10]))
-#define dat_readCursorGetVersion(r)     (r.popVersion)
 
-tIndexCursor dat_initPop1IndexCursor(unsigned char* highData,int highDataSize) {
-	tIndexCursor r;
-	r.popVersion=pop1;
-	r.highData=highData;
-	r.highDataSize=highDataSize;
-	r.slaveItems=array2short(highData);
-
-	/* remember the first slave index name */
-	strcpy(r.slaveIndexName,"POP1");
-	
-	/* jump to the first index */
-	r.currentSlaveItem=0;
-	r.currentRecord=r.highData+2;
-	
-	return r;
-}
+/* the detect function */
 
 tPopVersion detectPopVersion(unsigned char* highArea,int highAreaSize,unsigned short int *numberOfItems) {
 	const unsigned char* cursor;
@@ -221,6 +251,49 @@ tPopVersion detectPopVersion(unsigned char* highArea,int highAreaSize,unsigned s
 	}
 	
 	return pop2;
+}
+
+/* the cursor create functions */
+
+/* TODO: abstract the cursor library from pop version, merge pop1 & pop2 create */
+ 
+tIndexCursor dat_initPop2IndexCursor(unsigned char* highData,int highDataSize) {
+	tIndexCursor r;
+	r.popVersion=pop2;
+	r.highData=highData;
+	r.highDataSize=highDataSize;
+	r.masterItems=array2short(highData);
+
+	/* remember the first slave index name */
+	strncpy(r.slaveIndexName,(char*)(highData+2),4);
+	r.slaveIndexName[4]=0; /* now it is a null terminated string */
+			
+	/* remember the first slave index size */
+	r.slaveItems=array2short(highData+array2short(highData+6));
+							
+	/* jump to the first index */
+	r.currentMasterItem=0;
+	r.currentSlaveItem=0;
+	r.currentRecord=r.highData+array2short(r.highData+6)+2;
+	
+	return r;
+}
+
+tIndexCursor dat_initPop1IndexCursor(unsigned char* highData,int highDataSize) {
+	tIndexCursor r;
+	r.popVersion=pop1;
+	r.highData=highData;
+	r.highDataSize=highDataSize;
+	r.slaveItems=array2short(highData);
+
+	/* remember the first slave index name */
+	strcpy(r.slaveIndexName,"POP1");
+	
+	/* jump to the first index */
+	r.currentSlaveItem=0;
+	r.currentRecord=r.highData+2;
+	
+	return r;
 }
 
 tIndexCursor dat_createCursor(unsigned char* indexOffset,int indexSize,unsigned short int* numberOfItems) {
@@ -288,45 +361,44 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	return 0;
 }
 
-int mReadFileInDatFile(int k,unsigned char* *data,unsigned long int *size, unsigned long int *flags,char* *index) {
-	unsigned short int id;
-	unsigned long  int offset;
+int mReadFileInDatFileId(tResource* res) {
+	if (!dat_cursorMoveId(&readIndexCursor,res->id)) return 0; /* 0 means index not found */
+	/* TODO: use a function for common parts */
 
-	if (!dat_cursorMove(&readIndexCursor,k)) return -2; /* -2 means: out of range */
-	
 	/* for each archived file the index is read */
-	id=    dat_readCursorGetId        (readIndexCursor);
-	offset=dat_readCursorGetOffset    (readIndexCursor);
-	*size= dat_readCursorGetSize      (readIndexCursor);
-	*flags=dat_readCursorGetFlags     (readIndexCursor);
-	*index=dat_readCursorGetIndexName (readIndexCursor);
+	res->id.value=        dat_readCursorGetId        (readIndexCursor);
+	strncpy(res->id.index,dat_readCursorGetIndexName (readIndexCursor),5);
+	res->offset=          dat_readCursorGetOffset    (readIndexCursor);
+	res->size=            dat_readCursorGetSize      (readIndexCursor);
+	res->flags=           dat_readCursorGetFlags     (readIndexCursor);
 
 	/* if (offset>indexOffset) return -1; * a resourse offset is allways before the index offset TODO: move this check to detect pop version*/
-	(*size)++; /* add the checksum */
+	res->size++; /* add the checksum */
 
-printf("DEBUG: id=%d offset=%lu size=%lu flags=0x%08x index=%s\n",id,offset,*size,(int)(*flags),*index);
-	*data=readDatFile+offset;
+	res->data=readDatFile+res->offset;
 
-	return id;
+	return 1;
+	
 }
 
-int mReadInitResource(tResource** res,const unsigned char* data,long size) {
-	if ((*res)==NULL) {
-		(*res)=(tResource*)malloc(sizeof(tResource));
-		if ((*res)==NULL) return -1; /* no memory */
-		(*res)->path=NULL;
-		(*res)->palAux=NULL;
-		(*res)->desc=NULL;
-		(*res)->name=NULL;
-		(*res)->palette=0;
-		(*res)->number=0;
-		(*res)->size=(unsigned short int)size;
-		(*res)->type=verifyHeader(data,(unsigned short int)size);
-	} else { /* If resource type is invalid or 0, the type will be decided by PR */
-		if (!((*res)->type)) (*res)->type=verifyHeader(data,(unsigned short int)size);
-	}
-	return 0;
+int mReadFileInDatFile(tResource* res, int k) {
+
+	if (!dat_cursorMove(&readIndexCursor,k)) return 0; /* 0 means out of range */
+	
+	/* for each archived file the index is read */
+	res->id.value=        dat_readCursorGetId        (readIndexCursor);
+	strncpy(res->id.index,dat_readCursorGetIndexName (readIndexCursor),5);
+	res->offset=          dat_readCursorGetOffset    (readIndexCursor);
+	res->size=            dat_readCursorGetSize      (readIndexCursor);
+	res->flags=           dat_readCursorGetFlags     (readIndexCursor);
+
+	/* if (offset>indexOffset) return -1; * a resourse offset is allways before the index offset TODO: move this check to detect pop version*/
+	res->size++; /* add the checksum */
+	res->data=readDatFile+res->offset;
+
+	return 1;
 }
+
 #endif
 
 /***************************************************************\
@@ -335,6 +407,7 @@ int mReadInitResource(tResource** res,const unsigned char* data,long size) {
 
 #ifdef PR_DAT_INCLUDE_DATWRITE
 FILE* writeDatFile;
+tResourceList resIndex;
 
 int mWriteBeginDatFile(const char* vFile, int optionflag) {
 	/*
@@ -348,6 +421,7 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 	*/
 	if (writeOpen(vFile,&writeDatFile,optionflag|backup_flag)) {
 		short fill=0;
+		resIndex=resourceListCreate();
 		fwriteshort(&fill,writeDatFile); /* Fill the file with 6 starting null bytes */
 		fwriteshort(&fill,writeDatFile); /* Fill the file with 6 starting null bytes */
 		fwriteshort(&fill,writeDatFile); /* Fill the file with 6 starting null bytes */
@@ -356,7 +430,7 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 		return 0;
 	}
 }
-
+/*
 void mWriteInitResource(tResource** res) {
 	if ((*res)==NULL) {
 		(*res)=(tResource*)malloc(sizeof(tResource));
@@ -367,51 +441,75 @@ void mWriteInitResource(tResource** res) {
 	}
 	(*res)->offset=(unsigned long)ftell(writeDatFile);
 }
+*/
 
-void mWriteFileInDatFile(const unsigned char* data, int size) {
+void dat_write(const tResource* res,unsigned long off) { 
+	tResource insert;
+
+	/* do the magic */
+	fwrite(res->data,res->size,1,writeDatFile);
+
+	/* remember only indexed values */
+	insert.id=res->id;
+	insert.size=res->size;
+	insert.offset=off;
+	
+	/* TODO: use an abstract use of the list (at least macros in reslist.h) */
+	list_insert(&resIndex,&insert);
+}
+
+void mWriteFileInDatFileIgnoreChecksum(const tResource* res) {
+	dat_write(res,(unsigned long)ftell(writeDatFile));
+}
+
+void mWriteFileInDatFile(const tResource* res) {
 	/*
 		Adds a data resource to a dat file keeping
 		abstractly the checksum verifications
 	*/
 
 	/* Declare variables */
-	int            k        = size;
+	int            k        = res->size;
 	unsigned char  checksum = 0;
-	const unsigned char* dataAux  = data;
+	const unsigned char* dataAux  = res->data;
+	unsigned long off;
 
 	/* calculates the checksum */
 	while (k--) checksum+=*(dataAux++);
 	checksum=~checksum;
 
 	/* writes the checksum and the data content */
+	off=(unsigned long)ftell(writeDatFile);
 	fwritechar(&checksum,writeDatFile);
-	fwrite(data,size,1,writeDatFile);
+
+	/* write the resource contents */
+	dat_write(res,off);
 }
 
-void mWriteFileInDatFileIgnoreChecksum(unsigned char* data, int size) {
-	fwrite(data,size,1,writeDatFile);
-}
 
-void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const char* backupExtension) {
+void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension) {
 	/*
 		Closes a dat file filling the index and other structures
 	*/
-	unsigned short int id=1;
 	unsigned short int totalItems=0;
 	unsigned short int size2=2;
 	unsigned long  int size1=ftell(writeDatFile);
+	const tResource*   res;
 
 	/* Write index */
 	fwriteshort(&totalItems,writeDatFile); /* Junk total items count to reserve 2 bytes */
-	for (;id!=MAX_RES_COUNT;id++) {
-		if (r[id]!=NULL) {
-			/* the file is in the archive, so i'll add it to the index */
-			totalItems++;
-			fwriteshort(&id,writeDatFile);
-			fwritelong(&(r[id]->offset),writeDatFile);
-			fwriteshort(&(r[id]->size),writeDatFile);
-		}
+
+	/* TODO: use an abstract use of the list (at least macros in reslist.h) */
+	list_firstCursor(&resIndex);
+	while ((res=list_getCursor(&resIndex))) {
+		totalItems++;
+		fwriteshort(&(res->id.value),writeDatFile);
+		fwritelong(&(res->offset),writeDatFile);
+		fwriteshort(&(res->size),writeDatFile);
+					
+		list_nextCursor(&resIndex);
 	}
+
 	size2+=totalItems<<3;
 	fseek(writeDatFile,size1,SEEK_SET);
 	fwriteshort(&totalItems,writeDatFile); /* Definitive total items count */
@@ -423,6 +521,9 @@ void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const char* 
 
 	/* Closes the file and flushes the buffer */
 	writeClose(writeDatFile,dontSave,optionflag,backupExtension);
+
+	/* drops the index list */
+	resourceListDrop(&resIndex);
 }
 #endif
 
@@ -442,3 +543,4 @@ int mRWBeginDatFile(const char* vFile, unsigned short int *numberOfItems, int op
 }
 #endif
 #endif
+

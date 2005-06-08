@@ -64,7 +64,7 @@ plv.h: Princed Resources : PLV prince level files support headers
 #include "resources.h"
 #include "common.h" /* for PR_VERSION */
 
-int mFormatImportPlv(unsigned char* data, tResource *res);
+int mFormatImportPlv(tResource *res);
 int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned long int size,unsigned char level, const char* filename, const char* desc, const char* title, const char* vDatAuthor,int optionflag, const char* backupExtension);
 
 /* Weekdays and months */
