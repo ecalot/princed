@@ -104,22 +104,22 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 		newRes.id=res->id;
 		newRes.type=res->type;
 	
-			if (hasFlag(raw_flag)) newRes.type=0; /* compile from raw */
-			getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension);
-			/* the file is in the archive, so i'll add it to the main dat body */
-			if ((newRes.size=((unsigned short)mLoadFileArray(vFileext,&newRes.data)))) {
-				if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {
-					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
-					error++;
-				} else {
-					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
-					ok++;
-				}
-				free(newRes.data);
-			} else {
-				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
+		if (hasFlag(raw_flag)) newRes.type=0; /* compile from raw */
+		getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension);
+		/* the file is in the archive, so i'll add it to the main dat body */
+		if ((newRes.size=((unsigned short)mLoadFileArray(vFileext,&newRes.data)))) {
+			if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {
+				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
 				error++;
+			} else {
+				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
+				ok++;
 			}
+			free(newRes.data);
+		} else {
+			if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
+			error++;
+		}
 
 		list_nextCursor(r);
 	}
@@ -147,51 +147,56 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 	/*char vFileext[MAX_FILENAME_SIZE];*/
 	int                error,ok=0;
 	int                indexNumber;
+	char vFileext[MAX_FILENAME_SIZE];
 	unsigned short int numberOfItems;
 	tResource          res;
+	tResource          newRes;
 
 	/* Initialize abstract variables to read this new DAT file */
 	if ((error=mRWBeginDatFile(vFiledat,&numberOfItems,optionflag))) return error;
 
 	/* main loop */
 	for (indexNumber=0;(indexNumber<numberOfItems);indexNumber++) {
-		if (!mReadFileInDatFile(&res,indexNumber)) {
-			mRWCloseDatFile(0);
+		if (!mReadFileInDatFile(&res,indexNumber)) 
 			RW_ERROR; /* Read error */
-		}
-/*		if (res->id.value==0xFFFF) continue; * Tammo Jan Bug fix TODO: move to the dat layer? */
 
-#if 0 /* TODO: recode this based on extract function */
-		if (r[id]&&isInThePartialList(r[id]->path,id)) { /* If the resource was specified */
-			if (hasFlag(raw_flag)) r[id]->type=0; /* compile from raw */
-			getFileName(vFileext,vDirExt,r[id],(unsigned short)id,vFiledat,vDatFileName,optionflag,backupExtension,"POP1");
+		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix * TODO: move to the dat layer? */
 
-			/* the file is in the archive, so i'll add it to the main dat body */
-			if ((r[id]->size=((unsigned long)mLoadFileArray(vFileext,&data)))) {
-				if (!mAddCompiledFileToDatFile(data,r[id],vFileext)) {
+		/* add to res more information from the resource list */
+		resourceListAddInfo(r,&res);
+
+		if (isInThePartialList(res.path,res.id.value /*TODO: use res.id and code the index support to the partial list*/)) { /* If the resource was specified */
+			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size); 
+			if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
+
+			/* get save file name (if unknown document is in the xml) */
+			getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension);
+
+			/* the file is in the partial list, so i'll import */
+			if ((newRes.size=((unsigned short)mLoadFileArray(vFileext,&newRes.data)))) {
+				newRes.id=res.id;
+				newRes.type=res.type;
+				if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {
 					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
 					error++;
 				} else {
 					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
 					ok++;
 				}
-				free(data);
+				free(newRes.data);
 			} else {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
 				error++;
 			}
 		} else {
-			r[id]->size=size-1;
-			mWriteFileInDatFileIgnoreChecksum(data,size);
+			/* the file wasn't in the partial list, so I'll re-copy it from the open dat file */
+			res.size--; /* TODO: check if this works */
+			mWriteFileInDatFileIgnoreChecksum(&res);
 		}
-#endif
 	}
 
 	/* Close dat file */
 	mRWCloseDatFile(0);
-
-	/* Free allocated resources and dynamic strings */
-	/*freeResources;*/
 
 	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,error);
 	return error;

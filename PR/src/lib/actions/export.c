@@ -91,13 +91,13 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 
 		/* add to res more information from the resource list */
 		resourceListAddInfo(r,&res);
-		if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size); 
 		
 		if (isInThePartialList(res.path,res.id.value /*TODO: use res.id and code the index support to the partial list*/)) { /* If the resource was specified do the tasks */
+			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size); 
 			if (!(hasFlag(unknown_flag))) { /* If unknown flag is set do nothing but generate the unknown.xml file */
 				if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
-				/* get save file name (if unknown document it in the xml) */
+				/* get save file name (if unknown document is in the xml) */
 				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension);
 
 				switch (res.type) {
