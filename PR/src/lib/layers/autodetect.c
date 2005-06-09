@@ -265,8 +265,19 @@ int parseFile(const char* vFile, const char* datFile, tResourceList *r) {
 /* Resources output to xml functions. Private+abstract variable */
 static FILE* unknownXmlFile=NULL;
 
+char* toLower(const char* txt) {
+	static char ret[5];
+	char* r=ret;
+	while (*txt) {
+		*r=(('A'<=(*txt)) && ((*txt)<='Z'))?(*txt)|0x20:*txt;
+		r++;
+		txt++;
+	}
+	*r=0;
+	return ret;			
+}
+
 void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,char type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count) {
-	/* TODO: use lowercase for .index values */
 	/* Open file if not open */
 	if (unknownXmlFile==NULL) {
 		char xmlFile[MAX_FILENAME_SIZE];
@@ -278,13 +289,13 @@ void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext
 		/* Save headers */
 		if (type==6) pal=id;
 		fprintf(unknownXmlFile,RES_XML_UNKNOWN_START,
-			vFiledat,vFiledatWithPath,pal.value,pal.index
+			vFiledat,vFiledatWithPath,pal.value,toLower(pal.index)
 		);
 	}
 
 	/* Write item */
 	fprintf(unknownXmlFile,RES_XML_UNKNOWN_ITEM,
-		id.value,id.index,getExtDesc(type),count,ext,getExtDesc(type),getExtDesc(type),count
+		id.value,toLower(id.index),getExtDesc(type),count,ext,getExtDesc(type),getExtDesc(type),count
 	); /* To the xml output */
 }
 
