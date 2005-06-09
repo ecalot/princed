@@ -1603,6 +1603,9 @@ Attributes:
      - the palette attribute will be ignored in resources other than images.
      - if the number value is not a valid palette, the image will be extracted in other
        palette from the file or a random generated palette.
+	o paletteindex (inheritable): the name of the index the palette has to be looked into
+	  Note:
+		 - If not speficied the index value will be used
   o name (not inheritable): the name of the folder
   o desc (not inheritable): a description
   o path (partially inheritable): a path where the folder is extracted to.
@@ -1615,7 +1618,8 @@ Attributes:
   o file: see itemtype file (mandatory but may be inherited from a folder)
   o itemtype: see folder itemtype. May be inherited, omissions means autodetect
   o palette: see folder palette. Mandatory for image types but may be inherited,
-    when omited a ramdom palette will be used.
+    when omited a default palette will be used. This attribute is ignored in other items
+  o paletteindex: see folder paletteindex. Mandatory for image types but may be inherited.
   o desc: a description
   o path: the name of the file it will be extracted
   o number or levelnumber: an additional resource or level number
