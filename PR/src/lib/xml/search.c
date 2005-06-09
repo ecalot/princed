@@ -87,13 +87,13 @@ void workTag(const tTag* t,void* pass) {
 
 	/* Process tag and copy values to resource: */
 
-	/* Get string itemtype and convert into the itemtypeId */
+	/* Get string type and convert into the typeId */
 	res.type=0;
 #ifndef IGNORERESOURCEFUNCTIONS
-	if (t->itemtype!=NULL) { /* NULL tells the extractor that the type should be auto detected */
+	if (t->type!=NULL) { /* NULL tells the extractor that the type should be auto detected */
 		int i=RES_TYPECOUNT;
 		while((!res.type)&&(i--))
-			if (equalsIgnoreCase(t->itemtype,getExtDesc(i)))
+			if (equalsIgnoreCase(t->type,getExtDesc(i)))
 				res.type=i;
 		/* If error it returns 0 and the verifyHeader will try to detect the type */
 	}
@@ -174,18 +174,18 @@ void compareXmlFileForTag(const tTag* tag,void* pass) {
 		result=searchTree(modified,tag->file,tag->value);
 		if (!result) {
 			fprintf(outputStream,"Error: Item not found: '%s@%s'\n",tag->value,tag->file);
-			fprintf(outputStream,"-> <item value=\"%s\" path=\"%s\" itemtype=\"%s\" palette=\"%s\">%s</item>\n",
+			fprintf(outputStream,"-> <item value=\"%s\" path=\"%s\" type=\"%s\" palette=\"%s\">%s</item>\n",
 				tag->value,
 				tag->path,
-				tag->itemtype,
+				tag->type,
 				tag->palette,
 				tag->desc
 			);
 		} else {
 			fprintf(outputStream,"Item found: '%s@%s' %s\n",tag->value,tag->file,result->file);
-			if (!equalsIgnoreCase(tag->itemtype,result->itemtype)) {
+			if (!equalsIgnoreCase(tag->type,result->type)) {
 				compareStatisticsWarnings++;
-				fprintf(outputStream,"Warning: Type mismatch in '%s@%s' (%s!=%s)\n",tag->value,tag->file,tag->itemtype,result->itemtype);
+				fprintf(outputStream,"Warning: Type mismatch in '%s@%s' (%s!=%s)\n",tag->value,tag->file,tag->type,result->type);
 			}
 			compareStatisticsOk++;
 		}

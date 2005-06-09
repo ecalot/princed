@@ -45,16 +45,16 @@ resources.xml: Princed Resources : Resource tree
 
 <resources version="1.0">
  <folder index="pop1" name="binary" file="title.dat" path="title">
-  <folder path="texts" itemtype="image" palette="monochrome">
+  <folder path="texts" type="image" palette="monochrome">
    <item value="42" path="in the absence.bmp">Text in the absence (42)</item>
    <item value="43" path="marry jaffar.bmp">Text marry jaffar (43)</item>
    <item value="44" path="the tyrant.bmp">Text the tyrant (44)</item>
    <item value="45" path="credits.bmp">Text credits (45)</item>
   </folder>
-  <folder itemtype="image" path="main titles"> 
-   <item value="40" path="text background.pal" itemtype="palette">Unknown Resource number 40</item>
+  <folder type="image" path="main titles"> 
+   <item value="40" path="text background.pal" type="palette">Unknown Resource number 40</item>
    <item value="41" path="text background.bmp" palette="40">Unknown Resource number 41</item>
-   <item value="50" path="titles.pal" itemtype="palette">Unknown Resource number 50</item>
+   <item value="50" path="titles.pal" type="palette">Unknown Resource number 50</item>
    <folder palette="50">
     <item value="51" path="main background.bmp">Image main background (51)</item>
     <item value="52" path="presents.bmp">Image presents (52)</item>
@@ -65,8 +65,8 @@ resources.xml: Princed Resources : Resource tree
   </folder>
  </folder>
 
- <folder itemtype="image" index="pop1" name="vga dungeon enviornment" file="vdungeon.dat" path="vdungeon" palette="200">
-  <folder itemtype="palette" name="palette" path="palette">
+ <folder type="image" index="pop1" name="vga dungeon enviornment" file="vdungeon.dat" path="vdungeon" palette="200">
+  <folder type="palette" name="palette" path="palette">
    <item value="200" path="dungeon.pal">Dungeon Palette</item> 
   </folder>
   <folder name="big pillar" path="bigpillar">
@@ -205,112 +205,112 @@ resources.xml: Princed Resources : Resource tree
    <item value="377" path="mark04.bmp">dungeon wall</item> 
   </folder>
   <folder name="binary" path="binary">
-   <item itemtype="palette" value="360" path="other.pal">unloadable</item> 
-   <item value="1314" path="res1314.bin" itemtype="binary">200</item>
-   <item value="1315" path="res1315.bin" itemtype="binary">200</item>
-   <item value="1316" path="res1316.bin" itemtype="binary">200</item>
-   <item value="1317" path="res1317.bin" itemtype="binary">200</item>
-   <item value="1318" path="res1318.bin" itemtype="binary">200</item>
-   <item value="1319" path="res1319.bin" itemtype="binary">200</item>
-   <item value="1320" path="res1320.bin" itemtype="binary">200</item>
-   <item value="1321" path="res1321.bin" itemtype="binary">200</item>
-   <item value="1322" path="res1322.bin" itemtype="binary">200</item>
-   <item value="1323" path="res1323.bin" itemtype="binary">200</item>
-   <item value="201" path="res201.pcs" itemtype="pcspeaker">200</item>
-   <item value="202" path="res202.pcs" itemtype="pcspeaker">200</item>
-   <item value="203" path="res203.pcs" itemtype="pcspeaker">200</item>
-   <item value="204" path="res204.pcs" itemtype="pcspeaker">200</item>
-   <item value="205" path="res205.pcs" itemtype="pcspeaker">200</item>
-   <item value="206" path="res206.pcs" itemtype="pcspeaker">200</item>
-   <item value="207" path="res207.pcs" itemtype="pcspeaker">200</item>
-   <item value="208" path="res208.pcs" itemtype="pcspeaker">200</item>
-   <item value="209" path="res209.pcs" itemtype="pcspeaker">200</item>
-   <item value="210" path="res210.pcs" itemtype="pcspeaker">200</item>
-   <item value="211" path="res211.pcs" itemtype="pcspeaker">200</item>
-   <item value="212" path="res212.pcs" itemtype="pcspeaker">200</item>
-   <item value="213" path="res213.pcs" itemtype="pcspeaker">200</item>
-   <item value="214" path="res214.pcs" itemtype="pcspeaker">200</item>
-   <item value="215" path="res215.pcs" itemtype="pcspeaker">200</item>
-   <item value="216" path="res216.pcs" itemtype="pcspeaker">200</item>
-   <item value="217" path="res217.pcs" itemtype="pcspeaker">200</item>
-   <item value="218" path="res218.pcs" itemtype="pcspeaker">200</item>
-   <item value="219" path="res219.pcs" itemtype="pcspeaker">200</item>
-   <item value="220" path="res220.pcs" itemtype="pcspeaker">200</item>
-   <item value="221" path="res221.pcs" itemtype="pcspeaker">200</item>
-   <item value="222" path="res222.pcs" itemtype="pcspeaker">200</item>
-   <item value="223" path="res223.pcs" itemtype="pcspeaker">200</item>
-   <item value="224" path="res224.pcs" itemtype="pcspeaker">200</item>
-   <item value="225" path="res225.pcs" itemtype="pcspeaker">200</item>
-   <item value="226" path="res226.pcs" itemtype="pcspeaker">200</item>
-   <item value="227" path="res227.pcs" itemtype="pcspeaker">200</item>
-   <item value="228" path="res228.pcs" itemtype="pcspeaker">200</item>
-   <item value="229" path="res229.pcs" itemtype="pcspeaker">200</item>
-   <item value="230" path="res230.pcs" itemtype="pcspeaker">200</item>
-   <item value="231" path="res231.pcs" itemtype="pcspeaker">200</item>
-   <item value="268" path="res268.bin" itemtype="binary">200</item>
-   <item value="275" path="res275.pcs" itemtype="pcspeaker">200</item>
-   <item value="276" path="res276.pcs" itemtype="pcspeaker">200</item>
-   <item value="277" path="res277.pcs" itemtype="pcspeaker">200</item>
-   <item value="278" path="res278.pcs" itemtype="pcspeaker">200</item>
-   <item value="279" path="res279.pcs" itemtype="pcspeaker">200</item>
-   <item value="280" path="res280.pcs" itemtype="pcspeaker">200</item>
-   <item value="281" path="res281.pcs" itemtype="pcspeaker">200</item>
-   <item value="282" path="res282.pcs" itemtype="pcspeaker">200</item>
-   <item value="283" path="res283.pcs" itemtype="pcspeaker">200</item>
-   <item value="284" path="res284.pcs" itemtype="pcspeaker">200</item>
-   <item value="286" path="res286.pcs" itemtype="pcspeaker">200</item>
-   <item value="287" path="res287.pcs" itemtype="pcspeaker">200</item>
-   <item value="288" path="res288.pcs" itemtype="pcspeaker">200</item>
-   <item value="289" path="res289.pcs" itemtype="pcspeaker">200</item>
-   <item value="290" path="res290.pcs" itemtype="pcspeaker">200</item>
-   <item value="291" path="res291.pcs" itemtype="pcspeaker">200</item>
-   <item value="301" path="res301.pcs" itemtype="pcspeaker">200</item>
-   <item value="302" path="res302.pcs" itemtype="pcspeaker">200</item>
-   <item value="303" path="res303.pcs" itemtype="pcspeaker">200</item>
-   <item value="304" path="res304.pcs" itemtype="pcspeaker">200</item>
-   <item value="305" path="res305.pcs" itemtype="pcspeaker">200</item>
-   <item value="306" path="res306.pcs" itemtype="pcspeaker">200</item>
-   <item value="307" path="res307.pcs" itemtype="pcspeaker">200</item>
-   <item value="308" path="res308.pcs" itemtype="pcspeaker">200</item>
-   <item value="309" path="res309.pcs" itemtype="pcspeaker">200</item>
-   <item value="310" path="res310.pcs" itemtype="pcspeaker">200</item>
-   <item value="311" path="res311.pcs" itemtype="pcspeaker">200</item>
-   <item value="312" path="res312.pcs" itemtype="pcspeaker">200</item>
-   <item value="313" path="res313.pcs" itemtype="pcspeaker">200</item>
-   <item value="314" path="res314.pcs" itemtype="pcspeaker">200</item>
-   <item value="315" path="res315.pcs" itemtype="pcspeaker">200</item>
-   <item value="316" path="res316.pcs" itemtype="pcspeaker">200</item>
-   <item value="317" path="res317.pcs" itemtype="pcspeaker">200</item>
-   <item value="318" path="res318.pcs" itemtype="pcspeaker">200</item>
-   <item value="319" path="res319.pcs" itemtype="pcspeaker">200</item>
-   <item value="320" path="res320.pcs" itemtype="pcspeaker">200</item>
-   <item value="321" path="res321.pcs" itemtype="pcspeaker">200</item>
-   <item value="322" path="res322.pcs" itemtype="pcspeaker">200</item>
-   <item value="323" path="res323.pcs" itemtype="pcspeaker">200</item>
-   <item value="327" path="res327.pcs" itemtype="pcspeaker">200</item>
-   <item value="328" path="res328.pcs" itemtype="pcspeaker">200</item>
-   <item value="329" path="res329.pcs" itemtype="pcspeaker">200</item>
-   <item value="330" path="res330.pcs" itemtype="pcspeaker">200</item>
-   <item value="331" path="res331.pcs" itemtype="pcspeaker">200</item>
-   <item value="332" path="res332.pcs" itemtype="pcspeaker">200</item>
-   <item value="333" path="res333.pcs" itemtype="pcspeaker">200</item>
-   <item value="334" path="res334.pcs" itemtype="pcspeaker">200</item>
-   <item value="335" path="res335.pcs" itemtype="pcspeaker">200</item>
-   <item value="336" path="res336.pcs" itemtype="pcspeaker">200</item>
-   <item value="337" path="res337.pcs" itemtype="pcspeaker">200</item>
-   <item value="338" path="res338.pcs" itemtype="pcspeaker">200</item>
-   <item value="339" path="res339.pcs" itemtype="pcspeaker">200</item>
-   <item value="340" path="res340.pcs" itemtype="pcspeaker">200</item>
-   <item value="341" path="res341.pcs" itemtype="pcspeaker">200</item>
-   <item value="342" path="res342.pcs" itemtype="pcspeaker">200</item>
-   <item value="343" path="res343.pcs" itemtype="pcspeaker">200</item>
-   <item value="345" path="res345.pcs" itemtype="pcspeaker">200</item>
+   <item type="palette" value="360" path="other.pal">unloadable</item> 
+   <item value="1314" path="res1314.bin" type="binary">200</item>
+   <item value="1315" path="res1315.bin" type="binary">200</item>
+   <item value="1316" path="res1316.bin" type="binary">200</item>
+   <item value="1317" path="res1317.bin" type="binary">200</item>
+   <item value="1318" path="res1318.bin" type="binary">200</item>
+   <item value="1319" path="res1319.bin" type="binary">200</item>
+   <item value="1320" path="res1320.bin" type="binary">200</item>
+   <item value="1321" path="res1321.bin" type="binary">200</item>
+   <item value="1322" path="res1322.bin" type="binary">200</item>
+   <item value="1323" path="res1323.bin" type="binary">200</item>
+   <item value="201" path="res201.pcs" type="pcspeaker">200</item>
+   <item value="202" path="res202.pcs" type="pcspeaker">200</item>
+   <item value="203" path="res203.pcs" type="pcspeaker">200</item>
+   <item value="204" path="res204.pcs" type="pcspeaker">200</item>
+   <item value="205" path="res205.pcs" type="pcspeaker">200</item>
+   <item value="206" path="res206.pcs" type="pcspeaker">200</item>
+   <item value="207" path="res207.pcs" type="pcspeaker">200</item>
+   <item value="208" path="res208.pcs" type="pcspeaker">200</item>
+   <item value="209" path="res209.pcs" type="pcspeaker">200</item>
+   <item value="210" path="res210.pcs" type="pcspeaker">200</item>
+   <item value="211" path="res211.pcs" type="pcspeaker">200</item>
+   <item value="212" path="res212.pcs" type="pcspeaker">200</item>
+   <item value="213" path="res213.pcs" type="pcspeaker">200</item>
+   <item value="214" path="res214.pcs" type="pcspeaker">200</item>
+   <item value="215" path="res215.pcs" type="pcspeaker">200</item>
+   <item value="216" path="res216.pcs" type="pcspeaker">200</item>
+   <item value="217" path="res217.pcs" type="pcspeaker">200</item>
+   <item value="218" path="res218.pcs" type="pcspeaker">200</item>
+   <item value="219" path="res219.pcs" type="pcspeaker">200</item>
+   <item value="220" path="res220.pcs" type="pcspeaker">200</item>
+   <item value="221" path="res221.pcs" type="pcspeaker">200</item>
+   <item value="222" path="res222.pcs" type="pcspeaker">200</item>
+   <item value="223" path="res223.pcs" type="pcspeaker">200</item>
+   <item value="224" path="res224.pcs" type="pcspeaker">200</item>
+   <item value="225" path="res225.pcs" type="pcspeaker">200</item>
+   <item value="226" path="res226.pcs" type="pcspeaker">200</item>
+   <item value="227" path="res227.pcs" type="pcspeaker">200</item>
+   <item value="228" path="res228.pcs" type="pcspeaker">200</item>
+   <item value="229" path="res229.pcs" type="pcspeaker">200</item>
+   <item value="230" path="res230.pcs" type="pcspeaker">200</item>
+   <item value="231" path="res231.pcs" type="pcspeaker">200</item>
+   <item value="268" path="res268.bin" type="binary">200</item>
+   <item value="275" path="res275.pcs" type="pcspeaker">200</item>
+   <item value="276" path="res276.pcs" type="pcspeaker">200</item>
+   <item value="277" path="res277.pcs" type="pcspeaker">200</item>
+   <item value="278" path="res278.pcs" type="pcspeaker">200</item>
+   <item value="279" path="res279.pcs" type="pcspeaker">200</item>
+   <item value="280" path="res280.pcs" type="pcspeaker">200</item>
+   <item value="281" path="res281.pcs" type="pcspeaker">200</item>
+   <item value="282" path="res282.pcs" type="pcspeaker">200</item>
+   <item value="283" path="res283.pcs" type="pcspeaker">200</item>
+   <item value="284" path="res284.pcs" type="pcspeaker">200</item>
+   <item value="286" path="res286.pcs" type="pcspeaker">200</item>
+   <item value="287" path="res287.pcs" type="pcspeaker">200</item>
+   <item value="288" path="res288.pcs" type="pcspeaker">200</item>
+   <item value="289" path="res289.pcs" type="pcspeaker">200</item>
+   <item value="290" path="res290.pcs" type="pcspeaker">200</item>
+   <item value="291" path="res291.pcs" type="pcspeaker">200</item>
+   <item value="301" path="res301.pcs" type="pcspeaker">200</item>
+   <item value="302" path="res302.pcs" type="pcspeaker">200</item>
+   <item value="303" path="res303.pcs" type="pcspeaker">200</item>
+   <item value="304" path="res304.pcs" type="pcspeaker">200</item>
+   <item value="305" path="res305.pcs" type="pcspeaker">200</item>
+   <item value="306" path="res306.pcs" type="pcspeaker">200</item>
+   <item value="307" path="res307.pcs" type="pcspeaker">200</item>
+   <item value="308" path="res308.pcs" type="pcspeaker">200</item>
+   <item value="309" path="res309.pcs" type="pcspeaker">200</item>
+   <item value="310" path="res310.pcs" type="pcspeaker">200</item>
+   <item value="311" path="res311.pcs" type="pcspeaker">200</item>
+   <item value="312" path="res312.pcs" type="pcspeaker">200</item>
+   <item value="313" path="res313.pcs" type="pcspeaker">200</item>
+   <item value="314" path="res314.pcs" type="pcspeaker">200</item>
+   <item value="315" path="res315.pcs" type="pcspeaker">200</item>
+   <item value="316" path="res316.pcs" type="pcspeaker">200</item>
+   <item value="317" path="res317.pcs" type="pcspeaker">200</item>
+   <item value="318" path="res318.pcs" type="pcspeaker">200</item>
+   <item value="319" path="res319.pcs" type="pcspeaker">200</item>
+   <item value="320" path="res320.pcs" type="pcspeaker">200</item>
+   <item value="321" path="res321.pcs" type="pcspeaker">200</item>
+   <item value="322" path="res322.pcs" type="pcspeaker">200</item>
+   <item value="323" path="res323.pcs" type="pcspeaker">200</item>
+   <item value="327" path="res327.pcs" type="pcspeaker">200</item>
+   <item value="328" path="res328.pcs" type="pcspeaker">200</item>
+   <item value="329" path="res329.pcs" type="pcspeaker">200</item>
+   <item value="330" path="res330.pcs" type="pcspeaker">200</item>
+   <item value="331" path="res331.pcs" type="pcspeaker">200</item>
+   <item value="332" path="res332.pcs" type="pcspeaker">200</item>
+   <item value="333" path="res333.pcs" type="pcspeaker">200</item>
+   <item value="334" path="res334.pcs" type="pcspeaker">200</item>
+   <item value="335" path="res335.pcs" type="pcspeaker">200</item>
+   <item value="336" path="res336.pcs" type="pcspeaker">200</item>
+   <item value="337" path="res337.pcs" type="pcspeaker">200</item>
+   <item value="338" path="res338.pcs" type="pcspeaker">200</item>
+   <item value="339" path="res339.pcs" type="pcspeaker">200</item>
+   <item value="340" path="res340.pcs" type="pcspeaker">200</item>
+   <item value="341" path="res341.pcs" type="pcspeaker">200</item>
+   <item value="342" path="res342.pcs" type="pcspeaker">200</item>
+   <item value="343" path="res343.pcs" type="pcspeaker">200</item>
+   <item value="345" path="res345.pcs" type="pcspeaker">200</item>
   </folder>
   
  </folder>
 
- <folder itemtype="image" index="pop1" name="vga palace enviornment" file="vpalace.dat" path="vpalace" palette="200">
-  <folder path="palettes" name="palettes" itemtype="palette">
+ <folder type="image" index="pop1" name="vga palace enviornment" file="vpalace.dat" path="vpalace" palette="200">
+  <folder path="palettes" name="palettes" type="palette">
    <item value="200" path="palace.pal">Main palace palette</item>
    <item value="360" path="wall.pal">Wall palette for res 361</item>
   </folder>
@@ -364,7 +364,7 @@ resources.xml: Princed Resources : Resource tree
   </folder>
   
    <folder name="floor panels" path="floor panels">
-   <item value="236" path="closer base.bmp" itemtype="image">(null)</item>
+   <item value="236" path="closer base.bmp" type="image">(null)</item>
    <item value="297" path="broken left.bmp">floor panel</item> 
    <item value="300" path="broken left02.bmp">floor panel</item> 
    <item value="298" path="broken right.bmp">floor panel</item> 
@@ -479,7 +479,7 @@ resources.xml: Princed Resources : Resource tree
    <item value="1313" path="frame05 top.bmp">chopper</item> 
   </folder>
 
-  <folder name="binary" path="binary" itemtype="binary">
+  <folder name="binary" path="binary" type="binary">
    <item value="1207" path="res1207.bin">(null)</item>
    <item value="1208" path="res1208.bin">(null)</item>
    <item value="1276" path="res1276.bin">(null)</item>
@@ -594,9 +594,9 @@ resources.xml: Princed Resources : Resource tree
   </folder>
  </folder>
 
- <folder index="pop1" name="binary" file="pv.dat" path="pv" palette="800" itemtype="image">
+ <folder index="pop1" name="binary" file="pv.dat" path="pv" palette="800" type="image">
   <folder path="jaffar" palette="850">
-   <item value="850" path="palette.pal" itemtype="palette">Unknown Resource number 850</item>
+   <item value="850" path="palette.pal" type="palette">Unknown Resource number 850</item>
    <folder path="walking">
     <item value="851" path="frame01.bmp">Image frame01 (851)</item>
     <item value="852" path="frame02.bmp">Image frame02 (852)</item>
@@ -642,11 +642,11 @@ resources.xml: Princed Resources : Resource tree
   </folder>
   
   <folder path="princess" palette="900">
-   <item value="900" path="palette.pal" itemtype="palette">Unknown Resource number 900</item>
+   <item value="900" path="palette.pal" type="palette">Unknown Resource number 900</item>
    <item value="901" path="resting.bmp">Image resting (901)</item>
    <item value="902" path="colour.bmp">Image colour (902)</item>
    <folder path="in story" palette="800">
-    <item value="800" path="palette.pal" itemtype="palette">Unknown Resource number 800</item>
+    <item value="800" path="palette.pal" type="palette">Unknown Resource number 800</item>
     <item value="801" path="frame01.bmp">Image frame01 (801)</item>
     <item value="802" path="frame02.bmp">Image frame02 (802)</item>
     <item value="803" path="frame03.bmp">Image frame03 (803)</item>
@@ -700,7 +700,7 @@ resources.xml: Princed Resources : Resource tree
   </folder>
   
   <folder path="objects" palette="950">
-   <item value="950" path="room and clock.pal" itemtype="palette">Unknown Resource number 950</item>
+   <item value="950" path="room and clock.pal" type="palette">Unknown Resource number 950</item>
    <item value="951" path="room.bmp">Image room (951)</item>
    <item value="952" path="room pillar.bmp">Image room pillar (952)</item>
    <item value="953" path="clock01.bmp">Image clock01 (953)</item>
@@ -713,15 +713,15 @@ resources.xml: Princed Resources : Resource tree
    <item value="960" path="clocksand01.bmp">Image clocksand01 (960)</item>
    <item value="961" path="clocksand02.bmp">Image clocksand02 (961)</item>
    <item value="962" path="clocksand03.bmp">Image clocksand03 (962)</item>
-   <item value="980" path="room bed.pal" itemtype="palette">Unknown Resource number 980</item>
-   <item value="981" path="room bed.bmp" palette="980" itemtype="image">Unknown Resource number 981</item>
+   <item value="980" path="room bed.pal" type="palette">Unknown Resource number 980</item>
+   <item value="981" path="room bed.bmp" palette="980" type="image">Unknown Resource number 981</item>
   </folder>
  </folder>
 
  <folder index="pop1" name="binary" file="prince.dat" path="prince" palette="150">
-  <item value="150" path="main.pal" itemtype="palette">Unknown Resource number 150</item>
+  <item value="150" path="main.pal" type="palette">Unknown Resource number 150</item>
 
-  <folder name="fire animation" path="fire" itemtype="image" palette="150">
+  <folder name="fire animation" path="fire" type="image" palette="150">
    <item value="151" path="frame1.bmp">Image frame1 (151)</item>
    <item value="152" path="frame2.bmp">Image frame2 (152)</item>
    <item value="153" path="frame3.bmp">Image frame3 (153)</item>
@@ -734,20 +734,20 @@ resources.xml: Princed Resources : Resource tree
   </folder>
 
   <folder name="binary stuff" path="binary">
-   <item value="1" path="midi info 1.bin" itemtype="binary">Unknown Resource number 1</item>
-   <item value="2" path="pcs info 2.bin" itemtype="binary">Unknown Resource number 2</item>
-   <item value="10" path="guard palettes.bin" itemtype="binary">Unknown Resource number 10</item>  
+   <item value="1" path="midi info 1.bin" type="binary">Unknown Resource number 1</item>
+   <item value="2" path="pcs info 2.bin" type="binary">Unknown Resource number 2</item>
+   <item value="10" path="guard palettes.bin" type="binary">Unknown Resource number 10</item>  
   </folder>
 
   <folder name="potions" path="potions">
-   <folder name="base" path="base" itemtype="image" palette="150">  
-    <item value="162" path="small dungeon.bmp" itemtype="image">Unknown Resource number 162</item>
-    <item value="163" path="big dungeon.bmp" itemtype="image">Unknown Resource number 163</item>
-    <item value="164" path="small palace.bmp" itemtype="image">Unknown Resource number 164</item>
-    <item value="165" path="big palace.bmp" itemtype="image">Unknown Resource number 165</item>
+   <folder name="base" path="base" type="image" palette="150">  
+    <item value="162" path="small dungeon.bmp" type="image">Unknown Resource number 162</item>
+    <item value="163" path="big dungeon.bmp" type="image">Unknown Resource number 163</item>
+    <item value="164" path="small palace.bmp" type="image">Unknown Resource number 164</item>
+    <item value="165" path="big palace.bmp" type="image">Unknown Resource number 165</item>
    </folder>
 
-   <folder name="bubble animation" path="bubble animation" itemtype="image" palette="monochrome">
+   <folder name="bubble animation" path="bubble animation" type="image" palette="monochrome">
     <item value="166" path="frame01.bmp">Image frame01 (166)</item>
     <item value="167" path="frame02.bmp">Image frame02 (167)</item>
     <item value="168" path="frame03.bmp">Image frame03 (168)</item>
@@ -760,13 +760,13 @@ resources.xml: Princed Resources : Resource tree
   </folder>
   
   <folder name="sword" path="sword">  
-   <folder name="in the floor" path="in the floor" itemtype="image" palette="150">  
+   <folder name="in the floor" path="in the floor" type="image" palette="150">  
     <item value="160" path="normal.bmp">Image normal (160)</item>
     <item value="161" path="bright.bmp">Image bright (161)</item>
    </folder>
  
-   <folder name="fighting" path="fighting" itemtype="image" palette="700">
-    <item value="700" path="sword.pal" itemtype="palette">Unknown Resource number 700</item>
+   <folder name="fighting" path="fighting" type="image" palette="700">
+    <item value="700" path="sword.pal" type="palette">Unknown Resource number 700</item>
     <item value="701" path="sword01.bmp">Image sword01 (701)</item>
     <item value="702" path="sword02.bmp">Image sword02 (702)</item>
     <item value="703" path="sword03.bmp">Image sword03 (703)</item>
@@ -806,8 +806,8 @@ resources.xml: Princed Resources : Resource tree
  </folder>
 
 
- <folder index="pop1" name="binary" file="kid.dat" path="kid" palette="400" itemtype="image">
-  <item value="400" path="kid.pal" itemtype="palette">Resource number 400</item>
+ <folder index="pop1" name="binary" file="kid.dat" path="kid" palette="400" type="image">
+  <item value="400" path="kid.pal" type="palette">Resource number 400</item>
   <folder path="running">
    <item value="401" path="frame01.bmp">Image frame01 (401)</item>
    <item value="402" path="frame02.bmp">Image frame02 (402)</item>
@@ -1069,7 +1069,7 @@ resources.xml: Princed Resources : Resource tree
   </folder>
  </folder>
 
- <folder index="pop1" name="midi sound" file="midisnd1.dat" path="midisnd1" itemtype="midi">
+ <folder index="pop1" name="midi sound" file="midisnd1.dat" path="midisnd1" type="midi">
   <item value="10024" path="death 1.mid">Unknown Resource number 10024</item>
   <item value="10025" path="presentation.mid">Unknown Resource number 10025</item>
   <item value="10026" path="arrived to princess.mid">Unknown Resource number 10026</item>
@@ -1088,7 +1088,7 @@ resources.xml: Princed Resources : Resource tree
   <item value="10043" path="guard death 2.mid">Unknown Resource number 10043</item>
  </folder>
 
- <folder index="pop1" name="midi sound 2" file="midisnd2.dat" path="midisnd2" itemtype="midi">
+ <folder index="pop1" name="midi sound 2" file="midisnd2.dat" path="midisnd2" type="midi">
   <item value="10050" path="princess waiting 3.mid">Unknown Resource number 10050</item>
   <item value="10052" path="story3.mid">Unknown Resource number 10052</item>
   <item value="10053" path="story2 jaffar and clock apprearing.mid">Unknown Resource number 10053</item>
@@ -1097,7 +1097,7 @@ resources.xml: Princed Resources : Resource tree
   <item value="10056" path="winning theme.mid">Unknown Resource number 10056</item>
  </folder>
 
- <folder index="pop1" name="digital sound" file="digisnd1.dat" path="digisnd1" itemtype="wave">
+ <folder index="pop1" name="digital sound" file="digisnd1.dat" path="digisnd1" type="wave">
   <item value="10000" path="prince crashing into the floor.wav">crash with the flood</item>
   <item value="10002" path="tile crashing into the floor.wav">Unknown Resource number 10002</item>
   <item value="10003" path="door tile pressed 1.wav">Unknown Resource number 10003</item>
@@ -1119,7 +1119,7 @@ resources.xml: Princed Resources : Resource tree
   <item value="10022" path="door gate closing slow 2.wav">Unknown Resource number 10022</item>
   <item value="10023" path="running 2.wav">Unknown Resource number 10023</item>
  </folder>
- <folder index="pop1" name="binary" file="digisnd2.dat" path="digisnd2" itemtype="wave">
+ <folder index="pop1" name="binary" file="digisnd2.dat" path="digisnd2" type="wave">
   <item value="10044" path="skel alive.wav">Unknown Resource number 10044</item>
   <item value="10045" path="mirror.wav">Unknown Resource number 10045</item>
   <item value="10046" path="something chopped.wav">Unknown Resource number 10046</item>
@@ -1128,17 +1128,17 @@ resources.xml: Princed Resources : Resource tree
   <item value="10049" path="spikes.wav">Unknown Resource number 10049</item>
   <item value="10051" path="res10051.wav">Unknown Resource number 10051</item>
  </folder>
- <folder index="pop1" name="binary" file="digisnd3.dat" path="digisnd3" itemtype="wave">
+ <folder index="pop1" name="binary" file="digisnd3.dat" path="digisnd3" type="wave">
   <item value="10001" path="falling.wav">Unknown Resource number 10001</item>
   <item value="10014" path="res10014.wav">Unknown Resource number 10014</item>
-  <item value="10015" path="res10015.bin" itemtype="binary">Unknown Resource number 10015</item>
+  <item value="10015" path="res10015.bin" type="binary">Unknown Resource number 10015</item>
   <item value="10018" path="drinking.wav">Unknown Resource number 10018</item>
  </folder>
 
  <!-- not processed -->
- <folder index="pop1" name="binary" file="ibm_snd1.dat" path="ibm_snd1" itemtype="pcspeaker">
+ <folder index="pop1" name="binary" file="ibm_snd1.dat" path="ibm_snd1" type="pcspeaker">
   <item value="10000" path="snd00.pcs">Unknown Resource number 10000</item>
-  <item value="10001" path="snd01.bin" itemtype="binary">Unknown Resource number 10001</item>
+  <item value="10001" path="snd01.bin" type="binary">Unknown Resource number 10001</item>
   <item value="10002" path="snd02.pcs">Unknown Resource number 10002</item>
   <item value="10003" path="snd03.pcs">Unknown Resource number 10003</item>
   <item value="10004" path="snd04.pcs">Unknown Resource number 10004</item>
@@ -1148,18 +1148,18 @@ resources.xml: Princed Resources : Resource tree
   <item value="10008" path="snd08.pcs">Unknown Resource number 10008</item>
   <item value="10009" path="snd09.pcs">Unknown Resource number 10009</item>
   <item value="10010" path="snd10.pcs">Unknown Resource number 10010</item>
-  <item value="10011" path="snd11.bin" itemtype="binary">Unknown Resource number 10011</item>
+  <item value="10011" path="snd11.bin" type="binary">Unknown Resource number 10011</item>
   <item value="10012" path="snd12.pcs">Unknown Resource number 10012</item>
   <item value="10013" path="snd13.pcs">Unknown Resource number 10013</item>
   <item value="10014" path="snd14.pcs">Unknown Resource number 10014</item>
-  <item value="10015" path="snd15.bin" itemtype="binary">Unknown Resource number 10015</item>
+  <item value="10015" path="snd15.bin" type="binary">Unknown Resource number 10015</item>
   <item value="10016" path="snd16.pcs">Unknown Resource number 10016</item>
   <item value="10017" path="snd17.pcs">Unknown Resource number 10017</item>
   <item value="10018" path="snd18.pcs">Unknown Resource number 10018</item>
-  <item value="10019" path="snd19.bin" itemtype="binary">Unknown Resource number 10019</item>
-  <item value="10020" path="snd20.bin" itemtype="binary">Unknown Resource number 10020</item>
-  <item value="10021" path="snd21.bin" itemtype="binary">Unknown Resource number 10021</item>
-  <item value="10022" path="snd22.bin" itemtype="binary">Unknown Resource number 10022</item>
+  <item value="10019" path="snd19.bin" type="binary">Unknown Resource number 10019</item>
+  <item value="10020" path="snd20.bin" type="binary">Unknown Resource number 10020</item>
+  <item value="10021" path="snd21.bin" type="binary">Unknown Resource number 10021</item>
+  <item value="10022" path="snd22.bin" type="binary">Unknown Resource number 10022</item>
   <item value="10023" path="snd23.pcs">Unknown Resource number 10023</item>
   <item value="10024" path="snd24.pcs">Unknown Resource number 10024</item>
   <item value="10025" path="snd25.pcs">Unknown Resource number 10025</item>
@@ -1168,10 +1168,10 @@ resources.xml: Princed Resources : Resource tree
   <item value="10028" path="snd28.pcs">Unknown Resource number 10028</item>
   <item value="10029" path="snd29.pcs">Unknown Resource number 10029</item>
   <item value="10030" path="snd30.pcs">Unknown Resource number 10030</item>
-  <item value="10031" path="snd31.bin" itemtype="binary">Unknown Resource number 10031</item>
+  <item value="10031" path="snd31.bin" type="binary">Unknown Resource number 10031</item>
   <item value="10032" path="snd32.pcs">Unknown Resource number 10032</item>
   <item value="10033" path="snd33.pcs">Unknown Resource number 10033</item>
-  <item value="10034" path="snd34.bin" itemtype="binary">Unknown Resource number 10034</item>
+  <item value="10034" path="snd34.bin" type="binary">Unknown Resource number 10034</item>
   <item value="10035" path="snd35.pcs">Unknown Resource number 10035</item>
   <item value="10036" path="snd36.pcs">Unknown Resource number 10036</item>
   <item value="10037" path="snd37.pcs">Unknown Resource number 10037</item>
@@ -1179,10 +1179,10 @@ resources.xml: Princed Resources : Resource tree
   <item value="10039" path="snd39.pcs">Unknown Resource number 10039</item>
   <item value="10040" path="snd40.pcs">Unknown Resource number 10040</item>
   <item value="10041" path="snd41.pcs">Unknown Resource number 10041</item>
-  <item value="10042" path="snd42.bin" itemtype="binary">Unknown Resource number 10042</item>
+  <item value="10042" path="snd42.bin" type="binary">Unknown Resource number 10042</item>
   <item value="10043" path="snd43.pcs">Unknown Resource number 10043</item>
  </folder>
- <folder index="pop1" name="binary" file="ibm_snd2.dat" path="ibm_snd2" itemtype="pcspeaker">
+ <folder index="pop1" name="binary" file="ibm_snd2.dat" path="ibm_snd2" type="pcspeaker">
   <item value="10044" path="snd44.pcs">Unknown Resource number 10044</item>
   <item value="10045" path="snd45.pcs">Unknown Resource number 10045</item>
   <item value="10046" path="snd46.pcs">Unknown Resource number 10046</item>
@@ -1201,192 +1201,192 @@ resources.xml: Princed Resources : Resource tree
  <!-- guards -->
 
  <folder index="pop1" name="binary" file="skel.dat" path="skel" palette="750">
-  <item value="750" path="res750.pal" itemtype="palette">Unknown Resource number 750</item>
-  <item value="751" path="res751.bin" itemtype="binary">Unknown Resource number 751</item>
-  <item value="752" path="res752.bin" itemtype="binary">Unknown Resource number 752</item>
-  <item value="753" path="res753.bmp" itemtype="image">Unknown Resource number 753</item>
-  <item value="754" path="res754.bmp" itemtype="image">Unknown Resource number 754</item>
-  <item value="755" path="res755.bmp" itemtype="image">Unknown Resource number 755</item>
-  <item value="756" path="res756.bmp" itemtype="image">Unknown Resource number 756</item>
-  <item value="757" path="res757.bmp" itemtype="image">Unknown Resource number 757</item>
-  <item value="758" path="res758.bmp" itemtype="image">Unknown Resource number 758</item>
-  <item value="759" path="res759.bmp" itemtype="image">Unknown Resource number 759</item>
-  <item value="760" path="res760.bmp" itemtype="image">Unknown Resource number 760</item>
-  <item value="761" path="res761.bmp" itemtype="image">Unknown Resource number 761</item>
-  <item value="762" path="res762.bmp" itemtype="image">Unknown Resource number 762</item>
-  <item value="763" path="res763.bmp" itemtype="image">Unknown Resource number 763</item>
-  <item value="764" path="res764.bmp" itemtype="image">Unknown Resource number 764</item>
-  <item value="765" path="res765.bmp" itemtype="image">Unknown Resource number 765</item>
-  <item value="766" path="res766.bmp" itemtype="image">Unknown Resource number 766</item>
-  <item value="767" path="res767.bmp" itemtype="image">Unknown Resource number 767</item>
-  <item value="768" path="res768.bmp" itemtype="image">Unknown Resource number 768</item>
-  <item value="769" path="res769.bmp" itemtype="image">Unknown Resource number 769</item>
-  <item value="770" path="res770.bmp" itemtype="image">Unknown Resource number 770</item>
-  <item value="771" path="res771.bmp" itemtype="image">Unknown Resource number 771</item>
-  <item value="772" path="res772.bmp" itemtype="image">Unknown Resource number 772</item>
-  <item value="773" path="res773.bmp" itemtype="image">Unknown Resource number 773</item>
-  <item value="774" path="res774.bmp" itemtype="image">Unknown Resource number 774</item>
-  <item value="775" path="res775.bmp" itemtype="image">Unknown Resource number 775</item>
-  <item value="776" path="res776.bin" itemtype="binary">Unknown Resource number 776</item>
-  <item value="777" path="spiked.bmp" itemtype="image">Unknown Resource number 777</item>
-  <item value="778" path="chopped.bmp" itemtype="image">Unknown Resource number 778</item>
+  <item value="750" path="res750.pal" type="palette">Unknown Resource number 750</item>
+  <item value="751" path="res751.bin" type="binary">Unknown Resource number 751</item>
+  <item value="752" path="res752.bin" type="binary">Unknown Resource number 752</item>
+  <item value="753" path="res753.bmp" type="image">Unknown Resource number 753</item>
+  <item value="754" path="res754.bmp" type="image">Unknown Resource number 754</item>
+  <item value="755" path="res755.bmp" type="image">Unknown Resource number 755</item>
+  <item value="756" path="res756.bmp" type="image">Unknown Resource number 756</item>
+  <item value="757" path="res757.bmp" type="image">Unknown Resource number 757</item>
+  <item value="758" path="res758.bmp" type="image">Unknown Resource number 758</item>
+  <item value="759" path="res759.bmp" type="image">Unknown Resource number 759</item>
+  <item value="760" path="res760.bmp" type="image">Unknown Resource number 760</item>
+  <item value="761" path="res761.bmp" type="image">Unknown Resource number 761</item>
+  <item value="762" path="res762.bmp" type="image">Unknown Resource number 762</item>
+  <item value="763" path="res763.bmp" type="image">Unknown Resource number 763</item>
+  <item value="764" path="res764.bmp" type="image">Unknown Resource number 764</item>
+  <item value="765" path="res765.bmp" type="image">Unknown Resource number 765</item>
+  <item value="766" path="res766.bmp" type="image">Unknown Resource number 766</item>
+  <item value="767" path="res767.bmp" type="image">Unknown Resource number 767</item>
+  <item value="768" path="res768.bmp" type="image">Unknown Resource number 768</item>
+  <item value="769" path="res769.bmp" type="image">Unknown Resource number 769</item>
+  <item value="770" path="res770.bmp" type="image">Unknown Resource number 770</item>
+  <item value="771" path="res771.bmp" type="image">Unknown Resource number 771</item>
+  <item value="772" path="res772.bmp" type="image">Unknown Resource number 772</item>
+  <item value="773" path="res773.bmp" type="image">Unknown Resource number 773</item>
+  <item value="774" path="res774.bmp" type="image">Unknown Resource number 774</item>
+  <item value="775" path="res775.bmp" type="image">Unknown Resource number 775</item>
+  <item value="776" path="res776.bin" type="binary">Unknown Resource number 776</item>
+  <item value="777" path="spiked.bmp" type="image">Unknown Resource number 777</item>
+  <item value="778" path="chopped.bmp" type="image">Unknown Resource number 778</item>
  </folder>
 
  <folder index="pop1" name="binary" file="vizier.dat" path="vizier" palette="750">
-  <item value="750" path="res750.pal" itemtype="palette">Unknown Resource number 750</item>
-  <item value="751" path="hit points.bmp" itemtype="image">Unknown Resource number 751</item>
-  <item value="752" path="splash.bmp" itemtype="image">Unknown Resource number 752</item>
-  <item value="753" path="res753.bmp" itemtype="image">Unknown Resource number 753</item>
-  <item value="754" path="res754.bmp" itemtype="image">Unknown Resource number 754</item>
-  <item value="755" path="res755.bmp" itemtype="image">Unknown Resource number 755</item>
-  <item value="756" path="res756.bmp" itemtype="image">Unknown Resource number 756</item>
-  <item value="757" path="res757.bmp" itemtype="image">Unknown Resource number 757</item>
-  <item value="758" path="res758.bmp" itemtype="image">Unknown Resource number 758</item>
-  <item value="759" path="res759.bmp" itemtype="image">Unknown Resource number 759</item>
-  <item value="760" path="res760.bmp" itemtype="image">Unknown Resource number 760</item>
-  <item value="761" path="res761.bmp" itemtype="image">Unknown Resource number 761</item>
-  <item value="762" path="res762.bmp" itemtype="image">Unknown Resource number 762</item>
-  <item value="763" path="res763.bmp" itemtype="image">Unknown Resource number 763</item>
-  <item value="764" path="res764.bmp" itemtype="image">Unknown Resource number 764</item>
-  <item value="765" path="res765.bmp" itemtype="image">Unknown Resource number 765</item>
-  <item value="766" path="res766.bmp" itemtype="image">Unknown Resource number 766</item>
-  <item value="767" path="res767.bmp" itemtype="image">Unknown Resource number 767</item>
-  <item value="768" path="res768.bmp" itemtype="image">Unknown Resource number 768</item>
-  <item value="769" path="res769.bmp" itemtype="image">Unknown Resource number 769</item>
-  <item value="770" path="res770.bmp" itemtype="image">Unknown Resource number 770</item>
-  <item value="771" path="res771.bmp" itemtype="image">Unknown Resource number 771</item>
-  <item value="772" path="res772.bmp" itemtype="image">Unknown Resource number 772</item>
-  <item value="773" path="res773.bmp" itemtype="image">Unknown Resource number 773</item>
-  <item value="774" path="res774.bmp" itemtype="image">Unknown Resource number 774</item>
-  <item value="775" path="res775.bmp" itemtype="image">Unknown Resource number 775</item>
-  <item value="776" path="res776.bin" itemtype="binary">Unknown Resource number 776</item>
-  <item value="777" path="spiked.bmp" itemtype="image">Unknown Resource number 777</item>
-  <item value="778" path="chopped.bmp" itemtype="image">Unknown Resource number 778</item>
-  <item value="779" path="res779.bmp" itemtype="image">Unknown Resource number 779</item>
-  <item value="780" path="res780.bmp" itemtype="image">Unknown Resource number 780</item>
-  <item value="781" path="res781.bmp" itemtype="image">Unknown Resource number 781</item>
-  <item value="782" path="res782.bmp" itemtype="image">Unknown Resource number 782</item>
-  <item value="783" path="res783.bmp" itemtype="image">Unknown Resource number 783</item>
-  <item value="784" path="res784.bmp" itemtype="image">Unknown Resource number 784</item>
+  <item value="750" path="res750.pal" type="palette">Unknown Resource number 750</item>
+  <item value="751" path="hit points.bmp" type="image">Unknown Resource number 751</item>
+  <item value="752" path="splash.bmp" type="image">Unknown Resource number 752</item>
+  <item value="753" path="res753.bmp" type="image">Unknown Resource number 753</item>
+  <item value="754" path="res754.bmp" type="image">Unknown Resource number 754</item>
+  <item value="755" path="res755.bmp" type="image">Unknown Resource number 755</item>
+  <item value="756" path="res756.bmp" type="image">Unknown Resource number 756</item>
+  <item value="757" path="res757.bmp" type="image">Unknown Resource number 757</item>
+  <item value="758" path="res758.bmp" type="image">Unknown Resource number 758</item>
+  <item value="759" path="res759.bmp" type="image">Unknown Resource number 759</item>
+  <item value="760" path="res760.bmp" type="image">Unknown Resource number 760</item>
+  <item value="761" path="res761.bmp" type="image">Unknown Resource number 761</item>
+  <item value="762" path="res762.bmp" type="image">Unknown Resource number 762</item>
+  <item value="763" path="res763.bmp" type="image">Unknown Resource number 763</item>
+  <item value="764" path="res764.bmp" type="image">Unknown Resource number 764</item>
+  <item value="765" path="res765.bmp" type="image">Unknown Resource number 765</item>
+  <item value="766" path="res766.bmp" type="image">Unknown Resource number 766</item>
+  <item value="767" path="res767.bmp" type="image">Unknown Resource number 767</item>
+  <item value="768" path="res768.bmp" type="image">Unknown Resource number 768</item>
+  <item value="769" path="res769.bmp" type="image">Unknown Resource number 769</item>
+  <item value="770" path="res770.bmp" type="image">Unknown Resource number 770</item>
+  <item value="771" path="res771.bmp" type="image">Unknown Resource number 771</item>
+  <item value="772" path="res772.bmp" type="image">Unknown Resource number 772</item>
+  <item value="773" path="res773.bmp" type="image">Unknown Resource number 773</item>
+  <item value="774" path="res774.bmp" type="image">Unknown Resource number 774</item>
+  <item value="775" path="res775.bmp" type="image">Unknown Resource number 775</item>
+  <item value="776" path="res776.bin" type="binary">Unknown Resource number 776</item>
+  <item value="777" path="spiked.bmp" type="image">Unknown Resource number 777</item>
+  <item value="778" path="chopped.bmp" type="image">Unknown Resource number 778</item>
+  <item value="779" path="res779.bmp" type="image">Unknown Resource number 779</item>
+  <item value="780" path="res780.bmp" type="image">Unknown Resource number 780</item>
+  <item value="781" path="res781.bmp" type="image">Unknown Resource number 781</item>
+  <item value="782" path="res782.bmp" type="image">Unknown Resource number 782</item>
+  <item value="783" path="res783.bmp" type="image">Unknown Resource number 783</item>
+  <item value="784" path="res784.bmp" type="image">Unknown Resource number 784</item>
  </folder>
 
  <folder index="pop1" name="binary" file="shadow.dat" path="shadow" palette="750">
-  <item value="750" path="res750.pal" itemtype="palette">Unknown Resource number 750</item>
-  <item value="751" path="hit points.bmp" itemtype="image">Unknown Resource number 751</item>
-  <item value="752" path="splash.bmp" itemtype="image">Unknown Resource number 752</item>
-  <item value="753" path="res753.bmp" itemtype="image">Unknown Resource number 753</item>
-  <item value="754" path="res754.bmp" itemtype="image">Unknown Resource number 754</item>
-  <item value="755" path="res755.bmp" itemtype="image">Unknown Resource number 755</item>
-  <item value="756" path="res756.bmp" itemtype="image">Unknown Resource number 756</item>
-  <item value="757" path="res757.bmp" itemtype="image">Unknown Resource number 757</item>
-  <item value="758" path="res758.bmp" itemtype="image">Unknown Resource number 758</item>
-  <item value="759" path="res759.bmp" itemtype="image">Unknown Resource number 759</item>
-  <item value="760" path="res760.bmp" itemtype="image">Unknown Resource number 760</item>
-  <item value="761" path="res761.bmp" itemtype="image">Unknown Resource number 761</item>
-  <item value="762" path="res762.bmp" itemtype="image">Unknown Resource number 762</item>
-  <item value="763" path="res763.bmp" itemtype="image">Unknown Resource number 763</item>
-  <item value="764" path="res764.bmp" itemtype="image">Unknown Resource number 764</item>
-  <item value="765" path="res765.bmp" itemtype="image">Unknown Resource number 765</item>
-  <item value="766" path="res766.bmp" itemtype="image">Unknown Resource number 766</item>
-  <item value="767" path="res767.bmp" itemtype="image">Unknown Resource number 767</item>
-  <item value="768" path="res768.bin" itemtype="binary">Unknown Resource number 768</item>
-  <item value="769" path="res769.bmp" itemtype="image">Unknown Resource number 769</item>
-  <item value="770" path="res770.bmp" itemtype="image">Unknown Resource number 770</item>
-  <item value="771" path="res771.bmp" itemtype="image">Unknown Resource number 771</item>
-  <item value="772" path="res772.bmp" itemtype="image">Unknown Resource number 772</item>
-  <item value="773" path="res773.bmp" itemtype="image">Unknown Resource number 773</item>
-  <item value="774" path="res774.bmp" itemtype="image">Unknown Resource number 774</item>
-  <item value="775" path="res775.bmp" itemtype="image">Unknown Resource number 775</item>
-  <item value="776" path="res776.bmp" itemtype="image">Unknown Resource number 776</item>
-  <item value="777" path="res777.bin" itemtype="binary">Unknown Resource number 777</item>
-  <item value="778" path="res778.bin" itemtype="binary">Unknown Resource number 778</item>
-  <item value="779" path="res779.bin" itemtype="binary">Unknown Resource number 779</item>
-  <item value="780" path="res780.bin" itemtype="binary">Unknown Resource number 780</item>
-  <item value="781" path="res781.bin" itemtype="binary">Unknown Resource number 781</item>
-  <item value="782" path="res782.bin" itemtype="binary">Unknown Resource number 782</item>
+  <item value="750" path="res750.pal" type="palette">Unknown Resource number 750</item>
+  <item value="751" path="hit points.bmp" type="image">Unknown Resource number 751</item>
+  <item value="752" path="splash.bmp" type="image">Unknown Resource number 752</item>
+  <item value="753" path="res753.bmp" type="image">Unknown Resource number 753</item>
+  <item value="754" path="res754.bmp" type="image">Unknown Resource number 754</item>
+  <item value="755" path="res755.bmp" type="image">Unknown Resource number 755</item>
+  <item value="756" path="res756.bmp" type="image">Unknown Resource number 756</item>
+  <item value="757" path="res757.bmp" type="image">Unknown Resource number 757</item>
+  <item value="758" path="res758.bmp" type="image">Unknown Resource number 758</item>
+  <item value="759" path="res759.bmp" type="image">Unknown Resource number 759</item>
+  <item value="760" path="res760.bmp" type="image">Unknown Resource number 760</item>
+  <item value="761" path="res761.bmp" type="image">Unknown Resource number 761</item>
+  <item value="762" path="res762.bmp" type="image">Unknown Resource number 762</item>
+  <item value="763" path="res763.bmp" type="image">Unknown Resource number 763</item>
+  <item value="764" path="res764.bmp" type="image">Unknown Resource number 764</item>
+  <item value="765" path="res765.bmp" type="image">Unknown Resource number 765</item>
+  <item value="766" path="res766.bmp" type="image">Unknown Resource number 766</item>
+  <item value="767" path="res767.bmp" type="image">Unknown Resource number 767</item>
+  <item value="768" path="res768.bin" type="binary">Unknown Resource number 768</item>
+  <item value="769" path="res769.bmp" type="image">Unknown Resource number 769</item>
+  <item value="770" path="res770.bmp" type="image">Unknown Resource number 770</item>
+  <item value="771" path="res771.bmp" type="image">Unknown Resource number 771</item>
+  <item value="772" path="res772.bmp" type="image">Unknown Resource number 772</item>
+  <item value="773" path="res773.bmp" type="image">Unknown Resource number 773</item>
+  <item value="774" path="res774.bmp" type="image">Unknown Resource number 774</item>
+  <item value="775" path="res775.bmp" type="image">Unknown Resource number 775</item>
+  <item value="776" path="res776.bmp" type="image">Unknown Resource number 776</item>
+  <item value="777" path="res777.bin" type="binary">Unknown Resource number 777</item>
+  <item value="778" path="res778.bin" type="binary">Unknown Resource number 778</item>
+  <item value="779" path="res779.bin" type="binary">Unknown Resource number 779</item>
+  <item value="780" path="res780.bin" type="binary">Unknown Resource number 780</item>
+  <item value="781" path="res781.bin" type="binary">Unknown Resource number 781</item>
+  <item value="782" path="res782.bin" type="binary">Unknown Resource number 782</item>
  </folder>
 
  <folder index="pop1" name="binary" file="fat.dat" path="fat" palette="750">
-  <item value="750" path="res750.pal" itemtype="palette">Unknown Resource number 750</item>
-  <item value="751" path="hit points.bmp" itemtype="image">Unknown Resource number 751</item>
-  <item value="752" path="splash.bmp" itemtype="image">Unknown Resource number 752</item>
-  <item value="753" path="res753.bmp" itemtype="image">Unknown Resource number 753</item>
-  <item value="754" path="res754.bmp" itemtype="image">Unknown Resource number 754</item>
-  <item value="755" path="res755.bmp" itemtype="image">Unknown Resource number 755</item>
-  <item value="756" path="res756.bmp" itemtype="image">Unknown Resource number 756</item>
-  <item value="757" path="res757.bmp" itemtype="image">Unknown Resource number 757</item>
-  <item value="758" path="res758.bmp" itemtype="image">Unknown Resource number 758</item>
-  <item value="759" path="res759.bmp" itemtype="image">Unknown Resource number 759</item>
-  <item value="760" path="res760.bmp" itemtype="image">Unknown Resource number 760</item>
-  <item value="761" path="res761.bmp" itemtype="image">Unknown Resource number 761</item>
-  <item value="762" path="res762.bmp" itemtype="image">Unknown Resource number 762</item>
-  <item value="763" path="res763.bmp" itemtype="image">Unknown Resource number 763</item>
-  <item value="764" path="res764.bmp" itemtype="image">Unknown Resource number 764</item>
-  <item value="765" path="res765.bmp" itemtype="image">Unknown Resource number 765</item>
-  <item value="766" path="res766.bmp" itemtype="image">Unknown Resource number 766</item>
-  <item value="767" path="res767.bmp" itemtype="image">Unknown Resource number 767</item>
-  <item value="768" path="res768.bmp" itemtype="image">Unknown Resource number 768</item>
-  <item value="769" path="res769.bmp" itemtype="image">Unknown Resource number 769</item>
-  <item value="770" path="res770.bmp" itemtype="image">Unknown Resource number 770</item>
-  <item value="771" path="res771.bmp" itemtype="image">Unknown Resource number 771</item>
-  <item value="772" path="res772.bmp" itemtype="image">Unknown Resource number 772</item>
-  <item value="773" path="res773.bmp" itemtype="image">Unknown Resource number 773</item>
-  <item value="774" path="res774.bmp" itemtype="image">Unknown Resource number 774</item>
-  <item value="775" path="res775.bmp" itemtype="image">Unknown Resource number 775</item>
-  <item value="776" path="res776.bin" itemtype="binary">Unknown Resource number 776</item>
-  <item value="777" path="spiked.bmp" itemtype="image">Unknown Resource number 777</item>
-  <item value="778" path="res778.bin" itemtype="binary">Unknown Resource number 778</item>
-  <item value="779" path="res779.bmp" itemtype="image">Unknown Resource number 779</item>
-  <item value="780" path="res780.bmp" itemtype="image">Unknown Resource number 780</item>
-  <item value="781" path="res781.bmp" itemtype="image">Unknown Resource number 781</item>
-  <item value="782" path="res782.bmp" itemtype="image">Unknown Resource number 782</item>
-  <item value="783" path="res783.bmp" itemtype="image">Unknown Resource number 783</item>
-  <item value="784" path="res784.bmp" itemtype="image">Unknown Resource number 784</item>
+  <item value="750" path="res750.pal" type="palette">Unknown Resource number 750</item>
+  <item value="751" path="hit points.bmp" type="image">Unknown Resource number 751</item>
+  <item value="752" path="splash.bmp" type="image">Unknown Resource number 752</item>
+  <item value="753" path="res753.bmp" type="image">Unknown Resource number 753</item>
+  <item value="754" path="res754.bmp" type="image">Unknown Resource number 754</item>
+  <item value="755" path="res755.bmp" type="image">Unknown Resource number 755</item>
+  <item value="756" path="res756.bmp" type="image">Unknown Resource number 756</item>
+  <item value="757" path="res757.bmp" type="image">Unknown Resource number 757</item>
+  <item value="758" path="res758.bmp" type="image">Unknown Resource number 758</item>
+  <item value="759" path="res759.bmp" type="image">Unknown Resource number 759</item>
+  <item value="760" path="res760.bmp" type="image">Unknown Resource number 760</item>
+  <item value="761" path="res761.bmp" type="image">Unknown Resource number 761</item>
+  <item value="762" path="res762.bmp" type="image">Unknown Resource number 762</item>
+  <item value="763" path="res763.bmp" type="image">Unknown Resource number 763</item>
+  <item value="764" path="res764.bmp" type="image">Unknown Resource number 764</item>
+  <item value="765" path="res765.bmp" type="image">Unknown Resource number 765</item>
+  <item value="766" path="res766.bmp" type="image">Unknown Resource number 766</item>
+  <item value="767" path="res767.bmp" type="image">Unknown Resource number 767</item>
+  <item value="768" path="res768.bmp" type="image">Unknown Resource number 768</item>
+  <item value="769" path="res769.bmp" type="image">Unknown Resource number 769</item>
+  <item value="770" path="res770.bmp" type="image">Unknown Resource number 770</item>
+  <item value="771" path="res771.bmp" type="image">Unknown Resource number 771</item>
+  <item value="772" path="res772.bmp" type="image">Unknown Resource number 772</item>
+  <item value="773" path="res773.bmp" type="image">Unknown Resource number 773</item>
+  <item value="774" path="res774.bmp" type="image">Unknown Resource number 774</item>
+  <item value="775" path="res775.bmp" type="image">Unknown Resource number 775</item>
+  <item value="776" path="res776.bin" type="binary">Unknown Resource number 776</item>
+  <item value="777" path="spiked.bmp" type="image">Unknown Resource number 777</item>
+  <item value="778" path="res778.bin" type="binary">Unknown Resource number 778</item>
+  <item value="779" path="res779.bmp" type="image">Unknown Resource number 779</item>
+  <item value="780" path="res780.bmp" type="image">Unknown Resource number 780</item>
+  <item value="781" path="res781.bmp" type="image">Unknown Resource number 781</item>
+  <item value="782" path="res782.bmp" type="image">Unknown Resource number 782</item>
+  <item value="783" path="res783.bmp" type="image">Unknown Resource number 783</item>
+  <item value="784" path="res784.bmp" type="image">Unknown Resource number 784</item>
  </folder>
  <folder index="pop1" name="binary" file="guard.dat" path="guards" palette="0">
-  <item value="751" path="hit points.bmp" itemtype="image">Unknown Resource number 751</item>
-  <item value="752" path="splash.bmp" itemtype="image">Unknown Resource number 752</item>
-  <item value="753" path="res753.bmp" itemtype="image">Unknown Resource number 753</item>
-  <item value="754" path="res754.bmp" itemtype="image">Unknown Resource number 754</item>
-  <item value="755" path="res755.bmp" itemtype="image">Unknown Resource number 755</item>
-  <item value="756" path="res756.bmp" itemtype="image">Unknown Resource number 756</item>
-  <item value="757" path="res757.bmp" itemtype="image">Unknown Resource number 757</item>
-  <item value="758" path="res758.bmp" itemtype="image">Unknown Resource number 758</item>
-  <item value="759" path="res759.bmp" itemtype="image">Unknown Resource number 759</item>
-  <item value="760" path="res760.bmp" itemtype="image">Unknown Resource number 760</item>
-  <item value="761" path="res761.bmp" itemtype="image">Unknown Resource number 761</item>
-  <item value="762" path="res762.bmp" itemtype="image">Unknown Resource number 762</item>
-  <item value="763" path="res763.bmp" itemtype="image">Unknown Resource number 763</item>
-  <item value="764" path="res764.bmp" itemtype="image">Unknown Resource number 764</item>
-  <item value="765" path="res765.bmp" itemtype="image">Unknown Resource number 765</item>
-  <item value="766" path="res766.bmp" itemtype="image">Unknown Resource number 766</item>
-  <item value="767" path="res767.bmp" itemtype="image">Unknown Resource number 767</item>
-  <item value="768" path="res768.bmp" itemtype="image">Unknown Resource number 768</item>
-  <item value="769" path="res769.bmp" itemtype="image">Unknown Resource number 769</item>
-  <item value="770" path="res770.bmp" itemtype="image">Unknown Resource number 770</item>
-  <item value="771" path="res771.bmp" itemtype="image">Unknown Resource number 771</item>
-  <item value="772" path="res772.bmp" itemtype="image">Unknown Resource number 772</item>
-  <item value="773" path="res773.bmp" itemtype="image">Unknown Resource number 773</item>
-  <item value="774" path="res774.bmp" itemtype="image">Unknown Resource number 774</item>
-  <item value="775" path="res775.bmp" itemtype="image">Unknown Resource number 775</item>
-  <item value="776" path="res776.bin" itemtype="binary">Unknown Resource number 776</item>
-  <item value="777" path="spiked.bmp" itemtype="image">Unknown Resource number 777</item>
-  <item value="778" path="chopped.bmp" itemtype="image">Unknown Resource number 778</item>
-  <item value="779" path="res779.bmp" itemtype="image">Unknown Resource number 779</item>
-  <item value="780" path="res780.bmp" itemtype="image">Unknown Resource number 780</item>
-  <item value="781" path="res781.bmp" itemtype="image">Unknown Resource number 781</item>
-  <item value="782" path="res782.bmp" itemtype="image">Unknown Resource number 782</item>
-  <item value="783" path="res783.bmp" itemtype="image">Unknown Resource number 783</item>
-  <item value="784" path="res784.bmp" itemtype="image">Unknown Resource number 784</item>
+  <item value="751" path="hit points.bmp" type="image">Unknown Resource number 751</item>
+  <item value="752" path="splash.bmp" type="image">Unknown Resource number 752</item>
+  <item value="753" path="res753.bmp" type="image">Unknown Resource number 753</item>
+  <item value="754" path="res754.bmp" type="image">Unknown Resource number 754</item>
+  <item value="755" path="res755.bmp" type="image">Unknown Resource number 755</item>
+  <item value="756" path="res756.bmp" type="image">Unknown Resource number 756</item>
+  <item value="757" path="res757.bmp" type="image">Unknown Resource number 757</item>
+  <item value="758" path="res758.bmp" type="image">Unknown Resource number 758</item>
+  <item value="759" path="res759.bmp" type="image">Unknown Resource number 759</item>
+  <item value="760" path="res760.bmp" type="image">Unknown Resource number 760</item>
+  <item value="761" path="res761.bmp" type="image">Unknown Resource number 761</item>
+  <item value="762" path="res762.bmp" type="image">Unknown Resource number 762</item>
+  <item value="763" path="res763.bmp" type="image">Unknown Resource number 763</item>
+  <item value="764" path="res764.bmp" type="image">Unknown Resource number 764</item>
+  <item value="765" path="res765.bmp" type="image">Unknown Resource number 765</item>
+  <item value="766" path="res766.bmp" type="image">Unknown Resource number 766</item>
+  <item value="767" path="res767.bmp" type="image">Unknown Resource number 767</item>
+  <item value="768" path="res768.bmp" type="image">Unknown Resource number 768</item>
+  <item value="769" path="res769.bmp" type="image">Unknown Resource number 769</item>
+  <item value="770" path="res770.bmp" type="image">Unknown Resource number 770</item>
+  <item value="771" path="res771.bmp" type="image">Unknown Resource number 771</item>
+  <item value="772" path="res772.bmp" type="image">Unknown Resource number 772</item>
+  <item value="773" path="res773.bmp" type="image">Unknown Resource number 773</item>
+  <item value="774" path="res774.bmp" type="image">Unknown Resource number 774</item>
+  <item value="775" path="res775.bmp" type="image">Unknown Resource number 775</item>
+  <item value="776" path="res776.bin" type="binary">Unknown Resource number 776</item>
+  <item value="777" path="spiked.bmp" type="image">Unknown Resource number 777</item>
+  <item value="778" path="chopped.bmp" type="image">Unknown Resource number 778</item>
+  <item value="779" path="res779.bmp" type="image">Unknown Resource number 779</item>
+  <item value="780" path="res780.bmp" type="image">Unknown Resource number 780</item>
+  <item value="781" path="res781.bmp" type="image">Unknown Resource number 781</item>
+  <item value="782" path="res782.bmp" type="image">Unknown Resource number 782</item>
+  <item value="783" path="res783.bmp" type="image">Unknown Resource number 783</item>
+  <item value="784" path="res784.bmp" type="image">Unknown Resource number 784</item>
  </folder>
  <folder index="pop1" name="binary" file="guard1.dat" path="guards" palette="750">
-  <item value="750" path="palette1.pal" itemtype="palette">Unknown Resource number 750</item>
+  <item value="750" path="palette1.pal" type="palette">Unknown Resource number 750</item>
  </folder>
  <folder index="pop1" name="binary" file="guard2.dat" path="guards" palette="750">
-  <item value="750" path="palette2.pal" itemtype="palette">Unknown Resource number 750</item>
+  <item value="750" path="palette2.pal" type="palette">Unknown Resource number 750</item>
  </folder>
 
- <folder index="pop1" name="binary" file="levels.dat" itemtype="level" path="levels">
+ <folder index="pop1" name="binary" file="levels.dat" type="level" path="levels">
   <item value="2000" number="0" path="demo.plv">Demo level</item>
   <item value="2001" number="1" path="level1.plv">Level 1</item>
   <item value="2002" number="2" path="level2.plv">Level 2</item>
@@ -1405,169 +1405,169 @@ resources.xml: Princed Resources : Resource tree
   <item value="2015" number="15" path="potions.plv">Potions level</item>
  </folder>
 
- <folder index="pahs" name="the pop2 bird guard" file="bird.dat" itemtype="image" path="bird" palette="750" paletteindex="clap">
-  <item value="750" index="mark" path="binary01.bin" itemtype="binary">Unknown binary 1</item>
-  <item value="750" index="clap" path="binary02.bin" itemtype="binary">Unknown binary 2</item>
-  <item value="750" index="slap" path="bird.pal" itemtype="palette">The bird palette</item>
-  <item value="751" path="image01.bmp" itemtype="image">Unknown image 1</item>
-  <item value="752" path="image02.bmp" itemtype="image">Unknown image 2</item>
-  <item value="753" path="image03.bmp" itemtype="image">Unknown image 3</item>
-  <item value="754" path="image04.bmp" itemtype="image">Unknown image 4</item>
-  <item value="755" path="image05.bmp" itemtype="image">Unknown image 5</item>
-  <item value="756" path="image06.bmp" itemtype="image">Unknown image 6</item>
-  <item value="757" path="image07.bmp" itemtype="image">Unknown image 7</item>
-  <item value="758" path="image08.bmp" itemtype="image">Unknown image 8</item>
-  <item value="759" path="image09.bmp" itemtype="image">Unknown image 9</item>
-  <item value="760" path="image10.bmp" itemtype="image">Unknown image 10</item>
-  <item value="761" path="image11.bmp" itemtype="image">Unknown image 11</item>
-  <item value="762" path="image12.bmp" itemtype="image">Unknown image 12</item>
-  <item value="763" path="image13.bmp" itemtype="image">Unknown image 13</item>
-  <item value="764" path="image14.bmp" itemtype="image">Unknown image 14</item>
-  <item value="765" path="image15.bmp" itemtype="image">Unknown image 15</item>
-  <item value="766" path="image16.bmp" itemtype="image">Unknown image 16</item>
-  <item value="767" path="image17.bmp" itemtype="image">Unknown image 17</item>
-  <item value="768" path="image18.bmp" itemtype="image">Unknown image 18</item>
-  <item value="769" path="image19.bmp" itemtype="image">Unknown image 19</item>
-  <item value="770" path="image20.bmp" itemtype="image">Unknown image 20</item>
-  <item value="771" path="image21.bmp" itemtype="image">Unknown image 21</item>
-  <item value="772" path="image22.bmp" itemtype="image">Unknown image 22</item>
-  <item value="773" path="image23.bmp" itemtype="image">Unknown image 23</item>
-  <item value="774" path="image24.bmp" itemtype="image">Unknown image 24</item>
-  <item value="775" path="image25.bmp" itemtype="image">Unknown image 25</item>
-  <item value="776" path="image26.bmp" itemtype="image">Unknown image 26</item>
-  <item value="777" path="image27.bmp" itemtype="image">Unknown image 27</item>
-  <item value="778" path="image28.bmp" itemtype="image">Unknown image 28</item>
-  <item value="779" path="image29.bmp" itemtype="image">Unknown image 29</item>
-  <item value="780" path="image30.bmp" itemtype="image">Unknown image 30</item>
-  <item value="781" path="image31.bmp" itemtype="image">Unknown image 31</item>
-  <item value="782" path="image32.bmp" itemtype="image">Unknown image 32</item>
-  <item value="783" path="image33.bmp" itemtype="image">Unknown image 33</item>
-  <item value="784" path="image34.bmp" itemtype="image">Unknown image 34</item>
-  <item value="785" path="image35.bmp" itemtype="image">Unknown image 35</item>
-  <item value="786" path="image36.bmp" itemtype="image">Unknown image 36</item>
-  <item value="787" path="image37.bmp" itemtype="image">Unknown image 37</item>
-  <item value="788" path="image38.bmp" itemtype="image">Unknown image 38</item>
-  <item value="789" path="image39.bmp" itemtype="image">Unknown image 39</item>
-  <item value="790" path="image40.bmp" itemtype="image">Unknown image 40</item>
-  <item value="791" path="pcspeaker01.pcs" itemtype="pcspeaker">Unknown pcspeaker 1</item>
-  <item value="792" path="pcspeaker02.pcs" itemtype="pcspeaker">Unknown pcspeaker 2</item>
-  <item value="793" path="pcspeaker03.pcs" itemtype="pcspeaker">Unknown pcspeaker 3</item>
-  <item value="794" path="pcspeaker04.pcs" itemtype="pcspeaker">Unknown pcspeaker 4</item>
-  <item value="795" path="pcspeaker05.pcs" itemtype="pcspeaker">Unknown pcspeaker 5</item>
-  <item value="796" path="pcspeaker06.pcs" itemtype="pcspeaker">Unknown pcspeaker 6</item>
-  <item value="797" path="pcspeaker07.pcs" itemtype="pcspeaker">Unknown pcspeaker 7</item>
-  <item value="798" path="pcspeaker08.pcs" itemtype="pcspeaker">Unknown pcspeaker 8</item>
-  <item value="799" path="pcspeaker09.pcs" itemtype="pcspeaker">Unknown pcspeaker 9</item>
-  <item value="800" path="pcspeaker10.pcs" itemtype="pcspeaker">Unknown pcspeaker 10</item>
-  <item value="801" path="pcspeaker11.pcs" itemtype="pcspeaker">Unknown pcspeaker 11</item>
-  <item value="802" path="pcspeaker12.pcs" itemtype="pcspeaker">Unknown pcspeaker 12</item>
-  <item value="803" path="pcspeaker13.pcs" itemtype="pcspeaker">Unknown pcspeaker 13</item>
-  <item value="804" path="pcspeaker14.pcs" itemtype="pcspeaker">Unknown pcspeaker 14</item>
-  <item value="805" path="pcspeaker15.pcs" itemtype="pcspeaker">Unknown pcspeaker 15</item>
-  <item value="806" path="pcspeaker16.pcs" itemtype="pcspeaker">Unknown pcspeaker 16</item>
-  <item value="807" path="pcspeaker17.pcs" itemtype="pcspeaker">Unknown pcspeaker 17</item>
-  <item value="808" path="pcspeaker18.pcs" itemtype="pcspeaker">Unknown pcspeaker 18</item>
-  <item value="809" path="pcspeaker19.pcs" itemtype="pcspeaker">Unknown pcspeaker 19</item>
-  <item value="810" path="pcspeaker20.pcs" itemtype="pcspeaker">Unknown pcspeaker 20</item>
-  <item value="811" path="pcspeaker21.pcs" itemtype="pcspeaker">Unknown pcspeaker 21</item>
-  <item value="812" path="pcspeaker22.pcs" itemtype="pcspeaker">Unknown pcspeaker 22</item>
-  <item value="813" path="pcspeaker23.pcs" itemtype="pcspeaker">Unknown pcspeaker 23</item>
-  <item value="814" path="pcspeaker24.pcs" itemtype="pcspeaker">Unknown pcspeaker 24</item>
-  <item value="815" path="pcspeaker25.pcs" itemtype="pcspeaker">Unknown pcspeaker 25</item>
-  <item value="816" path="pcspeaker26.pcs" itemtype="pcspeaker">Unknown pcspeaker 26</item>
-  <item value="817" path="pcspeaker27.pcs" itemtype="pcspeaker">Unknown pcspeaker 27</item>
-  <item value="818" path="pcspeaker28.pcs" itemtype="pcspeaker">Unknown pcspeaker 28</item>
-  <item value="819" path="pcspeaker29.pcs" itemtype="pcspeaker">Unknown pcspeaker 29</item>
-  <item value="820" path="pcspeaker30.pcs" itemtype="pcspeaker">Unknown pcspeaker 30</item>
-  <item value="821" path="pcspeaker31.pcs" itemtype="pcspeaker">Unknown pcspeaker 31</item>
-  <item value="822" path="pcspeaker32.pcs" itemtype="pcspeaker">Unknown pcspeaker 32</item>
-  <item value="823" path="pcspeaker33.pcs" itemtype="pcspeaker">Unknown pcspeaker 33</item>
-  <item value="824" path="pcspeaker34.pcs" itemtype="pcspeaker">Unknown pcspeaker 34</item>
-  <item value="825" path="pcspeaker35.pcs" itemtype="pcspeaker">Unknown pcspeaker 35</item>
-  <item value="826" path="pcspeaker36.pcs" itemtype="pcspeaker">Unknown pcspeaker 36</item>
-  <item value="827" path="pcspeaker37.pcs" itemtype="pcspeaker">Unknown pcspeaker 37</item>
-  <item value="828" path="pcspeaker38.pcs" itemtype="pcspeaker">Unknown pcspeaker 38</item>
-  <item value="829" path="pcspeaker39.pcs" itemtype="pcspeaker">Unknown pcspeaker 39</item>
-  <item value="830" path="pcspeaker40.pcs" itemtype="pcspeaker">Unknown pcspeaker 40</item>
-  <item value="831" path="pcspeaker41.pcs" itemtype="pcspeaker">Unknown pcspeaker 41</item>
-  <item value="832" path="pcspeaker42.pcs" itemtype="pcspeaker">Unknown pcspeaker 42</item>
-  <item value="833" path="pcspeaker43.pcs" itemtype="pcspeaker">Unknown pcspeaker 43</item>
-  <item value="834" path="pcspeaker44.pcs" itemtype="pcspeaker">Unknown pcspeaker 44</item>
-  <item value="835" path="pcspeaker45.pcs" itemtype="pcspeaker">Unknown pcspeaker 45</item>
-  <item value="836" path="pcspeaker46.pcs" itemtype="pcspeaker">Unknown pcspeaker 46</item>
-  <item value="837" path="pcspeaker47.pcs" itemtype="pcspeaker">Unknown pcspeaker 47</item>
-  <item value="838" path="pcspeaker48.pcs" itemtype="pcspeaker">Unknown pcspeaker 48</item>
-  <item value="839" path="pcspeaker49.pcs" itemtype="pcspeaker">Unknown pcspeaker 49</item>
-  <item value="840" path="pcspeaker50.pcs" itemtype="pcspeaker">Unknown pcspeaker 50</item>
-  <item value="841" path="pcspeaker51.pcs" itemtype="pcspeaker">Unknown pcspeaker 51</item>
-  <item value="842" path="pcspeaker52.pcs" itemtype="pcspeaker">Unknown pcspeaker 52</item>
-  <item value="843" path="pcspeaker53.pcs" itemtype="pcspeaker">Unknown pcspeaker 53</item>
-  <item value="844" path="pcspeaker54.pcs" itemtype="pcspeaker">Unknown pcspeaker 54</item>
-  <item value="845" path="pcspeaker55.pcs" itemtype="pcspeaker">Unknown pcspeaker 55</item>
-  <item value="846" path="pcspeaker56.pcs" itemtype="pcspeaker">Unknown pcspeaker 56</item>
-  <item value="847" path="pcspeaker57.pcs" itemtype="pcspeaker">Unknown pcspeaker 57</item>
-  <item value="848" path="pcspeaker58.pcs" itemtype="pcspeaker">Unknown pcspeaker 58</item>
-  <item value="849" path="pcspeaker59.pcs" itemtype="pcspeaker">Unknown pcspeaker 59</item>
-  <item value="891" path="image41.bmp" itemtype="image">Unknown image 41</item>
-  <item value="892" path="image42.bmp" itemtype="image">Unknown image 42</item>
-  <item value="893" path="image43.bmp" itemtype="image">Unknown image 43</item>
-  <item value="894" path="image44.bmp" itemtype="image">Unknown image 44</item>
-  <item value="895" path="image45.bmp" itemtype="image">Unknown image 45</item>
-  <item value="896" path="image46.bmp" itemtype="image">Unknown image 46</item>
-  <item value="897" path="image47.bmp" itemtype="image">Unknown image 47</item>
-  <item value="898" path="image48.bmp" itemtype="image">Unknown image 48</item>
-  <item value="899" path="image49.bmp" itemtype="image">Unknown image 49</item>
-  <item value="900" path="image50.bmp" itemtype="image">Unknown image 50</item>
-  <item value="901" path="image51.bmp" itemtype="image">Unknown image 51</item>
-  <item value="902" path="image52.bmp" itemtype="image">Unknown image 52</item>
-  <item value="903" path="image53.bmp" itemtype="image">Unknown image 53</item>
-  <item value="904" path="image54.bmp" itemtype="image">Unknown image 54</item>
-  <item value="905" path="image55.bmp" itemtype="image">Unknown image 55</item>
-  <item value="906" path="image56.bmp" itemtype="image">Unknown image 56</item>
-  <item value="907" path="image57.bmp" itemtype="image">Unknown image 57</item>
-  <item value="908" path="image58.bmp" itemtype="image">Unknown image 58</item>
-  <item value="909" path="image59.bmp" itemtype="image">Unknown image 59</item>
-  <item value="910" path="image60.bmp" itemtype="image">Unknown image 60</item>
-  <item value="911" path="image61.bmp" itemtype="image">Unknown image 61</item>
-  <item value="912" path="image62.bmp" itemtype="image">Unknown image 62</item>
-  <item value="913" path="image63.bmp" itemtype="image">Unknown image 63</item>
-  <item value="914" path="image64.bmp" itemtype="image">Unknown image 64</item>
-  <item value="915" path="image65.bmp" itemtype="image">Unknown image 65</item>
-  <item value="916" path="image66.bmp" itemtype="image">Unknown image 66</item>
-  <item value="917" path="image67.bmp" itemtype="image">Unknown image 67</item>
-  <item value="918" path="image68.bmp" itemtype="image">Unknown image 68</item>
-  <item value="919" path="image69.bmp" itemtype="image">Unknown image 69</item>
-  <item value="920" path="image70.bmp" itemtype="image">Unknown image 70</item>
-  <item value="921" path="image71.bmp" itemtype="image">Unknown image 71</item>
-  <item value="922" path="image72.bmp" itemtype="image">Unknown image 72</item>
-  <item value="923" path="image73.bmp" itemtype="image">Unknown image 73</item>
-  <item value="924" path="image74.bmp" itemtype="image">Unknown image 74</item>
-  <item value="925" path="image75.bmp" itemtype="image">Unknown image 75</item>
-  <item value="926" path="image76.bmp" itemtype="image">Unknown image 76</item>
-  <item value="927" path="image77.bmp" itemtype="image">Unknown image 77</item>
-  <item value="928" path="image78.bmp" itemtype="image">Unknown image 78</item>
-  <item value="929" path="image79.bmp" itemtype="image">Unknown image 79</item>
-  <item value="930" path="image80.bmp" itemtype="image">Unknown image 80</item>
-  <item value="931" path="image81.bmp" itemtype="image">Unknown image 81</item>
-  <item value="932" path="image82.bmp" itemtype="image">Unknown image 82</item>
-  <item value="933" path="image83.bmp" itemtype="image">Unknown image 83</item>
-  <item value="934" path="image84.bmp" itemtype="image">Unknown image 84</item>
-  <item value="935" path="image85.bmp" itemtype="image">Unknown image 85</item>
-  <item value="936" path="image86.bmp" itemtype="image">Unknown image 86</item>
-  <item value="937" path="image87.bmp" itemtype="image">Unknown image 87</item>
-  <item value="938" path="image88.bmp" itemtype="image">Unknown image 88</item>
-  <item value="939" path="image89.bmp" itemtype="image">Unknown image 89</item>
-  <item value="940" path="image90.bmp" itemtype="image">Unknown image 90</item>
-  <item value="941" path="image91.bmp" itemtype="image">Unknown image 91</item>
-  <item value="942" path="image92.bmp" itemtype="image">Unknown image 92</item>
-  <item value="943" path="image93.bmp" itemtype="image">Unknown image 93</item>
-  <item value="944" path="image94.bmp" itemtype="image">Unknown image 94</item>
-  <item value="945" path="image95.bmp" itemtype="image">Unknown image 95</item>
-  <item value="946" path="image96.bmp" itemtype="image">Unknown image 96</item>
-  <item value="947" path="image97.bmp" itemtype="image">Unknown image 97</item>
-  <item value="948" path="image98.bmp" itemtype="image">Unknown image 98</item>
-  <item value="949" path="image99.bmp" itemtype="image">Unknown image 99</item>
-  <item value="750" path="binary04.bin" itemtype="binary">Unknown binary 4</item>
+ <folder index="pahs" name="the pop2 bird guard" file="bird.dat" type="image" path="bird" palette="750" paletteindex="clap">
+  <item value="750" index="mark" path="binary01.bin" type="binary">Unknown binary 1</item>
+  <item value="750" index="clap" path="binary02.bin" type="binary">Unknown binary 2</item>
+  <item value="750" index="slap" path="bird.pal" type="palette">The bird palette</item>
+  <item value="751" path="image01.bmp" type="image">Unknown image 1</item>
+  <item value="752" path="image02.bmp" type="image">Unknown image 2</item>
+  <item value="753" path="image03.bmp" type="image">Unknown image 3</item>
+  <item value="754" path="image04.bmp" type="image">Unknown image 4</item>
+  <item value="755" path="image05.bmp" type="image">Unknown image 5</item>
+  <item value="756" path="image06.bmp" type="image">Unknown image 6</item>
+  <item value="757" path="image07.bmp" type="image">Unknown image 7</item>
+  <item value="758" path="image08.bmp" type="image">Unknown image 8</item>
+  <item value="759" path="image09.bmp" type="image">Unknown image 9</item>
+  <item value="760" path="image10.bmp" type="image">Unknown image 10</item>
+  <item value="761" path="image11.bmp" type="image">Unknown image 11</item>
+  <item value="762" path="image12.bmp" type="image">Unknown image 12</item>
+  <item value="763" path="image13.bmp" type="image">Unknown image 13</item>
+  <item value="764" path="image14.bmp" type="image">Unknown image 14</item>
+  <item value="765" path="image15.bmp" type="image">Unknown image 15</item>
+  <item value="766" path="image16.bmp" type="image">Unknown image 16</item>
+  <item value="767" path="image17.bmp" type="image">Unknown image 17</item>
+  <item value="768" path="image18.bmp" type="image">Unknown image 18</item>
+  <item value="769" path="image19.bmp" type="image">Unknown image 19</item>
+  <item value="770" path="image20.bmp" type="image">Unknown image 20</item>
+  <item value="771" path="image21.bmp" type="image">Unknown image 21</item>
+  <item value="772" path="image22.bmp" type="image">Unknown image 22</item>
+  <item value="773" path="image23.bmp" type="image">Unknown image 23</item>
+  <item value="774" path="image24.bmp" type="image">Unknown image 24</item>
+  <item value="775" path="image25.bmp" type="image">Unknown image 25</item>
+  <item value="776" path="image26.bmp" type="image">Unknown image 26</item>
+  <item value="777" path="image27.bmp" type="image">Unknown image 27</item>
+  <item value="778" path="image28.bmp" type="image">Unknown image 28</item>
+  <item value="779" path="image29.bmp" type="image">Unknown image 29</item>
+  <item value="780" path="image30.bmp" type="image">Unknown image 30</item>
+  <item value="781" path="image31.bmp" type="image">Unknown image 31</item>
+  <item value="782" path="image32.bmp" type="image">Unknown image 32</item>
+  <item value="783" path="image33.bmp" type="image">Unknown image 33</item>
+  <item value="784" path="image34.bmp" type="image">Unknown image 34</item>
+  <item value="785" path="image35.bmp" type="image">Unknown image 35</item>
+  <item value="786" path="image36.bmp" type="image">Unknown image 36</item>
+  <item value="787" path="image37.bmp" type="image">Unknown image 37</item>
+  <item value="788" path="image38.bmp" type="image">Unknown image 38</item>
+  <item value="789" path="image39.bmp" type="image">Unknown image 39</item>
+  <item value="790" path="image40.bmp" type="image">Unknown image 40</item>
+  <item value="791" path="pcspeaker01.pcs" type="pcspeaker">Unknown pcspeaker 1</item>
+  <item value="792" path="pcspeaker02.pcs" type="pcspeaker">Unknown pcspeaker 2</item>
+  <item value="793" path="pcspeaker03.pcs" type="pcspeaker">Unknown pcspeaker 3</item>
+  <item value="794" path="pcspeaker04.pcs" type="pcspeaker">Unknown pcspeaker 4</item>
+  <item value="795" path="pcspeaker05.pcs" type="pcspeaker">Unknown pcspeaker 5</item>
+  <item value="796" path="pcspeaker06.pcs" type="pcspeaker">Unknown pcspeaker 6</item>
+  <item value="797" path="pcspeaker07.pcs" type="pcspeaker">Unknown pcspeaker 7</item>
+  <item value="798" path="pcspeaker08.pcs" type="pcspeaker">Unknown pcspeaker 8</item>
+  <item value="799" path="pcspeaker09.pcs" type="pcspeaker">Unknown pcspeaker 9</item>
+  <item value="800" path="pcspeaker10.pcs" type="pcspeaker">Unknown pcspeaker 10</item>
+  <item value="801" path="pcspeaker11.pcs" type="pcspeaker">Unknown pcspeaker 11</item>
+  <item value="802" path="pcspeaker12.pcs" type="pcspeaker">Unknown pcspeaker 12</item>
+  <item value="803" path="pcspeaker13.pcs" type="pcspeaker">Unknown pcspeaker 13</item>
+  <item value="804" path="pcspeaker14.pcs" type="pcspeaker">Unknown pcspeaker 14</item>
+  <item value="805" path="pcspeaker15.pcs" type="pcspeaker">Unknown pcspeaker 15</item>
+  <item value="806" path="pcspeaker16.pcs" type="pcspeaker">Unknown pcspeaker 16</item>
+  <item value="807" path="pcspeaker17.pcs" type="pcspeaker">Unknown pcspeaker 17</item>
+  <item value="808" path="pcspeaker18.pcs" type="pcspeaker">Unknown pcspeaker 18</item>
+  <item value="809" path="pcspeaker19.pcs" type="pcspeaker">Unknown pcspeaker 19</item>
+  <item value="810" path="pcspeaker20.pcs" type="pcspeaker">Unknown pcspeaker 20</item>
+  <item value="811" path="pcspeaker21.pcs" type="pcspeaker">Unknown pcspeaker 21</item>
+  <item value="812" path="pcspeaker22.pcs" type="pcspeaker">Unknown pcspeaker 22</item>
+  <item value="813" path="pcspeaker23.pcs" type="pcspeaker">Unknown pcspeaker 23</item>
+  <item value="814" path="pcspeaker24.pcs" type="pcspeaker">Unknown pcspeaker 24</item>
+  <item value="815" path="pcspeaker25.pcs" type="pcspeaker">Unknown pcspeaker 25</item>
+  <item value="816" path="pcspeaker26.pcs" type="pcspeaker">Unknown pcspeaker 26</item>
+  <item value="817" path="pcspeaker27.pcs" type="pcspeaker">Unknown pcspeaker 27</item>
+  <item value="818" path="pcspeaker28.pcs" type="pcspeaker">Unknown pcspeaker 28</item>
+  <item value="819" path="pcspeaker29.pcs" type="pcspeaker">Unknown pcspeaker 29</item>
+  <item value="820" path="pcspeaker30.pcs" type="pcspeaker">Unknown pcspeaker 30</item>
+  <item value="821" path="pcspeaker31.pcs" type="pcspeaker">Unknown pcspeaker 31</item>
+  <item value="822" path="pcspeaker32.pcs" type="pcspeaker">Unknown pcspeaker 32</item>
+  <item value="823" path="pcspeaker33.pcs" type="pcspeaker">Unknown pcspeaker 33</item>
+  <item value="824" path="pcspeaker34.pcs" type="pcspeaker">Unknown pcspeaker 34</item>
+  <item value="825" path="pcspeaker35.pcs" type="pcspeaker">Unknown pcspeaker 35</item>
+  <item value="826" path="pcspeaker36.pcs" type="pcspeaker">Unknown pcspeaker 36</item>
+  <item value="827" path="pcspeaker37.pcs" type="pcspeaker">Unknown pcspeaker 37</item>
+  <item value="828" path="pcspeaker38.pcs" type="pcspeaker">Unknown pcspeaker 38</item>
+  <item value="829" path="pcspeaker39.pcs" type="pcspeaker">Unknown pcspeaker 39</item>
+  <item value="830" path="pcspeaker40.pcs" type="pcspeaker">Unknown pcspeaker 40</item>
+  <item value="831" path="pcspeaker41.pcs" type="pcspeaker">Unknown pcspeaker 41</item>
+  <item value="832" path="pcspeaker42.pcs" type="pcspeaker">Unknown pcspeaker 42</item>
+  <item value="833" path="pcspeaker43.pcs" type="pcspeaker">Unknown pcspeaker 43</item>
+  <item value="834" path="pcspeaker44.pcs" type="pcspeaker">Unknown pcspeaker 44</item>
+  <item value="835" path="pcspeaker45.pcs" type="pcspeaker">Unknown pcspeaker 45</item>
+  <item value="836" path="pcspeaker46.pcs" type="pcspeaker">Unknown pcspeaker 46</item>
+  <item value="837" path="pcspeaker47.pcs" type="pcspeaker">Unknown pcspeaker 47</item>
+  <item value="838" path="pcspeaker48.pcs" type="pcspeaker">Unknown pcspeaker 48</item>
+  <item value="839" path="pcspeaker49.pcs" type="pcspeaker">Unknown pcspeaker 49</item>
+  <item value="840" path="pcspeaker50.pcs" type="pcspeaker">Unknown pcspeaker 50</item>
+  <item value="841" path="pcspeaker51.pcs" type="pcspeaker">Unknown pcspeaker 51</item>
+  <item value="842" path="pcspeaker52.pcs" type="pcspeaker">Unknown pcspeaker 52</item>
+  <item value="843" path="pcspeaker53.pcs" type="pcspeaker">Unknown pcspeaker 53</item>
+  <item value="844" path="pcspeaker54.pcs" type="pcspeaker">Unknown pcspeaker 54</item>
+  <item value="845" path="pcspeaker55.pcs" type="pcspeaker">Unknown pcspeaker 55</item>
+  <item value="846" path="pcspeaker56.pcs" type="pcspeaker">Unknown pcspeaker 56</item>
+  <item value="847" path="pcspeaker57.pcs" type="pcspeaker">Unknown pcspeaker 57</item>
+  <item value="848" path="pcspeaker58.pcs" type="pcspeaker">Unknown pcspeaker 58</item>
+  <item value="849" path="pcspeaker59.pcs" type="pcspeaker">Unknown pcspeaker 59</item>
+  <item value="891" path="image41.bmp" type="image">Unknown image 41</item>
+  <item value="892" path="image42.bmp" type="image">Unknown image 42</item>
+  <item value="893" path="image43.bmp" type="image">Unknown image 43</item>
+  <item value="894" path="image44.bmp" type="image">Unknown image 44</item>
+  <item value="895" path="image45.bmp" type="image">Unknown image 45</item>
+  <item value="896" path="image46.bmp" type="image">Unknown image 46</item>
+  <item value="897" path="image47.bmp" type="image">Unknown image 47</item>
+  <item value="898" path="image48.bmp" type="image">Unknown image 48</item>
+  <item value="899" path="image49.bmp" type="image">Unknown image 49</item>
+  <item value="900" path="image50.bmp" type="image">Unknown image 50</item>
+  <item value="901" path="image51.bmp" type="image">Unknown image 51</item>
+  <item value="902" path="image52.bmp" type="image">Unknown image 52</item>
+  <item value="903" path="image53.bmp" type="image">Unknown image 53</item>
+  <item value="904" path="image54.bmp" type="image">Unknown image 54</item>
+  <item value="905" path="image55.bmp" type="image">Unknown image 55</item>
+  <item value="906" path="image56.bmp" type="image">Unknown image 56</item>
+  <item value="907" path="image57.bmp" type="image">Unknown image 57</item>
+  <item value="908" path="image58.bmp" type="image">Unknown image 58</item>
+  <item value="909" path="image59.bmp" type="image">Unknown image 59</item>
+  <item value="910" path="image60.bmp" type="image">Unknown image 60</item>
+  <item value="911" path="image61.bmp" type="image">Unknown image 61</item>
+  <item value="912" path="image62.bmp" type="image">Unknown image 62</item>
+  <item value="913" path="image63.bmp" type="image">Unknown image 63</item>
+  <item value="914" path="image64.bmp" type="image">Unknown image 64</item>
+  <item value="915" path="image65.bmp" type="image">Unknown image 65</item>
+  <item value="916" path="image66.bmp" type="image">Unknown image 66</item>
+  <item value="917" path="image67.bmp" type="image">Unknown image 67</item>
+  <item value="918" path="image68.bmp" type="image">Unknown image 68</item>
+  <item value="919" path="image69.bmp" type="image">Unknown image 69</item>
+  <item value="920" path="image70.bmp" type="image">Unknown image 70</item>
+  <item value="921" path="image71.bmp" type="image">Unknown image 71</item>
+  <item value="922" path="image72.bmp" type="image">Unknown image 72</item>
+  <item value="923" path="image73.bmp" type="image">Unknown image 73</item>
+  <item value="924" path="image74.bmp" type="image">Unknown image 74</item>
+  <item value="925" path="image75.bmp" type="image">Unknown image 75</item>
+  <item value="926" path="image76.bmp" type="image">Unknown image 76</item>
+  <item value="927" path="image77.bmp" type="image">Unknown image 77</item>
+  <item value="928" path="image78.bmp" type="image">Unknown image 78</item>
+  <item value="929" path="image79.bmp" type="image">Unknown image 79</item>
+  <item value="930" path="image80.bmp" type="image">Unknown image 80</item>
+  <item value="931" path="image81.bmp" type="image">Unknown image 81</item>
+  <item value="932" path="image82.bmp" type="image">Unknown image 82</item>
+  <item value="933" path="image83.bmp" type="image">Unknown image 83</item>
+  <item value="934" path="image84.bmp" type="image">Unknown image 84</item>
+  <item value="935" path="image85.bmp" type="image">Unknown image 85</item>
+  <item value="936" path="image86.bmp" type="image">Unknown image 86</item>
+  <item value="937" path="image87.bmp" type="image">Unknown image 87</item>
+  <item value="938" path="image88.bmp" type="image">Unknown image 88</item>
+  <item value="939" path="image89.bmp" type="image">Unknown image 89</item>
+  <item value="940" path="image90.bmp" type="image">Unknown image 90</item>
+  <item value="941" path="image91.bmp" type="image">Unknown image 91</item>
+  <item value="942" path="image92.bmp" type="image">Unknown image 92</item>
+  <item value="943" path="image93.bmp" type="image">Unknown image 93</item>
+  <item value="944" path="image94.bmp" type="image">Unknown image 94</item>
+  <item value="945" path="image95.bmp" type="image">Unknown image 95</item>
+  <item value="946" path="image96.bmp" type="image">Unknown image 96</item>
+  <item value="947" path="image97.bmp" type="image">Unknown image 97</item>
+  <item value="948" path="image98.bmp" type="image">Unknown image 98</item>
+  <item value="949" path="image99.bmp" type="image">Unknown image 99</item>
+  <item value="750" path="binary04.bin" type="binary">Unknown binary 4</item>
  </folder>
 
 </resources>
@@ -1579,10 +1579,7 @@ Attributes:
  resources:
   o version: the version of the file (mandatory)
  folder:
-  o type (inheritable): the type of the folder
-    * game
-    * none
-  o itemtype (inheritable): the type of the items below (if not specified)
+  o type (inheritable): the type of the items below (if not specified)
     * autodetect
     * level
     * image
@@ -1592,7 +1589,6 @@ Attributes:
     * palette
     * pcspeaker
     * information
-    * (...): extensible
     Note:
      - See PR readme for details on item types
      - If no type is provided, PR will try to autodetect it
@@ -1616,7 +1612,7 @@ Attributes:
   o value: the item ID (mandatory)
   o index: the index name (mandatory)
   o file: see itemtype file (mandatory but may be inherited from a folder)
-  o itemtype: see folder itemtype. May be inherited, omissions means autodetect
+  o type: see folder type. May be inherited, omissions means autodetect
   o palette: see folder palette. Mandatory for image types but may be inherited,
     when omited a default palette will be used. This attribute is ignored in other items
   o paletteindex: see folder paletteindex. Mandatory for image types but may be inherited.

@@ -50,11 +50,10 @@ typedef struct tTag {
 	char* desc;
 	char* path;
 	char* file;
-	char* itemtype;
+	char* type;
 	char* name;
 	char* palette;
 	char* paletteindex;
-	char* type;
 	char* value;
 	char* index;
 	char* version;
@@ -102,7 +101,7 @@ void  setCompressionLevel(int cl);
 /* Xml parsing functions */
 tTag* resourceTreeGetChild(tTag* whereAmI);
 tTag* resourceTreeGetNext (tTag* whereAmI);
-int   resourceTreeGetInfo (tTag* whereAmI, char** tag, char** desc, char** path, char** file, char** itemtype, char** name, char** palette, char** type, char** value, char** version, char** number);
+int   resourceTreeGetInfo (tTag* whereAmI,	char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number);
 int   parseStructure(const char* vFile, tTag** structure);
 void  freeParsedStructure(tTag** structure);
 void  freeParsingCache();

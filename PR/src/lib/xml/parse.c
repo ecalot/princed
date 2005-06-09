@@ -81,10 +81,9 @@ tTag* getTagStructure() {
 	t->desc=NULL;
 	t->path=NULL;
 	t->file=NULL;
-	t->itemtype=NULL;
+	t->type=NULL;
 	t->name=NULL;
 	t->palette=NULL;
-	t->type=NULL;
 	t->value=NULL;
 	t->index=NULL;
 	t->paletteindex=NULL;
@@ -102,10 +101,9 @@ void freeTagStructure(tTag* t) {
 	freeAllocation(t->desc);
 	freeAllocation(t->path);
 	freeAllocation(t->file);
-	freeAllocation(t->itemtype);
+	freeAllocation(t->type);
 	freeAllocation(t->name);
 	freeAllocation(t->palette);
-	freeAllocation(t->type);
 	freeAllocation(t->value);
 	freeAllocation(t->index);
 	freeAllocation(t->paletteindex);
@@ -129,11 +127,11 @@ int attribFill(char* attr,char* val, tTag* t) {
 	FillAttr(t->path,"external"); /* external is a path alias for old compatibilities */
 	FillAttr(t->path,"path");
 	FillAttr(t->file,"file");
-	FillAttr(t->itemtype,"itemtype");
+	FillAttr(t->type,"type");
+	FillAttr(t->type,"itemtype"); /* alias fro type */
 	FillAttr(t->name,"name");
 	FillAttr(t->name,"title"); /* title is a name alias */
 	FillAttr(t->palette,"palette");
-	FillAttr(t->type,"type");
 	FillAttr(t->value,"value");
 	FillAttr(t->index,"index");
 	FillAttr(t->paletteindex,"paletteindex");
@@ -368,7 +366,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 
 		TotalInheritance(palette);
 		TotalInheritance(paletteindex);
-		TotalInheritance(itemtype);
+		TotalInheritance(type);
 		TotalInheritance(file);
 		TotalInheritance(index);
 		/* PartialConcatInheritance(tag->path,father->path,tag->value); */
@@ -560,16 +558,15 @@ tTag* resourceTreeGetChild(tTag* whereAmI) {
 	return whereAmI->child;
 }
 
-int   resourceTreeGetInfo (tTag* whereAmI,	char** tag, char** desc, char** path, char** file, char** itemtype, char** name, char** palette, char** type, char** value, char** version, char** number) {
+int   resourceTreeGetInfo (tTag* whereAmI,	char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number) {
 	if (whereAmI==NULL) return 0;
 	*tag=whereAmI->tag;
 	*desc=whereAmI->desc;
 	*path=whereAmI->path;
 	*file=whereAmI->file;
-	*itemtype=whereAmI->itemtype;
+	*type=whereAmI->type;
 	*name=whereAmI->name;
 	*palette=whereAmI->palette;
-	*type=whereAmI->type;
 	*value=whereAmI->value;
 	*version=whereAmI->version;
 	*number=whereAmI->number;
