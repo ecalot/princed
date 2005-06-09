@@ -10,7 +10,7 @@
 
 <p><dd><b><font color=red>Q:</font> I'm importing an image but PR doesn't want to import it?</b>
 
-<p><dd><b><font color=red>A:</font></b> First use the -v or --verbose option to see what image is that. Then check if the image exists and, if you are un unix-like systems, check case of the file, remember some operating systems are case sensitive. If the image exists, check that this image has a palette of 16 colours and the format is correct. Some images are in a two-color format, make sure that images aren't one of them (check them in resources.xml if palette is set to monochrome).
+<p><dd><b><font color=red>A:</font></b> First use the -v or --verbose option to see what image is that. Then check if the image exists and, if you are in unix-like systems, check case of the file, remember some operating systems are case sensitive. If the image exists, check that this image has a palette of 16 colours and the format is correct. Some images are in a two-color format, make sure that images aren't one of them (check them in resources.xml if palette is set to monochrome).
 
 <p><dd><b><font color=red>Q:</font> I don't understand the palettes!</b>
 
@@ -18,7 +18,7 @@
 
 <p><dd><b><font color=red>Q:</font> So, how can I edit a palette of a group of images?</b>
 
-<p><dd><b><font color=red>A:</font></b> You have to edit the palette of one image and export it to the PAL file that represent this group. For example for all images in vdungeon.dat the palette is called dungeon.pal. If you want to know what palette belongs to what image, just take a look at resources.xml. Note that the palettes in each BMP files are just for viewing purposes, changing them won't change the original palette; the only way to change the original palette is changing the PAL file. The import tool will always ignore the palettes for all BMPs files, and use the PAL file. Make sure to use the JASC PAL format (supported by Paint Shot Pro), other format like MS PAL aren't supported.
+<p><dd><b><font color=red>A:</font></b> You have to edit the palette of one image and export it to the PAL file that represent this group. For example for all images in vdungeon.dat the palette is called dungeon.pal. If you want to know what palette belongs to what image, just take a look at resources.xml. Note that the palettes in each BMP files are just for viewing purposes, changing them won't change the original palette; the only way to change the original palette is changing the PAL file. The import tool will always ignore the palettes for all BMPs files, and use the PAL file. Make sure to use the JASC PAL format (supported by Paint Shot Pro) because other formats like MS PAL aren't supported.
 
 <p><dd><b><font color=red>Q:</font> Ok, I changed the palette file, now what?</b>
 
@@ -30,11 +30,11 @@
 
 <p><dd><b><font color=red>Q:</font> Is there any definition loss?</b>
 
-<p><dd><b><font color=red>A:</font></b> Yes JASC palettes has 24 bit RGB values (16,7 millions of colours), DAT palettes has 18 bit RGB values (262144 colours). Colours are approached to the nearest 18-bit colour  equivalence. For example the RGB colour (123,122,121) will became (124,124,120) using all multiples of 4. This is the only definition loss. After this approaching is done the first time, you can export and import a DAT file all the times you want and the definition will be the same.
+<p><dd><b><font color=red>A:</font></b> Yes JASC palettes has 24 bit RGB values (16,7 millions of colours), DAT palettes has 18 bit RGB values (262144 colours). Colours are approached to the nearest 18-bit colour  equivalence. For example the RGB colour (123,122,121) will became (124,124,120) using multiples of 4. This is the only definition loss. After this approaching is done the first time, you can export and import a DAT file all the times you want and the definition will be the same.
 
 <p><dd><b><font color=red>Q:</font> I'm not sure where to find the correct PAL file for an image</b>
 
-<p><dd><b><font color=red>A:</font></b> This is the hardest way, but if you insist... Open resources.xml with a simple text editor (vim, notepad, TextPad, etc). Look for the file name of the BMP image. This will appear in an item tag like this <code>&lt;item value="478" external="chopped.bmp"&gt;Prince Chopped&lt;/item&gt;</code>. this item belongs to a bigger item,in that case <code>&lt;folder external="deaths"&gt;</code>. This means that the file is in the deaths folder. This item is in a bigger item section like this: <code>&lt;folder name="Our prince and mouse images" file="kid.dat" external="kid" palette="400" itemtype="image"&gt;</code>. Now we know that the folder that contained the image is in directory "kid" and its palette value is 400. Then just look at a resource where value="400" inside the folder of the same file, in this case file="kid.dat", so we'll find <code>&lt;item value="400" external="kid.pal" itemtype="palette"&gt;Resource number 400&lt;/item&gt;</code>. This means that a palette value 400 is correctly a palette and the external name is kid.pal.
+<p><dd><b><font color=red>A:</font></b> This is the hardest way, but if you insist... Open resources.xml with a simple text editor (vim, notepad, TextPad, etc). Look for the file name of the BMP image. This will appear in an item tag like this <code>&lt;item value="478" path="chopped.bmp"&gt;Prince Chopped&lt;/item&gt;</code>. this item belongs to a bigger item,in that case <code>&lt;folder path="deaths"&gt;</code>. This means that the file is in the deaths folder. This item is in a bigger item section like this: <code>&lt;folder name="Our prince and mouse images" file="kid.dat" path="kid" palette="400" itemtype="image"&gt;</code>. Now we know that the folder that contained the image is in directory "kid" and its palette value is 400. Then just look at a resource where value="400" inside the folder of the same file, in this case file="kid.dat", so we'll find <code>&lt;item value="400" path="kid.pal" itemtype="palette"&gt;Resource number 400&lt;/item&gt;</code>. This means that a palette value 400 is correctly a palette and the path name is kid.pal.
 
 <p><dd><b><font color=red>Q:</font> How can I edit resources.xml?</b>
 
@@ -54,13 +54,13 @@
 
 <p><dd><b><font color=red>A:</font></b> What are you waiting? Send it! We may include it in the next release!
 
-<p><dd><b><font color=red>Q:</font> I edited resources.xml but now my compiled files are broken?</b>
+<p><dd><b><font color=red>Q:</font> I edited resources.xml but now my compiled files are broken</b>
 
 <p><dd><b><font color=red>A:</font></b> Use the provided resources.xml's, we have tested them a lot. In case you invested too much time in that and you don't want it to be wasted, send it, we have developed some tools to check, detect errors and fix broken resources.xml. Remember: <b>don't delete items</b> you don't know what are them for, if one item is missing or has another identification value, all imported DAT files using this item may be broken. Even ext files are needed.
 
 <p><dd><b><font color=red>Q:</font> PR doesn't work in my game set?</b>
 
-<p><dd><b><font color=red>A:</font></b> Current resources.xml file only supports POP 1.4. You may want to make your own resources.xml for your version, in that case, empty the current resources.xml you have, only leave the itemtypes and ?xml version tags and export the dat files. Exported files will be autodetected and saved in the unknown folder with the unknown.xml file. There it is the information of your dat file, you can add it to the resources.xml you made and edit the descriptions, etc.</a>.
+<p><dd><b><font color=red>A:</font></b> Current resources.xml file only supports POP 1.4. You may want to make your own resources.xml for your version, in that case, empty the current resources.xml you have, only leave the resources and ?xml version tags and export the dat files. Exported files will be autodetected and saved in the unknown folder with the unknown.xml file. There it is the information of your dat file, you can add it to the resources.xml you made and edit the descriptions, etc.</a>.
 
 <p><dd><b><font color=red>Q:</font> Ok, I've finished a graphic or level set, can I publish it?</b>
 
@@ -79,4 +79,4 @@
 (c) 2003 - Copyleft Princed Development Team
            http://www.princed.com.ar
 
-Last update: 2004-02-18 16:57 UTC-3</pre>
+Last update: 2005-06-08 23:11 UTC-3</pre>

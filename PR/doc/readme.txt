@@ -1,4 +1,4 @@
-Princed Resources v1.0-dev2
+Princed Resources v1.1
 (c) Copyright 2003 - 2005 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -134,7 +134,7 @@ Binary:
 	  Compression level 6. Size 11218 bytes. Time 1.506183 seconds.
 	  Compression level 7. Size 10932 bytes. Time 2.916612 seconds.
 
-	 Benchamrk using valgrind 
+	 Benchamrk using valgrind: 
 	  Compression level 1. Size 38031 bytes. Time 1.239898 seconds.
 	  Compression level 2. Size 23756 bytes. Time 1.244662 seconds.
 	  Compression level 3. Size 15912 bytes. Time 1.305006 seconds.
