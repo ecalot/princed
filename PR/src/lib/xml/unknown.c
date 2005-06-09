@@ -110,6 +110,11 @@ const char* getExtDesc(int type) {
 |                Partial Resource List Functions                |
 \***************************************************************/
 
+/* TODO: 'FP/vdungeon.dat@/vdungeon/chopper/behind pillar frame03.bmp' should also work as 
+ *       'FP/vdungeon.dat@vdungeon/chopper/behind pillar frame03.bmp'
+ *       do the nessesary arrangements
+ */
+
 static tResIdList partialList;
 
 int partialListActive() {
@@ -219,6 +224,7 @@ void freePartialList() {
 		if (partialList.list[i].idType==eString)
 			free(partialList.list[i].value.text);
 	}
+	free(partialList.list);
 	partialList.count=0;
 }
 
