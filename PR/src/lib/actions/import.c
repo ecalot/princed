@@ -144,7 +144,6 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 			positive number: number of missing files
 	*/
 
-	/*char vFileext[MAX_FILENAME_SIZE];*/
 	int                error,ok=0;
 	int                indexNumber;
 	char vFileext[MAX_FILENAME_SIZE];
@@ -210,3 +209,4 @@ int compile(const char* vFiledat, const char* vDirExt, tResourceList* r, int opt
 		return fullCompile(vFiledat,vDirExt,r,optionflag,vDatFileName,backupExtension);
 	}
 }
+
