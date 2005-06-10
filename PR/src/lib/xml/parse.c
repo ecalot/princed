@@ -162,7 +162,7 @@ int equalsIgnoreCase(const char s1[],const char s2[]) {
 int parseNext(char** pString, tTag* tag) {
 	/*
 	  PR_RESULT_ERR_XML_ATTR Attribute not recognized
-	  PR_RESULT_ERR_FILE_DAT_NOTFOUND No memory
+	  PR_RESULT_ERR_MEMORY No memory
 		PR_RESULT_ERR_XML_PARSING Parse error
 		0  if continue
 		1  if tag end
@@ -202,7 +202,7 @@ int parseNext(char** pString, tTag* tag) {
 
 	size=(long int)i-(long int)start; /* Note: casted to long for portability with 64 bits architectures */
 	attribute=(char*)malloc(1+size);
-	if (attribute==NULL) return PR_RESULT_ERR_FILE_DAT_NOTFOUND;
+	if (attribute==NULL) return PR_RESULT_ERR_MEMORY;
 	memcpy(attribute,start,size);
 	attribute[size]=0;
 
@@ -242,7 +242,7 @@ int parseNext(char** pString, tTag* tag) {
 		value=(char*)malloc(k+1);
 		if (value==NULL) {
 			free(attribute);
-			return PR_RESULT_ERR_FILE_DAT_NOTFOUND;
+			return PR_RESULT_ERR_MEMORY;
 		}
 		memcpy(value,aux,k);
 		value[k]=0;
@@ -251,13 +251,14 @@ int parseNext(char** pString, tTag* tag) {
 		value=(char*)malloc(1);
 		if (value==NULL) {
 			free(attribute);
-			return PR_RESULT_ERR_FILE_DAT_NOTFOUND;
+			return PR_RESULT_ERR_MEMORY;
 		}
 		value[0]=0;
 	}
 
 	if (attribFill(attribute,value,tag)) {
 		free(attribute);
+		free(value);
 		return PR_RESULT_ERR_XML_ATTR;
 	}
 	free(attribute);
@@ -267,13 +268,13 @@ int parseNext(char** pString, tTag* tag) {
 
 int getNextTag(char** pString, char** value) {
 	/*
-	  PR_RESULT_ERR_FILE_DAT_NOTFOUND No memory
+	  PR_RESULT_ERR_MEMORY No memory
 		PR_RESULT_ERR_XML_PARSING Parse error
-		0  if next item is a tag
-		1  if it was a text
-		2  if next item closes a tag
-		3  End of document
-		4  if there was no text
+		0  if next item is a tag (value allocated)
+		1  if it was a text (value allocated)
+		2  if next item closes a tag (value allocated)
+		3  End of document (value not allocated)
+		4  if there was no text (value not allocated)
 	*/
 	char* i=*pString;
 	int   result;
@@ -310,7 +311,7 @@ int getNextTag(char** pString, char** value) {
 
 		size=(int)((long int)i-(long int)start); /* Note: casted to long for portability with 64 bits architectures */
 		*value=(char*)malloc(size);
-		if (*value==NULL) return PR_RESULT_ERR_FILE_DAT_NOTFOUND;
+		if (*value==NULL) return PR_RESULT_ERR_MEMORY;
 		memcpy(*value,start,size-1);
 		(*value)[size-1]=0;
 		*pString=i-(!result);
@@ -322,7 +323,7 @@ int getNextTag(char** pString, char** value) {
 	if (start==i) return 4;
 	size=(int)((long int)i-(long int)start); /* Note: casted to long for portability with 64 bits architectures */
 	*value=(char*)malloc(1+size);
-	if (*value==NULL) return PR_RESULT_ERR_FILE_DAT_NOTFOUND;
+	if (*value==NULL) return PR_RESULT_ERR_MEMORY;
 	memcpy(*value,start,size);
 	(*value)[size]=0;
 	*pString=i;
@@ -333,7 +334,7 @@ int getNextTag(char** pString, char** value) {
 tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 	/* *error
 		PR_RESULT_ERR_XML_ATTR Attribute not recognized
-	  PR_RESULT_ERR_FILE_DAT_NOTFOUND No memory
+	  PR_RESULT_ERR_MEMORY No memory
 		PR_RESULT_ERR_XML_PARSING Parse error
 		0  if next item is a tag
 	*/
@@ -348,7 +349,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 
 	while (!((*error)=parseNext(p, tag)));
 
-	if ((*error)<0) return NULL; /* Fatal error */
+	if ((*error)<0) {freeTagStructure(tag);return NULL;} /* Fatal error */
 	/*	(*error)
 			1  if tag end
 			2  if end
@@ -378,7 +379,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 			/* Create new variable */
 			x=strlen(father->path)+strlen(tag->path)+2;
 			str=(char*)malloc(x);
-			if (str==NULL) {*error=2;return NULL;}
+			if (str==NULL) {*error=PR_RESULT_ERR_MEMORY;return NULL;}
 
 			/* Set variable and destroy old variables */
 			sprintf(str,"%s/%s",father->path,tag->path);
@@ -410,7 +411,6 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 					children=children->next;
 				}
 				if (*error) {freeTagStructure(tag); return NULL;}
-				/* Add error handling */
 				break;
 			case 1:
 				freeAllocation(tag->name);
@@ -455,7 +455,7 @@ void showTag(int n,tTag* t) {
 tTag* parseXmlFile(const char* vFile,int* error) {
 	/* error may take the following values:
 		PR_RESULT_ERR_XML_PARSING Parse error
-		PR_RESULT_ERR_FILE_DAT_NOTFOUND No memory
+		PR_RESULT_ERR_MEMORY No memory
 		PR_RESULT_ERR_XML_ATTR Attribute not recognized
 		PR_RESULT_ERR_XML_FILE File not found
 		0  no errors
