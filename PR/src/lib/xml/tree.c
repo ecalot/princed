@@ -196,32 +196,30 @@ void parseGivenPath(char* path) {
 /* Code taken from PR 0.1 */
 int getMaskToken(const char texto[],char token[],int* i,int k) {
 	int j=0;
-	/*Copiar el string hasta que se encuentre el token Espacio o se termine la linea.
-	//En caso de que no entre el texto en el token, lo deja truncado pero avanza i hasta el final*/
-	char entreComillas=0; /*flag que indica si se esta dentro de una cadena entre comillas, alterna entre 0 y 1 dependiendo de si se encuentran las comillas, en caso de valer 1 el while no se detiene*/
-	while ((((entreComillas^=(texto[(*i)]==34)) || (texto[*i]!=32)) && ((j<k)?(token[j++]=texto[(*i)++]):(texto[(*i)++]))));
-	/*Seteo el caracter nulo al final del token, incremento i y devuelvo el siguiente caracter del texto o 0 en caso de que este sea el nulo.*/
+	/* Copy text string until a space is found or the end of line is reached.
+	 * In case the text diesn't fit inside the token it is truncated, but i is increased until the end of the token */
+	char entreComillas=0; /* flag indicating if we are inside the quotation marks */
+	while ((((entreComillas^=(texto[(*i)]=='"')) || (texto[*i]!=' ')) && ((j<k)?(token[j++]=texto[(*i)++]):(texto[(*i)++]))));
 	token[j]='\0';
 	return (texto[((*i)++)-1]);
 }
 
-char matches1(const char* text,const char* mask,int ptext, int pmask) {
+int matches1(const char* text,const char* mask,int ptext, int pmask) {
 	/*
-		Esta funcion verifica que el texto pertenezca a la mascara,
-		no verifica espacios ya que eso debe ser parseado en la funcion
-		que la llama.
-		En caso de poseer * la funcion se vuelve recursiva.
-		 Optimizacion:
-		  1) Se contempla el caso del * multiple y se lo toma como simple
-		  para evitar la ejecucion de recursividad de O(n cuadrado).
-		  2) Se contempla el caso del * al final de la mascara, en dicho caso
-		  no ejecuta la recursividad y devuelve verdadero ya que, si se llego a
-		  ese punto, el texto matchea.
-		En caso de poseer " las ignora.
-		En caso de poseer ? contempla cualquier caracter (incluso ? y *).
+	 * Verify if the text matches in the mask.
+	 * In case a wildcar * is found it recurses to itself
+	 * Optimization:
+	 *  i) multiple contiguous wildcars are taken as single to avoid
+	 *     executing the recursivity of order O(n²) more extra times.
+	 *  ii) a wildcard at the end of the mask is taken as the end of the
+	 *     comparission. No recursivity is needed to know that is true.
+	 *  
+	 *  " are ignored
+	 *  ? is interpreted as any character (including * and ? itself)
+	 *
+	 *  Returns true in case it matches and false in case it doesn't
+	 */
 
-		Devuelve 1 en caso de que el caracter coincida y 0 en caso contrario.
-	*/
 	while (text[ptext]||mask[pmask]) {
 		if (mask[pmask]=='"') {
 			pmask++;
@@ -230,10 +228,10 @@ char matches1(const char* text,const char* mask,int ptext, int pmask) {
 			if (!text[ptext]) return 0;
 			ptext++;
 		} else if (mask[pmask]=='*') {
-			char aux;
-			while (mask[pmask++]=='*');
+			int aux;
+			while (mask[pmask++]=='*'); /* optimization i */
 			pmask--;
-			if (!mask[pmask]) return 1; /*acelera un poco el proceso para el caso particular de que termine en * */
+			if (!mask[pmask]) return 1; /* optimization ii */
 			while ((text[ptext]) && !(aux=matches1(text,mask,ptext++,pmask)));
 			return aux;
 		} else {
@@ -245,15 +243,15 @@ char matches1(const char* text,const char* mask,int ptext, int pmask) {
 	return (text[ptext]==mask[pmask]);
 }
 
-char matchesIn(const char* text,const char* mask) {
+int matchesIn(const char* text,const char* mask) {
 	int i=0;
 	char token[PARSING_MAX_TOKEN_SIZE];
 	char valor=0;
 
 	/*
-		Esta funcion se encarga de partir los espacios de la mascara y
-		llamar a una comparacion por cada parte
-	*/
+	 * matches in main function: partitionates the text using spaces and matches
+	 * each token against the text
+	 */
 	while (getMaskToken(mask,token,&i,PARSING_MAX_TOKEN_SIZE) && !(valor=(valor || matches1(text,token,0,0))));
 	return valor?1:matches1(text,token,0,0);
 }
@@ -261,10 +259,11 @@ char matchesIn(const char* text,const char* mask) {
 int isInThePartialList(const char* vFile, int value) {
 	/*
 		Cases:
-			"path/path@"                    all files are false
-			"path/path"                     all files are true
-			"path/path@12file/jjj.bmp,777"  only file "12file/jjj.bmp" and id 777 are true
-			"path/path@1,2,3"               only ids 1, 2 and 3 are true
+			"path/path@"                     all files are false
+			"path/path"                      all files are true
+			"path/path@12file/jjj.bmp,777"   only file "12file/jjj.bmp" and id 777 are true
+			"path/path@1,2,3"                only ids 1, 2 and 3 are true
+			"path/path@12file/?mage1*.bmp"   each file matching "12file/?mage1*.bmp" is true
 	*/
 	int i;
 	char* file;
