@@ -20,7 +20,7 @@
 
 /*
 xmlparse.c: Princed Resources : xml parsing functions
-¯¯¯¯¯
+¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 23 Oct 2003
 
@@ -57,7 +57,7 @@ extern FILE* outputStream;
 #define Separate while (IsSpace(*i)) i++
 #define NextWord(i) while (IsChar(*(i))) (i)++
 
-#define FillAttr(a,b) if (equalsIgnoreCase(attr,b)) { freeAllocation(a); (a)=(val); return 1;}
+#define FillAttr(a,b) if (equalsIgnoreCase(attr,b)) { freeAllocation(a); (a)=(val); return 0;}
 
 #define TotalInheritance(attribute) \
 		if ((tag->attribute==NULL)&&(father->attribute!=NULL)) {\
@@ -67,7 +67,7 @@ extern FILE* outputStream;
 		}
 
 
-#define ParseError return -1
+#define ParseError return PR_RESULT_ERR_XML_PARSING
 
 tTag* getTagStructure() {
 	/* initializes */
@@ -114,13 +114,13 @@ void freeTagStructure(tTag* t) {
 
 int attribFill(char* attr,char* val, tTag* t) {
 	/*
-		0: attribute mismatch
-		1: ok
+		PR_RESULT_ERR_XML_ATTR: attribute mismatch
+		0: ok
 	*/
 
 	if (equalsIgnoreCase(attr,"?")) {
 		free(val);
-		return 1;
+		return 0;
 	}
 
 	FillAttr(t->desc,"desc");
@@ -139,7 +139,7 @@ int attribFill(char* attr,char* val, tTag* t) {
 	FillAttr(t->number,"levelnumber"); /* levelnumber is a number alias */
 	FillAttr(t->number,"number");
 
-	return 0;
+	return PR_RESULT_ERR_XML_ATTR;
 }
 
 /****************************************************************\
@@ -161,9 +161,9 @@ int equalsIgnoreCase(const char s1[],const char s2[]) {
 /* Parse text functions */
 int parseNext(char** pString, tTag* tag) {
 	/*
-	  -3 Attribute not recognized
-	  -2 No memory
-		-1 Parse error
+	  PR_RESULT_ERR_XML_ATTR Attribute not recognized
+	  PR_RESULT_ERR_FILE_DAT_NOTFOUND No memory
+		PR_RESULT_ERR_XML_PARSING Parse error
 		0  if continue
 		1  if tag end
 		2  if end
@@ -202,7 +202,7 @@ int parseNext(char** pString, tTag* tag) {
 
 	size=(long int)i-(long int)start; /* Note: casted to long for portability with 64 bits architectures */
 	attribute=(char*)malloc(1+size);
-	if (attribute==NULL) return -2;
+	if (attribute==NULL) return PR_RESULT_ERR_FILE_DAT_NOTFOUND;
 	memcpy(attribute,start,size);
 	attribute[size]=0;
 
@@ -242,7 +242,7 @@ int parseNext(char** pString, tTag* tag) {
 		value=(char*)malloc(k+1);
 		if (value==NULL) {
 			free(attribute);
-			return -2;
+			return PR_RESULT_ERR_FILE_DAT_NOTFOUND;
 		}
 		memcpy(value,aux,k);
 		value[k]=0;
@@ -251,14 +251,14 @@ int parseNext(char** pString, tTag* tag) {
 		value=(char*)malloc(1);
 		if (value==NULL) {
 			free(attribute);
-			return -2;
+			return PR_RESULT_ERR_FILE_DAT_NOTFOUND;
 		}
 		value[0]=0;
 	}
 
-	if (!(attribFill(attribute,value,tag))) {
+	if (attribFill(attribute,value,tag)) {
 		free(attribute);
-		return -3;
+		return PR_RESULT_ERR_XML_ATTR;
 	}
 	free(attribute);
 	*pString=i;
@@ -267,8 +267,8 @@ int parseNext(char** pString, tTag* tag) {
 
 int getNextTag(char** pString, char** value) {
 	/*
-	  -2 No memory
-		-1 Parse error
+	  PR_RESULT_ERR_FILE_DAT_NOTFOUND No memory
+		PR_RESULT_ERR_XML_PARSING Parse error
 		0  if next item is a tag
 		1  if it was a text
 		2  if next item closes a tag
@@ -310,7 +310,7 @@ int getNextTag(char** pString, char** value) {
 
 		size=(int)((long int)i-(long int)start); /* Note: casted to long for portability with 64 bits architectures */
 		*value=(char*)malloc(size);
-		if (*value==NULL) return -2;
+		if (*value==NULL) return PR_RESULT_ERR_FILE_DAT_NOTFOUND;
 		memcpy(*value,start,size-1);
 		(*value)[size-1]=0;
 		*pString=i-(!result);
@@ -322,7 +322,7 @@ int getNextTag(char** pString, char** value) {
 	if (start==i) return 4;
 	size=(int)((long int)i-(long int)start); /* Note: casted to long for portability with 64 bits architectures */
 	*value=(char*)malloc(1+size);
-	if (*value==NULL) return -2;
+	if (*value==NULL) return PR_RESULT_ERR_FILE_DAT_NOTFOUND;
 	memcpy(*value,start,size);
 	(*value)[size]=0;
 	*pString=i;
@@ -332,9 +332,9 @@ int getNextTag(char** pString, char** value) {
 /* Parse Tree functions */
 tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 	/* *error
-		-3 Attribute not recognized
-	  -2 No memory
-		-1 Parse error
+		PR_RESULT_ERR_XML_ATTR Attribute not recognized
+	  PR_RESULT_ERR_FILE_DAT_NOTFOUND No memory
+		PR_RESULT_ERR_XML_PARSING Parse error
 		0  if next item is a tag
 	*/
 
@@ -409,7 +409,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 					children->next=makeTree(p,value,error,tag);
 					children=children->next;
 				}
-				if (*error) return NULL;
+				if (*error) {freeTagStructure(tag); return NULL;}
 				/* Add error handling */
 				break;
 			case 1:
@@ -418,11 +418,11 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 				break;
 			case 2:
 				/* "no errors" or "a wrong tag is closed" */
-				*error=-(!(equalsIgnoreCase(value,tag->tag)));
+				*error=(equalsIgnoreCase(value,tag->tag))?0:PR_RESULT_ERR_XML_PARSING;
 				free(value);
 				return tag;
 			case 3:
-				*error=-1; /* this tag wasn't closed */
+				*error=PR_RESULT_ERR_XML_PARSING; /* this tag wasn't closed */
 				return tag;
 				break;
 		}
@@ -454,10 +454,10 @@ void showTag(int n,tTag* t) {
 
 tTag* parseXmlFile(const char* vFile,int* error) {
 	/* error may take the following values:
-		-1 Parse error
-		-2 No memory
-		-3 Attribute not recognized
-		-4 File not found
+		PR_RESULT_ERR_XML_PARSING Parse error
+		PR_RESULT_ERR_FILE_DAT_NOTFOUND No memory
+		PR_RESULT_ERR_XML_ATTR Attribute not recognized
+		PR_RESULT_ERR_XML_FILE File not found
 		0  no errors
 	*/
 	char* p;
@@ -468,7 +468,7 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 	int size;
 
 	if (!(size=mLoadFileArray(vFile,(unsigned char**)(&l)))) {
-		*error=-4; /* File not open */
+		*error=PR_RESULT_ERR_XML_FILE; /* File not open */
 		return NULL;
 	}
 	/* bugfix moved to loadArray */ l[size-1]=0; /* The last character must be an end of line (the > is forbiden) */ 
@@ -505,19 +505,19 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 	} else {
 		freeTagStructure(tag);
 		free(father);
-		*error=-1;
+		*error=PR_RESULT_ERR_XML_PARSING;
 		return NULL;
 	}
 }
 
 static tTag* xmlStructure=NULL; /* Keeping the parsed file structure in memory will save a lot of time */
 static char lastFile[256]="";
+static int xmlStructureError=0;
 
 /* cache parsed structure. If null is passed the default name will be used */
 int parseStructure(const char* vFile,tTag** structure) {
 	/* Resources input xml tree. Private+abstract variable */
 	static const char defaultXmlFile[]=RES_XML_RESOURC_XML;
-	int error=0;
 
 	if (vFile==NULL) vFile=defaultXmlFile;
 	
@@ -525,13 +525,17 @@ int parseStructure(const char* vFile,tTag** structure) {
 	if (strcmp(lastFile,vFile)) {
 		/* if the file is different than the cached file */
 		freeParsedStructure(&xmlStructure);
-		xmlStructure=parseXmlFile(vFile,&error);
+		xmlStructure=parseXmlFile(vFile,&xmlStructureError);
 		strncpy(lastFile,vFile,256); /* remember the new cached filename */
 	}
 
-	if (error) xmlStructure=NULL;
-	*structure=xmlStructure;
-	return error;
+	if (!xmlStructureError) {
+		*structure=xmlStructure;
+	} else {
+		*structure=NULL;
+	}
+
+	return xmlStructureError;
 }
 
 void freeParsingCache() {
