@@ -19,8 +19,8 @@
 */
 
 /*
-extract.c: Princed Resources : DAT Extractor
-¯¯¯¯¯¯¯¯¯
+export.c: Princed Resources : DAT Extractor
+¯¯¯¯¯¯¯¯
  Copyright 2003-2005 Princed Development Team
   Created: 24 Aug 2003
 

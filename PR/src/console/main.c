@@ -66,9 +66,9 @@ int main (int argc, char **argv) {
 	char* extension        =NULL;
 	char* resFile          =NULL;
 	char* file;
-	char* exportErrors[]   =PR_TEXT_EXPORT_ARRAY;
+	/*char* exportErrors[]   =PR_TEXT_EXPORT_ARRAY;
 	char* classifyErrors[] =PR_TEXT_CLASSIFY_ARRAY;
-	char* importErrors[]   =PR_TEXT_IMPORT_ARRAY;
+	char* importErrors[]   =PR_TEXT_IMPORT_ARRAY;*/
 	int   c,result;
 	int   optionflag=0;
 
@@ -151,7 +151,6 @@ int main (int argc, char **argv) {
 	/* Show about or cgi stuff */
 	if (hasFlag(cgi_flag)) {
 		fprintf(outputStream,PR_CGI_TEXT1);
-	} else {
 		fprintf(outputStream,PR_ABOUT);
 	}
 
@@ -198,20 +197,25 @@ int main (int argc, char **argv) {
 					/* import */
 					fprintf(outputStream,PR_TEXT_TASK_COMPILE,file,dirName);
 					result=prImportDatOpt(file,dirName,resFile,optionflag,dat,extension);
+					/*
 					if (result>0) {
 						fprintf(outputStream,PR_TEXT_RESULT_ERR,result,result);
 					} else {
 						fprintf(outputStream,PR_TEXT_RESULT,importErrors[-result],result);
 					}
+					*/
+					fprintf(outputStream,"result: %d\n",result);
 				} else if (hasFlag(export_flag)) {
 					/* export */
-					fprintf(outputStream,PR_TEXT_TASK_EXTRACT,file,dirName);
+					/*fprintf(outputStream,PR_TEXT_TASK_EXTRACT,file,dirName);*/
 					result=prExportDatOpt(file,dirName,resFile,optionflag,dat,datAuthor,extension);
-					fprintf(outputStream,PR_TEXT_RESULT,exportErrors[-result],result);
+					/*fprintf(outputStream,PR_TEXT_RESULT,exportErrors[-result],result);*/
+					fprintf(outputStream,"result: %d\n",result);
 				} else {
 					/* classify */
 					result=prClassifyDat(file);
-					fprintf(outputStream,PR_TEXT_RESULT,classifyErrors[result+2],result);
+					/*fprintf(outputStream,PR_TEXT_RESULT,classifyErrors[result+2],result);*/
+					fprintf(outputStream,"result: %d\n",result);
 				}
 				free(file);
 				free(datfile);
@@ -222,10 +226,6 @@ int main (int argc, char **argv) {
 			fprintf(stderr,"Error, check the xml file\n");
 			break;
 		}
-		/*parseGivenPath(datFilePath);*/
-
-		/* Run main program */
-		/*prStart(optionflag,extension,dirName,resFile,datFilePath,datFileName,datAuthor,stdout);*/
 	}
 	freeParsingCache();
 	freeAllocation(datAuthor);

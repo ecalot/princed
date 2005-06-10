@@ -483,7 +483,7 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 	father=getTagStructure();
 	tag=makeTree(&p,value,error,father);
 
-	if (*error) {
+	if ((*error)<0) {
 		freeTagStructure(tag);
 		free(l);
 		free(father);
@@ -498,8 +498,8 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 		free(father);
 		return NULL; /* Fatal error will stop the execusion of the parsing */
 	}
-	if (*error==3) {
-		*error=0;
+	if (*error==3) { /* 3 means end of document */
+		*error=PR_RESULT_SUCCESS;
 		free(father);
 		return tag;
 	} else {

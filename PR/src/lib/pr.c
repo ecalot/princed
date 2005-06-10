@@ -140,10 +140,7 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 
 	/* Parse XML and export the file */
 	a=parseFile(vResFile,currentDatFileName,&r);
-	if (a<0) {
-		/* parsing errors */
-		a-=3;
-	} else {
+	if (a==PR_RESULT_SUCCESS) {
 		/* exporting errors/no errors */
 		a=extract(currentDatFile,vDirName,&r,opt,currentDatFileName,datAuthor,backupExtension);
 	}

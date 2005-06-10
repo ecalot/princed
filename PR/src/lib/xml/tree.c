@@ -235,7 +235,7 @@ void freePartialList() {
 int checkSum(const unsigned char* data,int size) {
 	unsigned char  checksum = 1;
 
-	/* calculates the checksum */
+	/* validates the checksum */
 	while (size--) checksum+=*(data++);
 	return !checksum;
 }
@@ -255,13 +255,12 @@ int parseFile(const char* vFile, const char* datFile, tResourceList *r) {
 	if ((error=parseStructure(vFile,&structure))) return error;
 
 	/* Use the xml structure to Generate the resource structure of the file */
-	/*emptyTable(r);*/
 	pass.datFile=datFile;
 	pass.r=r;
 	workTree(structure,&pass,workTag);
 
 	/* All done */
-	return 0;
+	return PR_RESULT_SUCCESS;
 }
 
 /***************************************************************\

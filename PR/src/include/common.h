@@ -78,8 +78,6 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 
 #define DEFAULT_BACKUP_EXTENSION "bak"
 
-/* Define max & min's */
-
 /***************************************************************\
 |                        L A N G U A G E                        |
 \***************************************************************/
@@ -177,6 +175,30 @@ PARSING_OPTRAW\
 
 #define hasFlag(a) (optionflag&(a))
 #define setFlag(a) optionflag|=(a)
+
+#define PR_RESULT_SUCCESS 0
+#define PR_RESULT_ERR_EXTRACTION -1
+#define PR_RESULT_ERR_FILE_DAT_NOTFOUND -2
+#define PR_RESULT_ERR_FILE_DAT_NOTOPEN -3
+#define PR_RESULT_ERR_FILE_NOTFOUND -4
+#define PR_RESULT_ERR_FILE_NOTOPEN -5
+#define PR_RESULT_ERR_INVALID_DAT -6
+#define PR_RESULT_ERR_MEMORY -7
+#define PR_RESULT_ERR_XML_ATTR -8
+#define PR_RESULT_ERR_XML_FILE -9
+#define PR_RESULT_ERR_XML_PARSING -10
+#define PR_RESULT_TYPE_1BINARY 1
+#define PR_RESULT_TYPE_1GRAPHIC_BAD 2
+#define PR_RESULT_TYPE_1GRAPHIC_PAL 3
+#define PR_RESULT_TYPE_1LEVEL 4
+#define PR_RESULT_TYPE_1PCS 5
+#define PR_RESULT_TYPE_1WAVE 6
+#define PR_RESULT_TYPE_2BINARY 11
+#define PR_RESULT_TYPE_2GRAPHIC_BAD 12
+#define PR_RESULT_TYPE_2GRAPHIC_PAL 13
+#define PR_RESULT_TYPE_2LEVEL 14
+#define PR_RESULT_TYPE_2PCS 15
+#define PR_RESULT_TYPE_2WAVE 16
 
 #endif
 
