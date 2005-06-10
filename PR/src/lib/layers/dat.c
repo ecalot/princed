@@ -297,10 +297,10 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 
 	/* Open file */
 	readDatFileSize=mLoadFileArray(vFiledat,&readDatFile);
-	if (!readDatFileSize) return -2;
+	if (!readDatFileSize) return PR_RESULT_ERR_FILE_DAT_NOTOPEN;
 	if (readDatFileSize<=6) {
 		free(readDatFile);
-		return -1;
+		return PR_RESULT_ERR_INVALID_DAT;
 	}
 
 	/* read header  */
@@ -310,16 +310,16 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	/* verify dat format: the index offset belongs to the file and the file size is the index size plus the index offset */
 	if ((indexOffset>readDatFileSize)&&((indexOffset+indexSize)!=readDatFileSize)) {
 		free(readDatFile);
-		return -1; /* this is not a valid prince dat file */
+		return PR_RESULT_ERR_INVALID_DAT; /* this is not a valid prince dat file */
 	}
 
 	/* create cursor */
 	readIndexCursor=dat_createCursor(readDatFile+indexOffset,indexSize,numberOfItems);
 
 	/* pop version check */
-	if (!dat_readCursorGetVersion(readIndexCursor)) return -1;
+	if (!dat_readCursorGetVersion(readIndexCursor)) return PR_RESULT_ERR_INVALID_DAT;
 
-	return 0;
+	return PR_RESULT_SUCCESS;
 }
 
 void dat_readRes(tResource* res) {
@@ -373,9 +373,9 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 		fwriteshort(&fill,writeDatFile); /* Fill the file with 6 starting null bytes */
 		fwriteshort(&fill,writeDatFile); /* Fill the file with 6 starting null bytes */
 		fwriteshort(&fill,writeDatFile); /* Fill the file with 6 starting null bytes */
-		return 1;
+		return PR_RESULT_SUCCESS;
 	} else {
-		return 0;
+		return PR_RESULT_ERR_FILE_DAT_NOTOPEN_W;
 	}
 }
 
@@ -470,12 +470,13 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 #ifdef PR_DAT_INCLUDE_DATREAD
 #ifdef PR_DAT_INCLUDE_DATWRITE
 int mRWBeginDatFile(const char* vFile, unsigned short int *numberOfItems, int optionflag) {
-	if (mReadBeginDatFile(numberOfItems,vFile)) return -2;
-	if (!mWriteBeginDatFile(vFile,optionflag)) {
+	int error;
+	if ((error=mReadBeginDatFile(numberOfItems,vFile))) return error;
+	if ((error=mWriteBeginDatFile(vFile,optionflag))) {
 		mReadCloseDatFile();
-		return -1;
+		return error;
 	}
-	return 0;
+	return PR_RESULT_SUCCESS;
 }
 #endif
 #endif

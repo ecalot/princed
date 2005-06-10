@@ -217,10 +217,7 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 
 	/* Parse XML and import files */
 	a=parseFile(vResFile,currentDatFileName,&r);
-	if (a<0) {
-		/* parsing errors */
-		a-=2;
-	} else {
+	if (a==PR_RESULT_SUCCESS) {
 		/* importing errors/no errors */
 		a=compile (currentDatFile, vDirName,&r,opt,currentDatFileName,backupExtension);
 	}

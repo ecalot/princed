@@ -68,15 +68,17 @@ extern FILE* outputStream;
 int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension) {
 	char               vFileext[MAX_FILENAME_SIZE];
 	int                indexNumber;
-	int                ok=1;
+	int                ok;
 	tImage             image; /* this is used to make a persistent palette */
 	unsigned short int numberOfItems;
 	tResourceList      paletteBuffer;
 	tResourceId        bufferedPalette={0,""};
 	tResource          res;
+	int                count=0;
 
 	/* Initialize abstract variables to read this new DAT file */
-	if (mReadBeginDatFile(&numberOfItems,vFiledat)) return -1;
+	if ((ok=mReadBeginDatFile(&numberOfItems,vFiledat))) return ok;
+	ok=1;
 
 	/* initialize palette buffer */
 	paletteBuffer=resourceListCreate(1);
@@ -86,7 +88,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	/* main loop */
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
 
-		if (!mReadFileInDatFile(&res,indexNumber)) return -3; /* Read error */
+		if (!mReadFileInDatFile(&res,indexNumber)) return PR_RESULT_ERR_INVALID_DAT; /* Read error */
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
 
 		/* add to res more information from the resource list */
@@ -151,6 +153,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 						fprintf(outputStream,PR_TEXT_EXPORT_ERROR,getFileNameFromPath(vFileext));
 					}
 				}
+				if (ok) count++;
 			} else {
 				/* if the dat file is unknown, add it in the xml */
 				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension);
@@ -165,6 +168,6 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 
 	/* Close unknownXML */
 	endUnknownXml(optionflag,backupExtension);
-	return ok-1;
+	return ok?count:PR_RESULT_ERR_EXTRACTION;
 }
 

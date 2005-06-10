@@ -19,8 +19,8 @@
 */
 
 /*
-compile.c: Princed Resources : DAT Compiler
-¯¯¯¯¯¯¯¯¯
+import.c: Princed Resources : DAT Compiler
+¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 
@@ -96,7 +96,7 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 	const tResource* res;
 	tResource newRes;
 
-	if (!mWriteBeginDatFile(vFiledat,optionflag)) return -1; /* File couldn't be open */
+	if (mWriteBeginDatFile(vFiledat,optionflag)) return PR_RESULT_ERR_FILE_DAT_NOTOPEN_W; /* File couldn't be open */
 	
 	list_firstCursor(r);
 	while ((res=list_getCursor(r))) {
@@ -134,7 +134,7 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 	return error;
 }
 
-#define RW_ERROR {mRWCloseDatFile(1);return 0;}
+#define RW_ERROR {mRWCloseDatFile(1);return PR_RESULT_ERR_FILE_NOTOPEN;}
 int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension) {
 	/*
 		Return values:
