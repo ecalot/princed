@@ -297,7 +297,20 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 
 	/* Open file */
 	readDatFileSize=mLoadFileArray(vFiledat,&readDatFile);
-	if (!readDatFileSize) return PR_RESULT_ERR_FILE_DAT_NOTOPEN;
+	if (readDatFileSize<=0) {
+		switch (readDatFileSize) {
+		case PR_RESULT_ERR_FILE_NOT_READ_ACCESS:
+			return PR_RESULT_ERR_FILE_DAT_NOT_READ_ACCESS;
+		case PR_RESULT_ERR_FILE_NOT_OPEN_WASDIR:
+			return PR_RESULT_ERR_FILE_DAT_NOT_OPEN_WASDIR;
+		case PR_RESULT_ERR_FILE_NOT_OPEN_NOTFOUND:
+			return PR_RESULT_ERR_FILE_DAT_NOT_OPEN_NOTFOUND;
+		case 0:
+			return PR_RESULT_ERR_INVALID_DAT;
+		default:
+			return readDatFileSize;
+		}
+	}
 	if (readDatFileSize<=6) {
 		free(readDatFile);
 		return PR_RESULT_ERR_INVALID_DAT;
@@ -375,7 +388,7 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 		fwriteshort(&fill,writeDatFile); /* Fill the file with 6 starting null bytes */
 		return PR_RESULT_SUCCESS;
 	} else {
-		return PR_RESULT_ERR_FILE_DAT_NOTOPEN_W;
+		return PR_RESULT_ERR_FILE_DAT_NOT_WRITE_ACCESS;
 	}
 }
 

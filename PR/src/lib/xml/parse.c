@@ -467,7 +467,7 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 	tTag* father;
 	int size;
 
-	if (!(size=mLoadFileArray(vFile,(unsigned char**)(&l)))) {
+	if (((size=mLoadFileArray(vFile,(unsigned char**)(&l)))<=0)) {
 		*error=PR_RESULT_ERR_XML_FILE; /* File not open */
 		return NULL;
 	}

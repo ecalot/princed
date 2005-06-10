@@ -43,7 +43,7 @@ tasks.c: Princed Resources : Classify a DAT file
 |                    Get the type of a DAT file                 |
 \***************************************************************/
 
-#define READ_ERROR {mReadCloseDatFile();return 0;}
+#define READ_ERROR {mReadCloseDatFile();return PR_RESULT_ERR_INVALID_DAT;}
 
 /* TODO: centralize all return values in defines. Change the interfaces. */
 
@@ -53,10 +53,10 @@ int prClassifyDat(const char* vFiledat) {
 	unsigned short int numberOfItems;
 	tPopVersion        popVersion;
 	tResource          res;
-	int                ok;
+	int                error;
 
 	/* Initialize abstract variables to read this new DAT file */
-	if ((ok=mReadBeginDatFile(&numberOfItems,vFiledat))) return ok+1; /* -1 if not found or empty, 0 if invalid */
+	if ((error=mReadBeginDatFile(&numberOfItems,vFiledat))) return error;
 
 	popVersion=mReadGetVersion();
 
@@ -88,6 +88,7 @@ int prClassify(const char* fileName) {
 		
 		/* let's get it's content and see what it is */
 		fileSize=mLoadFileArray(fileName,&fileData);
+		if (fileSize<=0) return fileSize;
 		
 		/* 2) let's compare the size with a .sav size */
 		if (fileSize==8) {

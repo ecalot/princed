@@ -66,9 +66,8 @@ int main (int argc, char **argv) {
 	char* extension        =NULL;
 	char* resFile          =NULL;
 	char* file;
-	/*char* exportErrors[]   =PR_TEXT_EXPORT_ARRAY;
-	char* classifyErrors[] =PR_TEXT_CLASSIFY_ARRAY;
-	char* importErrors[]   =PR_TEXT_IMPORT_ARRAY;*/
+	char* errors[]         =PR_TEXT_ERRORS;
+	char* types[]          =PR_TEXT_TYPES;
 	int   c,result;
 	int   optionflag=0;
 
@@ -197,25 +196,29 @@ int main (int argc, char **argv) {
 					/* import */
 					fprintf(outputStream,PR_TEXT_TASK_COMPILE,file,dirName);
 					result=prImportDatOpt(file,dirName,resFile,optionflag,dat,extension);
-					/*
 					if (result>0) {
 						fprintf(outputStream,PR_TEXT_RESULT_ERR,result,result);
 					} else {
-						fprintf(outputStream,PR_TEXT_RESULT,importErrors[-result],result);
+						fprintf(outputStream,PR_TEXT_RESULT,errors[-result],result);
 					}
-					*/
-					fprintf(outputStream,"result: %d\n",result);
 				} else if (hasFlag(export_flag)) {
 					/* export */
-					/*fprintf(outputStream,PR_TEXT_TASK_EXTRACT,file,dirName);*/
+					fprintf(outputStream,PR_TEXT_TASK_EXTRACT,file,dirName);
 					result=prExportDatOpt(file,dirName,resFile,optionflag,dat,datAuthor,extension);
-					/*fprintf(outputStream,PR_TEXT_RESULT,exportErrors[-result],result);*/
-					fprintf(outputStream,"result: %d\n",result);
+					if (result>0) {
+						fprintf(outputStream,PR_TEXT_EXPORT_OK,result,result);
+					} else {
+						fprintf(outputStream,PR_TEXT_RESULT,errors[-result],result);
+					}
 				} else {
 					/* classify */
+					fprintf(outputStream,PR_TEXT_TASK_CLASSIFY,file);
 					result=prClassifyDat(file);
-					/*fprintf(outputStream,PR_TEXT_RESULT,classifyErrors[result+2],result);*/
-					fprintf(outputStream,"result: %d\n",result);
+					if (result>0) {
+						fprintf(outputStream,"Result: Detected as %s (%d)\n",types[result],result);
+					} else {
+						fprintf(outputStream,PR_TEXT_RESULT,errors[-result],result);
+					}
 				}
 				free(file);
 				free(datfile);

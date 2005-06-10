@@ -108,6 +108,8 @@ int mFormatImportPal(tResource *res,const char* vFile) {
 	/* Read sample */
 	sprintf(aux,"%s.more",vFile);
 	sample1=mLoadFileArray(aux,&pals1);
+	if (sample1<0) return sample1;
+
 	if (sample1==100) {
 		pals=pals1;
 	} else {

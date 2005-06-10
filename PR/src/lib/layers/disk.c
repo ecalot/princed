@@ -155,6 +155,7 @@ void addFileToOpenFilesList(const char* fileName,int hasBackup) {
 
 	if (hasBackup) {
 		newNode->size=mLoadFileArray(fileName,&(newNode->content));
+		if (newNode->size<0) newNode->size=0;
 	} else {
 		newNode->size=0;
 	}
@@ -406,18 +407,25 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 	/* declare variables */
 	FILE *fp;
 	int  aux;
+	const char* file=repairFolders(vFile);
+	whatIs f;
 
+	/* check type */
+	f=isDir(file);
+	if (f==eDirectory) return PR_RESULT_ERR_FILE_NOT_OPEN_WASDIR;
+	if (f==eNotFound)  return PR_RESULT_ERR_FILE_NOT_OPEN_NOTFOUND;
+	
 	/* Open the file */
-	if ((fp=fopen(repairFolders(vFile),"rb"))==NULL) {
-		return 0;
+	if ((fp=fopen(file,"rb"))==NULL) {
+		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
 	} else {
 		/* get file size */
 		fseek(fp,0,SEEK_END);
 		aux=ftell(fp);
-		if ( !aux || (aux>SIZE_OF_FILE) || ( ((*array=(unsigned char*)malloc(aux+1))==NULL) ) ) {
-			/* if the file was null or bigger than the max size or couldn't allocate the file in memory */
+		if (!aux) {fclose(fp);return 0;}
+		if ((*array=(unsigned char*)malloc(aux+1))==NULL) {
 			fclose(fp);
-			return 0;
+			return PR_RESULT_ERR_MEMORY; /* this is probable to happen in big files! */
 		} else {
 			/* if the file was successfully open */
 			fseek(fp,0,SEEK_SET);

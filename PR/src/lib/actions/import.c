@@ -96,7 +96,7 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 	const tResource* res;
 	tResource newRes;
 
-	if (mWriteBeginDatFile(vFiledat,optionflag)) return PR_RESULT_ERR_FILE_DAT_NOTOPEN_W; /* File couldn't be open */
+	if (mWriteBeginDatFile(vFiledat,optionflag)) return PR_RESULT_ERR_FILE_DAT_NOT_WRITE_ACCESS; /* File couldn't be open */
 	
 	list_firstCursor(r);
 	while ((res=list_getCursor(r))) {
@@ -107,7 +107,7 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 		if (hasFlag(raw_flag)) newRes.type=0; /* compile from raw */
 		getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension);
 		/* the file is in the archive, so i'll add it to the main dat body */
-		if ((newRes.size=((unsigned short)mLoadFileArray(vFileext,&newRes.data)))) {
+		if ((newRes.size=((unsigned short)mLoadFileArray(vFileext,&newRes.data))<=0)) {
 			if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
 				error++;
@@ -134,7 +134,7 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 	return error;
 }
 
-#define RW_ERROR {mRWCloseDatFile(1);return PR_RESULT_ERR_FILE_NOTOPEN;}
+#define RW_ERROR {mRWCloseDatFile(1);return error;}
 int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension) {
 	/*
 		Return values:
@@ -144,7 +144,7 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 			positive number: number of missing files
 	*/
 
-	int                error,ok=0;
+	int                error,errors=0,ok=0;
 	int                indexNumber;
 	char vFileext[MAX_FILENAME_SIZE];
 	unsigned short int numberOfItems;
@@ -156,8 +156,7 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 
 	/* main loop */
 	for (indexNumber=0;(indexNumber<numberOfItems);indexNumber++) {
-		if (!mReadFileInDatFile(&res,indexNumber)) 
-			RW_ERROR; /* Read error */
+		if ((error=mReadFileInDatFile(&res,indexNumber))) return error; /* Read error */
 
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix * TODO: move to the dat layer? */
 
@@ -177,7 +176,7 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 				newRes.type=res.type;
 				if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {
 					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
-					error++;
+					errors++;
 				} else {
 					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
 					ok++;
@@ -185,7 +184,7 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 				free(newRes.data);
 			} else {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
-				error++;
+				errors++;
 			}
 		} else {
 			/* the file wasn't in the partial list, so I'll re-copy it from the open dat file */
@@ -197,8 +196,8 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 	/* Close dat file */
 	mRWCloseDatFile(0);
 
-	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,error);
-	return error;
+	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,errors);
+	return errors;
 }
 
 int compile(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension) {

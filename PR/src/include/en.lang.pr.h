@@ -69,6 +69,7 @@ pr.h: Princed Resources : English language strings
 #define PR_TEXT_IMPORT_PLV_WARN   "Warning: PLV file may be corrupt\n"
 
 #define PR_TEXT_EXPORT_WORKING    "'%s' successfully exported\n"
+#define PR_TEXT_EXPORT_OK         "%d files successfully exported (%d)\n"
 #define PR_TEXT_EXPORT_ERROR      "'%s' has errors, aborting...\n"
 #define PR_TEXT_EXPORT_BMP_WARN   "Warning: Extracted file may be corrupt\n"
 
@@ -76,20 +77,22 @@ pr.h: Princed Resources : English language strings
 |                        Text Output Arrays                     |
 \***************************************************************/
 
-#define PR_TEXT_EXPORT_ARRAY {\
-"Ok",\
+#define PR_TEXT_ERRORS {\
+"Success",\
+"-1","-2","-3","-4","-5","-6","-7","-8","-9","-10",\
+"-11","-12","-13","-14","-15","-16","-17","-18","-19","-20"}
+
+				/*
 "Error accessing a file",\
 "Memory error in extraction",\
 "Invalid DAT file",\
 "XML Parsing error",\
 "Memory error in parsing",\
 "XML Attribute not recognized",\
-"XML File not found"}
+"XML File not found"}*/
 
-#define PR_TEXT_CLASSIFY_ARRAY {\
-"Memory error",\
-"File not found or no access error",\
-"Not a valid DAT file",\
+#define PR_TEXT_TYPES {\
+NULL,\
 "Levels file",\
 "Graphic DAT file without palette",\
 "Waves/Digital sound file",\
