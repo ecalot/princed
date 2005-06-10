@@ -1410,61 +1410,59 @@ resources.xml: Princed Resources : Resource tree
       pop2: bird.dat
   -->
  <folder index="pahs" name="the pop2 bird guard" file="bird.dat" type="image" path="bird" palette="750" paletteindex="clap">
-  <item value="750" index="marf" path="binary001.bin" type="binary">Unknown binary 1</item>
-  <item value="750" index="clap" path="binary002.bin" type="binary">Unknown binary 2</item>
   <item value="750" index="slap" path="bird.pal" type="palette">The bird palette</item>
   <folder path="fighting">
-   <item value="751" path="751.bmp" type="image">frame 751</item>
-   <item value="752" path="752.bmp" type="image">frame 752</item>
-   <item value="753" path="753.bmp" type="image">frame 753</item>
-   <item value="754" path="754.bmp" type="image">frame 754</item>
-   <item value="755" path="755.bmp" type="image">frame 755</item>
-   <item value="756" path="756.bmp" type="image">frame 756</item>
-   <item value="757" path="757.bmp" type="image">frame 757</item>
-   <item value="758" path="758.bmp" type="image">frame 758</item>
-   <item value="759" path="759.bmp" type="image">frame 759</item>
-   <item value="760" path="760.bmp" type="image">frame 760</item>
-   <item value="761" path="761.bmp" type="image">frame 761</item>
-   <item value="762" path="762.bmp" type="image">frame 762</item>
-   <item value="763" path="763.bmp" type="image">frame 763</item>
-   <item value="764" path="764.bmp" type="image">frame 764</item>
-   <item value="765" path="765.bmp" type="image">frame 765</item>
-   <!-- staying --><item value="766" path="766.bmp" type="image">frame 766</item>
-   <item value="767" path="767.bmp" type="image">frame 767</item>
-   <item value="768" path="768.bmp" type="image">frame 768</item>
-   <item value="769" path="769.bmp" type="image">frame 769</item>
-   <item value="770" path="770.bmp" type="image">frame 770</item>
+   <item value="751" path="frame01.bmp" type="image">Frame 01 (751)</item>
+   <item value="752" path="frame02.bmp" type="image">Frame 02 (752)</item>
+   <item value="753" path="frame03.bmp" type="image">Frame 03 (753)</item>
+   <item value="754" path="frame04.bmp" type="image">Frame 04 (754)</item>
+   <item value="755" path="frame05.bmp" type="image">Frame 05 (755)</item>
+   <item value="756" path="frame06.bmp" type="image">Frame 06 (756)</item>
+   <item value="757" path="frame07.bmp" type="image">Frame 07 (757)</item>
+   <item value="758" path="frame08.bmp" type="image">Frame 08 (758)</item>
+   <item value="759" path="frame09.bmp" type="image">Frame 09 (759)</item>
+   <item value="760" path="frame10.bmp" type="image">Frame 10 (760)</item>
+   <item value="761" path="frame11.bmp" type="image">Frame 11 (761)</item>
+   <item value="762" path="frame12.bmp" type="image">Frame 12 (762)</item>
+   <item value="763" path="frame13.bmp" type="image">Frame 13 (763)</item>
+   <item value="764" path="frame14.bmp" type="image">Frame 14 (764)</item>
+   <item value="765" path="frame15.bmp" type="image">Frame 15 (765)</item>
+   <item value="766" path="staying01.bmp" type="image">Frame 01 (766)</item>
+   <item value="767" path="frame16.bmp" type="image">Frame 16 (767)</item>
+   <item value="768" path="frame17.bmp" type="image">Frame 17 (768)</item>
+   <item value="769" path="frame18.bmp" type="image">Frame 18 (769)</item>
+   <item value="770" path="frame19.bmp" type="image">Frame 19 (770)</item>
    <!-- below: hitted during fight -->
-   <item value="771" path="771.bmp" type="image">frame 771</item>
-   <item value="772" path="772.bmp" type="image">frame 772</item>
-   <item value="773" path="773.bmp" type="image">frame 773</item>
+   <item value="771" path="frame20.bmp" type="image">Frame 20 (771)</item>
+   <item value="772" path="frame21.bmp" type="image">Frame 21 (772)</item>
+   <item value="773" path="frame22.bmp" type="image">Frame 22 (773)</item>
   </folder>
-  <folder path="killed_by_sword">
-   <item value="774" path="image024.bmp" type="image">Unknown image 24</item>
-   <item value="775" path="image025.bmp" type="image">Unknown image 25</item>
-   <item value="776" path="image026.bmp" type="image">Unknown image 26</item>
-   <item value="777" path="image027.bmp" type="image">Unknown image 27</item>
-   <item value="778" path="image028.bmp" type="image">Unknown image 28</item>
-   <!-- ITEM 779 MOVED DOWN !!! -->
+  <folder path="dying_of_sword">
+   <item value="774" path="frame01.bmp" type="image">Frame 01 (774)</item>
+   <item value="775" path="frame02.bmp" type="image">Frame 02 (775)</item>
+   <item value="776" path="frame03.bmp" type="image">Frame 03 (776)</item>
+   <item value="777" path="frame04.bmp" type="image">Frame 04 (777)</item>
+   <item value="778" path="frame05.bmp" type="image">Frame 05 (778)</item>
+   <item value="779" path="deadbody01.bmp" type="image">Dead body 01 (779)</item>
+   <item value="946" path="deadbody02.bmp" type="image">Dead body 02 (946)</item>
+   <item value="947" path="deadbody03.bmp" type="image">Dead body 03 (947)</item>
+   <item value="948" path="deadbody04.bmp" type="image">Dead body 04 (948)</item>
+   <item value="949" path="deadbody05.bmp" type="image">Dead body 05 (949)</item>
   </folder>
-  <folder path="killed_by_guillotine">
-   <item value="780" path="image030.bmp" type="image">Unknown image 30</item>
-   <item value="781" path="image031.bmp" type="image">Unknown image 31</item>
-   <item value="782" path="image032.bmp" type="image">Unknown image 32</item>
-   <item value="783" path="image033.bmp" type="image">Unknown image 33</item>
-   <item value="784" path="image034.bmp" type="image">Unknown image 34</item>
+  <folder path="dying_of_traps">
+   <item value="785" path="spikes101.bmp" type="image">Spikes 1 01 (785)</item>
+   <item value="786" path="spikes102.bmp" type="image">Spikes 1 02 (786)</item>
+   <item value="787" path="spikes103.bmp" type="image">Spikes 1 03 (787)</item>
+   <item value="788" path="spikes201.bmp" type="image">Spikes 2 01 (788)</item>
+   <item value="789" path="spikes202.bmp" type="image">Spikes 2 02 (789)</item>
+   <item value="790" path="spikes203.bmp" type="image">Spikes 2 03 (790)</item>
+   <item value="780" path="guillotine01.bmp" type="image">Guillotine 01 (780)</item>
+   <item value="781" path="guillotine02.bmp" type="image">Guillotine 02 (781)</item>
+   <item value="782" path="guillotine03.bmp" type="image">Guillotine 03 (782)</item>
+   <item value="783" path="guillotine04.bmp" type="image">Guillotine 04 (783)</item>
+   <item value="784" path="guillotine05.bmp" type="image">Guillotine 05 (784)</item>
   </folder>
-  <folder path="killed_by_spikes_back">
-   <item value="785" path="image035.bmp" type="image">frame 01 (785)</item>
-   <item value="786" path="image036.bmp" type="image">frame 02 (786)</item>
-   <item value="787" path="image037.bmp" type="image">frame 03 (787)</item>
-  </folder>
-  <folder path="killed_by_spikes_forward">
-   <item value="788" path="image038.bmp" type="image">Unknown image 38</item>
-   <item value="789" path="image039.bmp" type="image">Unknown image 39</item>
-   <item value="790" path="image040.bmp" type="image">Unknown image 40</item>
-  </folder>
-  <folder path="_invalid_data">
+  <folder path="binary">
    <item value="791" path="pcspeaker002.pcs" type="pcspeaker">Unknown pcspeaker 2</item>
    <item value="792" path="pcspeaker003.pcs" type="pcspeaker">Unknown pcspeaker 3</item>
    <item value="793" path="pcspeaker004.pcs" type="pcspeaker">Unknown pcspeaker 4</item>
@@ -1524,83 +1522,76 @@ resources.xml: Princed Resources : Resource tree
    <item value="847" path="pcspeaker058.pcs" type="pcspeaker">Unknown pcspeaker 58</item>
    <item value="848" path="pcspeaker059.pcs" type="pcspeaker">Unknown pcspeaker 59</item>
    <item value="849" path="pcspeaker060.pcs" type="pcspeaker">Unknown pcspeaker 60</item>
+   <item value="750" index="lphs" path="binary003.bin" type="binary">Unknown binary 3</item>
+   <item value="750" index="marf" path="binary001.bin" type="binary">Unknown binary 1</item>
+   <item value="750" index="clap" path="binary002.bin" type="binary">Unknown binary 2</item>
   </folder>
-  <folder path="run">
-   <!-- TODO: Divide this into two folders: start run   and   run -->
-   <item value="891" path="image041.bmp" type="image">Unknown image 41</item>
-   <item value="892" path="image042.bmp" type="image">Unknown image 42</item>
-   <item value="893" path="image043.bmp" type="image">Unknown image 43</item>
-   <item value="894" path="image044.bmp" type="image">Unknown image 44</item>
-   <item value="895" path="image045.bmp" type="image">Unknown image 45</item>
-   <item value="896" path="image046.bmp" type="image">Unknown image 46</item>
-   <item value="897" path="image047.bmp" type="image">Unknown image 47</item>
-   <item value="898" path="image048.bmp" type="image">Unknown image 48</item>
-   <item value="899" path="image049.bmp" type="image">Unknown image 49</item>
-   <item value="900" path="image050.bmp" type="image">Unknown image 50</item>
-   <item value="901" path="image051.bmp" type="image">Unknown image 51</item>
-   <item value="902" path="image052.bmp" type="image">Unknown image 52</item>
-   <item value="903" path="image053.bmp" type="image">Unknown image 53</item>
-   <item value="904" path="image054.bmp" type="image">Unknown image 54</item>
-   <!-- TODO: what's this below? -->
+  <folder path="running">
+   <item value="891" path="startrun01.bmp" type="image">Start running - frame 01 (891)</item>
+   <item value="892" path="startrun02.bmp" type="image">Start running - frame 02 (892)</item>
+   <item value="893" path="startrun03.bmp" type="image">Start running - frame 03 (893)</item>
+   <item value="894" path="startrun04.bmp" type="image">Start running - frame 04 (894)</item>
+   <item value="895" path="startrun05.bmp" type="image">Start running - frame 05 (895)</item>
+   <item value="896" path="startrun06.bmp" type="image">Start running - frame 06 (896)</item>
+   <item value="897" path="frame01.bmp" type="image">Frame 01 (897)</item>
+   <item value="898" path="frame02.bmp" type="image">Frame 02 (898)</item>
+   <item value="899" path="frame03.bmp" type="image">Frame 03 (899)</item>
+   <item value="900" path="frame04.bmp" type="image">Frame 04 (900)</item>
+   <item value="901" path="frame05.bmp" type="image">Frame 05 (901)</item>
+   <item value="902" path="frame06.bmp" type="image">Frame 06 (902)</item>
+   <item value="903" path="frame07.bmp" type="image">Frame 07 (903)</item>
+   <item value="904" path="frame08.bmp" type="image">Frame 08 (904)</item>
+  </folder>
+  <folder path="_hmm_whats_these">
    <item value="905" path="image055.bmp" type="image">Unknown image 55</item>
    <item value="906" path="image056.bmp" type="image">Unknown image 56</item>
   </folder>
   <folder path="long_jump">
-   <item value="907" path="image057.bmp" type="image">Unknown image 57</item>
-   <item value="908" path="image058.bmp" type="image">Unknown image 58</item>
-   <item value="909" path="image059.bmp" type="image">Unknown image 59</item>
-   <item value="910" path="image060.bmp" type="image">Unknown image 60</item>
-   <item value="911" path="image061.bmp" type="image">Unknown image 61</item>
-   <item value="912" path="image062.bmp" type="image">Unknown image 62</item>
-   <item value="913" path="image063.bmp" type="image">Unknown image 63</item>
-   <item value="914" path="image064.bmp" type="image">Unknown image 64</item>
-   <item value="915" path="image065.bmp" type="image">Unknown image 65</item>
-   <item value="916" path="image066.bmp" type="image">Unknown image 66</item>
-   <item value="917" path="image067.bmp" type="image">Unknown image 67</item>
+   <item value="907" path="frame01.bmp" type="image">Frame 01 (907)</item>
+   <item value="908" path="frame02.bmp" type="image">Frame 02 (908)</item>
+   <item value="909" path="frame03.bmp" type="image">Frame 03 (909)</item>
+   <item value="910" path="frame04.bmp" type="image">Frame 04 (910)</item>
+   <item value="911" path="frame05.bmp" type="image">Frame 05 (911)</item>
+   <item value="912" path="frame06.bmp" type="image">Frame 06 (912)</item>
+   <item value="913" path="frame07.bmp" type="image">Frame 07 (913)</item>
+   <item value="914" path="frame08.bmp" type="image">Frame 08 (914)</item>
+   <item value="915" path="frame09.bmp" type="image">Frame 09 (915)</item>
+   <item value="916" path="frame10.bmp" type="image">Frame 10 (916)</item>
+   <item value="917" path="frame11.bmp" type="image">Frame 11 (917)</item>
+   <!-- landing below -->
+   <item value="924" path="frame12.bmp" type="image">Frame 12 (924)</item>
+   <item value="925" path="frame13.bmp" type="image">Frame 13 (925)</item>
+   <item value="926" path="frame14.bmp" type="image">Frame 14 (926)</item>
+   <item value="927" path="frame15.bmp" type="image">Frame 15 (927)</item>
+   <item value="928" path="frame16.bmp" type="image">Frame 16 (928)</item>
+   <item value="929" path="frame17.bmp" type="image">Frame 17 (929)</item>
+   <item value="930" path="frame18.bmp" type="image">Frame 18 (930)</item>
+   <item value="931" path="frame19.bmp" type="image">Frame 19 (931)</item>
+   <item value="932" path="frame20.bmp" type="image">Frame 20 (932)</item>
   </folder>
-  <folder path="killed_by_sword_and_fall">
-   <item value="918" path="image068.bmp" type="image">Unknown image 68</item>
-   <item value="919" path="image069.bmp" type="image">Unknown image 69</item>
-   <item value="920" path="image070.bmp" type="image">Unknown image 70</item>
-   <item value="921" path="image071.bmp" type="image">Unknown image 71</item>
-   <item value="922" path="image072.bmp" type="image">Unknown image 72</item>
-   <item value="923" path="image073.bmp" type="image">Unknown image 73</item>
-  </folder>
-  <folder path="landing_after_jump">
-   <item value="924" path="image074.bmp" type="image">Unknown image 74</item>
-   <item value="925" path="image075.bmp" type="image">Unknown image 75</item>
-   <item value="926" path="image076.bmp" type="image">Unknown image 76</item>
-   <item value="927" path="image077.bmp" type="image">Unknown image 77</item>
-   <item value="928" path="image078.bmp" type="image">Unknown image 78</item>
-   <item value="929" path="image079.bmp" type="image">Unknown image 79</item>
-   <item value="930" path="image080.bmp" type="image">Unknown image 80</item>
-   <item value="931" path="image081.bmp" type="image">Unknown image 81</item>
-   <item value="932" path="image082.bmp" type="image">Unknown image 82</item>
+  <folder path="dying_of_sword_and_fall">
+   <item value="918" path="frame01.bmp" type="image">Frame 01 (918)</item>
+   <item value="919" path="frame02.bmp" type="image">Frame 02 (919)</item>
+   <item value="920" path="frame03.bmp" type="image">Frame 03 (920)</item>
+   <item value="921" path="frame04.bmp" type="image">Frame 04 (921)</item>
+   <item value="922" path="frame05.bmp" type="image">Frame 05 (922)</item>
+   <item value="923" path="frame06.bmp" type="image">Frame 06 (923)</item>
   </folder>
   <folder path="making_a_bow">
-   <item value="933" path="image083.bmp" type="image">Unknown image 83</item>
-   <item value="934" path="image084.bmp" type="image">Unknown image 84</item>
-   <item value="935" path="image085.bmp" type="image">Unknown image 85</item>
-   <item value="936" path="image086.bmp" type="image">Unknown image 86</item>
-   <item value="937" path="image087.bmp" type="image">Unknown image 87</item>
-   <item value="938" path="image088.bmp" type="image">Unknown image 88</item>
-   <item value="939" path="image089.bmp" type="image">Unknown image 89</item>
-   <item value="940" path="image090.bmp" type="image">Unknown image 90</item>
-   <item value="941" path="image091.bmp" type="image">Unknown image 91</item>
-   <item value="942" path="image092.bmp" type="image">Unknown image 92</item>
-   <item value="943" path="image093.bmp" type="image">Unknown image 93</item>
-   <item value="944" path="image094.bmp" type="image">Unknown image 94</item>
-   <item value="945" path="image095.bmp" type="image">Unknown image 95</item>
+   <item value="933" path="frame01.bmp" type="image">Frame 01 (933)</item>
+   <item value="934" path="frame02.bmp" type="image">Frame 02 (934)</item>
+   <item value="935" path="frame03.bmp" type="image">Frame 03 (935)</item>
+   <item value="936" path="frame04.bmp" type="image">Frame 04 (936)</item>
+   <item value="937" path="frame05.bmp" type="image">Frame 05 (937)</item>
+   <item value="938" path="frame06.bmp" type="image">Frame 06 (938)</item>
+   <item value="939" path="frame07.bmp" type="image">Frame 07 (939)</item>
+   <item value="940" path="frame08.bmp" type="image">Frame 08 (940)</item>
+   <item value="941" path="frame09.bmp" type="image">Frame 09 (941)</item>
+   <item value="942" path="frame10.bmp" type="image">Frame 10 (942)</item>
+   <item value="943" path="frame11.bmp" type="image">Frame 11 (943)</item>
+   <item value="944" path="frame12.bmp" type="image">Frame 12 (944)</item>
+   <item value="945" path="frame13.bmp" type="image">Frame 13 (945)</item>
   </folder>
-  <folder path="deaths">
-   <item value="779" path="image029.bmp" type="image">Unknown image 29</item>
-   <item value="946" path="image096.bmp" type="image">Unknown image 96</item>
-   <item value="947" path="image097.bmp" type="image">Unknown image 97</item>
-   <item value="948" path="image098.bmp" type="image">Unknown image 98</item>
-   <item value="949" path="image099.bmp" type="image">Unknown image 99</item>
-  </folder>
-  <!-- TODO: correct index below -->
-  <item value="750" index="lphs" path="binary003.bin" type="binary">Unknown binary 3</item>
  </folder>
 
 </resources>
