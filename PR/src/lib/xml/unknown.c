@@ -40,7 +40,6 @@ resources.c: Princed Resources : Resource Handler
 #include <string.h>
 #include <stdlib.h>
 #include "common.h"
-#include "xmlparse.h"
 #include "xmlsearch.h"
 #include "disk.h"
 #include "memory.h"
@@ -110,16 +109,13 @@ const char* getExtDesc(int type) {
 |                Partial Resource List Functions                |
 \***************************************************************/
 
-/* TODO: 'FP/vdungeon.dat@/vdungeon/chopper/behind pillar frame03.bmp' should also work as 
- *       'FP/vdungeon.dat@vdungeon/chopper/behind pillar frame03.bmp'
- *       do the nessesary arrangements
- */
-
 static tResIdList partialList;
 
 int partialListActive() {
 	return partialList.count;
 }
+
+#define PARSING_MAX_TOKEN_SIZE 200
 
 void parseGivenPath(char* path) {
 	/*
@@ -135,6 +131,7 @@ void parseGivenPath(char* path) {
 	int j=0;
 	unsigned char n;
 	int size;
+	char aux[PARSING_MAX_TOKEN_SIZE];
 
 	/* Check if the variable wasn't initialized before */
 	if (partialList.count!=0) return;
@@ -180,7 +177,10 @@ void parseGivenPath(char* path) {
 		} else {
 			if (n) {
 				partialList.list[j].idType=eString;
-				partialList.list[j].value.text=strallocandcopy(repairFolders(path+separator));
+				aux[0]='/';
+				aux[1]=0;
+				strcat(aux,path+separator);
+				partialList.list[j].value.text=strallocandcopy(repairFolders(aux));
 				while (path[i]) i++;
 			} else {
 				partialList.list[j].idType=eValue;
@@ -191,6 +191,71 @@ void parseGivenPath(char* path) {
 			j++;
 		}
 	}
+}
+
+/* Code taken from PR 0.1 */
+int getMaskToken(const char texto[],char token[],int* i,int k) {
+	int j=0;
+	/*Copiar el string hasta que se encuentre el token Espacio o se termine la linea.
+	//En caso de que no entre el texto en el token, lo deja truncado pero avanza i hasta el final*/
+	char entreComillas=0; /*flag que indica si se esta dentro de una cadena entre comillas, alterna entre 0 y 1 dependiendo de si se encuentran las comillas, en caso de valer 1 el while no se detiene*/
+	while ((((entreComillas^=(texto[(*i)]==34)) || (texto[*i]!=32)) && ((j<k)?(token[j++]=texto[(*i)++]):(texto[(*i)++]))));
+	/*Seteo el caracter nulo al final del token, incremento i y devuelvo el siguiente caracter del texto o 0 en caso de que este sea el nulo.*/
+	token[j]='\0';
+	return (texto[((*i)++)-1]);
+}
+
+char matches1(const char* text,const char* mask,int ptext, int pmask) {
+	/*
+		Esta funcion verifica que el texto pertenezca a la mascara,
+		no verifica espacios ya que eso debe ser parseado en la funcion
+		que la llama.
+		En caso de poseer * la funcion se vuelve recursiva.
+		 Optimizacion:
+		  1) Se contempla el caso del * multiple y se lo toma como simple
+		  para evitar la ejecucion de recursividad de O(n cuadrado).
+		  2) Se contempla el caso del * al final de la mascara, en dicho caso
+		  no ejecuta la recursividad y devuelve verdadero ya que, si se llego a
+		  ese punto, el texto matchea.
+		En caso de poseer " las ignora.
+		En caso de poseer ? contempla cualquier caracter (incluso ? y *).
+
+		Devuelve 1 en caso de que el caracter coincida y 0 en caso contrario.
+	*/
+	while (text[ptext]||mask[pmask]) {
+		if (mask[pmask]=='"') {
+			pmask++;
+		} else if (mask[pmask]=='?') {
+			pmask++;
+			if (!text[ptext]) return 0;
+			ptext++;
+		} else if (mask[pmask]=='*') {
+			char aux;
+			while (mask[pmask++]=='*');
+			pmask--;
+			if (!mask[pmask]) return 1; /*acelera un poco el proceso para el caso particular de que termine en * */
+			while ((text[ptext]) && !(aux=matches1(text,mask,ptext++,pmask)));
+			return aux;
+		} else {
+			if (text[ptext]!=mask[pmask]) return 0;
+			ptext++;
+			pmask++;
+		}
+	}
+	return (text[ptext]==mask[pmask]);
+}
+
+char matchesIn(const char* text,const char* mask) {
+	int i=0;
+	char token[PARSING_MAX_TOKEN_SIZE];
+	char valor=0;
+
+	/*
+		Esta funcion se encarga de partir los espacios de la mascara y
+		llamar a una comparacion por cada parte
+	*/
+	while (getMaskToken(mask,token,&i,PARSING_MAX_TOKEN_SIZE) && !(valor=(valor || matches1(text,token,0,0))));
+	return valor?1:matches1(text,token,0,0);
 }
 
 int isInThePartialList(const char* vFile, int value) {
@@ -212,7 +277,7 @@ int isInThePartialList(const char* vFile, int value) {
 			if (value==partialList.list[i].value.number) return 1;
 		} else {
 			if (file)
-				if (equalsIgnoreCase(file,partialList.list[i].value.text)) return 1;
+				if (matchesIn(file,partialList.list[i].value.text)) return 1;
 		}
 	}
 	return 0;

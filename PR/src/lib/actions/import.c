@@ -188,7 +188,7 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 			}
 		} else {
 			/* the file wasn't in the partial list, so I'll re-copy it from the open dat file */
-			res.size--; /* TODO: check if this works */
+			res.size--;
 			mWriteFileInDatFileIgnoreChecksum(&res);
 		}
 	}

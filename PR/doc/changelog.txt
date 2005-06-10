@@ -144,18 +144,19 @@ Versions:
   - Solved bug in palette buffer initialization for autodetected images
   - Stable version for win32 and unix based systems
   - Using new macros to use an endian-independent layer.
- * PR v1.1:
+ * PR v1.1 (next week)
+  - Added pop2 palette support
+  - Centralize all the return values in defines
   - Coded file type detection to detect dat subtypes, sav, hof and exe
     subtypes.
-  x Finish python interface
+  - Fixed memory leaks in xml parser in the error exceptions
+  - Improved resources.xml. Now it works in bird.dat
   + Rewritten DAT indexing layer to support pop2
   - Rewritten resource handling using dynamic structures
-  - Added pop2 palette support
-  - Improved resources.xml. Now it works in bird.dat
-  - Centralize all the return values in defines
-  x Support of partial list folder selection (e.g.
-    vdungeon.dat@vdungeon/chopper)
-	- Fixed memory leaks in xml parser in the error exceptions
+  - Support of partial list folder selection wildcards (e.g.
+    vdungeon.dat@vdungeon/chopper/*.bmp)
+ * PR v1.2 (future plans)
+  x Finish python interface
 
 2) ToDo List & Future Plans:
 
