@@ -67,18 +67,18 @@ Sound:
   - Unknown (see standard MIDI specifications)
  Format supported by: Power Tracks.
 
-Binary:
- * Type "binary":
- Some binary garbage or untested stuff.
- Format supported by: xvi32 or any other hex editor.
-
  * Type "pcspeaker":
  For the internal PC Speaker sound we are using binary data saved in pcs
  format.
  The format is saved this way:
-  2 unique bytes for headers
+  1 unique byte as header
   3 bytes per note (2 for frequency and 1 for duration)
  Format supported by: not supported yet, use xvi32 or any other hex editor.
+
+Binary:
+ * Type "binary":
+ Some binary garbage or untested stuff.
+ Format supported by: xvi32 or any other hex editor.
 
 2) Bugs:
  All known bugs were solved. If you find a bug (program crashes, corrupted
@@ -93,27 +93,74 @@ Binary:
  
  C:\PRINCED\PR> pr -xext dat\vdungeon.dat
  
- This will extract the bitmaps and palettes allocated in 
+ This win32 example will extract the bitmaps and palettes stored in 
  C:\princed\pr\dat\vdungeon.dat into the c:\princed\pr\ext. 
- Note: ext must exist.
  
  C:\PRINCE> pr -x vdungeon.dat
  
- This will extract all the bitmaps and palettes allocated in
+ This will extract all the bitmaps and palettes stored in
  c:\prince\vdungeon.dat into c:\prince.
  
- C:\PRINCED\PR> pr -cext compiled\vdungeon.dat
+ C:\PRINCED\PR> pr -iext compiled\vdungeon.dat
  
- This will compile the bitmaps and palettes that are in c:\princed\pr\ext
+ This will import the bitmaps and palettes that are in c:\princed\pr\ext
  and associated to vdungeon.dat in the resource file and generate the file
  c:\princed\pr\compiled\vdungeon.dat.
- 
-4) New versions
- It's strongly recommended that you download a newer stable version of
- this program as soon as it comes available in the official url
- http://www.princed.com.ar
 
-5) Requirements
+ C:\PRINCED\PR> pr -xext compiled\vpalace.dat@161
+ 
+ This will export the resource number 161 to the directory according to
+ resources.xml (c:\princed\pr\ext\prince\sword\in the floor\bright.bmp).
+
+ $ ./pr -xext FP/prince.dat@162:pop1 -f -v
+
+ This UNIX examle will export the resource 162 from the index "pop1"
+ forcing overwrite and being verbose.
+
+ $ ./pr -ximages 'FP/prince.dat@prince/sword/*.bmp'
+
+ This is to export all bitmaps from prince/sword directory to the
+ images/prince/sword directory.
+ Note: the quotation marks '' are only to avoid wildcard expansion and
+  won't be need in win32 consoles.
+
+ $ ./pr -xfpdats FP
+
+ Exports all dat files in FP to fpdats directory.
+
+ $ ./pr -xfpdats FP -R
+
+ The same, but looking into sub-directories.
+
+ $ ./pr -x FP/v*.dat
+
+ Exports to the current folder all dat files in FP whose name starts with v.
+ Note: Only works in shells with wildcard expansion support.
+
+ $ ./pr -ximg FP/prince.dat FP/pv.dat
+
+ Exports to img the content of both files prince.dat and pv.dat located at the folder FP.
+
+ $ ./pr -iimg FP/prince.dat@161
+
+ Imports back to (updates) FP/prince.dat only the resource 161 located in the directory img.
+ 
+ $ ./pr -z7 -ximg 'FP/prince.dat@prince/sword/*.bmp'
+
+ Updates FP/prince.dat with the current bmp resources in img/prince/sword using compression
+ level 7 (slow but very effective).
+
+ $ ./pr -ximages 'FP/vdungeon.dat@vdungeon/chopper/frame*.bmp,vdungeon/spikes/frame01.bmp,1310'
+
+ Exports to images folder the resources matching with vdungeon/chopper/frame*.bmp,
+ the resource vdungeon/spikes/frame01.bmp and the resource number 1310.
+ 
+ $ ./pr -xpop2 pop2/bird.dat@bird/long_jump/frame06.bmp,751:pahs -v -f
+
+ Exports the file bird/long_jump/frame06.bmp and the resource 751 indexed in "pahs" from
+ pop2/bird.dat to the pop2 folder.
+ 
+4) Requirements
   
   Approximately 25Mb in RAM are required for a normal full directory task
   
@@ -143,7 +190,7 @@ Binary:
 	  Compression level 6. Size 11218 bytes. Time 73.004200 seconds.
 	  Compression level 7. Size 10932 bytes. Time 144.786515 seconds.
 
-6) Credits
+5) Credits
 
  Coding & main routines
   Enrique Calot
@@ -165,6 +212,7 @@ Binary:
 
  Resources.xml edition
   Steven Fayers
+  Piotr Kochanek
 
 Type pr --version to see translation credits for an specific language 
 Pr is also using some GPL compatible and GPL components made by
