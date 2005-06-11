@@ -156,7 +156,7 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 
 	/* main loop */
 	for (indexNumber=0;(indexNumber<numberOfItems);indexNumber++) {
-		if ((error=mReadFileInDatFile(&res,indexNumber))) return error; /* Read error */
+		if (!mReadFileInDatFile(&res,indexNumber)) return PR_RESULT_ERR_INVALID_DAT; /* Read error */
 
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix * TODO: move to the dat layer? */
 
@@ -188,7 +188,6 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 			}
 		} else {
 			/* the file wasn't in the partial list, so I'll re-copy it from the open dat file */
-			res.size--;
 			mWriteFileInDatFileIgnoreChecksum(&res);
 		}
 	}

@@ -231,7 +231,6 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 
 	/* Initialize variables */
 	imageSizeInBytes=image->widthInBytes*image->height;
-	for (i=0;i<COMPRESS_WORKING_ALGORITHMS;i++) compressedSize[i]=imageSizeInBytes; /* TODO: remove this line */
 
 	/*
 		Perform all compressions

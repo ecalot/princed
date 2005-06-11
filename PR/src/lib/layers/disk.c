@@ -162,9 +162,7 @@ void addFileToOpenFilesList(const char* fileName,int hasBackup) {
 	openFilesList=newNode;
 }
 
-void addPointerToOpenFilesList(FILE* fp) { /* TODO: use a define */
-	openFilesList->file=fp;
-}
+#define addPointerToOpenFilesList(fp) openFilesList->file=fp;
 
 int getFromOpenFilesList(FILE* fp, char** fileName, unsigned char** content, unsigned long int *size) {
 	tOpenFiles* currentNode;
