@@ -64,10 +64,26 @@ int verifyImageHeader(const unsigned char *array, int size) {
 }
 
 int verifyPaletteHeader(const unsigned char *array, int size) {
+	/* this is only pop2 palette */
 	return ((size==101)&&(!array[2])&&(!array[3])&&(array[4]==0x10));
 }
 
+int verifySpeakerHeader(const unsigned char *array, int size) {
+	/* format: (checksum)+(0x00)+(even number)+3 bytes per note */
+	return
+		(size>4)&&(array[1]==0x00)&&(!(array[2]%2))&&(!(size%3))
+	;
+}
+
+int verifyWaveHeader(const unsigned char *array, int size) {
+	/* format: (checksum)+(0x01)+raw wave */
+	return
+		(size>1)&&(array[1]==0x01)&&((size%3)==2)
+	;
+}
+
 int verifyMidiHeader(const unsigned char *array, int size) {
+	/* format: (checksum)+(0x02)+"MThd"... */
 	return
 		(size>6) &&
 		(array[1]==0x02) &&
@@ -75,18 +91,6 @@ int verifyMidiHeader(const unsigned char *array, int size) {
 		(array[3]=='T') &&
 		(array[4]=='h') &&
 		(array[5]=='d')
-	;
-}
-
-int verifyWaveHeader(const unsigned char *array, int size) {
-	return
-		(size>1)&&(array[1]==0x01)&&((size%3)==2)
-	;
-}
-
-int verifySpeakerHeader(const unsigned char *array, int size) {
-	return
-		(size>2)&&(array[1]==0x00) /* &&!(size%3) */
 	;
 }
 
@@ -267,10 +271,8 @@ int isInThePartialList(const char* vFile, tResourceId id) {
 			"path/path@12file/?mage1*.bmp"   each file matching "12file/?mage1*.bmp" is true
 	*/
 	int i;
-	char* file;
 
 	if (!partialList.count) return 1;
-	file=(char*)repairFolders(vFile);
 
 	for (i=0;i<partialList.count;i++) {
 		switch (partialList.list[i].type) {
@@ -278,7 +280,7 @@ int isInThePartialList(const char* vFile, tResourceId id) {
 			if (id.value==partialList.list[i].field.id.value) return 1;
 			break;
 		case eString:
-			if (file && matchesIn(file,partialList.list[i].field.text)) return 1;
+			if (vFile && matchesIn(repairFolders(vFile),partialList.list[i].field.text)) return 1;
 			break;
 		case eId:
 			if (!resIdCmp(id,partialList.list[i].field.id)) return 1;
