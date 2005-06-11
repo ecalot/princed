@@ -163,7 +163,7 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 		/* add to res more information from the resource list */
 		resourceListAddInfo(r,&res);
 
-		if (isInThePartialList(res.path,res.id.value /*TODO: use res.id and code the index support to the partial list*/)) { /* If the resource was specified */
+		if (isInThePartialList(res.path,res.id)) { /* If the resource was specified */
 			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size); 
 			if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 

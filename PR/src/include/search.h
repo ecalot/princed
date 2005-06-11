@@ -43,6 +43,8 @@ xmlparse.h: Princed Resources : xml handling functions header file
 #include "xmlparse.h"
 #include "resources.h"
 
+void str5uppercpy (char* dst,const char* src);
+	
 /****************************************************************\
 |                   Tag Tree Searching Functions                 |
 \****************************************************************/

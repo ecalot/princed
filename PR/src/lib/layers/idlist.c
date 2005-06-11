@@ -127,9 +127,7 @@ void parseGivenPath(char* path) {
 
 	int i;
 	int separator=0;
-	int resourceValue;
 	int j=0;
-	unsigned char n;
 	int size;
 	char aux[PARSING_MAX_TOKEN_SIZE];
 
@@ -169,27 +167,30 @@ void parseGivenPath(char* path) {
 	partialList.list=(tResIdListItem*)malloc(sizeof(tResIdListItem)*partialList.count);
 
 	/* Parse values and save them in the list */
-	resourceValue=0;
 	for(i=separator;j!=partialList.count;i++) {
-		n=path[i];
-		if ((0x2F<n)&&(n<0x3A)) {
-			resourceValue=resourceValue*10+(n-'0');
-		} else {
-			if (n) {
-				partialList.list[j].idType=eString;
-				aux[0]='/';
-				aux[1]=0;
-				strcat(aux,path+separator);
-				partialList.list[j].value.text=strallocandcopy(repairFolders(aux));
-				while (path[i]) i++;
-			} else {
-				partialList.list[j].idType=eValue;
-				partialList.list[j].value.number=resourceValue;
-			}
-			resourceValue=0;
-			separator=i+1;
-			j++;
+		unsigned int value;
+		int converted;
+		char index[5];
+		converted=sscanf(path+i,"%u:%5s",&value,index);
+		switch (converted) {
+		case 2:
+			partialList.list[j].type=eId;
+			partialList.list[j].field.id.value=value;
+			str5uppercpy(partialList.list[j].field.id.index,index);
+			break;
+		case 1:
+			partialList.list[j].type=eIdValue;
+			partialList.list[j].field.id.value=value;
+			break;
+		default:
+			partialList.list[j].type=eString;
+			aux[0]='/';aux[1]=0;
+			strcat(aux,path+i);
+			partialList.list[j].field.text=strallocandcopy(repairFolders(aux));
+			break;
 		}
+		while (path[i]) i++;
+		j++;
 	}
 }
 
@@ -256,7 +257,7 @@ int matchesIn(const char* text,const char* mask) {
 	return valor?1:matches1(text,token,0,0);
 }
 
-int isInThePartialList(const char* vFile, int value) {
+int isInThePartialList(const char* vFile, tResourceId id) {
 	/*
 		Cases:
 			"path/path@"                     all files are false
@@ -272,11 +273,16 @@ int isInThePartialList(const char* vFile, int value) {
 	file=(char*)repairFolders(vFile);
 
 	for (i=0;i<partialList.count;i++) {
-		if (partialList.list[i].idType==eValue) {
-			if (value==partialList.list[i].value.number) return 1;
-		} else {
-			if (file)
-				if (matchesIn(file,partialList.list[i].value.text)) return 1;
+		switch (partialList.list[i].type) {
+		case eIdValue:
+			if (id.value==partialList.list[i].field.id.value) return 1;
+			break;
+		case eString:
+			if (file && matchesIn(file,partialList.list[i].field.text)) return 1;
+			break;
+		case eId:
+			if (!resIdCmp(id,partialList.list[i].field.id)) return 1;
+			break;
 		}
 	}
 	return 0;
@@ -285,8 +291,8 @@ int isInThePartialList(const char* vFile, int value) {
 void freePartialList() {
 	int i;
 	for (i=0;i<partialList.count;i++) {
-		if (partialList.list[i].idType==eString)
-			free(partialList.list[i].value.text);
+		if (partialList.list[i].type==eString)
+			free(partialList.list[i].field.text);
 	}
 	free(partialList.list);
 	partialList.count=0;

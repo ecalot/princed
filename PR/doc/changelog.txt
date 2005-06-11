@@ -157,6 +157,7 @@ Versions:
     vdungeon.dat@vdungeon/chopper/*.bmp)
  * PR v1.2 (future plans)
   x Finish python interface
+	x Fix the language support
 
 2) ToDo List & Future Plans:
 

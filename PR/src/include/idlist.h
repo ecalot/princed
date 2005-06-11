@@ -60,16 +60,17 @@ resources.h: Princed Resources : Resource Handler headers
 
 #define RES_TYPECOUNT         8
 
+#include "dat.h"
 
 /* Id list for partial manipulation */
-typedef enum {eString,eValue}tResIdType;
+typedef enum {eString,eId,eIdValue}tResLocationType;
 
 typedef struct {
-  tResIdType idType;
+  tResLocationType type;
   union {
-    char*      text;
-    long       number;
-  } value;
+    char*        text;
+    tResourceId  id;
+  } field;
 }tResIdListItem;
 
 typedef struct {
@@ -79,7 +80,7 @@ typedef struct {
 
 void parseGivenPath(char* path);
 int  partialListActive();
-int  isInThePartialList(const char* file, int value);
+int isInThePartialList(const char* vFile, tResourceId id);
 void freePartialList();
 
 /* Includes */
