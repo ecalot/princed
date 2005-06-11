@@ -193,7 +193,7 @@ int mFormatImportPlv(tResource *res) {
 	/* save data */
 	posAux=res->data;
 	res->data=pos;
-	mWriteFileInDatFileIgnoreChecksum(res); /* TODO: check res->size-- */
+	mWriteFileInDatFileIgnoreChecksum(res);
 	res->data=posAux;
 	
 	return 1;

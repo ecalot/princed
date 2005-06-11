@@ -67,7 +67,7 @@ typedef struct tOpenFiles {
 	FILE* file;
 	char* name;
 	unsigned char* content;
-	unsigned long int size;
+	long int size;
 }tOpenFiles;
 
 char mDiskVealidateFileHeader(unsigned char* text, int size, FILE* fp);

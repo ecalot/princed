@@ -392,23 +392,36 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 	}
 }
 
-void dat_write(const tResource* res,unsigned long off) {
+void dat_write(const tResource* res,unsigned char checksum) {
 	tResource insert;
-
-	/* do the magic */
-	fwrite(res->data,res->size,1,writeDatFile);
 
 	/* remember only indexed values */
 	insert.id=res->id;
 	insert.size=res->size;
-	insert.offset=off;
+	insert.offset=((unsigned long)ftell(writeDatFile));
+
+	/* writes the checksum */
+	fwritechar(&checksum,writeDatFile);
+
+	/* do the magic */
+	fwrite(res->data,res->size,1,writeDatFile);
 
 	/* TODO: use an abstract use of the list (at least macros in reslist.h) */
 	list_insert(&resIndex,&insert);
 }
 
 void mWriteFileInDatFileIgnoreChecksum(const tResource* res) {
-	dat_write(res,(unsigned long)ftell(writeDatFile));
+	tResource aux;
+
+	/* set up virtual resource aux */
+	aux=*res;
+
+	/* drop the checksum */
+	aux.data++;
+	aux.size--;
+
+	/* write it */
+	dat_write(&aux,res->data[0]);
 }
 
 void mWriteFileInDatFile(const tResource* res) {
@@ -421,18 +434,13 @@ void mWriteFileInDatFile(const tResource* res) {
 	int            k        = res->size;
 	unsigned char  checksum = 0;
 	const unsigned char* dataAux  = res->data;
-	unsigned long off;
 
 	/* calculates the checksum */
 	while (k--) checksum+=*(dataAux++);
 	checksum=~checksum;
 
-	/* writes the checksum and the data content */
-	off=(unsigned long)ftell(writeDatFile);
-	fwritechar(&checksum,writeDatFile);
-
 	/* write the resource contents */
-	dat_write(res,off);
+	dat_write(res,checksum);
 }
 
 
