@@ -41,7 +41,7 @@ xmlparse.h: Princed Resources : xml handling functions header file
 /* Includes */
 #include "common.h" /* tTag */
 #include "xmlparse.h"
-#include "resources.h"
+#include "reslist.h"
 
 void str5uppercpy (char* dst,const char* src);
 	

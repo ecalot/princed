@@ -45,22 +45,11 @@ resources.h: Princed Resources : Resource Handler headers
 /* File extensions */
 
 #define RES_FILE_EXTENSIONS   {"raw","plv","bmp","wav","mid","bin","pal","pcs"}
-#define RES_FILE_TYPES        {"autodetect","level","image","wave","midi","binary","palette","pcspeaker"}
 
-/* Item Types */
-
-#define RES_TYPE_RAW          0
-#define RES_TYPE_LEVEL        1
-#define RES_TYPE_IMAGE        2
-#define RES_TYPE_WAVE         3
-#define RES_TYPE_MIDI         4
-#define RES_TYPE_BINARY       5
-#define RES_TYPE_PALETTE      6
-#define RES_TYPE_PCSPEAKER    7
-
-#define RES_TYPECOUNT         8
-
-#include "dat.h"
+/* Includes */
+#include <stdio.h>
+#include "xmlparse.h"
+#include "reslist.h"
 
 /* Id list for partial manipulation */
 typedef enum {eString,eId,eIdValue}tResLocationType;
@@ -83,12 +72,8 @@ int  partialListActive();
 int isInThePartialList(const char* vFile, tResourceId id);
 void freePartialList();
 
-/* Includes */
-#include <stdio.h>
-#include "xmlparse.h"
-
 /* Verify  header */
-int verifyHeader(const unsigned char* array, int size);
+tResourceType verifyHeader(const unsigned char* array, int size);
 
 /*
 	Headers may be:
@@ -100,12 +85,6 @@ int verifyHeader(const unsigned char* array, int size);
 	 06 Palette
 	 07 Internal Speaker Sounds
 */
-
-#include "dat.h" /* tResource */
-#include "reslist.h" /* tResourceList */
-
-/* CheckSum verification */
-int checkSum(const unsigned char* data,int size);
 
 /* Resources extras */
 void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension);

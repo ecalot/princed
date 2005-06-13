@@ -36,9 +36,7 @@ pal.c: Princed Resources : JASC PAL files support
 #include <stdlib.h>
 #include <stdio.h>
 #include "pal.h"
-#include "memory.h"
 #include "disk.h"
-#include "resources.h"
 #include "dat.h"
 
 /***************************************************************\
@@ -49,8 +47,8 @@ static const char* enter="\r\n";
 
 /* Public functions */
 int mFormatExportPal(const unsigned char* data, char *vFileext,unsigned long int size,int optionflag,const char* backupExtension ) {
-	unsigned char* pal=getMemory(240);
-	unsigned char* aux=getMemory(MAX_FILENAME_SIZE);
+	unsigned char* pal=malloc(240);
+	unsigned char* aux=malloc(MAX_FILENAME_SIZE);
 	int i;
 
 	/* Export extra palette information */
@@ -117,7 +115,7 @@ int mFormatImportPal(tResource *res,const char* vFile) {
 	}
 
 	/* Allocate palette */
-	pal=getMemory(100);
+	pal=malloc(100);
 
 	/* set palette with sample */
 	memcpy(pal,pals,100);

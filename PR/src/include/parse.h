@@ -35,8 +35,11 @@ xmlparse.h: Princed Resources : xml handling functions headers
 #define _XMLPARSE_H_
 
 int equalsIgnoreCase(const char s1[],const char s2[]);
+const char* getExtDesc(int type);
 
 /* Constants */
-#define MAX_VALUE_SIZE 3000
+#define MAX_VALUE_SIZE        3000
+#define RES_TYPECOUNT         8
+#define RES_FILE_TYPES        {"autodetect","level","image","wave","midi","binary","palette","pcspeaker"}
 
 #endif

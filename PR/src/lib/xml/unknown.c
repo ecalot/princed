@@ -94,7 +94,7 @@ int verifyMidiHeader(const unsigned char *array, int size) {
 	;
 }
 
-int verifyHeader(const unsigned char *array, int size) {
+tResourceType verifyHeader(const unsigned char *array, int size) {
 	if (verifyLevelHeader  (array,size)) return RES_TYPE_LEVEL;
 	if (verifyMidiHeader   (array,size)) return RES_TYPE_MIDI;
 	if (verifyImageHeader  (array,size)) return RES_TYPE_IMAGE;
@@ -102,11 +102,6 @@ int verifyHeader(const unsigned char *array, int size) {
 	if (verifyWaveHeader   (array,size)) return RES_TYPE_WAVE;
 	if (verifySpeakerHeader(array,size)) return RES_TYPE_PCSPEAKER;
 	return RES_TYPE_BINARY;
-}
-
-const char* getExtDesc(int type) {
-	static const char* extarraydesc[]=RES_FILE_TYPES;
-	return extarraydesc[type];
 }
 
 /***************************************************************\
@@ -298,18 +293,6 @@ void freePartialList() {
 	}
 	free(partialList.list);
 	partialList.count=0;
-}
-
-/***************************************************************\
-|                       Checksum handling                       |
-\***************************************************************/
-
-int checkSum(const unsigned char* data,int size) {
-	unsigned char  checksum = 1;
-
-	/* validates the checksum */
-	while (size--) checksum+=*(data++);
-	return !checksum;
 }
 
 /***************************************************************\

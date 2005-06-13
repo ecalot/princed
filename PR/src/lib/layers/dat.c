@@ -63,6 +63,18 @@ static unsigned char* readDatFile;
 static int            readDatFileSize;
 static tIndexCursor   readIndexCursor;
 
+/***************************************************************\
+|                       Checksum handling                       |
+\***************************************************************/
+
+int checkSum(const unsigned char* data,int size) {
+	unsigned char  checksum = 1;
+
+	/* validates the checksum */
+	while (size--) checksum+=*(data++);
+	return !checksum;
+}
+
 /* private functions */
 /* todo: move to datindex.c */
 

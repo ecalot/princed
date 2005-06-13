@@ -19,8 +19,8 @@
 */
 
 /*
-extract.h: Princed Resources : DAT Extractor headers
-¯¯¯¯¯¯¯¯¯
+export.h: Princed Resources : DAT Extractor headers
+¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 
@@ -38,3 +38,4 @@ extract.h: Princed Resources : DAT Extractor headers
 
 int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int task, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension);
 #endif
+

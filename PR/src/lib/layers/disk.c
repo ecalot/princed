@@ -37,7 +37,7 @@ disk.c: Princed Resources : Disk Access & File handling functions
 */
 
 /* Defines */
-#include "memory.h"
+#include "memory.h" /* strallocandcopy */
 #include <string.h>
 #include "disk.h"
 #ifndef WIN32
@@ -49,7 +49,6 @@ disk.c: Princed Resources : Disk Access & File handling functions
 
 #ifndef DISK_ALLWAYS_FORCE
 #include "common.h" /* language texts */
-#include "xmlparse.h" /* equalsIgnoreCase */
 #endif
 
 #ifndef WIN32
@@ -78,6 +77,14 @@ disk.c: Princed Resources : Disk Access & File handling functions
 #ifndef DISK_ALLWAYS_FORCE
 extern FILE* outputStream;
 #endif
+
+typedef struct tOpenFiles {
+	struct tOpenFiles* next;
+	FILE* file;
+	char* name;
+	unsigned char* content;
+	long int size;
+}tOpenFiles;
 
 /***************************************************************\
 |              Disk Access & File handling functions            |

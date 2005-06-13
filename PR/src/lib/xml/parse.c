@@ -19,8 +19,8 @@
 */
 
 /*
-xmlparse.c: Princed Resources : xml parsing functions
-¯¯¯¯¯¯¯¯¯¯
+parse.c: Princed Resources : xml parsing functions
+¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 23 Oct 2003
 
@@ -49,6 +49,11 @@ extern FILE* outputStream;
 /****************************************************************\
 |                   Tag Tree Handling Functions                  |
 \****************************************************************/
+
+const char* getExtDesc(int type) {
+	static const char* extarraydesc[]=RES_FILE_TYPES;
+	return extarraydesc[type];
+}
 
 /* private defines */
 #define IsSpace(c) ((c==' ')||(c==9))||(c=='\n')||(c=='\r')

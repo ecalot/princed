@@ -19,8 +19,8 @@
 */
 
 /*
-xmlsearch.c: Princed Resources : specific xml handling functions
-¯¯¯¯¯¯¯¯¯¯¯
+search.c: Princed Resources : specific xml handling functions
+¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 23 Oct 2003
 

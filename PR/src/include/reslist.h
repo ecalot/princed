@@ -35,11 +35,39 @@ reslist.h: Princed Resources : Resource list
 #define _RESLIST_H_
 
 #include "list.h" /* tList */
-
 #define tResourceList tList
 
-#include "dat.h" /* tResourceId & tResource */
-/* TODO: fix header dependencies */
+/* Item Types */
+
+typedef enum {
+RES_TYPE_RAW=0,
+RES_TYPE_LEVEL=1,
+RES_TYPE_IMAGE=2,
+RES_TYPE_WAVE=3,
+RES_TYPE_MIDI=4,
+RES_TYPE_BINARY=5,
+RES_TYPE_PALETTE=6,
+RES_TYPE_PCSPEAKER=7} tResourceType;
+
+/* types */
+typedef struct {
+	unsigned short int value;
+	char               index[5];
+}tResourceId;
+
+typedef struct {
+	tResourceId        id;
+	tResourceId        palette;
+	long int           size;
+	unsigned long int  offset; /* Used internally in dat.c to remember the offset */
+	unsigned char      number; /* Used for level number */
+	tResourceType      type;
+	char*              desc;
+	char*              name;
+	char*              path;
+	unsigned char*     data;
+	unsigned long      flags;
+}tResource;
 
 void printr(const tResource* record); /* for debug purposes */
 

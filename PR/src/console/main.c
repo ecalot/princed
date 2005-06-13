@@ -147,11 +147,9 @@ int main (int argc, char **argv) {
 	/* At least one of these options must be selected, if not, the user needs help! */
 	if (!(hasFlag(import_flag|export_flag|classify_flag))) setFlag(help_flag);
 
-	/* Show about or cgi stuff */
-	if (hasFlag(cgi_flag)) {
-		fprintf(outputStream,PR_CGI_TEXT1);
-		fprintf(outputStream,PR_ABOUT);
-	}
+	/* Show cgi and about stuff */
+	if (hasFlag(cgi_flag)) fprintf(outputStream,PR_CGI_TEXT1);
+	fprintf(outputStream,PR_ABOUT);
 
 	/* Show version screen if requested */
 	if (hasFlag(version_flag)) {

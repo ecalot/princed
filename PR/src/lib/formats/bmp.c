@@ -39,7 +39,7 @@ bmp.c: Princed Resources : BMP file support
 #include "bmp.h"
 #include "disk.h"
 #include "memory.h"
-#include "dat.h"
+/*#include "dat.h"*/
 
 extern FILE* outputStream;
 
@@ -195,7 +195,7 @@ int mReadBitMap(tImage* image,unsigned char* data, int size) {
 
 	/* Validate image and file size; get memory to allocate the image */
 	ok=ok&& (filesize==size);
-	ok=ok&& (	(image->pix=getMemory(height*image->widthInBytes*2)) != NULL	);
+	ok=ok&& (	(image->pix=malloc(height*image->widthInBytes*2)) != NULL	);
 	/* if validations==wrong */
 	if (!ok) {
 		freeAllocation(image->pix);

@@ -34,8 +34,7 @@ pal.h: Princed Resources : JASC PAL files support headers
 #ifndef _PAL_H_
 #define _PAL_H_
 
-#include "compress.h"
-#include "resources.h"
+#include "dat.h"
 #include <stdio.h>
 
 #define PAL_HEADER "JASC-PAL\r\n0100\r\n16\r\n"

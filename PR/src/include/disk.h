@@ -45,8 +45,6 @@ disk.h: Princed Resources : Disk Access & File handling functions headers
 #define DISK_TERM_MANIPULATION
 /* #define DISK_ALLWAYS_FORCE   */
 
-/* 64 Kb */
-#define SIZE_OF_FILE     (1200*1024)
 #define MAX_FILENAME_SIZE        260
 
 /* Path defines */
@@ -62,17 +60,6 @@ typedef enum {eFile,eDirectory,eNotFound}whatIs;
 #define charToUpper(a) ((a)&0xDF)
 #define isDirSep(a,i) ((a[i]=='\\')||(a[i]=='/'))
 
-typedef struct tOpenFiles {
-	struct tOpenFiles* next;
-	FILE* file;
-	char* name;
-	unsigned char* content;
-	long int size;
-}tOpenFiles;
-
-char mDiskVealidateFileHeader(unsigned char* text, int size, FILE* fp);
-/* char mSaveRaw      (const char* vFile,const unsigned char* output, int size); */
-#define mSaveRaw(f,d,s,optionflag,backup) writeData(d,0,f,s,optionflag,backup)
 #define writeCloseOk(a,b,c) writeClose(a,0,b,c)
 #define writeCloseDelete(a,b,c) writeClose(a,1,b,c)
 int  writeData     (const unsigned char* data, int ignoreChars, char* vFileext, int size, int optionflag,const char* backupExtension);
@@ -113,3 +100,4 @@ int macfwritel(const void* var,FILE* file);
 #endif
 
 #endif
+

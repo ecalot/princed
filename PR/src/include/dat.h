@@ -34,25 +34,7 @@ dat.h: Princed Resources : DAT library headers
 #ifndef _DAT_H_
 #define _DAT_H_
 
-/* types */
-typedef struct {
-	unsigned short int value;
-	char               index[5];
-}tResourceId;
-
-typedef struct {
-	tResourceId        id;
-	tResourceId        palette;
-	long int           size;
-	unsigned long int  offset; /* Used internally in dat.c to remember the offset */
-	unsigned char      number; /* Used for level number */
-	char               type;
-	char*              desc;
-	char*              name;
-	char*              path;
-	unsigned char*     data;
-	unsigned long      flags;
-}tResource;
+#include "reslist.h" /* tResource* */
 
 typedef enum {
 	none=0,
@@ -61,6 +43,9 @@ typedef enum {
 } tPopVersion;
 
 tPopVersion mReadGetVersion();
+
+/* CheckSum verification */
+int checkSum(const unsigned char* data,int size);
 
 #define PR_DAT_INCLUDE_DATREAD
 #define PR_DAT_INCLUDE_DATWRITE

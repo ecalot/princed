@@ -19,7 +19,7 @@
 */
 
 /*
-compile.h: Princed Resources : DAT Compiler headers
+import.h: Princed Resources : DAT Compiler headers
 ¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -31,8 +31,8 @@ compile.h: Princed Resources : DAT Compiler headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _COMPILE_H_
-#define _COMPILE_H_
+#ifndef _IMPORT_H_
+#define _IMPORT_H_
 
 #include <stdio.h>
 #include "resources.h"
