@@ -71,7 +71,6 @@ const char* getExtDesc(int type) {
 			memcpy(tag->attribute,father->attribute,x);\
 		}
 
-
 #define ParseError return PR_RESULT_ERR_XML_PARSING
 
 tTag* getTagStructure() {

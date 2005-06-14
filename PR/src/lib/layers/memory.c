@@ -45,7 +45,6 @@ char* strallocandcopy(const char* text) {
 	return aux;
 }
 
-
 #else
 #include <stdlib.h>
 #include <stdio.h>
@@ -57,7 +56,6 @@ typedef struct memm {
 	int   line;
 	int   size;
 }memm;
-
 
 static memm* list=NULL;
 static int memcounter=0;
@@ -89,7 +87,6 @@ void myfree(void* a,char* fileName,int line) {
 	memcounter--;
 	/*if ((!(memcounter%100))||((memcounter<100)&&(memcounter>-100)))
 	//fprintf(stderr,"Liberando memoria? -> %p (%d/%d)\n",a,memsize,memcounter);*/
-
 
 	free(a);
 

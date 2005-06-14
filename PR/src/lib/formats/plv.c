@@ -35,7 +35,6 @@ plv.c: Princed Resources : PLV prince level files support
    Enrique Calot <ecalot.cod@princed.com.ar>
   Version: 1.00 (2003-Nov-28)
 
-
  Note:
   DO NOT remove this copyright notice
 */

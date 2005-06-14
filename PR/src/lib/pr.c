@@ -62,7 +62,6 @@ pr.c: Main source file for Princed Resources library
 #include "memory.h"    /* getMemory, free */
 #include "disk.h"      /* getFileNameFromPath */
 
-
 /***************************************************************\
 |                      Main working functions                   |
 \***************************************************************/
@@ -105,7 +104,6 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 			force_flag     - default option, you cannot disable it,
 			                 so please make a backup of your files
 			backup_flag    - backup your files
-
 
 		Return values:
 			00 Ok
@@ -182,7 +180,6 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 			force_flag     - If not set and the file exists it will prompt
 			                 for action
 			backup_flag    - backup your files
-
 
 		Return values:
 			-1 DAT File couldn't be open for writing

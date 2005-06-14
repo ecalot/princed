@@ -57,7 +57,6 @@ void workTree(const tTag* t,void* pass, void (*function)(const tTag*,void*));
 
 void compareXmlFile(tTag* modified,tTag* original);
 
-
 /* File List Functions */
 char* getFileFromList();
 

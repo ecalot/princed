@@ -54,14 +54,12 @@ disk.h: Princed Resources : Disk Access & File handling functions headers
  #define DIR_SEPARATOR           '\\'
 #endif
 
-
 typedef enum {eFile,eDirectory,eNotFound}whatIs;
 
 #define charToUpper(a) ((a)&0xDF)
 #define isDirSep(a,i) ((a[i]=='\\')||(a[i]=='/'))
 
 #define writeCloseOk(a,b,c) writeClose(a,0,b,c)
-#define writeCloseDelete(a,b,c) writeClose(a,1,b,c)
 int  writeData     (const unsigned char* data, int ignoreChars, char* vFileext, int size, int optionflag,const char* backupExtension);
 int  writeOpen     (const char* vFileext, FILE* *fp, int optionflag);
 int  writeClose    (FILE* fp,int dontSave,int optionflag,const char* backupExtension);
@@ -70,7 +68,7 @@ int  makebase      (const char* p);
 const char* repairFolders(const char* a);
 const char* getFileNameFromPath(const char* path);
 whatIs isDir(const char *nombre);
-#define mRemoveFile(a) remove(repairFolders(a))
+/*#define mRemoveFile(a) remove(repairFolders(a))*/
 
 #ifdef DISK_DIR_SCANING
 int recurseDirectory(const char* path,int recursive, void* pass, void (*function)(const char*,void*));

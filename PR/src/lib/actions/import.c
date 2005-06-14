@@ -134,7 +134,6 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 	return error;
 }
 
-#define RW_ERROR {mRWCloseDatFile(1);return error;}
 int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension) {
 	/*
 		Return values:

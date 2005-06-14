@@ -236,7 +236,6 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 		Perform all compressions
 	*/
 
-
 	/* Forward compression */
 	
 	/* COMPRESS_RAW

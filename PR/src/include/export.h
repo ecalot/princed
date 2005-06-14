@@ -31,11 +31,12 @@ export.h: Princed Resources : DAT Extractor headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _EXTARCT_H_
-#define _EXTRACT_H_
+#ifndef _EXPORT_H_
+#define _EXPORT_H_
 
 #include "resources.h"
 
 int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int task, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension);
+
 #endif
 

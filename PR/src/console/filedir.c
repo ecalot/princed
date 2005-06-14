@@ -316,8 +316,6 @@ void fileDirAddOption(tFileDir2* list1, const char* option) {
 	filedir_push(op, &(list1->options),0);
 }
 
-
-
 int fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notHasRecursiveFlag,const char* resfile,int given) {
 /* case 1: * import from more than one directory */
  

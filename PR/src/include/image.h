@@ -48,11 +48,6 @@ compress.c: Princed Resources : Image Compressor headers
 #define COMPRESS_RESULT_WARNING -1
 #define COMPRESS_RESULT_SUCCESS 0
 
-/* reserved memory for the Lzx algorithm */
-#define MAX_MOD_SIZE_IN_LZG    32001                /* 38401 */
-/* modulus to be used in the 10 bits of the algorithm */
-#define MAX_MXD_SIZE_IN_LZG    0x400
-
 typedef struct {
 	int width;
 	int widthInBytes;

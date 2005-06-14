@@ -110,7 +110,6 @@ const char *repairFolders(const char* a) {
 	return result;
 }
 
-
 /* Create base directory of a file */
 int makebase(const char* p) {
 	/*
@@ -280,7 +279,6 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 	fileType=isDir(vFileext);
 	if (fileType==eDirectory) return 0;
 
-
 	if (fileType==eFile) {
 		/* File exists. We need to ask */
 		if ((!(hasFlag(force_flag)))&&(!all)) {
@@ -295,7 +293,6 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 		makebase(file);
 	}
 
-
 #ifdef UNIX
 #ifdef DISK_TERM_MANIPULATION
 	/* restoring previous terminal options */
@@ -307,7 +304,6 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 		If the file exists, we need to remember the old content in memory
 		if not, we need to know the name in case we need to delete it
 	*/
-
 
 	addFileToOpenFilesList(file,hasFlag(backup_flag));
 

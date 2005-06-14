@@ -455,7 +455,6 @@ void mWriteFileInDatFile(const tResource* res) {
 	dat_write(res,checksum);
 }
 
-
 void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension) {
 	/*
 		Closes a dat file filling the index and other structures

@@ -59,7 +59,6 @@ extern FILE* outputStream;
 |                    M A I N   E X T R A C T                    |
 \***************************************************************/
 
-
 /*
 	Extracts a dat file
 	For parameter documentation, see pr.c

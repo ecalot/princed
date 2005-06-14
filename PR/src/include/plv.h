@@ -35,7 +35,6 @@ plv.h: Princed Resources : PLV prince level files support headers
    Enrique Calot <ecalot.cod@princed.com.ar>
   Version: 1.00 (2003-Nov-28)
 
-
  Note:
   DO NOT remove this copyright notice
 */
@@ -84,7 +83,6 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 #define PLV_FOOT_TMODIF        "Time Last Modified"
 #define PLV_FOOT_ORIG_FILE     "Original Filename"
 #define PLV_FOOT_LEV_NUM_ORIG  "Original Level Number"
-#define PLV_HEADER_SIZE_OFFSET PLV_HEADER_A_SIZE+PLV_HEADER_B_SIZE
 
 #define PLV_DEFAULT_AUTHOR     "PR user"
 

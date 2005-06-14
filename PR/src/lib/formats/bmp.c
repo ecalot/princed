@@ -67,7 +67,6 @@ int mFormatExportBmp(const unsigned char* data, const char *vFileext,unsigned lo
 	return 1;
 }
 
-
 int mFormatImportBmp(tResource *res) {
 	int size;
 	tImage img;
