@@ -151,19 +151,26 @@ Versions:
     subtypes.
   - Fixed memory leaks in xml parser in the error exceptions
   - Improved resources.xml. Now it works in bird.dat
+  + Improved speaker file automatic detection
   + Rewritten DAT indexing layer to support pop2
   - Rewritten resource handling using dynamic structures
   - Support of partial list folder selection wildcards (e.g.
     vdungeon.dat@vdungeon/chopper/*.bmp)
  * PR v1.2 (future plans)
   x Finish python interface
-	x Fix the language support
+  x Fix the language support
+  x Add parsing feature @:pahs
+  x Add pop2 importing
+  x Add pop2 to resources.xml
+	x Replace wildcard matching function for a smaller one adding & as
+	  space and fix the space bug
+	x delete equalsignorecase 
 
 2) ToDo List & Future Plans:
 
- * PR v2.0 beta:
+ * PR v2.0 beta
   x Add full pop2 support
- * PR v2.0:
+ * PR v2.0
   x Optimized & stable version for win32 and unix based systems
   x Set, if applicable, POP2 in the parent folder of the unknown.xml file
 
