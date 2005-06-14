@@ -37,13 +37,10 @@ resources.c: Princed Resources : Resource Handler
 
 /* Includes */
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include "common.h"
-#include "xmlsearch.h"
 #include "disk.h"
-#include "memory.h"
 #include "resources.h"
+#include "xmlsearch.h"
 
 /***************************************************************\
 |            Filtering xml structure to tResourceList           |

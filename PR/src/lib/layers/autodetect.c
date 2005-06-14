@@ -19,7 +19,7 @@
 */
 
 /*
-autodetect.c: Princed Resources : Resource Handler
+autodetect.c: Princed Resources : Autodetect resource types
 ¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -36,10 +36,7 @@ autodetect.c: Princed Resources : Resource Handler
 \***************************************************************/
 
 /* Includes */
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "reslist.h"
+#include "reslist.h" /* tResourceType */
 
 /***************************************************************\
 |                       Item Type Detector                      |

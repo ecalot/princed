@@ -37,14 +37,9 @@ idlist.c: Princed Resources : Partial Id list
 
 /* Includes */
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "common.h"
-#include "xmlsearch.h"
 #include "disk.h"
 #include "memory.h"
 #include "resources.h"
-#include "compress.h"
 
 /***************************************************************\
 |                Partial Resource List Functions                |
@@ -135,6 +130,7 @@ void parseGivenPath(char* path) {
 	}
 }
 
+/* TODO rewrite into memory.c */
 /* Code taken from PR 0.1 */
 int getMaskToken(const char texto[],char token[],int* i,int k) {
 	int j=0;
