@@ -34,7 +34,6 @@ xmlparse.h: Princed Resources : xml handling functions headers
 #ifndef _XMLPARSE_H_
 #define _XMLPARSE_H_
 
-int equalsIgnoreCase(const char s1[],const char s2[]);
 const char* getExtDesc(int type);
 
 /* Constants */

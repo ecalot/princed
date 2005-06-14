@@ -147,18 +147,6 @@ int attribFill(char* attr,char* val, tTag* t) {
 }
 
 /****************************************************************\
-|                     Other Modules Functions                    |
-\****************************************************************/
-
-/* Taken from parser.c */
-
-int equalsIgnoreCase(const char s1[],const char s2[]) {
-	int i=0;
-	for (;((s1[i]&0xDF)==(s2[i]&0xDF))&&s1[i];i++);
-	return !(s1[i]||s2[i]);
-}
-
-/****************************************************************\
 |                       XML Parsing Functions                    |
 \****************************************************************/
 

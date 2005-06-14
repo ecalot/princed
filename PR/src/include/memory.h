@@ -34,20 +34,23 @@ memory.h: Princed Resources : Memory handling headers
 #ifndef _MEMORY_H_
 #define _MEMORY_H_
 
-/* #define MEM_CHECK */
-
 #include <stdlib.h>
+
 #define getMemory(size) ((unsigned char*)malloc(size))
 char* strallocandcopy(const char* text);
 #define freeAllocation(m) if ((m)!=NULL) free(m)
 
-#ifdef MEM_CHECK
-void myfree(void* a,char* fileName,int line);
-void* mymalloc(int size,char* fileName,int line);
-void showStats();
+/* equalsIgnoreCase is coded unless we are in the BSD standars that is taken from string.h */
+#ifdef __USE_BSD
+#include <string.h>
+#define IGNORE_EQUALS
+#define equalsIgnoreCase(a,b) (!strcasecmp(a,b))
 #else
-#define showInfo(a)
+#define equalsIgnoreCase(a,b) equalsIgnoreCase2(a,b)
+int equalsIgnoreCase2(const char s1[],const char s2[]);
 #endif
+
+void str5uppercpy (char* dst,const char* src);
 
 #endif
 
