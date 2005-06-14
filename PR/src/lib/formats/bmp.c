@@ -39,7 +39,7 @@ bmp.c: Princed Resources : BMP file support
 #include "bmp.h"
 #include "disk.h"
 #include "memory.h"
-/*#include "dat.h"*/
+#include "dat.h"
 
 extern FILE* outputStream;
 

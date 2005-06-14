@@ -59,8 +59,7 @@ plv.h: Princed Resources : PLV prince level files support headers
 	All values are unsigned and in the intel x86 architecture
 */
 
-#include <stdio.h>
-#include "dat.h"
+#include "reslist.h"
 #include "common.h" /* for PR_VERSION */
 
 int mFormatImportPlv(tResource *res);

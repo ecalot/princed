@@ -61,8 +61,10 @@ void resFree(void* a) {
 void resFreeDummy(void* a) {
 }
 
-void resourceListDrop(tResourceList* r) {
-	list_drop(r);
+const tResource* resourceListGetElement(tResourceList* r) {
+	const tResource* ret=list_getCursor(r);
+	if (ret) list_nextCursor(r);
+	return ret;
 }
 
 tResourceList resourceListCreate(int isCopy) {

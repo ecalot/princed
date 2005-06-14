@@ -69,14 +69,17 @@ typedef struct {
 	unsigned long      flags;
 }tResource;
 
-void printr(const tResource* record); /* for debug purposes */
+/* void printr(const tResource* record); * for debug purposes */
 
-int resIdCmp(tResourceId a,tResourceId b);
+#define resourceListStartIteration(l) list_firstCursor(l)
+#define resourceListDrop(r)	list_drop(r)
+
 int resCmp(const void* a,const void* b);
-void resourceListDrop(tResourceList* r);
+int resIdCmp(tResourceId a,tResourceId b);
+const tResource* resourceListGetElement(tResourceList* r);
 tResourceList resourceListCreate(int isCopy);
+void resourceListAddInfo(tResourceList* r,tResource* res);
 void resourceListAdd(tResourceList* r,const tResource* res);
 void resourceListDebugPrint(tResourceList* r);
-void resourceListAddInfo(tResourceList* r,tResource* res);
 
 #endif

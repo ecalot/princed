@@ -39,7 +39,6 @@ search.c: Princed Resources : specific xml handling functions
 /* Includes */
 #include "common.h"
 #include "parse.h"
-#include "reslist.h" /* only to add to the list */
 #include "search.h"
 #include "memory.h"
 #include <string.h>

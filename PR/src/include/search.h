@@ -40,7 +40,6 @@ search.h: Princed Resources : xml handling functions header file
 
 /* Includes */
 #include "common.h" /* tTag */
-#include "parse.h"
 #include "reslist.h"
 
 /****************************************************************\

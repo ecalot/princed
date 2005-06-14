@@ -160,7 +160,7 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 	for (indexNumber=0;(indexNumber<numberOfItems);indexNumber++) {
 		if (!mReadFileInDatFile(&res,indexNumber)) return PR_RESULT_ERR_INVALID_DAT; /* Read error */
 
-		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix * TODO: move to the dat layer? */
+		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
 
 		/* add to res more information from the resource list */
 		resourceListAddInfo(r,&res);

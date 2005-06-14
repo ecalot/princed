@@ -418,8 +418,7 @@ void dat_write(const tResource* res,unsigned char checksum) {
 	/* do the magic */
 	fwrite(res->data,res->size,1,writeDatFile);
 
-	/* TODO: use an abstract use of the list (at least macros in reslist.h) */
-	list_insert(&resIndex,&insert);
+	resourceListAdd(&resIndex,&insert);
 }
 
 void mWriteFileInDatFileIgnoreChecksum(const tResource* res) {
@@ -467,15 +466,12 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 	/* Write index */
 	fwriteshort(&totalItems,writeDatFile); /* Junk total items count to reserve 2 bytes */
 
-	/* TODO: use an abstract use of the list (at least macros in reslist.h) */
-	list_firstCursor(&resIndex);
-	while ((res=list_getCursor(&resIndex))) {
+	resourceListStartIteration(&resIndex);
+	while ((res=resourceListGetElement(&resIndex))) {
 		totalItems++;
 		fwriteshort(&(res->id.value),writeDatFile);
 		fwritelong(&(res->offset),writeDatFile);
 		fwriteshort(&(res->size),writeDatFile);
-
-		list_nextCursor(&resIndex);
 	}
 
 	size2+=totalItems<<3;

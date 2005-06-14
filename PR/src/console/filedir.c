@@ -61,8 +61,7 @@ int filedir_push(const char* text, tFileDir** list, int checkEquals) {
 	if (checkEquals) {
 		node=*list;
 		while (node) {
-			if (equalsIgnoreCase(node->text,text)) /* TODO: use defines If file was in the list, do nothing */
-			/*if (!strcmp(node->file,text)) * If file was in the list, do nothing */
+			if (equalsIgnoreCase(node->text,text)) /* If file was in the list, do nothing */
 				return -1;
 			node=node->next;
 		}
@@ -170,8 +169,6 @@ int isADatFile(const char* vResFile, const char* file) {
 	pass.file=getFileNameFromPath(file);
 	pass.result=0;
 
-	/* TODO: directory must end with / */
-	
 	/* Generate xml structure if doesn't exist */
 	if ((error=parseStructure(vResFile,&structure))) return error;
 
