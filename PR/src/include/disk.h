@@ -68,7 +68,6 @@ int  makebase      (const char* p);
 const char* repairFolders(const char* a);
 const char* getFileNameFromPath(const char* path);
 whatIs isDir(const char *nombre);
-/*#define mRemoveFile(a) remove(repairFolders(a))*/
 
 #ifdef DISK_DIR_SCANING
 int recurseDirectory(const char* path,int recursive, void* pass, void (*function)(const char*,void*));

@@ -48,43 +48,8 @@ resources.h: Princed Resources : Resource Handler headers
 
 /* Includes */
 #include <stdio.h>
-#include "xmlparse.h"
+#include "parse.h"
 #include "reslist.h"
-
-/* Id list for partial manipulation */
-typedef enum {eString,eId,eIdValue}tResLocationType;
-
-typedef struct {
-  tResLocationType type;
-  union {
-    char*        text;
-    tResourceId  id;
-  } field;
-}tResIdListItem;
-
-typedef struct {
-	int             count;
-	tResIdListItem* list;
-}tResIdList;
-
-void parseGivenPath(char* path);
-int  partialListActive();
-int isInThePartialList(const char* vFile, tResourceId id);
-void freePartialList();
-
-/* Verify  header */
-tResourceType verifyHeader(const unsigned char* array, int size);
-
-/*
-	Headers may be:
-	 01 Levels
-	 02 Bitmaps
-	 03 Waves
-	 04 Midis
-	 05 Binary
-	 06 Palette
-	 07 Internal Speaker Sounds
-*/
 
 /* Resources extras */
 void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension);

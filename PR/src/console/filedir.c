@@ -31,7 +31,7 @@ filedir.c: Princed Resources : read command line file arguments and generate a f
   DO NOT remove this copyright notice
 */
 
-#include "xmlsearch.h" /* tTag */
+#include "search.h" /* tTag */
 #include "memory.h" /* malloc, strallocandcopy */
 #include <string.h> /* strcat */
 #include "disk.h"

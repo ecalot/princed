@@ -38,10 +38,14 @@ export.c: Princed Resources : DAT Extractor
 #include "common.h"
 
 #include "export.h"
+
+#include "autodetect.h"
 #include "dat.h"
 #include "disk.h"
+#include "idlist.h"
 #include "memory.h"
 #include "reslist.h" /* resIdcmp, resourceList primitives for the palette */
+#include "resources.h"
 
 #include "bmp.h"
 #include "wav.h"

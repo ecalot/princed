@@ -35,8 +35,7 @@ autodetect.c: Princed Resources : Autodetect resource types
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
 
-/* Includes */
-#include "reslist.h" /* tResourceType */
+#include "autodetect.h"
 
 /***************************************************************\
 |                       Item Type Detector                      |

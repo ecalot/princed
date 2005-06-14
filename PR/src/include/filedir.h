@@ -19,7 +19,7 @@
 */
 
 /*
-xmlparse.h: Princed Resources : xml handling functions header file
+filedir.h: Princed Resources : xml handling functions header file
 ¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 23 Oct 2003

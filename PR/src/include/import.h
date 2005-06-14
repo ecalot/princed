@@ -34,8 +34,7 @@ import.h: Princed Resources : DAT Compiler headers
 #ifndef _IMPORT_H_
 #define _IMPORT_H_
 
-#include <stdio.h>
-#include "resources.h"
+#include "reslist.h"
 
 int compile(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension);
 

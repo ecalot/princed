@@ -53,14 +53,14 @@ pr.c: Main source file for Princed Resources library
 
 #include "common.h"
 
-#include "compress.h"
-
 #include "export.h"
 #include "import.h"
 #include "classify.h"
 
-#include "memory.h"    /* getMemory, free */
 #include "disk.h"      /* getFileNameFromPath */
+#include "idlist.h"
+#include "memory.h"    /* getMemory, free */
+#include "resources.h"
 
 /***************************************************************\
 |                      Main working functions                   |

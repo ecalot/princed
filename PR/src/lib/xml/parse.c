@@ -36,7 +36,7 @@ parse.c: Princed Resources : xml parsing functions
 \***************************************************************/
 
 /* Includes */
-#include "xmlparse.h"
+#include "parse.h"
 #include "disk.h"
 #include "memory.h"
 #include "common.h"

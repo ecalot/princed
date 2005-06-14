@@ -19,7 +19,7 @@
 */
 
 /*
-xmlparse.h: Princed Resources : xml handling functions header file
+search.h: Princed Resources : xml handling functions header file
 ¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 23 Oct 2003
@@ -40,7 +40,7 @@ xmlparse.h: Princed Resources : xml handling functions header file
 
 /* Includes */
 #include "common.h" /* tTag */
-#include "xmlparse.h"
+#include "parse.h"
 #include "reslist.h"
 
 /****************************************************************\

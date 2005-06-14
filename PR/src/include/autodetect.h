@@ -19,7 +19,7 @@
 */
 
 /*
-resources.h: Princed Resources : Resource Handler headers
+autodetect.h: Princed Resources : Resource autodetection headers
 ¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -31,75 +31,13 @@ resources.h: Princed Resources : Resource Handler headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _RESOURCES_H_
-#define _RESOURCES_H_
-
-/* XML generation defines */
-
-#define RES_XML_UNKNOWN_PATH  "%s/unknown/%s/"
-#define RES_XML_UNKNOWN_FILES "%s%03d.%s"
-#define RES_XML_UNKNOWN_START "<?xml version=\"1.0\" ?>\n<resources version=\"generated\">\n <folder name=\"unknown\" path=\"%s\" file=\"%s\" palette=\"%d\" paletteindex=\"%s\">\n"
-#define RES_XML_UNKNOWN_ITEM  "  <item value=\"%d\" index=\"%s\" path=\""RES_XML_UNKNOWN_FILES"\" itemtype=\"%s\">Unknown %s %d</item>\n"
-#define RES_XML_UNKNOWN_END   " </folder>\n</resources>\n"
-
-/* File extensions */
-
-#define RES_FILE_EXTENSIONS   {"raw","plv","bmp","wav","mid","bin","pal","pcs"}
+#ifndef _AUTODETECT_H_
+#define _AUTODETECT_H_
 
 /* Includes */
-#include <stdio.h>
-#include "xmlparse.h"
-#include "reslist.h"
-
-/* Id list for partial manipulation */
-typedef enum {eString,eId,eIdValue}tResLocationType;
-
-typedef struct {
-  tResLocationType type;
-  union {
-    char*        text;
-    tResourceId  id;
-  } field;
-}tResIdListItem;
-
-typedef struct {
-	int             count;
-	tResIdListItem* list;
-}tResIdList;
-
-void parseGivenPath(char* path);
-int  partialListActive();
-int isInThePartialList(const char* vFile, tResourceId id);
-void freePartialList();
+#include "reslist.h" /* tResourceType */
 
 /* Verify  header */
 tResourceType verifyHeader(const unsigned char* array, int size);
-
-/*
-	Headers may be:
-	 01 Levels
-	 02 Bitmaps
-	 03 Waves
-	 04 Midis
-	 05 Binary
-	 06 Palette
-	 07 Internal Speaker Sounds
-*/
-
-/* Resources extras */
-void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension);
-void getUpperFolder(char* aux, char* vFiledat);
-
-const char* getExtDesc(int type);
-
-/* parse xml file */
-int parseFile(const char* vFile, const char* datFile, tResourceList *r);
-
-/* In case there are unknown resources it closes the unknown XML output */
-void endUnknownXml();
-
-/* Search files for the Import feature */
-int importDir(const char* directory, const char* vResFile, int pOption, const char* backupExtension,const char* vDirectory,FILE* output);
-int isntADatFile(const char* testFile, const char* vResFile);
 
 #endif

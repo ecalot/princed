@@ -34,10 +34,10 @@ tasks.c: Princed Resources : Classify a DAT file
 #include <stdio.h>
 #include "classify.h"
 #include "memory.h"
-#include "resources.h"
 #include "dat.h"
 #include "disk.h" /* mLoadFileArray */
 #include "common.h"
+#include "autodetect.h"
 
 /***************************************************************\
 |                    Get the type of a DAT file                 |

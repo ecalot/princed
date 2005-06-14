@@ -41,7 +41,7 @@ main.c: PR console program parsing routine
 #include "filedir.h"
 #include "disk.h" /* MAX_FILENAME_SIZE */
 #include "compress.h" /* setCompressionLevel */
-#include "xmlparse.h" /* free parsed cache */
+#include "parse.h" /* free parsed cache */
 
 FILE* outputStream;
 

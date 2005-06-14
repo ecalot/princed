@@ -39,9 +39,12 @@ import.c: Princed Resources : DAT Compiler
 #include "common.h"
 #include "import.h"
 
+#include "autodetect.h"
 #include "dat.h"
-#include "memory.h"
 #include "disk.h"
+#include "idlist.h"
+#include "memory.h"
+#include "resources.h"
 
 #include "bmp.h"
 #include "mid.h"
