@@ -51,16 +51,16 @@ else
   LINKERRELEASE = -s
 endif
 
-FILES    = .import.o .export.o .resources.o .classify.o .disk.o\
-           .dat.o .bmp.o .mid.o .pal.o .wav.o .plv.o\
-           .memory.o .pr.o .list.o .reslist.o
-
-XML      = .parse.o .search.o
+ACTIONS  = .import.o .export.o .classify.o
+XML      = .parse.o .search.o .resources.o
 COMPRESS = .compress.o .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o 
+LAYERS   = .dat.o .memory.o .list.o .reslist.o .disk.o .idlist.o .autodetect.o
+FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
 CONSOLE  = .main.o .filedir.o
+MAIN     = .pr.o
 
-EXEOBJ   = $(FILES) $(XML) $(COMPRESS) $(CONSOLE) $(PORTS)
-LIBOBJ   = $(FILES) $(XML) $(COMPRESS) $(PORTS)
+EXEOBJ   = $(MAIN) $(XML) $(COMPRESS) $(ACTIONS) $(LAYERS) $(FORMAT) $(PORTS) $(CONSOLE)
+LIBOBJ   = $(MAIN) $(XML) $(COMPRESS) $(ACTIONS) $(LAYERS) $(FORMAT) $(PORTS)
 
 EXEFILE  = bin/pr
 XMLFILE  = bin/resources.xml
@@ -117,13 +117,33 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling import module...
 	$(CC) $(OPTIONS) -c lib/actions/import.c -o $@
 
-.memory.o: lib/layers/memory.c include/memory.h
-	$(INFO) Compiling memory manager...
-	$(CC) $(OPTIONS) -c lib/layers/memory.c -o $@
+.classify.o: lib/actions/classify.c include/classify.h include/common.h include/dat.h include/disk.h include/memory.h include/resources.h
+	$(INFO) Compiling classification module...
+	$(CC) $(OPTIONS) -c lib/actions/classify.c -o $@
 
 .export.o: lib/actions/export.c include/bmp.h include/common.h include/dat.h include/disk.h include/export.h include/memory.h include/mid.h include/pal.h include/plv.h include/reslist.h include/wav.h
 	$(INFO) Compiling export module...
 	$(CC) $(OPTIONS) -c lib/actions/export.c -o $@
+
+.autodetect.o: lib/layers/autodetect.c include/common.h include/compress.h include/disk.h include/memory.h include/resources.h include/xmlsearch.h
+	$(INFO) Compiling resource autodetection module...
+	$(CC) $(OPTIONS) -c lib/layers/autodetect.c -o $@
+
+.idlist.o: lib/layers/idlist.c include/common.h include/compress.h include/disk.h include/memory.h include/resources.h include/xmlsearch.h
+	$(INFO) Compiling id list layer...
+	$(CC) $(OPTIONS) -c lib/layers/idlist.c -o $@
+
+.disk.o: lib/layers/disk.c include/common.h include/direntwin.h include/disk.h include/memory.h include/xmlparse.h
+	$(INFO) Compiling disk access library...
+	$(CC) $(OPTIONS) -c lib/layers/disk.c -o $@
+
+.dat.o: lib/layers/dat.c include/common.h include/dat.h include/disk.h include/reslist.h
+	$(INFO) Compiling DAT editing library...
+	$(CC) $(OPTIONS) -c lib/layers/dat.c -o $@
+
+.memory.o: lib/layers/memory.c include/memory.h
+	$(INFO) Compiling memory manager...
+	$(CC) $(OPTIONS) -c lib/layers/memory.c -o $@
 
 .list.o: lib/layers/list.c include/list.h
 	$(INFO) Compiling list implementation...
@@ -153,25 +173,21 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling RLE uncompression module...
 	$(CC) $(OPTIONS) -c lib/compression/rle_uncompress.c -o $@
 
-.main.o: console/main.c include/common.h include/compress.h include/disk.h include/filedir.h include/getopt.h include/memory.h include/xmlparse.h
-	$(INFO) Compiling command parsing module for standard mode...
-	$(CC) $(OPTIONS) -c console/main.c -o $@
-
 .pr.o: lib/pr.c include/classify.h include/common.h include/compress.h include/disk.h include/export.h include/import.h include/memory.h
 	$(INFO) Compiling main library primitives for both modes...
 	$(CC) $(OPTIONS) -c lib/pr.c -o $@
 	
+.main.o: console/main.c include/common.h include/compress.h include/disk.h include/filedir.h include/getopt.h include/memory.h include/xmlparse.h
+	$(INFO) Compiling command parsing module for standard mode...
+	$(CC) $(OPTIONS) -c console/main.c -o $@
+
 .filedir.o: console/filedir.c include/disk.h include/memory.h include/xmlsearch.h
 	$(INFO) Compiling directory and recursive file reading module for standard mode...
 	$(CC) $(OPTIONS) -c console/filedir.c -o $@
 
-.resources.o: lib/resources.c include/common.h include/compress.h include/disk.h include/memory.h include/resources.h include/xmlsearch.h
-	$(INFO) Compiling resource manager module...
-	$(CC) $(OPTIONS) -c lib/resources.c -o $@
-
-.classify.o: lib/actions/classify.c include/classify.h include/common.h include/dat.h include/disk.h include/memory.h include/resources.h
-	$(INFO) Compiling classification module...
-	$(CC) $(OPTIONS) -c lib/actions/classify.c -o $@
+.resources.o: lib/xml/resources.c include/common.h include/compress.h include/disk.h include/memory.h include/resources.h include/xmlsearch.h
+	$(INFO) Compiling XML resource reading module...
+	$(CC) $(OPTIONS) -c lib/xml/resources.c -o $@
 
 .parse.o: lib/xml/parse.c include/common.h include/disk.h include/memory.h include/xmlparse.h
 	$(INFO) Compiling XML parsing module...
@@ -180,14 +196,6 @@ $(XMLFILE): xml/resources.xml
 .search.o: lib/xml/search.c include/common.h include/memory.h include/reslist.h include/xmlparse.h include/xmlsearch.h
 	$(INFO) Compiling XML search features...
 	$(CC) $(OPTIONS) -c lib/xml/search.c -o $@
-
-.disk.o: lib/layers/disk.c include/common.h include/direntwin.h include/disk.h include/memory.h include/xmlparse.h
-	$(INFO) Compiling disk access library...
-	$(CC) $(OPTIONS) -c lib/layers/disk.c -o $@
-
-.dat.o: lib/layers/dat.c include/common.h include/dat.h include/disk.h include/reslist.h
-	$(INFO) Compiling DAT editing library...
-	$(CC) $(OPTIONS) -c lib/layers/dat.c -o $@
 
 .bmp.o: lib/formats/bmp.c include/bmp.h include/common.h include/dat.h include/disk.h include/memory.h
 	$(INFO) Compiling bitmap files support \(bmp\)...

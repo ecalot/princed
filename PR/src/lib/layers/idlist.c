@@ -19,8 +19,8 @@
 */
 
 /*
-resources.c: Princed Resources : Resource Handler
-¯¯¯¯¯¯¯¯¯¯¯
+idlist.c: Princed Resources : Partial Id list
+¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 
@@ -45,64 +45,6 @@ resources.c: Princed Resources : Resource Handler
 #include "memory.h"
 #include "resources.h"
 #include "compress.h"
-
-extern FILE* outputStream;
-
-/***************************************************************\
-|                       Item Type Detector                      |
-\***************************************************************/
-
-int verifyLevelHeader(const unsigned char *array, int size) {
-	return (((size==2306)||(size==2305))&&!(array[1698]&0x0F)&&!(array[1700]&0x0F)&&!(array[1702]&0x0F));
-}
-
-int verifyImageHeader(const unsigned char *array, int size) {
-	unsigned char imageBitRate;
-	imageBitRate=((unsigned char)array[6]&0xF0);
-	return (size>7) && (!array[5]) && ((imageBitRate==0xB0));
-	/* return (size>7) && (!array[5]) && ((imageBitRate==0xB0)||(imageBitRate==0x00)); */
-}
-
-int verifyPaletteHeader(const unsigned char *array, int size) {
-	/* this is only pop2 palette */
-	return ((size==101)&&(!array[2])&&(!array[3])&&(array[4]==0x10));
-}
-
-int verifySpeakerHeader(const unsigned char *array, int size) {
-	/* format: (checksum)+(0x00)+(even number)+3 bytes per note */
-	return
-		(size>4)&&(array[1]==0x00)&&(!(array[2]%2))&&(!(size%3))
-	;
-}
-
-int verifyWaveHeader(const unsigned char *array, int size) {
-	/* format: (checksum)+(0x01)+raw wave */
-	return
-		(size>1)&&(array[1]==0x01)&&((size%3)==2)
-	;
-}
-
-int verifyMidiHeader(const unsigned char *array, int size) {
-	/* format: (checksum)+(0x02)+"MThd"... */
-	return
-		(size>6) &&
-		(array[1]==0x02) &&
-		(array[2]=='M') &&
-		(array[3]=='T') &&
-		(array[4]=='h') &&
-		(array[5]=='d')
-	;
-}
-
-tResourceType verifyHeader(const unsigned char *array, int size) {
-	if (verifyLevelHeader  (array,size)) return RES_TYPE_LEVEL;
-	if (verifyMidiHeader   (array,size)) return RES_TYPE_MIDI;
-	if (verifyImageHeader  (array,size)) return RES_TYPE_IMAGE;
-	if (verifyPaletteHeader(array,size)) return RES_TYPE_PALETTE;
-	if (verifyWaveHeader   (array,size)) return RES_TYPE_WAVE;
-	if (verifySpeakerHeader(array,size)) return RES_TYPE_PCSPEAKER;
-	return RES_TYPE_BINARY;
-}
 
 /***************************************************************\
 |                Partial Resource List Functions                |
@@ -293,102 +235,5 @@ void freePartialList() {
 	}
 	free(partialList.list);
 	partialList.count=0;
-}
-
-/***************************************************************\
-|                     Parsing resource file                     |
-\***************************************************************/
-
-/* parse file */
-int parseFile(const char* vFile, const char* datFile, tResourceList *r) {
-	/* Declare error variable */
-	int error;
-	tPassWork pass;
-	tTag* structure;
-
-	/* Generate xml structure if doesn't exist */
-	if ((error=parseStructure(vFile,&structure))) return error;
-
-	/* Use the xml structure to Generate the resource structure of the file */
-	pass.datFile=datFile;
-	pass.r=r;
-	workTree(structure,&pass,workTag);
-
-	/* All done */
-	return PR_RESULT_SUCCESS;
-}
-
-/***************************************************************\
-|                     Unknown.xml primitives                    |
-\***************************************************************/
-
-/* Resources output to xml functions. Private+abstract variable */
-static FILE* unknownXmlFile=NULL;
-
-char* toLower(const char* txt) {
-	static char ret[5];
-	char* r=ret;
-	while (*txt) {
-		*r=(('A'<=(*txt)) && ((*txt)<='Z'))?(*txt)|0x20:*txt;
-		r++;
-		txt++;
-	}
-	*r=0;
-	return ret;			
-}
-
-void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,char type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count) {
-	/* Open file if not open */
-	if (unknownXmlFile==NULL) {
-		char xmlFile[MAX_FILENAME_SIZE];
-		sprintf(xmlFile,RES_XML_UNKNOWN_PATH""RES_XML_UNKNOWN_XML,vDirExt,vFiledatWithPath);
-
-		/* Open file */
-		if (!writeOpen(xmlFile,&unknownXmlFile,optionflag)) return;
-
-		/* Save headers */
-		if (type==6) pal=id;
-		fprintf(unknownXmlFile,RES_XML_UNKNOWN_START,
-			vFiledat,vFiledatWithPath,pal.value,toLower(pal.index)
-		);
-	}
-
-	/* Write item */
-	fprintf(unknownXmlFile,RES_XML_UNKNOWN_ITEM,
-		id.value,toLower(id.index),getExtDesc(type),count,ext,getExtDesc(type),getExtDesc(type),count
-	); /* To the xml output */
-}
-
-static unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
-
-void endUnknownXml(int optionflag, const char* backupExtension) {
-	if (unknownXmlFile!=NULL) {
-		int i;
-		fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);
-		writeCloseOk(unknownXmlFile,optionflag,backupExtension);
-		unknownXmlFile=NULL;
-		for (i=0;i<RES_TYPECOUNT;i++) typeCount[i]=0;
-	}
-}
-
-/***************************************************************\
-|                   Resources extra functions                   |
-\***************************************************************/
-
-void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag, const char* backupExtension) {
-	static const char* extarray[]=RES_FILE_EXTENSIONS;
-	int pos;
-
-	if (r->path==NULL) {
-		pos=((r->type<RES_TYPECOUNT)&&(r->type>=0))?r->type:RES_TYPE_BINARY;
-		typeCount[pos]++;
-
-		/* set filename */
-		sprintf(vFileext,RES_XML_UNKNOWN_PATH""RES_XML_UNKNOWN_FILES,vDirExt,vDatFileName,getExtDesc(pos),typeCount[pos],extarray[pos]);
-		AddToUnknownXml(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,typeCount[pos]);
-	} else {
-		/* set filename */
-		sprintf(vFileext,"%s/%s",vDirExt,r->path);
-	}
 }
 
