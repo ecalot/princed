@@ -19,7 +19,7 @@
 */
 
 /*
-memory.h: Princed Resources : Memory handling headers
+memory.h: Princed Resources : Memory handling & comparission headers
 ¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 20 Dec 2003
@@ -40,7 +40,7 @@ memory.h: Princed Resources : Memory handling headers
 char* strallocandcopy(const char* text);
 #define freeAllocation(m) if ((m)!=NULL) free(m)
 
-/* equalsIgnoreCase is coded unless we are in the BSD standars that is taken from string.h */
+/* equalsIgnoreCase is built in unless we are in the BSD standars that is taken from string.h */
 #ifdef __USE_BSD
 #include <string.h>
 #define IGNORE_EQUALS
@@ -51,6 +51,7 @@ int equalsIgnoreCase2(const char s1[],const char s2[]);
 #endif
 
 void str5uppercpy (char* dst,const char* src);
+int matchesIn(const char *s, const char *p);
 
 #endif
 

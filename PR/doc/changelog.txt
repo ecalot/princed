@@ -155,16 +155,14 @@ Versions:
   + Rewritten DAT indexing layer to support pop2
   - Rewritten resource handling using dynamic structures
   - Support of partial list folder selection wildcards (e.g.
-    vdungeon.dat@vdungeon/chopper/*.bmp)
+    vdungeon.dat@vdungeon/chopper/*.bmp) '*' and '?' using '&' as escape
  * PR v1.2 (future plans)
-  x Finish python interface
-  x Fix the language support
   x Add parsing feature @:pahs
+  x Add pop2 flag to xml file
   x Add pop2 importing
   x Add pop2 to resources.xml
-	x Replace wildcard matching function for a smaller one adding & as
-	  space and fix the space bug
-	x delete equalsignorecase 
+  x Finish python interface
+  x Fix the language support
 
 2) ToDo List & Future Plans:
 

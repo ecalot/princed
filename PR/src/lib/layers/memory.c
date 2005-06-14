@@ -54,6 +54,16 @@ void str5uppercpy (char* dst,const char* src) {
 	*dst=0;
 }
 
+int matchesIn(const char *s, const char *p) {
+  switch(*p) {
+    case 0: return !(*s);
+    case '*': return matchesIn(s,p+1) || ((*s) && matchesIn(s+1,p));
+    case '?': return (*s) && matchesIn(s+1,p+1);
+    case '&': p++;
+    default: return ((*p)==(*s)) && matchesIn(s+1,p+1);
+  }
+}
+
 #ifndef IGNORE_EQUALS
 int equalsIgnoreCase2(const char s1[],const char s2[]) {
 	int i=0;
