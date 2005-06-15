@@ -12,6 +12,7 @@ Legend:
  - Code improvement
     Things that were supported before, but they have been improved
     Code bug fixes
+ x Not coded, but scheduled
 
 Versions:
  * PG (unreleased)
@@ -144,7 +145,7 @@ Versions:
   - Solved bug in palette buffer initialization for autodetected images
   - Stable version for win32 and unix based systems
   - Using new macros to use an endian-independent layer.
- * PR v1.1 (next week)
+ * PR v1.1 (2005-06-15)
   - Added pop2 palette support
   - Centralize all the return values in defines
   - Coded file type detection to detect dat subtypes, sav, hof and exe
@@ -162,10 +163,8 @@ Versions:
   x Add pop2 importing
   x Add pop2 to resources.xml
   x Finish python interface
+	x Fix buffer overflows
   x Fix the language support
-
-2) ToDo List & Future Plans:
-
  * PR v2.0 beta
   x Add full pop2 support
  * PR v2.0

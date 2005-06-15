@@ -133,7 +133,7 @@ int listAllDatFiles(const char* vResFile, const char* directory, const char* opt
 	tPassListAndDir pass;
 	tTag* structure;
 	int error;
-	
+
 	pass.dir=directory;
 	pass.opt=opt;
 	pass.list=list;
@@ -165,7 +165,7 @@ int isADatFile(const char* vResFile, const char* file) {
 	tPassFileAndResult pass;
 	tTag* structure;
 	int error;
-	
+
 	pass.file=getFileNameFromPath(file);
 	pass.result=0;
 
@@ -191,11 +191,11 @@ int fileDirGetFilesImport(tFileDir2* list1,tFileDir2* files,const char* resfile,
 
 	files->filenames=NULL;
 	files->options=NULL;
-	
+
 	while ((file=filedir_pop(&(list1->filenames)))) {
 		opt=filedir_pop(&(list1->options));
 		type=isDir(file);
-		
+
 		/* a not found file may become either a directory or a file depending on the res file */
 		if (type==eNotFound) {
 			/* first check if the dat type was given by the -t option */
@@ -213,7 +213,7 @@ int fileDirGetFilesImport(tFileDir2* list1,tFileDir2* files,const char* resfile,
 				}
 			}
 		}
-		
+
 		if ((!dirs)&&type==eDirectory) {
 			parseError=listAllDatFiles(resfile, file, opt, files);
 		}
@@ -315,7 +315,7 @@ void fileDirAddOption(tFileDir2* list1, const char* option) {
 
 int fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notHasRecursiveFlag,const char* resfile,int given) {
 /* case 1: * import from more than one directory */
- 
+
 	if (!hasExportFlag&&!notHasRecursiveFlag) {
 		char* file;
 		while ((file=filedir_pop(&(list1->filenames)))) {
@@ -329,7 +329,7 @@ int fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notH
 		return fileDirGetFilesExport(list1,files,notHasRecursiveFlag);
 	else
 		return fileDirGetFilesImport(list1,files,resfile,given);
-	
+
 }
 
 char* fileDirGetFile(tFileDir2* files, char** datfile) {

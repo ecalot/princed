@@ -143,7 +143,7 @@ int main (int argc, char **argv) {
 
 	outputStream=stdout;
 	c=0;
-	
+
 	/* At least one of these options must be selected, if not, the user needs help! */
 	if (!(hasFlag(import_flag|export_flag|classify_flag))) setFlag(help_flag);
 
@@ -162,7 +162,7 @@ int main (int argc, char **argv) {
 	} else {
 		tFileDir2 files;
 		tFileDir2 input;
-		
+
 		fileDirClearOptions(&input);
 		if (optind < argc) {
 			while (optind < argc)

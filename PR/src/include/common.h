@@ -130,7 +130,7 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 #else
 #define PARSING_OPTRAW ,
 #define PARSING_CHRRAW ""
-#define PARSING_SHOWRAW(a) "" 
+#define PARSING_SHOWRAW(a) ""
 #endif
 #define PARSING_OPTIONS {\
 {"import",      optional_argument, 0,'m'},\
