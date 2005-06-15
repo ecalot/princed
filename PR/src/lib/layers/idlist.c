@@ -37,6 +37,7 @@ idlist.c: Princed Resources : Partial Id list
 
 /* Includes */
 #include <stdio.h>
+#include <string.h> /* strcat strlen */
 #include "disk.h"
 #include "memory.h"
 #include "idlist.h"
