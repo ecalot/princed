@@ -35,11 +35,11 @@ TYPE          = Debug
 RELEASE       = -ansic
 LINKERRELEASE = -s
 
-FILES    = import.obj export.obj resources.obj classify.obj disk.obj\
+FILES    = import.obj export.obj idlist.obj autodetect.obj classify.obj disk.obj\
            dat.obj bmp.obj mid.obj pal.obj wav.obj plv.obj\
            memory.obj pr.obj list.obj reslist.obj
 
-XML      = parse.obj search.obj
+XML      = parse.obj search.obj resources.obj
 COMPRESS = compress.obj lzg_compress.obj lzg_uncompress.obj rle_compress.obj rle_uncompress.obj 
 CONSOLE  = main.obj filedir.obj
 
@@ -140,9 +140,9 @@ filedir.obj: console\filedir.c
 	$(INFO) Compiling directory and recursive file reading module for standard mode...
 	$(CC) $(OPTIONS) -c console\filedir.c
 
-resources.obj: lib\resources.c
-	$(INFO) Compiling resource manager module...
-	$(CC) $(OPTIONS) -c lib\resources.c
+resources.obj: lib\xml\resources.c
+	$(INFO) Compiling xml resource module...
+	$(CC) $(OPTIONS) -c lib\xml\resources.c
 
 classify.obj: lib\actions\classify.c
 	$(INFO) Compiling classification module...
@@ -155,6 +155,14 @@ parse.obj: lib\xml\parse.c
 search.obj: lib\xml\search.c
 	$(INFO) Compiling XML search features...
 	$(CC) $(OPTIONS) -c lib\xml\search.c
+
+autodetect.obj: lib\layers\autodetect.c include\autodetect.h
+	$(INFO) Compiling resource autodetection module...
+	$(CC) $(OPTIONS) -c lib\layers\autodetect.c
+
+idlist.obj: lib\layers\idlist.c include\disk.h include\idlist.h include\memory.h
+	$(INFO) Compiling id list layer...
+	$(CC) $(OPTIONS) -c lib\layers\idlist.c
 
 disk.obj: lib\layers\disk.c
 	$(INFO) Compiling disk access library...
