@@ -106,6 +106,7 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 		/* remember only id and type */
 		newRes.id=res->id;
 		newRes.type=res->type;
+		newRes.flags=res->flags;
 	
 		if (hasFlag(raw_flag)) newRes.type=0; /* compile from raw */
 		getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension);
@@ -129,9 +130,6 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 
 	/* Close file. If empty, don't save */
 	mWriteCloseDatFile(!ok,optionflag,backupExtension);
-
-	/* Free allocated resources and dynamic strings */
-	/*freeResources;*/
 
 	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,error);
 	return error;

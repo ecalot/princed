@@ -84,7 +84,7 @@ char* toLower(const char* txt) {
 	return ret;			
 }
 
-void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,char type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count) {
+void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count, unsigned long int flags) {
 	/* Open file if not open */
 	if (unknownXmlFile==NULL) {
 		char xmlFile[MAX_FILENAME_SIZE];
@@ -94,7 +94,7 @@ void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext
 		if (!writeOpen(xmlFile,&unknownXmlFile,optionflag)) return;
 
 		/* Save headers */
-		if (type==6) pal=id;
+		if (type==RES_TYPE_PALETTE) pal=id;
 		fprintf(unknownXmlFile,RES_XML_UNKNOWN_START,
 			vFiledat,vFiledatWithPath,pal.value,toLower(pal.index)
 		);
@@ -102,7 +102,7 @@ void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext
 
 	/* Write item */
 	fprintf(unknownXmlFile,RES_XML_UNKNOWN_ITEM,
-		id.value,toLower(id.index),getExtDesc(type),count,ext,getExtDesc(type),getExtDesc(type),count
+		id.value,toLower(id.index),getExtDesc(type),count,ext,getExtDesc(type),flags,getExtDesc(type),count
 	); /* To the xml output */
 }
 
@@ -128,7 +128,7 @@ void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const cha
 
 		/* set filename */
 		sprintf(vFileext,RES_XML_UNKNOWN_PATH""RES_XML_UNKNOWN_FILES,vDirExt,vDatFileName,getExtDesc(pos),typeCount[pos],extarray[pos]);
-		AddToUnknownXml(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,typeCount[pos]);
+		AddToUnknownXml(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,typeCount[pos],r->flags);
 	} else {
 		/* set filename */
 		sprintf(vFileext,"%s/%s",vDirExt,r->path);

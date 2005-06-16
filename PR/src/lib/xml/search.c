@@ -67,6 +67,7 @@ void workTag(const tTag* t,void* pass) {
 	const char* datFile=((tPassWork*)pass)->datFile;
 	tResourceList* r=((tPassWork*)pass)->r;
 	tResource res;
+	char* end;
 
 	/* Skipping conditions */
 	if (!equalsIgnoreCase(t->file,datFile))   return; /* If it doesn't belong to the given dat file */
@@ -94,6 +95,12 @@ void workTag(const tTag* t,void* pass) {
 	
 	/* Copy number, title, desc and path */
 	keepIntAttribute(number,unsigned char);    /* Transforms the char* levelnumer/number attribute into a char value, if error, demo level is used */
+	if (t->flags) {
+		res.flags=strtol(t->flags,&end,0);
+		if (*end) return;
+	} else {
+		res.flags=0;
+	}
 	keepStringAttribute(desc);  /* only for plv */
 	keepStringAttribute(name);  /* only for plv */
 	keepStringAttribute(path);

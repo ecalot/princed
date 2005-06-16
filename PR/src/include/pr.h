@@ -58,6 +58,7 @@ typedef struct tTag {
 	char* index;
 	char* version;
 	char* number;
+	char* flags;
 }tTag;
 
 /***************************************************************\

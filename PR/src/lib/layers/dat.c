@@ -84,7 +84,7 @@ int checkSum(const unsigned char* data,int size) {
 #define dat_readCursorGetId(r)        (array2short(r.currentRecord))
 #define dat_readCursorGetOffset(r)    (array2long(r.currentRecord+2))
 #define dat_readCursorGetSize(r)      (array2short(r.currentRecord+6))
-#define dat_readCursorGetFlags(r)     ((r.popVersion==pop1)?(1<<31):(r.currentRecord[8]<<16|r.currentRecord[9]<<8|r.currentRecord[10]))
+#define dat_readCursorGetFlags(r)     ((r.popVersion==pop1)?(1<<24):(r.currentRecord[8]<<16|r.currentRecord[9]<<8|r.currentRecord[10]))
 #define dat_readCursorGetVersion(r)     (r.popVersion)
 
 /* the cursor move functions */
@@ -409,6 +409,7 @@ void dat_write(const tResource* res,unsigned char checksum) {
 
 	/* remember only indexed values */
 	insert.id=res->id;
+	insert.flags=res->flags;
 	insert.size=res->size;
 	insert.offset=((unsigned long)ftell(writeDatFile));
 
@@ -462,22 +463,88 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 	unsigned short int size2=2;
 	unsigned long  int size1=ftell(writeDatFile);
 	const tResource*   res;
+	char               index[5];
 
 	/* Write index */
 	fwriteshort(&totalItems,writeDatFile); /* Junk total items count to reserve 2 bytes */
 
 	resourceListStartIteration(&resIndex);
-	while ((res=resourceListGetElement(&resIndex))) {
-		totalItems++;
-		fwriteshort(&(res->id.value),writeDatFile);
-		fwritelong(&(res->offset),writeDatFile);
-		fwriteshort(&(res->size),writeDatFile);
+	res=resourceListGetElement(&resIndex);
+	if (res) {
+		if (!strncmp(res->id.index,"POP1",4)) { /* POP1 */
+			do {
+				totalItems++;
+				printf("Adding item id (%s,%d)\n",res->id.index,res->id.value);
+				fwriteshort(&(res->id.value),writeDatFile);
+				fwritelong(&(res->offset),writeDatFile);
+				fwriteshort(&(res->size),writeDatFile);
+			} while ((res=resourceListGetElement(&resIndex)));
+			size2+=totalItems<<3;
+
+		} else { /* POP2 */
+			unsigned long int flags=res->flags;
+			int numberOfSlaveItems=0;
+			int slaveCountPos=size1; /* first value is a junked place */
+
+			/* first step: read the list to create the master index */
+			strcpy(index,"a");
+			do {
+				if (strncmp(res->id.index,index,4)) {
+					fwrite(res->id.index,4,1,writeDatFile);
+					fwriteshort(&totalItems,writeDatFile); /* Junk (I) */
+
+					strncpy(index,res->id.index,5);
+					flags=res->flags;
+				}
+			} while ((res=resourceListGetElement(&resIndex)));
+			/* second step: read the list to create the slave indexes */
+			resourceListStartIteration(&resIndex);
+			res=resourceListGetElement(&resIndex);
+			strcpy(index,"a");
+			do {
+				unsigned char v;
+				if (strncmp(res->id.index,index,4)) {
+					int relativePos=ftell(writeDatFile)-size1;
+					/* go to the master index to write the beginning of this new index */
+					fseek(writeDatFile,size1+6+6*(totalItems++),SEEK_SET);
+					fwriteshort(&relativePos,writeDatFile); /* overwrite junk (I) */
+					/* go to the last junk (II) and write the right value */
+					fseek(writeDatFile,slaveCountPos,SEEK_SET);
+					fwriteshort(&numberOfSlaveItems,writeDatFile); /* overwrite junk (II) */
+					numberOfSlaveItems=0;
+					/* return to the end of the file to keep writing */
+					fseek(writeDatFile,0,SEEK_END);
+					slaveCountPos=ftell(writeDatFile); /* remember the juni (II) place */
+					fwriteshort(&numberOfSlaveItems,writeDatFile); /* junk (II) */
+
+					strncpy(index,res->id.index,5);
+				}
+				/* write slave index content */
+				fwriteshort(&(res->id.value),writeDatFile);
+				fwritelong(&(res->offset),writeDatFile);
+				fwriteshort(&(res->size),writeDatFile);
+				/* this is the flag writen in endian safe */
+				v=(res->flags>>16)&&0xff;
+				fwritechar(&v,writeDatFile);
+				v=(res->flags>>8)&&0xff;
+				fwritechar(&v,writeDatFile);
+				v=(res->flags)&&0xff;
+				fwritechar(&v,writeDatFile);
+
+				numberOfSlaveItems++;
+			} while ((res=resourceListGetElement(&resIndex)));
+			size2=ftell(writeDatFile)-size1;
+			fseek(writeDatFile,slaveCountPos,SEEK_SET);
+			fwriteshort(&numberOfSlaveItems,writeDatFile); /* overwrite junk (II) */
+		}
+	} else {
+		dontSave=1;
 	}
 
-	size2+=totalItems<<3;
+	/* Write totalItems */
 	fseek(writeDatFile,size1,SEEK_SET);
 	fwriteshort(&totalItems,writeDatFile); /* Definitive total items count */
-
+	
 	/* Write first 6 bytes header */
 	fseek(writeDatFile,0,SEEK_SET);
 	fwritelong(&size1,writeDatFile);

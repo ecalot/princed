@@ -1409,7 +1409,7 @@ resources.xml: Princed Resources : Resource tree
  <!--
       pop2: bird.dat
   -->
- <folder index="pahs" name="the pop2 bird guard" file="bird.dat" type="image" path="bird" palette="750" paletteindex="clap">
+ <folder index="pahs" name="the pop2 bird guard" file="bird.dat" type="image" path="bird" palette="750" paletteindex="clap" flags="0x400000">
   <item value="750" index="slap" path="bird.pal" type="palette">The bird palette</item>
   <folder path="fighting">
    <item value="751" path="frame01.bmp" type="image">Frame 01 (751)</item>
