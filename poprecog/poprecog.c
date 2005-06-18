@@ -62,10 +62,11 @@ struct sRecognized
   int imageID;
   int posX, posY;
   int goodPixels;
+  int ownedPixels; // for recognizeMap
 } recognized[MAX_RECOGNIZED_ITEMS];
 int recognizedNumber;
 
-/*This will be soonint recognizeTable[320][200]; // here are stored information which 'recognize result' have this pixel*/
+int recognizeMap[320][200]; // here are stored information which 'recognize result' have this pixel
 
 FILE *outputFile;
 char outputFileName[20];
@@ -98,7 +99,7 @@ int cmptImage(void *a, void *b)
 
 int findImageOnScreenShotInPosition(BITMAP *bitmap, int posX, int posY)
 {
-  register int i, j, x, y, c;
+  register int i, j, x, y;
   register short transparentPixel = makecol16(0, 0, 0);
   register short screenShotTransparentPixel = makecol16(255, 0, 255);  
   register int goodPixels;
@@ -122,8 +123,37 @@ int findImageOnScreenShotInPosition(BITMAP *bitmap, int posX, int posY)
         continue;        
       return 0;
     }
-  if (goodPixels < 0) return 0;
+  //if (goodPixels < 0) return 0;
   return goodPixels;
+}
+
+int putImageOnRecognizeMap(BITMAP *bitmap, int posX, int posY, int recognizedID)
+{
+  int x, y, value;
+  short transparentPixel = makecol16(0, 0, 0);
+  short screenShotTransparentPixel = makecol16(255, 0, 255);
+
+  for (x = 0; x < bitmap->w; x++)
+    for (y = 0; y < bitmap->h; y++)  
+    {
+      value = recognizeMap[posX+x][posY+y];
+      if (((short *)bitmap->line[y])[x] != transparentPixel)
+      {
+        if (value == -1)
+        {
+          recognizeMap[posX+x][posY+y] = recognizedID;
+          recognized[recognizedID].ownedPixels++;
+        }
+        else
+        if (recognized[value].goodPixels < recognized[recognizedID].goodPixels)
+        {
+          recognized[value].ownedPixels--;
+          recognizeMap[posX+x][posY+y] = recognizedID;
+          recognized[recognizedID].ownedPixels++;
+        }
+      }
+    }  
+  return recognized[recognizedID].ownedPixels;  
 }
 
 int cutImageFromScreenShot(BITMAP *bitmap, int posX, int posY)
@@ -248,24 +278,26 @@ int findImageOnScreenShot(int imageID, int maxImages)
       posY = y;      
       //printf("    Probably object %s found at position %d:%d\n", image[imageID].filePath, posX, posY);
       //fprintf(outputFile, "    Probably object %s found at position %d:%d\n", image[imageID].filePath, posX, posY);
-                  
+      
       if (tmp = findImageOnScreenShotInPosition(image[imageID].bitmap, posX, posY))
       {
         recognized[recognizedNumber].imageID = imageID;
         recognized[recognizedNumber].posX = posX;  
         recognized[recognizedNumber].posY = posY;
         recognized[recognizedNumber].goodPixels = tmp;
+        recognized[recognizedNumber].ownedPixels = 0;
         recognizedNumber++;
-        
-        cutImageFromScreenShot(image[imageID].bitmap, posX, posY);
-        numberOfRecognizedImages++;
-        printf("    %s %c %d %d\n", image[imageID].filePath, image[imageID].direction, posX, posY);
-        fprintf(outputFile, "    %s %c %d %d\n", image[imageID].filePath, image[imageID].direction, posX, posY);
-        //if (numberOfRecognizedImages >= maxImages) return numberOfRecognizedImages;        
-        /*char buf[100];
-        sprintf(buf, "%d_%d_%d.bmp", x, y, rand()%100);
-        save_bitmap(buf, bitmapToFind, 0);*/
-      }
+        // int putImageOnRecognizeMap(BITMAP *bitmap, int posX, int posY, int recognizedID)
+        if (putImageOnRecognizeMap(image[imageID].bitmap, posX, posY, recognizedNumber-1))
+        {
+          cutImageFromScreenShot(image[imageID].bitmap, posX, posY);
+          numberOfRecognizedImages++;
+          //if (numberOfRecognizedImages >= maxImages) return numberOfRecognizedImages;        
+          /*char buf[100];
+          sprintf(buf, "%d_%d_%d.bmp", x, y, rand()%100);
+          save_bitmap(buf, bitmapToFind, 0);*/
+        }
+      }  
     }
   return numberOfRecognizedImages;
 }
@@ -274,7 +306,9 @@ void recognizeScreenShot(int screenShotID)
 {
   char buf[100];
   int x, y;  
-/*This will be soon  int i, j;*/
+  int i, j;
+  int sessionNumber = 0;
+  int totalNumberOfRecognizedImages = 0;
   //int maxImages, tmp, nrOfRecognizedImages, nrOfRecognizedImagesThisSession;
   
   printf("Recognizing %s\n", screenShotList[screenShotID].fileName);
@@ -283,29 +317,43 @@ void recognizeScreenShot(int screenShotID)
   screenShot = load_bmp(buf, 0);
   transparentScreenShot = load_bmp(buf, 0);  
   recognizedNumber = 0;
-/*This will be soon  for (i = 0; i < 320; i++)
+  for (i = 0; i < 320; i++)
     for (j = 0; j < 200; j++)
     {
-      recognizeTable[i][j] = -1;
-    }*/
-    
-  for (x = 0; x < 2; x++)
-  {
-    for (y = 0; y < imagesNumber; y++)
-    {
-      //maxImages = dirContents[x].maxImagesOnScreenShot - nrOfRecognizedImages;
-      //if (maxImages <= 0) break;        
-      /*tmp = */findImageOnScreenShot(y, 999/*maxImages*/);
-      //nrOfRecognizedImagesThisSession += tmp;
-      //nrOfRecognizedImages += tmp;        
+      recognizeMap[i][j] = -1;
     }
-    //if ((nrOfRecognizedImagesThisSession == 0) || (maxImages <= 0) || (dirContents[x].maxImagesOnScreenShot == 1)) break;
-    //printf("WARNING!!! SECOND LOOP!!! WARNING!!! SECOND LOOP!!!\n");
-    printf("Session %d, recognized %d images\n", x, recognizedNumber);
-    fprintf(outputFile, "Session %d, recognized %d images\n", x, recognizedNumber);
+    
+  do
+  {
+    sessionNumber++;
+    printf("# Session %d\n", sessionNumber);
+    fprintf(outputFile, "# Session %d\n", sessionNumber);   
+    i = 0;
+    for (y = 0; y < recognizedNumber; y++)
+      if (recognized[y].ownedPixels != 0) i++;
+    for (x = 0; x < imagesNumber; x++)
+    {
+      findImageOnScreenShot(x, 999/*maxImages*/);
+    }
+    j = 0;
+    for (y = 0; y < recognizedNumber; y++)
+      if (recognized[y].ownedPixels != 0) j++;    
   }
-    sprintf(buf, "ss_%03d.bmp", screenShotID);
-    save_bitmap(buf, transparentScreenShot, 0);
+  while (j - i != 0);
+  
+  for (i = 0; i < recognizedNumber; i++)
+  {
+    if (recognized[i].ownedPixels != 0)
+    {
+      printf("Found %s %c %d %d\n", image[recognized[i].imageID].filePath, image[recognized[i].imageID].direction, recognized[i].posX, recognized[i].posY);
+      fprintf(outputFile, "Found %s %c %d %d\n", image[recognized[i].imageID].filePath, image[recognized[i].imageID].direction, recognized[i].posX, recognized[i].posY);
+      totalNumberOfRecognizedImages++;
+    }  
+  }
+  printf("# Total number of recognized images %d\n", totalNumberOfRecognizedImages);
+  fprintf(outputFile, "# Total number of recognized images %d\n", totalNumberOfRecognizedImages);
+  sprintf(buf, "ss_%03d.bmp", screenShotID);
+  save_bitmap(buf, transparentScreenShot, 0);
   destroy_bitmap(screenShot);
   destroy_bitmap(transparentScreenShot);  
 }
@@ -419,11 +467,11 @@ void sortListOfImages()
   int i;
  
   qsort(image, imagesNumber, sizeof(tImage), cmptImage);
-  for (i = 0; i < imagesNumber; i++)
-  {
-    printf("#### %s -> %d pixels\n", image[i].filePath, image[i].pixelsNumber);
-    //rest(100);
-  }
+//  for (i = 0; i < imagesNumber; i++)
+//  {
+//    printf("#### %s -> %d pixels\n", image[i].filePath, image[i].pixelsNumber);
+//    //rest(100);
+//  }
 }
 
 /*void readDir(int dirID)
@@ -510,16 +558,15 @@ int main(int argc, char *argv[])
   int i;
   long timeBefore, timeAfter;
   
-  system("del ss_*.bmp");
-  
   allegro_init();
   set_color_depth(16);
   set_color_conversion(COLORCONV_TOTAL);
   
   readParameters();
+  system("del ss_*.bmp");  
   
   outputFile = fopen(outputFileName, "a");
-  fprintf(outputFile, "\n");
+  fprintf(outputFile, "# File generated by Prince Of Persia Screenshots Recognizer\n# (c) Copyright 2005 Princed Development Team\n# Programmed by peter_k\n# http://www.princed.com.ar\n#\n");     
 
   for (i = 0; i < dirsNumber; i++)
   {
@@ -542,7 +589,8 @@ int main(int argc, char *argv[])
     recognizeScreenShot(i);
 
   timeAfter = time(0);
-  printf("Info: Recognizing %d frames last about %d seconds\n", screenShotsNumber, timeAfter - timeBefore);    
+  printf("# Recognizing %d frames last about %d seconds\n", screenShotsNumber, timeAfter - timeBefore);    
+  fprintf(outputFile, "Recognizing %d frames last about %d seconds\n", screenShotsNumber, timeAfter - timeBefore);       
     
   printf("Freeing memory\n");
 //  for (i = 0; i < dirsNumber; i++)
