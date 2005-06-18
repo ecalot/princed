@@ -21,8 +21,9 @@
 
 /* Compile options */
 #define MAX_DIRS 9999
-#define MAX_FILES_IN_DIR 9999
 #define MAX_SCREENSHOTS 99999
+#define MAX_IMAGES 999999
+#define MAX_RECOGNIZED_ITEMS 999999
 #define NUMBER_OF_CONTROL_PIXELS 5 // do not edit this value now
 
 /* Types and global variables */
@@ -33,31 +34,38 @@ struct sScreenShotList
 int screenShotsNumber;
 char screenShotsDir[100];
 
-typedef struct sTmpImageList
+typedef struct sImage
 {
   BITMAP *bitmap;
   char *filePath;
   char direction;  
   int pixelsNumber;
-} sTmpImageList;
+  int dirID;  
+} tImage;
 
-BITMAP *actualScreenShot;
+tImage image[MAX_IMAGES];
+int imagesNumber;
+//tImage tmpImage[MAX_IMAGES];
+//int tmpImagesNumber;
 
-struct sImage
-{
-  BITMAP *bitmap;
-  char *filePath;
-  char direction;
-};
+BITMAP *screenShot, *transparentScreenShot;
 
-struct sDirContents
+struct sDirInfo
 {
   char dirName[16];
-  struct sImage image[MAX_FILES_IN_DIR];
-  int imagesNumber;
   int maxImagesOnScreenShot;
-} dirContents[MAX_DIRS];
+} dirInfo[MAX_DIRS];
 int dirsNumber;
+
+struct sRecognized
+{
+  int imageID;
+  int posX, posY;
+  int goodPixels;
+} recognized[MAX_RECOGNIZED_ITEMS];
+int recognizedNumber;
+
+/*This will be soonint recognizeTable[320][200]; // here are stored information which 'recognize result' have this pixel*/
 
 FILE *outputFile;
 char outputFileName[20];
@@ -79,54 +87,46 @@ int pstrcmp(const void *p1, const void *p2)
   return strcmp(*(char * const *)p1, *(char * const *)p2);
 }
 
-int cmp(void *a, void *b)
+int cmptImage(void *a, void *b)
 {
-  register int pxa = ((sTmpImageList*)(a))->pixelsNumber;
-  register int pxb = ((sTmpImageList*)(b))->pixelsNumber;
+  register int pxa = ((tImage*)(a))->pixelsNumber;
+  register int pxb = ((tImage*)(b))->pixelsNumber;
   if (pxa>pxb) return -1;
   if (pxa<pxb) return 1;
   return 0;
 }
 
-/*int cmp(void* a,void* b)
-{
-  register int pxa = ((sTmpImageList*)(*a))->pixelsNumber;
-  register int pxb = ((sTmpImageList*)(*b))->pixelsNumber;
-  if (pxa>pxb) return 1;
-  if (pxa<pxb) return -1;
-  return 0;
-}*/
-
-int isBitmapOnScreenShot(BITMAP *bitmap, int posX, int posY)
+int findImageOnScreenShotInPosition(BITMAP *bitmap, int posX, int posY)
 {
   register int i, j, x, y, c;
   register short transparentPixel = makecol16(0, 0, 0);
   register short screenShotTransparentPixel = makecol16(255, 0, 255);  
-  register int numberOfGoodPixels;
+  register int goodPixels;
   register int wPer2 = bitmap->w / 2;
-  register int hPer2 = bitmap->h / 2;
+  register int hPer2 = bitmap->h / 2;  
 
-  numberOfGoodPixels = 0;  
+  goodPixels = 0;  
   for (i = 0; i < bitmap->w; i++)
     for (j = 0; j < bitmap->h; j++)  
     {
       x = (i+wPer2)%bitmap->w;
-      y = (j+hPer2)%bitmap->h;      
-      if ((((short *)bitmap->line[y])[x] == transparentPixel) ||
-          (((short *)actualScreenShot->line[posY+y])[posX+x] == screenShotTransparentPixel))
-        continue;        
-      if (((short *)bitmap->line[y])[x] == ((short *)actualScreenShot->line[posY+y])[posX+x])
-      {
-        numberOfGoodPixels++;
+      y = (j+hPer2)%bitmap->h;
+      if (((short *)bitmap->line[y])[x] == transparentPixel)
         continue;
-      }  
+      if (((short *)bitmap->line[y])[x] == ((short *)transparentScreenShot->line[posY+y])[posX+x])
+      {
+        goodPixels++;
+        continue;
+      }        
+      if (((short *)transparentScreenShot->line[posY+y])[posX+x] == screenShotTransparentPixel)
+        continue;        
       return 0;
     }
-  if (numberOfGoodPixels < 1) return 0;
-  return 1;
+  if (goodPixels < 0) return 0;
+  return goodPixels;
 }
 
-int cutBitmapFromScreenShot(BITMAP *bitmap, int posX, int posY)
+int cutImageFromScreenShot(BITMAP *bitmap, int posX, int posY)
 {
   int x, y, c;
   int transparentPixel = makecol16(0, 0, 0);
@@ -137,29 +137,32 @@ int cutBitmapFromScreenShot(BITMAP *bitmap, int posX, int posY)
     for (y = 0; y < bitmap->h; y++)  
     {
       if (((short *)bitmap->line[y])[x] != transparentPixel)
-        ((short *)actualScreenShot->line[posY+y])[posX+x] = screenShotTransparentPixel;
+        ((short *)transparentScreenShot->line[posY+y])[posX+x] = screenShotTransparentPixel;
     }
   //sprintf(buf, "ss_%05d.bmp", rand()%9999);
   //save_bitmap(buf, actualScreenShot, 0);    
   //rest(500);
 }
 
-int findImageOnScreenShot(int bitmapDirID, int bitmapID, int maxImages)
+int findImageOnScreenShot(int imageID, int maxImages)
 {
   /*int i;*/
   int numberOfRecognizedImages = 0;
   register int x, y;
   int posX, posY;
+  int tmp;
   /*struct sControlPixel
   {
     int posX, posY, color;
   } controlPixel[NUMBER_OF_CONTROL_PIXELS];*/
   short transparentPixel = makecol(0, 0, 0);
   register short screenShotTransparentPixel = makecol(255, 0, 255);
-  BITMAP *bitmapToFind = dirContents[bitmapDirID].image[bitmapID].bitmap;
-  register int cp1x; register int cp1y; register short cp1c;
-  register int cp2x; register int cp2y; register short cp2c;
-  register int cp3x; register int cp3y; register short cp3c;    
+  BITMAP *bitmapToFind = image[imageID].bitmap;
+  int cp1x; int cp1y; short cp1c;
+  int cp2x; int cp2y; short cp2c;
+  int cp3x; int cp3y; short cp3c;
+  int cp4x; int cp4y; short cp4c;
+  int cp5x; int cp5y; short cp5c;
 
 /*  if (((short *)actualScreenShot->line[0])[0] == screenShotTransparentPixel)
     printf(".");
@@ -181,6 +184,16 @@ int findImageOnScreenShot(int bitmapDirID, int bitmapID, int maxImages)
     cp3y = rand()%(bitmapToFind->h);
     cp3c = ((short *)bitmapToFind->line[cp3y])[cp3x];   
   } while (cp3c == transparentPixel);    
+  do {
+    cp4x = rand()%(bitmapToFind->w);
+    cp4y = rand()%(bitmapToFind->h);
+    cp4c = ((short *)bitmapToFind->line[cp4y])[cp4x];   
+  } while (cp4c == transparentPixel);    
+  do {
+    cp5x = rand()%(bitmapToFind->w);
+    cp5y = rand()%(bitmapToFind->h);
+    cp5c = ((short *)bitmapToFind->line[cp5y])[cp5x];   
+  } while (cp5c == transparentPixel);        
  
 /*  for (i = 0; i < NUMBER_OF_CONTROL_PIXELS; i++)
   {
@@ -196,18 +209,21 @@ int findImageOnScreenShot(int bitmapDirID, int bitmapID, int maxImages)
   for (x = 0; x < 321-(bitmapToFind->w); x++)
     for (y = 0; y < 201-(bitmapToFind->h); y++)
     {
-       if ((((short *)actualScreenShot->line[y+cp1y])[x+cp1x] != cp1c) &&
-           (((short *)actualScreenShot->line[y+cp1y])[x+cp1x] != screenShotTransparentPixel))
+       if ((((short *)transparentScreenShot->line[y+cp1y])[x+cp1x] != cp1c) &&
+           (((short *)transparentScreenShot->line[y+cp1y])[x+cp1x] != screenShotTransparentPixel))
         continue;                          
-      //printf("   1Probably object %s found at position %d:%d\n", dirContents[bitmapDirID].image[bitmapID].filePath, x, y);        
-       if ((((short *)actualScreenShot->line[y+cp2y])[x+cp2x] != cp2c) &&
-           (((short *)actualScreenShot->line[y+cp2y])[x+cp2x] != screenShotTransparentPixel))
-        continue; 
-      //printf("    2Probably object %s found at position %d:%d\n", dirContents[bitmapDirID].image[bitmapID].filePath, x, y);                                 
-       if ((((short *)actualScreenShot->line[y+cp3y])[x+cp3x] != cp3c) &&
-           (((short *)actualScreenShot->line[y+cp3y])[x+cp3x] != screenShotTransparentPixel))
+       if ((((short *)transparentScreenShot->line[y+cp2y])[x+cp2x] != cp2c) &&
+           (((short *)transparentScreenShot->line[y+cp2y])[x+cp2x] != screenShotTransparentPixel))
+        continue;                          
+       if ((((short *)transparentScreenShot->line[y+cp3y])[x+cp3x] != cp3c) &&
+           (((short *)transparentScreenShot->line[y+cp3y])[x+cp3x] != screenShotTransparentPixel))
         continue;                                          
-     
+       if ((((short *)transparentScreenShot->line[y+cp4y])[x+cp4x] != cp4c) &&
+           (((short *)transparentScreenShot->line[y+cp4y])[x+cp4x] != screenShotTransparentPixel))
+        continue;                                                  
+       if ((((short *)transparentScreenShot->line[y+cp5y])[x+cp5x] != cp5c) &&
+           (((short *)transparentScreenShot->line[y+cp5y])[x+cp5x] != screenShotTransparentPixel))
+        continue;                                                  
 /*       if ((((short *)actualScreenShot->line[y + controlPixel[0].posY])[x + controlPixel[0].posX] != controlPixel[0].color) &&
            (((short *)actualScreenShot->line[y + controlPixel[0].posY])[x + controlPixel[0].posX] != screenShotTransparentPixel))
         continue;                     
@@ -230,15 +246,22 @@ int findImageOnScreenShot(int bitmapDirID, int bitmapID, int maxImages)
       }*/
       posX = x;
       posY = y;      
-      //printf("    Probably object %s found at position %d:%d\n", dirContents[bitmapDirID].image[bitmapID].filePath, posX, posY);
-            
-      if (isBitmapOnScreenShot(dirContents[bitmapDirID].image[bitmapID].bitmap, posX, posY))
+      //printf("    Probably object %s found at position %d:%d\n", image[imageID].filePath, posX, posY);
+      //fprintf(outputFile, "    Probably object %s found at position %d:%d\n", image[imageID].filePath, posX, posY);
+                  
+      if (tmp = findImageOnScreenShotInPosition(image[imageID].bitmap, posX, posY))
       {
-        cutBitmapFromScreenShot(dirContents[bitmapDirID].image[bitmapID].bitmap, posX, posY);
+        recognized[recognizedNumber].imageID = imageID;
+        recognized[recognizedNumber].posX = posX;  
+        recognized[recognizedNumber].posY = posY;
+        recognized[recognizedNumber].goodPixels = tmp;
+        recognizedNumber++;
+        
+        cutImageFromScreenShot(image[imageID].bitmap, posX, posY);
         numberOfRecognizedImages++;
-        printf("%s %c %d %d\n", dirContents[bitmapDirID].image[bitmapID].filePath, dirContents[bitmapDirID].image[bitmapID].direction, posX, posY);
-        fprintf(outputFile, "%s %c %d %d\n", dirContents[bitmapDirID].image[bitmapID].filePath, dirContents[bitmapDirID].image[bitmapID].direction, posX, posY);
-        if (numberOfRecognizedImages >= maxImages) return numberOfRecognizedImages;        
+        printf("    %s %c %d %d\n", image[imageID].filePath, image[imageID].direction, posX, posY);
+        fprintf(outputFile, "    %s %c %d %d\n", image[imageID].filePath, image[imageID].direction, posX, posY);
+        //if (numberOfRecognizedImages >= maxImages) return numberOfRecognizedImages;        
         /*char buf[100];
         sprintf(buf, "%d_%d_%d.bmp", x, y, rand()%100);
         save_bitmap(buf, bitmapToFind, 0);*/
@@ -251,34 +274,40 @@ void recognizeScreenShot(int screenShotID)
 {
   char buf[100];
   int x, y;  
-  int maxImages, tmp, nrOfRecognizedImages, nrOfRecognizedImagesThisSession;
+/*This will be soon  int i, j;*/
+  //int maxImages, tmp, nrOfRecognizedImages, nrOfRecognizedImagesThisSession;
   
   printf("Recognizing %s\n", screenShotList[screenShotID].fileName);
   fprintf(outputFile, "Recognizing %s\n", screenShotList[screenShotID].fileName);
   sprintf(buf, "%s\\%s", screenShotsDir, screenShotList[screenShotID].fileName);
-  actualScreenShot = load_bmp(buf, 0);
-  for (x = 0; x < dirsNumber; x++)
-  {
-    nrOfRecognizedImages = 0;
-    while (nrOfRecognizedImages < dirContents[x].maxImagesOnScreenShot)
+  screenShot = load_bmp(buf, 0);
+  transparentScreenShot = load_bmp(buf, 0);  
+  recognizedNumber = 0;
+/*This will be soon  for (i = 0; i < 320; i++)
+    for (j = 0; j < 200; j++)
     {
-      nrOfRecognizedImagesThisSession = 0;
-      for (y = 0; y < dirContents[x].imagesNumber; y++)
-      {
-        //printf("(%d) ", maxImages);
-        maxImages = dirContents[x].maxImagesOnScreenShot - nrOfRecognizedImages;
-        if (maxImages <= 0) break;        
-        tmp = findImageOnScreenShot(x, y, maxImages);
-        nrOfRecognizedImagesThisSession += tmp;
-        nrOfRecognizedImages += tmp;        
-      }
-      if ((nrOfRecognizedImagesThisSession == 0) || (maxImages <= 0) || (dirContents[x].maxImagesOnScreenShot == 1)) break;
-      //printf("WARNING!!! SECOND LOOP!!! WARNING!!! SECOND LOOP!!!\n");
+      recognizeTable[i][j] = -1;
+    }*/
+    
+  for (x = 0; x < 2; x++)
+  {
+    for (y = 0; y < imagesNumber; y++)
+    {
+      //maxImages = dirContents[x].maxImagesOnScreenShot - nrOfRecognizedImages;
+      //if (maxImages <= 0) break;        
+      /*tmp = */findImageOnScreenShot(y, 999/*maxImages*/);
+      //nrOfRecognizedImagesThisSession += tmp;
+      //nrOfRecognizedImages += tmp;        
     }
+    //if ((nrOfRecognizedImagesThisSession == 0) || (maxImages <= 0) || (dirContents[x].maxImagesOnScreenShot == 1)) break;
+    //printf("WARNING!!! SECOND LOOP!!! WARNING!!! SECOND LOOP!!!\n");
+    printf("Session %d, recognized %d images\n", x, recognizedNumber);
+    fprintf(outputFile, "Session %d, recognized %d images\n", x, recognizedNumber);
   }
     sprintf(buf, "ss_%03d.bmp", screenShotID);
-    save_bitmap(buf, actualScreenShot, 0);
-  destroy_bitmap(actualScreenShot);
+    save_bitmap(buf, transparentScreenShot, 0);
+  destroy_bitmap(screenShot);
+  destroy_bitmap(transparentScreenShot);  
 }
 
 void sortListOfScreenShots()
@@ -339,38 +368,33 @@ int countPixels(BITMAP *bitmap)
 
 void readDir(int dirID)
 {
-//  char *filesList[MAX_FILES_IN_DIR];
-//  int filesNumber;
   char buf[100];
   int i;
-  DIR *dir = opendir(dirContents[dirID].dirName);
+  DIR *dir = opendir(dirInfo[dirID].dirName);
   struct dirent *file;
-  sTmpImageList tmpImageList[MAX_FILES_IN_DIR];  
-  int tmpImagesNumber;
-  
-  tmpImagesNumber = 0;
+
   while (file = readdir(dir))
   {
     if (match("*.bmp", file->d_name) || match("*.BMP", file->d_name))
     {
-      strcpy(buf, dirContents[dirID].dirName);
+      strcpy(buf, dirInfo[dirID].dirName);
       strcat(buf, "\\");      
       strcat(buf, file->d_name);
-      tmpImageList[tmpImagesNumber].filePath = (char *) malloc(strlen(buf)+1);
-      strcpy(tmpImageList[tmpImagesNumber].filePath, buf);
-      tmpImageList[tmpImagesNumber].bitmap = load_bmp(tmpImageList[tmpImagesNumber].filePath, 0);
-      tmpImageList[tmpImagesNumber].direction = 'L';      
-      tmpImageList[tmpImagesNumber].pixelsNumber = countPixels(tmpImageList[tmpImagesNumber].bitmap);
-      tmpImagesNumber++;
+      image[imagesNumber].filePath = (char *) malloc(strlen(buf)+1);
+      strcpy(image[imagesNumber].filePath, buf);
+      image[imagesNumber].bitmap = load_bmp(image[imagesNumber].filePath, 0);
+      image[imagesNumber].direction = 'L';      
+      image[imagesNumber].pixelsNumber = countPixels(image[imagesNumber].bitmap);
+      imagesNumber++;
       
-      tmpImageList[tmpImagesNumber].filePath = (char *) malloc(strlen(buf)+1);
-      strcpy(tmpImageList[tmpImagesNumber].filePath, buf);
-      tmpImageList[tmpImagesNumber].bitmap = create_bitmap(tmpImageList[tmpImagesNumber-1].bitmap->w, tmpImageList[tmpImagesNumber-1].bitmap->h);
-      draw_sprite_h_flip(tmpImageList[tmpImagesNumber].bitmap, tmpImageList[tmpImagesNumber-1].bitmap, 0, 0);
-      tmpImageList[tmpImagesNumber].direction = 'R';
-      tmpImageList[tmpImagesNumber].pixelsNumber = tmpImageList[tmpImagesNumber-1].pixelsNumber;
-      tmpImagesNumber++;
-      
+      image[imagesNumber].filePath = (char *) malloc(strlen(buf)+1);
+      strcpy(image[imagesNumber].filePath, buf);
+      image[imagesNumber].bitmap = create_bitmap(image[imagesNumber-1].bitmap->w, image[imagesNumber-1].bitmap->h);
+      draw_sprite_h_flip(image[imagesNumber].bitmap, image[imagesNumber-1].bitmap, 0, 0);
+      image[imagesNumber].direction = 'R';
+      image[imagesNumber].pixelsNumber = image[imagesNumber-1].pixelsNumber;
+      imagesNumber++;
+ 
       
 /*      dirContents[dirID].image[dirContents[dirID].imagesNumber].filePath = (char *) malloc(strlen(buf)+1);
       strcpy(dirContents[dirID].image[dirContents[dirID].imagesNumber].filePath, buf);
@@ -388,17 +412,18 @@ void readDir(int dirID)
     }  
   }  
   closedir(dir);
-  qsort(tmpImageList, tmpImagesNumber, sizeof(sTmpImageList), cmp);
-  for (i = 0; i < tmpImagesNumber; i++)
+}
+
+void sortListOfImages()
+{
+  int i;
+ 
+  qsort(image, imagesNumber, sizeof(tImage), cmptImage);
+  for (i = 0; i < imagesNumber; i++)
   {
-//    printf("#### %s -> %d pixels\n", tmpImageList[i].filePath, tmpImageList[i].pixelsNumber);
-//    rest(100);
-    dirContents[dirID].image[i].bitmap = tmpImageList[i].bitmap;
-    dirContents[dirID].image[i].filePath = tmpImageList[i].filePath;
-    dirContents[dirID].image[i].direction = tmpImageList[i].direction;
-    //printf("%s\n", filesList[i]);
+    printf("#### %s -> %d pixels\n", image[i].filePath, image[i].pixelsNumber);
+    //rest(100);
   }
-  dirContents[dirID].imagesNumber = tmpImagesNumber;
 }
 
 /*void readDir(int dirID)
@@ -440,17 +465,16 @@ void readDir(int dirID)
   closedir(dir);
 }*/
 
-void freeDir(int dirID)
+void freeListOfImages()
 {
   int i;
    
-  for (i = 0; i < dirContents[dirID].imagesNumber; i++)
+  for (i = 0; i < imagesNumber; i++)
   {
-    //printf("%s\n", dirContents[dirID].image[i].filePath);   
-    free(dirContents[dirID].image[i].filePath);
-    destroy_bitmap(dirContents[dirID].image[i].bitmap);
+    free(image[i].filePath);
+    destroy_bitmap(image[i].bitmap);
   }
-  dirContents[dirID].imagesNumber = 0;
+  imagesNumber = 0;
 }
 
 void readParameters()
@@ -465,10 +489,10 @@ void readParameters()
   printf("\nStep 2. Type dirs where are stored bitmaps to recognize.\nPlease type in this format: [dirname] [max images on screenshot][ENTER].\nWhen you'll finish type END[ENTER].\n");
   for (;;)
   {
-    scanf("%s", dirContents[dirsNumber].dirName);
-    if (strcmp(dirContents[dirsNumber].dirName, "END"))
+    scanf("%s", dirInfo[dirsNumber].dirName);
+    if (strcmp(dirInfo[dirsNumber].dirName, "END"))
     {
-      scanf("%d", &dirContents[dirsNumber].maxImagesOnScreenShot);     
+      scanf("%d", &dirInfo[dirsNumber].maxImagesOnScreenShot);     
       dirsNumber++;
     }  
     else
@@ -499,11 +523,11 @@ int main(int argc, char *argv[])
 
   for (i = 0; i < dirsNumber; i++)
   {
-    printf("Loading bitmaps from dir %s (%d)\n", dirContents[i].dirName, dirContents[i].maxImagesOnScreenShot);      
-    rest(500);
+    printf("Loading bitmaps from dir %s (%d)\n", dirInfo[i].dirName, dirInfo[i].maxImagesOnScreenShot);      
+    //rest(500);
     readDir(i);
   }
-  
+  sortListOfImages();  
   sortListOfScreenShots();
   
 //  for (i = 0; i < dirContents[0].imagesNumber; i++)
@@ -521,10 +545,10 @@ int main(int argc, char *argv[])
   printf("Info: Recognizing %d frames last about %d seconds\n", screenShotsNumber, timeAfter - timeBefore);    
     
   printf("Freeing memory\n");
-  for (i = 0; i < dirsNumber; i++)
-    freeDir(i);  
-    
+//  for (i = 0; i < dirsNumber; i++)
+//    freeDir(i);  
   freeListOfScreenShots();
+  freeListOfImages();  
   
   fclose(outputFile);
     
