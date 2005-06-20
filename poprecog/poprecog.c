@@ -382,9 +382,10 @@ int findImageOnScreenShot(int imageID, int maxImages)
         //if (recognizedNumber%100 == 0) printf("# Already recognized %d images\n", recognizedNumber);
 //          printf("Found %s %c %d %d\n", image[imageID].filePath, image[imageID].direction, posX, posY);        
         // int putImageOnRecognizeMap(BITMAP *bitmap, int posX, int posY, int recognizedID)
-          if (putImageOnRecognizeMap(image[imageID].bitmap, posX, posY, recognizedNumber-1))
+/*          if (putImageOnRecognizeMap(image[imageID].bitmap, posX, posY, recognizedNumber-1))
           {
-            cutImageFromTransparentScreenShot(image[imageID].bitmap, posX, posY);
+            //cutImageFromTransparentScreenShot(image[imageID].bitmap, posX, posY);
+            
             //numberOfRecognizedImages++;
             //if (numberOfRecognizedImages >= maxImages) return numberOfRecognizedImages;        
             //char buf[100];
@@ -392,7 +393,7 @@ int findImageOnScreenShot(int imageID, int maxImages)
             //save_bitmap(buf, bitmapToFind, 0);
           }
           else
-            recognizedNumber--;
+            recognizedNumber--;*/
         }  
       }  
     }
@@ -403,12 +404,12 @@ void recognizeScreenShot(int screenShotID)
 {
   char buf[100];
   int x, y;  
-  int i, j, k, l;
+  int i, j, k, l, tmp;
   int sessionNumber = 0;
   int totalNumberOfRecognizedImages = 0;
   short transparentPixel = makecol(0, 0, 0);
   register short screenShotTransparentPixel = makecol(255, 0, 255);  
-  int maxOwnedPixels, maxOwnedID;
+  int maxPixelsNumber, maxPixelsID;
   //int maxImages, tmp, nrOfRecognizedImages, nrOfRecognizedImagesThisSession;
   
   printf("Recognizing %s\n", screenShotList[screenShotID].fileName);
@@ -437,12 +438,14 @@ void recognizeScreenShot(int screenShotID)
     {
       findImageOnScreenShot(x, 999/*maxImages*/);
     }
+    for (x = 0; x < recognizedNumber; x++)
+      cutImageFromTransparentScreenShot(image[recognized[x].imageID].bitmap, recognized[x].posX, recognized[x].posY);
 //    j = 0;
 //    for (y = 0; y < recognizedNumber; y++)
 //      if (recognized[y].ownedPixels != 0) j++;    
     j = recognizedNumber;
-    //sprintf(buf, "ss_%02d_s_%d.bmp", screenShotID, sessionNumber);
-    //save_bitmap(buf, transparentScreenShot, 0);      
+    sprintf(buf, "ss_%02d_s_%d.bmp", screenShotID, sessionNumber);
+    save_bitmap(buf, transparentScreenShot, 0);      
   }
   while (j - i != 0);
   
@@ -456,40 +459,46 @@ void recognizeScreenShot(int screenShotID)
 
   for(;;)
   {
-    maxOwnedPixels = 0;
-    maxOwnedID = -1;
+    maxPixelsNumber = 0;
+    maxPixelsID = -1;
     for (i = 0; i < recognizedNumber; i++)
     {
-      if (recognized[i].ownedPixels > maxOwnedPixels)
+      if (recognized[i].goodPixels > maxPixelsNumber)
       {
-        maxOwnedPixels = recognized[i].ownedPixels;
-        maxOwnedID = i;
+        maxPixelsNumber = recognized[i].goodPixels;
+        maxPixelsID = i;
       }
     }
-    if (maxOwnedID != -1)
+    if (maxPixelsID != -1)
     {
+      tmp = findImageOnScreenShotInPosition(recognized[maxPixelsID].imageID, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
+      if (recognized[maxPixelsID].goodPixels != tmp)
+      {
+        recognized[maxPixelsID].goodPixels = tmp;
+        continue;
+      }
       totalNumberOfRecognizedImages++;     
-      cutImageFromScreenShot(image[recognized[maxOwnedID].imageID].bitmap, recognized[maxOwnedID].posX, recognized[maxOwnedID].posY);
-      recognized[maxOwnedID].ownedPixels = 0;
-      for (k = 0; k < 320; k++)
+      cutImageFromScreenShot(image[recognized[maxPixelsID].imageID].bitmap, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
+      recognized[maxPixelsID].goodPixels = 0;
+/*      for (k = 0; k < 320; k++)
         for (l = 0; l < 200; l++)
         {
           recognizeMap[k][l] = -1;
         }      
       for (j = 0; j < recognizedNumber; j++)
       {
-        if (recognized[j].ownedPixels != 0)
+        if (recognized[j].goodPixels != 0)
         {
           recognized[j].ownedPixels = 0;
           recognized[j].goodPixels = findImageOnScreenShotInPosition(recognized[j].imageID, recognized[j].posX, recognized[j].posY);
-          putImageOnRecognizeMap(image[recognized[j].imageID].bitmap, recognized[j].posX, recognized[j].posY, j);
+          //putImageOnRecognizeMap(image[recognized[j].imageID].bitmap, recognized[j].posX, recognized[j].posY, j);
         }
-      } 
-      printf("Found %s %c %d %d (OW:%d / GO:%d / TO:%d)\n", image[recognized[maxOwnedID].imageID].filePath, image[recognized[maxOwnedID].imageID].direction, recognized[maxOwnedID].posX, recognized[maxOwnedID].posY, recognized[maxOwnedID].ownedPixels, recognized[maxOwnedID].goodPixels, image[recognized[maxOwnedID].imageID].pixelsNumber);
-      fprintf(outputFile, "Found %s %c %d %d (OW:%d / GO:%d / TO:%d)\n", image[recognized[maxOwnedID].imageID].filePath, image[recognized[maxOwnedID].imageID].direction, recognized[maxOwnedID].posX, recognized[maxOwnedID].posY, recognized[maxOwnedID].ownedPixels, recognized[maxOwnedID].goodPixels, image[recognized[maxOwnedID].imageID].pixelsNumber);      
+      } */
+      printf("Found %s %c %d %d (OW:%d / GO:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, image[recognized[maxPixelsID].imageID].pixelsNumber);
+      fprintf(outputFile, "Found %s %c %d %d (OW:%d / GO:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, image[recognized[maxPixelsID].imageID].pixelsNumber);      
       /* debug screenshots */
       blit(transparentScreenShot, DEBUGScreenShot, 0, 0, 0, 0, 320, 200);
-      blit(image[recognized[maxOwnedID].imageID].bitmap, DEBUGScreenShot, 0, 0, recognized[maxOwnedID].posX, recognized[maxOwnedID].posY, image[recognized[maxOwnedID].imageID].bitmap->w, image[recognized[maxOwnedID].imageID].bitmap->h);
+      blit(image[recognized[maxPixelsID].imageID].bitmap, DEBUGScreenShot, 0, 0, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, image[recognized[maxPixelsID].imageID].bitmap->w, image[recognized[maxPixelsID].imageID].bitmap->h);
 /*      for (x = 0; x < image[recognized[i].imageID].bitmap->w; x++)
         for (y = 0; y < image[recognized[i].imageID].bitmap->h; y++)  
         {
