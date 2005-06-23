@@ -824,7 +824,7 @@ Table of Contents
 
  The 6-bytes-length index record (one per item): Size = 6 bytes
   - Relative offset 0, size 4, type sting: 4 ASCII bytes string denoting
-           the section ID
+           the section ID. The character order is inverted.
   - Relative offset 4, size 2, type US: SlaveIndexOffset
            (slave index offset relative to HighDataOffset)
 
@@ -833,25 +833,32 @@ Table of Contents
  points to).
 
  There are different 4 bytes ASCII strings section IDs. When the string is
- less than 4 bytes, the hex 0x00 is used. We will denote it with the
- cardinal # symbol.
+ less than 4 bytes, they are ended in hex 0x00 is used. We will denote it with
+ the cardinal # symbol. The character order is inverted, so for example the
+ text SLAP becomes PALS, MARF becomes FRAM, #### becomes empty or
+ RCS# becomes SCR. They must be un upper case.
 
                    Table 5.1: Section ID strings
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   ID   Size in records Type
-   ~~   ~~~~~~~~~~~~~~~ ~~~~
-   CEIP 1
-   CLAP 1 or 2
-   DNS# variant
-   LPHS 1
-   MARF 1
-   PAHS variant         This is the main encapsulated file content index
-   SLAP 1 or 2
-   SQES variant         Used in the midi sequence file
-   TSUC variant
-   #### 1
-   
+   ID   Size in records
+   ~~   ~~~~~~~~~~~~~~~
+   cust custom 
+   font fonts
+   fram frames
+   palc CGA Palette
+   pals SVGA Palette
+   palt TGA Palette
+   piec Pieces  
+   psl  ? 
+   scr  Screens (images that have the full screen)
+   shap Shapes (normal graphics)
+   shpl Shape palettes
+   strl Str
+   snd  Sound
+   seqs Midi sequences
+   txt4 Text
+
 5.3. The slave indexes
  All encapsulated sections are indexes.
  The slave index is made with:
