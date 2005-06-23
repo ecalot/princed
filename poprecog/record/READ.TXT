@@ -1,0 +1,36 @@
+RECORD README FILE
+
+Q : What can I do with this program ?
+A : This program can capture tha animation from a game. After finish the game, it create as many bmp files as there was recorded frames.
+
+
+Q : What should i have, to create own animation (for example in gif file) ?
+A : You should have :
+    - game (which You want to record) :)
+    - record program (that You have downloaded) :)
+    - any program that can link *.bmp files into one file (gif, avi etc.). For example Animation Shop in Paint Shop Pro.
+    - that's all :).
+    Next question please ...
+
+
+Q : What kinds of game (or programs) can i record ?
+A : This program can record only games (or programs) that are running in 13h mode.
+    What's 13h mode ? This is very old graphic mode that have 320 * 200 resolution and displays 256 colors max.
+    Some of games that are running in that mode are : Prince of Persia 1 & 2, Liero, Dangerous Dave and much, much more :)
+
+
+Q : How to record game ?
+A : It's very easy. Create in notepad file start.bat which has : "record game.exe parameters". Game.exe is the name of file to execute. Parameters are optional. For example, if you want to record Prince of Persia 1 with cheats, write in this file : "record prince.exe magahit". After that, run this file. The game should start. 
+The function keys are :
+F11 - Start recording
+F12 - Stop recording
+F10 - Single screenshot
+F9  - View Bufor Status
+After finish playing, confirm to save bmp files. This can take few minutes.
+
+Q : After few minutes (or seconds) i hear recurrent, noisy voices from PC Speaker.
+A : Your recording bufor is overcrowded or You have running program that it isn't in 13h mode.
+
+
+Q : When i run record program, it's display an error, that i haven't mouse !
+A : Don't run the program in the DOS mode :)

@@ -1,0 +1,6 @@
+Before compiling set this :
+
+Target : Real mode
+Options / Compiler : enable 286 instructions
+
+Mean file : record.pas
