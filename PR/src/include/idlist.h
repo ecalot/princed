@@ -35,23 +35,9 @@ idlist.h: Princed Resources : Resource id list headers
 #define _IDLIST_H_
 
 /* Includes */
-#include "reslist.h"
+#include "reslist.h" /* tResourceId */
 
-/* Id list for partial manipulation */
-typedef enum {eString,eId,eIdValue}tResLocationType;
-
-typedef struct {
-  tResLocationType type;
-  union {
-    char*        text;
-    tResourceId  id;
-  } field;
-}tResIdListItem;
-
-typedef struct {
-	int             count;
-	tResIdListItem* list;
-}tResIdList;
+#define PARSING_MAX_TOKEN_SIZE 200
 
 void parseGivenPath(char* path);
 int  partialListActive();

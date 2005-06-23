@@ -57,7 +57,7 @@ void str5uppercpy (char* dst,const char* src) {
 int matchesIn(const char *s, const char *p) {
   switch(*p) {
     case 0: return !(*s);
-    case '*': return matchesIn(s,p+1) || ((*s) && matchesIn(s+1,p));
+    case '*': while(*(p+1)=='*') p++; return matchesIn(s,p+1) || ((*s) && matchesIn(s+1,p));
     case '?': return (*s) && matchesIn(s+1,p+1);
     case '&': p++;
     default: return ((*p)==(*s)) && matchesIn(s+1,p+1);

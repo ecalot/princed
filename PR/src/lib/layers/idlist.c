@@ -42,9 +42,21 @@ idlist.c: Princed Resources : Partial Id list
 #include "memory.h"
 #include "idlist.h"
 
-/***************************************************************\
-|                Partial Resource List Functions                |
-\***************************************************************/
+/* Id list for partial manipulation. Private type */
+typedef enum {eString,eId,eIdValue,eIdIndex}tResLocationType;
+
+typedef struct {
+  tResLocationType type;
+  union {
+    char*        text;
+    tResourceId  id;
+  } field;
+}tResIdListItem;
+
+typedef struct {
+	int             count;
+	tResIdListItem* list;
+}tResIdList;
 
 static tResIdList partialList;
 
@@ -52,7 +64,9 @@ int partialListActive() {
 	return partialList.count;
 }
 
-#define PARSING_MAX_TOKEN_SIZE 200
+/***************************************************************\
+|                Partial Resource List Functions                |
+\***************************************************************/
 
 void parseGivenPath(char* path) {
 	/*
@@ -66,7 +80,6 @@ void parseGivenPath(char* path) {
 	int separator=0;
 	int j=0;
 	int size;
-	char aux[PARSING_MAX_TOKEN_SIZE];
 
 	/* Check if the variable wasn't initialized before */
 	if (partialList.count!=0) return;
@@ -120,10 +133,19 @@ void parseGivenPath(char* path) {
 			partialList.list[j].field.id.value=value;
 			break;
 		default:
-			partialList.list[j].type=eString;
-			aux[0]='/';aux[1]=0;
-			strcat(aux,path+i);
-			partialList.list[j].field.text=strallocandcopy(repairFolders(aux));
+			/* TODO: test this */
+			if (sscanf(path+i,":%5s",index)) {
+				partialList.list[j].type=eIdIndex;
+				strncpy(partialList.list[j].field.id.index,index,5);
+			} else {
+				char* aux;
+				partialList.list[j].type=eString;
+				aux=malloc(strlen(path+i)+2);
+				aux[0]='/';
+				strcpy(aux+1,path+i);
+				partialList.list[j].field.text=strallocandcopy(repairFolders(aux));
+				free(aux);
+			}
 			break;
 		}
 		while (path[i]) i++;
@@ -148,6 +170,9 @@ int isInThePartialList(const char* vFile, tResourceId id) {
 		switch (partialList.list[i].type) {
 		case eIdValue:
 			if (id.value==partialList.list[i].field.id.value) return 1;
+			break;
+		case eIdIndex:
+			if (!strncmp(id.index,partialList.list[i].field.id.index,4)) return 1;
 			break;
 		case eString:
 			if (vFile && matchesIn(repairFolders(vFile),partialList.list[i].field.text)) return 1;
