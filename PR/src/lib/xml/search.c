@@ -52,12 +52,12 @@ search.c: Princed Resources : specific xml handling functions
 #define keepStringAttribute(attribute) res.attribute=strallocandcopy(t->attribute)
 #define keepIntAttribute(attribute,type) res.attribute=(type)ptoi(t->attribute);
 #define keepIdAttributes(attribute,idnum,idindex) res.attribute.value=(unsigned short int)ptoi(t->idnum);\
-                                             if (t->idindex) str5uppercpy(res.attribute.index,t->idindex);\
+                                             if (t->idindex) str5lowercpy(res.attribute.index,t->idindex);\
 																	           else res.attribute.index[0]=0
 																	 
 #define keepIdAttributesElse(attribute,idnum,idindex,idelse) res.attribute.value=(unsigned short int)ptoi(t->idnum);\
-                                             if (t->idindex) str5uppercpy(res.attribute.index,t->idindex);\
-																	           else str5uppercpy(res.attribute.index,t->idelse)
+                                             if (t->idindex) str5lowercpy(res.attribute.index,t->idindex);\
+																	           else str5lowercpy(res.attribute.index,t->idelse)
 void workTag(const tTag* t,void* pass) {
 	/*
 		If the tag matches, it is converted to resource and added to the array

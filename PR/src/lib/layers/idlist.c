@@ -126,7 +126,7 @@ void parseGivenPath(char* path) {
 		case 2:
 			partialList.list[j].type=eId;
 			partialList.list[j].field.id.value=value;
-			str5uppercpy(partialList.list[j].field.id.index,index);
+			str5lowercpy(partialList.list[j].field.id.index,index);
 			break;
 		case 1:
 			partialList.list[j].type=eIdValue;

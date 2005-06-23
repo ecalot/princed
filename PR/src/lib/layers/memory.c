@@ -44,10 +44,10 @@ char* strallocandcopy(const char* text) {
 	return aux;
 }
 
-void str5uppercpy (char* dst,const char* src) {
+void str5lowercpy (char* dst,const char* src) {
 	int i;
 	for (i=0;(i<4)&&(*src);i++) {
-		*dst=((*src>='a')&&(*src<='z'))?*src&0xDF:*src;
+		*dst=((*src>='a')&&(*src<='z'))?*src|0x40:*src;
 		src++;
 		dst++;
 	}

@@ -78,6 +78,9 @@ int checkSum(const unsigned char* data,int size) {
 /* private functions */
 /* todo: move to datindex.c */
 
+#define toLower(a) (('A'<=(a)&&(a)<='Z')?(a)|0x40:(a)) /* TODO: move to memory.c and improve str5lowercpy */
+#define toUpper(a) (('a'<=(a)&&(a)<='b')?(a)&0xDF:(a))
+
 /* the cursor get functions */
 
 #define dat_readCursorGetIndexName(r) (r.slaveIndexName)
@@ -86,6 +89,18 @@ int checkSum(const unsigned char* data,int size) {
 #define dat_readCursorGetSize(r)      (array2short(r.currentRecord+6))
 #define dat_readCursorGetFlags(r)     ((r.popVersion==pop1)?(1<<24):(r.currentRecord[8]<<16|r.currentRecord[9]<<8|r.currentRecord[10]))
 #define dat_readCursorGetVersion(r)     (r.popVersion)
+
+void rememberIndex(char* to, const char* from) {
+	int i=4;
+	from+=3;
+	while (i--) {
+		*to=toLower(*from);
+		from--;
+		if (!*to) continue;
+		to++;
+	}
+	*to=0;
+}
 
 /* the cursor move functions */
 
@@ -100,7 +115,7 @@ int dat_cursorNextIndex(tIndexCursor* r) {
 		}
 
 		/* remember the new slave index name */
-		strncpy(r->slaveIndexName,(char*)(r->highData+2+6*r->currentMasterItem),4);
+		rememberIndex(r->slaveIndexName,(char*)(r->highData+2+6*r->currentMasterItem));
 
 		/* remember the new slave index size */
 		r->slaveItems=array2short(r->highData+array2short(r->highData+6+6*r->currentMasterItem));
@@ -133,8 +148,7 @@ int dat_cursorNext(tIndexCursor* r) {
 void dat_cursorFirst(tIndexCursor* r) {
 	if (r->popVersion==pop2) {
 		/* remember the first slave index name */
-		strncpy(r->slaveIndexName,(char*)(r->highData+2),4);
-		r->slaveIndexName[4]=0; /* now it is a null terminated string */
+		rememberIndex(r->slaveIndexName,(char*)(r->highData+2));
 		r->currentRecord=r->highData+array2short(r->highData+6)+2;
 	} else {
 		r->currentRecord=r->highData+2;
@@ -179,8 +193,7 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 				/* Great! we found it */
 
 				/* remember the new slave index name */
-				strncpy(r->slaveIndexName,(char*)(r->highData+2+6*i),4);
-				r->slaveIndexName[4]=0; /* now it is a null terminated string */
+				rememberIndex(r->slaveIndexName,(char*)(r->highData+2+6*i));
 
 				/* remember the new slave index size */
 				r->slaveItems=itemCount;
@@ -257,7 +270,7 @@ tIndexCursor dat_createCursor(unsigned char* highData,int highDataSize,unsigned 
 		r.slaveItems=array2short(highData);
 
 		/* remember the first slave index name */
-		strcpy(r.slaveIndexName,"POP1");
+		strcpy(r.slaveIndexName,"pop1");
 
 		/* jump to the first index */
 		r.currentSlaveItem=0;
@@ -270,8 +283,7 @@ tIndexCursor dat_createCursor(unsigned char* highData,int highDataSize,unsigned 
 		r.masterItems=array2short(highData);
 
 		/* remember the first slave index name */
-		strncpy(r.slaveIndexName,(char*)(highData+2),4);
-		r.slaveIndexName[4]=0; /* now it is a null terminated string */
+		rememberIndex(r.slaveIndexName,(char*)(highData+2));
 
 		/* remember the first slave index size */
 		r.slaveItems=array2short(highData+array2short(highData+6));
@@ -485,12 +497,20 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 			unsigned long int flags=res->flags;
 			int numberOfSlaveItems=0;
 			int slaveCountPos=size1; /* first value is a junked place */
+			unsigned char v;
 
 			/* first step: read the list to create the master index */
-			strcpy(index,"a");
+			strcpy(index,"X");
 			do {
 				if (strncmp(res->id.index,index,4)) {
-					fwrite(res->id.index,4,1,writeDatFile);
+					v=toUpper(res->id.index[4]);
+					fwritechar(&v,writeDatFile);
+					v=toUpper(res->id.index[3]);
+					fwritechar(&v,writeDatFile);
+					v=toUpper(res->id.index[2]);
+					fwritechar(&v,writeDatFile);
+					v=toUpper(res->id.index[1]);
+					fwritechar(&v,writeDatFile);
 					fwriteshort(&totalItems,writeDatFile); /* Junk (I) */
 
 					strncpy(index,res->id.index,5);
@@ -502,7 +522,6 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 			res=resourceListGetElement(&resIndex);
 			strcpy(index,"a");
 			do {
-				unsigned char v;
 				if (strncmp(res->id.index,index,4)) {
 					int relativePos=ftell(writeDatFile)-size1;
 					/* go to the master index to write the beginning of this new index */
