@@ -231,7 +231,7 @@ inline int putImageOnRecognizeMap(BITMAP *bitmap, int posX, int posY, int recogn
           recognized[recognizedID].ownedPixels++;
         }
         else
-        if (recognized[value].goodPixels < recognized[recognizedID].goodPixels)
+        if (recognized[value].goodPixelsPercent < recognized[recognizedID].goodPixelsPercent)
         {
           recognized[value].ownedPixels--;
           recognizeMap[posX+x][posY+y] = recognizedID;
@@ -443,7 +443,7 @@ int findImageOnScreenShot(int imageID)
           recognized[recognizedNumber].posX = posX;  
           recognized[recognizedNumber].posY = posY;
           recognized[recognizedNumber].goodPixels = /*(*/tmp/* * 100) / image[imageID].pixelsNumber*//* + tmp*/;
-          recognized[recognizedNumber].goodPixelsPercent = (recognized[recognizedNumber].goodPixels*100)/image[recognized[recognizedNumber].imageID].pixelsNumber;
+          recognized[recognizedNumber].goodPixelsPercent = (recognized[recognizedNumber].goodPixels*65536)/image[recognized[recognizedNumber].imageID].pixelsNumber;
           recognized[recognizedNumber].ownedPixels = 0;
           recognizedNumber++;          
           dirInfo[image[imageID].dirID].recognizedNumber++;
