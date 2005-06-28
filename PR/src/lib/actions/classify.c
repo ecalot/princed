@@ -47,7 +47,7 @@ tasks.c: Princed Resources : Classify a DAT file
 
 int prClassifyDat(const char* vFiledat) {
 	int                indexNumber;
-	tResourceType      type=RES_TYPE_BINARY;
+	tResourceType      type=eResTypeBinary;
 	unsigned short int numberOfItems;
 	tPopVersion        popVersion;
 	tResource          res;
@@ -59,7 +59,7 @@ int prClassifyDat(const char* vFiledat) {
 	popVersion=mReadGetVersion();
 
 	/* main loop */
-	for (indexNumber=0;(indexNumber<numberOfItems)&&(type==RES_TYPE_BINARY);indexNumber++) {
+	for (indexNumber=0;(indexNumber<numberOfItems)&&(type==eResTypeBinary);indexNumber++) {
 		if (!mReadFileInDatFile(&res,indexNumber)) READ_ERROR; /* Read error */
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
 		type=verifyHeader(res.data,res.size);

@@ -84,12 +84,12 @@ int verifyMidiHeader(const unsigned char *array, int size) {
 }
 
 tResourceType verifyHeader(const unsigned char *array, int size) {
-	if (verifyLevelHeader  (array,size)) return RES_TYPE_LEVEL;
-	if (verifyMidiHeader   (array,size)) return RES_TYPE_MIDI;
-	if (verifyImageHeader  (array,size)) return RES_TYPE_IMAGE;
-	if (verifyPaletteHeader(array,size)) return RES_TYPE_PALETTE;
-	if (verifyWaveHeader   (array,size)) return RES_TYPE_WAVE;
-	if (verifySpeakerHeader(array,size)) return RES_TYPE_PCSPEAKER;
-	return RES_TYPE_BINARY;
+	if (verifyLevelHeader  (array,size)) return eResTypeLevel;
+	if (verifyMidiHeader   (array,size)) return eResTypeMidi;
+	if (verifyImageHeader  (array,size)) return eResTypeImage;
+	if (verifyPaletteHeader(array,size)) return eResTypePalette;
+	if (verifyWaveHeader   (array,size)) return eResTypeWave;
+	if (verifySpeakerHeader(array,size)) return eResTypePcspeaker;
+	return eResTypeBinary;
 }
 

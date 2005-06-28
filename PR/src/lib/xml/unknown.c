@@ -94,7 +94,7 @@ void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext
 		if (!writeOpen(xmlFile,&unknownXmlFile,optionflag)) return;
 
 		/* Save headers */
-		if (type==RES_TYPE_PALETTE) pal=id;
+		if (type==eResTypePalette) pal=id;
 		fprintf(unknownXmlFile,RES_XML_UNKNOWN_START,
 			vFiledat,vFiledatWithPath,pal.value,toLower(pal.index)
 		);
@@ -123,7 +123,7 @@ void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const cha
 	int pos;
 
 	if (r->path==NULL) {
-		pos=((r->type<RES_TYPECOUNT)&&(r->type>=0))?r->type:RES_TYPE_BINARY;
+		pos=((r->type<RES_TYPECOUNT)&&(r->type>=0))?r->type:eResTypeBinary;
 		typeCount[pos]++;
 
 		/* set filename */

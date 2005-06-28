@@ -40,14 +40,15 @@ reslist.h: Princed Resources : Resource list
 /* Item Types */
 
 typedef enum {
-RES_TYPE_RAW=0,
-RES_TYPE_LEVEL=1,
-RES_TYPE_IMAGE=2,
-RES_TYPE_WAVE=3,
-RES_TYPE_MIDI=4,
-RES_TYPE_BINARY=5,
-RES_TYPE_PALETTE=6,
-RES_TYPE_PCSPEAKER=7} tResourceType;
+	eResTypeRaw=0,
+	eResTypeLevel=1,
+	eResTypeImage=2,
+	eResTypeWave=3,
+	eResTypeMidi=4,
+	eResTypeBinary=5,
+	eResTypePalette=6,
+	eResTypePcspeaker=7
+} tResourceType;
 
 /* types */
 typedef struct {

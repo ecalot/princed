@@ -106,14 +106,14 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension);
 
 				switch (res.type) {
-						case RES_TYPE_LEVEL:
+						case eResTypeLevel:
 						ok=mFormatExportPlv(res.data,vFileext,res.size,res.number,vDatFileName,res.name,res.desc,vDatAuthor,optionflag,backupExtension);
 						break;
-					case RES_TYPE_BINARY: /* Binary files */
-					case RES_TYPE_RAW: /* Raw files */
+					case eResTypeBinary: /* Binary files */
+					case eResTypeRaw: /* Raw files */
 						ok=writeData(res.data,1,vFileext,res.size,optionflag,backupExtension); /* Ignore checksum */
 						break;
-					case RES_TYPE_PALETTE: /* save and remember palette file */
+					case eResTypePalette: /* save and remember palette file */
 						/* This will remember the palette for the next images
 						 * (because it's more probable to get all the images after its palette) */
 						mLoadPalette(res.data,image,mReadGetVersion());
@@ -122,14 +122,14 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 						/* This will export the palette */
 						ok=mFormatExportPal(res.data,vFileext,res.size,optionflag,backupExtension);
 						break;
-					case RES_TYPE_PCSPEAKER: /* save pcs file */
-					case RES_TYPE_MIDI:	/* save midi file */
+					case eResTypePcspeaker: /* save pcs file */
+					case eResTypeMidi:	/* save midi file */
 						ok=mFormatExportMid(res.data,vFileext,res.size,optionflag,backupExtension);
 						break;
-					case RES_TYPE_WAVE: /* save wav file */
+					case eResTypeWave: /* save wav file */
 						ok=mFormatExportWav(res.data,vFileext,res.size,optionflag,backupExtension);
 						break;
-					case RES_TYPE_IMAGE: /* save image */
+					case eResTypeImage: /* save image */
 						/* Palette handling */
 						if (resIdCmp(res.palette,bufferedPalette)) { /* The palette isn't in the buffer */
 							tResource readPalette;

@@ -62,18 +62,18 @@ extern FILE* outputStream;
 int mAddCompiledFileToDatFile(tResource* res,const char* vFile) {
 	/* return 1 	if ok, 0 	if error */
 	switch (res->type) {
-		case RES_TYPE_LEVEL:
+		case eResTypeLevel:
 			return mFormatImportPlv(res);
-		case RES_TYPE_IMAGE:
+		case eResTypeImage:
 			return mFormatImportBmp(res);
-		case RES_TYPE_WAVE:
+		case eResTypeWave:
 			return mFormatImportWav(res);
-		case RES_TYPE_MIDI:
-		case RES_TYPE_PCSPEAKER:
+		case eResTypeMidi:
+		case eResTypePcspeaker:
 			return mFormatImportMid(res);
-		case RES_TYPE_PALETTE:
+		case eResTypePalette:
 			return mFormatImportPal(res,vFile);
-		case RES_TYPE_BINARY:
+		case eResTypeBinary:
 		default:
 			mWriteFileInDatFile(res);
 			break;
