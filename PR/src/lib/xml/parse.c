@@ -44,6 +44,11 @@ parse.c: Princed Resources : xml parsing functions
 #include <stdio.h> /* Included only for XML specific attribute code */
 #include <stdlib.h>
 
+#define XML_NO_TEXT 4
+#define XML_END_DOCUMENT 3
+#define XML_TAG_END 1
+
+
 extern FILE* outputStream;
 
 /****************************************************************\
@@ -160,7 +165,7 @@ int parseNext(char** pString, tTag* tag) {
 	  PR_RESULT_ERR_MEMORY No memory
 		PR_RESULT_ERR_XML_PARSING Parse error
 		0  if continue
-		1  if tag end
+		XML_TAG_END  if tag end
 		2  if end
 	*/
 
@@ -182,7 +187,7 @@ int parseNext(char** pString, tTag* tag) {
 		Separate;
 		if (*i=='>') {
 			*pString=i+1;
-			return 1;
+			return XML_TAG_END;
 		} else {
 			ParseError;
 		}
@@ -266,10 +271,10 @@ int getNextTag(char** pString, char** value) {
 	  PR_RESULT_ERR_MEMORY No memory
 		PR_RESULT_ERR_XML_PARSING Parse error
 		0  if next item is a tag (value allocated)
-		1  if it was a text (value allocated)
+		XML_TAG_END  if it was a text (value allocated)
 		2  if next item closes a tag (value allocated)
-		3  End of document (value not allocated)
-		4  if there was no text (value not allocated)
+		XML_END_DOCUMENT  End of document (value not allocated)
+		XML_NO_TEXT  if there was no text (value not allocated)
 	*/
 	char* i=*pString;
 	int   result;
@@ -290,7 +295,7 @@ int getNextTag(char** pString, char** value) {
 				while ((*i)&&((*i)!='>')) i++;
 				if (!(*i)) ParseError;
 				i++;
-				if (!(*i)) return 3;
+				if (!(*i)) return XML_END_DOCUMENT;
 				result=getNextTag(&i,value);
 				*pString=i;
 				return result;
@@ -314,15 +319,15 @@ int getNextTag(char** pString, char** value) {
 	}
 	start=i;
 	while ((*i)&&((*i)!='<')) i++;
-	if (!(*i)) return 3;
-	if (start==i) return 4;
+	if (!(*i)) return XML_END_DOCUMENT;
+	if (start==i) return XML_NO_TEXT;
 	size=(int)((long int)i-(long int)start); /* Note: casted to long for portability with 64 bits architectures */
 	*value=(char*)malloc(1+size);
 	if (*value==NULL) return PR_RESULT_ERR_MEMORY;
 	memcpy(*value,start,size);
 	(*value)[size]=0;
 	*pString=i;
-	return 1;
+	return XML_TAG_END;
 }
 
 /* Parse Tree functions */
@@ -346,10 +351,10 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 
 	if ((*error)<0) {freeTagStructure(tag);return NULL;} /* Fatal error */
 	/*	(*error)
-			1  if tag end
+			XML_TAG_END  if tag end
 			2  if end
 	*/
-	if ((*error)==1) {
+	if ((*error)==XML_TAG_END) {
 		*error=0; /* No errors, end of the tag in the same tag <tag /> */
 		return tag;
 	}
@@ -391,10 +396,10 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 		if ((*error)<0) return NULL; /* Fatal error */
 		/*	(*error)
 				0  if next item is a tag
-				1  if it was a text
+				XML_TAG_END  if it was a text
 				2  if next item closes a tag
-				3  End of document
-				4  if there was no text
+				XML_END_DOCUMENT  End of document
+				XML_NO_TEXT  if there was no text
 		*/
 		result=(*error);
 		switch (result) {
@@ -408,7 +413,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 				}
 				if (*error) {freeTagStructure(tag); return NULL;}
 				break;
-			case 1:
+			case XML_TAG_END:
 				freeAllocation(tag->name);
 				tag->name=value;
 				break;
@@ -417,7 +422,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 				*error=(equalsIgnoreCase(value,tag->tag))?0:PR_RESULT_ERR_XML_PARSING;
 				free(value);
 				return tag;
-			case 3:
+			case XML_END_DOCUMENT:
 				*error=PR_RESULT_ERR_XML_PARSING; /* this tag wasn't closed */
 				return tag;
 				break;
@@ -494,7 +499,7 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 		free(father);
 		return NULL; /* Fatal error will stop the execusion of the parsing */
 	}
-	if (*error==3) { /* 3 means end of document */
+	if (*error==XML_END_DOCUMENT) { /* XML_END_DOCUMENT means end of document */
 		*error=PR_RESULT_SUCCESS;
 		free(father);
 		return tag;
