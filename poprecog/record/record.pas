@@ -63,6 +63,8 @@ VAR
  OutputFile : File;
  BMPHandle : THandleBMP;
  FileName : String;
+ ActualSum,
+ PreviousSum : Longint;
  Line : Array [0..319] of Byte;
  Line2 : Array [0..319] of Byte;
  STOP : BOOLEAN;
@@ -303,10 +305,48 @@ BEGIN
   Unload13h;
 END;}
 
-PROCEDURE SaveAnimation;
+FUNCTION GetTotalChars (FileName : String) : Longint;
 VAR
-  LastBufor : Byte;
-  LastXMSFrame : Longint;
+  Plik : File;
+  Bufor : Array [1..1000] of Byte;
+  I,Read : Word;
+  Total : Longint;
+BEGIN
+  Total := 0;
+  Assign (Plik,FileName);
+  {$I-}
+  Reset (Plik,1);
+  {$I+}
+  If (IOResult <> 0) then
+  Begin
+    GetTotalChars := 0;
+    Exit;
+  End;
+  REPEAT
+    BlockRead (Plik,Bufor,1000,Read);
+    For I := 1 to Read do Total := Total + Bufor [I] + I*I + Read;
+  UNTIL (Read <> 1000);
+  Close (Plik);
+  GetTotalChars := Total;
+END;
+
+PROCEDURE DeleteFile (FileName : String);
+VAR
+  Plik : File;
+BEGIN
+  Assign (Plik,FileName);
+  {$I-}
+  Reset (Plik,1);
+  {$I+}
+  If (IOResult <> 0) then
+  Begin
+    Exit;
+  End;
+  Close (Plik);
+  Erase (Plik);
+END;
+
+PROCEDURE SaveAnimation;
 BEGIN
   {If (NOT YN ('Save bitmaps files')) Then If (YN ('Are You SURE')) Then Exit;
   OPT. DelDuplicateFrames := YN ('Delete duplicate frames');}
@@ -338,35 +378,8 @@ BEGIN
   ActualSaveFrame := 0;
   For ActualFrame := 0 to (TotalFrames - 1) do
   Begin
-    { for skipping the same frames }
-    LastBufor := ActualBufor;
-    LastXMSFrame := ActualXMSFrame;
-    { ... }
     ActualBufor := ActualFrame div 1035;
     ActualXMSFrame := ActualFrame mod 1035;
-
-    { for skipping the same frames }
-    If (OPT. DelDuplicateFrames) and (ActualFrame > 0) then
-    Begin
-      Bool := False;
-      For I := 0 to 199 do
-      Begin
-        XMSMoveMem (AnimationHandle [LastBufor],Pointer ((LastXMSFrame * 64768) + (I * 320) + SizeOf (FramePalette)),
-                    0,Addr (Line),320);
-        XMSMoveMem (AnimationHandle [ActualBufor],Pointer ((ActualXMSFrame * 64768) + (I * 320) + SizeOf (FramePalette)),
-                    0,Addr (Line2),320);
-        For J := 0 to 319 do
-        If (Line [J] <> Line2 [J]) then
-        Begin
-          Bool := True;
-          Break;
-        End;
-        If (Bool) then Break;
-      End;
-      If (NOT Bool) then
-        Continue;
-    End;
-    { ... }
 
     Inc(ActualSaveFrame);
     FileName := IntToStr (ActualSaveFrame);
@@ -398,6 +411,15 @@ BEGIN
     END;
 
     Close (OutputFile);
+
+    PreviousSum := ActualSum;
+    ActualSum := GetTotalChars('frames\' + FileName);
+
+    If ((OPT. DelDuplicateFrames) and (ActualSum = PreviousSum) and (ActualFrame <> 0)) Then
+    Begin
+      DeleteFile('frames\' + FileName);
+      Dec(ActualSaveFrame);
+    End;
 
     GoToXY (1,WhereY);
     Write (((ActualFrame + 1) * 100) div TotalFrames,'%, ( ',ActualFrame + 1,' frames )          ');
