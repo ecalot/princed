@@ -49,7 +49,7 @@ int imagesNumber;
 //tImage tmpImage[MAX_IMAGES];
 //int tmpImagesNumber;
 
-BITMAP *screenShot, *transparentScreenShot, *DEBUGScreenShot;
+BITMAP *screenShot, *transparentScreenShot, *DEBUGScreenShot, *DEBUGScreenShot2;
 
 int DEBUGY = 0;
 
@@ -69,6 +69,7 @@ typedef struct sRecognized
   int imageID;
   int posX, posY;
   int goodPixels;
+  int goodPixels2;  
   int layer;
   int pixelsNumber;  
   int upperLayers;  
@@ -160,7 +161,7 @@ int cmptRecognized(void *a, void *b)
   return 0;
 }
 
-inline int findImageOnScreenShotInPosition(int imageID, int posX, int posY)
+/*inline int findImageOnScreenShotInPosition(int imageID, int posX, int posY)
 {
   register int i, j, x, y, value;
   register short transparentPixel = makecol16(0, 0, 0);
@@ -246,51 +247,45 @@ inline int findImageOnScreenShotInPosition(int imageID, int posX, int posY)
   recognized[newRecognized].ownedPixels = 0;
   if (!alreadyExist) recognized[newRecognized].layer = actualLayer;
   
-  /*for (x = 0; x < bitmap->w; x++)
-    for (y = 0; y < bitmap->h; y++)  
-    {
-      value = recognizeMap[posX+x][posY+y];
-      if ((((short *)bitmap->line[y])[x] != transparentPixel) &&       
-          (((short *)bitmap->line[y])[x] == ((short *)screenShot->line[posY+y])[posX+x]))
-      {
-        if ((value == -1) || (value = newRecognized))
-        {
-          recognizeMap[posX+x][posY+y] = newRecognized;
-          recognized[newRecognized].ownedPixels++;
-        }
-        else
-        if (layerOrder[value] >= 0)
-        {
-          if (recognized[value].goodPixels < recognized[newRecognized].goodPixels)
-          {
-            recognized[value].ownedPixels--;
-            recognizeMap[posX+x][posY+y] = newRecognized;
-            recognized[newRecognized].ownedPixels++;
-          }
-          else
-          if ((recognized[value].goodPixels == recognized[newRecognized].goodPixels) && (recognized[value].upperLayers > recognized[newRecognized].upperLayers))
-          {
-            recognized[value].ownedPixels--;
-            recognizeMap[posX+x][posY+y] = newRecognized;
-            recognized[newRecognized].ownedPixels++;
-          }          
-        }  
-      }
-    }
-  ///printf("Recognize map result-> %d\n", recognized[recognizedID].ownedPixels);
-  
- 
-  if (recognized[recognizedNumber].ownedPixels > 0)
-  {*/
     if (!alreadyExist)
     {
       recognizedNumber++;
       dirInfo[image[imageID].dirID].recognizedNumber++; 
     }
     return recognized[newRecognized].ownedPixels;
-  /*}
-  else
-    return 0;*/
+}*/
+
+inline int findImageOnScreenShotInPosition(int imageID, int posX, int posY)
+{
+  register int i, j, x, y;
+  register short transparentPixel = makecol16(0, 0, 0);
+  register short screenShotTransparentPixel = makecol16(255, 0, 255);  
+  register int goodPixels;
+  BITMAP *bitmap = image[imageID].bitmap;  
+  register int wPer2 = bitmap->w / 2;
+  register int hPer2 = bitmap->h / 2; 
+  
+  goodPixels = 0;  
+  for (i = 0; i < bitmap->w; i++)
+    for (j = 0; j < bitmap->h; j++)  
+    {
+      x = (i+wPer2)%bitmap->w;
+      y = (j+hPer2)%bitmap->h;
+      if (((short *)bitmap->line[y])[x] == transparentPixel)
+        continue;
+      if (((short *)bitmap->line[y])[x] == ((short *)screenShot->line[posY+y])[posX+x])
+      {
+        goodPixels++;
+        continue;
+      }        
+      if (((short *)transparentScreenShot->line[posY+y])[posX+x] == screenShotTransparentPixel)
+        continue;
+      return 0;
+    }
+  if (((goodPixels*100)/image[imageID].pixelsNumber) < dirInfo[image[imageID].dirID].optMinImagePercent) return 0;
+ 
+//   dir[image[imageID].dirID].recognizedNumber++;  
+  return goodPixels;
 }
 
 inline int putImageOnRecognizeMap(BITMAP *bitmap, int posX, int posY, int recognizedID)
@@ -446,12 +441,20 @@ int cutImageFromScreenShot(BITMAP *bitmap, int posX, int posY)
   //rest(500);
 }
 
-int cutImageFromDEBUGScreenShot(BITMAP *bitmap, int posX, int posY)
+int cutImageFromDEBUGScreenShot(int recognizedID, int posX, int posY)
 {
   register int x, y, c, i;
   register int transparentPixel = makecol16(0, 0, 0);
-  register int randomColour = makecol16(rand()%256, rand()%256, rand()%256);  
+  register int randomColour = makecol16(128+rand()%128, 128+rand()%128, 128+rand()%128);
   char buf[100];
+  BITMAP *bitmap = image[recognized[recognizedID].imageID].bitmap;
+  
+  if (DEBUGY < 300)
+  {
+    textprintf(DEBUGScreenShot, font, 320+2, 30+DEBUGY, makecol(255, 255, 255), "%s", image[recognized[recognizedID].imageID].filePath);
+    textprintf(DEBUGScreenShot, font, 320+2+bitmap->w+1, 30+9+DEBUGY, makecol(255, 255, 255), "P(%d;%d) D%c L%d", recognized[recognizedID].posX, recognized[recognizedID].posY, image[recognized[recognizedID].imageID].direction, recognized[recognizedID].layer);
+    textprintf(DEBUGScreenShot, font, 320+2+bitmap->w+1, 30+18+DEBUGY, makecol(255, 255, 255), "D(%d;%d) Per:%d%%", bitmap->w, bitmap->h, (recognized[recognizedID].goodPixels*100)/recognized[recognizedID].pixelsNumber);
+  }  
     
   for (x = 0; x < bitmap->w; x++)
     for (y = 0; y < bitmap->h; y++)  
@@ -461,10 +464,10 @@ int cutImageFromDEBUGScreenShot(BITMAP *bitmap, int posX, int posY)
         {  
           ((short *)DEBUGScreenShot->line[posY+y])[posX+x] = randomColour;
         }
-      if ((((short *)bitmap->line[y])[x] != transparentPixel) && (DEBUGY < 1000))
-        ((short *)DEBUGScreenShot->line[400+DEBUGY+y+posY])[x+posX] = makecol(255, 0, 255);
+      if ((((short *)bitmap->line[y])[x] != transparentPixel) && (DEBUGY < 300))
+        ((short *)DEBUGScreenShot->line[40+DEBUGY+y])[320+2+x] = randomColour;
     }
-  DEBUGY += bitmap->h + 10;
+  DEBUGY += MAX(bitmap->h+20, 40);
   //sprintf(buf, "ss_%05d.bmp", rand()%9999);
   //save_bitmap(buf, actualScreenShot, 0);    
   //rest(500);
@@ -577,7 +580,7 @@ int findImageOnScreenShot(int imageID)
       
       tmp = findImageOnScreenShotInPosition(imageID, posX, posY);
       
-      continue;
+      //continue;
       
       if (tmp)
       {
@@ -597,11 +600,14 @@ int findImageOnScreenShot(int imageID)
         {
           ///printf("Step2. alreadyExist = 0 ;)\n");         
           recognized[recognizedNumber].imageID = imageID;
+          recognized[recognizedNumber].layer = actualLayer;
           recognized[recognizedNumber].posX = posX;  
           recognized[recognizedNumber].posY = posY;
-          recognized[recognizedNumber].goodPixels = /*(*/tmp/* * 100) / image[imageID].pixelsNumber*//* + tmp*/;
+          recognized[recognizedNumber].goodPixels = tmp;
+          recognized[recognizedNumber].goodPixels2 = tmp;          
           recognized[recognizedNumber].goodPixelsPercent = (recognized[recognizedNumber].goodPixels*65536)/image[recognized[recognizedNumber].imageID].pixelsNumber;
           recognized[recognizedNumber].ownedPixels = 0;
+          recognized[recognizedNumber].pixelsNumber = image[imageID].pixelsNumber;
           recognizedNumber++;          
           dirInfo[image[imageID].dirID].recognizedNumber++;
           //printf("tmp1 - %d ||| tmp2 - %d\n", dirInfo[image[imageID].dirID].recognizedNumber, dirInfo[image[imageID].dirID].optMaxRecognizedNumber);
@@ -645,8 +651,7 @@ void recognizeScreenShot(int screenShotID)
   int i, j, k, l, tmp;
   short transparentPixel = makecol(0, 0, 0);
   register short screenShotTransparentPixel = makecol(255, 0, 255);  
-  int maxPixelsPercent, maxPixelsID;
-  int TMP = 0;
+  int maxPixelsNumber, maxPixelsID, maxTotalPixelsNumber;
   int recognizedNow, recognizedBefore;
   //int maxImages, tmp, nrOfRecognizedImages, nrOfRecognizedImagesThisSession;
   
@@ -655,12 +660,15 @@ void recognizeScreenShot(int screenShotID)
   sprintf(buf, "%s\\%s", screenShotsDir, screenShotList[screenShotID].fileName);
   screenShot = load_bmp(buf, 0);
   transparentScreenShot = load_bmp(buf, 0);  
-  DEBUGScreenShot = create_bitmap(320, 2000);
+  DEBUGScreenShot2 = load_bmp(buf, 0);  
+  DEBUGScreenShot = create_bitmap(500, 400);
   clear_to_color(DEBUGScreenShot, makecol(50, 50, 50));
   blit(screenShot, DEBUGScreenShot, 0, 0, 0, 200, 320, 200);  
+  line(DEBUGScreenShot, 320, 0, 320, 399, makecol(255, 255, 255));  
   totalNumberOfRecognizedImages = 0;  
   recognizedNumber = 0;
   actualLayer = 0;
+  DEBUGY = 0;
   for (i = 0; i < 320; i++)
     for (j = 0; j < 200; j++)
     {
@@ -674,25 +682,31 @@ void recognizeScreenShot(int screenShotID)
   {
     recognizedBefore = recognizedNow;
     recognizedNow = 0;
-    /* TODO (#1#): delete TMP variable */
-    TMP++;
-    if (TMP > 3) break;
-    //if ((optMaxLayers != 0) && (layerNumber+1 > optMaxLayers)) break;   
+    if ((optMaxLayers != 0) && (actualLayer+1 > optMaxLayers)) break;   
    
-    i = recognizedNumber;   
-    printf("# Checking layer %d\n", actualLayer);
+    recognizedBefore = recognizedNumber;   
+    printf("# Checking layer nr. %d ... ", actualLayer);
     //i = 0;
     //for (y = 0; y < recognizedNumber; y++)
     //if (recognized[y].ownedPixels != 0) i++;
     
+    //recognizedNumber = 0;
     for (x = 0; x < imagesNumber; x++)
     {
       /* TODO (#1#): delete // below */
       //if (dirInfo[image[x].dirID].recognizedNumber < dirInfo[image[x].dirID].optMaxRecognizedNumber)
+      if (x%20 == 0)
+        printf("\b\b\b\b% 3d%%", (x*100)/imagesNumber);
       findImageOnScreenShot(x);
     }
+    printf("\b\b\b\bDone\n");
     
-    qsort(recognized, recognizedNumber, sizeof(tRecognized), cmptRecognized);
+    for (i = 0; i < recognizedNumber; i++)
+    {
+      cutImageFromTransparentScreenShot(image[recognized[i].imageID].bitmap, recognized[i].posX, recognized[i].posY);
+    }    
+    
+    /*qsort(recognized, recognizedNumber, sizeof(tRecognized), cmptRecognized);*/
     
     /*for (i = 0; i < 320; i++)
       for (j = 0; j < 200; j++)
@@ -700,7 +714,7 @@ void recognizeScreenShot(int screenShotID)
         recognizeMap[i][j] = -1;
       }   
     recognizedNumber = 0;*/
-    for (i = 0; i < 320; i++)
+    /*for (i = 0; i < 320; i++)
       for (j = 0; j < 200; j++)
       {
         recognizeMap[i][j] = -1;
@@ -710,35 +724,27 @@ void recognizeScreenShot(int screenShotID)
       recognized[i].ownedPixels = 0;
     for (i = 0; i < recognizedNumber; i++)
     {
-      //recognized[i].ownedPixels = 0;
       if (putAndCheck(i, recognized[i].posX, recognized[i].posY))
       {
         totalNumberOfRecognizedImages++;       
         cutImageFromTransparentScreenShot(image[recognized[i].imageID].bitmap, recognized[i].posX, recognized[i].posY);
         removeImageFromRecognizeMap(i, recognized[i].posX, recognized[i].posY);
         printf("Hmm %s d%c l%d x%d y%d (OW:%d / GO:%d / TO:%d / UL:%d)\n", image[recognized[i].imageID].filePath, image[recognized[i].imageID].direction, recognized[i].layer, recognized[i].posX, recognized[i].posY, recognized[i].ownedPixels, recognized[i].goodPixels, image[recognized[i].imageID].pixelsNumber, recognized[i].upperLayers);
-
-        /*blit(transparentScreenShot, DEBUGScreenShot, 0, 0, 0, 0, 320, 200);
-        blit(image[recognized[i].imageID].bitmap, DEBUGScreenShot, 0, 0, recognized[i].posX, recognized[i].posY, image[recognized[i].imageID].bitmap->w, image[recognized[i].imageID].bitmap->h);
-        sprintf(buf, "ss_new_%02d_%03d.bmp", screenShotID, totalNumberOfRecognizedImages);
-        save_bitmap(buf, DEBUGScreenShot, 0);*/
       }
-    }  
+    }*/ 
 
     //j = 0;
     //for (y = 0; y < recognizedNumber; y++)
     //if (recognized[y].ownedPixels != 0) j++;    
-    j = recognizedNumber;
+    recognizedNow = recognizedNumber;
 //    sprintf(buf, "ss_db_%02d_s_%d.bmp", screenShotID, actualLayer);
 //    save_bitmap(buf, transparentScreenShot, 0);      
     
     actualLayer++;    
         
     /* TODO (#1#): delete this two lines below */
-    j=1;
-    i=0;
   }
-  while (j - i != 0);
+  while (recognizedNow - recognizedBefore != 0);
   
   //return 13+13;
   
@@ -748,7 +754,7 @@ void recognizeScreenShot(int screenShotID)
 //      recognizeMap[i][j] = -1;
 //    }
     
-  totalNumberOfRecognizedImages = 0;  
+  /*totalNumberOfRecognizedImages = 0;  
   for (i = 0; i < recognizedNumber; i++)
   {
     if (recognized[i].ownedPixels)
@@ -762,27 +768,35 @@ void recognizeScreenShot(int screenShotID)
       sprintf(buf, "ss_ds_%02d_%03d.bmp", screenShotID, totalNumberOfRecognizedImages);
       save_bitmap(buf, DEBUGScreenShot, 0);*/
       
-      cutImageFromDEBUGScreenShot(image[recognized[i].imageID].bitmap, recognized[i].posX, recognized[i].posY);
+      /*cutImageFromDEBUGScreenShot(image[recognized[i].imageID].bitmap, recognized[i].posX, recognized[i].posY);
     }
   }
   sprintf(buf, "ss_debug_%s.bmp", screenShotList[screenShotID]);
   save_bitmap(buf, DEBUGScreenShot, 0);  
   
-  return 13;
+  return 13;*/
 
   for(;;)
   {
-    maxPixelsPercent = 0;
+    maxPixelsNumber = 0;
+    maxTotalPixelsNumber = 0;    
     maxPixelsID = -1;
     for (i = 0; i < recognizedNumber; i++)
     {
-      if /*((recognized[i].ownedPixels != 0) &&*/ (recognized[i].goodPixels > maxPixelsPercent)/*)*/
+      if (recognized[i].goodPixels > maxPixelsNumber)
       {
-        maxPixelsPercent = recognized[i].goodPixels;
+        maxTotalPixelsNumber = 0;
+        maxPixelsNumber = recognized[i].goodPixels;
+        maxPixelsID = i;
+      }
+      else
+      if ((recognized[i].goodPixels == maxPixelsNumber) && (recognized[i].pixelsNumber > maxTotalPixelsNumber))
+      {
+        maxTotalPixelsNumber = recognized[i].pixelsNumber;
         maxPixelsID = i;
       }
     }
-    if (maxPixelsID != -1)
+    if (maxPixelsNumber != 0)
     {
       tmp = findImageOnScreenShotInPosition(recognized[maxPixelsID].imageID, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
       if (recognized[maxPixelsID].goodPixels != tmp)
@@ -791,8 +805,12 @@ void recognizeScreenShot(int screenShotID)
         continue;
       }
       totalNumberOfRecognizedImages++;     
-      cutImageFromDEBUGScreenShot(image[recognized[maxPixelsID].imageID].bitmap, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
+      cutImageFromDEBUGScreenShot(maxPixelsID, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
       cutImageFromScreenShot(image[recognized[maxPixelsID].imageID].bitmap, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
+      //printf("Found %s %c %d %d (OW:%d / GO:%d / GO2:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, recognized[maxPixelsID].goodPixels2, image[recognized[maxPixelsID].imageID].pixelsNumber);
+      //fprintf(outputFile, "Found %s %c %d %d (OW:%d / GO:%d / GO2:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, recognized[maxPixelsID].goodPixels2, image[recognized[maxPixelsID].imageID].pixelsNumber);
+      printf("Found %s d%c l%d x%d y%d (OW:%d / GO:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].layer, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, image[recognized[maxPixelsID].imageID].pixelsNumber);
+      fprintf(outputFile, "Found %s d%c l%d x%d y%d (OW:%d / GO:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].layer, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, image[recognized[maxPixelsID].imageID].pixelsNumber);
       recognized[maxPixelsID].goodPixels = 0;
 /*      for (k = 0; k < 320; k++)
         for (l = 0; l < 200; l++)
@@ -808,21 +826,16 @@ void recognizeScreenShot(int screenShotID)
           //putImageOnRecognizeMap(image[recognized[j].imageID].bitmap, recognized[j].posX, recognized[j].posY, j);
         }
       } */
-      printf("Found %s %c %d %d (OW:%d / GO:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, image[recognized[maxPixelsID].imageID].pixelsNumber);
-      fprintf(outputFile, "Found %s %c %d %d (OW:%d / GO:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, image[recognized[maxPixelsID].imageID].pixelsNumber);      
       /* debug screenshots */
-      /*blit(transparentScreenShot, DEBUGScreenShot, 0, 0, 0, 0, 320, 200);
-      blit(image[recognized[maxPixelsID].imageID].bitmap, DEBUGScreenShot, 0, 0, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, image[recognized[maxPixelsID].imageID].bitmap->w, image[recognized[maxPixelsID].imageID].bitmap->h);
+      blit(transparentScreenShot, DEBUGScreenShot2, 0, 0, 0, 0, 320, 200);
+      blit(image[recognized[maxPixelsID].imageID].bitmap, DEBUGScreenShot2, 0, 0, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, image[recognized[maxPixelsID].imageID].bitmap->w, image[recognized[maxPixelsID].imageID].bitmap->h);
       sprintf(buf, "ss_ds_%02d_%03d.bmp", screenShotID, totalNumberOfRecognizedImages);
-      save_bitmap(buf, DEBUGScreenShot, 0);*/
+      save_bitmap(buf, DEBUGScreenShot2, 0);
     }
     else
       break;
   }  
   
-  sprintf(buf, "ss_debug_%02d.bmp", screenShotID);
-  save_bitmap(buf, DEBUGScreenShot, 0);
- 
 /*  for (i = 0; i < recognizedNumber; i++)
   {
     if (recognized[i].ownedPixels != 0)
@@ -849,14 +862,20 @@ void recognizeScreenShot(int screenShotID)
       sprintf(buf, "ss_%02d_%03d.bmp", screenShotID, totalNumberOfRecognizedImages);
       save_bitmap(buf, DEBUGScreenShot, 0);
     }  
-  }
+  }*/
+  textprintf(DEBUGScreenShot, font, 320+2, 1, makecol(255, 255, 255), "%s (%d/%d)", screenShotList[screenShotID], screenShotID+1, screenShotsNumber);
+  textprintf(DEBUGScreenShot, font, 320+2, 10, makecol(255, 255, 255), "Recognized number: %d", totalNumberOfRecognizedImages);
+  
   printf("# Total number of recognized images %d\n", totalNumberOfRecognizedImages);
   fprintf(outputFile, "# Total number of recognized images %d\n", totalNumberOfRecognizedImages);
   sprintf(buf, "ss_%02d.bmp", screenShotID);
   save_bitmap(buf, transparentScreenShot, 0);
+  sprintf(buf, "ss_debug_%s.bmp", screenShotList[screenShotID]);
+  save_bitmap(buf, DEBUGScreenShot, 0);
   destroy_bitmap(screenShot);
   destroy_bitmap(transparentScreenShot);  
-  destroy_bitmap(DEBUGScreenShot);*/
+  destroy_bitmap(DEBUGScreenShot);
+  destroy_bitmap(DEBUGScreenShot2);
 }
 
 void sortListOfScreenShots()
