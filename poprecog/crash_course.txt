@@ -3,35 +3,77 @@ PRINCE OF PERSIA SCREENSHOTS RECOGNIZER
 (c) Copyright 2005 Princed Development Team
 Programmed by peter_k
 
-Q. What this tool is for?
-A. This tool is mainly for pop developers. It can "say" you what is the frame order in animation, what is the pixel position and the screen, what is the layer number and if this bitmap is "mirrored" or not.
+Q. What is this tool for?
+A. This tool is mainly for pop developers. It can "tell" you what is the
+frame order in animation, what is the pixel position and the screen, what
+is the layer number and if this bitmap is "mirrored" or not.
 
-Q. How to recognize sth?
-A. If you want to start recognize sth, first you should make few dirs:
-- Screen shots dir -> only one dir. In this dir you can put as many 320x200 bitmap files as you want (no more than 99999 ;P)
-- Bitmaps to recognize -> as many dirs as you want. In each dir you should put images from one category, for example "kid", "vizier", "swords", but it is not order.
-In this dirs you can also put file "bitmaps.cfg" (it is also not order). Here is the example content of this file:
+Q. How to recognize something?
+A. If you want to start recognize something, first you should make few dirs:
+ - Screen shots dir -> only one dir. In this dir you can put up to 99999
+   bitmap files, all sized 320x200.
+ - Bitmaps to recognize -> as many dirs as you want. In each dir you should
+   put images from one category, for example "kid", "vizier", "swords", but
+   it is not order.
+
+In this dirs you can also put file "bitmaps.cfg" (neither it is in order).
+
+Here is an example content of this file:
 1
 1
 10
-First number means if this bitmaps have "two directions". If yes than type here 1, if not type 0. The default value is 1.
-Second number meanse the maximum number of this object at the screen. The default value is 99999. NOTE: If in one folder named for example "kid" you'll have kids frames and kid lives, and you'll type "1" the program will recognize only kid, not his live. So in this situation you can put kid frames and kid lives in separate dirs, but it is not order.
-The last, third number means the minimum percent of "good pixels" to recognize sth. By default it is 30 (so 30%). For pop1 swords use 10%, for other items > 30%. The bigger number the faster results ;)
 
-Ok, so you have screen shots in "screen" dir and you want to detect kid fight with jaffar ;) So you need kid.dat, prince.dat and vizier.dat frames. You can extract them using for example PR. But remember that in bitmaps dir, under(?) dir are not readed!
-So run "poprecog.exe" now ;) For the first you should type screen shots dir. After this press [ENTER] to confirm. Then type each dir, in which there are itmaps to recognize, confirm them also by [ENTER]. At the end type "END"[ENTER]. Now type the maximum number of layers. If you'll type "0" here than it means that poprecog should recognize as long as it won't be new recognized items. Confirm with [ENTER] key ;) And last thing, type dir, in which there will be results. This dir don't have to exist, but if it is now, please empty it. I advise to use prefix before the folder name, for example "__fight_with_jaffar", to differentiate this dir from other dirs (with screen shots and bitmaps). Now you should only wait ... ;)
+First number means if this bitmaps have "two directions". A number 1 means
+true (bitmaps have two directions), a number 0 means false. The default
+value is 1.
+Second number is for the maximum number of this object at the screen. The
+default value is 99999. NOTE: If in one folder named for example "kid" you
+'ll have kids frames and kid lives, and you type "1" the program will
+recognize only kid, not his lives. So in this situation you can put kid
+frames and kid lives in separate dirs, but it is not order.
+The third and last number represents the minimum allowed percentile of
+"good pixels" to recognize something. By default it is 30 (so 30%). For 
+pop1 swords use 10%, for other items some value over 30%. The bigger number
+you use will result in the faster it runs ;)
 
-Q. What are this files in results dir?
-A. In results dir you'll see many files:
-all_results.txt -> everything that was in the console window
-small_results.txt -> this is the "smaller" file of all_results.txt. It contains only information about what screenshot is recognized, and what are the founded items. This program can be used by other programs, for example to recognized animation.
-rec_[SCREENSHOT_FILE_NAME].bmp -> Here are good results to check if everything was recognized correctly.
-trans_[SCREENSHOT_FILE_NAME].bmp -> Every pixel which was recognized is [R:255,G:0,B:255] ;)
+Ok, so you have screen shots in the "screen" dir and you want to detect kid
+fight with jaffar ;) So you need kid.dat, prince.dat and vizier.dat frames.
+You can extract them using for example PR. But remember that in bitmaps dir,
+background dir is not read!
+So run "poprecog.exe" now ;) For the first you should type screen shots dir.
+After this press [ENTER] to confirm. Then type each dir, in which there are
+bitmaps to recognize, confirm them also by pressing [ENTER]. At the end type
+"END"[ENTER]. Now type the maximum number of layers. If you'll type "0" here
+than it means that poprecog should recognize as long as it won't be new
+recognized items. Confirm with [ENTER] key ;) And last thing, type dir, in
+which there will be results. This dir don't have to exist, but if it is now,
+please empty it. I advise to use prefix before the folder name, for example
+"__fight_with_jaffar", to differentiate this dir from other dirs (with
+screen shots and bitmaps). Now you only have to wait ... ;)
 
-Q. How can i made this screen shots?
-A. Download RECORD from http://princed.com.ar (it works only in dos mode & win95 & win98) or try any other program ;)
+Q. What are this files in the results dir?
+A. In results dir you'll see many output files:
+
+all_results.txt
+  Everything that was in the console window
+
+small_results.txt
+  This is the "smaller" file of all_results.txt. It contains only information
+  about what screenshot is recognized, and what are the founded items. This
+  program can be used by other programs, for example to recognized animation.
+
+rec_[SCREENSHOT_FILE_NAME].bmp
+  Here are good results to check if everything was recognized correctly.
+
+trans_[SCREENSHOT_FILE_NAME].bmp
+  Every pixel which was recognized is [R:255,G:0,B:255] ;)
+
+Q. How can I made this screen shots?
+A. Download RECORD from http://www.princed.com.ar (it only works in dos mode,
+win95 or win98) or try any other program ;)
 
 I hope this tool will be useful :)
 
 ---
 2005.06.30
+
