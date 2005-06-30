@@ -2840,29 +2840,29 @@ resources.xml: Princed Resources : Resource tree
   <item value="25282" index="shap" path="binary057.bin" type="binary" flags="0x400000">Unknown binary 57</item>
   <item value="25283" index="shap" path="binary058.bin" type="binary" flags="0x400000">Unknown binary 58</item>
   <item value="25284" index="shap" path="binary059.bin" type="binary" flags="0x400000">Unknown binary 59</item>
-  <item value="25285" index="shap" path="binary060.bin" type="binary" flags="0x400000">Unknown binary 60</item>
-  <item value="25285" index="shap" path="binary061.bin" type="binary" flags="0x400000">Unknown binary 61</item>
-  <item value="25286" index="shap" path="binary062.bin" type="binary" flags="0x400000">Unknown binary 62</item>
-  <item value="25286" index="shap" path="binary063.bin" type="binary" flags="0x400000">Unknown binary 63</item>
-  <item value="25287" index="shap" path="binary064.bin" type="binary" flags="0x400000">Unknown binary 64</item>
-  <item value="25287" index="shap" path="binary065.bin" type="binary" flags="0x400000">Unknown binary 65</item>
-  <item value="25288" index="shap" path="binary066.bin" type="binary" flags="0x400000">Unknown binary 66</item>
-  <item value="25288" index="shap" path="binary067.bin" type="binary" flags="0x400000">Unknown binary 67</item>
-  <item value="25289" index="shap" path="binary068.bin" type="binary" flags="0x400000">Unknown binary 68</item>
-  <item value="25289" index="shap" path="binary069.bin" type="binary" flags="0x400000">Unknown binary 69</item>
-  <item value="25290" index="shap" path="binary070.bin" type="binary" flags="0x400000">Unknown binary 70</item>
-  <item value="25290" index="shap" path="binary071.bin" type="binary" flags="0x400000">Unknown binary 71</item>
-  <item value="25291" index="shap" path="binary072.bin" type="binary" flags="0x400000">Unknown binary 72</item>
-  <item value="25291" index="shap" path="binary073.bin" type="binary" flags="0x400000">Unknown binary 73</item>
-  <item value="25292" index="shap" path="binary074.bin" type="binary" flags="0x400000">Unknown binary 74</item>
-  <item value="25292" index="shap" path="binary075.bin" type="binary" flags="0x400000">Unknown binary 75</item>
-  <item value="25293" index="shap" path="binary076.bin" type="binary" flags="0x400000">Unknown binary 76</item>
-  <item value="25293" index="shap" path="binary077.bin" type="binary" flags="0x400000">Unknown binary 77</item>
-  <item value="25294" index="shap" path="binary078.bin" type="binary" flags="0x400000">Unknown binary 78</item>
-  <item value="25294" index="shap" path="binary079.bin" type="binary" flags="0x400000">Unknown binary 79</item>
-  <item value="25295" index="shap" path="binary080.bin" type="binary" flags="0x400000">Unknown binary 80</item>
-  <item value="25295" index="shap" path="binary081.bin" type="binary" flags="0x400000">Unknown binary 81</item>
-  <item value="25296" index="shap" path="binary082.bin" type="binary" flags="0x400000">Unknown binary 82</item>
+  <item value="25285" order="first" index="shap" path="binary060.bin" type="binary" flags="0x400000">Unknown binary 60</item>
+  <item value="25285" order="last" index="shap" path="binary061.bin" type="binary" flags="0x400000">Unknown binary 61</item>
+  <item value="25286" order="first" index="shap" path="binary062.bin" type="binary" flags="0x400000">Unknown binary 62</item>
+  <item value="25286" order="last" index="shap" path="binary063.bin" type="binary" flags="0x400000">Unknown binary 63</item>
+  <item value="25287" order="first" index="shap" path="binary064.bin" type="binary" flags="0x400000">Unknown binary 64</item>
+  <item value="25287" order="last" index="shap" path="binary065.bin" type="binary" flags="0x400000">Unknown binary 65</item>
+  <item value="25288" order="first" index="shap" path="binary066.bin" type="binary" flags="0x400000">Unknown binary 66</item>
+  <item value="25288" order="last" index="shap" path="binary067.bin" type="binary" flags="0x400000">Unknown binary 67</item>
+  <item value="25289" order="first" index="shap" path="binary068.bin" type="binary" flags="0x400000">Unknown binary 68</item>
+  <item value="25289" order="last" index="shap" path="binary069.bin" type="binary" flags="0x400000">Unknown binary 69</item>
+  <item value="25290" order="first" index="shap" path="binary070.bin" type="binary" flags="0x400000">Unknown binary 70</item>
+  <item value="25290" order="last" index="shap" path="binary071.bin" type="binary" flags="0x400000">Unknown binary 71</item>
+  <item value="25291" order="first" index="shap" path="binary072.bin" type="binary" flags="0x400000">Unknown binary 72</item>
+  <item value="25291" order="last" index="shap" path="binary073.bin" type="binary" flags="0x400000">Unknown binary 73</item>
+  <item value="25292" order="first" index="shap" path="binary074.bin" type="binary" flags="0x400000">Unknown binary 74</item>
+  <item value="25292" order="last" index="shap" path="binary075.bin" type="binary" flags="0x400000">Unknown binary 75</item>
+  <item value="25293" order="first" index="shap" path="binary076.bin" type="binary" flags="0x400000">Unknown binary 76</item>
+  <item value="25293" order="last" index="shap" path="binary077.bin" type="binary" flags="0x400000">Unknown binary 77</item>
+  <item value="25294" order="first" index="shap" path="binary078.bin" type="binary" flags="0x400000">Unknown binary 78</item>
+  <item value="25294" order="last" index="shap" path="binary079.bin" type="binary" flags="0x400000">Unknown binary 79</item>
+  <item value="25295" order="first" index="shap" path="binary080.bin" type="binary" flags="0x400000">Unknown binary 80</item>
+  <item value="25295" order="last" index="shap" path="binary081.bin" type="binary" flags="0x400000">Unknown binary 81</item>
+  <item value="25296" order="first" index="shap" path="binary082.bin" type="binary" flags="0x400000">Unknown binary 82</item>
   <item value="25296" index="shap" path="binary083.bin" type="binary" flags="0x400000">Unknown binary 83</item>
   <item value="25297" index="shap" path="binary084.bin" type="binary" flags="0x400000">Unknown binary 84</item>
   <item value="25298" index="shap" path="binary085.bin" type="binary" flags="0x400000">Unknown binary 85</item>
