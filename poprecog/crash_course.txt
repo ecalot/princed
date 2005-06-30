@@ -22,6 +22,7 @@ Here is an example content of this file:
 1
 1
 10
+1
 
 First number means if this bitmaps have "two directions". A number 1 means
 true (bitmaps have two directions), a number 0 means false. The default
@@ -31,10 +32,12 @@ default value is 99999. NOTE: If in one folder named for example "kid" you
 'll have kids frames and kid lives, and you type "1" the program will
 recognize only kid, not his lives. So in this situation you can put kid
 frames and kid lives in separate dirs, but it is not order.
-The third and last number represents the minimum allowed percentile of
+The third number represents the minimum allowed percentile of
 "good pixels" to recognize something. By default it is 30 (so 30%). For 
 pop1 swords use 10%, for other items some value over 30%. The bigger number
 you use will result in the faster it runs ;)
+The fourth and last number means if bitmaps in this dir are transparent.
+If "1" than yes (R:0,G:0,B:0 is transparent), if "0" than no.
 
 Ok, so you have screen shots in the "screen" dir and you want to detect kid
 fight with jaffar ;) So you need kid.dat, prince.dat and vizier.dat frames.
