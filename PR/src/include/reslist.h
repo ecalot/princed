@@ -54,6 +54,7 @@ typedef enum {
 typedef struct {
 	unsigned short int value;
 	char               index[5];
+	unsigned short     order;
 }tResourceId;
 
 typedef struct {

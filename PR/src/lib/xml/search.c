@@ -89,6 +89,21 @@ void workTag(const tTag* t,void* pass) {
 	}
 #endif
 
+	/* Get the order */
+	if (t->order) {
+		if (equalsIgnoreCase(t->order,"first")) {
+			res.id.order=0;
+		} else if (equalsIgnoreCase(t->order,"second")) {
+			res.id.order=1;
+		} else if (equalsIgnoreCase(t->order,"last")) {
+			res.id.order=65535;
+		} else {
+			res.id.order=atoi(t->order);
+		}
+	} else {
+		res.id.order=0;
+	}
+	
 	/* Copy id and palette id */	
 	keepIdAttributes(id,value,index);
 	keepIdAttributesElse(palette,palette,paletteindex,index);

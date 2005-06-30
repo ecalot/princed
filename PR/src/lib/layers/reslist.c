@@ -48,6 +48,10 @@ int resIdCmp(tResourceId a,tResourceId b) {
 	/* at this point, the indexes are the same, so let's compare the number */
 	if (a.value>b.value) return GT;
 	if (a.value<b.value) return LT;
+	
+	/* at this point, indexes and values are the same, but this is not enough, we'll use order to be sure it's unique */
+	if (a.order>b.order) return GT;
+	if (a.order<b.order) return LT;
 	return EQ;
 }
 
@@ -82,7 +86,7 @@ void resourceListAdd(tResourceList* r,const tResource* res) {
 }
 
 void printr(const tResource* record) {
-		printf("id=(%d,%s)\n",record->id.value,record->id.index);
+		printf("id=(%d,%s,%d)\n",record->id.value,record->id.index,record->id.order);
 		printf("palette=(%d,%s)\n",record->palette.value,record->palette.index);
 		printf("size=%ld offset=%lu\n",record->size,record->offset);
 		printf("number=%d type=%d\n",record->number,record->type);
