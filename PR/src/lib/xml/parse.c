@@ -44,10 +44,13 @@ parse.c: Princed Resources : xml parsing functions
 #include <stdio.h> /* Included only for XML specific attribute code */
 #include <stdlib.h>
 
-#define XML_NO_TEXT 4
-#define XML_END_DOCUMENT 3
-#define XML_TAG_END 1
-
+#define XML_TAG_CLOSE 1
+#define XML_TAG_OPEN 2
+#define XML_WAS_CDATA 3
+#define XML_WAS_CLOSER 4
+#define XML_WAS_EOD 5
+#define XML_WASNT_TEXT 6
+#define XML_WAS_TAG 7
 
 extern FILE* outputStream;
 
@@ -88,10 +91,10 @@ tTag* getTagStructure() {
 	t->next=NULL;
 	t->tag=NULL;
 	t->desc=NULL;
+	t->name=NULL;
 	t->path=NULL;
 	t->file=NULL;
 	t->type=NULL;
-	t->name=NULL;
 	t->palette=NULL;
 	t->value=NULL;
 	t->index=NULL;
@@ -165,8 +168,8 @@ int parseNext(char** pString, tTag* tag) {
 	  PR_RESULT_ERR_MEMORY No memory
 		PR_RESULT_ERR_XML_PARSING Parse error
 		0  if continue
-		XML_TAG_END  if tag end
-		2  if end
+		XML_TAG_CLOSE  if tag end
+		XML_TAG_OPEN  if end
 	*/
 
 	char* start;
@@ -180,14 +183,14 @@ int parseNext(char** pString, tTag* tag) {
 
 	if (*i=='>') {
 		*pString=i+1;
-		return 2;
+		return XML_TAG_OPEN;
 	}
 	if (*i=='/') {
 		i++;
 		Separate;
 		if (*i=='>') {
 			*pString=i+1;
-			return XML_TAG_END;
+			return XML_TAG_CLOSE;
 		} else {
 			ParseError;
 		}
@@ -270,11 +273,11 @@ int getNextTag(char** pString, char** value) {
 	/*
 	  PR_RESULT_ERR_MEMORY No memory
 		PR_RESULT_ERR_XML_PARSING Parse error
-		0  if next item is a tag (value allocated)
-		XML_TAG_END  if it was a text (value allocated)
-		2  if next item closes a tag (value allocated)
-		XML_END_DOCUMENT  End of document (value not allocated)
-		XML_NO_TEXT  if there was no text (value not allocated)
+		XML_WAS_TAG               if next item is a tag (value allocated)
+		XML_WAS_CDATA   if it was a text (value allocated)
+		XML_WAS_CLOSER  if next item closes a tag (value allocated)
+		XML_WAS_EOD     end of document (value not allocated)
+		XML_WASNT_TEXT  if there was no text (value not allocated)
 	*/
 	char* i=*pString;
 	int   result;
@@ -288,19 +291,19 @@ int getNextTag(char** pString, char** value) {
 		i++;
 		Separate;
 		if (*i=='/') {
-			result=2;
+			result=XML_WAS_CLOSER;
 			i++;
 		} else {
 			if ((*i=='!')||(*i=='?')) {
 				while ((*i)&&((*i)!='>')) i++;
 				if (!(*i)) ParseError;
 				i++;
-				if (!(*i)) return XML_END_DOCUMENT;
+				if (!(*i)) return XML_WAS_EOD;
 				result=getNextTag(&i,value);
 				*pString=i;
 				return result;
 			} else {
-				result=0;
+				result=XML_WAS_TAG;
 			}
 		}
 		start=i;
@@ -319,15 +322,15 @@ int getNextTag(char** pString, char** value) {
 	}
 	start=i;
 	while ((*i)&&((*i)!='<')) i++;
-	if (!(*i)) return XML_END_DOCUMENT;
-	if (start==i) return XML_NO_TEXT;
+	if (!(*i)) return XML_WAS_EOD;
+	if (start==i) return XML_WASNT_TEXT;
 	size=(int)((long int)i-(long int)start); /* Note: casted to long for portability with 64 bits architectures */
 	*value=(char*)malloc(1+size);
 	if (*value==NULL) return PR_RESULT_ERR_MEMORY;
 	memcpy(*value,start,size);
 	(*value)[size]=0;
 	*pString=i;
-	return XML_TAG_END;
+	return XML_WAS_CDATA;
 }
 
 /* Parse Tree functions */
@@ -336,7 +339,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 		PR_RESULT_ERR_XML_ATTR Attribute not recognized
 	  PR_RESULT_ERR_MEMORY No memory
 		PR_RESULT_ERR_XML_PARSING Parse error
-		0  if next item is a tag
+		0 if the tag was parsed succesfully
 	*/
 
 	tTag* tag;
@@ -350,11 +353,11 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 	while (!((*error)=parseNext(p, tag)));
 
 	if ((*error)<0) {freeTagStructure(tag);return NULL;} /* Fatal error */
-	/*	(*error)
-			XML_TAG_END  if tag end
-			2  if end
+	/*	(*error) is
+			XML_TAG_CLOSE  if tag is closed in the same openning
+			XML_TAG_OPEN  if tag remains open
 	*/
-	if ((*error)==XML_TAG_END) {
+	if ((*error)==XML_TAG_CLOSE) {
 		*error=0; /* No errors, end of the tag in the same tag <tag /> */
 		return tag;
 	}
@@ -395,15 +398,15 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 		(*error)=getNextTag(p, &value);
 		if ((*error)<0) return NULL; /* Fatal error */
 		/*	(*error)
-				0  if next item is a tag
-				XML_TAG_END  if it was a text
-				2  if next item closes a tag
-				XML_END_DOCUMENT  End of document
-				XML_NO_TEXT  if there was no text
+				XML_WAS_CDATA   if it was a text
+				XML_WAS_CLOSER  if next item closes a tag
+				XML_WAS_EOD     end of document
+				XML_WASNT_TEXT  if there was no text
+				XML_WAS_TAG     if next item is a tag
 		*/
 		result=(*error);
 		switch (result) {
-			case 0:
+			case XML_WAS_TAG:
 				if (children==NULL) {
 					tag->child=makeTree(p,value,error,tag);
 					children=tag->child;
@@ -413,16 +416,16 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 				}
 				if (*error) {freeTagStructure(tag); return NULL;}
 				break;
-			case XML_TAG_END:
+			case XML_WAS_CDATA:
 				freeAllocation(tag->name);
 				tag->name=value;
 				break;
-			case 2:
+			case XML_WAS_CLOSER:
 				/* "no errors" or "a wrong tag is closed" */
 				*error=(equalsIgnoreCase(value,tag->tag))?0:PR_RESULT_ERR_XML_PARSING;
 				free(value);
 				return tag;
-			case XML_END_DOCUMENT:
+			case XML_WAS_EOD:
 				*error=PR_RESULT_ERR_XML_PARSING; /* this tag wasn't closed */
 				return tag;
 				break;
@@ -499,7 +502,7 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 		free(father);
 		return NULL; /* Fatal error will stop the execusion of the parsing */
 	}
-	if (*error==XML_END_DOCUMENT) { /* XML_END_DOCUMENT means end of document */
+	if (*error==XML_WAS_EOD) { /* XML_WAS_EOD means end of document */
 		*error=PR_RESULT_SUCCESS;
 		free(father);
 		return tag;

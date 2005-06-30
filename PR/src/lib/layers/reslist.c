@@ -77,8 +77,8 @@ tResourceList resourceListCreate(int isCopy) {
 
 void resourceListAdd(tResourceList* r,const tResource* res) {
 	/* first try to detect if the resource exists */
-	if (!list_moveCursor(r,res))
-		list_insert(r,res);
+	/*if (!list_moveCursor(r,res))*/
+		list_insert(r,res); /* insert repeated resources */
 }
 
 void printr(const tResource* record) {

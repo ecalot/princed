@@ -503,14 +503,19 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 			strcpy(index,"X");
 			do {
 				if (strncmp(res->id.index,index,4)) {
-					v=toUpper(res->id.index[4]);
+					fseek(writeDatFile,3,SEEK_CUR);
+					v=toUpper(res->id.index[0]);
 					fwritechar(&v,writeDatFile);
-					v=toUpper(res->id.index[3]);
+					fseek(writeDatFile,-1,SEEK_CUR);
+					v=v?toUpper(res->id.index[1]):0;
 					fwritechar(&v,writeDatFile);
-					v=toUpper(res->id.index[2]);
+					v=v?toUpper(res->id.index[2]):0;
+					fseek(writeDatFile,-1,SEEK_CUR);
 					fwritechar(&v,writeDatFile);
-					v=toUpper(res->id.index[1]);
+					v=v?toUpper(res->id.index[3]):0;
+					fseek(writeDatFile,-1,SEEK_CUR);
 					fwritechar(&v,writeDatFile);
+					fseek(writeDatFile,4,SEEK_CUR);
 					fwriteshort(&totalItems,writeDatFile); /* Junk (I) */
 
 					strncpy(index,res->id.index,5);
