@@ -973,7 +973,7 @@ void sortListOfScreenShots()
   {
     if (match("*.bmp", file->d_name) || match("*.BMP", file->d_name))
     {
-      tmpScreenShotsList[tmpScreenShotsNumber] = (char *) malloc(file->d_namlen+1);
+      tmpScreenShotsList[tmpScreenShotsNumber] = (char *) malloc(strlen(file->d_name)+1);
       strcpy(tmpScreenShotsList[tmpScreenShotsNumber], file->d_name);
       tmpScreenShotsNumber++;
     }  
