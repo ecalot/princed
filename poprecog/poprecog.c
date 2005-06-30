@@ -82,12 +82,11 @@ int totalNumberOfRecognizedImages;
 
 int actualLayer;
 int recognizeMap[320][200]; // here are stored information which 'recognize result' have this pixel
-int layerOrder[MAX_RECOGNIZED_ITEMS]; // for bitmap recognizing
+int goodPixelsNumber[MAX_RECOGNIZED_ITEMS]; // for bitmap recognizing
 
-FILE *outputFile;
-char outputFileName[20];
+FILE *outputFile, *outputSmallFile;
 
-int optRecognizeMethod;
+char optResultsDir[30];
 int optMaxLayers;
 
 /* Functions */
@@ -655,8 +654,9 @@ void recognizeScreenShot(int screenShotID)
   int recognizedNow, recognizedBefore;
   //int maxImages, tmp, nrOfRecognizedImages, nrOfRecognizedImagesThisSession;
   
-  printf("Recognizing %s\n", screenShotList[screenShotID].fileName);
-  fprintf(outputFile, "Recognizing %s\n", screenShotList[screenShotID].fileName);
+  printf("\nRecognizing %s\n", screenShotList[screenShotID].fileName);
+  fprintf(outputFile, "\nRecognizing %s\n", screenShotList[screenShotID].fileName);
+  fprintf(outputSmallFile, "Recognizing %s\n", screenShotList[screenShotID].fileName);  
   sprintf(buf, "%s\\%s", screenShotsDir, screenShotList[screenShotID].fileName);
   screenShot = load_bmp(buf, 0);
   transparentScreenShot = load_bmp(buf, 0);  
@@ -685,7 +685,7 @@ void recognizeScreenShot(int screenShotID)
     if ((optMaxLayers != 0) && (actualLayer+1 > optMaxLayers)) break;   
    
     recognizedBefore = recognizedNumber;   
-    printf("# Checking layer nr. %d ... ", actualLayer);
+    printf("    Checking layer nr. %d ...     ", actualLayer);
     //i = 0;
     //for (y = 0; y < recognizedNumber; y++)
     //if (recognized[y].ownedPixels != 0) i++;
@@ -695,8 +695,8 @@ void recognizeScreenShot(int screenShotID)
     {
       /* TODO (#1#): delete // below */
       //if (dirInfo[image[x].dirID].recognizedNumber < dirInfo[image[x].dirID].optMaxRecognizedNumber)
-      if (x%20 == 0)
-        printf("\b\b\b\b% 3d%%", (x*100)/imagesNumber);
+      //if (x%20 == 0)
+      printf("\b\b\b\b% 3d%%", (x*100)/imagesNumber);
       findImageOnScreenShot(x);
     }
     printf("\b\b\b\bDone\n");
@@ -809,8 +809,9 @@ void recognizeScreenShot(int screenShotID)
       cutImageFromScreenShot(image[recognized[maxPixelsID].imageID].bitmap, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
       //printf("Found %s %c %d %d (OW:%d / GO:%d / GO2:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, recognized[maxPixelsID].goodPixels2, image[recognized[maxPixelsID].imageID].pixelsNumber);
       //fprintf(outputFile, "Found %s %c %d %d (OW:%d / GO:%d / GO2:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, recognized[maxPixelsID].goodPixels2, image[recognized[maxPixelsID].imageID].pixelsNumber);
-      printf("Found %s d%c l%d x%d y%d (OW:%d / GO:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].layer, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, image[recognized[maxPixelsID].imageID].pixelsNumber);
-      fprintf(outputFile, "Found %s d%c l%d x%d y%d (OW:%d / GO:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].layer, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, image[recognized[maxPixelsID].imageID].pixelsNumber);
+      printf("    Found %s d%c l%d x%d y%d (OW:%d / GO:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].layer, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, image[recognized[maxPixelsID].imageID].pixelsNumber);
+      fprintf(outputFile, "    Found %s d%c l%d x%d y%d (OW:%d / GO:%d / TO:%d)\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].layer, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, recognized[maxPixelsID].ownedPixels, recognized[maxPixelsID].goodPixels, image[recognized[maxPixelsID].imageID].pixelsNumber);
+      fprintf(outputSmallFile, "Found %s d%c l%d x%d y%d\n", image[recognized[maxPixelsID].imageID].filePath, image[recognized[maxPixelsID].imageID].direction, recognized[maxPixelsID].layer, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
       recognized[maxPixelsID].goodPixels = 0;
 /*      for (k = 0; k < 320; k++)
         for (l = 0; l < 200; l++)
@@ -827,10 +828,10 @@ void recognizeScreenShot(int screenShotID)
         }
       } */
       /* debug screenshots */
-      blit(transparentScreenShot, DEBUGScreenShot2, 0, 0, 0, 0, 320, 200);
-      blit(image[recognized[maxPixelsID].imageID].bitmap, DEBUGScreenShot2, 0, 0, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, image[recognized[maxPixelsID].imageID].bitmap->w, image[recognized[maxPixelsID].imageID].bitmap->h);
-      sprintf(buf, "ss_ds_%02d_%03d.bmp", screenShotID, totalNumberOfRecognizedImages);
-      save_bitmap(buf, DEBUGScreenShot2, 0);
+      //blit(transparentScreenShot, DEBUGScreenShot2, 0, 0, 0, 0, 320, 200);
+      //blit(image[recognized[maxPixelsID].imageID].bitmap, DEBUGScreenShot2, 0, 0, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, image[recognized[maxPixelsID].imageID].bitmap->w, image[recognized[maxPixelsID].imageID].bitmap->h);
+      //sprintf(buf, "ss_ds_%02d_%03d.bmp", screenShotID, totalNumberOfRecognizedImages);
+      //save_bitmap(buf, DEBUGScreenShot2, 0);
     }
     else
       break;
@@ -866,11 +867,11 @@ void recognizeScreenShot(int screenShotID)
   textprintf(DEBUGScreenShot, font, 320+2, 1, makecol(255, 255, 255), "%s (%d/%d)", screenShotList[screenShotID], screenShotID+1, screenShotsNumber);
   textprintf(DEBUGScreenShot, font, 320+2, 10, makecol(255, 255, 255), "Recognized number: %d", totalNumberOfRecognizedImages);
   
-  printf("# Total number of recognized images %d\n", totalNumberOfRecognizedImages);
-  fprintf(outputFile, "# Total number of recognized images %d\n", totalNumberOfRecognizedImages);
-  sprintf(buf, "ss_%02d.bmp", screenShotID);
+  printf("    Total number of recognized images %d\n", totalNumberOfRecognizedImages);
+  fprintf(outputFile, "    Total number of recognized images %d\n", totalNumberOfRecognizedImages);
+  sprintf(buf, "%s/trans_%s.bmp", optResultsDir, screenShotList[screenShotID]);
   save_bitmap(buf, transparentScreenShot, 0);
-  sprintf(buf, "ss_debug_%s.bmp", screenShotList[screenShotID]);
+  sprintf(buf, "%s/rec_%s.bmp", optResultsDir, screenShotList[screenShotID]);
   save_bitmap(buf, DEBUGScreenShot, 0);
   destroy_bitmap(screenShot);
   destroy_bitmap(transparentScreenShot);  
@@ -955,7 +956,7 @@ void readDir(int dirID)
   {
     //printf("Cannot find bitmaps.cfg in dat file\n");
     dirInfo[dirID].optTwoDirections = 1;    
-    dirInfo[dirID].optMaxRecognizedNumber = 9999;
+    dirInfo[dirID].optMaxRecognizedNumber = 99999;
     dirInfo[dirID].optMinImagePercent = 30;
     //dirInfo[dirID].optVolatile = 0;
   }  
@@ -1090,14 +1091,11 @@ void readParameters()
       break; 
   }
   
-  printf("\nStep 3. Type number of recognize method\n0 = Fast (the best for pop1&2 kid's&enemy's)\n1 = Volatile (for pop1 swords and pop1&2 tiles, walls etc)\n");
-  scanf("%d", &optRecognizeMethod);
-  
-  printf("\nStep 4. Type number of maximum layers\nHINT:\nIf you'll type 0, poprecog will automatically detect the number of layers,\nbut it is not recommended for tiles, walls, cinematic etc.\n");
+  printf("\nStep 3. Type number of maximum layers\nHINT:\nIf you'll type 0, poprecog will automatically detect the number of layers,\nbut it is not recommended for tiles, walls, cinematic etc.\n");
   scanf("%d", &optMaxLayers);  
   
-  printf("\nStep 5. Type output filename\nIf you will type file which exist it will be appended.\n");
-  scanf("%s", outputFileName);  
+  printf("\nStep 4. Type output dir, in which you'll see recognized things\n");
+  scanf("%s", optResultsDir);
   
   printf("\n");
 }
@@ -1106,6 +1104,7 @@ int main(int argc, char *argv[])
 {
   int i;
   long timeBefore, timeAfter;
+  char buf[100];
   
   srand((unsigned int)time((time_t *)NULL));  
   
@@ -1115,13 +1114,19 @@ int main(int argc, char *argv[])
   
   readParameters();
   system("del ss_*.bmp");  
+
+  mkdir(optResultsDir);
   
-  outputFile = fopen(outputFileName, "a");
-  fprintf(outputFile, "# File generated by Prince Of Persia Screenshots Recognizer\n# (c) Copyright 2005 Princed Development Team\n# Programmed by peter_k\n# http://www.princed.com.ar\n#\n");     
+  sprintf(buf, "%s/%s", optResultsDir, "all_results.txt");
+  outputFile = fopen(buf, "a");
+  sprintf(buf, "%s/%s", optResultsDir, "small_results.txt");  
+  outputSmallFile = fopen(buf, "a");
+  fprintf(outputFile, "File generated by Prince Of Persia Screenshots Recognizer\n(c) Copyright 2005 Princed Development Team\nProgrammed by peter_k\nhttp://www.princed.com.ar\n\n");
 
   for (i = 0; i < dirsNumber; i++)
   {
     printf("Loading bitmaps from dir %s\n", dirInfo[i].dirName);
+    fprintf(outputFile, "Loading bitmaps from dir %s\n", dirInfo[i].dirName);    
     //rest(500);
     readDir(i);
   }
@@ -1140,16 +1145,18 @@ int main(int argc, char *argv[])
     recognizeScreenShot(i);
 
   timeAfter = time(0);
-  printf("# Recognizing %d frames last about %d seconds\n", screenShotsNumber, timeAfter - timeBefore);    
+  printf("Recognizing %d frames last about %d seconds\n", screenShotsNumber, timeAfter - timeBefore);    
   fprintf(outputFile, "Recognizing %d frames last about %d seconds\n", screenShotsNumber, timeAfter - timeBefore);       
     
   printf("Freeing memory\n");
+  fprintf(outputFile, "Freeing memory\n");  
 //  for (i = 0; i < dirsNumber; i++)
 //    freeDir(i);  
   freeListOfScreenShots();
   freeListOfImages();  
   
   fclose(outputFile);
+  fclose(outputSmallFile);  
     
   printf("Press any key...\n");
   
