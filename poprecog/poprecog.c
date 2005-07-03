@@ -1,7 +1,29 @@
+/*  Poprecog - Prince of Persia image recognizer
+    Copyright (C) 2005 Princed Development Team
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+    The authors of this program may be contacted at http://forum.princed.com.ar
+*/
+
 /*
-**  PRINCE OF PERSIA SCREENSHOTS RECOGNIZER
-**  (c) Copyright 2005 Princed Development Team
-**  Programmed by peter_k
+poprecog.c: Prince of Persia Screenshots Recognizer
+¯¯¯¯¯¯¯¯¯¯
+
+ Author: peter_k <peter@princed.com.ar>
+
 */
 
 /*
@@ -19,7 +41,7 @@
 #include <time.h>
 #include <string.h>
 #include <dirent.h>
-//#include <qsort.h>
+/* #include <qsort.h> */
 #include <allegro.h>
 
 /* Defines */
@@ -48,7 +70,10 @@
 #define MAX_SCREENSHOTS 99999
 #define MAX_IMAGES 999999
 #define MAX_RECOGNIZED_ITEMS 999999
-#define NUMBER_OF_CONTROL_PIXELS 5 // do not edit this value now
+#define NUMBER_OF_CONTROL_PIXELS 5 /* do not edit this value now */
+
+#define POPRECOG_URL "http://www.princed.com.ar"
+#define POPRECOG_ABOUT "Prince of Persia Screenshots Recognizer\n(c) Copyright 2005 Princed Development Team\nProgrammed by peter_k\n" POPRECOG_URL "\n\n" 
 
 /* Types and global variables */
 struct sScreenShotList
@@ -82,7 +107,7 @@ struct sDirInfo
   int optMaxRecognizedNumber;
   int optMinImagePercent;
   int optAllowTransparency;
-  //int optVolatile;
+  /* int optVolatile; */
 } dirInfo[MAX_DIRS];
 int dirsNumber;
 
@@ -96,14 +121,14 @@ typedef struct sRecognized
   int pixelsNumber;  
   int upperLayers;  
   int goodPixelsPercent;
-  int ownedPixels; // for recognizeMap
+  int ownedPixels; /* for recognizeMap */
 } tRecognized;
 tRecognized recognized[MAX_RECOGNIZED_ITEMS];
 int recognizedNumber;
 int totalNumberOfRecognizedImages;
 
 int actualLayer;
-int recognizeMap[320][200]; // here are stored information which 'recognize result' have this pixel
+int recognizeMap[320][200]; /* here are stored information which 'recognize result' have this pixel */
 struct sSharedPixels
 {
   int recognizedID;
@@ -111,7 +136,7 @@ struct sSharedPixels
 } sharedPixels[MAX_RECOGNIZED_ITEMS];
 
 FILE *outputFile, *outputSmallFile;
-char output[2000]; // for outputFile
+char output[2000]; /* for outputFile */
 
 char optResultsDir[100];
 int optMaxLayers;
@@ -363,7 +388,8 @@ int findImageOnScreenShot(int imageID)
     cp5c = ((short *)bitmapToFind->line[cp5y])[cp5x];   
   } while (cp5c == transparentPixel);        
 
-/* this code below will probably not be used, but maybe ... ;)
+#if 0
+	/* this code below will probably not be used, but maybe ... ;) */
   for (i = 0; i < NUMBER_OF_CONTROL_PIXELS; i++)
   {
     do
@@ -373,8 +399,9 @@ int findImageOnScreenShot(int imageID)
       controlPixel[i].color = ((short *)bitmapToFind->line[controlPixel[i].posY])[controlPixel[i].posX];
     }
     while (controlPixel[i].color == transparentPixel);
-  }*/
-  
+  }
+#endif
+
   for (x = 0; x < 321-(bitmapToFind->w); x++)
     for (y = 0; y < 201-(bitmapToFind->h); y++)
     {
@@ -394,11 +421,14 @@ int findImageOnScreenShot(int imageID)
            (((short *)transparentScreenShot->line[y+cp5y])[x+cp5x] != screenShotTransparentPixel))
         continue;                                                  
 
-/*      for (i = 0; i < NUMBER_OF_CONTROL_PIXELS; i++)
+#if 0
+      for (i = 0; i < NUMBER_OF_CONTROL_PIXELS; i++)
       {
         if ((((short *)actualScreenShot->line[y + controlPixel[i].posY])[x + controlPixel[i].posX] == controlPixel[i].color) ||
             (((short *)actualScreenShot->line[y + controlPixel[i].posY])[x + controlPixel[i].posX] == screenShotTransparentPixel))
-      }*/
+      }
+#endif
+
       posX = x;
       posY = y;      
       
@@ -709,14 +739,14 @@ void freeListOfImages()
 void readParameters()
 {
   int i;
-  
-  printf("Prince of Persia Screenshots Recognizer\n(c) Copyright 2005 Princed Development Team\nProgrammed by peter_k\nhttp://www.princed.com.ar\n\n");
-      strcpy(output, "Prince of Persia Screenshots Recognizer\n(c) Copyright 2005 Princed Development Team\nProgrammed by peter_k\nhttp://www.princed.com.ar\n\n");
+
+  strcpy(output, POPRECOG_ABOUT);
+  printf(output);
   
   printf("Step 1. Type dir where screenshots are stored.\nThis should be 320x200 bmp files with 256 colour palette.\n");
-      strcat(output, "Step 1. Type dir where screenshots are stored.\nThis should be 320x200 bmp files with 256 colour palette.\n");
+  strcat(output, "Step 1. Type dir where screenshots are stored.\nThis should be 320x200 bmp files with 256 colour palette.\n");
   scanf("%s", screenShotsDir);
-      sprintf(output, "%s%s\n", output, screenShotsDir);
+  sprintf(output, "%s%s\n", output, screenShotsDir);
   
   printf("\nStep 2. Type dirs where are stored bitmaps to recognize.\nPlease type in this format: [dirname] [max images on screenshot][ENTER].\nWhen you'll finish type END[ENTER].\n");
       strcat(output, "\nStep 2. Type dirs where are stored bitmaps to recognize.\nPlease type in this format: [dirname] [max images on screenshot][ENTER].\nWhen you'll finish type END[ENTER].\n");  
@@ -810,3 +840,4 @@ int main(int argc, char *argv[])
   return 0;
 }
 END_OF_MAIN();
+

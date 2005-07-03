@@ -18,7 +18,7 @@ COPY       = @ln -f
 INCLUDE       =
 LIBS          = `allegro-config --libs --cflags` 
 
-RELEASE       =
+RELEASE       = -g
 #-g -Wall -pedantic 
 LINKERRELEASE =
 
