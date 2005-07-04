@@ -18,8 +18,7 @@ COPY       = @ln -f
 INCLUDE       =
 LIBS          = `allegro-config --libs --cflags` 
 
-RELEASE       = -g
-#-g -Wall -pedantic 
+RELEASE       = -g -Wall -pedantic 
 LINKERRELEASE =
 
 MAIN     = .poprecog.o
