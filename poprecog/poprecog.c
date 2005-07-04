@@ -75,6 +75,10 @@ poprecog.c: Prince of Persia Screenshots Recognizer
 #define POPRECOG_URL "http://www.princed.com.ar"
 #define POPRECOG_ABOUT "Prince of Persia Screenshots Recognizer\n(c) Copyright 2005 Princed Development Team\nProgrammed by peter_k\n" POPRECOG_URL "\n\n" 
 
+/* TODO: move the strings as text defines */
+/* TODO: textprintf is deprecated, use its replacement */
+/* TODO: separate structs variables and type definitions using typedef */
+
 /* Types */
 typedef struct sImage {
 	BITMAP *bitmap;
@@ -96,8 +100,8 @@ typedef struct sRecognized {
 	int ownedPixels; /* for recognizeMap */
 } tRecognized;
 
-/* Global variables */ 
-struct sScreenShotList {
+/* Global variables TODO: try to delete as much global variables as possible */ 
+struct sScreenShotList { /* TODO: use just char* screenShotList[MAX] */
 	char *fileName;
 } screenShotList[MAX_SCREENSHOTS];
 
@@ -157,7 +161,7 @@ int pstrcmp(const void *p1, const void *p2) {
 	return strcmp(*(char * const *)p1, *(char * const *)p2);
 }
 
-int cmptImage(void *a, void *b) {
+int cmptImage(const void *a, const void *b) {
 	register int pxa = ((tImage*)(a))->pixelsNumber;
 	register int pxb = ((tImage*)(b))->pixelsNumber;
 	if (pxa > pxb)
@@ -439,9 +443,9 @@ int findImageOnScreenShot(int imageID) {
 void recognizeScreenShot(int screenShotID) {
 	char buf[100];
 	int x;  
-	int i, j, k, l, tmp;
-	short transparentPixel = makecol(0, 0, 0);
-	register short screenShotTransparentPixel = makecol(255, 0, 255);  
+	int i, j, /*k, l,*/ tmp;
+	/*short transparentPixel = makecol(0, 0, 0);*/
+	/*register short screenShotTransparentPixel = makecol(255, 0, 255);  */
 	int maxPixelsNumber, maxPixelsID, maxTotalPixelsNumber;
 	int recognizedNow, recognizedBefore;
 	int timeBefore, timeAfter;
@@ -594,7 +598,7 @@ void sortListOfScreenShots() {
 	struct dirent *file;
 	
 	tmpScreenShotsNumber = 0;
-	while (file = readdir(dir)) {
+	while ((file = readdir(dir))) {
 		if (match("*.bmp", file->d_name) || match("*.BMP", file->d_name))	{
 			tmpScreenShotsList[tmpScreenShotsNumber] = (char *) malloc(strlen(file->d_name)+1);
 			strcpy(tmpScreenShotsList[tmpScreenShotsNumber], file->d_name);
@@ -632,13 +636,13 @@ int countPixels(BITMAP *bitmap) {
 
 void readDir(int dirID) {
 	char buf[100];
-	int i;
+	/*int i;*/
 	DIR *dir = opendir(dirInfo[dirID].dirName);
 	struct dirent *file;
 	FILE *optFile;
 	
 	sprintf(buf, "%s" SEPS "bitmaps.cfg", dirInfo[dirID].dirName);
-	if (optFile = fopen(buf, "r")) {
+	if ((optFile = fopen(buf, "r"))) {
 		fscanf(optFile, "%d", &dirInfo[dirID].optTwoDirections);    
 		fscanf(optFile, "%d", &dirInfo[dirID].optMaxRecognizedNumber);
 		fscanf(optFile, "%d", &dirInfo[dirID].optMinImagePercent);
@@ -651,7 +655,7 @@ void readDir(int dirID) {
 		dirInfo[dirID].optAllowTransparency = 1;    
 	}  
 
-	while (file = readdir(dir))	{
+	while ((file = readdir(dir)))	{
 		if (match("*.bmp", file->d_name) || match("*.BMP", file->d_name))	{
 			strcpy(buf, dirInfo[dirID].dirName);
 			strcat(buf, SEPS); 
@@ -682,7 +686,7 @@ void readDir(int dirID) {
 void sortListOfImages() {
 /*	int i;*/
  
-	qsort(image, imagesNumber, sizeof(tImage), (void*)cmptImage);
+	qsort(image, imagesNumber, sizeof(tImage), cmptImage);
 }
 
 void freeListOfImages() {
@@ -696,7 +700,7 @@ void freeListOfImages() {
 }
 
 void readParameters() {
-	int i;
+	/*int i;*/
 
 	strcpy(output, POPRECOG_ABOUT);
 	printf(output);
@@ -730,7 +734,7 @@ void readParameters() {
 	strcat(output, "\n");  
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
 	int i;
 	long timeBefore, timeAfter;
 	char buf[100];
@@ -773,10 +777,10 @@ int main(int argc, char *argv[]) {
 		recognizeScreenShot(i);
 
 	timeAfter = time(0);
-	printf("\nRecognizing %d frames last about %d seconds\n", screenShotsNumber, timeAfter - timeBefore);
-	fprintf(outputFile, "\nRecognizing %d frames last about %d seconds\n", screenShotsNumber, timeAfter - timeBefore);
+	printf("\nRecognized %d frames in about %d seconds\n", screenShotsNumber, timeAfter - timeBefore);
+	fprintf(outputFile, "\nRecognized %d frames in about %d seconds\n", screenShotsNumber, timeAfter - timeBefore);
 		
-	printf("Freeing memory\n");
+	printf("Releasing memory\n");
 	fprintf(outputFile, "Freeing memory\n");
 	freeListOfScreenShots();
 	freeListOfImages();  
@@ -784,7 +788,7 @@ int main(int argc, char *argv[]) {
 	fclose(outputFile);
 	fclose(outputSmallFile);
 		
-	printf("Type sth and press ENTER key...\n");
+	printf("Type something and press ENTER key...\n");
 	scanf("\n");
 	
 	return 0;
