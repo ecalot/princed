@@ -1,4 +1,4 @@
-/*  Poprecog - Prince of Persia image recognizer
+/*  Poprecog - Prince Of Persia Screenshots Recognizer
 		Copyright (C) 2005 Princed Development Team
 
 		This program is free software; you can redistribute it and/or modify
@@ -119,9 +119,10 @@ struct sDirInfo {
 	char dirName[16];
 	int recognizedNumber;
 	int optTwoDirections;
-	int optMaxRecognizedNumber;
+	int optGoodNumber;
 	int optMinImagePercent;
 	int optAllowTransparency;
+	int optSearchThis;
 	/* int optVolatile; */
 } dirInfo[MAX_DIRS];
 
@@ -295,9 +296,10 @@ void cutImageFromDEBUGScreenShot(int recognizedID, int posX, int posY) {
 	BITMAP *bitmap = image[recognized[recognizedID].imageID].bitmap;
 	
 	if (DEBUGY < 300)	{
-		textprintf(DEBUGScreenShot, font, 320+2, 30+DEBUGY, makecol(255, 255, 255), "%s", image[recognized[recognizedID].imageID].filePath);
-		textprintf(DEBUGScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+9+DEBUGY, makecol(255, 255, 255), "P(%d;%d) D%c L%d", recognized[recognizedID].posX, recognized[recognizedID].posY, image[recognized[recognizedID].imageID].direction, recognized[recognizedID].layer);
-		textprintf(DEBUGScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+18+DEBUGY, makecol(255, 255, 255), "D(%d;%d) Per:%d%%", bitmap->w, bitmap->h, (recognized[recognizedID].goodPixels*100)/recognized[recognizedID].pixelsNumber);
+		textprintf_ex(DEBUGScreenShot, font, 320+2, 30+DEBUGY, makecol(255, 255, 255), makecol(50, 50, 50), "%s", image[recognized[recognizedID].imageID].filePath);
+		//textprintf_ex, (struct BITMAP *bmp, AL_CONST struct FONT *f, int x, int y, int color, int bg, AL_CONST char *format, ...)
+		textprintf_ex(DEBUGScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+9+DEBUGY, makecol(255, 255, 255), makecol(50, 50, 50), "P(%d;%d) D%c L%d", recognized[recognizedID].posX, recognized[recognizedID].posY, image[recognized[recognizedID].imageID].direction, recognized[recognizedID].layer);
+		textprintf_ex(DEBUGScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+18+DEBUGY, makecol(255, 255, 255), makecol(50, 50, 50), "D(%d;%d) Per:%d%%", bitmap->w, bitmap->h, (recognized[recognizedID].goodPixels*100)/recognized[recognizedID].pixelsNumber);
 	}  
 		
 	for (x = 0; x < bitmap->w; x++)
@@ -402,9 +404,7 @@ int findImageOnScreenShot(int imageID) {
 			posX = x;
 			posY = y;      
 			
-			tmp = findImageOnScreenShotInPosition(imageID, posX, posY);
-			
-			if (tmp) {
+			if (findImageOnScreenShotInPosition(imageID, posX, posY)) {
 				newRecognized = recognizedNumber;
 				alreadyExist = 0;
 				for (i = 0; i < recognizedNumber; i++) {
@@ -416,6 +416,8 @@ int findImageOnScreenShot(int imageID) {
 						break;
 					}  
 				}
+				//if ((!alreadyExist) && (dirInfo[image[imageID].dirID].optGoodNumber) && (dirInfo[image[imageID].dirID].recognizedNumber >= dirInfo[image[imageID].dirID].optGoodNumber))
+				//	return 0;
 				recognized[newRecognized].imageID = imageID;
 				recognized[newRecognized].posX = posX;  
 				recognized[newRecognized].posY = posY;
@@ -429,8 +431,6 @@ int findImageOnScreenShot(int imageID) {
 					recognizedNumber++;          
 					dirInfo[image[imageID].dirID].recognizedNumber++;
 				}  
-				if (dirInfo[image[imageID].dirID].recognizedNumber > dirInfo[image[imageID].dirID].optMaxRecognizedNumber)
-					return 0;
 				if (recognizedNumber > 99900) {
 					printf("[ERROR] %s\n", "Too many recognized items!");
 					while (1) {};
@@ -443,12 +443,13 @@ int findImageOnScreenShot(int imageID) {
 void recognizeScreenShot(int screenShotID) {
 	char buf[100];
 	int x;  
-	int i, j, /*k, l,*/ tmp;
+	int i, j, tmp;
 	/*short transparentPixel = makecol(0, 0, 0);*/
 	/*register short screenShotTransparentPixel = makecol(255, 0, 255);  */
 	int maxPixelsNumber, maxPixelsID, maxTotalPixelsNumber;
 	int recognizedNow, recognizedBefore;
 	int timeBefore, timeAfter;
+	int everythingRecognized;
  
 	timeBefore = time(0);
 	printf("\nRecognizing %s (shot %d of %d)\n", screenShotList[screenShotID].fileName, screenShotID+1, screenShotsNumber);
@@ -483,9 +484,10 @@ void recognizeScreenShot(int screenShotID) {
 		printf("    Checking layer nr. %d ...     ", actualLayer);
 
 		for (x = 0; x < imagesNumber; x++) {
-			if (dirInfo[image[x].dirID].recognizedNumber < dirInfo[image[x].dirID].optMaxRecognizedNumber)
-			printf("\b\b\b\b% 3d%%", (x*100)/imagesNumber);
-			findImageOnScreenShot(x);
+			//if ((!dirInfo[image[x].dirID].optGoodNumber) || (dirInfo[image[x].dirID].recognizedNumber < dirInfo[image[x].dirID].optGoodNumber)) {
+				printf("\b\b\b\b% 3d%%", (x*100)/imagesNumber);
+				findImageOnScreenShot(x);
+			//}
 		}
 		printf("\b\b\b\bDone\n");
 		
@@ -496,11 +498,18 @@ void recognizeScreenShot(int screenShotID) {
 		for (i = 0; i < recognizedNumber; i++) {
 			cutImageFromTransparentScreenShot(i, recognized[i].posX, recognized[i].posY);
 			putImageOnRecognizeMap(image[recognized[i].imageID].bitmap, recognized[i].posX, recognized[i].posY, i);
-		}    
+		}
 		
 		recognizedNow = recognizedNumber;
 		
-		actualLayer++;    
+		everythingRecognized = 1;
+		for (i = 0; i < dirsNumber; i++)
+			if (dirInfo[i].recognizedNumber < dirInfo[i].optGoodNumber)
+				everythingRecognized = 0;
+		//if (everythingRecognized)
+		//	break;
+		
+		actualLayer++;
 	}
 	while (recognizedNow - recognizedBefore != 0);
 	
@@ -529,7 +538,8 @@ void recognizeScreenShot(int screenShotID) {
 			}
 			
 			totalNumberOfRecognizedImages++;
-			cutImageFromDEBUGScreenShot(maxPixelsID, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
+			//if (dirInfo[image[recognized[maxPixelsID].imageID].dirID].optGoodNumber)
+				cutImageFromDEBUGScreenShot(maxPixelsID, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
 			cutImageFromScreenShot(maxPixelsID, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
 			putImageOnRecognizeMap(image[recognized[maxPixelsID].imageID].bitmap, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, maxPixelsID);
 
@@ -644,15 +654,17 @@ void readDir(int dirID) {
 	sprintf(buf, "%s" SEPS "bitmaps.cfg", dirInfo[dirID].dirName);
 	if ((optFile = fopen(buf, "r"))) {
 		fscanf(optFile, "%d", &dirInfo[dirID].optTwoDirections);    
-		fscanf(optFile, "%d", &dirInfo[dirID].optMaxRecognizedNumber);
+		fscanf(optFile, "%d", &dirInfo[dirID].optGoodNumber);
 		fscanf(optFile, "%d", &dirInfo[dirID].optMinImagePercent);
-		fscanf(optFile, "%d", &dirInfo[dirID].optAllowTransparency);    
+		fscanf(optFile, "%d", &dirInfo[dirID].optAllowTransparency);
+		fscanf(optFile, "%d", &dirInfo[dirID].optSearchThis);		
 		fclose(optFile);
 	}	else {
-		dirInfo[dirID].optTwoDirections = 1;    
-		dirInfo[dirID].optMaxRecognizedNumber = 99999;
+		dirInfo[dirID].optTwoDirections = 1;
+		dirInfo[dirID].optGoodNumber = 99999;
 		dirInfo[dirID].optMinImagePercent = 30;
-		dirInfo[dirID].optAllowTransparency = 1;    
+		dirInfo[dirID].optAllowTransparency = 1;
+		dirInfo[dirID].optSearchThis = 1;
 	}  
 
 	while ((file = readdir(dir)))	{
@@ -794,4 +806,3 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 END_OF_MAIN();
-
