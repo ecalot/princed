@@ -86,7 +86,7 @@ poprecog.c: Prince of Persia Screenshots Recognizer
 #define POPRECOG_SUMMARY "%d recognized images in about %d seconds\n"
 #define POPRECOG_ERROR_CANNOT_OPEN "Cannot open %s for append\n"
 #define POPRECOG_LOADING "Loading bitmaps from dir %s\n"
-#define POPRECOG_END_SUMMARY "\nRecognized %d frames in about %d seconds\n"	
+#define POPRECOG_END_SUMMARY "\nRecognized %d frames in about %ld seconds\n"	
 #define POPRECOG_RELEASING_MEMORY "Releasing memory\n"
 #define POPRECOG_TYPE_STH "Type something and press ENTER key...\n"
 #define POPRECOG_DEBUG_HEADER "%s (%d/%d)"
@@ -198,7 +198,7 @@ int cmptImage(const void *a, const void *b) {
 	return 0;
 }
 
-inline int findImageOnScreenShotInPosition(int imageID, int posX, int posY) {
+/*inline*/ int findImageOnScreenShotInPosition(int imageID, int posX, int posY) {
 	register int i, x, y;
 	register short transparentPixel = makecol16(0, 0, 0);
 	register short screenShotTransparentPixel = makecol16(255, 0, 255);  
@@ -260,7 +260,7 @@ inline int findImageOnScreenShotInPosition(int imageID, int posX, int posY) {
 	return goodPixels;
 }
 
-inline int putImageOnRecognizeMap(BITMAP *bitmap, int posX, int posY, int recognizedID) {
+/*inline*/ int putImageOnRecognizeMap(BITMAP *bitmap, int posX, int posY, int recognizedID) {
 	register int x, y, value;
 	register short transparentPixel = makecol16(0, 0, 0);
 	
@@ -741,13 +741,13 @@ int main(int argc, char* argv[]) {
 	outputFile = fopen(buf, "a");
  	if (!outputFile) {
 			printf(POPRECOG_ERROR_CANNOT_OPEN,buf);
-			exit;
+			return -1;
 	}
 	sprintf(buf, "%s/%s", optResultsDir, "small_results.txt");  
 	outputSmallFile = fopen(buf, "a");
  	if (!outputFile) {
 			printf(POPRECOG_ERROR_CANNOT_OPEN,buf);
-			exit;
+			return -1;
 	}
 	fprintf(outputFile, output);
 
@@ -781,4 +781,4 @@ int main(int argc, char* argv[]) {
 	
 	return 0;
 }
-END_OF_MAIN();
+END_OF_MAIN()

@@ -2,8 +2,8 @@
 # Programs #
 ############
 
-CC         = gcc
-LINKER     = ld
+CC         = @gcc
+LINKER     = @ld
 INFO       = @echo
 MAKEDIR    = @mkdir -p
 REMOVER    = @rm -f
@@ -18,7 +18,7 @@ COPY       = @ln -f
 INCLUDE       =
 LIBS          = `allegro-config --libs --cflags` 
 
-RELEASE       = -g -Wall -pedantic 
+RELEASE       = -g -Wall -pedantic -save-temps -ansi 
 LINKERRELEASE =
 
 MAIN     = .poprecog.o
