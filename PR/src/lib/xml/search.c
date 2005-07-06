@@ -103,6 +103,8 @@ void workTag(const tTag* t,void* pass) {
 	} else {
 		res.id.order=0;
 	}
+
+	res.palette.order=0; /* TODO: all palettes have an order of 0 */
 	
 	/* Copy id and palette id */	
 	keepIdAttributes(id,value,index);

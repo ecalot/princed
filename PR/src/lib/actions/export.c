@@ -75,7 +75,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	tImage             image; /* this is used to make a persistent palette */
 	unsigned short int numberOfItems;
 	tResourceList      paletteBuffer;
-	tResourceId        bufferedPalette={0,""};
+	tResourceId        bufferedPalette={0,"",0};
 	tResource          res;
 	int                count=0;
 
