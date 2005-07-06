@@ -1387,7 +1387,7 @@ resources.xml: Princed Resources : Resource tree
   <item value="750" path="palette2.pal" type="palette">Unknown Resource number 750</item>
  </folder>
 
- <folder index="pop1" name="binary" file="ilevels.dat" type="level" path="levels">
+ <folder index="pop1" name="binary" file="levels.dat" type="level" path="levels">
   <item value="2000" number="0" path="demo.plv">Demo level</item>
   <item value="2001" number="1" path="level1.plv">Level 1</item>
   <item value="2002" number="2" path="level2.plv">Level 2</item>

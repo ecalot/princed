@@ -81,7 +81,7 @@ int resIdCmp(tResourceId a,tResourceId b);
 const tResource* resourceListGetElement(tResourceList* r);
 tResourceList resourceListCreate(int isCopy);
 void resourceListAddInfo(tResourceList* r,tResource* res);
-void resourceListAdd(tResourceList* r,const tResource* res);
+void resourceListAdd(tResourceList* r,tResource* res); /* only increases order */
 void resourceListDebugPrint(tResourceList* r);
 
 #endif

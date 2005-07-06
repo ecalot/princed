@@ -69,14 +69,14 @@ ADDONS   = .python.o
 
 #Use this to temporary remove an option
 OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
-LINKEROPTIONS = $(LINKERRELEASE)
+LINKEROPTIONS = $(LINKERRELEASE) $(LIBS)
 
 #main file
 
 $(EXEFILE): $(EXEOBJ) $(XMLFILE)
 	$(INFO) Linking files...
 	$(MAKEDIR) bin
-	$(CC) $(OPTIONS) -o $(EXEFILE) $(EXEOBJ)  -o $@
+	$(CC) $(OPTIONS) -o $(EXEFILE) $(EXEOBJ)
 	$(INFO) Program successfully compiled
 	$(INFO)
 	$(INFO) Please read readme.txt for syntax information

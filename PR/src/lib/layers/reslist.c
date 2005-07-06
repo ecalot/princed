@@ -79,10 +79,14 @@ tResourceList resourceListCreate(int isCopy) {
 	return list_create(sizeof(tResource),resCmp,isCopy?resFreeDummy:resFree);
 }
 
-void resourceListAdd(tResourceList* r,const tResource* res) {
+void resourceListAdd(tResourceList* r,tResource* res) {
 	/* first try to detect if the resource exists */
-	/*if (!list_moveCursor(r,res))*/
-		list_insert(r,res); /* insert repeated resources */
+/*	res->id.order=0;
+	while (list_moveCursor(r,res)) {
+		printf("id=(%d,%s,%d)\n",res->id.value,res->id.index,res->id.order);
+					res->id.order++; * increase order until the id is unique *
+	}*/
+	list_insert(r,res);
 }
 
 void printr(const tResource* record) {

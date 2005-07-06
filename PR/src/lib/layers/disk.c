@@ -122,7 +122,7 @@ int makebase(const char* p) {
 
 	/* Declare variables */
 	static char old[MAX_FILENAME_SIZE];
-	int i,a,equal=1;
+	int i,a=0,equal=1;
 	int size;
 	char* aux;
 

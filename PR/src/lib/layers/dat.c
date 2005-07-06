@@ -79,7 +79,7 @@ int checkSum(const unsigned char* data,int size) {
 /* todo: move to datindex.c */
 
 #define toLower(a) (('A'<=(a)&&(a)<='Z')?(a)|0x40:(a)) /* TODO: move to memory.c and improve str5lowercpy */
-#define toUpper(a) (('a'<=(a)&&(a)<='b')?(a)&0xDF:(a))
+#define toUpper(a) (('a'<=(a)&&(a)<='z')?(a)&0xDF:(a))
 
 /* the cursor get functions */
 
@@ -100,6 +100,19 @@ void rememberIndex(char* to, const char* from) {
 		to++;
 	}
 	*to=0;
+}
+
+void saveIndex(char* to, const char* from) {
+	int i=4;
+	int k=0;
+	from+=3;
+	while (i--) {
+		to[k]=toUpper(*from);
+		from--;
+		if (!to[k]) continue;
+		k++;
+	}
+	for (;k<4;k++) to[k]=0;
 }
 
 /* the cursor move functions */
@@ -363,6 +376,7 @@ void dat_readRes(tResource* res) {
 	/* for each archived file the index is read */
 	res->id.value=        dat_readCursorGetId        (readIndexCursor);
 	strncpy(res->id.index,dat_readCursorGetIndexName (readIndexCursor),5);
+	res->id.order=0;
 	res->offset=          dat_readCursorGetOffset    (readIndexCursor);
 	res->size=            dat_readCursorGetSize      (readIndexCursor);
 	res->flags=           dat_readCursorGetFlags     (readIndexCursor);
@@ -483,7 +497,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 	resourceListStartIteration(&resIndex);
 	res=resourceListGetElement(&resIndex);
 	if (res) {
-		if (!strncmp(res->id.index,"POP1",4)) { /* POP1 */
+		if (!strncmp(res->id.index,"pop1",4)) { /* POP1 */
 			do {
 				totalItems++;
 				printf("Adding item id (%s,%d)\n",res->id.index,res->id.value);
@@ -497,25 +511,17 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 			unsigned long int flags=res->flags;
 			int numberOfSlaveItems=0;
 			int slaveCountPos=size1; /* first value is a junked place */
+			int c;
 			unsigned char v;
+			char aux[4];
 
 			/* first step: read the list to create the master index */
 			strcpy(index,"X");
 			do {
 				if (strncmp(res->id.index,index,4)) {
-					fseek(writeDatFile,3,SEEK_CUR);
-					v=toUpper(res->id.index[0]);
-					fwritechar(&v,writeDatFile);
-					fseek(writeDatFile,-1,SEEK_CUR);
-					v=v?toUpper(res->id.index[1]):0;
-					fwritechar(&v,writeDatFile);
-					v=v?toUpper(res->id.index[2]):0;
-					fseek(writeDatFile,-1,SEEK_CUR);
-					fwritechar(&v,writeDatFile);
-					v=v?toUpper(res->id.index[3]):0;
-					fseek(writeDatFile,-1,SEEK_CUR);
-					fwritechar(&v,writeDatFile);
-					fseek(writeDatFile,4,SEEK_CUR);
+					saveIndex(aux,res->id.index);
+					for (c=0;c<4;c++)
+						fwritechar((unsigned char*)(aux+c),writeDatFile);
 					fwriteshort(&totalItems,writeDatFile); /* Junk (I) */
 
 					strncpy(index,res->id.index,5);
