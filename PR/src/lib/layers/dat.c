@@ -62,6 +62,7 @@ typedef struct {
 static unsigned char* readDatFile;
 static int            readDatFileSize;
 static tIndexCursor   readIndexCursor;
+static const char*    textPop1="pop1";
 
 /***************************************************************\
 |                       Checksum handling                       |
@@ -283,7 +284,7 @@ tIndexCursor dat_createCursor(unsigned char* highData,int highDataSize,unsigned 
 		r.slaveItems=array2short(highData);
 
 		/* remember the first slave index name */
-		strcpy(r.slaveIndexName,"pop1");
+		strcpy(r.slaveIndexName,textPop1);
 
 		/* jump to the first index */
 		r.currentSlaveItem=0;
@@ -497,7 +498,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 	resourceListStartIteration(&resIndex);
 	res=resourceListGetElement(&resIndex);
 	if (res) {
-		if (!strncmp(res->id.index,"pop1",4)) { /* POP1 */
+		if (!strncmp(res->id.index,textPop1,4)) { /* POP1 */
 			do {
 				totalItems++;
 				printf("Adding item id (%s,%d)\n",res->id.index,res->id.value);
