@@ -111,7 +111,6 @@ typedef struct sRecognized {
 	int imageID;
 	int posX, posY;
 	int goodPixels;
-	int goodPixels2;  
 	int layer;
 	int pixelsNumber;  
 	int upperLayers;  
@@ -160,6 +159,8 @@ int dirsNumber;
 
 tRecognized recognized[MAX_RECOGNIZED_ITEMS];
 int recognizedNumber;
+tRecognized recognized2[MAX_RECOGNIZED_ITEMS];
+int recognized2Number;
 int totalNumberOfRecognizedImages;
 int actualLayer;
 int recognizeMap[320][200]; /* here are stored information which 'recognize result' have this pixel */
@@ -191,6 +192,23 @@ int pstrcmp(const void *p1, const void *p2) {
 int cmptImage(const void *a, const void *b) {
 	register int pxa = ((tImage*)(a))->pixelsNumber;
 	register int pxb = ((tImage*)(b))->pixelsNumber;
+	if (pxa > pxb)
+		return -1;
+	if (pxa < pxb)
+		return 1;
+	return 0;
+}
+
+int cmptRecognized(void *a, void *b)
+{
+	register int laa = ((tRecognized*)(a))->layer;
+	register int lab = ((tRecognized*)(b))->layer; 
+	register int pxa = ((tRecognized*)(a))->goodPixels;
+	register int pxb = ((tRecognized*)(b))->goodPixels;
+	if (laa > lab)
+		return -1;
+	if (laa < lab)
+		return 1;
 	if (pxa > pxb)
 		return -1;
 	if (pxa < pxb)
@@ -395,7 +413,6 @@ int findImageOnScreenShot(int imageID) {
 				recognized[newRecognized].posX = posX;  
 				recognized[newRecognized].posY = posY;
 				recognized[newRecognized].goodPixels = tmp;
-				recognized[newRecognized].goodPixels2 = tmp;          
 				recognized[newRecognized].goodPixelsPercent = (recognized[newRecognized].goodPixels*65536)/image[recognized[newRecognized].imageID].pixelsNumber;
 				recognized[newRecognized].ownedPixels = 0;
 				recognized[newRecognized].pixelsNumber = image[imageID].pixelsNumber;
@@ -411,12 +428,13 @@ int findImageOnScreenShot(int imageID) {
 
 void recognizeScreenShot(int screenShotID) {
 	char buf[100];
-	int x;  
+	int x, y;  
 	int i, j, tmp;
 	int maxPixelsNumber, maxPixelsID, maxTotalPixelsNumber;
 	int recognizedNow, recognizedBefore;
 	int timeBefore, timeAfter;
 	int everythingRecognized;
+	int transparentPixel = makecol16(0, 0, 0);	
  
 	timeBefore = time(0);
 	printf(POPRECOG_RECOGNIZING, screenShotList[screenShotID], screenShotID+1, screenShotsNumber);
@@ -425,11 +443,12 @@ void recognizeScreenShot(int screenShotID) {
 	sprintf(buf, "%s" SEPS "%s", screenShotsDir, screenShotList[screenShotID]);
 	screenShot = load_bmp(buf, 0);
 	transparentScreenShot = load_bmp(buf, 0);  
-	DEBUGScreenShot2 = load_bmp(buf, 0);  
 	DEBUGScreenShot = create_bitmap(500, 400);
 	clear_to_color(DEBUGScreenShot, makecol(50, 50, 50));
-	blit(screenShot, DEBUGScreenShot, 0, 0, 0, 200, 320, 200);  
+	blit(screenShot, DEBUGScreenShot, 0, 0, 0, 200, 320, 200);
 	line(DEBUGScreenShot, 320, 0, 320, 399, makecol(255, 255, 255));  
+	DEBUGScreenShot2 = create_bitmap(320, 400);
+  blit(screenShot, DEBUGScreenShot2, 0, 0, 0, 200, 320, 200);	
 	totalNumberOfRecognizedImages = 0;  
 	recognizedNumber = 0;
 	actualLayer = 0;
@@ -483,7 +502,8 @@ void recognizeScreenShot(int screenShotID) {
 	
 	for (i = 0; i < recognizedNumber; i++)
 		recognized[i].ownedPixels = 0;  
-
+		
+	recognized2Number = 0;
 	while (1)	{
 		maxPixelsNumber = 0;
 		maxTotalPixelsNumber = 0;    
@@ -510,54 +530,77 @@ void recognizeScreenShot(int screenShotID) {
 				cutImageFromDEBUGScreenShot(maxPixelsID, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
 			cutImageFromScreenShot(maxPixelsID, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
 			putImageOnRecognizeMap(image[recognized[maxPixelsID].imageID].bitmap, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, maxPixelsID);
+			
+			recognized2[recognized2Number].imageID =  recognized[maxPixelsID].imageID;
+			recognized2[recognized2Number].posX =  recognized[maxPixelsID].posX;
+			recognized2[recognized2Number].posY =  recognized[maxPixelsID].posY;
+			recognized2[recognized2Number].goodPixels =  recognized[maxPixelsID].goodPixels;
+			recognized2[recognized2Number].layer =  recognized[maxPixelsID].layer;
+			recognized2[recognized2Number].pixelsNumber =  recognized[maxPixelsID].pixelsNumber;
+			recognized2[recognized2Number].upperLayers =  recognized[maxPixelsID].upperLayers;
+			recognized2[recognized2Number].goodPixelsPercent =  recognized[maxPixelsID].goodPixelsPercent;
+			recognized2[recognized2Number].ownedPixels =  recognized[maxPixelsID].ownedPixels;
+			recognized2Number++;
 
-			/* Print results */
-			printf("    " POPRECOG_FOUND,
-				image[recognized[maxPixelsID].imageID].filePath,
-				image[recognized[maxPixelsID].imageID].direction,
-				recognized[maxPixelsID].layer,
-				recognized[maxPixelsID].posX,
-				recognized[maxPixelsID].posY,
-				image[recognized[maxPixelsID].imageID].bitmap->w,
-				image[recognized[maxPixelsID].imageID].bitmap->h,
-				(image[recognized[maxPixelsID].imageID].direction=='-') ?
-					(recognized[maxPixelsID].posX) :
-					(recognized[maxPixelsID].posX+image[recognized[maxPixelsID].imageID].bitmap->w
-				),
-				recognized[maxPixelsID].posY+image[recognized[maxPixelsID].imageID].bitmap->h
-			);
-			fprintf(outputFile, "    " POPRECOG_FOUND,
-				image[recognized[maxPixelsID].imageID].filePath,
-				image[recognized[maxPixelsID].imageID].direction,
-				recognized[maxPixelsID].layer,
-				recognized[maxPixelsID].posX,
-				recognized[maxPixelsID].posY,
-				image[recognized[maxPixelsID].imageID].bitmap->w,
-				image[recognized[maxPixelsID].imageID].bitmap->h,
-				(image[recognized[maxPixelsID].imageID].direction=='-') ?
-					(recognized[maxPixelsID].posX) :
-					(recognized[maxPixelsID].posX+image[recognized[maxPixelsID].imageID].bitmap->w
-				),
-				recognized[maxPixelsID].posY+image[recognized[maxPixelsID].imageID].bitmap->h
-			);			
-			fprintf(outputSmallFile, POPRECOG_FOUND,
-				image[recognized[maxPixelsID].imageID].filePath,
-				image[recognized[maxPixelsID].imageID].direction,
-				recognized[maxPixelsID].layer,
-				recognized[maxPixelsID].posX,
-				recognized[maxPixelsID].posY,
-				image[recognized[maxPixelsID].imageID].bitmap->w,
-				image[recognized[maxPixelsID].imageID].bitmap->h,
-				(image[recognized[maxPixelsID].imageID].direction=='-') ?
-					(recognized[maxPixelsID].posX) :
-					(recognized[maxPixelsID].posX+image[recognized[maxPixelsID].imageID].bitmap->w
-				),
-				recognized[maxPixelsID].posY+image[recognized[maxPixelsID].imageID].bitmap->h
-			);
 			recognized[maxPixelsID].goodPixels = 0;
 		}
 		else
 			break;
+	}
+	
+	qsort(recognized2, recognized2Number, sizeof(tRecognized), cmptRecognized);
+	
+	/* Print results */
+	
+	for (i = 0; i < recognized2Number; i++) {
+		printf("    " POPRECOG_FOUND,
+			image[recognized2[i].imageID].filePath,
+			image[recognized2[i].imageID].direction,
+			recognized2[i].layer,
+			recognized2[i].posX,
+			recognized2[i].posY,
+			image[recognized2[i].imageID].bitmap->w,
+			image[recognized2[i].imageID].bitmap->h,
+			(image[recognized2[i].imageID].direction=='-') ?
+				(recognized2[i].posX) :
+				(recognized2[i].posX+image[recognized2[i].imageID].bitmap->w
+			),
+			recognized2[i].posY+image[recognized2[i].imageID].bitmap->h
+		);
+		fprintf(outputFile, "    " POPRECOG_FOUND,
+			image[recognized2[i].imageID].filePath,
+			image[recognized2[i].imageID].direction,
+			recognized2[i].layer,
+			recognized2[i].posX,
+			recognized2[i].posY,
+			image[recognized2[i].imageID].bitmap->w,
+			image[recognized2[i].imageID].bitmap->h,
+			(image[recognized2[i].imageID].direction=='-') ?
+				(recognized2[i].posX) :
+				(recognized2[i].posX+image[recognized2[i].imageID].bitmap->w
+			),
+			recognized2[i].posY+image[recognized2[i].imageID].bitmap->h
+		);
+		fprintf(outputSmallFile, POPRECOG_FOUND,
+			image[recognized2[i].imageID].filePath,
+			image[recognized2[i].imageID].direction,
+			recognized2[i].layer,
+			recognized2[i].posX,
+			recognized2[i].posY,
+			image[recognized2[i].imageID].bitmap->w,
+			image[recognized2[i].imageID].bitmap->h,
+			(image[recognized2[i].imageID].direction=='-') ?
+				(recognized2[i].posX) :
+				(recognized2[i].posX+image[recognized2[i].imageID].bitmap->w
+			),
+			recognized2[i].posY+image[recognized2[i].imageID].bitmap->h
+		);				
+		if (dirInfo[image[recognized2[i].imageID].dirID].optGoodNumber)
+			for (x = 0; x < image[recognized2[i].imageID].bitmap->w; x++)
+				for (y = 0; y < image[recognized2[i].imageID].bitmap->h; y++) {
+					if ((((short *)image[recognized2[i].imageID].bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized2[i].imageID].dirID].optAllowTransparency)) 
+						((short *)DEBUGScreenShot2->line[recognized2[i].posY+y])[recognized2[i].posX+x] = ((short *)image[recognized2[i].imageID].bitmap->line[y])[x];
+				}
 	}
 	
 	textprintf_ex(DEBUGScreenShot, font, 320+2, 1, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_HEADER, screenShotList[screenShotID], screenShotID+1, screenShotsNumber);
@@ -565,7 +608,9 @@ void recognizeScreenShot(int screenShotID) {
 	sprintf(buf, "%s/trans_%s.bmp", optResultsDir, screenShotList[screenShotID]);
 	save_bitmap(buf, transparentScreenShot, 0);
 	sprintf(buf, "%s/rec_%s.bmp", optResultsDir, screenShotList[screenShotID]);
-	save_bitmap(buf, DEBUGScreenShot, 0);  
+	save_bitmap(buf, DEBUGScreenShot, 0);
+	sprintf(buf, "%s/debug_%s.bmp", optResultsDir, screenShotList[screenShotID]);
+	save_bitmap(buf, DEBUGScreenShot2, 0);
 	timeAfter = time(0);
 
 	printf("    " POPRECOG_SUMMARY, totalNumberOfRecognizedImages, timeAfter - timeBefore);
@@ -760,7 +805,7 @@ int main(int argc, char* argv[]) {
 	sortListOfScreenShots();
 	
 	timeBefore = time(0);
-		
+	
 	for (i = 0; i < screenShotsNumber; i++)  
 		recognizeScreenShot(i);
 
