@@ -39,7 +39,7 @@ reslist.c: Princed Resources : Ordered Read-Only list implementarion
 
 /* resource list layer (that uses the abstract list layer primitives) */
 
-int resIdCmp(tResourceId a,tResourceId b) {
+int resIdCmp(const tResourceId a,const tResourceId b) {
 	/* the index has the priority */
 	int c=strncmp(a.index,b.index,5);
 	if (c>0) return GT;
@@ -48,7 +48,7 @@ int resIdCmp(tResourceId a,tResourceId b) {
 	/* at this point, the indexes are the same, so let's compare the number */
 	if (a.value>b.value) return GT;
 	if (a.value<b.value) return LT;
-	
+
 	/* at this point, indexes and values are the same, but this is not enough, we'll use order to be sure it's unique */
 	if (a.order>b.order) return GT;
 	if (a.order<b.order) return LT;
