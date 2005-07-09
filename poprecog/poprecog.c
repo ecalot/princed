@@ -442,6 +442,7 @@ void recognizeScreenShot(int screenShotID) {
 	fprintf(outputSmallFile, POPRECOG_RECOGNIZING2, screenShotList[screenShotID]);  
 	sprintf(buf, "%s" SEPS "%s", screenShotsDir, screenShotList[screenShotID]);
 	screenShot = load_bmp(buf, 0);
+	if (!screenShot) return; /* bugfix: do exit in case of file not open */
 	transparentScreenShot = load_bmp(buf, 0);  
 	DEBUGScreenShot = create_bitmap(500, 400);
 	clear_to_color(DEBUGScreenShot, makecol(50, 50, 50));
@@ -696,6 +697,7 @@ void readDir(int dirID) {
 			image[imagesNumber].filePath = (char *) malloc(strlen(buf)+1);
 			strcpy(image[imagesNumber].filePath, buf);
 			image[imagesNumber].bitmap = load_bmp(image[imagesNumber].filePath, 0);
+			if (!image[imagesNumber].bitmap) continue; /* bugfix in case the image couldn't be loaded */
 			image[imagesNumber].direction = '-';      
 			image[imagesNumber].pixelsNumber = countPixels(image[imagesNumber].bitmap);
 			image[imagesNumber].dirID = dirID;
