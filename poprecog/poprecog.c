@@ -199,7 +199,7 @@ int cmptImage(const void *a, const void *b) {
 	return 0;
 }
 
-int cmptRecognized(void *a, void *b)
+int cmptRecognized(const void *a, const void *b)
 {
 	register int laa = ((tRecognized*)(a))->layer;
 	register int lab = ((tRecognized*)(b))->layer; 
