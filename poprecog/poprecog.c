@@ -77,7 +77,8 @@ poprecog.c: Prince of Persia Screenshots Recognizer
 #define POPRECOG_STEP1 "Step 1. Type dir where screenshots are stored.\nThis should be 320x200 bmp files with 256 colour palette.\n"
 #define POPRECOG_STEP2 "\nStep 2. Type dirs where are stored bitmaps to recognize.\nPlease type in this format: [dirname] [max images on screenshot][ENTER].\nWhen you'll finish type END[ENTER].\n"
 #define POPRECOG_STEP3 "\nStep 3. Type number of maximum layers\nHINT:\nIf you'll type 0, poprecog will automatically detect the number of layers,\nbut it is not recommended for tiles, walls, cinematic etc.\n"
-#define POPRECOG_STEP4 "\nStep 4. Type output dir, in which you'll see recognized things\n"
+#define POPRECOG_STEP4 "\nStep 4. Type the number of bitmap debug method\n 0 - don't create bitmap debug files\n 1 - colour recognized things (expext not important) + additional info\n 2 - show recognized things (expect not important) + additional info\n 4 - pink EVERY recognized thing (320x200)\n 8 - only show recognized (expect not important; 320x200)\n15 - create every bitmap file from top list\n"
+#define POPRECOG_STEP5 "\nStep 5. Type output dir, in which you'll see recognized things\n"
 #define POPRECOG_RECOGNIZING "\nRecognizing %s (shot %d of %d)\n"
 #define POPRECOG_RECOGNIZING2 "Recognizing %s\n"
 #define POPRECOG_CHECKING_LAYER "Checking layer nr. %d"
@@ -125,7 +126,6 @@ typedef struct sDirInfo {
 	int optGoodNumber;
 	int optMinImagePercent;
 	int optAllowTransparency;
-	int optSearchThis;
 	/* int optVolatile; */
 } tDirInfo;
 
@@ -150,9 +150,7 @@ char screenShotsDir[100];
 tImage image[MAX_IMAGES];
 int imagesNumber;
 
-BITMAP *screenShot, *transparentScreenShot, *DEBUGScreenShot, *DEBUGScreenShot2;
-
-int DEBUGY = 0;
+BITMAP *screenShot, *transparentScreenShot;
 
 tDirInfo dirInfo[MAX_DIRS];
 int dirsNumber;
@@ -172,6 +170,13 @@ char output[2000]; /* for outputFile */
 
 char optResultsDir[100];
 int optMaxLayers;
+unsigned short optDebugMethod;
+#define colour_flag 0x0001
+#define show_flag   0x0002
+#define trans_flag  0x0004
+#define movie_flag  0x0008
+#define hasFlag(a) (optDebugMethod&(a))
+#define setFlag(a) optDebugMethod|=(a)
 
 /* Functions */
 
@@ -300,21 +305,7 @@ int cmptRecognized(const void *a, const void *b)
 	return recognized[recognizedID].ownedPixels;  
 }
 
-void cutImageFromTransparentScreenShot(int recognizedID, int posX, int posY) {
-	register int x, y;
-	register int transparentPixel = makecol16(0, 0, 0);
-	register int screenShotTransparentPixel = makecol16(255, 0, 255);  
-	BITMAP *bitmap = image[recognized[recognizedID].imageID].bitmap;    
-		
-	for (x = 0; x < bitmap->w; x++)
-		for (y = 0; y < bitmap->h; y++) {
-			if (((((short *)bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized[recognizedID].imageID].dirID].optAllowTransparency)) && 
-					(((short *)bitmap->line[y])[x] == ((short *)screenShot->line[posY+y])[posX+x]))
-				((short *)transparentScreenShot->line[posY+y])[posX+x] = screenShotTransparentPixel;
-		}
-}
-
-void cutImageFromScreenShot(int recognizedID, int posX, int posY) {
+void cutImageFromScreenShot(BITMAP *screenShot2, int recognizedID) {
 	register int x, y;
 	register int transparentPixel = makecol16(0, 0, 0);
 	register int screenShotTransparentPixel = makecol16(255, 0, 255);  
@@ -323,33 +314,67 @@ void cutImageFromScreenShot(int recognizedID, int posX, int posY) {
 	for (x = 0; x < bitmap->w; x++)
 		for (y = 0; y < bitmap->h; y++) {
 			if (((((short *)bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized[recognizedID].imageID].dirID].optAllowTransparency)) && 
-					(((short *)bitmap->line[y])[x] == ((short *)screenShot->line[posY+y])[posX+x]))
-				((short *)screenShot->line[posY+y])[posX+x] = screenShotTransparentPixel;
+					(((short *)bitmap->line[y])[x] == ((short *)screenShot->line[recognized[recognizedID].posY+y])[recognized[recognizedID].posX+x]))
+				((short *)screenShot2->line[recognized[recognizedID].posY+y])[recognized[recognizedID].posX+x] = screenShotTransparentPixel;
 		}
 }
 
-void cutImageFromDEBUGScreenShot(int recognizedID, int posX, int posY) {
+void debugScreenShot0(BITMAP *debugScreenShot, int *debugScreenShotY, int recognizedID) {
 	register int x, y;
 	register int transparentPixel = makecol16(0, 0, 0);
 	register int randomColour = makecol16(128+rand()%128, 128+rand()%128, 128+rand()%128);
 	BITMAP *bitmap = image[recognized[recognizedID].imageID].bitmap;
 	
-	if (DEBUGY < 300)	{
-		textprintf_ex(DEBUGScreenShot, font, 320+2, 30+DEBUGY, makecol(255, 255, 255), makecol(50, 50, 50), "%s", image[recognized[recognizedID].imageID].filePath);
-		textprintf_ex(DEBUGScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+9+DEBUGY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_FIRST, recognized[recognizedID].posX, recognized[recognizedID].posY, image[recognized[recognizedID].imageID].direction, recognized[recognizedID].layer);
-		textprintf_ex(DEBUGScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+18+DEBUGY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_SECOND, bitmap->w, bitmap->h, (recognized[recognizedID].goodPixels*100)/recognized[recognizedID].pixelsNumber);
+	if (*debugScreenShotY < 300)	{
+		textprintf_ex(debugScreenShot, font, 320+2, 30+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), "%s", image[recognized[recognizedID].imageID].filePath);
+		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+9+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_FIRST, recognized[recognizedID].posX, recognized[recognizedID].posY, image[recognized[recognizedID].imageID].direction, recognized[recognizedID].layer);
+		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+18+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_SECOND, bitmap->w, bitmap->h, (recognized[recognizedID].goodPixels*100)/recognized[recognizedID].pixelsNumber);
 	}  
 		
 	for (x = 0; x < bitmap->w; x++)
 		for (y = 0; y < bitmap->h; y++) {
-			if (((((short *)bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized[recognizedID].imageID].dirID].optAllowTransparency)) && 
-					(((short *)bitmap->line[y])[x] == ((short *)screenShot->line[posY+y])[posX+x])) {
-				((short *)DEBUGScreenShot->line[posY+y])[posX+x] = randomColour;
+			if ((((short *)bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized[recognizedID].imageID].dirID].optAllowTransparency)) {
+				((short *)debugScreenShot->line[recognized[recognizedID].posY+y])[recognized[recognizedID].posX+x] = randomColour;
 			}
-			if ((((short *)bitmap->line[y])[x] != transparentPixel) && (DEBUGY < 300) && (x < 50))
-				((short *)DEBUGScreenShot->line[40+DEBUGY+y])[320+2+x] = randomColour;
+			if ((((short *)bitmap->line[y])[x] != transparentPixel) && (*debugScreenShotY < 300) && (x < 50))
+				((short *)debugScreenShot->line[40+*debugScreenShotY+y])[320+2+x] = randomColour;
 		}
-	DEBUGY += MAX(bitmap->h+20, 40);
+	*debugScreenShotY += MAX(bitmap->h+20, 40);
+}
+
+void debugScreenShot1(BITMAP *debugScreenShot, int *debugScreenShotY, int recognizedID) {
+	register int x, y;
+	register int transparentPixel = makecol16(0, 0, 0);
+	BITMAP *bitmap = image[recognized[recognizedID].imageID].bitmap;
+	
+	if (*debugScreenShotY < 300)	{
+		textprintf_ex(debugScreenShot, font, 320+2, 30+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), "%s", image[recognized[recognizedID].imageID].filePath);
+		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+9+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_FIRST, recognized[recognizedID].posX, recognized[recognizedID].posY, image[recognized[recognizedID].imageID].direction, recognized[recognizedID].layer);
+		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+18+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_SECOND, bitmap->w, bitmap->h, (recognized[recognizedID].goodPixels*100)/recognized[recognizedID].pixelsNumber);
+	}  
+		
+	for (x = 0; x < bitmap->w; x++)
+		for (y = 0; y < bitmap->h; y++) {
+			if ((((short *)bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized[recognizedID].imageID].dirID].optAllowTransparency)) {
+				((short *)debugScreenShot->line[recognized[recognizedID].posY+y])[recognized[recognizedID].posX+x] = ((short *)bitmap->line[y])[x];
+			}
+			if ((((short *)bitmap->line[y])[x] != transparentPixel) && (*debugScreenShotY < 300) && (x < 50))
+				((short *)debugScreenShot->line[40+*debugScreenShotY+y])[320+2+x] = ((short *)bitmap->line[y])[x];
+		}
+	*debugScreenShotY += MAX(bitmap->h+20, 40);
+}
+
+void blit2(BITMAP *screenShot, int recognizedID) {
+	register int x, y;
+	register int transparentPixel = makecol16(0, 0, 0);
+	BITMAP *bitmap = image[recognized[recognizedID].imageID].bitmap;
+	
+	for (x = 0; x < bitmap->w; x++)
+		for (y = 0; y < bitmap->h; y++) {
+			if ((((short *)bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized[recognizedID].imageID].dirID].optAllowTransparency)) {
+				((short *)screenShot->line[recognized[recognizedID].posY+y])[recognized[recognizedID].posX+x] = ((short *)bitmap->line[y])[x];
+			}
+		}
 }
 
 int findImageOnScreenShot(int imageID) {
@@ -434,26 +459,40 @@ void recognizeScreenShot(int screenShotID) {
 	int recognizedNow, recognizedBefore;
 	int timeBefore, timeAfter;
 	int everythingRecognized;
-	int transparentPixel = makecol16(0, 0, 0);	
+	int transparentPixel = makecol16(0, 0, 0);
+	BITMAP *debugScreenShot[4];
+	int debugScreenShotY[2];
  
 	timeBefore = time(0);
 	printf(POPRECOG_RECOGNIZING, screenShotList[screenShotID], screenShotID+1, screenShotsNumber);
 	fprintf(outputFile, POPRECOG_RECOGNIZING, screenShotList[screenShotID], screenShotID+1, screenShotsNumber);
 	fprintf(outputSmallFile, POPRECOG_RECOGNIZING2, screenShotList[screenShotID]);  
 	sprintf(buf, "%s" SEPS "%s", screenShotsDir, screenShotList[screenShotID]);
+	
 	screenShot = load_bmp(buf, 0);
 	if (!screenShot) return; /* bugfix: do exit in case of file not open */
 	transparentScreenShot = load_bmp(buf, 0);  
-	DEBUGScreenShot = create_bitmap(500, 400);
-	clear_to_color(DEBUGScreenShot, makecol(50, 50, 50));
-	blit(screenShot, DEBUGScreenShot, 0, 0, 0, 200, 320, 200);
-	line(DEBUGScreenShot, 320, 0, 320, 399, makecol(255, 255, 255));  
-	DEBUGScreenShot2 = create_bitmap(320, 400);
-  blit(screenShot, DEBUGScreenShot2, 0, 0, 0, 200, 320, 200);	
+	
+	debugScreenShot[0] = create_bitmap(500, 400);
+	debugScreenShotY[0] = 0;
+	clear_to_color(debugScreenShot[0], makecol(50, 50, 50));
+	blit(screenShot, debugScreenShot[0], 0, 0, 0, 200, 320, 200);
+	line(debugScreenShot[0], 320, 0, 320, 399, makecol(255, 255, 255));	
+	
+	debugScreenShot[1] = create_bitmap(500, 400);
+	debugScreenShotY[1] = 0;
+	clear_to_color(debugScreenShot[1], makecol(50, 50, 50));
+	blit(screenShot, debugScreenShot[1], 0, 0, 0, 200, 320, 200);
+	line(debugScreenShot[1], 320, 0, 320, 399, makecol(255, 255, 255));		
+  
+  debugScreenShot[2] = load_bmp(buf, 0);
+
+	debugScreenShot[3] = create_bitmap(320, 200);
+	clear(debugScreenShot[3]);
+  
 	totalNumberOfRecognizedImages = 0;  
 	recognizedNumber = 0;
 	actualLayer = 0;
-	DEBUGY = 0;
 	for (i = 0; i < 320; i++)
 		for (j = 0; j < 200; j++)
 			recognizeMap[i][j] = -1;
@@ -484,7 +523,7 @@ void recognizeScreenShot(int screenShotID) {
 				recognizeMap[i][j] = -1;
 		
 		for (i = 0; i < recognizedNumber; i++) {
-			cutImageFromTransparentScreenShot(i, recognized[i].posX, recognized[i].posY);
+			cutImageFromScreenShot(transparentScreenShot, i);
 			putImageOnRecognizeMap(image[recognized[i].imageID].bitmap, recognized[i].posX, recognized[i].posY, i);
 		}
 		
@@ -526,10 +565,15 @@ void recognizeScreenShot(int screenShotID) {
 				continue;
 			}
 			
-			totalNumberOfRecognizedImages++;
 			if (dirInfo[image[recognized[maxPixelsID].imageID].dirID].optGoodNumber)
-				cutImageFromDEBUGScreenShot(maxPixelsID, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
-			cutImageFromScreenShot(maxPixelsID, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY);
+			{
+				debugScreenShot0(debugScreenShot[0], &debugScreenShotY[0], maxPixelsID);
+				debugScreenShot1(debugScreenShot[1], &debugScreenShotY[1], maxPixelsID);				
+				blit2(debugScreenShot[3], maxPixelsID);
+				totalNumberOfRecognizedImages++;
+			}
+			cutImageFromScreenShot(debugScreenShot[2], maxPixelsID);			
+			cutImageFromScreenShot(screenShot, maxPixelsID);
 			putImageOnRecognizeMap(image[recognized[maxPixelsID].imageID].bitmap, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, maxPixelsID);
 			
 			recognized2[recognized2Number].imageID =  recognized[maxPixelsID].imageID;
@@ -549,7 +593,7 @@ void recognizeScreenShot(int screenShotID) {
 			break;
 	}
 	
-	qsort(recognized2, recognized2Number, sizeof(tRecognized), cmptRecognized);
+	qsort(recognized2, recognized2Number, sizeof(tRecognized), (void *)cmptRecognized);
 	
 	/* Print results */
 	
@@ -596,30 +640,36 @@ void recognizeScreenShot(int screenShotID) {
 			),
 			recognized2[i].posY+image[recognized2[i].imageID].bitmap->h
 		);				
-		if (dirInfo[image[recognized2[i].imageID].dirID].optGoodNumber)
-			for (x = 0; x < image[recognized2[i].imageID].bitmap->w; x++)
-				for (y = 0; y < image[recognized2[i].imageID].bitmap->h; y++) {
-					if ((((short *)image[recognized2[i].imageID].bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized2[i].imageID].dirID].optAllowTransparency)) 
-						((short *)DEBUGScreenShot2->line[recognized2[i].posY+y])[recognized2[i].posX+x] = ((short *)image[recognized2[i].imageID].bitmap->line[y])[x];
-				}
 	}
 	
-	textprintf_ex(DEBUGScreenShot, font, 320+2, 1, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_HEADER, screenShotList[screenShotID], screenShotID+1, screenShotsNumber);
-	textprintf_ex(DEBUGScreenShot, font, 320+2, 10, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_RECOGNIZED_NR, totalNumberOfRecognizedImages);
-	sprintf(buf, "%s/trans_%s.bmp", optResultsDir, screenShotList[screenShotID]);
-	save_bitmap(buf, transparentScreenShot, 0);
-	sprintf(buf, "%s/rec_%s.bmp", optResultsDir, screenShotList[screenShotID]);
-	save_bitmap(buf, DEBUGScreenShot, 0);
-	sprintf(buf, "%s/debug_%s.bmp", optResultsDir, screenShotList[screenShotID]);
-	save_bitmap(buf, DEBUGScreenShot2, 0);
+	if (hasFlag(colour_flag)) {
+		textprintf_ex(debugScreenShot[0], font, 320+2, 1, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_HEADER, screenShotList[screenShotID], screenShotID+1, screenShotsNumber);
+		textprintf_ex(debugScreenShot[0], font, 320+2, 10, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_RECOGNIZED_NR, totalNumberOfRecognizedImages);
+		sprintf(buf, "%s/colour_%s.bmp", optResultsDir, screenShotList[screenShotID]);
+		save_bitmap(buf, debugScreenShot[0], 0);
+	}
+	if (hasFlag(show_flag)) {
+		textprintf_ex(debugScreenShot[1], font, 320+2, 1, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_HEADER, screenShotList[screenShotID], screenShotID+1, screenShotsNumber);
+		textprintf_ex(debugScreenShot[1], font, 320+2, 10, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_RECOGNIZED_NR, totalNumberOfRecognizedImages);				
+		sprintf(buf, "%s/show_%s.bmp", optResultsDir, screenShotList[screenShotID]);
+		save_bitmap(buf, debugScreenShot[1], 0);
+	}
+	if (hasFlag(trans_flag)) {
+		sprintf(buf, "%s/trans_%s.bmp", optResultsDir, screenShotList[screenShotID]);
+		save_bitmap(buf, debugScreenShot[2], 0);
+	}
+	if (hasFlag(movie_flag)) {
+		sprintf(buf, "%s/movie_%s.bmp", optResultsDir, screenShotList[screenShotID]);
+		save_bitmap(buf, debugScreenShot[3], 0);
+	}
 	timeAfter = time(0);
 
 	printf("    " POPRECOG_SUMMARY, totalNumberOfRecognizedImages, timeAfter - timeBefore);
 	fprintf(outputFile, POPRECOG_SUMMARY, totalNumberOfRecognizedImages, timeAfter - timeBefore);
 	destroy_bitmap(screenShot);
 	destroy_bitmap(transparentScreenShot);  
-	destroy_bitmap(DEBUGScreenShot);
-	destroy_bitmap(DEBUGScreenShot2);
+	for (i = 0; i < 4; i++)
+		destroy_bitmap(debugScreenShot[i]);
 }
 
 void sortListOfScreenShots() {
@@ -679,14 +729,12 @@ void readDir(int dirID) {
 		fscanf(optFile, "%d", &dirInfo[dirID].optGoodNumber);
 		fscanf(optFile, "%d", &dirInfo[dirID].optMinImagePercent);
 		fscanf(optFile, "%d", &dirInfo[dirID].optAllowTransparency);
-		fscanf(optFile, "%d", &dirInfo[dirID].optSearchThis);		
 		fclose(optFile);
 	}	else {
 		dirInfo[dirID].optTwoDirections = 1;
 		dirInfo[dirID].optGoodNumber = 99999;
 		dirInfo[dirID].optMinImagePercent = 30;
 		dirInfo[dirID].optAllowTransparency = 1;
-		dirInfo[dirID].optSearchThis = 1;
 	}  
 
 	while ((file = readdir(dir)))	{
@@ -762,6 +810,11 @@ void readParameters() {
 	
 	printf(POPRECOG_STEP4);
 	strcat(output, POPRECOG_STEP4);
+	scanf("%d", &optDebugMethod);  
+	sprintf(output, "%s%d\n", output, optDebugMethod);
+	
+	printf(POPRECOG_STEP5);
+	strcat(output, POPRECOG_STEP5);
 	scanf("%s", optResultsDir);
 	sprintf(output, "%s%s\n", output, optResultsDir);
 	
