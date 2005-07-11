@@ -27,11 +27,14 @@ Here is an example content of this file:
 First number means if this bitmaps have "two directions". A number 1 means
 true (bitmaps have two directions), a number 0 means false. The default
 value is 1.
-Second number is for the maximum number of this object at the screen. The
-default value is 99999. NOTE: If in one folder named for example "kid" you
-'ll have kids frames and kid lives, and you type "1" the program will
-recognize only kid, not his lives. So in this situation you can put kid
-frames and kid lives in separate dirs, but it is not order.
+Second number means good number of recognized object.
+Here you should use only this values:
+0 - if this object is not important (it can be recognized, but it won't be
+    on debug files; only in trans_*.bmp). Use it for the things that can
+    exist in a front of the sprites
+1 - use this for kid, vizier, pop1 guards etc
+99999 - use this for pop1 swords, tiles etc
+The default value is 99999.
 The third number represents the minimum allowed percentile of
 "good pixels" to recognize something. By default it is 30 (so 30%). For 
 pop1 swords use 10%, for other items some value over 30%. The bigger number
@@ -65,11 +68,19 @@ small_results.txt
   about what screenshot is recognized, and what are the founded items. This
   program can be used by other programs, for example to recognized animation.
 
-rec_[SCREENSHOT_FILE_NAME].bmp
+colour_[SCREENSHOT_FILE_NAME].bmp
   Here are good results to check if everything was recognized correctly.
+  The recognized things are coloured with random colors.
+
+show_[SCREENSHOT_FILE_NAME].bmp
+  The same as above but images are displayed, not colored.
 
 trans_[SCREENSHOT_FILE_NAME].bmp
-  Every pixel which was recognized is [R:255,G:0,B:255] ;)
+  Every pixel which was recognized is [R:255,G:0,B:255]. This is good for
+  debug pop1 swords.
+
+movie_[SCREENSHOT_FILE_NAME].bmp
+  The same as show_*.bmp but this is 320x200 bitmap without text results.
 
 Q. How can I made this screen shots?
 A. Download RECORD from http://www.princed.com.ar (it only works in dos mode,
