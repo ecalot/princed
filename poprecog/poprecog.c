@@ -26,106 +26,16 @@ poprecog.c: Prince of Persia Screenshots Recognizer
 
 */
 
-/*
-	Changelog:
-	- 2005.06.15 - I've started coding this pretty tool ;)
-	- 2005.06.16 - Second day of coding (few hours)...
-	- 2005.06.17 - Third day of coding (few hours)...  Some problems with POP1 compability.
-	- ...
-	- 2005.07.01 - :)
-*/
-
 /* Header files */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
 #include <dirent.h>
-/* #include <qsort.h> */
 #include <allegro.h>
 
 /* Defines */
-#ifndef WIN32
-#define UNIX
-#endif
-
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#ifndef WIN32
-	#define defmkdir(a) mkdir (a,(mode_t)0755)
-	#define osIndepGetCharacter() getchar()
-	#define SEPS "/"
-	#define SEPC '/'
-#else
-	#include <direct.h> /* mkdir */ 
-	#define defmkdir(a) mkdir (a)
-	#define osIndepGetCharacter() getche()
-	#define SEPS "\\"
-	#define SEPC '\\'
-#endif
-
-/* Text Defines */
-#define MAX_DIRS 9999
-#define MAX_SCREENSHOTS 99999
-#define MAX_IMAGES 999999
-#define MAX_RECOGNIZED_ITEMS 999999
-#define NUMBER_OF_CONTROL_PIXELS 5
-
-/* about */
-#define POPRECOG_URL "http://www.princed.com.ar"
-#define POPRECOG_ABOUT "\
-Prince of Persia Screenshots Recognizer\n\
-(c) Copyright 2005 Princed Development Team\n\
-Programmed by peter_k\n" POPRECOG_URL "\n\n"
-
-/* steps */
-#define POPRECOG_STEP1 "\
-Step 1. Type dir where screenshots are stored.\nThis should be 320x200 bmp files with 256 colour palette.\n"
-
-#define POPRECOG_STEP2 "\n\
-Step 2. Type dirs where are stored bitmaps to recognize.\n\
-Please type in this format: [dirname] [max images on screenshot][ENTER].\n\
-When you'll finish type END[ENTER].\n"
-
-#define POPRECOG_STEP3 "\n\
-Step 3. Type number of maximum layers\n\
-HINT:\n\
-If you'll type 0, poprecog will automatically detect the number of layers,\n\
-but it is not recommended for tiles, walls, cinematic etc.\n"
-
-#define POPRECOG_STEP4 "\n\
-Step 4. Type the number of bitmap debug method\n\
- 0 - don't create bitmap debug files\n\
- 1 - colour recognized things (expext not important) + additional info\n\
- 2 - show recognized things (expect not important) + additional info\n\
- 4 - pink EVERY recognized thing (320x200)\n\
- 8 - only show recognized (expect not important; 320x200)\n\
-15 - create every bitmap file from top list\n"
-
-#define POPRECOG_STEP5 "\n\
-Step 5. Type output dir, in which you'll see recognized things\n"
-
-/* other texts */
-#define POPRECOG_RECOGNIZING         "\nRecognizing %s (shot %d of %d)\n"
-#define POPRECOG_RECOGNIZING2        "Recognizing %s\n"
-#define POPRECOG_CHECKING_LAYER      "Checking layer nr. %d"
-#define POPRECOG_DONE                "Done"
-#define POPRECOG_FOUND               "Found %s d %c l %d x %d y %d w %d h %d fpx %d fpy %d\n"
-#define POPRECOG_SUMMARY             "%d recognized images in about %d seconds\n"
-#define POPRECOG_ERROR_CANNOT_OPEN   "Cannot open %s for append\n"
-#define POPRECOG_LOADING             "Loading bitmaps from dir %s\n"
-#define POPRECOG_END_SUMMARY         "\nRecognized %d frames in about %ld seconds\n"	
-#define POPRECOG_RELEASING_MEMORY    "Releasing memory\n"
-#define POPRECOG_TYPE_STH            "Type something and press ENTER key...\n"
-#define POPRECOG_DEBUG_HEADER        "%s (%d/%d)"
-#define POPRECOG_DEBUG_RECOGNIZED_NR "Recognized number: %d"
-#define POPRECOG_DEBUG_FIRST         "P(%d;%d) D%c L%d"
-#define POPRECOG_DEBUG_SECOND        "D(%d;%d) Per:%d%%"
-
-/* DONE: move the strings as text defines */
-/* DONE: textprintf is deprecated, use its replacement */
-/* DONE: separate structs variables and type definitions using typedef */
+#include "poprecog.h"
 
 /* Types */
 typedef struct sImage {
@@ -144,7 +54,7 @@ typedef struct sRecognized {
 	int pixelsNumber;  
 	int upperLayers;  
 	int goodPixelsPercent;
-	int ownedPixels; /* for recognizeMap */
+	int ownedPixels;
 } tRecognized;
 
 typedef struct sDirInfo {
@@ -154,7 +64,6 @@ typedef struct sDirInfo {
 	int optGoodNumber;
 	int optMinImagePercent;
 	int optAllowTransparency;
-	/* int optVolatile; */
 } tDirInfo;
 
 typedef struct sSharedPixels {
@@ -198,17 +107,19 @@ char output[2000]; /* for outputFile */
 char optResultsDir[100];
 int optMaxLayers;
 unsigned int optDebugMethod;
-/* TODO: create a .h file and send all defines there */
-#define colour_flag 0x0001
-#define show_flag   0x0002
-#define trans_flag  0x0004
-#define movie_flag  0x0008
-#define hasFlag(a) (optDebugMethod&(a))
-#define setFlag(a) optDebugMethod|=(a)
+/* DONE: create a .h file and send all defines there */
+
 
 /* Functions */
-
-#define equalsIgnoreCase(a,b) (((a)==(b))||((('A'<=((a)&0xdf)&&((a)&0xdf)<='Z'))&& !((a)^(b))&0xdf))
+char *strToLower(char *ch) {
+	char *begin;
+	begin = ch;
+	while (*ch) {
+		*ch = tolower(*ch);
+		*ch++;
+	}	
+	return begin;
+}
 
 int match(char *pat, char *str) {
 	switch(*pat)
@@ -352,18 +263,18 @@ void debugScreenShot0(BITMAP *debugScreenShot, int *debugScreenShotY, int recogn
 	register int x, y;
 	register int transparentPixel = makecol16(0, 0, 0);
 	register int randomColour = makecol16(128+rand()%128, 128+rand()%128, 128+rand()%128);
-	BITMAP *bitmap = image[recognized[recognizedID].imageID].bitmap;
+	BITMAP *bitmap = image[recognized2[recognizedID].imageID].bitmap;
 	
 	if (*debugScreenShotY < 300)	{
-		textprintf_ex(debugScreenShot, font, 320+2, 30+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), "%s", image[recognized[recognizedID].imageID].filePath);
-		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+9+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_FIRST, recognized[recognizedID].posX, recognized[recognizedID].posY, image[recognized[recognizedID].imageID].direction, recognized[recognizedID].layer);
-		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+18+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_SECOND, bitmap->w, bitmap->h, (recognized[recognizedID].goodPixels*100)/recognized[recognizedID].pixelsNumber);
+		textprintf_ex(debugScreenShot, font, 320+2, 30+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), "%s", image[recognized2[recognizedID].imageID].filePath);
+		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+9+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_FIRST, recognized2[recognizedID].posX, recognized2[recognizedID].posY, image[recognized2[recognizedID].imageID].direction, recognized2[recognizedID].layer);
+		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+18+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_SECOND, bitmap->w, bitmap->h, (recognized2[recognizedID].goodPixels*100)/recognized2[recognizedID].pixelsNumber);
 	}  
 		
 	for (x = 0; x < bitmap->w; x++)
 		for (y = 0; y < bitmap->h; y++) {
-			if ((((short *)bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized[recognizedID].imageID].dirID].optAllowTransparency)) {
-				((short *)debugScreenShot->line[recognized[recognizedID].posY+y])[recognized[recognizedID].posX+x] = randomColour;
+			if ((((short *)bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized2[recognizedID].imageID].dirID].optAllowTransparency)) {
+				((short *)debugScreenShot->line[recognized2[recognizedID].posY+y])[recognized2[recognizedID].posX+x] = randomColour;
 			}
 			if ((((short *)bitmap->line[y])[x] != transparentPixel) && (*debugScreenShotY < 300) && (x < 50))
 				((short *)debugScreenShot->line[40+*debugScreenShotY+y])[320+2+x] = randomColour;
@@ -374,18 +285,18 @@ void debugScreenShot0(BITMAP *debugScreenShot, int *debugScreenShotY, int recogn
 void debugScreenShot1(BITMAP *debugScreenShot, int *debugScreenShotY, int recognizedID) {
 	register int x, y;
 	register int transparentPixel = makecol16(0, 0, 0);
-	BITMAP *bitmap = image[recognized[recognizedID].imageID].bitmap;
+	BITMAP *bitmap = image[recognized2[recognizedID].imageID].bitmap;
 	
 	if (*debugScreenShotY < 300)	{
-		textprintf_ex(debugScreenShot, font, 320+2, 30+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), "%s", image[recognized[recognizedID].imageID].filePath);
-		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+9+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_FIRST, recognized[recognizedID].posX, recognized[recognizedID].posY, image[recognized[recognizedID].imageID].direction, recognized[recognizedID].layer);
-		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+18+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_SECOND, bitmap->w, bitmap->h, (recognized[recognizedID].goodPixels*100)/recognized[recognizedID].pixelsNumber);
+		textprintf_ex(debugScreenShot, font, 320+2, 30+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), "%s", image[recognized2[recognizedID].imageID].filePath);
+		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+9+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_FIRST, recognized2[recognizedID].posX, recognized2[recognizedID].posY, image[recognized2[recognizedID].imageID].direction, recognized2[recognizedID].layer);
+		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+18+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_SECOND, bitmap->w, bitmap->h, (recognized2[recognizedID].goodPixels*100)/recognized2[recognizedID].pixelsNumber);
 	}  
 		
 	for (x = 0; x < bitmap->w; x++)
 		for (y = 0; y < bitmap->h; y++) {
-			if ((((short *)bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized[recognizedID].imageID].dirID].optAllowTransparency)) {
-				((short *)debugScreenShot->line[recognized[recognizedID].posY+y])[recognized[recognizedID].posX+x] = ((short *)bitmap->line[y])[x];
+			if ((((short *)bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized2[recognizedID].imageID].dirID].optAllowTransparency)) {
+				((short *)debugScreenShot->line[recognized2[recognizedID].posY+y])[recognized2[recognizedID].posX+x] = ((short *)bitmap->line[y])[x];
 			}
 			if ((((short *)bitmap->line[y])[x] != transparentPixel) && (*debugScreenShotY < 300) && (x < 50))
 				((short *)debugScreenShot->line[40+*debugScreenShotY+y])[320+2+x] = ((short *)bitmap->line[y])[x];
@@ -396,12 +307,12 @@ void debugScreenShot1(BITMAP *debugScreenShot, int *debugScreenShotY, int recogn
 void blit2(BITMAP *screenShot, int recognizedID) {
 	register int x, y;
 	register int transparentPixel = makecol16(0, 0, 0);
-	BITMAP *bitmap = image[recognized[recognizedID].imageID].bitmap;
+	BITMAP *bitmap = image[recognized2[recognizedID].imageID].bitmap;
 	
 	for (x = 0; x < bitmap->w; x++)
 		for (y = 0; y < bitmap->h; y++) {
-			if ((((short *)bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized[recognizedID].imageID].dirID].optAllowTransparency)) {
-				((short *)screenShot->line[recognized[recognizedID].posY+y])[recognized[recognizedID].posX+x] = ((short *)bitmap->line[y])[x];
+			if ((((short *)bitmap->line[y])[x] != transparentPixel) || (!dirInfo[image[recognized2[recognizedID].imageID].dirID].optAllowTransparency)) {
+				((short *)screenShot->line[recognized2[recognizedID].posY+y])[recognized2[recognizedID].posX+x] = ((short *)bitmap->line[y])[x];
 			}
 		}
 }
@@ -417,7 +328,6 @@ int findImageOnScreenShot(int imageID) {
 	BITMAP *bitmapToFind = image[imageID].bitmap;
 	int newRecognized;
 	int continueLoop;
-	/* DONE: use struct cp[] .x, .y and .c and a for */
 	tCp cp[NUMBER_OF_CONTROL_PIXELS];
 	
 	for (i = 0; i < NUMBER_OF_CONTROL_PIXELS; i++)
@@ -488,7 +398,6 @@ void recognizeScreenShot(int screenShotID) {
 	int recognizedNow, recognizedBefore;
 	int timeBefore, timeAfter;
 	int everythingRecognized;
-	/*int transparentPixel = makecol16(0, 0, 0);*/
 	BITMAP *debugScreenShot[4];
 	int debugScreenShotY[2];
  
@@ -499,8 +408,12 @@ void recognizeScreenShot(int screenShotID) {
 	sprintf(buf, "%s" SEPS "%s", screenShotsDir, screenShotList[screenShotID]);
 	
 	screenShot = load_bmp(buf, 0);
-printf("poirot: debug %s\n",buf);
-	if (!screenShot) return; /* bugfix: do exit in case of file not open */
+  /*printf("poirot: debug %s\n",buf);*/
+	if (!screenShot) {
+		printf(POPRECOG_ERROR_CANNOT_OPEN POPRECOG_TYPE_STH, buf);
+		scanf("\n");		
+		exit(1);
+	}
 	transparentScreenShot = load_bmp(buf, 0);  
 	
 	debugScreenShot[0] = create_bitmap(500, 400);
@@ -593,14 +506,7 @@ printf("poirot: debug %s\n",buf);
 				recognized[maxPixelsID].goodPixels = tmp;
 				continue;
 			}
-			
-			if (dirInfo[image[recognized[maxPixelsID].imageID].dirID].optGoodNumber)
-			{
-				debugScreenShot0(debugScreenShot[0], &debugScreenShotY[0], maxPixelsID);
-				debugScreenShot1(debugScreenShot[1], &debugScreenShotY[1], maxPixelsID);				
-				blit2(debugScreenShot[3], maxPixelsID);
-				totalNumberOfRecognizedImages++;
-			}
+		
 			cutImageFromScreenShot(debugScreenShot[2], maxPixelsID);			
 			cutImageFromScreenShot(screenShot, maxPixelsID);
 			putImageOnRecognizeMap(image[recognized[maxPixelsID].imageID].bitmap, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, maxPixelsID);
@@ -624,9 +530,17 @@ printf("poirot: debug %s\n",buf);
 	
 	qsort(recognized2, recognized2Number, sizeof(tRecognized), cmptRecognized);
 	
-	/* Print results */
-	
 	for (i = 0; i < recognized2Number; i++) {
+		/* Create bitmap debug files */		
+		if (dirInfo[image[recognized2[i].imageID].dirID].optGoodNumber)
+		{
+			debugScreenShot0(debugScreenShot[0], &debugScreenShotY[0], i);
+			debugScreenShot1(debugScreenShot[1], &debugScreenShotY[1], i);				
+			blit2(debugScreenShot[3], i);
+			totalNumberOfRecognizedImages++;
+		}		
+		/* Print results */		
+		cutImageFromScreenShot(debugScreenShot[2], maxPixelsID);		
 		printf("    " POPRECOG_FOUND,
 			image[recognized2[i].imageID].filePath,
 			image[recognized2[i].imageID].direction,
@@ -702,27 +616,24 @@ printf("poirot: debug %s\n",buf);
 }
 
 void sortListOfScreenShots() {
-	char *tmpScreenShotsList[MAX_SCREENSHOTS];
-	int tmpScreenShotsNumber;  
 	int i;
 	DIR *dir = opendir(screenShotsDir);
 	struct dirent *file;
-	
-	tmpScreenShotsNumber = 0;
+
+	screenShotsNumber = 0;
 	while ((file = readdir(dir))) {
+		strToLower(file->d_name);
 		if (match("*.bmp", file->d_name))	{
-			tmpScreenShotsList[tmpScreenShotsNumber] = (char *) malloc(strlen(file->d_name)+1);
-			strcpy(tmpScreenShotsList[tmpScreenShotsNumber], file->d_name);
-			tmpScreenShotsNumber++;
+			screenShotList[screenShotsNumber] = (char *) malloc(strlen(file->d_name)+1);
+			strcpy(screenShotList[screenShotsNumber], file->d_name);
+			screenShotsNumber++;
 		}  
 	}  
 	closedir(dir);
 	
-	qsort(tmpScreenShotsList, tmpScreenShotsNumber, sizeof(char *), pstrcmp);
+	qsort(screenShotList, screenShotsNumber, sizeof(char *), pstrcmp);
 	
-	for (i = 0; i < tmpScreenShotsNumber; i++) /* TODO: why are you using a tmp structure where you can use the output structure? */ 
-		screenShotList[i] = tmpScreenShotsList[i];
-	screenShotsNumber = tmpScreenShotsNumber;
+	/* DONE: why are you using a tmp structure where you can use the output structure? */ 
 }
 
 void freeListOfScreenShots() {
@@ -747,7 +658,6 @@ int countPixels(BITMAP *bitmap) {
 
 void readDir(int dirID) {
 	char buf[100];
-	/*int i;*/
 	DIR *dir = opendir(dirInfo[dirID].dirName);
 	struct dirent *file;
 	FILE *optFile;
@@ -774,8 +684,13 @@ void readDir(int dirID) {
 			image[imagesNumber].filePath = (char *) malloc(strlen(buf)+1);
 			strcpy(image[imagesNumber].filePath, buf);
 			image[imagesNumber].bitmap = load_bmp(image[imagesNumber].filePath, 0);
-printf("poirot: debug %s\n",image[imagesNumber].filePath);
-			if (!image[imagesNumber].bitmap) continue; /* bugfix in case the image couldn't be loaded */
+			/*printf("poirot: debug %s\n",image[imagesNumber].filePath);*/
+			if (!image[imagesNumber].bitmap) {
+				/* bugfix in case the image couldn't be loaded */
+				printf(POPRECOG_ERROR_CANNOT_OPEN POPRECOG_TYPE_STH, image[imagesNumber].filePath);
+				scanf("\n");
+				exit(1);			
+			}
 			image[imagesNumber].direction = '-';      
 			image[imagesNumber].pixelsNumber = countPixels(image[imagesNumber].bitmap);
 			image[imagesNumber].dirID = dirID;
@@ -797,8 +712,6 @@ printf("poirot: debug %s\n",image[imagesNumber].filePath);
 }
 
 void sortListOfImages() {
-/*	int i;*/
- 
 	qsort(image, imagesNumber, sizeof(tImage), cmptImage);
 }
 
@@ -813,8 +726,6 @@ void freeListOfImages() {
 }
 
 void readParameters() {
-	/*int i;*/
-
 	strcpy(output, POPRECOG_ABOUT);
 	printf(output);
 	
@@ -829,7 +740,6 @@ void readParameters() {
 		scanf("%s", dirInfo[dirsNumber].dirName);
 		sprintf(output, "%s%s\n", output, dirInfo[dirsNumber].dirName);
 		dirsNumber++;
-		/* DONE: use a do/while with strcmp as condition */
 	} while(strcmp(dirInfo[dirsNumber-1].dirName, "END"));
 	dirsNumber--;
 	
@@ -870,14 +780,16 @@ int main(int argc, char* argv[]) {
 	sprintf(buf, "%s/%s", optResultsDir, "all_results.txt");
 	outputFile = fopen(buf, "a");
  	if (!outputFile) {
-			printf(POPRECOG_ERROR_CANNOT_OPEN,buf);
-			return -1;
+		printf(POPRECOG_ERROR_CANNOT_OPEN POPRECOG_TYPE_STH,buf);
+		scanf("\n");
+		exit(1);
 	}
 	sprintf(buf, "%s/%s", optResultsDir, "small_results.txt");  
 	outputSmallFile = fopen(buf, "a");
  	if (!outputFile) {
-			printf(POPRECOG_ERROR_CANNOT_OPEN,buf);
-			return -1;
+		printf(POPRECOG_ERROR_CANNOT_OPEN POPRECOG_TYPE_STH,buf);
+		scanf("\n");
+		exit(1);
 	}
 	fprintf(outputFile, output);
 

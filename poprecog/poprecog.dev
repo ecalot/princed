@@ -1,7 +1,7 @@
 [Project]
 FileName=poprecog.dev
 Name=poprecog
-UnitCount=1
+UnitCount=2
 Type=1
 Ver=1
 ObjFiles=
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000000000000000000
+CompilerSettings=0000000000001000000000
 
 [Unit1]
 FileName=poprecog.c
@@ -56,4 +56,14 @@ OriginalFilename=
 ProductName=
 ProductVersion=
 AutoIncBuildNr=0
+
+[Unit2]
+FileName=poprecog.h
+CompileCpp=0
+Folder=poprecog
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
 
