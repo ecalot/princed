@@ -532,57 +532,57 @@ void recognizeScreenShot(int screenShotID) {
 	
 	for (i = 0; i < recognized2Number; i++) {
 		/* Create bitmap debug files */		
-		if (dirInfo[image[recognized2[i].imageID].dirID].optGoodNumber)
-		{
+		if (dirInfo[image[recognized2[i].imageID].dirID].optGoodNumber) {
 			debugScreenShot0(debugScreenShot[0], &debugScreenShotY[0], i);
 			debugScreenShot1(debugScreenShot[1], &debugScreenShotY[1], i);				
 			blit2(debugScreenShot[3], i);
 			totalNumberOfRecognizedImages++;
-		}		
-		/* Print results */		
-		cutImageFromScreenShot(debugScreenShot[2], maxPixelsID);		
-		printf("    " POPRECOG_FOUND,
-			image[recognized2[i].imageID].filePath,
-			image[recognized2[i].imageID].direction,
-			recognized2[i].layer,
-			recognized2[i].posX,
-			recognized2[i].posY,
-			image[recognized2[i].imageID].bitmap->w,
-			image[recognized2[i].imageID].bitmap->h,
-			(image[recognized2[i].imageID].direction=='-') ?
-				(recognized2[i].posX) :
-				(recognized2[i].posX+image[recognized2[i].imageID].bitmap->w
-			),
-			recognized2[i].posY+image[recognized2[i].imageID].bitmap->h
-		);
-		fprintf(outputFile, "    " POPRECOG_FOUND,
-			image[recognized2[i].imageID].filePath,
-			image[recognized2[i].imageID].direction,
-			recognized2[i].layer,
-			recognized2[i].posX,
-			recognized2[i].posY,
-			image[recognized2[i].imageID].bitmap->w,
-			image[recognized2[i].imageID].bitmap->h,
-			(image[recognized2[i].imageID].direction=='-') ?
-				(recognized2[i].posX) :
-				(recognized2[i].posX+image[recognized2[i].imageID].bitmap->w
-			),
-			recognized2[i].posY+image[recognized2[i].imageID].bitmap->h
-		);
-		fprintf(outputSmallFile, POPRECOG_FOUND,
-			image[recognized2[i].imageID].filePath,
-			image[recognized2[i].imageID].direction,
-			recognized2[i].layer,
-			recognized2[i].posX,
-			recognized2[i].posY,
-			image[recognized2[i].imageID].bitmap->w,
-			image[recognized2[i].imageID].bitmap->h,
-			(image[recognized2[i].imageID].direction=='-') ?
-				(recognized2[i].posX) :
-				(recognized2[i].posX+image[recognized2[i].imageID].bitmap->w
-			),
-			recognized2[i].posY+image[recognized2[i].imageID].bitmap->h
-		);				
+			
+			/* Print results */		
+			cutImageFromScreenShot(debugScreenShot[2], maxPixelsID);		
+			printf("    " POPRECOG_FOUND,
+				image[recognized2[i].imageID].filePath,
+				image[recognized2[i].imageID].direction,
+				recognized2[i].layer,
+				recognized2[i].posX,
+				recognized2[i].posY,
+				image[recognized2[i].imageID].bitmap->w,
+				image[recognized2[i].imageID].bitmap->h,
+				(image[recognized2[i].imageID].direction=='-') ?
+					(recognized2[i].posX) :
+					(recognized2[i].posX+image[recognized2[i].imageID].bitmap->w
+				),
+				recognized2[i].posY+image[recognized2[i].imageID].bitmap->h
+			);
+			fprintf(outputFile, "    " POPRECOG_FOUND,
+				image[recognized2[i].imageID].filePath,
+				image[recognized2[i].imageID].direction,
+				recognized2[i].layer,
+				recognized2[i].posX,
+				recognized2[i].posY,
+				image[recognized2[i].imageID].bitmap->w,
+				image[recognized2[i].imageID].bitmap->h,
+				(image[recognized2[i].imageID].direction=='-') ?
+					(recognized2[i].posX) :
+					(recognized2[i].posX+image[recognized2[i].imageID].bitmap->w
+				),
+				recognized2[i].posY+image[recognized2[i].imageID].bitmap->h
+			);
+			fprintf(outputSmallFile, POPRECOG_FOUND,
+				image[recognized2[i].imageID].filePath,
+				image[recognized2[i].imageID].direction,
+				recognized2[i].layer,
+				recognized2[i].posX,
+				recognized2[i].posY,
+				image[recognized2[i].imageID].bitmap->w,
+				image[recognized2[i].imageID].bitmap->h,
+				(image[recognized2[i].imageID].direction=='-') ?
+					(recognized2[i].posX) :
+					(recognized2[i].posX+image[recognized2[i].imageID].bitmap->w
+				),
+				recognized2[i].posY+image[recognized2[i].imageID].bitmap->h
+			);
+		}
 	}
 	
 	if (hasFlag(colour_flag)) {
