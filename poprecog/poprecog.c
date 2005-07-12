@@ -55,14 +55,14 @@ poprecog.c: Prince of Persia Screenshots Recognizer
 #ifndef WIN32
 	#define defmkdir(a) mkdir (a,(mode_t)0755)
 	#define osIndepGetCharacter() getchar()
-	#define SEPS "\\"
-	#define SEPC '\\'
+	#define SEPS "/"
+	#define SEPC '/'
 #else
 	#include <direct.h> /* mkdir */ 
 	#define defmkdir(a) mkdir (a)
 	#define osIndepGetCharacter() getche()
-	#define SEPS "/"
-	#define SEPC '/'
+	#define SEPS "\\"
+	#define SEPC '\\'
 #endif
 
 /* Text Defines */
@@ -72,28 +72,56 @@ poprecog.c: Prince of Persia Screenshots Recognizer
 #define MAX_RECOGNIZED_ITEMS 999999
 #define NUMBER_OF_CONTROL_PIXELS 5
 
+/* about */
 #define POPRECOG_URL "http://www.princed.com.ar"
-#define POPRECOG_ABOUT "Prince of Persia Screenshots Recognizer\n(c) Copyright 2005 Princed Development Team\nProgrammed by peter_k\n" POPRECOG_URL "\n\n"
-#define POPRECOG_STEP1 "Step 1. Type dir where screenshots are stored.\nThis should be 320x200 bmp files with 256 colour palette.\n"
-#define POPRECOG_STEP2 "\nStep 2. Type dirs where are stored bitmaps to recognize.\nPlease type in this format: [dirname] [max images on screenshot][ENTER].\nWhen you'll finish type END[ENTER].\n"
-#define POPRECOG_STEP3 "\nStep 3. Type number of maximum layers\nHINT:\nIf you'll type 0, poprecog will automatically detect the number of layers,\nbut it is not recommended for tiles, walls, cinematic etc.\n"
-#define POPRECOG_STEP4 "\nStep 4. Type the number of bitmap debug method\n 0 - don't create bitmap debug files\n 1 - colour recognized things (expext not important) + additional info\n 2 - show recognized things (expect not important) + additional info\n 4 - pink EVERY recognized thing (320x200)\n 8 - only show recognized (expect not important; 320x200)\n15 - create every bitmap file from top list\n"
-#define POPRECOG_STEP5 "\nStep 5. Type output dir, in which you'll see recognized things\n"
-#define POPRECOG_RECOGNIZING "\nRecognizing %s (shot %d of %d)\n"
-#define POPRECOG_RECOGNIZING2 "Recognizing %s\n"
-#define POPRECOG_CHECKING_LAYER "Checking layer nr. %d"
-#define POPRECOG_DONE "Done"
-#define POPRECOG_FOUND "Found %s d %c l %d x %d y %d w %d h %d fpx %d fpy %d\n"
-#define POPRECOG_SUMMARY "%d recognized images in about %d seconds\n"
-#define POPRECOG_ERROR_CANNOT_OPEN "Cannot open %s for append\n"
-#define POPRECOG_LOADING "Loading bitmaps from dir %s\n"
-#define POPRECOG_END_SUMMARY "\nRecognized %d frames in about %ld seconds\n"	
-#define POPRECOG_RELEASING_MEMORY "Releasing memory\n"
-#define POPRECOG_TYPE_STH "Type something and press ENTER key...\n"
-#define POPRECOG_DEBUG_HEADER "%s (%d/%d)"
+#define POPRECOG_ABOUT "\
+Prince of Persia Screenshots Recognizer\n\
+(c) Copyright 2005 Princed Development Team\n\
+Programmed by peter_k\n" POPRECOG_URL "\n\n"
+
+/* steps */
+#define POPRECOG_STEP1 "\
+Step 1. Type dir where screenshots are stored.\nThis should be 320x200 bmp files with 256 colour palette.\n"
+
+#define POPRECOG_STEP2 "\n\
+Step 2. Type dirs where are stored bitmaps to recognize.\n\
+Please type in this format: [dirname] [max images on screenshot][ENTER].\n\
+When you'll finish type END[ENTER].\n"
+
+#define POPRECOG_STEP3 "\n\
+Step 3. Type number of maximum layers\n\
+HINT:\n\
+If you'll type 0, poprecog will automatically detect the number of layers,\n\
+but it is not recommended for tiles, walls, cinematic etc.\n"
+
+#define POPRECOG_STEP4 "\n\
+Step 4. Type the number of bitmap debug method\n\
+ 0 - don't create bitmap debug files\n\
+ 1 - colour recognized things (expext not important) + additional info\n\
+ 2 - show recognized things (expect not important) + additional info\n\
+ 4 - pink EVERY recognized thing (320x200)\n\
+ 8 - only show recognized (expect not important; 320x200)\n\
+15 - create every bitmap file from top list\n"
+
+#define POPRECOG_STEP5 "\n\
+Step 5. Type output dir, in which you'll see recognized things\n"
+
+/* other texts */
+#define POPRECOG_RECOGNIZING         "\nRecognizing %s (shot %d of %d)\n"
+#define POPRECOG_RECOGNIZING2        "Recognizing %s\n"
+#define POPRECOG_CHECKING_LAYER      "Checking layer nr. %d"
+#define POPRECOG_DONE                "Done"
+#define POPRECOG_FOUND               "Found %s d %c l %d x %d y %d w %d h %d fpx %d fpy %d\n"
+#define POPRECOG_SUMMARY             "%d recognized images in about %d seconds\n"
+#define POPRECOG_ERROR_CANNOT_OPEN   "Cannot open %s for append\n"
+#define POPRECOG_LOADING             "Loading bitmaps from dir %s\n"
+#define POPRECOG_END_SUMMARY         "\nRecognized %d frames in about %ld seconds\n"	
+#define POPRECOG_RELEASING_MEMORY    "Releasing memory\n"
+#define POPRECOG_TYPE_STH            "Type something and press ENTER key...\n"
+#define POPRECOG_DEBUG_HEADER        "%s (%d/%d)"
 #define POPRECOG_DEBUG_RECOGNIZED_NR "Recognized number: %d"
-#define POPRECOG_DEBUG_FIRST "P(%d;%d) D%c L%d"
-#define POPRECOG_DEBUG_SECOND "D(%d;%d) Per:%d%%"
+#define POPRECOG_DEBUG_FIRST         "P(%d;%d) D%c L%d"
+#define POPRECOG_DEBUG_SECOND        "D(%d;%d) Per:%d%%"
 
 /* DONE: move the strings as text defines */
 /* DONE: textprintf is deprecated, use its replacement */
@@ -141,7 +169,6 @@ typedef struct sCp
 } tCp;
 
 /* Global variables TODO: try to delete as much global variables as possible */ 
-/* DONE: use just char* screenShotList[MAX] */
 char *screenShotList[MAX_SCREENSHOTS];
 
 int screenShotsNumber;
@@ -170,7 +197,8 @@ char output[2000]; /* for outputFile */
 
 char optResultsDir[100];
 int optMaxLayers;
-unsigned short optDebugMethod;
+unsigned int optDebugMethod;
+/* TODO: create a .h file and send all defines there */
 #define colour_flag 0x0001
 #define show_flag   0x0002
 #define trans_flag  0x0004
@@ -180,13 +208,15 @@ unsigned short optDebugMethod;
 
 /* Functions */
 
+#define equalsIgnoreCase(a,b) (((a)==(b))||((('A'<=((a)&0xdf)&&((a)&0xdf)<='Z'))&& !((a)^(b))&0xdf))
+
 int match(char *pat, char *str) {
 	switch(*pat)
 	{
 		case '\0': return !*str;
 		case '*': return match(pat + 1, str) || (*str && match(pat, str + 1));
 		case '?': return *str && match(pat + 1, str + 1);
-		default: return (*pat == *str) && match(pat + 1, str + 1);
+		default: return (equalsIgnoreCase(*pat,*str)) && match(pat + 1, str + 1);
 	}
 }
 
@@ -227,7 +257,6 @@ int cmptRecognized(const void *a, const void *b)
 	register short screenShotTransparentPixel = makecol16(255, 0, 255);  
 	register int goodPixels;
 	BITMAP *bitmap = image[imageID].bitmap;  
-      /* DONE: check unused vars */
 	
 	sharedPixels[0].recognizedID = -1;
 	
@@ -453,13 +482,13 @@ int findImageOnScreenShot(int imageID) {
 
 void recognizeScreenShot(int screenShotID) {
 	char buf[100];
-	int x, y;  
+	int x;  
 	int i, j, tmp;
 	int maxPixelsNumber, maxPixelsID, maxTotalPixelsNumber;
 	int recognizedNow, recognizedBefore;
 	int timeBefore, timeAfter;
 	int everythingRecognized;
-	int transparentPixel = makecol16(0, 0, 0);
+	/*int transparentPixel = makecol16(0, 0, 0);*/
 	BITMAP *debugScreenShot[4];
 	int debugScreenShotY[2];
  
@@ -470,6 +499,7 @@ void recognizeScreenShot(int screenShotID) {
 	sprintf(buf, "%s" SEPS "%s", screenShotsDir, screenShotList[screenShotID]);
 	
 	screenShot = load_bmp(buf, 0);
+printf("poirot: debug %s\n",buf);
 	if (!screenShot) return; /* bugfix: do exit in case of file not open */
 	transparentScreenShot = load_bmp(buf, 0);  
 	
@@ -533,8 +563,7 @@ void recognizeScreenShot(int screenShotID) {
 		for (i = 0; i < dirsNumber; i++)
 			if (dirInfo[i].recognizedNumber < dirInfo[i].optGoodNumber)
 				everythingRecognized = 0;
-		if (everythingRecognized)
-			break;
+		if (everythingRecognized)	break;
 		
 		actualLayer++;
 	}
@@ -544,7 +573,7 @@ void recognizeScreenShot(int screenShotID) {
 		recognized[i].ownedPixels = 0;  
 		
 	recognized2Number = 0;
-	while (1)	{
+	while (1)	{ /* TODO: use a structured loop here */
 		maxPixelsNumber = 0;
 		maxTotalPixelsNumber = 0;    
 		maxPixelsID = -1;
@@ -593,7 +622,7 @@ void recognizeScreenShot(int screenShotID) {
 			break;
 	}
 	
-	qsort(recognized2, recognized2Number, sizeof(tRecognized), (void *)cmptRecognized);
+	qsort(recognized2, recognized2Number, sizeof(tRecognized), cmptRecognized);
 	
 	/* Print results */
 	
@@ -681,7 +710,7 @@ void sortListOfScreenShots() {
 	
 	tmpScreenShotsNumber = 0;
 	while ((file = readdir(dir))) {
-		if (match("*.bmp", file->d_name) || match("*.BMP", file->d_name))	{
+		if (match("*.bmp", file->d_name))	{
 			tmpScreenShotsList[tmpScreenShotsNumber] = (char *) malloc(strlen(file->d_name)+1);
 			strcpy(tmpScreenShotsList[tmpScreenShotsNumber], file->d_name);
 			tmpScreenShotsNumber++;
@@ -691,7 +720,7 @@ void sortListOfScreenShots() {
 	
 	qsort(tmpScreenShotsList, tmpScreenShotsNumber, sizeof(char *), pstrcmp);
 	
-	for (i = 0; i < tmpScreenShotsNumber; i++) 
+	for (i = 0; i < tmpScreenShotsNumber; i++) /* TODO: why are you using a tmp structure where you can use the output structure? */ 
 		screenShotList[i] = tmpScreenShotsList[i];
 	screenShotsNumber = tmpScreenShotsNumber;
 }
@@ -738,13 +767,14 @@ void readDir(int dirID) {
 	}  
 
 	while ((file = readdir(dir)))	{
-		if (match("*.bmp", file->d_name) || match("*.BMP", file->d_name))	{
+		if (match("*.bmp", file->d_name))	{
 			strcpy(buf, dirInfo[dirID].dirName);
 			strcat(buf, SEPS); 
 			strcat(buf, file->d_name);
 			image[imagesNumber].filePath = (char *) malloc(strlen(buf)+1);
 			strcpy(image[imagesNumber].filePath, buf);
 			image[imagesNumber].bitmap = load_bmp(image[imagesNumber].filePath, 0);
+printf("poirot: debug %s\n",image[imagesNumber].filePath);
 			if (!image[imagesNumber].bitmap) continue; /* bugfix in case the image couldn't be loaded */
 			image[imagesNumber].direction = '-';      
 			image[imagesNumber].pixelsNumber = countPixels(image[imagesNumber].bitmap);
@@ -797,7 +827,7 @@ void readParameters() {
 	strcat(output, POPRECOG_STEP2);
 	do {
 		scanf("%s", dirInfo[dirsNumber].dirName);
-				sprintf(output, "%s%s\n", output, dirInfo[dirsNumber].dirName);
+		sprintf(output, "%s%s\n", output, dirInfo[dirsNumber].dirName);
 		dirsNumber++;
 		/* DONE: use a do/while with strcmp as condition */
 	} while(strcmp(dirInfo[dirsNumber-1].dirName, "END"));
@@ -810,7 +840,7 @@ void readParameters() {
 	
 	printf(POPRECOG_STEP4);
 	strcat(output, POPRECOG_STEP4);
-	scanf("%d", &optDebugMethod);  
+	scanf("%ud", &optDebugMethod);  
 	sprintf(output, "%s%d\n", output, optDebugMethod);
 	
 	printf(POPRECOG_STEP5);
