@@ -111,6 +111,7 @@ unsigned int optDebugMethod;
 
 
 /* Functions */
+#if 0
 char *strToLower(char *ch) {
 	char *begin;
 	begin = ch;
@@ -120,6 +121,7 @@ char *strToLower(char *ch) {
 	}	
 	return begin;
 }
+#endif
 
 int match(char *pat, char *str) {
 	switch(*pat)
@@ -616,13 +618,12 @@ void recognizeScreenShot(int screenShotID) {
 }
 
 void sortListOfScreenShots() {
-	int i;
 	DIR *dir = opendir(screenShotsDir);
 	struct dirent *file;
 
 	screenShotsNumber = 0;
 	while ((file = readdir(dir))) {
-		strToLower(file->d_name);
+		/* strToLower(file->d_name); file->d_name should not be edited, match is now case insensitive, so there is no problem */
 		if (match("*.bmp", file->d_name))	{
 			screenShotList[screenShotsNumber] = (char *) malloc(strlen(file->d_name)+1);
 			strcpy(screenShotList[screenShotsNumber], file->d_name);
