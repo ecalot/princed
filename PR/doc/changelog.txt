@@ -167,6 +167,9 @@ Versions:
   x Finish python interface
   x Fix buffer overflows
   x Fix the language support
+	x Fix memory leak
+	- Fix uppercase typedef of types
+	- Add defines for positive return values in XML
  * PR v2.0 beta
   x Add full pop2 support
  * PR v2.0
