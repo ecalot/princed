@@ -41,9 +41,9 @@ poprecog.c: Prince of Persia Screenshots Recognizer
 typedef struct sImage {
 	BITMAP *bitmap;
 	char *filePath;
-	char direction;  
+	char direction;
 	int pixelsNumber;
-	int dirID;  
+	int dirID;
 } tImage;
 
 typedef struct sRecognized {
@@ -51,8 +51,8 @@ typedef struct sRecognized {
 	int posX, posY;
 	int goodPixels;
 	int layer;
-	int pixelsNumber;  
-	int upperLayers;  
+	int pixelsNumber;
+	int upperLayers;
 	int goodPixelsPercent;
 	int ownedPixels;
 } tRecognized;
@@ -124,8 +124,7 @@ char *strToLower(char *ch) {
 #endif
 
 int match(char *pat, char *str) {
-	switch(*pat)
-	{
+	switch(*pat) {
 		case '\0': return !*str;
 		case '*': return match(pat + 1, str) || (*str && match(pat, str + 1));
 		case '?': return *str && match(pat + 1, str + 1);
@@ -164,12 +163,12 @@ int cmptRecognized(const void *a, const void *b)
 	return 0;
 }
 
-/*inline*/ int findImageOnScreenShotInPosition(int imageID, int posX, int posY) {
+int findImageOnScreenShotInPosition(int imageID, int posX, int posY) {
 	register int i, x, y;
 	register short transparentPixel = makecol16(0, 0, 0);
-	register short screenShotTransparentPixel = makecol16(255, 0, 255);  
+	register short screenShotTransparentPixel = makecol16(255, 0, 255);
 	register int goodPixels;
-	BITMAP *bitmap = image[imageID].bitmap;  
+	BITMAP *bitmap = image[imageID].bitmap;
 	
 	sharedPixels[0].recognizedID = -1;
 	
@@ -189,13 +188,13 @@ int cmptRecognized(const void *a, const void *b)
 					if (sharedPixels[i].recognizedID == -1) {
 						sharedPixels[i].recognizedID = recognizeMap[posX+x][posY+y];
 						sharedPixels[i].number = 1;
-						sharedPixels[i+1].recognizedID = -1;            
+						sharedPixels[i+1].recognizedID = -1;
 					}
 				} else {
 					goodPixels++;
 				}
 				continue;
-			}        
+			}
 			if (((short *)transparentScreenShot->line[posY+y])[posX+x] == screenShotTransparentPixel)	{
 				if (recognizeMap[posX+x][posY+y] != -1)	{
 					for (i=0; sharedPixels[i].recognizedID != -1; i++) {
@@ -211,7 +210,7 @@ int cmptRecognized(const void *a, const void *b)
 					}
 				} 
 				continue;
-			}  
+			}
 			return 0;
 		}
 		
@@ -225,7 +224,7 @@ int cmptRecognized(const void *a, const void *b)
 	return goodPixels;
 }
 
-/*inline*/ int putImageOnRecognizeMap(BITMAP *bitmap, int posX, int posY, int recognizedID) {
+int putImageOnRecognizeMap(BITMAP *bitmap, int posX, int posY, int recognizedID) {
 	register int x, y, value;
 	register short transparentPixel = makecol16(0, 0, 0);
 	
@@ -244,14 +243,14 @@ int cmptRecognized(const void *a, const void *b)
 				}
 			}
 		}
-	return recognized[recognizedID].ownedPixels;  
+	return recognized[recognizedID].ownedPixels;
 }
 
 void cutImageFromScreenShot(BITMAP *screenShot2, int recognizedID) {
 	register int x, y;
 	register int transparentPixel = makecol16(0, 0, 0);
-	register int screenShotTransparentPixel = makecol16(255, 0, 255);  
-	BITMAP *bitmap = image[recognized[recognizedID].imageID].bitmap;      
+	register int screenShotTransparentPixel = makecol16(255, 0, 255);
+	BITMAP *bitmap = image[recognized[recognizedID].imageID].bitmap;
 		
 	for (x = 0; x < bitmap->w; x++)
 		for (y = 0; y < bitmap->h; y++) {
@@ -271,7 +270,7 @@ void debugScreenShot0(BITMAP *debugScreenShot, int *debugScreenShotY, int recogn
 		textprintf_ex(debugScreenShot, font, 320+2, 30+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), "%s", image[recognized2[recognizedID].imageID].filePath);
 		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+9+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_FIRST, recognized2[recognizedID].posX, recognized2[recognizedID].posY, image[recognized2[recognizedID].imageID].direction, recognized2[recognizedID].layer);
 		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+18+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_SECOND, bitmap->w, bitmap->h, (recognized2[recognizedID].goodPixels*100)/recognized2[recognizedID].pixelsNumber);
-	}  
+	}
 		
 	for (x = 0; x < bitmap->w; x++)
 		for (y = 0; y < bitmap->h; y++) {
@@ -293,7 +292,7 @@ void debugScreenShot1(BITMAP *debugScreenShot, int *debugScreenShotY, int recogn
 		textprintf_ex(debugScreenShot, font, 320+2, 30+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), "%s", image[recognized2[recognizedID].imageID].filePath);
 		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+9+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_FIRST, recognized2[recognizedID].posX, recognized2[recognizedID].posY, image[recognized2[recognizedID].imageID].direction, recognized2[recognizedID].layer);
 		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+18+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_SECOND, bitmap->w, bitmap->h, (recognized2[recognizedID].goodPixels*100)/recognized2[recognizedID].pixelsNumber);
-	}  
+	}
 		
 	for (x = 0; x < bitmap->w; x++)
 		for (y = 0; y < bitmap->h; y++) {
@@ -332,10 +331,8 @@ int findImageOnScreenShot(int imageID) {
 	int continueLoop;
 	tCp cp[NUMBER_OF_CONTROL_PIXELS];
 	
-	for (i = 0; i < NUMBER_OF_CONTROL_PIXELS; i++)
-	{
-		do
-		{
+	for (i = 0; i < NUMBER_OF_CONTROL_PIXELS; i++) {
+		do {
 			cp[i].x = rand()%(bitmapToFind->w);
 			cp[i].y = rand()%(bitmapToFind->h);
 			cp[i].c = ((short *)bitmapToFind->line[cp[i].y])[cp[i].x];
@@ -346,8 +343,7 @@ int findImageOnScreenShot(int imageID) {
 	for (x = 0; x < 321-(bitmapToFind->w); x++)
 		for (y = 0; y < 201-(bitmapToFind->h); y++)	{
 			continueLoop = 0;
-			for (i = 0; i < NUMBER_OF_CONTROL_PIXELS; i++)
-			{
+			for (i = 0; i < NUMBER_OF_CONTROL_PIXELS; i++) {
 				if ((((short *)screenShot->line[y+cp[i].y])[x+cp[i].x] != cp[i].c) &&
 				(((short *)transparentScreenShot->line[y+cp[i].y])[x+cp[i].x] != screenShotTransparentPixel)) {
 					continueLoop = 1;
@@ -357,7 +353,7 @@ int findImageOnScreenShot(int imageID) {
 			if (continueLoop) continue;
 
 			posX = x;
-			posY = y;      
+			posY = y;
 			
 			tmp = findImageOnScreenShotInPosition(imageID, posX, posY);
 			
@@ -371,30 +367,30 @@ int findImageOnScreenShot(int imageID) {
 						alreadyExist = 1;
 						newRecognized = i;
 						break;
-					}  
+					}
 				}
 				if ((!alreadyExist) && (dirInfo[image[imageID].dirID].optGoodNumber) && (dirInfo[image[imageID].dirID].recognizedNumber >= dirInfo[image[imageID].dirID].optGoodNumber))
 					return 0;
 				recognized[newRecognized].imageID = imageID;
-				recognized[newRecognized].posX = posX;  
+				recognized[newRecognized].posX = posX;
 				recognized[newRecognized].posY = posY;
 				recognized[newRecognized].goodPixels = tmp;
 				recognized[newRecognized].goodPixelsPercent = (recognized[newRecognized].goodPixels*65536)/image[recognized[newRecognized].imageID].pixelsNumber;
 				recognized[newRecognized].ownedPixels = 0;
 				recognized[newRecognized].pixelsNumber = image[imageID].pixelsNumber;
 				if (!alreadyExist) {
-					recognized[newRecognized].layer = actualLayer;         
-					recognizedNumber++;          
+					recognized[newRecognized].layer = actualLayer;
+					recognizedNumber++;
 					dirInfo[image[imageID].dirID].recognizedNumber++;
-				}  
-			}  
+				}
+			}
 		}
 	return numberOfRecognizedImages;
 }
 
 void recognizeScreenShot(int screenShotID) {
 	char buf[100];
-	int x;  
+	int x;
 	int i, j, tmp;
 	int maxPixelsNumber, maxPixelsID, maxTotalPixelsNumber;
 	int recognizedNow, recognizedBefore;
@@ -406,17 +402,17 @@ void recognizeScreenShot(int screenShotID) {
 	timeBefore = time(0);
 	printf(POPRECOG_RECOGNIZING, screenShotList[screenShotID], screenShotID+1, screenShotsNumber);
 	fprintf(outputFile, POPRECOG_RECOGNIZING, screenShotList[screenShotID], screenShotID+1, screenShotsNumber);
-	fprintf(outputSmallFile, POPRECOG_RECOGNIZING2, screenShotList[screenShotID]);  
+	fprintf(outputSmallFile, POPRECOG_RECOGNIZING2, screenShotList[screenShotID]);
 	sprintf(buf, "%s" SEPS "%s", screenShotsDir, screenShotList[screenShotID]);
 	
 	screenShot = load_bmp(buf, 0);
-  /*printf("poirot: debug %s\n",buf);*/
+	/*printf("poirot: debug %s\n",buf);*/
 	if (!screenShot) {
 		printf(POPRECOG_ERROR_CANNOT_OPEN POPRECOG_TYPE_STH, buf);
 		scanf("\n");		
 		exit(1);
 	}
-	transparentScreenShot = load_bmp(buf, 0);  
+	transparentScreenShot = load_bmp(buf, 0);
 	
 	debugScreenShot[0] = create_bitmap(500, 400);
 	debugScreenShotY[0] = 0;
@@ -429,13 +425,13 @@ void recognizeScreenShot(int screenShotID) {
 	clear_to_color(debugScreenShot[1], makecol(50, 50, 50));
 	blit(screenShot, debugScreenShot[1], 0, 0, 0, 200, 320, 200);
 	line(debugScreenShot[1], 320, 0, 320, 399, makecol(255, 255, 255));		
-  
-  debugScreenShot[2] = load_bmp(buf, 0);
+	
+	debugScreenShot[2] = load_bmp(buf, 0);
 
 	debugScreenShot[3] = create_bitmap(320, 200);
 	clear(debugScreenShot[3]);
-  
-	totalNumberOfRecognizedImages = 0;  
+	
+	totalNumberOfRecognizedImages = 0;
 	recognizedNumber = 0;
 	actualLayer = 0;
 	for (i = 0; i < 320; i++)
@@ -449,9 +445,9 @@ void recognizeScreenShot(int screenShotID) {
 	do {
 		recognizedBefore = recognizedNow;
 		recognizedNow = 0;
-		if ((optMaxLayers != 0) && (actualLayer+1 > optMaxLayers)) break;   
+		if ((optMaxLayers != 0) && (actualLayer+1 > optMaxLayers)) break;
 	 
-		recognizedBefore = recognizedNumber;   
+		recognizedBefore = recognizedNumber;
 		printf("    " POPRECOG_CHECKING_LAYER " ...     ", actualLayer);
 		fprintf(outputFile, "    " POPRECOG_CHECKING_LAYER " ... " POPRECOG_DONE "\n", actualLayer);
 
@@ -485,12 +481,12 @@ void recognizeScreenShot(int screenShotID) {
 	while (recognizedNow - recognizedBefore != 0);
 	
 	for (i = 0; i < recognizedNumber; i++)
-		recognized[i].ownedPixels = 0;  
+		recognized[i].ownedPixels = 0;
 		
 	recognized2Number = 0;
 	while (1)	{ /* TODO: use a structured loop here */
 		maxPixelsNumber = 0;
-		maxTotalPixelsNumber = 0;    
+		maxTotalPixelsNumber = 0;
 		maxPixelsID = -1;
 		for (i = 0; i < recognizedNumber; i++) {
 			if (recognized[i].goodPixels > maxPixelsNumber)	{
@@ -513,15 +509,15 @@ void recognizeScreenShot(int screenShotID) {
 			cutImageFromScreenShot(screenShot, maxPixelsID);
 			putImageOnRecognizeMap(image[recognized[maxPixelsID].imageID].bitmap, recognized[maxPixelsID].posX, recognized[maxPixelsID].posY, maxPixelsID);
 			
-			recognized2[recognized2Number].imageID =  recognized[maxPixelsID].imageID;
-			recognized2[recognized2Number].posX =  recognized[maxPixelsID].posX;
-			recognized2[recognized2Number].posY =  recognized[maxPixelsID].posY;
-			recognized2[recognized2Number].goodPixels =  recognized[maxPixelsID].goodPixels;
-			recognized2[recognized2Number].layer =  recognized[maxPixelsID].layer;
-			recognized2[recognized2Number].pixelsNumber =  recognized[maxPixelsID].pixelsNumber;
-			recognized2[recognized2Number].upperLayers =  recognized[maxPixelsID].upperLayers;
-			recognized2[recognized2Number].goodPixelsPercent =  recognized[maxPixelsID].goodPixelsPercent;
-			recognized2[recognized2Number].ownedPixels =  recognized[maxPixelsID].ownedPixels;
+			recognized2[recognized2Number].imageID = recognized[maxPixelsID].imageID;
+			recognized2[recognized2Number].posX = recognized[maxPixelsID].posX;
+			recognized2[recognized2Number].posY = recognized[maxPixelsID].posY;
+			recognized2[recognized2Number].goodPixels = recognized[maxPixelsID].goodPixels;
+			recognized2[recognized2Number].layer = recognized[maxPixelsID].layer;
+			recognized2[recognized2Number].pixelsNumber = recognized[maxPixelsID].pixelsNumber;
+			recognized2[recognized2Number].upperLayers = recognized[maxPixelsID].upperLayers;
+			recognized2[recognized2Number].goodPixelsPercent = recognized[maxPixelsID].goodPixelsPercent;
+			recognized2[recognized2Number].ownedPixels = recognized[maxPixelsID].ownedPixels;
 			recognized2Number++;
 
 			recognized[maxPixelsID].goodPixels = 0;
@@ -612,7 +608,7 @@ void recognizeScreenShot(int screenShotID) {
 	printf("    " POPRECOG_SUMMARY, totalNumberOfRecognizedImages, timeAfter - timeBefore);
 	fprintf(outputFile, POPRECOG_SUMMARY, totalNumberOfRecognizedImages, timeAfter - timeBefore);
 	destroy_bitmap(screenShot);
-	destroy_bitmap(transparentScreenShot);  
+	destroy_bitmap(transparentScreenShot);
 	for (i = 0; i < 4; i++)
 		destroy_bitmap(debugScreenShot[i]);
 }
@@ -628,8 +624,8 @@ void sortListOfScreenShots() {
 			screenShotList[screenShotsNumber] = (char *) malloc(strlen(file->d_name)+1);
 			strcpy(screenShotList[screenShotsNumber], file->d_name);
 			screenShotsNumber++;
-		}  
-	}  
+		}
+	}
 	closedir(dir);
 	
 	qsort(screenShotList, screenShotsNumber, sizeof(char *), pstrcmp);
@@ -649,12 +645,12 @@ int countPixels(BITMAP *bitmap) {
 	int x, y, number;
 	int transparentPixel = makecol16(0, 0, 0);
 
-	number = 0;    
+	number = 0;
 	for (x = 0; x < bitmap->w; x++)
 		for (y = 0; y < bitmap->h; y++)
 			if (((short *)bitmap->line[y])[x] != transparentPixel)
 				number++;
-	return number;  
+	return number;
 }
 
 void readDir(int dirID) {
@@ -665,7 +661,7 @@ void readDir(int dirID) {
 	
 	sprintf(buf, "%s" SEPS "bitmaps.cfg", dirInfo[dirID].dirName);
 	if ((optFile = fopen(buf, "r"))) {
-		fscanf(optFile, "%d", &dirInfo[dirID].optTwoDirections);    
+		fscanf(optFile, "%d", &dirInfo[dirID].optTwoDirections);
 		fscanf(optFile, "%d", &dirInfo[dirID].optGoodNumber);
 		fscanf(optFile, "%d", &dirInfo[dirID].optMinImagePercent);
 		fscanf(optFile, "%d", &dirInfo[dirID].optAllowTransparency);
@@ -675,7 +671,7 @@ void readDir(int dirID) {
 		dirInfo[dirID].optGoodNumber = 99999;
 		dirInfo[dirID].optMinImagePercent = 30;
 		dirInfo[dirID].optAllowTransparency = 1;
-	}  
+	}
 
 	while ((file = readdir(dir)))	{
 		if (match("*.bmp", file->d_name))	{
@@ -692,23 +688,23 @@ void readDir(int dirID) {
 				scanf("\n");
 				exit(1);			
 			}
-			image[imagesNumber].direction = '-';      
+			image[imagesNumber].direction = '-';
 			image[imagesNumber].pixelsNumber = countPixels(image[imagesNumber].bitmap);
 			image[imagesNumber].dirID = dirID;
 			imagesNumber++;
 			
-			if (dirInfo[dirID].optTwoDirections) {      
+			if (dirInfo[dirID].optTwoDirections) {
 				image[imagesNumber].filePath = (char *) malloc(strlen(buf)+1);
 				strcpy(image[imagesNumber].filePath, buf);
 				image[imagesNumber].bitmap = create_bitmap(image[imagesNumber-1].bitmap->w, image[imagesNumber-1].bitmap->h);
 				draw_sprite_h_flip(image[imagesNumber].bitmap, image[imagesNumber-1].bitmap, 0, 0);
 				image[imagesNumber].direction = 'M';
 				image[imagesNumber].pixelsNumber = image[imagesNumber-1].pixelsNumber;
-				image[imagesNumber].dirID = dirID;        
+				image[imagesNumber].dirID = dirID;
 				imagesNumber++;
 			}
-		}  
-	}  
+		}
+	}
 	closedir(dir);
 }
 
@@ -746,12 +742,12 @@ void readParameters() {
 	
 	printf(POPRECOG_STEP3);
 	strcat(output, POPRECOG_STEP3);
-	scanf("%d", &optMaxLayers);  
+	scanf("%d", &optMaxLayers);
 	sprintf(output, "%s%d\n", output, optMaxLayers);
 	
 	printf(POPRECOG_STEP4);
 	strcat(output, POPRECOG_STEP4);
-	scanf("%ud", &optDebugMethod);  
+	scanf("%ud", &optDebugMethod);
 	sprintf(output, "%s%d\n", output, optDebugMethod);
 	
 	printf(POPRECOG_STEP5);
@@ -760,7 +756,7 @@ void readParameters() {
 	sprintf(output, "%s%s\n", output, optResultsDir);
 	
 	printf("\n");
-	strcat(output, "\n");  
+	strcat(output, "\n");
 }
 
 int main(int argc, char* argv[]) {
@@ -768,7 +764,7 @@ int main(int argc, char* argv[]) {
 	long timeBefore, timeAfter;
 	char buf[100];
 	
-	srand((unsigned int)time((time_t *)NULL));  
+	srand((unsigned int)time((time_t *)NULL));
 	
 	allegro_init();
 	set_color_depth(16);
@@ -785,7 +781,7 @@ int main(int argc, char* argv[]) {
 		scanf("\n");
 		exit(1);
 	}
-	sprintf(buf, "%s/%s", optResultsDir, "small_results.txt");  
+	sprintf(buf, "%s/%s", optResultsDir, "small_results.txt");
 	outputSmallFile = fopen(buf, "a");
  	if (!outputFile) {
 		printf(POPRECOG_ERROR_CANNOT_OPEN POPRECOG_TYPE_STH,buf);
@@ -796,15 +792,15 @@ int main(int argc, char* argv[]) {
 
 	for (i = 0; i < dirsNumber; i++) {
 		printf(POPRECOG_LOADING, dirInfo[i].dirName);
-		fprintf(outputFile, POPRECOG_LOADING, dirInfo[i].dirName);    
+		fprintf(outputFile, POPRECOG_LOADING, dirInfo[i].dirName);
 		readDir(i);
 	}
-	sortListOfImages();  
+	sortListOfImages();
 	sortListOfScreenShots();
 	
 	timeBefore = time(0);
 	
-	for (i = 0; i < screenShotsNumber; i++)  
+	for (i = 0; i < screenShotsNumber; i++)
 		recognizeScreenShot(i);
 
 	timeAfter = time(0);
@@ -814,7 +810,7 @@ int main(int argc, char* argv[]) {
 	printf(POPRECOG_RELEASING_MEMORY);
 	fprintf(outputFile, POPRECOG_RELEASING_MEMORY);
 	freeListOfScreenShots();
-	freeListOfImages();  
+	freeListOfImages();
 	
 	fclose(outputFile);
 	fclose(outputSmallFile);
