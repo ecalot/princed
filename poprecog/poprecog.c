@@ -133,7 +133,7 @@ int match(char *pat, char *str) {
 }
 
 int pstrcmp(const void *p1, const void *p2) {
-	return strcmp(*(char * const *)p1, *(char * const *)p2);
+	return strcmp(*(char * const *)p1, *(char * const *)p2); /* TODO: use a define macro here */
 }
 
 int cmptImage(const void *a, const void *b) {
@@ -288,7 +288,7 @@ void debugScreenShot1(BITMAP *debugScreenShot, int *debugScreenShotY, int recogn
 	register int transparentPixel = makecol16(0, 0, 0);
 	BITMAP *bitmap = image[recognized2[recognizedID].imageID].bitmap;
 	
-	if (*debugScreenShotY < 300)	{
+	if (*debugScreenShotY < 300) {
 		textprintf_ex(debugScreenShot, font, 320+2, 30+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), "%s", image[recognized2[recognizedID].imageID].filePath);
 		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+9+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_FIRST, recognized2[recognizedID].posX, recognized2[recognizedID].posY, image[recognized2[recognizedID].imageID].direction, recognized2[recognizedID].layer);
 		textprintf_ex(debugScreenShot, font, 320+2+MIN(bitmap->w, 50)+1, 30+18+*debugScreenShotY, makecol(255, 255, 255), makecol(50, 50, 50), POPRECOG_DEBUG_SECOND, bitmap->w, bitmap->h, (recognized2[recognizedID].goodPixels*100)/recognized2[recognizedID].pixelsNumber);
@@ -629,8 +629,6 @@ void sortListOfScreenShots() {
 	closedir(dir);
 	
 	qsort(screenShotList, screenShotsNumber, sizeof(char *), pstrcmp);
-	
-	/* DONE: why are you using a tmp structure where you can use the output structure? */ 
 }
 
 void freeListOfScreenShots() {
@@ -681,7 +679,6 @@ void readDir(int dirID) {
 			image[imagesNumber].filePath = (char *) malloc(strlen(buf)+1);
 			strcpy(image[imagesNumber].filePath, buf);
 			image[imagesNumber].bitmap = load_bmp(image[imagesNumber].filePath, 0);
-			/*printf("poirot: debug %s\n",image[imagesNumber].filePath);*/
 			if (!image[imagesNumber].bitmap) {
 				/* bugfix in case the image couldn't be loaded */
 				printf(POPRECOG_ERROR_CANNOT_OPEN POPRECOG_TYPE_STH, image[imagesNumber].filePath);
