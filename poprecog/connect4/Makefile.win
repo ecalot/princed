@@ -1,0 +1,30 @@
+# Project: genboard
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = genboard.o $(RES)
+LINKOBJ  = genboard.o $(RES)
+LIBS =  -L"D:/dcpp/lib"  
+INCS =  -I"D:/dcpp/include" 
+CXXINCS =  -I"D:/dcpp/lib/gcc/mingw32/3.4.2/include"  -I"D:/dcpp/include/c++/3.4.2/backward"  -I"D:/dcpp/include/c++/3.4.2/mingw32"  -I"D:/dcpp/include/c++/3.4.2"  -I"D:/dcpp/include" 
+BIN  = genboard.exe
+CXXFLAGS = $(CXXINCS)  
+CFLAGS = $(INCS)  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before genboard.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "genboard.exe" $(LIBS)
+
+genboard.o: genboard.cpp
+	$(CPP) -c genboard.cpp -o genboard.o $(CXXFLAGS)
