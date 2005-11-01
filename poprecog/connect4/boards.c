@@ -17,12 +17,76 @@ class board {
 inline board::putToken44(int column) {
 	switch(column) {
 		case 0:
+			switch((board[0]|board[1])&4369) {
+				case 1048576:
+					board[actualPlayer]|=65536;
+					break;
+				case 1048576:
+					board[actualPlayer]|=4096;
+					break;
+				case 1052672:
+					board[actualPlayer]|=256;
+					break;
+				case 1052928:
+					board[actualPlayer]|=16;
+					break;
+				case 1052929:
+					return -2;
+					break;
 			break;
 		case 1:
+			switch((board[0]|board[1])&8738) {
+				case 2097152:
+					board[actualPlayer]|=131072;
+					break;
+				case 2097152:
+					board[actualPlayer]|=8192;
+					break;
+				case 2105344:
+					board[actualPlayer]|=512;
+					break;
+				case 2105856:
+					board[actualPlayer]|=32;
+					break;
+				case 2105858:
+					return -2;
+					break;
 			break;
 		case 2:
+			switch((board[0]|board[1])&17476) {
+				case 4194304:
+					board[actualPlayer]|=262144;
+					break;
+				case 4194304:
+					board[actualPlayer]|=16384;
+					break;
+				case 4210688:
+					board[actualPlayer]|=1024;
+					break;
+				case 4211712:
+					board[actualPlayer]|=64;
+					break;
+				case 4211716:
+					return -2;
+					break;
 			break;
 		case 3:
+			switch((board[0]|board[1])&34952) {
+				case 8388608:
+					board[actualPlayer]|=524288;
+					break;
+				case 8388608:
+					board[actualPlayer]|=32768;
+					break;
+				case 8421376:
+					board[actualPlayer]|=2048;
+					break;
+				case 8423424:
+					board[actualPlayer]|=128;
+					break;
+				case 8423432:
+					return -2;
+					break;
 			break;
 	};
 }
