@@ -20,7 +20,7 @@
 
 /*
 stringformat.c: Princed Resources : format string parsing feature
-¯¯¯¯¯¯¯¯
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 4 Jul 2005
 
@@ -49,7 +49,7 @@ void emitString(const char* txt, int size, int zeroflag) {
 	int length;
 
 	length=strlen(txt);
-	complete=(length>size)?length-size:0;
+	complete=(length>size)?0:size-length;
 
 	while (complete--) emit(zeroflag?'0':' ');
 	
@@ -73,7 +73,7 @@ void emitNumber(int n, int size, int zeroflag) {
 		k/=10;
 	}
 
-	complete=(digits>size)?digits-size:0;
+	complete=(digits>size)?0:size-digits;
 
 	while (complete--) emit(zeroflag?'0':' ');
 
@@ -95,7 +95,7 @@ const char* parseformat(const char* format,long value,const char* index, const c
 	 * %d - the description
 	 * %% - a % sign
 	 * 
-	 * modifiers:
+	 * Modifiers: (TODO: truncate flag)
 	 * %5i  - the index truncated to 5 bytes or the index size, whatever comes first
 	 * %05i - the same, but in case the index is sized less than 5 it's filled with spaces
 	 * %5v  - the value tabulated to 5 digits (filled with spaces), in case the number is bigger, more digits will be used
@@ -129,7 +129,7 @@ const char* parseformat(const char* format,long value,const char* index, const c
 				if (!k) return NULL; /* just in case the string is finished in the wrong place */
 			}
 			while (isNumber(k)) { /* it's %0[0-9]... */
-				size=size*10+k;
+				size=size*10+k-'0';
 				readk(k); /* read next char */
 				if (!k) return NULL; /* just in case the string is finished in the wrong place */
 			}
@@ -171,4 +171,18 @@ const char* parseformat(const char* format,long value,const char* index, const c
 	
 	return emit(0)?buffer:NULL; /* close the string and return it (return NULL in case of error)*/
 }
+
+#ifdef DEBUG_STRINGS
+int main(int a,char** b) {
+printf("%s\n", parseformat(
+b[1],
+233,
+"shap",
+"image",
+"bmp",
+ 5,0,"hey man!"
+	));
+return 0;
+}
+#endif
 
