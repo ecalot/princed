@@ -121,22 +121,25 @@ void parseGivenPath(char* path) {
 		unsigned int value;
 		int converted;
 		char index[5];
-		converted=sscanf(path+i,"%u:%5s",&value,index);
+		converted=sscanf(path+i,"%u:%5s",&value,index); /* TODO: support order */
 		switch (converted) {
 		case 2:
 			partialList.list[j].type=eId;
 			partialList.list[j].field.id.value=value;
 			str5lowercpy(partialList.list[j].field.id.index,index);
+			partialList.list[j].field.id.order=0;
 			break;
 		case 1:
 			partialList.list[j].type=eIdValue;
 			partialList.list[j].field.id.value=value;
+			partialList.list[j].field.id.order=0;
 			break;
 		default:
 			/* TODO: test this */
 			if (sscanf(path+i,":%5s",index)) {
 				partialList.list[j].type=eIdIndex;
-				strncpy(partialList.list[j].field.id.index,index,5);
+				strncpy(partialList.list[j].field.id.index,index,5); /* TODO: check str5lowercpy */
+				partialList.list[j].field.id.order=0;
 			} else {
 				char* aux;
 				partialList.list[j].type=eString;

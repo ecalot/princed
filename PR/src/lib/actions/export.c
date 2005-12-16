@@ -93,7 +93,6 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 
 		if (!mReadFileInDatFile(&res,indexNumber)) return PR_RESULT_ERR_INVALID_DAT; /* Read error */
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
-
 		/* add to res more information from the resource list */
 		resourceListAddInfo(r,&res);
 		
