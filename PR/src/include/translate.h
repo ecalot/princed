@@ -36,14 +36,15 @@ translate.c: Princed Resources : array translating resources
 
 #define TRANS_ARRAY_INDEX_INT {"pop1", "shap", "fram", "shpl",         "palt"       }
 #define TRANS_ARRAY_INDEX_EXT {"pop 1","shape","frame","shape palette","palette tga"}
+#define TRANS_ARRAY_INDEX_SIZ 5
 
 extern const char* _indexInt[];
 extern const char* _indexExt[];
 
 const char* translate (const char* input, const char** s1, const char** s2,int sizeOfArray);
 
-#define translateInt2Ext(a) translate (a, _indexInt, _indexExt, sizeof(_indexInt)/sizeof(char*))
-#define translateExt2Int(a) translate (a, _indexExt, _indexInt, sizeof(_indexInt)/sizeof(char*))
+#define translateInt2Ext(a) translate (a, _indexInt, _indexExt, TRANS_ARRAY_INDEX_SIZ)
+#define translateExt2Int(a) translate (a, _indexExt, _indexInt, TRANS_ARRAY_INDEX_SIZ)
 
 #endif
 

@@ -41,6 +41,7 @@ resources.c: Princed Resources : Resource Handler
 #include "disk.h"
 #include "resources.h"
 #include "search.h"
+#include "translate.h"
 
 /***************************************************************\
 |            Filtering xml structure to tResourceList           |
@@ -96,13 +97,13 @@ void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext
 		/* Save headers */
 		if (type==eResTypePalette) pal=id;
 		fprintf(unknownXmlFile,RES_XML_UNKNOWN_START,
-			vFiledat,vFiledatWithPath,pal.value,toLower(pal.index)
+			vFiledat,vFiledatWithPath,pal.value,translateInt2Ext(toLower(pal.index))
 		);
 	}
 
 	/* Write item */
 	fprintf(unknownXmlFile,RES_XML_UNKNOWN_ITEM,
-		id.value,toLower(id.index),getExtDesc(type),count,ext,getExtDesc(type),flags,getExtDesc(type),count
+		id.value,translateInt2Ext(toLower(id.index)),getExtDesc(type),count,ext,getExtDesc(type),flags,getExtDesc(type),count
 	); /* To the xml output */
 }
 

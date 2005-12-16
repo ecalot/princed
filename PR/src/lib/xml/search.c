@@ -42,6 +42,7 @@ search.c: Princed Resources : specific xml handling functions
 #include "search.h"
 #include "memory.h"
 #include <string.h>
+#include "translate.h" /* to translate indexes */
 
 /****************************************************************\
 |                   Tag Tree Searching Functions                 |
@@ -52,11 +53,11 @@ search.c: Princed Resources : specific xml handling functions
 #define keepStringAttribute(attribute) res.attribute=strallocandcopy(t->attribute)
 #define keepIntAttribute(attribute,type) res.attribute=(type)ptoi(t->attribute);
 #define keepIdAttributes(attribute,idnum,idindex) res.attribute.value=(unsigned short int)ptoi(t->idnum);\
-                                             if (t->idindex) str5lowercpy(res.attribute.index,t->idindex);\
+                                             if (t->idindex) str5lowercpy(res.attribute.index,translateExt2Int(t->idindex));\
 																	           else res.attribute.index[0]=0
 																	 
 #define keepIdAttributesElse(attribute,idnum,idindex,idelse) res.attribute.value=(unsigned short int)ptoi(t->idnum);\
-                                             if (t->idindex) str5lowercpy(res.attribute.index,t->idindex);\
+                                             if (t->idindex) str5lowercpy(res.attribute.index,translateExt2Int(t->idindex));\
 																	           else str5lowercpy(res.attribute.index,t->idelse)
 void workTag(const tTag* t,void* pass) {
 	/*
