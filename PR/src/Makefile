@@ -197,6 +197,14 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling XML search features...
 	$(CC) $(OPTIONS) -c lib/xml/search.c -o $@
 
+.translate.o: lib/xml/translate.c include/common.h
+	$(INFO) Compiling array tranlation features...
+	$(CC) $(OPTIONS) -c lib/xml/translate.c -o $@
+
+.stringformat.o: lib/layers/stringformat.c include/common.h
+	$(INFO) Compiling unknown string format parsing feature...
+	$(CC) $(OPTIONS) -c lib/layers/stringformat.c -o $@
+
 .bmp.o: lib/formats/bmp.c include/bmp.h include/common.h include/dat.h include/disk.h include/memory.h
 	$(INFO) Compiling bitmap files support \(bmp\)...
 	$(CC) $(OPTIONS) -c lib/formats/bmp.c -o $@

@@ -31,6 +31,7 @@ dfsdfs.c: Princed Resources : dfsgsdgsdfgdfgs
   DO NOT remove this copyright notice
 */
 
+#include <stdlib.h> /* NULL */
 
 static int i;
 static char buffer[200];
