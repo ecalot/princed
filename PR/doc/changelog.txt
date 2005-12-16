@@ -158,7 +158,7 @@ Versions:
   - Support of partial list folder selection wildcards (e.g.
     vdungeon.dat@vdungeon/chopper/*.bmp) '*' and '?' using '&' as escape
  * PR v1.2 (future plans)
-  x Add parsing feature @:pahs
+  x Add parsing feature @:shap
   - Add pop2 flag to xml file
   - Add pop2 importing
   x Add pop2 to resources.xml: nis3vc.dat, nisibm.dat, skeleton.dat,
@@ -170,6 +170,7 @@ Versions:
 	x Fix memory leak
 	- Fix uppercase typedef of types
 	- Add defines for positive return values in XML
+  x Add replace "shape" --> "shap", etc (only leave the original if not match)
  * PR v2.0 beta
   x Add full pop2 support
  * PR v2.0
