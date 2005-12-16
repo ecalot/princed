@@ -155,7 +155,7 @@ $(XMLFILE): xml/resources.xml
 
 .compress.o: lib/compression/main.c include/compress.h include/disk.h include/memory.h
 	$(INFO) Compiling main compression library...
-	$(CC) $(OPTIONS) -c lib/compression/main.c -o .compress.o -o $@
+	$(CC) $(OPTIONS) -c lib/compression/main.c -o $@
 
 .lzg_compress.o: lib/compression/lzg_compress.c include/compress.h
 	$(INFO) Compiling LZG compression module...
