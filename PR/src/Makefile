@@ -197,7 +197,7 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling XML search features...
 	$(CC) $(OPTIONS) -c lib/xml/search.c -o $@
 
-.translate.o: lib/xml/translate.c include/common.h
+.translate.o: lib/xml/translate.c include/translate.h
 	$(INFO) Compiling array tranlation features...
 	$(CC) $(OPTIONS) -c lib/xml/translate.c -o $@
 

@@ -31,10 +31,11 @@ translate.c: Princed Resources : array translating resources
   DO NOT remove this copyright notice
 */
 
+#include "translate.h"
 #include <string.h> /* strcmp */
 
 const char* _indexInt[]=TRANS_ARRAY_INDEX_INT;
-const char* _indexExt[]=TRANS_ARRAY_INDEX_EXT};
+const char* _indexExt[]=TRANS_ARRAY_INDEX_EXT;
 
 const char* translate (const char* input, const char** s1, const char** s2,int sizeOfArray) {
 	while (sizeOfArray--) {
