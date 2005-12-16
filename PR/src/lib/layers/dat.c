@@ -396,7 +396,8 @@ int mReadFileInDatFileId(tResource* res) {
 int mReadFileInDatFile(tResource* res, int k) {
 	if (!dat_cursorMove(&readIndexCursor,k)) return 0; /* 0 means out of range */
 	dat_readRes(res);
-	if (res->id.order) return 1;
+	
+	if (res->id.order) return 1; /* TODO: check */
 	return 1;
 }
 
