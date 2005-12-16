@@ -19,7 +19,7 @@
 */
 
 /*
-dfsdfs.c: Princed Resources : dfsgsdgsdfgdfgs
+stringformat.c: Princed Resources : format string parsing feature
 ¯¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 4 Jul 2005
@@ -32,6 +32,8 @@ dfsdfs.c: Princed Resources : dfsgsdgsdfgdfgs
 */
 
 #include <stdlib.h> /* NULL */
+#include "translate.h" /* index translation */
+#include <string.h> /* strlen */
 
 static int i;
 static char buffer[200];
@@ -42,13 +44,50 @@ int emit(char c) {
 	return 1;
 }
 
+void emitString(const char* txt, int size, int zeroflag) {
+	int complete;
+	int length;
+
+	length=strlen(txt);
+	complete=(length>size)?length-size:0;
+
+	while (complete--) emit(zeroflag?'0':' ');
+	
+	for (complete=0;complete<length;complete++) emit(txt[complete]);
+}
+
+void recEmit(int k) {
+	if (k) {
+		recEmit(k/10);
+		emit('0'+(k%10));
+	}
+}
+
+void emitNumber(int n, int size, int zeroflag) {
+	int complete;
+	int digits=0;
+	int k=n;
+
+	while (k) {
+		digits++;
+		k/=10;
+	}
+
+	complete=(digits>size)?digits-size:0;
+
+	while (complete--) emit(zeroflag?'0':' ');
+
+	recEmit(n);	
+}
+
 #define readk(k) (k=*(format++))
 #define isNumber(k) ('0'<=k && k<='9')
 
 const char* parseformat(const char* format,long value,const char* index, const char* type, const char* extension, long numberOfThisType, int order, const char* desc) {
 	/* This function parses format in this way:
 	 * %v - the value
-	 * %i - the index name
+	 * %i - the 4-chars index name
+	 * %I - the human-like index name
 	 * %t - the item type (image, wave, etc)
 	 * %e - the extension (bmp, wav, etc)
 	 * %n - the number of the item typed in %t
@@ -63,7 +102,7 @@ const char* parseformat(const char* format,long value,const char* index, const c
 	 * %05v - the same, but in case the value is sized less than 5 it's filled with zeros
 	 *
 	 * Examples:
-	 * "%i%05v.%e" for shap25001.bmo
+	 * "%i%05v.%e" for shap25001.bmp
 	 * "%t%02n.%e" for image01.bmp
 	 * 
 	 * Limitations:
@@ -100,6 +139,9 @@ const char* parseformat(const char* format,long value,const char* index, const c
 				break;
 			case 'i': /* index name */
 				emitString(index,size,zeroflag);
+				break;
+			case 'I': /* index human name */
+				emitString(translateInt2Ext(index),size,zeroflag);
 				break;
 			case 't': /* item type (image, wave, etc) */
 				emitString(type,size,zeroflag);
