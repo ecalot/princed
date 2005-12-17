@@ -79,7 +79,7 @@ int checkSum(const unsigned char* data,int size) {
 /* private functions */
 /* todo: move to datindex.c */
 
-#define toLower(a) (('A'<=(a)&&(a)<='Z')?(a)|0x40:(a)) /* TODO: move to memory.c and improve str5lowercpy */
+#define toLower(a) (('A'<=(a)&&(a)<='Z')?(a)|0x20:(a)) /* TODO: move to memory.c and improve str5lowercpy */
 #define toUpper(a) (('a'<=(a)&&(a)<='z')?(a)&0xDF:(a))
 
 /* the cursor get functions */
