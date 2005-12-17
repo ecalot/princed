@@ -1,4 +1,4 @@
-Princed Resources v1.1
+Princed Resources v1.2
 (c) Copyright 2003-2005, Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms
@@ -157,20 +157,25 @@ Versions:
   - Rewritten resource handling using dynamic structures
   - Support of partial list folder selection wildcards (e.g.
     vdungeon.dat@vdungeon/chopper/*.bmp) '*' and '?' using '&' as escape
- * PR v1.2 (future plans)
-  x Add parsing feature @:shap
+ * PR v1.2 (current development)
+  x Add parsing feature @400:shape#second
+  - Fix order bug in repeated indexes
   - Add pop2 flag to xml file
   - Add pop2 importing
+  + Added order to support non-unique resource IDs
+  + Inverted pop2 index names
   x Add pop2 to resources.xml: nis3vc.dat, nisibm.dat, skeleton.dat,
     flame.dat, head.dat, kid.dat, nismidi.dat, tandysnd.dat, digisnd.dat,
     ibmsnd.dat
-  x Finish python interface
-  x Fix buffer overflows
   x Fix the language support
-	x Fix memory leak
-	- Fix uppercase typedef of types
-	- Add defines for positive return values in XML
-  x Add replace "shape" --> "shap", etc (only leave the original if not match)
+  - Fix uppercase typedef of types
+  - Add defines for positive return values in XML
+  - Add replace "shape" --> "shap", etc (only leave the original if not match)
+  - Add --format option for unknown filename generation format
+ * PR v1.3 (future plans)
+  x Fix buffer overflows (in scanfs)
+  x Finish python interface
+  x Check for memory leak
  * PR v2.0 beta
   x Add full pop2 support
  * PR v2.0
