@@ -47,7 +47,7 @@ char* strallocandcopy(const char* text) {
 void str5lowercpy (char* dst,const char* src) {
 	int i;
 	for (i=0;(i<4)&&(*src);i++) {
-		*dst=((*src>='a')&&(*src<='z'))?*src|0x20:*src;
+		*dst=((*src>='A')&&(*src<='Z'))?*src|0x20:*src;
 		src++;
 		dst++;
 	}
