@@ -54,6 +54,7 @@ typedef struct tTag {
 	char* name;
 	char* palette;
 	char* paletteindex;
+	char* paletteorder;
 	char* value;
 	char* index;
 	char* order;

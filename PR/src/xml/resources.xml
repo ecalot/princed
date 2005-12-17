@@ -1409,7 +1409,7 @@ resources.xml: Princed Resources : Resource tree
  <!--
       pop2: bird.dat
   -->
- <folder index="shap" name="the pop2 bird guard" file="bird.dat" type="image" path="bird" palette="750" paletteindex="palc" flags="0x400000">
+ <folder index="shape" name="the pop2 bird guard" file="bird.dat" type="image" path="bird" palette="750" paletteindex="palc" flags="0x400000">
   <item value="750" index="pals" path="bird.pal" type="palette">The bird palette</item>
   <folder path="fighting">
    <item value="751" path="frame01.bmp" type="image">Frame 01 (751)</item>
@@ -1985,9 +1985,9 @@ resources.xml: Princed Resources : Resource tree
  <!--
       pop2: head.dat
   -->
- <folder index="shap" name="head" path="head" file="head.dat" palette="750" paletteindex="palc" flags="0x400000">
+ <folder index="shape" name="head" path="head" file="head.dat" palette="750" paletteindex="palc" flags="0x400000">
   <item value="755" index="" path="binary001.bin" type="binary" flags="0x0">Unknown binary 1</item>
-  <item value="750" index="fram" path="binary002.bin" type="binary" flags="0x0">Unknown binary 2</item>
+  <item value="750" index="frame" path="binary002.bin" type="binary" flags="0x0">Unknown binary 2</item>
   <item value="750" index="palc" path="binary003.bin" type="binary" flags="0x0">Unknown binary 3</item>
   <item value="750" index="pals" path="binary004.bin" type="binary" flags="0x0">The head palette</item>
   <item value="751" index="shap" path="image001.bmp" type="image" flags="0x400000">Unknown image 1</item>
@@ -1995,10 +1995,10 @@ resources.xml: Princed Resources : Resource tree
   <item value="753" index="shap" path="image003.bmp" type="image" flags="0x400000">Unknown image 3</item>
   <item value="754" index="shap" path="image004.bmp" type="image" flags="0x400000">Unknown image 4</item>
   <item value="755" index="shap" path="image005.bmp" type="image" flags="0x400000">Unknown image 5</item>
-  <item value="756" index="shap" path="image006.bmp" type="image" flags="0x400000">Unknown image 6</item>
+  <item value="756" index="shape" path="image006.bmp" type="image" flags="0x400000">Unknown image 6</item>
   <item value="757" index="shap" path="image007.bmp" type="image" flags="0x400000">Unknown image 7</item>
   <item value="758" index="shap" path="image008.bmp" type="image" flags="0x400000">Unknown image 8</item>
-  <item value="759" index="shap" path="image009.bmp" type="image" flags="0x400000">Unknown image 9</item>
+  <item value="759" index="shape" path="image009.bmp" type="image" flags="0x400000">Unknown image 9</item>
   <item value="760" index="shap" path="image010.bmp" type="image" flags="0x400000">Unknown image 10</item>
   <item value="761" index="shap" path="image011.bmp" type="image" flags="0x400000">Unknown image 11</item>
   <item value="762" index="shap" path="image012.bmp" type="image" flags="0x400000">Unknown image 12</item>

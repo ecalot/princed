@@ -100,6 +100,7 @@ tTag* getTagStructure() {
 	t->index=NULL;
 	t->order=NULL;
 	t->paletteindex=NULL;
+	t->paletteorder=NULL;
 	t->version=NULL;
 	t->number=NULL;
 	t->flags=NULL;
@@ -122,6 +123,7 @@ void freeTagStructure(tTag* t) {
 	freeAllocation(t->index);
 	freeAllocation(t->order);
 	freeAllocation(t->paletteindex);
+	freeAllocation(t->paletteorder);
 	freeAllocation(t->version);
 	freeAllocation(t->number);
 	freeAllocation(t->flags);
@@ -144,7 +146,7 @@ int attribFill(char* attr,char* val, tTag* t) {
 	FillAttr(t->path,"path");
 	FillAttr(t->file,"file");
 	FillAttr(t->type,"type");
-	FillAttr(t->type,"itemtype"); /* alias fro type */
+	FillAttr(t->type,"itemtype"); /* deprecated alias for type */
 	FillAttr(t->name,"name");
 	FillAttr(t->name,"title"); /* title is a name alias */
 	FillAttr(t->palette,"palette");
@@ -152,6 +154,7 @@ int attribFill(char* attr,char* val, tTag* t) {
 	FillAttr(t->index,"index");
 	FillAttr(t->order,"order");
 	FillAttr(t->paletteindex,"paletteindex");
+	FillAttr(t->paletteorder,"paletteorder");
 	FillAttr(t->version,"version");
 	FillAttr(t->number,"levelnumber"); /* levelnumber is a number alias */
 	FillAttr(t->number,"number");
@@ -373,6 +376,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 
 		TotalInheritance(palette);
 		TotalInheritance(paletteindex);
+		TotalInheritance(paletteorder);
 		TotalInheritance(type);
 		TotalInheritance(file);
 		TotalInheritance(index);

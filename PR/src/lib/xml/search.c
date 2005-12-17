@@ -44,6 +44,22 @@ search.c: Princed Resources : specific xml handling functions
 #include <string.h>
 #include "translate.h" /* to translate indexes */
 
+int getOrder(const char* order) {
+	if (order) {
+		if (equalsIgnoreCase(order,"first")) {
+			return 0;
+		} else if (equalsIgnoreCase(order,"second")) {
+			return 1;
+		} else if (equalsIgnoreCase(order,"last")) {
+			return 65535;
+		} else {
+			return atoi(order);
+		}
+	} else {
+		return 0;
+	}
+}
+
 /****************************************************************\
 |                   Tag Tree Searching Functions                 |
 \****************************************************************/
@@ -91,21 +107,8 @@ void workTag(const tTag* t,void* pass) {
 #endif
 
 	/* Get the order */
-	if (t->order) {
-		if (equalsIgnoreCase(t->order,"first")) {
-			res.id.order=0;
-		} else if (equalsIgnoreCase(t->order,"second")) {
-			res.id.order=1;
-		} else if (equalsIgnoreCase(t->order,"last")) {
-			res.id.order=65535;
-		} else {
-			res.id.order=atoi(t->order);
-		}
-	} else {
-		res.id.order=0;
-	}
-
-	res.palette.order=0; /* TODO: all palettes have an order of 0 */
+	res.id.order=getOrder(t->order);
+	res.palette.order=getOrder(t->paletteorder);
 	
 	/* Copy id and palette id */	
 	keepIdAttributes(id,value,index);
