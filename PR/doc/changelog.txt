@@ -158,20 +158,21 @@ Versions:
   - Support of partial list folder selection wildcards (e.g.
     vdungeon.dat@vdungeon/chopper/*.bmp) '*' and '?' using '&' as escape
  * PR v1.2 (current development)
-  x Add parsing feature @400:shape#second
-  - Fix order bug in repeated indexes
+  - Add defines for positive return values in XML
+  + Added order to support non-unique resource IDs
+  - Add --format option for unknown filename generation format
   - Add pop2 flag to xml file
   - Add pop2 importing
-  + Added order to support non-unique resource IDs
+  - Fix order bug in repeated indexes
+  - Fix uppercase typedef of types
+  - Index long names are supported in XML and replaced to their four-letter
+    equivalences
   + Inverted pop2 index names
+  x Add parsing feature @400:shape#second
   x Add pop2 to resources.xml: nis3vc.dat, nisibm.dat, skeleton.dat,
     flame.dat, head.dat, kid.dat, nismidi.dat, tandysnd.dat, digisnd.dat,
     ibmsnd.dat
   x Fix the language support
-  - Fix uppercase typedef of types
-  - Add defines for positive return values in XML
-  - Add replace "shape" --> "shap", etc (only leave the original if not match)
-  - Add --format option for unknown filename generation format
  * PR v1.3 (future plans)
   x Fix buffer overflows (in scanfs)
   x Finish python interface
