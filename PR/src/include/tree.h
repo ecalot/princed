@@ -37,9 +37,9 @@ resources.h: Princed Resources : Resource Handler headers
 /* XML generation defines */
 
 #define RES_XML_UNKNOWN_PATH  "%s/unknown/%s/"
-#define RES_XML_UNKNOWN_FILES "%s%03d.%s"
+#define RES_XML_UNKNOWN_FILES "%t%03n.%e"
 #define RES_XML_UNKNOWN_START "<?xml version=\"1.0\" ?>\n<resources version=\"generated\">\n <folder name=\"unknown\" path=\"%s\" file=\"%s\" palette=\"%d\" paletteindex=\"%s\">\n"
-#define RES_XML_UNKNOWN_ITEM  "  <item value=\"%d\" index=\"%s\" path=\""RES_XML_UNKNOWN_FILES"\" type=\"%s\" flags=\"0x%lx\">Unknown %s %d</item>\n"
+#define RES_XML_UNKNOWN_ITEM  "  <item value=\"%d\" index=\"%s\" path=\"%s\" type=\"%s\" flags=\"0x%lx\">Unknown %s %d</item>\n"
 #define RES_XML_UNKNOWN_END   " </folder>\n</resources>\n"
 
 /* File extensions */

@@ -54,7 +54,7 @@ endif
 ACTIONS  = .import.o .export.o .classify.o
 XML      = .parse.o .search.o .resources.o .translate.o
 COMPRESS = .compress.o .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o 
-LAYERS   = .dat.o .memory.o .list.o .reslist.o .disk.o .idlist.o .autodetect.o
+LAYERS   = .dat.o .memory.o .list.o .reslist.o .disk.o .idlist.o .autodetect.o .stringformat.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
 CONSOLE  = .main.o .filedir.o
 MAIN     = .pr.o

@@ -41,6 +41,7 @@ resources.c: Princed Resources : Resource Handler
 #include "disk.h"
 #include "resources.h"
 #include "search.h"
+#include "stringformat.h"
 #include "translate.h"
 
 /***************************************************************\
@@ -85,7 +86,7 @@ char* toLower(const char* txt) {
 	return ret;			
 }
 
-void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count, unsigned long int flags,const char* format) {
+void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count, unsigned long int flags,const char* filename) {
 	/* Open file if not open */
 	if (unknownXmlFile==NULL) {
 		char xmlFile[MAX_FILENAME_SIZE];
@@ -96,14 +97,14 @@ void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext
 
 		/* Save headers */
 		if (type==eResTypePalette) pal=id;
-		fprintf(unknownXmlFile,RES_XML_UNKNOWN_START"%s",
-			vFiledat,vFiledatWithPath,pal.value,translateInt2Ext(toLower(pal.index)),format
+		fprintf(unknownXmlFile,RES_XML_UNKNOWN_START,
+			vFiledat,vFiledatWithPath,pal.value,translateInt2Ext(toLower(pal.index))
 		);
 	}
 
 	/* Write item */
 	fprintf(unknownXmlFile,RES_XML_UNKNOWN_ITEM,
-		id.value,translateInt2Ext(toLower(id.index)),getExtDesc(type),count,ext,getExtDesc(type),flags,getExtDesc(type),count
+		id.value,translateInt2Ext(toLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count
 	); /* To the xml output */
 }
 
@@ -121,6 +122,7 @@ void endUnknownXml(int optionflag, const char* backupExtension) {
 
 void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag, const char* backupExtension,const char* format) {
 	static const char* extarray[]=RES_FILE_EXTENSIONS;
+	const char* filename;
 	int pos;
 
 	if (r->path==NULL) {
@@ -128,8 +130,11 @@ void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const cha
 		typeCount[pos]++;
 
 		/* set filename */
-		sprintf(vFileext,RES_XML_UNKNOWN_PATH""RES_XML_UNKNOWN_FILES,vDirExt,vDatFileName,getExtDesc(pos),typeCount[pos],extarray[pos]);
-		AddToUnknownXml(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,typeCount[pos],r->flags,format);
+		if (!format) format=RES_XML_UNKNOWN_FILES;
+		filename=parseformat(format,r->id.value,r->id.index,getExtDesc(pos),extarray[pos],typeCount[pos],r->id.order,r->desc);
+
+		sprintf(vFileext,RES_XML_UNKNOWN_PATH"%s",vDirExt,vDatFileName,filename);
+		AddToUnknownXml(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,typeCount[pos],r->flags,filename);
 	} else {
 		/* set filename */
 		sprintf(vFileext,"%s/%s",vDirExt,r->path);
