@@ -38,9 +38,9 @@ translate.c: Princed Resources : array translating resources
 "pop1", "cust", "fram", "palc", "pals", "palt", "piec", "scr", "shap", "shpl", "strl", "snd", "seqs", "txt4"}
 
 #define TRANS_ARRAY_INDEX_EXT {\
-"custom", "frame", "cga palette", "svga palette", "tga palette", "piece", "screen", "shape", "shape palette", "string", "sound", "sequence", "text4"}
+"pop 1","custom", "frame", "cga palette", "svga palette", "tga palette", "piece", "screen", "shape", "shape palette", "string", "sound", "sequence", "text4"}
 
-#define TRANS_ARRAY_INDEX_SIZ 12
+#define TRANS_ARRAY_INDEX_SIZ 13
 
 extern const char* _indexInt[];
 extern const char* _indexExt[];
