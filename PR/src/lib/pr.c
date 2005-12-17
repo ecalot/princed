@@ -75,10 +75,10 @@ void prSetOutput(FILE* output) {
 
 int prExportDat(const char* vDatFile, const char* vDirName, const char* vResFile) {
 	outputStream=stdout;
-	return prExportDatOpt(vDatFile,vDirName,vResFile,export_flag,NULL,NULL,NULL);
+	return prExportDatOpt(vDatFile,vDirName,vResFile,export_flag,NULL,NULL,NULL,NULL);
 }
 
-int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char* vDatFileName,const char* datAuthor, const char* backupExtension) {
+int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char* vDatFileName,const char* datAuthor, const char* backupExtension,const char* format) {
 	/*
 		Arguments:
 			char* vDatFile        - full Path to the dat file
@@ -94,6 +94,9 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 			const char* backupExtension
 			                      - If backup_flag is set, the string to attach
 			                        to the backup files
+			const char* format
+			                      - Sets the format the unknown files will be created.
+			                        See stringformat.c documentation.
 
 		Options:
 			unknown_flag   - generate the unknown file without performing
@@ -141,7 +144,7 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	a=parseFile(vResFile,currentDatFileName,&r);
 	if (a==PR_RESULT_SUCCESS) {
 		/* exporting errors/no errors */
-		a=extract(currentDatFile,vDirName,&r,opt,currentDatFileName,datAuthor,backupExtension);
+		a=extract(currentDatFile,vDirName,&r,opt,currentDatFileName,datAuthor,backupExtension,format);
 	}
 	resourceListDrop(&r);
 	free(currentDatFileName);

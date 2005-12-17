@@ -51,7 +51,7 @@ resources.h: Princed Resources : Resource Handler headers
 #include "reslist.h"
 
 /* Resources extras */
-void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension);
+void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension,const char* format);
 void getUpperFolder(char* aux, char* vFiledat);
 
 const char* getExtDesc(int type);

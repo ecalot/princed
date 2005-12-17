@@ -36,7 +36,7 @@ export.h: Princed Resources : DAT Extractor headers
 
 #include "reslist.h"
 
-int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int task, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension);
+int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int task, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension,const char* format);
 
 #endif
 

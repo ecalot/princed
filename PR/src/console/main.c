@@ -64,6 +64,7 @@ int main (int argc, char **argv) {
 	char* datFileName      =NULL;
 	char* datfile          =NULL;
 	char* extension        =NULL;
+	char* format           =NULL;
 	char* resFile          =NULL;
 	char* file;
 	char* errors[]         =PR_TEXT_ERRORS;
@@ -100,6 +101,10 @@ int main (int argc, char **argv) {
 					setFlag(backup_flag);
 					freeAllocation(extension);
 					extension=strallocandcopy(optarg);
+					break;
+				case 'F':
+					freeAllocation(format);
+					format=strallocandcopy(optarg);
 					break;
 				case 'f':
 					setFlag(force_flag);
@@ -202,7 +207,7 @@ int main (int argc, char **argv) {
 				} else if (hasFlag(export_flag)) {
 					/* export */
 					fprintf(outputStream,PR_TEXT_TASK_EXTRACT,file,dirName);
-					result=prExportDatOpt(file,dirName,resFile,optionflag,dat,datAuthor,extension);
+					result=prExportDatOpt(file,dirName,resFile,optionflag,dat,datAuthor,extension,format);
 					if (result>0) {
 						fprintf(outputStream,PR_TEXT_EXPORT_OK,result,result);
 					} else {

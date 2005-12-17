@@ -140,6 +140,7 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 {"setauthor",   required_argument, 0,'a'},\
 {"backup",      optional_argument, 0,'b'},\
 {"force",       no_argument,       0,'f'},\
+{"format",      required_argument, 0,'F'},\
 {"cgi",         no_argument,       0,'g'},\
 {"help",        no_argument,       0,'?'},\
 {"resource",    required_argument, 0,'s'},\

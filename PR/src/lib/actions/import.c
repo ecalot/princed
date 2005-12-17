@@ -109,7 +109,7 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 		newRes.flags=res->flags;
 	
 		if (hasFlag(raw_flag)) newRes.type=0; /* compile from raw */
-		getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension);
+		getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 		/* the file is in the archive, so i'll add it to the main dat body */
 		if ((newRes.size=(mLoadFileArray(vFileext,&newRes.data)))>0) {
 			if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {
@@ -168,7 +168,7 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 			if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
 			/* get save file name (if unknown document is in the xml) */
-			getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension);
+			getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 
 			/* the file is in the partial list, so i'll import */
 			if ((newRes.size=mLoadFileArray(vFileext,&newRes.data))>0) {

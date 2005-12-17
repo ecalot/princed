@@ -85,7 +85,7 @@ char* toLower(const char* txt) {
 	return ret;			
 }
 
-void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count, unsigned long int flags) {
+void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count, unsigned long int flags,const char* format) {
 	/* Open file if not open */
 	if (unknownXmlFile==NULL) {
 		char xmlFile[MAX_FILENAME_SIZE];
@@ -96,8 +96,8 @@ void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext
 
 		/* Save headers */
 		if (type==eResTypePalette) pal=id;
-		fprintf(unknownXmlFile,RES_XML_UNKNOWN_START,
-			vFiledat,vFiledatWithPath,pal.value,translateInt2Ext(toLower(pal.index))
+		fprintf(unknownXmlFile,RES_XML_UNKNOWN_START"%s",
+			vFiledat,vFiledatWithPath,pal.value,translateInt2Ext(toLower(pal.index)),format
 		);
 	}
 
@@ -119,7 +119,7 @@ void endUnknownXml(int optionflag, const char* backupExtension) {
 	}
 }
 
-void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag, const char* backupExtension) {
+void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag, const char* backupExtension,const char* format) {
 	static const char* extarray[]=RES_FILE_EXTENSIONS;
 	int pos;
 
@@ -129,7 +129,7 @@ void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const cha
 
 		/* set filename */
 		sprintf(vFileext,RES_XML_UNKNOWN_PATH""RES_XML_UNKNOWN_FILES,vDirExt,vDatFileName,getExtDesc(pos),typeCount[pos],extarray[pos]);
-		AddToUnknownXml(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,typeCount[pos],r->flags);
+		AddToUnknownXml(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,typeCount[pos],r->flags,format);
 	} else {
 		/* set filename */
 		sprintf(vFileext,"%s/%s",vDirExt,r->path);

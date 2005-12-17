@@ -68,7 +68,7 @@ extern FILE* outputStream;
 	For parameter documentation, see pr.c
 */
 
-int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension) {
+int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension,const char* format) {
 	char               vFileext[MAX_FILENAME_SIZE];
 	int                indexNumber;
 	int                ok;
@@ -102,7 +102,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
 				/* get save file name (if unknown document is in the xml) */
-				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension);
+				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
 
 				switch (res.type) {
 						case eResTypeLevel:
@@ -158,7 +158,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				if (ok) count++;
 			} else {
 				/* if the dat file is unknown, add it in the xml */
-				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension);
+				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
 			}
 		}
 	}

@@ -92,7 +92,7 @@ int   prClassifyDat(const char* vFiledat);
 /* Extra featured functions */
 int   prExportDatOpt(const char* vDatFile, const char* vDirName,
       const char* vResFile,int opt,const char * vDatFileName,
-      const char* datAuthor, const char* backupExtension);
+      const char* datAuthor, const char* backupExtension, const char* format);
 int   prImportDatOpt(const char* vDatFile, const char* vDirName,
       const char* vResFile,int opt,const char* vDatFileName,
       const char* backupExtension);

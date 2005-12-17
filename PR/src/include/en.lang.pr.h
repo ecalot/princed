@@ -154,11 +154,13 @@ NULL,NULL,NULL,\
    -t, --datfile=DATFILE      specifies a dat file to read resources\n\
                               different than the original file\n\
    -z, --compression-level=N  a number from 1 to 7 specifying how hard has PR\n\
-                              to try to reduce the generated dat files.\n"
+                              to try to reduce the generated dat files\n"
 
 #define PARSING_HELP_PART4 "\
                               1 is high speed, low compression, 7 is high\n\
-                              compression but low speed.\n\
+                              compression but low speed\n\
+       --format=FORMAT        generate the item files in the unknown file using\n\
+                              the given format\n\
        --unknown              generate the unknown file without performing\n\
                               any extraction\n\
    -v, --verbose              explain what is being done\n\
