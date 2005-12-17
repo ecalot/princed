@@ -70,6 +70,21 @@ int partialListActive() {
 
 void parseGivenPath(char* path) {
 	/*
+	 * format: \([^@]*\)/(@\([0-9]\+\)?\(:[a-z ]*\)?\(#[a-z0-9]\+\)\)?
+	 * where: \1 is the dat filename, \2 is the partical list whole match if exists,
+	 *        \3 is the resource id, \4 is the index name and \5 is the order
+	 * examples:                         rID Ind  Ord
+	 *  datfile.dat@111:shape#first  --> 111 shap 0
+	 *  datfile.dat@111:shape        --> 111 shap *
+	 *  datfile.dat@111#first        --> 111 *    0
+	 *  datfile.dat@#first           --> *   *    0
+	 *  datfile.dat@:shape           --> *   shap *
+	 *  datfile.dat@111              --> 111 *    *
+	 *  datfile.dat@#last            --> *   *    last
+	 *  datfile.dat@#second          --> *   *    1
+	 *  datfile.dat@:shap            --> *   shap *
+	 *  datfile.dat@#785             --> *   *    785
+
 		PRE:  partialList.list was not allocated
 		POST:
 		 partialList.count=0 and partialList.list=NULL if all resources
