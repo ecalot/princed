@@ -67,5 +67,7 @@ typedef struct tPassCompare {
 	const tTag* tag;
 }tPassCompare;
 
+int getOrder(const char* order); 
+
 #endif
 
