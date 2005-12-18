@@ -1,10 +1,14 @@
 
-/* TODO: rename this file to resourcematch.c */
+/* TODO:
+ * add headers
+ * rename this file to resourcematch.c 
+ */
 
 #include <stdio.h>
 #include "memory.h"
 #include "search.h" /* getOrder */
 #include "resourcematch.h"
+#include "translate.h" /* translate */
 
 #define dVal 1
 #define dInd 2
@@ -26,8 +30,10 @@ void freeRM(tResourceMatch *r) {
 void xemit(tStatus s, char c) {
 	static tStatus old=eDone;
 	static char* a=aux;
+	static int x=0;
+
 	if (s!=old) { /* status change */
-		*a=0;
+		*a=0;x=0;
 		switch (old) {
 		case eVal:result.value=atoi(aux);break;
 		case eInd:result.index=strallocandcopy(aux);break;
@@ -38,7 +44,9 @@ void xemit(tStatus s, char c) {
 		old=s;
 		a=aux;
 	}
+	if (x==199) {*a=0;return;} /* oups, aux size limit has been reached. this return avoids a buffer overflow */
  	*(a++)=c;
+	x++;
 }
 
 int initRM(const char* text, tResourceMatch *r) {
@@ -101,6 +109,7 @@ int initRM(const char* text, tResourceMatch *r) {
 int runRM(const tResourceMatch *r, const char* path, const tResourceId *id) {
 	int m=1; /* by default it matches */
 
+#ifdef MATCH_DEBUG
 	printf("Matching: path='%s', id=(%d,%s,%d) <=> flag=%x path='%s' id=(%d,%s,%d)\n",
 		path,
 		id->value,id->index,id->order,
@@ -108,12 +117,12 @@ int runRM(const tResourceMatch *r, const char* path, const tResourceId *id) {
 		r->path,
 		r->value,r->index,r->order
 	);
-
+#endif
 
 	/* compare each field */
 	compare(dOrd,r->order==id->order);
 	compare(dVal,r->value==id->value);
-/*	compare(dInd,matchesIn()||matchesIn(translate()));*/
+	compare(dInd,matchesIn(id->index,r->index)||matchesIn(translateInt2Ext(id->index),r->index));
 	compare(dPat,matchesIn(path,r->path));
 	
 	return m;

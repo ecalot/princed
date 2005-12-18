@@ -138,8 +138,7 @@ void parseGivenPath(char* path) {
 
 	/* Parse values and save them in the list */
 	for(i=separator;j!=partialList.count;i++) {
-		printf("hola %s j=%d\n",path+i,j);
-		initRM(path+i,partialList.list+j); /* parsing error*/
+		initRM(path+i,partialList.list+j); /* TODO: check for parsing error*/
 /*		unsigned int value;
 		int converted;
 		char index[5];
