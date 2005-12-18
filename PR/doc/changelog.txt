@@ -157,7 +157,7 @@ Versions:
   - Rewritten resource handling using dynamic structures
   - Support of partial list folder selection wildcards (e.g.
     vdungeon.dat@vdungeon/chopper/*.bmp) '*' and '?' using '&' as escape
- * PR v1.2 (current development)
+ * PR v1.2 (scheduled 2005-12-22)
   - Add defines for positive return values in XML
   + Added order to support non-unique resource IDs
   - Add --format option for unknown filename generation format
