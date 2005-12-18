@@ -54,7 +54,7 @@ endif
 ACTIONS  = .import.o .export.o .classify.o
 XML      = .parse.o .search.o .resources.o .translate.o
 COMPRESS = .compress.o .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o 
-LAYERS   = .dat.o .memory.o .list.o .reslist.o .disk.o .idlist.o .autodetect.o .stringformat.o .parseresource.o
+LAYERS   = .dat.o .memory.o .list.o .reslist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
 CONSOLE  = .main.o .filedir.o
 MAIN     = .pr.o
@@ -205,9 +205,9 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling unknown string format parsing feature...
 	$(CC) $(OPTIONS) -c lib/layers/stringformat.c -o $@
 
-.parseresource.o: lib/layers/parseresource.c include/search.h include/memory.h include/resourcematch.h
+.resourcematch.o: lib/layers/resourcematch.c include/search.h include/memory.h include/resourcematch.h
 	$(INFO) Compiling resource list parsing feature...
-	$(CC) $(OPTIONS) -c lib/layers/parseresource.c -o $@
+	$(CC) $(OPTIONS) -c lib/layers/resourcematch.c -o $@
 
 .bmp.o: lib/formats/bmp.c include/bmp.h include/common.h include/dat.h include/disk.h include/memory.h
 	$(INFO) Compiling bitmap files support \(bmp\)...
