@@ -168,13 +168,13 @@ Versions:
   - Index long names are supported in XML and replaced to their four-letter
     equivalences
   + Inverted pop2 index names
-  x Add parsing feature @400:shape#second
+  - Add parsing feature @400:shape#second
   x Add pop2 to resources.xml: nis3vc.dat, nisibm.dat, skeleton.dat,
     flame.dat, head.dat, kid.dat, nismidi.dat, tandysnd.dat, digisnd.dat,
     ibmsnd.dat
   x Fix the language support
  * PR v1.3 (future plans)
-  x Fix buffer overflows (in scanfs)
+  x Fix buffer overflows (in entered filename sizes)
   x Finish python interface
   x Check for memory leak
  * PR v2.0 beta
