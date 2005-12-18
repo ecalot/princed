@@ -40,22 +40,24 @@ idlist.c: Princed Resources : Partial Id list
 #include <string.h> /* strcat strlen */
 #include "disk.h"
 #include "memory.h"
+#include "resourcematch.h"
 #include "idlist.h"
 
 /* Id list for partial manipulation. Private type */
 typedef enum {eString,eId,eIdValue,eIdIndex}tResLocationType;
-
+/*
 typedef struct {
   tResLocationType type;
   union {
     char*        text;
     tResourceId  id;
   } field;
-}tResIdListItem;
-
+}tResourceMatch;
+*/
 typedef struct {
 	int             count;
-	tResIdListItem* list;
+	/*tResourceMatch* list;*/
+	tResourceMatch* list;
 }tResIdList;
 
 static tResIdList partialList;
@@ -132,14 +134,16 @@ void parseGivenPath(char* path) {
 		}
 		i++;
 	}
-	partialList.list=(tResIdListItem*)malloc(sizeof(tResIdListItem)*partialList.count);
+	partialList.list=(tResourceMatch*)malloc(sizeof(tResourceMatch)*partialList.count);
 
 	/* Parse values and save them in the list */
 	for(i=separator;j!=partialList.count;i++) {
-		unsigned int value;
+		printf("hola %s j=%d\n",path+i,j);
+		initRM(path+i,partialList.list+j); /* parsing error*/
+/*		unsigned int value;
 		int converted;
 		char index[5];
-		converted=sscanf(path+i,"%u:%5s",&value,index); /* TODO: support order */
+		converted=sscanf(path+i,"%u:%5s",&value,index); * TODO: support order *
 		switch (converted) {
 		case 2:
 			partialList.list[j].type=eId;
@@ -153,10 +157,10 @@ void parseGivenPath(char* path) {
 			partialList.list[j].field.id.order=0;
 			break;
 		default:
-			/* TODO: test this */
+			* TODO: test this *
 			if (sscanf(path+i,":%5s",index)) {
 				partialList.list[j].type=eIdIndex;
-				strncpy(partialList.list[j].field.id.index,index,5); /* TODO: check str5lowercpy */
+				strncpy(partialList.list[j].field.id.index,index,5); * TODO: check str5lowercpy *
 				partialList.list[j].field.id.order=0;
 			} else {
 				char* aux;
@@ -169,6 +173,7 @@ void parseGivenPath(char* path) {
 			}
 			break;
 		}
+		*/
 		while (path[i]) i++;
 		j++;
 	}
@@ -188,7 +193,7 @@ int isInThePartialList(const char* vFile, tResourceId id) {
 	if (!partialList.count) return 1;
 
 	for (i=0;i<partialList.count;i++) {
-		switch (partialList.list[i].type) {
+/*		switch (partialList.list[i].type) {
 		case eIdValue:
 			if (id.value==partialList.list[i].field.id.value) return 1;
 			break;
@@ -201,18 +206,15 @@ int isInThePartialList(const char* vFile, tResourceId id) {
 		case eId:
 			if (!resIdCmp(id,partialList.list[i].field.id)) return 1;
 			break;
-		}
+		}*/
+		if (runRM(partialList.list+i,repairFolders(vFile),&id)) return 1;
 	}
 	return 0;
 }
 
 void freePartialList() {
-	int i;
-	for (i=0;i<partialList.count;i++) {
-		if (partialList.list[i].type==eString)
-			free(partialList.list[i].field.text);
-	}
-	free(partialList.list);
-	partialList.count=0;
+	void* aux=partialList.list;
+	while (partialList.count--) freeRM(partialList.list++);
+	free(aux);
 }
 

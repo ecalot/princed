@@ -205,7 +205,7 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling unknown string format parsing feature...
 	$(CC) $(OPTIONS) -c lib/layers/stringformat.c -o $@
 
-.parseresource.o: lib/layers/parseresource.c include/search.h include/memory.h
+.parseresource.o: lib/layers/parseresource.c include/search.h include/memory.h include/resourcematch.h
 	$(INFO) Compiling resource list parsing feature...
 	$(CC) $(OPTIONS) -c lib/layers/parseresource.c -o $@
 
