@@ -206,7 +206,7 @@ int isInThePartialList(const char* vFile, tResourceId id) {
 			if (!resIdCmp(id,partialList.list[i].field.id)) return 1;
 			break;
 		}*/
-		if (runRM(partialList.list+i,repairFolders(vFile),&id)) return 1;
+		if (runRM(partialList.list+i,repairFolders(vFile?vFile:""),&id)) return 1;
 	}
 	return 0;
 }

@@ -135,6 +135,9 @@ int initRM(const char* text, tResourceMatch *r) {
 
 int runRM(const tResourceMatch *r, const char* path, const tResourceId *id) {
 	int m=1; /* by default it matches */
+	const char* null="";
+	const char* rpath;
+	const char* rindex;
 
 #ifdef MATCH_DEBUG
 	printf("Matching: path='%s', id=(%d,%s,%d) <=> flag=%x path='%s' id=(%d,%s,%d)\n",
@@ -145,12 +148,15 @@ int runRM(const tResourceMatch *r, const char* path, const tResourceId *id) {
 		r->value,r->index,r->order
 	);
 #endif
-
+	/* replace NULL with null */
+	rindex=r->index?r->index:null;
+	rpath=r->path?r->path:null;
+	
 	/* compare each field */
 	compare(dOrd,r->order==id->order);
 	compare(dVal,r->value==id->value);
-	compare(dInd,matchesIn(id->index,r->index)||matchesIn(translateInt2Ext(id->index),r->index));
-	compare(dPat,matchesIn(path,r->path));
+	compare(dInd,matchesIn(id->index,rindex)||matchesIn(translateInt2Ext(id->index),rindex));
+	compare(dPat,matchesIn(path,rpath));
 	
 	return m;
 }
