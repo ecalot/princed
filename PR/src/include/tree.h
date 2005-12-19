@@ -19,8 +19,8 @@
 */
 
 /*
-resources.h: Princed Resources : Resource Handler headers
-¯¯¯¯¯¯¯¯¯¯¯
+unknown.h: Princed Resources : Resource Handler headers
+¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 

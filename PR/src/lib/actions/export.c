@@ -45,7 +45,7 @@ export.c: Princed Resources : DAT Extractor
 #include "idlist.h"
 #include "memory.h"
 #include "reslist.h" /* resIdcmp, resourceList primitives for the palette */
-#include "resources.h"
+#include "unknown.h"
 
 #include "bmp.h"
 #include "wav.h"

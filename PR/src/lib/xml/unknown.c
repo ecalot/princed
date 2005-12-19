@@ -19,8 +19,8 @@
 */
 
 /*
-resources.c: Princed Resources : Unknown resources handler
-¯¯¯¯¯¯¯¯¯¯¯
+unknown.c: Princed Resources : Unknown resources handler
+¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 
@@ -40,7 +40,7 @@ resources.c: Princed Resources : Unknown resources handler
 #include <stdio.h>
 #include "common.h"
 #include "disk.h"
-#include "resources.h"
+#include "unknown.h"
 #include "stringformat.h"
 #include "translate.h"
 

@@ -113,7 +113,7 @@ $(XMLFILE): xml/resources.xml
 	$(MAKEDIR) bin
 	$(COPY) xml/resources.xml $(XMLFILE)
 
-.import.o: lib/actions/import.c include/autodetect.h include/bmp.h include/common.h include/dat.h include/disk.h include/idlist.h include/import.h include/memory.h include/mid.h include/pal.h include/plv.h include/resources.h include/wav.h
+.import.o: lib/actions/import.c include/autodetect.h include/bmp.h include/common.h include/dat.h include/disk.h include/idlist.h include/import.h include/memory.h include/mid.h include/pal.h include/plv.h include/unknown.h include/wav.h
 	$(INFO) Compiling import module...
 	$(CC) $(OPTIONS) -c lib/actions/import.c -o $@
 
@@ -121,7 +121,7 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling classification module...
 	$(CC) $(OPTIONS) -c lib/actions/classify.c -o $@
 
-.export.o: lib/actions/export.c include/autodetect.h include/bmp.h include/common.h include/dat.h include/disk.h include/export.h include/idlist.h include/memory.h include/mid.h include/pal.h include/plv.h include/reslist.h include/resources.h include/wav.h
+.export.o: lib/actions/export.c include/autodetect.h include/bmp.h include/common.h include/dat.h include/disk.h include/export.h include/idlist.h include/memory.h include/mid.h include/pal.h include/plv.h include/reslist.h include/unknown.h include/wav.h
 	$(INFO) Compiling export module...
 	$(CC) $(OPTIONS) -c lib/actions/export.c -o $@
 
@@ -173,7 +173,7 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling RLE uncompression module...
 	$(CC) $(OPTIONS) -c lib/compression/rle_uncompress.c -o $@
 
-.pr.o: lib/pr.c include/classify.h include/common.h include/disk.h include/export.h include/idlist.h include/import.h include/memory.h include/resources.h
+.pr.o: lib/pr.c include/classify.h include/common.h include/disk.h include/export.h include/idlist.h include/import.h include/memory.h include/unknown.h
 	$(INFO) Compiling main library primitives for both modes...
 	$(CC) $(OPTIONS) -c lib/pr.c -o $@
 	
@@ -185,9 +185,9 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling directory and recursive file reading module for standard mode...
 	$(CC) $(OPTIONS) -c console/filedir.c -o $@
 
-.resources.o: lib/xml/resources.c include/common.h include/disk.h include/resources.h include/search.h
-	$(INFO) Compiling XML resource reading module...
-	$(CC) $(OPTIONS) -c lib/xml/resources.c -o $@
+.resources.o: lib/xml/unknown.c include/common.h include/disk.h include/unknown.h include/search.h
+	$(INFO) Compiling unknown.xml generating module...
+	$(CC) $(OPTIONS) -c lib/xml/unknown.c -o $@
 
 .parse.o: lib/xml/parse.c include/common.h include/disk.h include/memory.h include/parse.h
 	$(INFO) Compiling XML parsing module...

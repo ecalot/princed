@@ -61,7 +61,7 @@ pr.c: Main source file for Princed Resources library
 #include "idlist.h"
 #include "reslist.h"
 #include "memory.h"    /* getMemory, free */
-#include "resources.h"
+#include "unknown.h"
 
 #include "search.h" /* parse */
 

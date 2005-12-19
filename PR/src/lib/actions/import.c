@@ -44,7 +44,7 @@ import.c: Princed Resources : DAT Compiler
 #include "disk.h"
 #include "idlist.h"
 #include "memory.h"
-#include "resources.h"
+#include "unknown.h"
 
 #include "bmp.h"
 #include "mid.h"
