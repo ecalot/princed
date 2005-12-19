@@ -19,13 +19,14 @@
 */
 
 /*
-resources.c: Princed Resources : Resource Handler
+resources.c: Princed Resources : Unknown resources handler
 ¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
   Version: 1.01 (2003-Oct-23)
+  Version: 1.50 (2005-Dec-19)
 
  Note:
   DO NOT remove this copyright notice
@@ -40,7 +41,6 @@ resources.c: Princed Resources : Resource Handler
 #include "common.h"
 #include "disk.h"
 #include "resources.h"
-#include "search.h"
 #include "stringformat.h"
 #include "translate.h"
 
