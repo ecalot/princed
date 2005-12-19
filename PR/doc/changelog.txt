@@ -22,7 +22,7 @@ Versions:
  * PS (unreleased)
   + Added support to .mid files
   + Added support to indexed dat files
- * PR 0.1 alpha (2003-06-09)
+ * PR v0.1 alpha (2003-06-09)
   - Merged PS and PG into one extractor.
   + Added dynamic palette extraction
   - Added resource.txt parser.
@@ -30,12 +30,12 @@ Versions:
   + Added support to export JASC palette for .pal files.
   + Coded type header verification
   - Solved several bugs.
- * PR 0.2 alpha (2003-06-17)
+ * PR v0.2 alpha (2003-06-17)
   + Added classifying dat type feature
   + Added support to import .bmp files
   - Implemented CGI output support for UNIX versions
   - Source files were abstracted
- * PR 0.3 beta (2003-06-25)
+ * PR v0.3 beta (2003-06-25)
   - Added modifiers -x[rnu] -c[r]
   - Added pr.dll compiling
   + Bitmaps aren't upside down anymore 
@@ -44,29 +44,29 @@ Versions:
   - Optimized bitmap handling
   - Solved bugs in bitmap format
   + Solved segmentation fault in title.dat
- * PR 0.4 beta (2003-06-27)
+ * PR v0.4 beta (2003-06-27)
   - Fixed a memory bug since v0.3
   + Pop2 DAT files detected (file type 11)
- * PR 0.5 beta (2003-07-03)
+ * PR v0.5 beta (2003-07-03)
   - Abstracted format handling
   - Optimized bmp saving algorithm
   + Solved and optimized decompression for big images
   + Some Pop2 graphics are extracted (palettes aren't supported yet)
- * PR 0.6 alpha (2003-10-08)
+ * PR v0.6 alpha (2003-10-08)
   - Coded full import/export bmp (in separate files not included
     in this distribution)
   + Completed and tested bmp reading algorithm
   - Optimized PG algorithms and reserved memory sizes
- * PR 0.6 beta (2003-10-17)
+ * PR v0.6 beta (2003-10-17)
   + Added full import bmp support
   + Solved palette import bug
- * PR 0.7 (2003-10-23)
+ * PR v0.7 (2003-10-23)
   - Added Makefile
   - Moved PG module to compress.c and bmp.c
   - Moved midi support to mid.c
   + Solved corrupted images on compression bug
   - Source ported to several compilers and platforms
- * PR 0.8 beta (2003-11-04)
+ * PR v0.8 beta (2003-11-04)
   - Abstracted disk functions into one module
   + Added PC Speaker sound classification
   + Added compression algorithms B0 and B2. Before that it was only
@@ -169,14 +169,15 @@ Versions:
     equivalences
   + Inverted pop2 index names
   - Add parsing feature @400:shape#second
+  x Fix the language support
+ * PR v1.3 (future plans)
   x Add pop2 to resources.xml: nis3vc.dat, nisibm.dat, skeleton.dat,
     flame.dat, head.dat, kid.dat, nismidi.dat, tandysnd.dat, digisnd.dat,
     ibmsnd.dat
-  x Fix the language support
- * PR v1.3 (future plans)
-  x Fix buffer overflows (in entered filename sizes)
-  x Finish python interface
   x Check for memory leak
+  x Finish python interface
+  x Fix buffer overflows (in entered filename sizes)
+  x Merge all generated unknown.xml in .. for each extract.	
  * PR v2.0 beta
   x Add full pop2 support
  * PR v2.0
