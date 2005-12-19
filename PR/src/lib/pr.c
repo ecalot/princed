@@ -63,6 +63,8 @@ pr.c: Main source file for Princed Resources library
 #include "memory.h"    /* getMemory, free */
 #include "resources.h"
 
+#include "search.h" /* parse */
+
 /***************************************************************\
 |                      Main working functions                   |
 \***************************************************************/

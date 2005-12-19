@@ -124,8 +124,8 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 #define PR_IGNORE_RAW_OPTION
 
 #ifndef PR_IGNORE_RAW_OPTION
-#define PARSING_OPTRAW ,{"raw",         no_argument,       0,'r'},
-#define PARSING_CHRRAW "r"
+#define PARSING_OPTRAW ,{"raw",         no_argument,       0,'w'},
+#define PARSING_CHRRAW "w"
 #define PARSING_SHOWRAW(a) a
 #else
 #define PARSING_OPTRAW ,
@@ -154,7 +154,7 @@ PARSING_OPTRAW\
 {0, 0, 0, 0}\
 }
 
-#define PARSING_CHARS    "z::i::m::cx::e::b::a::fgs::t::Rvh?"PARSING_CHRRAW
+#define PARSING_CHARS    "z::i::m::cx::e::b::a::fgs::t::Rrvh?"PARSING_CHRRAW
 
 /* Flags */
 #define import_flag      0x0001

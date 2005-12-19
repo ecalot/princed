@@ -54,11 +54,6 @@ resources.h: Princed Resources : Resource Handler headers
 void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension,const char* format);
 void getUpperFolder(char* aux, char* vFiledat);
 
-const char* getExtDesc(int type);
-
-/* parse xml file */
-int parseFile(const char* vFile, const char* datFile, tResourceList *r);
-
 /* In case there are unknown resources it closes the unknown XML output */
 void endUnknownXml();
 

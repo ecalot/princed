@@ -45,29 +45,6 @@ resources.c: Princed Resources : Resource Handler
 #include "translate.h"
 
 /***************************************************************\
-|            Filtering xml structure to tResourceList           |
-\***************************************************************/
-
-/* parse file */
-int parseFile(const char* vFile, const char* datFile, tResourceList *r) {
-	/* Declare error variable */
-	int error;
-	tPassWork pass;
-	tTag* structure;
-
-	/* Generate xml structure if doesn't exist */
-	if ((error=parseStructure(vFile,&structure))) return error;
-
-	/* Use the xml structure to Generate the resource structure of the file */
-	pass.datFile=datFile;
-	pass.r=r;
-	workTree(structure,&pass,workTag);
-
-	/* All done */
-	return PR_RESULT_SUCCESS;
-}
-
-/***************************************************************\
 |                     Unknown.xml primitives                    |
 \***************************************************************/
 

@@ -116,11 +116,12 @@ int main (int argc, char **argv) {
 				case 'z':
 					if (optarg) setCompressionLevel(atoi(optarg));
 					break;
-				case 'r':
 #ifndef PR_IGNORE_RAW_OPTION
+				case 'w':
 					setFlag(raw_flag);
 					break;
 #endif
+				case 'r':
 				case 'R':
 					setFlag(recursive_flag);
 					break;

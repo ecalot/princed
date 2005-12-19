@@ -44,6 +44,29 @@ search.c: Princed Resources : specific xml handling functions
 #include <string.h>
 #include "translate.h" /* to translate indexes */
 
+/***************************************************************\
+|            Filtering xml structure to tResourceList           |
+\***************************************************************/
+
+/* parse file */
+int parseFile(const char* vFile, const char* datFile, tResourceList *r) {
+	/* Declare error variable */
+	int error;
+	tPassWork pass;
+	tTag* structure;
+
+	/* Generate xml structure if doesn't exist */
+	if ((error=parseStructure(vFile,&structure))) return error;
+
+	/* Use the xml structure to Generate the resource structure of the file */
+	pass.datFile=datFile;
+	pass.r=r;
+	workTree(structure,&pass,workTag);
+
+	/* All done */
+	return PR_RESULT_SUCCESS;
+}
+
 int getOrder(const char* order) {
 	if (order) {
 		if (equalsIgnoreCase(order,"first")) {

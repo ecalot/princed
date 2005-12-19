@@ -42,6 +42,9 @@ search.h: Princed Resources : xml handling functions header file
 #include "common.h" /* tTag */
 #include "reslist.h"
 
+/* parse xml file */
+int parseFile(const char* vFile, const char* datFile, tResourceList *r);
+
 /****************************************************************\
 |                   Tag Tree Searching Functions                 |
 \****************************************************************/
