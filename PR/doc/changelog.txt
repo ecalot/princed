@@ -170,6 +170,7 @@ Versions:
   + Inverted pop2 index names
   - Add parsing feature @400:shape#second
   x Fix the language support
+	- Finished abstarcting resources.c and renamed to unknown.c
  * PR v1.3 (future plans)
   x Add pop2 to resources.xml: nis3vc.dat, nisibm.dat, skeleton.dat,
     flame.dat, head.dat, kid.dat, nismidi.dat, tandysnd.dat, digisnd.dat,
