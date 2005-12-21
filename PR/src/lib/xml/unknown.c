@@ -59,10 +59,30 @@ static struct {
 	unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
 } unknownFile;
 
-#define unknown_init(a)
+/* syntactic layer */
+
+/* fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);*/
+
+#define unknown_emptyfile()\
+	fprintf(unknownFile.fd, "<resources />\n")
+
+#define unknown_folderclose()\
+	fprintf(unknownFile.fd, "\t</folder>\n\n")
+
+#define unknown_folder(file)\
+	fprintf(unknownFile.fd, "\t<folder file=\"%s\"", file)
+
+#define unknown_foot()\
+	fprintf(unknownFile.fd, "</resources>\n")
+
+#define unknown_head()\
+	fprintf(unknownFile.fd, "<?xml version=\"1.0\" ?><resources>\n")
+
+#define unknown_item(path)\
+	fprintf(unknownFile.fd, "\t\t<item path=\"%s\" />", path)
 
 
-
+/* semantic layer */
 
 int unknownLogStart (const char* file,int optionflag, const char* backupExtension) {
 	if (unknownFile.fd) return -1; /* File already open */
@@ -85,11 +105,13 @@ int unknownLogStop () {
 
 	/* close a folder if it is open */
 	if (unknownFile.currentDat) { /* there is a folder open */
-/*		unknown_folderclose(vFiledat); */
+		unknown_folderclose();
+		unknown_foot(); /* fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);*/
+	} else {
+		unknown_emptyfile();
 	}
 	
 	/* Close the file */
-	/* unknown_foot fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);*/
 	writeCloseOk(unknownFile.fd,unknownFile.optionflag,unknownFile.backupExtension);
 
 	/* Free structures */
@@ -106,19 +128,17 @@ int unknownLogAppend(const char* vFiledatWithPath,tResourceId id,const char* ext
 	if (!unknownFile.fd) return -1; /* File not open, logging if off */
 
 	if (!unknownFile.currentDat) { /* this is the beginning of the file */
-/*		unknown_head();*/
-/*		unknown_folder(vFiledat); */
-		
-
+		unknown_head();
+		unknown_folder(vFiledat); 
 	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
-/*		unknown_folderclose(vFiledat); */
-/*		unknown_folder(vFiledat); */
+		unknown_folderclose(); 
+		unknown_folder(vFiledat); 
 		freeAllocation(unknownFile.currentDat);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
-
 	}
-	
-/*	unknown_item();*/
+
+	unknown_item(ext);
+
 	return 0;
 }
 
