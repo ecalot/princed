@@ -93,7 +93,7 @@ void endUnknownXml(int optionflag, const char* backupExtension) {
 		fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);
 		writeCloseOk(unknownXmlFile,optionflag,backupExtension);
 		unknownXmlFile=NULL;
-		for (i=0;i<RES_TYPECOUNT;i++) typeCount[i]=0;
+		for (i=0;i<RES_TYPECOUNT;i++) typeCount[i]=0; /* re-initialize in 0 for next file processing */
 	}
 }
 
