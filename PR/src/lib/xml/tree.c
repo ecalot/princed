@@ -96,7 +96,7 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 	if (unknownFile.fd) return -1; /* File already open */
 
 	/* Use default filename if file is NULL */
-	if (!file) file="unknown.xml";
+	if (!file) file=RES_XML_UNKNOWN_XML;
 
 	/* Remember optionflag and backupExtension */
 	unknownFile.optionflag=optionflag;
@@ -143,10 +143,12 @@ int unknownLogAppend(const char* vFiledatWithPath,tResourceId id,const char* ext
 		unknown_folder(vFiledat,vFiledatWithPath,pal.value,translateInt2Ext(toLower(pal.index)));
 		unknownFile.currentDat=strallocandcopy(vFiledat);
 	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
+		int i;
 		unknown_folderclose(); 
 		unknown_folder(vFiledat,vFiledatWithPath,pal.value,translateInt2Ext(toLower(pal.index)));
 		freeAllocation(unknownFile.currentDat);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
+		for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
 	}
 
 	unknown_item(id.value,translateInt2Ext(toLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count);
