@@ -45,7 +45,6 @@ unknown.c: Princed Resources : Unknown resources handler
 #include "stringformat.h"
 #include "translate.h"
 
-
 char* toLower(const char* txt) { /* TODO: send to memory.c */
 	static char ret[5];
 	char* r=ret;
@@ -66,9 +65,6 @@ char* toLower(const char* txt) { /* TODO: send to memory.c */
 
 #define RES_XML_UNKNOWN_PATH  "%s/unknown/%s/"
 #define RES_XML_UNKNOWN_FILES "%t%03n.%e"
-#define RES_XML_UNKNOWN_END   " </folder>\n</resources>\n"
-
-unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
 
 static struct {
 	FILE* fd;
@@ -79,8 +75,6 @@ static struct {
 } unknownFile;
 
 /* syntactic layer */
-
-/* fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);*/
 
 #define unknown_emptyfile()\
 	fprintf(unknownFile.fd, "<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n\
@@ -104,8 +98,9 @@ static struct {
 	fprintf(unknownFile.fd, "\t\t<item value=\"%d\" index=\"%s\" path=\"%s\" type=\"%s\" flags=\"0x%lx\">Unknown %s %d</item>\n",\
 	                                   value,       index,       path,       type,       flags,          typedesc, count)
 
-
-/* semantic layer */
+/***************************************************************\
+|                          Semantic Layer                       |
+\***************************************************************/
 
 int unknownLogStart (const char* file,int optionflag, const char* backupExtension) {
 	if (unknownFile.fd) return -1; /* File already open */
@@ -132,7 +127,7 @@ int unknownLogStop () {
 	/* close a folder if it is open */
 	if (unknownFile.currentDat) { /* there is a folder open */
 		unknown_folderclose();
-		unknown_foot(); /* fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);*/
+		unknown_foot(); 
 	} else {
 		unknown_emptyfile();
 	}
@@ -169,53 +164,9 @@ int unknownLogAppend(const char* vFiledatWithPath,tResourceId id,const char* ext
 	return 0;
 }
 
-
-
-/* Resources output to xml functions. Private+abstract variable */
-/*static FILE* unknownXmlFile=NULL;*/
-
-void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count, unsigned long int flags,const char* filename) {
-
-	unknownLogAppend(vFiledatWithPath,id,ext,type,vDirExt,pal,vFiledat,optionflag,count,flags,filename);
-
-#if 0
-	/* Open file if not open */
-	if (unknownXmlFile==NULL) {
-		char xmlFile[MAX_FILENAME_SIZE];
-		sprintf(xmlFile,RES_XML_UNKNOWN_PATH""RES_XML_UNKNOWN_XML,vDirExt,vFiledatWithPath);
-
-		/* Open file */
-		if (!writeOpen(xmlFile,&unknownXmlFile,optionflag)) return;
-
-		/* Save headers */
-		if (type==eResTypePalette) pal=id;
-		fprintf(unknownXmlFile,RES_XML_UNKNOWN_START,
-			vFiledat,vFiledatWithPath,pal.value,translateInt2Ext(toLower(pal.index))
-		);
-	}
-
-	/* Write item */
-	fprintf(unknownXmlFile,RES_XML_UNKNOWN_ITEM,
-		id.value,translateInt2Ext(toLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count
-	); /* To the xml output */
-#endif
-}
-
-
-void endUnknownXml(int optionflag, const char* backupExtension) {
-#if 0
-	if (unknownXmlFile!=NULL) {
-		int i;
-		fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);
-		writeCloseOk(unknownXmlFile,optionflag,backupExtension);
-		unknownXmlFile=NULL;
-		for (i=0;i<RES_TYPECOUNT;i++) typeCount[i]=0; /* re-initialize in 0 for next file processing */
-	}
-#endif
-}
-
-
-/* Middle layer function */
+/***************************************************************\
+|                     Middle layer function                     |
+\***************************************************************/
 
 void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag, const char* backupExtension,const char* format) {
 	static const char* extarray[]=RES_FILE_EXTENSIONS;
@@ -231,7 +182,7 @@ void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const cha
 		filename=parseformat(format,r->id.value,r->id.index,getExtDesc(pos),extarray[pos],unknownFile.typeCount[pos],r->id.order,r->desc);
 
 		sprintf(vFileext,RES_XML_UNKNOWN_PATH"%s",vDirExt,vDatFileName,filename);
-		AddToUnknownXml(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,unknownFile.typeCount[pos],r->flags,filename);
+		unknownLogAppend(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,unknownFile.typeCount[pos],r->flags,filename);
 	} else {
 		/* set filename */
 		sprintf(vFileext,"%s/%s",vDirExt,r->path);

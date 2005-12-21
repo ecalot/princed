@@ -169,7 +169,6 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	resourceListDrop(&paletteBuffer);
 
 	/* Close unknownXML */
-	endUnknownXml(optionflag,backupExtension);
 	return ok?count:PR_RESULT_ERR_EXTRACTION;
 }
 
