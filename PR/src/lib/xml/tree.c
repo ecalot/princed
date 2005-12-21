@@ -143,17 +143,6 @@ int unknownLogAppend(const char* vFiledatWithPath,tResourceId id,const char* ext
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
 char* toLower(const char* txt) { /* TODO: send to memory.c */
 	static char ret[5];
 	char* r=ret;
@@ -172,6 +161,10 @@ char* toLower(const char* txt) { /* TODO: send to memory.c */
 static FILE* unknownXmlFile=NULL;
 
 void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count, unsigned long int flags,const char* filename) {
+
+	unknownLogAppend(vFiledatWithPath,id,ext,type,vDirExt,pal,vFiledat,optionflag,count,flags,filename);
+
+#if 0
 	/* Open file if not open */
 	if (unknownXmlFile==NULL) {
 		char xmlFile[MAX_FILENAME_SIZE];
@@ -191,10 +184,12 @@ void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext
 	fprintf(unknownXmlFile,RES_XML_UNKNOWN_ITEM,
 		id.value,translateInt2Ext(toLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count
 	); /* To the xml output */
+#endif
 }
 
 
 void endUnknownXml(int optionflag, const char* backupExtension) {
+#if 0
 	if (unknownXmlFile!=NULL) {
 		int i;
 		fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);
@@ -202,6 +197,7 @@ void endUnknownXml(int optionflag, const char* backupExtension) {
 		unknownXmlFile=NULL;
 		for (i=0;i<RES_TYPECOUNT;i++) typeCount[i]=0; /* re-initialize in 0 for next file processing */
 	}
+#endif
 }
 
 
