@@ -41,6 +41,7 @@ unknown.c: Princed Resources : Unknown resources handler
 #include "common.h"
 #include "disk.h"
 #include "unknown.h"
+#include "memory.h"
 #include "stringformat.h"
 #include "translate.h"
 
@@ -48,10 +49,92 @@ unknown.c: Princed Resources : Unknown resources handler
 |                     Unknown.xml primitives                    |
 \***************************************************************/
 
-/* Resources output to xml functions. Private+abstract variable */
-static FILE* unknownXmlFile=NULL;
+unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
 
-char* toLower(const char* txt) {
+static struct {
+	FILE* fd;
+	char* backupExtension;
+	char* currentDat;
+	int optionflag;
+	unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
+} unknownFile;
+
+#define unknown_init(a)
+
+
+
+
+int unknownLogStart (const char* file,int optionflag, const char* backupExtension) {
+	if (unknownFile.fd) return -1; /* File already open */
+
+	/* Remember optionflag and backupExtension */
+	unknownFile.optionflag=optionflag;
+	unknownFile.backupExtension=strallocandcopy(backupExtension);
+	unknownFile.currentDat=NULL;
+
+	/* Open the file */
+	if (!writeOpen(file,&unknownFile.fd,optionflag)) return -2; /* file not open */
+
+	return 0; /* Ok */
+}
+
+int unknownLogStop () {
+	int i;
+
+	if (!unknownFile.fd) return -1; /* File not open */
+
+	/* close a folder if it is open */
+	if (unknownFile.currentDat) { /* there is a folder open */
+/*		unknown_folderclose(vFiledat); */
+	}
+	
+	/* Close the file */
+	/* unknown_foot fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);*/
+	writeCloseOk(unknownFile.fd,unknownFile.optionflag,unknownFile.backupExtension);
+
+	/* Free structures */
+	freeAllocation(unknownFile.currentDat);
+	freeAllocation(unknownFile.backupExtension);
+	unknownFile.backupExtension=NULL;
+	unknownFile.fd=NULL;
+	for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
+
+	return 0; /* Ok */
+}
+
+int unknownLogAppend(const char* vFiledatWithPath,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count, unsigned long int flags,const char* filename) {
+	if (!unknownFile.fd) return -1; /* File not open, logging if off */
+
+	if (!unknownFile.currentDat) { /* this is the beginning of the file */
+/*		unknown_head();*/
+/*		unknown_folder(vFiledat); */
+		
+
+	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
+/*		unknown_folderclose(vFiledat); */
+/*		unknown_folder(vFiledat); */
+		freeAllocation(unknownFile.currentDat);
+		unknownFile.currentDat=strallocandcopy(vFiledat);
+
+	}
+	
+/*	unknown_item();*/
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+char* toLower(const char* txt) { /* TODO: send to memory.c */
 	static char ret[5];
 	char* r=ret;
 	while (*txt) {
@@ -62,6 +145,11 @@ char* toLower(const char* txt) {
 	*r=0;
 	return ret;			
 }
+
+
+
+/* Resources output to xml functions. Private+abstract variable */
+static FILE* unknownXmlFile=NULL;
 
 void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count, unsigned long int flags,const char* filename) {
 	/* Open file if not open */
@@ -85,7 +173,6 @@ void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext
 	); /* To the xml output */
 }
 
-static unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
 
 void endUnknownXml(int optionflag, const char* backupExtension) {
 	if (unknownXmlFile!=NULL) {
@@ -96,6 +183,9 @@ void endUnknownXml(int optionflag, const char* backupExtension) {
 		for (i=0;i<RES_TYPECOUNT;i++) typeCount[i]=0; /* re-initialize in 0 for next file processing */
 	}
 }
+
+
+/* Middle layer function */
 
 void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag, const char* backupExtension,const char* format) {
 	static const char* extarray[]=RES_FILE_EXTENSIONS;
