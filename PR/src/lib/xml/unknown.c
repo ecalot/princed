@@ -45,18 +45,6 @@ unknown.c: Princed Resources : Unknown resources handler
 #include "stringformat.h"
 #include "translate.h"
 
-char* toLower(const char* txt) { /* TODO: send to memory.c */
-	static char ret[5];
-	char* r=ret;
-	while (*txt) {
-		*r=(('A'<=(*txt)) && ((*txt)<='Z'))?(*txt)|0x20:*txt;
-		r++;
-		txt++;
-	}
-	*r=0;
-	return ret;			
-}
-
 /***************************************************************\
 |                     Unknown.xml primitives                    |
 \***************************************************************/
@@ -74,29 +62,31 @@ static struct {
 	unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
 } unknownFile;
 
-/* syntactic layer */
+/***************************************************************\
+|                        Syntactic Layer                        |
+\***************************************************************/
 
-#define unknown_emptyfile()\
-	fprintf(unknownFile.fd, "<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n\
-<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<resources version=\"generated\" />\n") /* TODO: don't affect this file if empty */
+#define unknown_emptyfile() /* TODO: don't affect this file if empty */  fprintf(unknownFile.fd,\
+	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
+	"<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<resources version=\"generated\" />\n") 
 
-#define unknown_folderclose()\
-	fprintf(unknownFile.fd, "\t</folder>\n\n")
+#define unknown_folderclose() fprintf(unknownFile.fd,\
+	"\t</folder>\n\n")
 
-#define unknown_folder(path, file, palette, paletteindex)\
-	fprintf(unknownFile.fd, "\t<folder name=\"unknown\" path=\"%s\" file=\"%s\" palette=\"%d\" paletteindex=\"%s\">\n",\
-	                                                    path,       file,       palette,       paletteindex)
+#define unknown_folder(path, file, palette, paletteindex) fprintf(unknownFile.fd,\
+	"\t<folder name=\"unknown\" path=\"%s\" file=\"%s\" palette=\"%d\" paletteindex=\"%s\">\n",\
+	                            path,       file,       palette,       paletteindex)
 
-#define unknown_foot()\
-	fprintf(unknownFile.fd, "</resources>\n")
+#define unknown_foot() fprintf(unknownFile.fd,\
+	"</resources>\n")
 
-#define unknown_head()\
-	fprintf(unknownFile.fd, "<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n\
-<?xml version=\"1.0\" ?>\n<resources version=\"generated\">\n")
+#define unknown_head() fprintf(unknownFile.fd,\
+	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
+	"<?xml version=\"1.0\" ?>\n<resources version=\"generated\">\n")
 
-#define unknown_item(value,index,path,type,flags,typedesc,count)\
-	fprintf(unknownFile.fd, "\t\t<item value=\"%d\" index=\"%s\" path=\"%s\" type=\"%s\" flags=\"0x%lx\">Unknown %s %d</item>\n",\
-	                                   value,       index,       path,       type,       flags,          typedesc, count)
+#define unknown_item(value,index,path,type,flags,typedesc,count) fprintf(unknownFile.fd,\
+	"\t\t<item value=\"%d\" index=\"%s\" path=\"%s\" type=\"%s\" flags=\"0x%lx\">Unknown %s %d</item>\n",\
+	           value,       index,       path,       type,       flags,          typedesc, count)
 
 /***************************************************************\
 |                          Semantic Layer                       |

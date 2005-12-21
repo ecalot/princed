@@ -78,6 +78,9 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 
 #define DEFAULT_BACKUP_EXTENSION "bak"
 
+/* File extensions */
+#define RES_FILE_EXTENSIONS   {"raw","plv","bmp","wav","mid","bin","pal","pcs"}
+
 /***************************************************************\
 |                        L A N G U A G E                        |
 \***************************************************************/

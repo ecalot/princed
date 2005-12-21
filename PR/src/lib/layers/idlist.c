@@ -45,18 +45,9 @@ idlist.c: Princed Resources : Partial Id list
 
 /* Id list for partial manipulation. Private type */
 typedef enum {eString,eId,eIdValue,eIdIndex}tResLocationType;
-/*
-typedef struct {
-  tResLocationType type;
-  union {
-    char*        text;
-    tResourceId  id;
-  } field;
-}tResourceMatch;
-*/
+
 typedef struct {
 	int             count;
-	/*tResourceMatch* list;*/
 	tResourceMatch* list;
 }tResIdList;
 
@@ -139,40 +130,6 @@ void parseGivenPath(char* path) {
 	/* Parse values and save them in the list */
 	for(i=separator;j!=partialList.count;i++) {
 		initRM(path+i,partialList.list+j); /* TODO: check for parsing error*/
-/*		unsigned int value;
-		int converted;
-		char index[5];
-		converted=sscanf(path+i,"%u:%5s",&value,index); * TODO: support order *
-		switch (converted) {
-		case 2:
-			partialList.list[j].type=eId;
-			partialList.list[j].field.id.value=value;
-			str5lowercpy(partialList.list[j].field.id.index,index);
-			partialList.list[j].field.id.order=0;
-			break;
-		case 1:
-			partialList.list[j].type=eIdValue;
-			partialList.list[j].field.id.value=value;
-			partialList.list[j].field.id.order=0;
-			break;
-		default:
-			* TODO: test this *
-			if (sscanf(path+i,":%5s",index)) {
-				partialList.list[j].type=eIdIndex;
-				strncpy(partialList.list[j].field.id.index,index,5); * TODO: check str5lowercpy *
-				partialList.list[j].field.id.order=0;
-			} else {
-				char* aux;
-				partialList.list[j].type=eString;
-				aux=malloc(strlen(path+i)+2);
-				aux[0]='/';
-				strcpy(aux+1,path+i);
-				partialList.list[j].field.text=strallocandcopy(repairFolders(aux));
-				free(aux);
-			}
-			break;
-		}
-		*/
 		while (path[i]) i++;
 		j++;
 	}
@@ -191,23 +148,9 @@ int isInThePartialList(const char* vFile, tResourceId id) {
 
 	if (!partialList.count) return 1;
 
-	for (i=0;i<partialList.count;i++) {
-/*		switch (partialList.list[i].type) {
-		case eIdValue:
-			if (id.value==partialList.list[i].field.id.value) return 1;
-			break;
-		case eIdIndex:
-			if (!strncmp(id.index,partialList.list[i].field.id.index,4)) return 1;
-			break;
-		case eString:
-			if (vFile && matchesIn(repairFolders(vFile),partialList.list[i].field.text)) return 1;
-			break;
-		case eId:
-			if (!resIdCmp(id,partialList.list[i].field.id)) return 1;
-			break;
-		}*/
+	for (i=0;i<partialList.count;i++)
 		if (runRM(partialList.list+i,repairFolders(vFile?vFile:""),&id)) return 1;
-	}
+
 	return 0;
 }
 

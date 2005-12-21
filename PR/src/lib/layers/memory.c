@@ -54,6 +54,18 @@ void str5lowercpy (char* dst,const char* src) {
 	*dst=0;
 }
 
+char* toLower(const char* txt) {
+	static char ret[5];
+	char* r=ret;
+	while (*txt) {
+		*r=(('A'<=(*txt)) && ((*txt)<='Z'))?(*txt)|0x20:*txt;
+		r++;
+		txt++;
+	}
+	*r=0;
+	return ret;			
+}
+
 int matchesIn(const char *s, const char *p) {
   switch(*p) {
     case 0: return !(*s);

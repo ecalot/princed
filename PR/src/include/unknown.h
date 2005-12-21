@@ -19,7 +19,7 @@
 */
 
 /*
-unknown.h: Princed Resources : Resource Handler headers
+unknown.h: Princed Resources : Unknown.xml generator headers
 ¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -31,13 +31,12 @@ unknown.h: Princed Resources : Resource Handler headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _RESOURCES_H_
-#define _RESOURCES_H_
+#ifndef _UNKNOWN_H_
+#define _UNKNOWN_H_
 
-
-/* File extensions */
-
-#define RES_FILE_EXTENSIONS   {"raw","plv","bmp","wav","mid","bin","pal","pcs"} /* TODO: move to common.h */
+/* Note:
+ * To use the functions as a library you must include pr.h
+ */
 
 /* Includes */
 #include "parse.h"
@@ -45,14 +44,5 @@ unknown.h: Princed Resources : Resource Handler headers
 
 /* Resources extras */
 void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension,const char* format);
-/*void getUpperFolder(char* aux, char* vFiledat);*/
-
-/* In case there are unknown resources it closes the unknown XML output */
-/*void endUnknownXml();*/
-
-/* Search files for the Import feature * TODO check this prototypes *
-int importDir(const char* directory, const char* vResFile, int pOption, const char* backupExtension,const char* vDirectory,FILE* output);
-int isntADatFile(const char* testFile, const char* vResFile);
-*/
 
 #endif

@@ -50,6 +50,7 @@ char* strallocandcopy(const char* text);
 int equalsIgnoreCase2(const char s1[],const char s2[]);
 #endif
 
+char* toLower(const char* txt);
 void str5lowercpy (char* dst,const char* src);
 int matchesIn(const char *s, const char *p);
 
