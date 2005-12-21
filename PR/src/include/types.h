@@ -37,18 +37,7 @@ reslist.h: Princed Resources : Resource list
 #include "list.h" /* tList */
 #define tResourceList tList
 
-/* Item Types */
-
-typedef enum {
-	eResTypeRaw=0,
-	eResTypeLevel=1,
-	eResTypeImage=2,
-	eResTypeWave=3,
-	eResTypeMidi=4,
-	eResTypeBinary=5,
-	eResTypePalette=6,
-	eResTypePcspeaker=7
-} tResourceType;
+#include "common.h" /* Item Types */
 
 /* types */
 typedef struct {

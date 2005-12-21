@@ -38,7 +38,8 @@ const char* getExtDesc(int type);
 
 /* Constants */
 #define MAX_VALUE_SIZE        3000
-#define RES_TYPECOUNT         8
-#define RES_FILE_TYPES        {"autodetect","level","image","wave","midi","binary","palette","pcspeaker"}
+#define RES_TYPECOUNT         9
+/* for RES_FILE_TYPES */
+#include "common.h"
 
 #endif

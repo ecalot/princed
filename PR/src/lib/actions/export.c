@@ -109,6 +109,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 						ok=mFormatExportPlv(res.data,vFileext,res.size,res.number,vDatFileName,res.name,res.desc,vDatAuthor,optionflag,backupExtension);
 						break;
 					case eResTypeBinary: /* Binary files */
+					case eResTypeText: /* Text files */
 					case eResTypeRaw: /* Raw files */
 						ok=writeData(res.data,1,vFileext,res.size,optionflag,backupExtension); /* Ignore checksum */
 						break;

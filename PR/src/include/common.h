@@ -79,7 +79,20 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 #define DEFAULT_BACKUP_EXTENSION "bak"
 
 /* File extensions */
-#define RES_FILE_EXTENSIONS   {"raw","plv","bmp","wav","mid","bin","pal","pcs"}
+#define RES_FILE_EXTENSIONS   {"raw","plv","bmp","wav","mid","bin","pal","pcs","txt"}
+#define RES_FILE_TYPES        {"autodetect","level","image","wave","midi","binary","palette","pcspeaker","text"}
+
+typedef enum {
+	eResTypeRaw=0,
+	eResTypeLevel=1,
+	eResTypeImage=2,
+	eResTypeWave=3,
+	eResTypeMidi=4,
+	eResTypeBinary=5,
+	eResTypePalette=6,
+	eResTypePcspeaker=7,
+	eResTypeText=8
+} tResourceType;
 
 /***************************************************************\
 |                        L A N G U A G E                        |

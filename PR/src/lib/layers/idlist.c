@@ -44,8 +44,6 @@ idlist.c: Princed Resources : Partial Id list
 #include "idlist.h"
 
 /* Id list for partial manipulation. Private type */
-typedef enum {eString,eId,eIdValue,eIdIndex}tResLocationType;
-
 typedef struct {
 	int             count;
 	tResourceMatch* list;
