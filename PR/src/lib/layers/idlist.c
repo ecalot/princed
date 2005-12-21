@@ -213,7 +213,10 @@ int isInThePartialList(const char* vFile, tResourceId id) {
 
 void freePartialList() {
 	void* aux=partialList.list;
-	while (partialList.count--) freeRM(partialList.list++);
-	free(aux);
+	if (partialList.list) {
+		while (partialList.count--) freeRM(partialList.list++);
+		free(aux);
+	}
+	partialList.list=NULL;
 }
 
