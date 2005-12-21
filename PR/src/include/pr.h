@@ -98,18 +98,23 @@ int   prImportDatOpt(const char* vDatFile, const char* vDirName,
       const char* backupExtension);
 
 /* Option functions */
-void  prSetOutput(FILE* output);
-void  setCompressionLevel(int cl);
+void  prSetOutput         (FILE* output);
+void  setCompressionLevel (int cl);
 
 /* Xml parsing functions */
 tTag* resourceTreeGetChild(tTag* whereAmI);
 tTag* resourceTreeGetNext (tTag* whereAmI);
 int   resourceTreeGetInfo (tTag* whereAmI,	char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number);
-int   parseStructure(const char* vFile, tTag** structure);
-void  freeParsedStructure(tTag** structure);
-void  freeParsingCache();
-void  freeTagStructure (tTag* structure);
-tTag* parseXmlFile     (const char* vFile,int* error);
+int   parseStructure      (const char* vFile, tTag** structure);
+void  freeParsedStructure (tTag** structure);
+void  freeParsingCache    ();
+void  freeTagStructure    (tTag* structure);
+tTag* parseXmlFile        (const char* vFile,int* error);
+
+/* unknown.xml logging */
+
+int   unknownLogStart     (const char* file,int optionflag, const char* backupExtension);
+int   unknownLogStop      ();
 
 #endif
 

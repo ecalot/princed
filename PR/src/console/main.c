@@ -199,7 +199,9 @@ int main (int argc, char **argv) {
 				if (hasFlag(import_flag)) {
 					/* import */
 					fprintf(outputStream,PR_TEXT_TASK_COMPILE,file,dirName);
+					unknownLogStart(NULL,optionflag,extension);
 					result=prImportDatOpt(file,dirName,resFile,optionflag,dat,extension);
+					unknownLogStop();
 					if (result>0) {
 						fprintf(outputStream,PR_TEXT_RESULT_ERR,result,result);
 					} else {
@@ -208,7 +210,9 @@ int main (int argc, char **argv) {
 				} else if (hasFlag(export_flag)) {
 					/* export */
 					fprintf(outputStream,PR_TEXT_TASK_EXTRACT,file,dirName);
+					unknownLogStart(NULL,optionflag,extension);
 					result=prExportDatOpt(file,dirName,resFile,optionflag,dat,datAuthor,extension,format);
+					unknownLogStop();
 					if (result>0) {
 						fprintf(outputStream,PR_TEXT_EXPORT_OK,result,result);
 					} else {

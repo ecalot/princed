@@ -57,7 +57,7 @@ void getUpperFolder(char* aux, char* vFiledat);
 /* In case there are unknown resources it closes the unknown XML output */
 void endUnknownXml();
 
-/* Search files for the Import feature */
+/* Search files for the Import feature * TODO check this prototypes */
 int importDir(const char* directory, const char* vResFile, int pOption, const char* backupExtension,const char* vDirectory,FILE* output);
 int isntADatFile(const char* testFile, const char* vResFile);
 

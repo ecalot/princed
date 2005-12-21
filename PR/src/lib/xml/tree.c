@@ -64,28 +64,31 @@ static struct {
 /* fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);*/
 
 #define unknown_emptyfile()\
-	fprintf(unknownFile.fd, "<resources />\n")
+	fprintf(unknownFile.fd, "<?xml version=\"1.0\" ?>\n<resources />\n")
 
 #define unknown_folderclose()\
 	fprintf(unknownFile.fd, "\t</folder>\n\n")
 
 #define unknown_folder(file)\
-	fprintf(unknownFile.fd, "\t<folder file=\"%s\"", file)
+	fprintf(unknownFile.fd, "\t<folder file=\"%s\">\n", file)
 
 #define unknown_foot()\
 	fprintf(unknownFile.fd, "</resources>\n")
 
 #define unknown_head()\
-	fprintf(unknownFile.fd, "<?xml version=\"1.0\" ?><resources>\n")
+	fprintf(unknownFile.fd, "<?xml version=\"1.0\" ?>\n<resources>\n")
 
 #define unknown_item(path)\
-	fprintf(unknownFile.fd, "\t\t<item path=\"%s\" />", path)
+	fprintf(unknownFile.fd, "\t\t<item path=\"%s\" />\n", path)
 
 
 /* semantic layer */
 
 int unknownLogStart (const char* file,int optionflag, const char* backupExtension) {
 	if (unknownFile.fd) return -1; /* File already open */
+
+	/* Use default filename if file is NULL */
+	if (!file) file="unknown.xml";
 
 	/* Remember optionflag and backupExtension */
 	unknownFile.optionflag=optionflag;
@@ -130,6 +133,7 @@ int unknownLogAppend(const char* vFiledatWithPath,tResourceId id,const char* ext
 	if (!unknownFile.currentDat) { /* this is the beginning of the file */
 		unknown_head();
 		unknown_folder(vFiledat); 
+		unknownFile.currentDat=strallocandcopy(vFiledat);
 	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
 		unknown_folderclose(); 
 		unknown_folder(vFiledat); 
@@ -158,7 +162,7 @@ char* toLower(const char* txt) { /* TODO: send to memory.c */
 
 
 /* Resources output to xml functions. Private+abstract variable */
-static FILE* unknownXmlFile=NULL;
+/*static FILE* unknownXmlFile=NULL;*/
 
 void AddToUnknownXml(const char* vFiledatWithPath,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count, unsigned long int flags,const char* filename) {
 
