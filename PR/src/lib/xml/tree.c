@@ -45,9 +45,28 @@ unknown.c: Princed Resources : Unknown resources handler
 #include "stringformat.h"
 #include "translate.h"
 
+
+char* toLower(const char* txt) { /* TODO: send to memory.c */
+	static char ret[5];
+	char* r=ret;
+	while (*txt) {
+		*r=(('A'<=(*txt)) && ((*txt)<='Z'))?(*txt)|0x20:*txt;
+		r++;
+		txt++;
+	}
+	*r=0;
+	return ret;			
+}
+
 /***************************************************************\
 |                     Unknown.xml primitives                    |
 \***************************************************************/
+
+/* XML generation defines */
+
+#define RES_XML_UNKNOWN_PATH  "%s/unknown/%s/"
+#define RES_XML_UNKNOWN_FILES "%t%03n.%e"
+#define RES_XML_UNKNOWN_END   " </folder>\n</resources>\n"
 
 unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
 
@@ -64,22 +83,26 @@ static struct {
 /* fwrite(RES_XML_UNKNOWN_END,1,sizeof(RES_XML_UNKNOWN_END)-1,unknownXmlFile);*/
 
 #define unknown_emptyfile()\
-	fprintf(unknownFile.fd, "<?xml version=\"1.0\" ?>\n<resources />\n")
+	fprintf(unknownFile.fd, "<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n\
+<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<resources version=\"generated\" />\n") /* TODO: don't affect this file if empty */
 
 #define unknown_folderclose()\
 	fprintf(unknownFile.fd, "\t</folder>\n\n")
 
-#define unknown_folder(file)\
-	fprintf(unknownFile.fd, "\t<folder file=\"%s\">\n", file)
+#define unknown_folder(path, file, palette, paletteindex)\
+	fprintf(unknownFile.fd, "\t<folder name=\"unknown\" path=\"%s\" file=\"%s\" palette=\"%d\" paletteindex=\"%s\">\n",\
+	                                                    path,       file,       palette,       paletteindex)
 
 #define unknown_foot()\
 	fprintf(unknownFile.fd, "</resources>\n")
 
 #define unknown_head()\
-	fprintf(unknownFile.fd, "<?xml version=\"1.0\" ?>\n<resources>\n")
+	fprintf(unknownFile.fd, "<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n\
+<?xml version=\"1.0\" ?>\n<resources version=\"generated\">\n")
 
-#define unknown_item(path)\
-	fprintf(unknownFile.fd, "\t\t<item path=\"%s\" />\n", path)
+#define unknown_item(value,index,path,type,flags,typedesc,count)\
+	fprintf(unknownFile.fd, "\t\t<item value=\"%d\" index=\"%s\" path=\"%s\" type=\"%s\" flags=\"0x%lx\">Unknown %s %d</item>\n",\
+	                                   value,       index,       path,       type,       flags,          typedesc, count)
 
 
 /* semantic layer */
@@ -132,31 +155,18 @@ int unknownLogAppend(const char* vFiledatWithPath,tResourceId id,const char* ext
 
 	if (!unknownFile.currentDat) { /* this is the beginning of the file */
 		unknown_head();
-		unknown_folder(vFiledat); 
+		unknown_folder(vFiledat,vFiledatWithPath,pal.value,translateInt2Ext(toLower(pal.index)));
 		unknownFile.currentDat=strallocandcopy(vFiledat);
 	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
 		unknown_folderclose(); 
-		unknown_folder(vFiledat); 
+		unknown_folder(vFiledat,vFiledatWithPath,pal.value,translateInt2Ext(toLower(pal.index)));
 		freeAllocation(unknownFile.currentDat);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
 	}
 
-	unknown_item(ext);
+	unknown_item(id.value,translateInt2Ext(toLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count);
 
 	return 0;
-}
-
-
-char* toLower(const char* txt) { /* TODO: send to memory.c */
-	static char ret[5];
-	char* r=ret;
-	while (*txt) {
-		*r=(('A'<=(*txt)) && ((*txt)<='Z'))?(*txt)|0x20:*txt;
-		r++;
-		txt++;
-	}
-	*r=0;
-	return ret;			
 }
 
 
@@ -214,14 +224,14 @@ void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const cha
 
 	if (r->path==NULL) {
 		pos=((r->type<RES_TYPECOUNT)&&(r->type>=0))?r->type:eResTypeBinary;
-		typeCount[pos]++;
+		unknownFile.typeCount[pos]++;
 
 		/* set filename */
 		if (!format) format=RES_XML_UNKNOWN_FILES;
-		filename=parseformat(format,r->id.value,r->id.index,getExtDesc(pos),extarray[pos],typeCount[pos],r->id.order,r->desc);
+		filename=parseformat(format,r->id.value,r->id.index,getExtDesc(pos),extarray[pos],unknownFile.typeCount[pos],r->id.order,r->desc);
 
 		sprintf(vFileext,RES_XML_UNKNOWN_PATH"%s",vDirExt,vDatFileName,filename);
-		AddToUnknownXml(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,typeCount[pos],r->flags,filename);
+		AddToUnknownXml(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,unknownFile.typeCount[pos],r->flags,filename);
 	} else {
 		/* set filename */
 		sprintf(vFileext,"%s/%s",vDirExt,r->path);

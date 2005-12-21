@@ -34,17 +34,10 @@ unknown.h: Princed Resources : Resource Handler headers
 #ifndef _RESOURCES_H_
 #define _RESOURCES_H_
 
-/* XML generation defines */
-
-#define RES_XML_UNKNOWN_PATH  "%s/unknown/%s/"
-#define RES_XML_UNKNOWN_FILES "%t%03n.%e"
-#define RES_XML_UNKNOWN_START "<?xml version=\"1.0\" ?>\n<resources version=\"generated\">\n <folder name=\"unknown\" path=\"%s\" file=\"%s\" palette=\"%d\" paletteindex=\"%s\">\n"
-#define RES_XML_UNKNOWN_ITEM  "  <item value=\"%d\" index=\"%s\" path=\"%s\" type=\"%s\" flags=\"0x%lx\">Unknown %s %d</item>\n"
-#define RES_XML_UNKNOWN_END   " </folder>\n</resources>\n"
 
 /* File extensions */
 
-#define RES_FILE_EXTENSIONS   {"raw","plv","bmp","wav","mid","bin","pal","pcs"}
+#define RES_FILE_EXTENSIONS   {"raw","plv","bmp","wav","mid","bin","pal","pcs"} /* TODO: move to common.h */
 
 /* Includes */
 #include "parse.h"
@@ -57,8 +50,9 @@ void getUpperFolder(char* aux, char* vFiledat);
 /* In case there are unknown resources it closes the unknown XML output */
 void endUnknownXml();
 
-/* Search files for the Import feature * TODO check this prototypes */
+/* Search files for the Import feature * TODO check this prototypes *
 int importDir(const char* directory, const char* vResFile, int pOption, const char* backupExtension,const char* vDirectory,FILE* output);
 int isntADatFile(const char* testFile, const char* vResFile);
+*/
 
 #endif
