@@ -127,8 +127,8 @@ void search_best_pattern(unsigned char *input, int inputSize,
 
 		if (pattern_len == MAX_PATTERN_SIZE) break;
 
-		/* if cLevel is 9 compression rate will be 5% better
-		 * and compression time will be 400% slower */
+		/* if cLevel is 6 or 7 (cHigh set) compression rate will be
+		 * 5% better and compression time will be 400% slower */
 		cHigh {
 			window_len--;
 			window++;
