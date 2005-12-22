@@ -180,16 +180,18 @@ int main (int argc, char **argv) {
 
 		switch (c) {
 		case -20: /* import from more than one directory */
-			fprintf(stderr,"You may select one directory to export all dat files or specifiy dat files.\nBoth actions are not allowed.\n");
+			fprintf(stderr,PR_TEXT_ERROR_ONE_DIR);
 			break;
 		case -21: /* import with recursive flag */
-			fprintf(stderr,"Recursive flag must not be set when you import files\n");
+			fprintf(stderr,PR_TEXT_ERROR_IMPORT_NORECURSE);
 			break;
 		case -22: /* no files selected */
-			fprintf(stderr,"No files selected\n");
+			fprintf(stderr,PR_TEXT_ERROR_NO_FILES_SEL);
 			break;
-		case 0:
-			unknownLogStart(NULL,optionflag,extension);
+		case 0: {
+			char  unknownFile[MAX_FILENAME_SIZE];
+			sprintf(unknownFile,"%s/" RES_XML_UNKNOWN_PATH "/" RES_XML_UNKNOWN_XML,dirName);
+			unknownLogStart(unknownFile,optionflag,extension);
 			while ((file=fileDirGetFile(&files,&datfile))) {
 				const char* dat;
 				if (datFileName)
@@ -220,7 +222,7 @@ int main (int argc, char **argv) {
 					fprintf(outputStream,PR_TEXT_TASK_CLASSIFY,file);
 					result=prClassifyDat(file);
 					if (result>0) {
-						fprintf(outputStream,"Result: Detected as %s (%d)\n",types[result],result);
+						fprintf(outputStream,PR_TEXT_RESULT_DETECTED,types[result],result);
 					} else {
 						fprintf(outputStream,PR_TEXT_RESULT,errors[-result],result);
 					}
@@ -230,9 +232,9 @@ int main (int argc, char **argv) {
 			}
 			fprintf(outputStream,"\n");
 			unknownLogStop();
-			break;
+			} break;
 		default:
-			fprintf(stderr,"Error, check the xml file\n");
+			fprintf(stderr,PR_TEXT_ERROR_XML_FILE);
 			break;
 		}
 	}

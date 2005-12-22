@@ -75,6 +75,7 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 /* Default Files */
 #define RES_XML_UNKNOWN_XML      "unknown.xml"
 #define RES_XML_RESOURC_XML      "resources.xml"
+#define RES_XML_UNKNOWN_PATH     "unknown"
 
 #define DEFAULT_BACKUP_EXTENSION "bak"
 

@@ -37,13 +37,14 @@ pr.h: Princed Resources : English language strings
 |                           Text Defines                        |
 \***************************************************************/
 
-#define PR_ABOUT                  "Princed resources (PR) "PR_VERSION" "OS"\n"PR_COPY"\n"PR_URL"\n\n"
+#define PR_ABOUT                  "Princed resources (PR) " PR_VERSION " " OS "\n" PR_COPY "\n" PR_URL "\n\n"
 
 #define PR_CGI_TEXT1              "Content-Type:text/html\n\nRunning as a cgi\n"
 #define PR_CGI_TEXT2              "Result: %02d type\n"
 
 #define PR_TEXT_RESULT            "Result: %s (%d)\n"
 #define PR_TEXT_RESULT_ERR        "Result: %d files with errors (%d)\n"
+#define PR_TEXT_RESULT_DETECTED   "Result: Detected as %s (%d)\n"
 
 #define PR_TEXT_FILE_NOT_FOUND    "Result: File or directory '%s' not found\n"
 
@@ -73,23 +74,32 @@ pr.h: Princed Resources : English language strings
 #define PR_TEXT_EXPORT_ERROR      "'%s' has errors, aborting...\n"
 #define PR_TEXT_EXPORT_BMP_WARN   "Warning: Extracted file may be corrupt\n"
 
+#define PR_TEXT_ERROR_IMPORT_NORECURSE "Recursive flag must not be set when you import files\n"
+#define PR_TEXT_ERROR_NO_FILES_SEL "No files selected\n"
+#define PR_TEXT_ERROR_ONE_DIR     "You may select one directory to export all dat files or specifiy dat files.\nBoth actions are not allowed.\n"
+#define PR_TEXT_ERROR_XML_FILE    "Error, check the xml file\n"
+
 /***************************************************************\
 |                        Text Output Arrays                     |
 \***************************************************************/
 
 #define PR_TEXT_ERRORS {\
-"Success",\
-"-1","-2","-3","-4","-5","-6","-7","-8","-9","-10",\
-"-11","-12","-13","-14","-15","-16","-17","-18","-19","-20"}
-
-				/*
-"Error accessing a file",\
-"Memory error in extraction",\
-"Invalid DAT file",\
-"XML Parsing error",\
-"Memory error in parsing",\
-"XML Attribute not recognized",\
-"XML File not found"}*/
+	"Success",\
+	"Extraction error",\
+	"Dat file not found",\
+	"Expected dat file, but a directory was given",\
+	"DAT file reading permission denied",\
+	"DAT file writing permission denied",\
+	"File not found",\
+	"Expected file, but a directory was given",\
+	"File reading permission denied",\
+	"File writing permission denied",\
+	"Invalid DAT file",\
+	"Memory error",\
+	"XML parsing attribute error",\
+	"Cannot open XML file",\
+	"XML parsing error",\
+	"-15","-16","-17","-18","-19","-20"}
 
 #define PR_TEXT_TYPES {\
 NULL,\
