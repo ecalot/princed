@@ -98,6 +98,7 @@ int   prImportDatOpt(const char* vDatFile, const char* vDirName,
       const char* backupExtension);
 
 /* Option functions */
+#include <stdio.h> /* FILE* */
 void  prSetOutput         (FILE* output);
 void  setCompressionLevel (int cl);
 

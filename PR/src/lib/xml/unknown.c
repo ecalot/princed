@@ -42,6 +42,7 @@ unknown.c: Princed Resources : Unknown resources handler
 #include "disk.h"
 #include "unknown.h"
 #include "memory.h"
+#include "parse.h" /* For the moment just testing */
 #include "stringformat.h"
 #include "translate.h"
 
@@ -59,6 +60,7 @@ static struct {
 	char* currentDat;
 	int optionflag;
 	unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
+	tTag* tree;
 } unknownFile;
 
 /***************************************************************\
@@ -87,6 +89,48 @@ static struct {
 	"\t\t<item value=\"%d\" index=\"%s\" path=\"%s\" type=\"%s\" flags=\"0x%lx\">Unknown %s %d</item>\n",\
 	           value,       index,       path,       type,       flags,          typedesc, count)
 
+
+/* tree module */
+void rec_tree(tTag* *t,const char* file) {
+	tTag* aux=*t;
+	tTag* aux2;
+	
+	if (*t && (*t)->file) {
+		if (equalsIgnoreCase((aux->file),file)) {
+			if (aux->child) {
+				*t=aux->child; /* the children are now replacing his parent */
+				if ((*t)->next) {
+					for(aux2=*t;aux2->next;aux2=aux2->next); /* go to the last child */
+				 	aux2->next=aux->next; /* and set the next siebling as the parent next siebling */
+				}
+				aux->next=NULL;
+				aux->child=NULL;
+				/* freeTag(aux); */
+			} else {
+				if (*t)	rec_tree(t,file);
+			}
+		} else {
+			if ((*t) && (*t)->next)
+				rec_tree(&((*t)->next),file);
+		}
+	}
+	
+	if ((*t) && (*t)->child)
+		rec_tree(&((*t)->child),file);
+
+}
+
+void unknown_deletetreefile(const char* file) {
+	printf("deleting file %s from tree\n",file);
+	showTag(0,unknownFile.tree);
+	if (unknownFile.tree)
+		rec_tree(&(unknownFile.tree->child),file);
+
+
+	showTag(0,unknownFile.tree);
+
+}
+
 /***************************************************************\
 |                          Semantic Layer                       |
 \***************************************************************/
@@ -102,6 +146,19 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 	unknownFile.backupExtension=strallocandcopy(backupExtension);
 	unknownFile.currentDat=NULL;
 
+	/* Read the previous file if exists */
+	{
+		int error;
+
+		unknownFile.tree=parseXmlFile(file,&error);
+		if (!error) {
+		/*	showTag(0,unknownFile.tree);*/
+		} else {
+			unknownFile.tree=NULL;
+			printf("Error parsing %s (code=%d)\n",file,error);
+		}
+	}
+	
 	/* Open the file */
 	if (!writeOpen(file,&unknownFile.fd,optionflag)) return -2; /* file not open */
 
@@ -130,23 +187,28 @@ int unknownLogStop () {
 	unknownFile.backupExtension=NULL;
 	unknownFile.fd=NULL;
 	for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
+	showTag(0,unknownFile.tree);
+	freeParsedStructure (&unknownFile.tree);
 
 	return 0; /* Ok */
 }
 
-int unknownLogAppend(const char* vFiledatWithPath,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledat,int optionflag,int count, unsigned long int flags,const char* filename) {
+int unknownLogAppend(const char* vFiledat,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledatWithPath,int optionflag,int count, unsigned long int flags,const char* filename) {
 	if (!unknownFile.fd) return -1; /* File not open, logging if off */
 
 	if (!unknownFile.currentDat) { /* this is the beginning of the file */
 		unknown_head();
-		unknown_folder(vFiledat,vFiledatWithPath,pal.value,translateInt2Ext(toLower(pal.index)));
+		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)));
 		unknownFile.currentDat=strallocandcopy(vFiledat);
+		/* TODO: move here the read-parsing-loading and write-opening */
+		unknown_deletetreefile(vFiledat);
 	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
 		int i;
 		unknown_folderclose(); 
-		unknown_folder(vFiledat,vFiledatWithPath,pal.value,translateInt2Ext(toLower(pal.index)));
+		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)));
 		freeAllocation(unknownFile.currentDat);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
+		unknown_deletetreefile(vFiledat);
 		for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
 	}
 

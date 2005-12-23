@@ -52,8 +52,6 @@ parse.c: Princed Resources : xml parsing functions
 #define XML_WASNT_TEXT 6
 #define XML_WAS_TAG 7
 
-extern FILE* outputStream;
-
 /****************************************************************\
 |                   Tag Tree Handling Functions                  |
 \****************************************************************/
@@ -444,13 +442,15 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 
 #ifdef IGNOREVERIFYDATTYPES
 
+extern FILE* outputStream;
+
 void showTag(int n,tTag* t) {
 	int a;
 	tTag* children;
 
 	for(a=0;a<n;a++) fprintf (outputStream,"  ");
 	if (t!=NULL) {
-		fprintf(outputStream,"%s (%s@%s)\n",t->tag,t->file,t->value);
+		fprintf(outputStream,"%s (%s@%s:%s#%s)\n",t->tag,t->file,t->value,t->index,t->order);
 		children=t->child;
 
 		while (children!=NULL) {
