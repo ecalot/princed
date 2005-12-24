@@ -36,7 +36,6 @@ parse.h: Princed Resources : xml handling functions headers
 
 const char* getExtDesc(int type);
 
-#define IGNOREVERIFYDATTYPES
 #ifdef IGNOREVERIFYDATTYPES
 #include "pr.h"
 void showTag(int n,tTag* t);

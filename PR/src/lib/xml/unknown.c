@@ -91,6 +91,49 @@ static struct {
 
 
 /* tree module */
+#define outputStream stdout
+
+void showTag(int n,tTag* t) {
+	int a;
+	tTag* children;
+	for(a=0;a<n;a++) fprintf (outputStream,"\t");
+	if (t!=NULL) {
+		fprintf(outputStream,"<%s",t->tag);
+
+#define FillAttr(a,b) if (a) fprintf(outputStream," %s=\"%s\"",b,a)
+
+	FillAttr(t->desc,"desc");
+	FillAttr(t->path,"path");
+	FillAttr(t->file,"file");
+	FillAttr(t->type,"type");
+	FillAttr(t->name,"name");
+	FillAttr(t->palette,"palette");
+	FillAttr(t->value,"value");
+	FillAttr(t->index,"index");
+	FillAttr(t->order,"order");
+	FillAttr(t->paletteindex,"paletteindex");
+	FillAttr(t->paletteorder,"paletteorder");
+	FillAttr(t->version,"version");
+	FillAttr(t->number,"number");
+	FillAttr(t->flags,"flags");
+
+#undef FillAttr
+
+		if ((children=t->child)) {
+			fprintf(outputStream,">\n");
+			while (children!=NULL) {
+				showTag(n+1,children);
+				children=children->next;
+			}
+			for(a=0;a<n;a++) fprintf (outputStream,"\t");
+			fprintf(outputStream,"</%s>\n",t->tag);
+		} else {
+			fprintf(outputStream," />\n");
+		}
+	}
+}
+
+
 void rec_tree(tTag* *t,const char* file) {
 	tTag* aux=*t;
 	tTag* aux2;
@@ -120,11 +163,11 @@ void rec_tree(tTag* *t,const char* file) {
 
 void unknown_deletetreefile(const char* file) {
 	printf("deleting file %s from tree\n",file);
-	showTag(0,unknownFile.tree);
+/*	showTag(0,unknownFile.tree);*/
 	if (unknownFile.tree)
 		rec_tree(&(unknownFile.tree->child),file);
 
-	showTag(0,unknownFile.tree);
+/*	showTag(0,unknownFile.tree);*/
 
 }
 
