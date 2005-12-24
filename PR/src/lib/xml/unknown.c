@@ -94,7 +94,7 @@ static struct {
 void rec_tree(tTag* *t,const char* file) {
 	tTag* aux=*t;
 	tTag* aux2;
-	
+
 	if (*t && (*t)->file) {
 		if (equalsIgnoreCase((aux->file),file)) {
 			if (aux->child) {
@@ -103,21 +103,19 @@ void rec_tree(tTag* *t,const char* file) {
 					for(aux2=*t;aux2->next;aux2=aux2->next); /* go to the last child */
 				 	aux2->next=aux->next; /* and set the next siebling as the parent next siebling */
 				}
-				aux->next=NULL;
 				aux->child=NULL;
-				/* freeTag(aux); */
 			} else {
-				if (*t)	rec_tree(t,file);
+				*t=aux->next;
 			}
+			aux->next=NULL;
+			/* freeTag(aux); */
+			if (*t) rec_tree(t,file);
 		} else {
-			if ((*t) && (*t)->next)
-				rec_tree(&((*t)->next),file);
+			if ((*t) && (*t)->next) rec_tree(&((*t)->next),file);
 		}
 	}
 	
-	if ((*t) && (*t)->child)
-		rec_tree(&((*t)->child),file);
-
+	if ((*t) && (*t)->child) rec_tree(&((*t)->child),file);
 }
 
 void unknown_deletetreefile(const char* file) {
@@ -125,7 +123,6 @@ void unknown_deletetreefile(const char* file) {
 	showTag(0,unknownFile.tree);
 	if (unknownFile.tree)
 		rec_tree(&(unknownFile.tree->child),file);
-
 
 	showTag(0,unknownFile.tree);
 
