@@ -91,6 +91,8 @@ int main (int argc, char **argv) {
 					if (hasFlag(import_flag|export_flag)) setFlag(help_flag);
 					setFlag(classify_flag);
 					break;
+				case 2:
+					setFlag(unknown_flag);
 				case 'x':
 				case 'e':
 					if (hasFlag(classify_flag|import_flag)) setFlag(help_flag);
@@ -135,9 +137,6 @@ int main (int argc, char **argv) {
 					break;
 				case 'v':
 					setFlag(verbose_flag);
-					break;
-				case 2:
-					setFlag(unknown_flag);
 				case -1:
 					break;
 				case 1:
@@ -190,8 +189,10 @@ int main (int argc, char **argv) {
 			break;
 		case 0: {
 			char  unknownFile[MAX_FILENAME_SIZE];
-			sprintf(unknownFile,"%s/" RES_XML_UNKNOWN_PATH "/" RES_XML_UNKNOWN_XML,dirName);
-			unknownLogStart(unknownFile,optionflag,extension);
+			if (hasFlag(export_flag)) {
+				sprintf(unknownFile,"%s/" RES_XML_UNKNOWN_PATH "/" RES_XML_UNKNOWN_XML,dirName);
+				unknownLogStart(unknownFile,optionflag,extension);
+			}
 			while ((file=fileDirGetFile(&files,&datfile))) {
 				const char* dat;
 				if (datFileName)
@@ -231,7 +232,7 @@ int main (int argc, char **argv) {
 				free(datfile);
 			}
 			fprintf(outputStream,"\n");
-			unknownLogStop();
+			if (hasFlag(export_flag)) unknownLogStop();
 			} break;
 		default:
 			fprintf(stderr,PR_TEXT_ERROR_XML_FILE);
