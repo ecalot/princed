@@ -33,6 +33,8 @@ input.h: Free Prince : Input devices handling
 #ifndef _INPUT_H_
 #define _INPUT_H_
 
+#include "common.h"
+
 typedef enum {none=0,quit,load,reload,passLevel,showUp,showLeft,showRight,showDown,showScreens,showMoreScreens,showVersion,showTime,addTime,takeTime,addLive,addHitPoint,gotoTitles,kill,resurrect,joystick,keyboard,featherWeight,addHitpoint,invert,blind,other,save,buttonPressed,pause}tAction;
 
 /*#define inputIgnoreCtrl(a)  (a&( ~(1<<1) ))*/
@@ -81,5 +83,9 @@ int inputDelay(tKey* key,int ticks);
 void inputStopTimer();
 void inputInitTimer();
 void inputPause();
+
+#ifdef DEBUG_POS
+void inputDebugSetTimer(int fps);
+#endif
 
 #endif

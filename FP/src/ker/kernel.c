@@ -37,11 +37,13 @@ kernel.c: FreePrince : Main Kernel
 #include "kernel.h"
 #include "maps.h"
 #include "object.h"
+#include "kid.h"
 #include "output.h"
 #include "resources.h"
 #include "room.h"
 #include "states.h" /* stateKidInLevel */
 #include "titles.h"
+#include "common.h"
 
 /*
  * Main game control function
@@ -71,7 +73,7 @@ int playgame(int optionflag,int level) {
 		
 		/*TODO: use a map.c function that reads this information and creates the kid*/
 		kid=objectCreate(30,1,DIR_RIGHT,stateKidInLevel(level),RES_IMG_ALL_KID,1,oKid);
-		outputDrawMessage(24,"LEVEL %d\n",level);
+		outputDrawMessage(24,"LEVEL %d",level);
 		
 		/* Game loop here */
 		
@@ -170,6 +172,10 @@ int playgame(int optionflag,int level) {
 					);
 					break;
 				case pause:
+					/* using to turn to interactive debug mode if compuled with the flag */
+#ifdef DEBUG_POS
+					inputDebugSetTimer(500);
+#endif
 					break;
 				case showMoreScreens:
 					outputDrawMessage(24,"S%d AL%d AR%d BL%d BR%d\n",

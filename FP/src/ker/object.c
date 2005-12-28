@@ -84,6 +84,10 @@ void objectDraw(tObject* object) {
 		object_getLocation(object,image),
 		58-stateGetBottom(object)+object->floor*TILE_H
 	);
+#ifdef DEBUG_POS
+	if (object->type==oKid)
+		outputDrawMessage(1,"kidPos: %d,%d",object_getLocation(object,image),stateGetBottom(object));
+#endif
 }
 
 /* event triggered when an object is moved */

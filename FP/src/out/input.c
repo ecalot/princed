@@ -33,6 +33,7 @@ input.c: FreePrince : Input interface
 
 #include <SDL/SDL.h>
 #include "input.h"
+#include "common.h"
 #include <stdio.h> /* only for the printf debug */
 
 tKey inputCreateKey() {
@@ -225,6 +226,14 @@ int inputGetEvent(tKey* key) {
 		case SDL_KEYUP:
 			editKey(key,event.key.keysym.sym,0);
 			break;
+#ifdef DEBUG_POS
+		case SDL_MOUSEBUTTONDOWN:
+			printf("apretaste un boton en (%d,%d)\n",event.button.x,event.button.y);
+			break;
+		case SDL_MOUSEBUTTONUP:
+			printf("levantaste el boton en (%d,%d)\n",event.button.x,event.button.y);
+			break;
+#endif
 		case SDL_USEREVENT:
 			return 1; /* A new time cicle has started! */
 		case SDL_QUIT:
@@ -251,6 +260,13 @@ Uint32 timer_callback(Uint32 interval, void *param)
 
 	return interval; /* Timer must raise an alarm again after 'interval' ms. */
 }
+
+#ifdef DEBUG_POS
+void inputDebugSetTimer(int fps) {
+	inputStopTimer();
+	timer=SDL_AddTimer(fps, timer_callback, NULL);
+}
+#endif
 
 void inputInitTimer()
 {

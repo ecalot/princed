@@ -34,6 +34,7 @@ kid.c: Free Prince : Kid object
 #include "room.h"
 #include <stdio.h> /* DEBUG printf */
 #include "states.h"
+#include "common.h"
 #include "output.h" /* outputDrawBitmap */
 #include "maps.h" /* mapGetRoom */
 
