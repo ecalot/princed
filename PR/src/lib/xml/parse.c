@@ -130,9 +130,9 @@ void freeTagStructure(tTag* t) {
 
 int attribFill(char* attr,char* val, tTag* t) {
 	/*
-		PR_RESULT_ERR_XML_ATTR: attribute mismatch
-		0: ok
-	*/
+	 * PR_RESULT_ERR_XML_ATTR  Attribute mismatch
+	 * PR_RESULT_SUCCESS       Ok
+	 */
 
 	if (equalsIgnoreCase(attr,"?")) {
 		free(val);
@@ -168,13 +168,13 @@ int attribFill(char* attr,char* val, tTag* t) {
 /* Parse text functions */
 int parseNext(char** pString, tTag* tag) {
 	/*
-	  PR_RESULT_ERR_XML_ATTR Attribute not recognized
-	  PR_RESULT_ERR_MEMORY No memory
-		PR_RESULT_ERR_XML_PARSING Parse error
-		0  if continue
-		XML_TAG_CLOSE  if tag end
-		XML_TAG_OPEN  if end
-	*/
+	 * PR_RESULT_ERR_XML_ATTR    Attribute not recognized
+	 * PR_RESULT_ERR_MEMORY      No memory
+	 * PR_RESULT_ERR_XML_PARSING Parse error
+	 * PR_RESULT_SUCCESS         If continue
+	 * XML_TAG_CLOSE             If tag end
+	 * XML_TAG_OPEN              If end
+	 */
 
 	char* start;
 	char* attribute;
@@ -275,14 +275,15 @@ int parseNext(char** pString, tTag* tag) {
 
 int getNextTag(char** pString, char** value) {
 	/*
-	  PR_RESULT_ERR_MEMORY No memory
-		PR_RESULT_ERR_XML_PARSING Parse error
-		XML_WAS_TAG               if next item is a tag (value allocated)
-		XML_WAS_CDATA   if it was a text (value allocated)
-		XML_WAS_CLOSER  if next item closes a tag (value allocated)
-		XML_WAS_EOD     end of document (value not allocated)
-		XML_WASNT_TEXT  if there was no text (value not allocated)
-	*/
+	 * PR_RESULT_ERR_MEMORY       No memory
+	 * PR_RESULT_ERR_XML_PARSING  Parse error
+	 * XML_WAS_TAG     if next item is a tag (value allocated)
+	 * XML_WAS_CDATA   if it was a text (value allocated)
+	 * XML_WAS_CLOSER  if next item closes a tag (value allocated)
+	 * XML_WAS_EOD     end of document (value not allocated)
+	 * XML_WASNT_TEXT  if there was no text (value not allocated)
+	 */
+
 	char* i=*pString;
 	int   result;
 	char* start;
@@ -340,11 +341,11 @@ int getNextTag(char** pString, char** value) {
 /* Parse Tree functions */
 tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 	/* *error
-		PR_RESULT_ERR_XML_ATTR Attribute not recognized
-	  PR_RESULT_ERR_MEMORY No memory
-		PR_RESULT_ERR_XML_PARSING Parse error
-		0 if the tag was parsed succesfully
-	*/
+	 * PR_RESULT_ERR_XML_ATTR    Attribute not recognized
+	 * PR_RESULT_ERR_MEMORY      No memory
+	 * PR_RESULT_ERR_XML_PARSING Parse error
+	 * PR_RESULT_SUCCESS         If the tag was parsed succesfully
+	 */
 
 	tTag* tag;
 	tTag* children=NULL;
@@ -357,12 +358,12 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 	while (!((*error)=parseNext(p, tag)));
 
 	if ((*error)<0) {freeTagStructure(tag);return NULL;} /* Fatal error */
-	/*	(*error) is
-			XML_TAG_CLOSE  if tag is closed in the same openning
-			XML_TAG_OPEN  if tag remains open
-	*/
+	/* (*error) is
+	 * XML_TAG_CLOSE  If tag is closed in the same openning
+	 * XML_TAG_OPEN   If tag remains open
+	 */
 	if ((*error)==XML_TAG_CLOSE) {
-		*error=0; /* No errors, end of the tag in the same tag <tag /> */
+		*error=PR_RESULT_SUCCESS; /* No errors, end of the tag in the same tag <tag /> */
 		return tag;
 	}
 
@@ -403,13 +404,13 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 	while (1) {
 		(*error)=getNextTag(p, &value);
 		if ((*error)<0) return NULL; /* Fatal error */
-		/*	(*error)
-				XML_WAS_CDATA   if it was a text
-				XML_WAS_CLOSER  if next item closes a tag
-				XML_WAS_EOD     end of document
-				XML_WASNT_TEXT  if there was no text
-				XML_WAS_TAG     if next item is a tag
-		*/
+		/* (*error)
+		 * XML_WAS_CDATA   If it was a text
+		 * XML_WAS_CLOSER  If next item closes a tag
+		 * XML_WAS_EOD     End of document
+		 * XML_WASNT_TEXT  If there was no text
+		 * XML_WAS_TAG     If next item is a tag
+		 */
 		result=(*error);
 		switch (result) {
 			case XML_WAS_TAG:
@@ -466,12 +467,13 @@ void showTag(int n,tTag* t) {
 
 tTag* parseXmlFile(const char* vFile,int* error) {
 	/* error may take the following values:
-		PR_RESULT_ERR_XML_PARSING Parse error
-		PR_RESULT_ERR_MEMORY No memory
-		PR_RESULT_ERR_XML_ATTR Attribute not recognized
-		PR_RESULT_ERR_XML_FILE File not found
-		0  no errors
-	*/
+	 * PR_RESULT_ERR_XML_PARSING Parse error
+	 * PR_RESULT_ERR_MEMORY      No memory
+	 * PR_RESULT_ERR_XML_ATTR    Attribute not recognized
+	 * PR_RESULT_ERR_XML_FILE    File not found
+	 * PR_RESULT_SUCCESS         No errors
+	 */
+
 	char* p;
 	char* l;
 	char* value=NULL;
@@ -574,7 +576,7 @@ tTag* resourceTreeGetChild(tTag* whereAmI) {
 	return whereAmI->child;
 }
 
-int   resourceTreeGetInfo (tTag* whereAmI,	char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number) {
+int   resourceTreeGetInfo (tTag* whereAmI, char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number) {
 	if (whereAmI==NULL) return 0;
 	*tag=whereAmI->tag;
 	*desc=whereAmI->desc;
