@@ -57,7 +57,7 @@ output.c: Free Prince : Output Devices Handler
 
 #ifdef OUTPUT_BIGPIXELS
 #define putpixel(surface,x,y,pixel) putbigpixel(surface,x,y,pixel)
-#define transformSize(x) (x<1)
+#define transformSize(x) (x<<1)
 #else
 #define putpixel(surface,x,y,pixel) putsinglepixel(surface,x,y,pixel)
 #define transformSize(x) (x)
