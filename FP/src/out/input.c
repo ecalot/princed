@@ -228,10 +228,10 @@ int inputGetEvent(tKey* key) {
 			break;
 #ifdef DEBUG_POS
 		case SDL_MOUSEBUTTONDOWN:
-			printf("apretaste un boton en (%d,%d)\n",event.button.x,event.button.y);
+			printf("button pressed (%d,%d)\n",event.button.x,event.button.y);
 			break;
 		case SDL_MOUSEBUTTONUP:
-			printf("levantaste el boton en (%d,%d)\n",event.button.x,event.button.y);
+			printf("button released (%d,%d)\n",event.button.x,event.button.y);
 			break;
 #endif
 		case SDL_USEREVENT:
