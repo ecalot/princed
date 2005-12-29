@@ -90,7 +90,7 @@ static struct {
 	           value,       index,       path,       type,       flags,          typedesc, count)
 
 
-/* tree module */
+/* tree module, TODO send to other module */
 #define outputStream stdout
 
 void showTag(int n,tTag* t) {
@@ -133,6 +133,7 @@ void showTag(int n,tTag* t) {
 	}
 }
 
+/* file deletion */
 
 void rec_tree(tTag* *t,const char* file) {
 	tTag* aux=*t;
@@ -169,6 +170,36 @@ void unknown_deletetreefile(const char* file) {
 
 /*	showTag(0,unknownFile.tree);*/
 
+}
+
+/* inheritance fixing */
+#define TotalInheritance(a) if (equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
+
+void rec_tree_fix(tTag* parent,tTag* child) {
+	if (parent) {
+		TotalInheritance(palette);
+		TotalInheritance(paletteindex);
+		TotalInheritance(paletteorder);
+		TotalInheritance(type);
+		TotalInheritance(file);
+		TotalInheritance(index);
+		TotalInheritance(order);
+		TotalInheritance(flags);
+		printf("t='%s' child='%s'\n",parent->path,child->path);
+	}
+	
+	if (child->next) rec_tree_fix(parent,child->next);
+	if (child->child) rec_tree_fix(child,child->child);
+}
+
+void unknown_fixtreeinheritances() {
+	printf("fixind inheritances in tree\n");
+	if (unknownFile.tree) {
+		rec_tree_fix(NULL,unknownFile.tree);
+		
+		freeAllocation(unknownFile.tree->path);
+		unknownFile.tree->path=NULL;		
+	}
 }
 
 /***************************************************************\
@@ -242,6 +273,7 @@ int unknownLogAppend(const char* vFiledat,tResourceId id,const char* ext,tResour
 		unknownFile.currentDat=strallocandcopy(vFiledat);
 		/* TODO: move here the read-parsing-loading and write-opening */
 		unknown_deletetreefile(vFiledat);
+		unknown_fixtreeinheritances();
 	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
 		int i;
 		unknown_folderclose(); 
