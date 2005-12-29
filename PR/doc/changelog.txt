@@ -169,7 +169,7 @@ Versions:
     equivalences
   + Inverted pop2 index names
   - Add parsing feature @400:shape#second
-  x Fix the language support
+  - Fix the language support
   - Finished abstarcting resources.c and renamed to unknown.c
   - Merged all generated unknown.xml in .. for each extract
  * PR v1.3 (future plans)
