@@ -54,29 +54,29 @@ unknown.c: Princed Resources : Unknown resources handler
 
 #define RES_XML_UNKNOWN_FILES "%t%03n.%e"
 
-static struct {
-	FILE* fd;
-	char* backupExtension;
-	char* currentDat;
-	int optionflag;
-	unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
-	tTag* tree;
-	tTag* folderFirst;
-	tTag* folderCursor;
-	tTag* itemCursor;
-} unknownFile;
-
-/***************************************************************\
-|                        Syntactic Layer                        |
-\***************************************************************/
-
 #define XML_HEADER \
 	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
 	"<?xml version=\"1.0\" ?>\n"
 
+static struct {
+	char*        backupExtension;
+	char*        currentDat;
+	FILE*        fd;
+	tTag*        folderCursor;
+	tTag*        folderFirst;
+	tTag*        itemCursor;
+	tTag*        tree;
+	unsigned int optionflag;
+	unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
+} unknownFile;
+
+/***************************************************************\
+|                           Tree Layer                          |
+\***************************************************************/
+
 void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex) {
-	tTag* folder=malloc(sizeof(tTag));	
 	char number[10];
+	tTag* folder=malloc(sizeof(tTag));	
 
 	memset(folder,0,sizeof(tTag));
 	sprintf(number,"%d",palette);
@@ -97,8 +97,8 @@ void unknown_folder(const char* path, const char* file, int palette, const char*
 }
 
 void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count) {
-	tTag* item=malloc(sizeof(tTag));	
 	char aux[100];
+	tTag* item=malloc(sizeof(tTag));	
 
 	memset(item,0,sizeof(tTag));
 	sprintf(aux,"%d",value);
@@ -118,13 +118,12 @@ void unknown_item(int value,const char* index,const char* path,const char* type,
 		unknownFile.itemCursor->next=item;
 	}
 	unknownFile.itemCursor=item;
-
 }
 
-/* tree module, TODO send to other module */
+/* memory tree --> xml, TODO send to other module */
 #define outputStream unknownFile.fd
 
-void showTag(int n,tTag* t) {
+void generateXML(int n,tTag* t) {
 	int a;
 	tTag* children;
 
@@ -155,7 +154,7 @@ void showTag(int n,tTag* t) {
 		if ((children=t->child)) {
 			fprintf(outputStream,">\n");
 			while (children!=NULL) {
-				showTag(n+1,children);
+				generateXML(n+1,children);
 				children=children->next;
 			}
 			for(a=0;a<n;a++) fprintf (outputStream,"\t");
@@ -248,11 +247,11 @@ void unknown_fixtreeinheritances() {
 }
 
 /***************************************************************\
-|                          Semantic Layer                       |
+|                           Logging Layer                       |
 \***************************************************************/
 
 int unknownLogStart (const char* file,int optionflag, const char* backupExtension) {
-	if (unknownFile.fd) return -1; /* File already open */
+	if (unknownFile.fd) return PR_RESULT_ERR_XML_ALREADY_OPEN; /* File already open */
 
 	/* Use default filename if file is NULL */
 	if (!file) file=RES_XML_UNKNOWN_XML;
@@ -269,11 +268,7 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 		unknownFile.folderFirst=NULL;
 		unknownFile.folderCursor=NULL;
 		unknownFile.tree=parseXmlFile(file,&error);
-		if (!error) {
-			/*printf("initial parsed tree");showTag(0,unknownFile.tree);*/
-		/*	showTag(0,unknownFile.tree);*/
-		} else {
-			/*printf("Error parsing %s (code=%d)\n",file,error);*/
+		if (error) {
 			unknownFile.tree=malloc(sizeof(tTag));
 			memset(unknownFile.tree,0,sizeof(tTag));
 			unknownFile.tree->version=strallocandcopy("generated");
@@ -282,30 +277,20 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 	}
 	
 	/* Open the file */
-	if (!writeOpen(file,&unknownFile.fd,optionflag)) return -2; /* file not open */
+	if (!writeOpen(file,&unknownFile.fd,optionflag)) return PR_RESULT_ERR_XML_FILE; /* file not open */
 
-	return 0; /* Ok */
+	return PR_RESULT_SUCCESS; /* Ok */
 }
 
 int unknownLogStop () {
 	int i;
 	tTag* t;
 
-	if (!unknownFile.fd) return -1; /* File not open */
+	if (!unknownFile.fd) return PR_RESULT_ERR_XML_NOT_OPEN; /* File not open */
 
-	/* close a folder if it is open */
-	if (unknownFile.currentDat) { /* there is a folder open */
-		/*unknown_folderclose();
-		unknown_foot(); */
-	} else {
-		/*unknown_emptyfile();*/
-	}
-
-	/*printf("parsed tree with files deleted");showTag(0,unknownFile.tree);*/
 	/* it is time to fix the inheritances */
 	unknown_fixtreeinheritances();
 	
-	/*printf("parsed tree with files and inheritance deleted");showTag(0,unknownFile.tree);*/
 	/* now we'll add the new generated part of the tree at the end of the second level (resources id the first) */
 	if (unknownFile.tree) {
 		if (unknownFile.tree->child) {
@@ -316,13 +301,15 @@ int unknownLogStop () {
 		}
 	}
 
-	/* show the new generated tree */
-	showTag(0,unknownFile.tree);
+	/* TODO: create common factor tree reducing function */
+	
+	/* generate the xml file */
+	generateXML(0,unknownFile.tree);
 
 	/* it's time to free the tree */
 	freeParsedStructure (&unknownFile.tree);
 	
-	/* Close the file */
+	/* and close the file */
 	writeCloseOk(unknownFile.fd,unknownFile.optionflag,unknownFile.backupExtension);
 
 	/* Free structures */
@@ -331,23 +318,20 @@ int unknownLogStop () {
 	unknownFile.backupExtension=NULL;
 	unknownFile.fd=NULL;
 	for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
-	
 
-	return 0; /* Ok */
+	return PR_RESULT_SUCCESS; /* Ok */
 }
 
 int unknownLogAppend(const char* vFiledat,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledatWithPath,int optionflag,int count, unsigned long int flags,const char* filename) {
-	if (!unknownFile.fd) return -1; /* File not open, logging if off */
+	if (!unknownFile.fd) return PR_RESULT_ERR_XML_NOT_OPEN; /* File not open, logging is off, just a warning */
 
 	if (!unknownFile.currentDat) { /* this is the beginning of the file */
-		/*unknown_head();*/
 		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)));
 		unknownFile.currentDat=strallocandcopy(vFiledat);
 		/* TODO: move here the read-parsing-loading and write-opening */
 		unknown_deletetreefile(vFiledat);
 	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
 		int i;
-		/*unknown_folderclose(); */
 		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)));
 		freeAllocation(unknownFile.currentDat);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
@@ -357,7 +341,7 @@ int unknownLogAppend(const char* vFiledat,tResourceId id,const char* ext,tResour
 
 	unknown_item(id.value,translateInt2Ext(toLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count);
 
-	return 0;
+	return PR_RESULT_SUCCESS;
 }
 
 /***************************************************************\
