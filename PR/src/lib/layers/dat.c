@@ -79,7 +79,7 @@ int checkSum(const unsigned char* data,int size) {
 /* private functions */
 /* todo: move to datindex.c */
 
-#define toLower(a) (('A'<=(a)&&(a)<='Z')?(a)|0x20:(a)) /* TODO: move to memory.c and improve str5lowercpy */
+#define toLower(a) (('A'<=(a)&&(a)<='Z')?(a)|0x20:(a))
 #define toUpper(a) (('a'<=(a)&&(a)<='z')?(a)&0xDF:(a))
 
 /* the cursor get functions */
@@ -396,8 +396,6 @@ int mReadFileInDatFileId(tResource* res) {
 int mReadFileInDatFile(tResource* res, int k) {
 	if (!dat_cursorMove(&readIndexCursor,k)) return 0; /* 0 means out of range */
 	dat_readRes(res);
-	
-	if (res->id.order) return 1; /* TODO: check */
 	return 1;
 }
 
