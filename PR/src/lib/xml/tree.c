@@ -61,11 +61,18 @@ static struct {
 	int optionflag;
 	unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
 	tTag* tree;
+	tTag* folderFirst;
+	tTag* folderCursor;
+	tTag* itemCursor;
 } unknownFile;
 
 /***************************************************************\
 |                        Syntactic Layer                        |
 \***************************************************************/
+
+#define XML_HEADER \
+	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
+	"<?xml version=\"1.0\" ?>\n"
 
 #define unknown_emptyfile() /* TODO: don't affect this file if empty */  fprintf(unknownFile.fd,\
 	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
@@ -74,21 +81,50 @@ static struct {
 #define unknown_folderclose() fprintf(unknownFile.fd,\
 	"\t</folder>\n\n")
 
-#define unknown_folder(path, file, palette, paletteindex) fprintf(unknownFile.fd,\
-	"\t<folder name=\"unknown\" path=\"%s\" file=\"%s\" palette=\"%d\" paletteindex=\"%s\">\n",\
-	                            path,       file,       palette,       paletteindex)
+void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex) {
+	tTag* folder=malloc(sizeof(tTag));	
+	char number[10];
 
-#define unknown_foot() fprintf(unknownFile.fd,\
-	"</resources>\n")
+	memset(folder,0,sizeof(tTag));
+	sprintf(number,"%d",palette);
+	folder->name=strallocandcopy("unknown");
+	folder->path=strallocandcopy(path);
+	folder->file=strallocandcopy(file);
+	folder->palette=strallocandcopy(number);
+	folder->paletteindex=strallocandcopy(paletteindex);
+	
+	if (!unknownFile.folderFirst) {
+		unknownFile.folderFirst=folder;
+	} else {
+		unknownFile.folderCursor->next=folder;
+	}
+	unknownFile.folderCursor=folder;
+	unknownFile.itemCursor=NULL;
+}
 
-#define unknown_head() fprintf(unknownFile.fd,\
-	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
-	"<?xml version=\"1.0\" ?>\n<resources version=\"generated\">\n")
+void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count) {
+	tTag* item=malloc(sizeof(tTag));	
+	char aux[100];
 
-#define unknown_item(value,index,path,type,flags,typedesc,count) fprintf(unknownFile.fd,\
-	"\t\t<item value=\"%d\" index=\"%s\" path=\"%s\" type=\"%s\" flags=\"0x%lx\">Unknown %s %d</item>\n",\
-	           value,       index,       path,       type,       flags,          typedesc, count)
+	memset(item,0,sizeof(tTag));
+	sprintf(aux,"%d",value);
+	item->value=strallocandcopy(aux);
+	item->index=strallocandcopy(index);
+	item->path=strallocandcopy(path);
+	item->type=strallocandcopy(type);
+	sprintf(aux,"0x%lx",flags);
+	item->flags=strallocandcopy(aux);
+	sprintf(aux,"Unknown %s %d",typedesc, count);
+	item->flags=strallocandcopy(aux);
+	
+	if (!unknownFile.itemCursor) {
+		unknownFile.folderCursor->child=item;
+	} else {
+		unknownFile.itemCursor->next=item;
+	}
+	unknownFile.itemCursor=item;
 
+}
 
 /* tree module, TODO send to other module */
 #define outputStream stdout
@@ -96,6 +132,8 @@ static struct {
 void showTag(int n,tTag* t) {
 	int a;
 	tTag* children;
+
+	if (!n) printf(XML_HEADER);
 	for(a=0;a<n;a++) fprintf (outputStream,"\t");
 	if (t!=NULL) {
 		fprintf(outputStream,"<%s",t->tag);
@@ -176,6 +214,9 @@ void unknown_deletetreefile(const char* file) {
 #define TotalInheritance(a) if (parent->a&&child->a&&equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
 
 void rec_tree_fix(tTag* parent,tTag* child) {
+	if (child->next) rec_tree_fix(parent,child->next);
+	if (child->child) rec_tree_fix(child,child->child);
+
 	if (parent) {
 		TotalInheritance(palette);
 		TotalInheritance(paletteindex);
@@ -185,11 +226,20 @@ void rec_tree_fix(tTag* parent,tTag* child) {
 		TotalInheritance(index);
 		TotalInheritance(order);
 		TotalInheritance(flags);
-		printf("t='%s' child='%s'\n",parent->path,child->path);
+
+		/* partial */
+		if ((parent->path!=NULL)&&(child->path!=NULL)) {
+			char *p,*c,*aux;
+			
+			for (p=parent->path,c=child->path;*p&&*c&&*p==*c;p++,c++);
+			if (*c=='/') c++;
+			aux=strallocandcopy(c);
+			free(child->path);
+			child->path=aux;
+		}
+
 	}
 	
-	if (child->next) rec_tree_fix(parent,child->next);
-	if (child->child) rec_tree_fix(child,child->child);
 }
 
 void unknown_fixtreeinheritances() {
@@ -221,12 +271,17 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 	{
 		int error;
 
+		unknownFile.folderFirst=NULL;
+		unknownFile.folderCursor=NULL;
 		unknownFile.tree=parseXmlFile(file,&error);
 		if (!error) {
+			printf("initial parsed tree");showTag(0,unknownFile.tree);
 		/*	showTag(0,unknownFile.tree);*/
 		} else {
-			unknownFile.tree=NULL;
 			printf("Error parsing %s (code=%d)\n",file,error);
+			unknownFile.tree=malloc(sizeof(tTag));
+			memset(unknownFile.tree,0,sizeof(tTag));
+			unknownFile.tree->version=strallocandcopy("generated");
 		}
 	}
 	
@@ -238,15 +293,16 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 
 int unknownLogStop () {
 	int i;
+	tTag* t;
 
 	if (!unknownFile.fd) return -1; /* File not open */
 
 	/* close a folder if it is open */
 	if (unknownFile.currentDat) { /* there is a folder open */
-		unknown_folderclose();
-		unknown_foot(); 
+		/*unknown_folderclose();
+		unknown_foot(); */
 	} else {
-		unknown_emptyfile();
+		/*unknown_emptyfile();*/
 	}
 	
 	/* Close the file */
@@ -258,7 +314,22 @@ int unknownLogStop () {
 	unknownFile.backupExtension=NULL;
 	unknownFile.fd=NULL;
 	for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
-	showTag(0,unknownFile.tree);
+	
+	printf("parsed tree with files deleted");showTag(0,unknownFile.tree);
+	/* it is time to fix the inheritances */
+	unknown_fixtreeinheritances();
+	
+	printf("parsed tree with files and inheritance deleted");showTag(0,unknownFile.tree);
+	/* now we'll add the new generated part of the tree at the end of the second level (resources id the first) */
+	if (unknownFile.tree) {
+		for (t=unknownFile.tree->child;t->next;t=t->next);
+		t->next=unknownFile.folderFirst; /* the first folder of the new tree */
+	}
+
+	/* show the new generated tree */
+	printf("final tree");showTag(0,unknownFile.tree);
+
+	/* it's time to free the tree */
 	freeParsedStructure (&unknownFile.tree);
 
 	return 0; /* Ok */
@@ -268,15 +339,14 @@ int unknownLogAppend(const char* vFiledat,tResourceId id,const char* ext,tResour
 	if (!unknownFile.fd) return -1; /* File not open, logging if off */
 
 	if (!unknownFile.currentDat) { /* this is the beginning of the file */
-		unknown_head();
+		/*unknown_head();*/
 		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)));
 		unknownFile.currentDat=strallocandcopy(vFiledat);
 		/* TODO: move here the read-parsing-loading and write-opening */
 		unknown_deletetreefile(vFiledat);
-		unknown_fixtreeinheritances();
 	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
 		int i;
-		unknown_folderclose(); 
+		/*unknown_folderclose(); */
 		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)));
 		freeAllocation(unknownFile.currentDat);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
