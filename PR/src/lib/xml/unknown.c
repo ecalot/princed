@@ -173,7 +173,7 @@ void unknown_deletetreefile(const char* file) {
 }
 
 /* inheritance fixing */
-#define TotalInheritance(a) if (equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
+#define TotalInheritance(a) if (parent->a&&child->a&&equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
 
 void rec_tree_fix(tTag* parent,tTag* child) {
 	if (parent) {
