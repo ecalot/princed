@@ -87,6 +87,7 @@ void unknown_folder(const char* path, const char* file, int palette, const char*
 
 	memset(folder,0,sizeof(tTag));
 	sprintf(number,"%d",palette);
+	folder->tag=strallocandcopy("folder");
 	folder->name=strallocandcopy("unknown");
 	folder->path=strallocandcopy(path);
 	folder->file=strallocandcopy(file);
@@ -108,6 +109,7 @@ void unknown_item(int value,const char* index,const char* path,const char* type,
 
 	memset(item,0,sizeof(tTag));
 	sprintf(aux,"%d",value);
+	item->tag=strallocandcopy("item");
 	item->value=strallocandcopy(aux);
 	item->index=strallocandcopy(index);
 	item->path=strallocandcopy(path);
@@ -282,6 +284,7 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 			unknownFile.tree=malloc(sizeof(tTag));
 			memset(unknownFile.tree,0,sizeof(tTag));
 			unknownFile.tree->version=strallocandcopy("generated");
+			unknownFile.tree->tag=strallocandcopy("resources");
 		}
 	}
 	
