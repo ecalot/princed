@@ -74,13 +74,6 @@ static struct {
 	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
 	"<?xml version=\"1.0\" ?>\n"
 
-#define unknown_emptyfile() /* TODO: don't affect this file if empty */  fprintf(unknownFile.fd,\
-	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
-	"<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<resources version=\"generated\" />\n") 
-
-#define unknown_folderclose() fprintf(unknownFile.fd,\
-	"\t</folder>\n\n")
-
 void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex) {
 	tTag* folder=malloc(sizeof(tTag));	
 	char number[10];
@@ -129,20 +122,20 @@ void unknown_item(int value,const char* index,const char* path,const char* type,
 }
 
 /* tree module, TODO send to other module */
-#define outputStream stdout
+#define outputStream unknownFile.fd
 
 void showTag(int n,tTag* t) {
 	int a;
 	tTag* children;
 
-	if (!n) printf(XML_HEADER);
+	if (!n) fprintf(outputStream,XML_HEADER);
 	for(a=0;a<n;a++) fprintf (outputStream,"\t");
 	if (t!=NULL) {
 		fprintf(outputStream,"<%s",t->tag);
 
 #define FillAttr(a,b) if (a) fprintf(outputStream," %s=\"%s\"",b,a)
 
-	FillAttr(t->desc,"desc");
+	if (t->child) FillAttr(t->desc,"desc");
 	FillAttr(t->path,"path");
 	FillAttr(t->file,"file");
 	FillAttr(t->type,"type");
@@ -168,7 +161,11 @@ void showTag(int n,tTag* t) {
 			for(a=0;a<n;a++) fprintf (outputStream,"\t");
 			fprintf(outputStream,"</%s>\n",t->tag);
 		} else {
-			fprintf(outputStream," />\n");
+			if (t->desc) {
+				fprintf(outputStream,">%s</%s>\n",t->desc,t->tag);
+			} else {
+				fprintf(outputStream," />\n\n");
+			}
 		}
 	}
 }
@@ -203,13 +200,9 @@ void rec_tree(tTag* *t,const char* file) {
 }
 
 void unknown_deletetreefile(const char* file) {
-	printf("deleting file %s from tree\n",file);
-/*	showTag(0,unknownFile.tree);*/
+	/*printf("deleting file %s from tree\n",file);*/
 	if (unknownFile.tree)
 		rec_tree(&(unknownFile.tree->child),file);
-
-/*	showTag(0,unknownFile.tree);*/
-
 }
 
 /* inheritance fixing */
@@ -245,7 +238,7 @@ void rec_tree_fix(tTag* parent,tTag* child) {
 }
 
 void unknown_fixtreeinheritances() {
-	printf("fixind inheritances in tree\n");
+	/*printf("fixing inheritances in tree\n");*/
 	if (unknownFile.tree) {
 		rec_tree_fix(NULL,unknownFile.tree);
 		
@@ -277,10 +270,10 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 		unknownFile.folderCursor=NULL;
 		unknownFile.tree=parseXmlFile(file,&error);
 		if (!error) {
-			printf("initial parsed tree");showTag(0,unknownFile.tree);
+			/*printf("initial parsed tree");showTag(0,unknownFile.tree);*/
 		/*	showTag(0,unknownFile.tree);*/
 		} else {
-			printf("Error parsing %s (code=%d)\n",file,error);
+			/*printf("Error parsing %s (code=%d)\n",file,error);*/
 			unknownFile.tree=malloc(sizeof(tTag));
 			memset(unknownFile.tree,0,sizeof(tTag));
 			unknownFile.tree->version=strallocandcopy("generated");
@@ -307,22 +300,12 @@ int unknownLogStop () {
 	} else {
 		/*unknown_emptyfile();*/
 	}
-	
-	/* Close the file */
-	writeCloseOk(unknownFile.fd,unknownFile.optionflag,unknownFile.backupExtension);
 
-	/* Free structures */
-	freeAllocation(unknownFile.currentDat);
-	freeAllocation(unknownFile.backupExtension);
-	unknownFile.backupExtension=NULL;
-	unknownFile.fd=NULL;
-	for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
-	
-	printf("parsed tree with files deleted");showTag(0,unknownFile.tree);
+	/*printf("parsed tree with files deleted");showTag(0,unknownFile.tree);*/
 	/* it is time to fix the inheritances */
 	unknown_fixtreeinheritances();
 	
-	printf("parsed tree with files and inheritance deleted");showTag(0,unknownFile.tree);
+	/*printf("parsed tree with files and inheritance deleted");showTag(0,unknownFile.tree);*/
 	/* now we'll add the new generated part of the tree at the end of the second level (resources id the first) */
 	if (unknownFile.tree) {
 		if (unknownFile.tree->child) {
@@ -334,10 +317,21 @@ int unknownLogStop () {
 	}
 
 	/* show the new generated tree */
-	printf("final tree");showTag(0,unknownFile.tree);
+	showTag(0,unknownFile.tree);
 
 	/* it's time to free the tree */
 	freeParsedStructure (&unknownFile.tree);
+	
+	/* Close the file */
+	writeCloseOk(unknownFile.fd,unknownFile.optionflag,unknownFile.backupExtension);
+
+	/* Free structures */
+	freeAllocation(unknownFile.currentDat);
+	freeAllocation(unknownFile.backupExtension);
+	unknownFile.backupExtension=NULL;
+	unknownFile.fd=NULL;
+	for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
+	
 
 	return 0; /* Ok */
 }
