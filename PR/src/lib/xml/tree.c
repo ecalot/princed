@@ -117,7 +117,7 @@ void unknown_item(int value,const char* index,const char* path,const char* type,
 	sprintf(aux,"0x%lx",flags);
 	item->flags=strallocandcopy(aux);
 	sprintf(aux,"Unknown %s %d",typedesc, count);
-	item->flags=strallocandcopy(aux);
+	item->desc=strallocandcopy(aux);
 	
 	if (!unknownFile.itemCursor) {
 		unknownFile.folderCursor->child=item;
@@ -325,8 +325,12 @@ int unknownLogStop () {
 	printf("parsed tree with files and inheritance deleted");showTag(0,unknownFile.tree);
 	/* now we'll add the new generated part of the tree at the end of the second level (resources id the first) */
 	if (unknownFile.tree) {
-		for (t=unknownFile.tree->child;t->next;t=t->next);
-		t->next=unknownFile.folderFirst; /* the first folder of the new tree */
+		if (unknownFile.tree->child) {
+			for (t=unknownFile.tree->child;t->next;t=t->next);
+			t->next=unknownFile.folderFirst; /* the first folder of the new tree */
+		} else {
+			unknownFile.tree->child=unknownFile.folderFirst; /* the first folder of the new tree */
+		}
 	}
 
 	/* show the new generated tree */
