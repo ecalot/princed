@@ -38,14 +38,13 @@ unknown.c: Princed Resources : Unknown resources handler
 
 /* Includes */
 #include <stdio.h>
+#include "tree.h"
 #include "common.h"
 #include "disk.h"
 #include "unknown.h"
 #include "memory.h"
-#include "parse.h" /* For the moment just testing */
 #include "stringformat.h"
 #include "translate.h"
-#include "tree.h"
 
 /***************************************************************\
 |                     Unknown.xml primitives                    |
@@ -54,12 +53,10 @@ unknown.c: Princed Resources : Unknown resources handler
 /* XML generation defines */
 
 #define RES_XML_UNKNOWN_FILES "%t%03n.%e"
+#define XML_TAG_RESOURCES     "resources"
+#define XML_ATTRV_VERSION     "generated"
 
-#define XML_HEADER \
-	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
-	"<?xml version=\"1.0\" ?>\n"
-
- struct {
+struct {
 	char*        backupExtension;
 	char*        currentDat;
 	FILE*        fd;
@@ -96,8 +93,8 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 		if (error) {
 			unknownFile.tree=malloc(sizeof(tTag));
 			memset(unknownFile.tree,0,sizeof(tTag));
-			unknownFile.tree->version=strallocandcopy("generated");
-			unknownFile.tree->tag=strallocandcopy("resources");
+			unknownFile.tree->version=strallocandcopy(XML_ATTRV_VERSION);
+			unknownFile.tree->tag=strallocandcopy(XML_TAG_RESOURCES);
 		}
 	}
 	

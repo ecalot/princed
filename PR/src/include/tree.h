@@ -35,7 +35,6 @@ unknown.h: Princed Resources : Unknown.xml generator headers
 #define _TREE_H_
 
 /* Includes */
-#include "parse.h"
 #include "reslist.h"
 
 void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex); 

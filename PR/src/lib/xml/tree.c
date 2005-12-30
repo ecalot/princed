@@ -19,10 +19,10 @@
 */
 
 /*
-unknown.c: Princed Resources : Unknown resources handler
-¯¯¯¯¯¯¯¯¯¯
+tree.c: Princed Resources : Tree handling routines
+¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
-  Created: 24 Aug 2003
+  Created: 28 Dec 2005
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
   Version: 1.01 (2003-Oct-23)
@@ -39,20 +39,14 @@ unknown.c: Princed Resources : Unknown resources handler
 /* Includes */
 #include <stdio.h>
 #include "common.h"
-#include "disk.h"
-#include "unknown.h"
 #include "memory.h"
-#include "parse.h" /* For the moment just testing */
-#include "stringformat.h"
-#include "translate.h"
+#include "parse.h" /* RES_TYPECOUNT */
 
 /***************************************************************\
 |                     Unknown.xml primitives                    |
 \***************************************************************/
 
 /* XML generation defines */
-
-#define RES_XML_UNKNOWN_FILES "%t%03n.%e"
 
 #define XML_HEADER \
 	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
