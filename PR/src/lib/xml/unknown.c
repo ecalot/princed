@@ -101,7 +101,7 @@ int unknownLogStop () {
 	if (!unknownFile.fd) return PR_RESULT_ERR_XML_NOT_OPEN; /* File not open */
 
 	/* it is time to fix the inheritances */
-	unknown_fixtreeinheritances();
+	unknown_fixtreeinheritances(&unknownFile.tree);
 	
 	/* now we'll add the new generated part of the tree at the end of the second level (resources id the first) */
 	if (unknownFile.tree) {
@@ -116,7 +116,7 @@ int unknownLogStop () {
 	/* TODO: create common factor tree reducing function */
 	
 	/* generate the xml file */
-	generateXML(0,unknownFile.tree);
+	generateXML(0,unknownFile.tree,unknownFile.fd);
 
 	/* it's time to free the tree */
 	freeParsedStructure (&unknownFile.tree);
@@ -141,13 +141,13 @@ int unknownLogAppend(const char* vFiledat,tResourceId id,const char* ext,tResour
 		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)),&unknownFile.status);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
 		/* TODO: move here the read-parsing-loading and write-opening */
-		unknown_deletetreefile(vFiledat);
+		unknown_deletetreefile(vFiledat,unknownFile.tree);
 	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
 		int i;
 		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)),&unknownFile.status);
 		freeAllocation(unknownFile.currentDat);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
-		unknown_deletetreefile(vFiledat);
+		unknown_deletetreefile(vFiledat,unknownFile.tree);
 		for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
 	}
 

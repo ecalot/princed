@@ -36,6 +36,7 @@ unknown.h: Princed Resources : Unknown.xml generator headers
 
 /* Includes */
 #include "reslist.h"
+#include <stdio.h> /* FILE* */
 
 typedef struct { 
 	tTag*        folderCursor;
@@ -45,8 +46,8 @@ typedef struct {
 
 void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, tTreeStatus* status);
 void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status);
-void unknown_deletetreefile(const char* file);
-void unknown_fixtreeinheritances();
-void generateXML(int n,tTag* t);
+void unknown_deletetreefile(const char* file, tTag* tree);
+void unknown_fixtreeinheritances(tTag* *tree);
+void generateXML(int n,tTag* t,FILE* outputStream);
 
 #endif

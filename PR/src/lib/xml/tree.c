@@ -41,31 +41,25 @@ tree.c: Princed Resources : Tree handling routines
 #include "common.h"
 #include "memory.h"
 #include "unknown.h" /* typedef tUnknownFile */
-#include "parse.h" /* RES_TYPECOUNT */
 
 /***************************************************************\
-|                     Unknown.xml primitives                    |
+|                     XML generation defines                    |
 \***************************************************************/
-
-/* XML generation defines */
 
 #define XML_HEADER \
 	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
 	"<?xml version=\"1.0\" ?>\n"
 
-extern tUnknownFile unknownFile;
-
 /***************************************************************\
-|                           Tree Layer                          |
+|              Common factor tree reducing routines             |
 \***************************************************************/
-
-/* TODO: send this layer to other module */
-
-/* Common factor tree reducing routines */
 
 /* TODO */
 
-/* Tag generation routines */
+/***************************************************************\
+|                     Tag generation routines                   |
+\***************************************************************/
+
 void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status) {
 	char number[10];
 	tTag* folder=malloc(sizeof(tTag));	
@@ -112,10 +106,11 @@ void unknown_item(int value,const char* index,const char* path,const char* type,
 	status->itemCursor=item;
 }
 
-/* memory tree --> xml */
-#define outputStream unknownFile.fd /**/
+/***************************************************************\
+|                       Memory tree --> xml                     |
+\***************************************************************/
 
-void generateXML(int n,tTag* t) {
+void generateXML(int n,tTag* t,FILE* outputStream) {
 	int a;
 	tTag* children;
 
@@ -146,7 +141,7 @@ void generateXML(int n,tTag* t) {
 		if ((children=t->child)) {
 			fprintf(outputStream,">\n");
 			while (children!=NULL) {
-				generateXML(n+1,children);
+				generateXML(n+1,children,outputStream);
 				children=children->next;
 			}
 			for(a=0;a<n;a++) fprintf (outputStream,"\t");
@@ -161,7 +156,9 @@ void generateXML(int n,tTag* t) {
 	}
 }
 
-/* file attribute deletion routines */
+/***************************************************************\
+|                File attribute deletion routines               |
+\***************************************************************/
 
 void rec_tree(tTag* *t,const char* file) {
 	tTag* aux=*t;
@@ -180,7 +177,6 @@ void rec_tree(tTag* *t,const char* file) {
 				*t=aux->next;
 			}
 			aux->next=NULL;
-			/* freeTag(aux); */
 			if (*t) rec_tree(t,file);
 		} else {
 			if ((*t) && (*t)->next) rec_tree(&((*t)->next),file);
@@ -190,13 +186,15 @@ void rec_tree(tTag* *t,const char* file) {
 	if ((*t) && (*t)->child) rec_tree(&((*t)->child),file);
 }
 
-void unknown_deletetreefile(const char* file) {
-	/*printf("deleting file %s from tree\n",file);*/
-	if (unknownFile.tree)
-		rec_tree(&(unknownFile.tree->child),file);
+void unknown_deletetreefile(const char* file, tTag* tree) {
+	if (tree)
+		rec_tree(&(tree->child),file);
 }
 
-/* inheritance fixing routines */
+/***************************************************************\
+|                  Inheritance fixing routines                  |
+\***************************************************************/
+
 #define TotalInheritance(a) if (parent->a&&child->a&&equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
 
 void rec_tree_fix(tTag* parent,tTag* child) {
@@ -228,13 +226,13 @@ void rec_tree_fix(tTag* parent,tTag* child) {
 	
 }
 
-void unknown_fixtreeinheritances() {
+void unknown_fixtreeinheritances(tTag* *tree) {
 	/*printf("fixing inheritances in tree\n");*/
-	if (unknownFile.tree) {
-		rec_tree_fix(NULL,unknownFile.tree);
+	if (*tree) {
+		rec_tree_fix(NULL,(*tree));
 		
-		freeAllocation(unknownFile.tree->path);
-		unknownFile.tree->path=NULL;		
+		freeAllocation((*tree)->path);
+		(*tree)->path=NULL;		
 	}
 }
 
