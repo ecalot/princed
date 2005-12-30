@@ -56,17 +56,7 @@ unknown.c: Princed Resources : Unknown resources handler
 #define XML_TAG_RESOURCES     "resources"
 #define XML_ATTRV_VERSION     "generated"
 
-struct {
-	char*        backupExtension;
-	char*        currentDat;
-	FILE*        fd;
-	tTag*        folderCursor;
-	tTag*        folderFirst;
-	tTag*        itemCursor;
-	tTag*        tree;
-	unsigned int optionflag;
-	unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
-} unknownFile;
+tUnknownFile unknownFile;
 
 /***************************************************************\
 |                           Logging Layer                       |
@@ -87,8 +77,8 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 	{
 		int error;
 
-		unknownFile.folderFirst=NULL;
-		unknownFile.folderCursor=NULL;
+		unknownFile.status.folderFirst=NULL;
+		unknownFile.status.folderCursor=NULL;
 		unknownFile.tree=parseXmlFile(file,&error);
 		if (error) {
 			unknownFile.tree=malloc(sizeof(tTag));
@@ -117,9 +107,9 @@ int unknownLogStop () {
 	if (unknownFile.tree) {
 		if (unknownFile.tree->child) {
 			for (t=unknownFile.tree->child;t->next;t=t->next);
-			t->next=unknownFile.folderFirst; /* the first folder of the new tree */
+			t->next=unknownFile.status.folderFirst; /* the first folder of the new tree */
 		} else {
-			unknownFile.tree->child=unknownFile.folderFirst; /* the first folder of the new tree */
+			unknownFile.tree->child=unknownFile.status.folderFirst; /* the first folder of the new tree */
 		}
 	}
 
@@ -148,20 +138,20 @@ int unknownLogAppend(const char* vFiledat,tResourceId id,const char* ext,tResour
 	if (!unknownFile.fd) return PR_RESULT_ERR_XML_NOT_OPEN; /* File not open, logging is off, just a warning */
 
 	if (!unknownFile.currentDat) { /* this is the beginning of the file */
-		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)));
+		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)),&unknownFile.status);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
 		/* TODO: move here the read-parsing-loading and write-opening */
 		unknown_deletetreefile(vFiledat);
 	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
 		int i;
-		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)));
+		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)),&unknownFile.status);
 		freeAllocation(unknownFile.currentDat);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
 		unknown_deletetreefile(vFiledat);
 		for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
 	}
 
-	unknown_item(id.value,translateInt2Ext(toLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count);
+	unknown_item(id.value,translateInt2Ext(toLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count,&unknownFile.status);
 
 	return PR_RESULT_SUCCESS;
 }

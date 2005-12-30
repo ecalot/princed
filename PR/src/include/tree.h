@@ -37,8 +37,14 @@ unknown.h: Princed Resources : Unknown.xml generator headers
 /* Includes */
 #include "reslist.h"
 
-void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex); 
-void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count);
+typedef struct { 
+	tTag*        folderCursor;
+	tTag*        folderFirst;
+	tTag*        itemCursor;
+} tTreeStatus;
+
+void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, tTreeStatus* status);
+void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status);
 void unknown_deletetreefile(const char* file);
 void unknown_fixtreeinheritances();
 void generateXML(int n,tTag* t);

@@ -40,6 +40,7 @@ tree.c: Princed Resources : Tree handling routines
 #include <stdio.h>
 #include "common.h"
 #include "memory.h"
+#include "unknown.h" /* typedef tUnknownFile */
 #include "parse.h" /* RES_TYPECOUNT */
 
 /***************************************************************\
@@ -52,17 +53,7 @@ tree.c: Princed Resources : Tree handling routines
 	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
 	"<?xml version=\"1.0\" ?>\n"
 
-extern struct {
-	char*        backupExtension;
-	char*        currentDat;
-	FILE*        fd;
-	tTag*        folderCursor;
-	tTag*        folderFirst;
-	tTag*        itemCursor;
-	tTag*        tree;
-	unsigned int optionflag;
-	unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
-} unknownFile;
+extern tUnknownFile unknownFile;
 
 /***************************************************************\
 |                           Tree Layer                          |
@@ -75,7 +66,7 @@ extern struct {
 /* TODO */
 
 /* Tag generation routines */
-void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex) {
+void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status) {
 	char number[10];
 	tTag* folder=malloc(sizeof(tTag));	
 
@@ -88,16 +79,16 @@ void unknown_folder(const char* path, const char* file, int palette, const char*
 	folder->palette=strallocandcopy(number);
 	folder->paletteindex=strallocandcopy(paletteindex);
 	
-	if (!unknownFile.folderFirst) {
-		unknownFile.folderFirst=folder;
+	if (!status->folderFirst) {
+		status->folderFirst=folder;
 	} else {
-		unknownFile.folderCursor->next=folder;
+		status->folderCursor->next=folder;
 	}
-	unknownFile.folderCursor=folder;
-	unknownFile.itemCursor=NULL;
+	status->folderCursor=folder;
+	status->itemCursor=NULL;
 }
 
-void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count) {
+void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, tTreeStatus* status) {
 	char aux[100];
 	tTag* item=malloc(sizeof(tTag));	
 
@@ -113,16 +104,16 @@ void unknown_item(int value,const char* index,const char* path,const char* type,
 	sprintf(aux,"Unknown %s %d",typedesc, count);
 	item->desc=strallocandcopy(aux);
 	
-	if (!unknownFile.itemCursor) {
-		unknownFile.folderCursor->child=item;
+	if (!status->itemCursor) {
+		status->folderCursor->child=item;
 	} else {
-		unknownFile.itemCursor->next=item;
+		status->itemCursor->next=item;
 	}
-	unknownFile.itemCursor=item;
+	status->itemCursor=item;
 }
 
 /* memory tree --> xml */
-#define outputStream unknownFile.fd
+#define outputStream unknownFile.fd /**/
 
 void generateXML(int n,tTag* t) {
 	int a;

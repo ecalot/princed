@@ -41,6 +41,17 @@ unknown.h: Princed Resources : Unknown.xml generator headers
 /* Includes */
 #include "parse.h"
 #include "reslist.h"
+#include "tree.h" /* tTreeStatus */
+
+typedef struct { 
+	char*        backupExtension;
+	char*        currentDat;
+	FILE*        fd;
+	tTreeStatus  status;
+	tTag*        tree;
+	unsigned int optionflag;
+	unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
+} tUnknownFile;
 
 /* Resources extras */
 void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension,const char* format);
