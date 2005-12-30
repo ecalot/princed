@@ -31,18 +31,17 @@ unknown.h: Princed Resources : Unknown.xml generator headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _UNKNOWN_H_
-#define _UNKNOWN_H_
-
-/* Note:
- * To use the functions as a library you must include pr.h
- */
+#ifndef _TREE_H_
+#define _TREE_H_
 
 /* Includes */
 #include "parse.h"
 #include "reslist.h"
 
-/* Resources extras */
-void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const char* vFiledat, const char* vDatFileName,int optionflag,const char* backupExtension,const char* format);
+void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex); 
+void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count);
+void unknown_deletetreefile(const char* file);
+void unknown_fixtreeinheritances();
+void generateXML(int n,tTag* t);
 
 #endif

@@ -45,6 +45,7 @@ unknown.c: Princed Resources : Unknown resources handler
 #include "parse.h" /* For the moment just testing */
 #include "stringformat.h"
 #include "translate.h"
+#include "tree.h"
 
 /***************************************************************\
 |                     Unknown.xml primitives                    |
@@ -58,7 +59,7 @@ unknown.c: Princed Resources : Unknown resources handler
 	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
 	"<?xml version=\"1.0\" ?>\n"
 
-static struct {
+ struct {
 	char*        backupExtension;
 	char*        currentDat;
 	FILE*        fd;
@@ -69,189 +70,6 @@ static struct {
 	unsigned int optionflag;
 	unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
 } unknownFile;
-
-/***************************************************************\
-|                           Tree Layer                          |
-\***************************************************************/
-
-/* TODO: send this layer to other module */
-
-/* Common factor tree reducing routines */
-
-/* TODO */
-
-/* Tag generation routines */
-void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex) {
-	char number[10];
-	tTag* folder=malloc(sizeof(tTag));	
-
-	memset(folder,0,sizeof(tTag));
-	sprintf(number,"%d",palette);
-	folder->tag=strallocandcopy("folder");
-	folder->name=strallocandcopy("unknown");
-	folder->path=strallocandcopy(path);
-	folder->file=strallocandcopy(file);
-	folder->palette=strallocandcopy(number);
-	folder->paletteindex=strallocandcopy(paletteindex);
-	
-	if (!unknownFile.folderFirst) {
-		unknownFile.folderFirst=folder;
-	} else {
-		unknownFile.folderCursor->next=folder;
-	}
-	unknownFile.folderCursor=folder;
-	unknownFile.itemCursor=NULL;
-}
-
-void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count) {
-	char aux[100];
-	tTag* item=malloc(sizeof(tTag));	
-
-	memset(item,0,sizeof(tTag));
-	sprintf(aux,"%d",value);
-	item->tag=strallocandcopy("item");
-	item->value=strallocandcopy(aux);
-	item->index=strallocandcopy(index);
-	item->path=strallocandcopy(path);
-	item->type=strallocandcopy(type);
-	sprintf(aux,"0x%lx",flags);
-	item->flags=strallocandcopy(aux);
-	sprintf(aux,"Unknown %s %d",typedesc, count);
-	item->desc=strallocandcopy(aux);
-	
-	if (!unknownFile.itemCursor) {
-		unknownFile.folderCursor->child=item;
-	} else {
-		unknownFile.itemCursor->next=item;
-	}
-	unknownFile.itemCursor=item;
-}
-
-/* memory tree --> xml */
-#define outputStream unknownFile.fd
-
-void generateXML(int n,tTag* t) {
-	int a;
-	tTag* children;
-
-	if (!n) fprintf(outputStream,XML_HEADER);
-	for(a=0;a<n;a++) fprintf (outputStream,"\t");
-	if (t!=NULL) {
-		fprintf(outputStream,"<%s",t->tag);
-
-#define FillAttr(a,b) if (a) fprintf(outputStream," %s=\"%s\"",b,a)
-
-	if (t->child) FillAttr(t->desc,"desc");
-	FillAttr(t->path,"path");
-	FillAttr(t->file,"file");
-	FillAttr(t->type,"type");
-	FillAttr(t->name,"name");
-	FillAttr(t->palette,"palette");
-	FillAttr(t->value,"value");
-	FillAttr(t->index,"index");
-	FillAttr(t->order,"order");
-	FillAttr(t->paletteindex,"paletteindex");
-	FillAttr(t->paletteorder,"paletteorder");
-	FillAttr(t->version,"version");
-	FillAttr(t->number,"number");
-	FillAttr(t->flags,"flags");
-
-#undef FillAttr
-
-		if ((children=t->child)) {
-			fprintf(outputStream,">\n");
-			while (children!=NULL) {
-				generateXML(n+1,children);
-				children=children->next;
-			}
-			for(a=0;a<n;a++) fprintf (outputStream,"\t");
-			fprintf(outputStream,"</%s>\n",t->tag);
-		} else {
-			if (t->desc) {
-				fprintf(outputStream,">%s</%s>\n",t->desc,t->tag);
-			} else {
-				fprintf(outputStream," />\n\n");
-			}
-		}
-	}
-}
-
-/* file attribute deletion routines */
-
-void rec_tree(tTag* *t,const char* file) {
-	tTag* aux=*t;
-	tTag* aux2;
-
-	if (*t && (*t)->file) {
-		if (equalsIgnoreCase((aux->file),file)) {
-			if (aux->child) {
-				*t=aux->child; /* the children are now replacing his parent */
-				if ((*t)->next) {
-					for(aux2=*t;aux2->next;aux2=aux2->next); /* go to the last child */
-				 	aux2->next=aux->next; /* and set the next siebling as the parent next siebling */
-				}
-				aux->child=NULL;
-			} else {
-				*t=aux->next;
-			}
-			aux->next=NULL;
-			/* freeTag(aux); */
-			if (*t) rec_tree(t,file);
-		} else {
-			if ((*t) && (*t)->next) rec_tree(&((*t)->next),file);
-		}
-	}
-	
-	if ((*t) && (*t)->child) rec_tree(&((*t)->child),file);
-}
-
-void unknown_deletetreefile(const char* file) {
-	/*printf("deleting file %s from tree\n",file);*/
-	if (unknownFile.tree)
-		rec_tree(&(unknownFile.tree->child),file);
-}
-
-/* inheritance fixing routines */
-#define TotalInheritance(a) if (parent->a&&child->a&&equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
-
-void rec_tree_fix(tTag* parent,tTag* child) {
-	if (child->next) rec_tree_fix(parent,child->next);
-	if (child->child) rec_tree_fix(child,child->child);
-
-	if (parent) {
-		TotalInheritance(palette);
-		TotalInheritance(paletteindex);
-		TotalInheritance(paletteorder);
-		TotalInheritance(type);
-		TotalInheritance(file);
-		TotalInheritance(index);
-		TotalInheritance(order);
-		TotalInheritance(flags);
-
-		/* partial */
-		if ((parent->path!=NULL)&&(child->path!=NULL)) {
-			char *p,*c,*aux;
-			
-			for (p=parent->path,c=child->path;*p&&*c&&*p==*c;p++,c++);
-			if (*c=='/') c++;
-			aux=strallocandcopy(c);
-			free(child->path);
-			child->path=aux;
-		}
-
-	}
-	
-}
-
-void unknown_fixtreeinheritances() {
-	/*printf("fixing inheritances in tree\n");*/
-	if (unknownFile.tree) {
-		rec_tree_fix(NULL,unknownFile.tree);
-		
-		freeAllocation(unknownFile.tree->path);
-		unknownFile.tree->path=NULL;		
-	}
-}
 
 /***************************************************************\
 |                           Logging Layer                       |

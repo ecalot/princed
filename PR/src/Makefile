@@ -52,7 +52,7 @@ else
 endif
 
 ACTIONS  = .import.o .export.o .classify.o
-XML      = .parse.o .search.o .unknown.o .translate.o
+XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
 COMPRESS = .compress.o .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o 
 LAYERS   = .dat.o .memory.o .list.o .reslist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
@@ -185,9 +185,13 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling directory and recursive file reading module for standard mode...
 	$(CC) $(OPTIONS) -c console/filedir.c -o $@
 
-.unknown.o: lib/xml/unknown.c include/common.h include/disk.h include/unknown.h include/search.h
+.unknown.o: lib/xml/unknown.c include/common.h include/disk.h include/unknown.h include/tree.h include/search.h
 	$(INFO) Compiling unknown.xml generating module...
 	$(CC) $(OPTIONS) -c lib/xml/unknown.c -o $@
+
+.tree.o: lib/xml/tree.c include/common.h include/disk.h include/tree.h include/search.h
+	$(INFO) Compiling XML tree special handling routines...
+	$(CC) $(OPTIONS) -c lib/xml/tree.c -o $@
 
 .parse.o: lib/xml/parse.c include/common.h include/disk.h include/memory.h include/parse.h
 	$(INFO) Compiling XML parsing module...
