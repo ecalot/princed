@@ -74,6 +74,13 @@ static struct {
 |                           Tree Layer                          |
 \***************************************************************/
 
+/* TODO: send this layer to other module */
+
+/* Common factor tree reducing routines */
+
+/* TODO */
+
+/* Tag generation routines */
 void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex) {
 	char number[10];
 	tTag* folder=malloc(sizeof(tTag));	
@@ -120,7 +127,7 @@ void unknown_item(int value,const char* index,const char* path,const char* type,
 	unknownFile.itemCursor=item;
 }
 
-/* memory tree --> xml, TODO send to other module */
+/* memory tree --> xml */
 #define outputStream unknownFile.fd
 
 void generateXML(int n,tTag* t) {
@@ -169,7 +176,7 @@ void generateXML(int n,tTag* t) {
 	}
 }
 
-/* file deletion */
+/* file attribute deletion routines */
 
 void rec_tree(tTag* *t,const char* file) {
 	tTag* aux=*t;
@@ -204,7 +211,7 @@ void unknown_deletetreefile(const char* file) {
 		rec_tree(&(unknownFile.tree->child),file);
 }
 
-/* inheritance fixing */
+/* inheritance fixing routines */
 #define TotalInheritance(a) if (parent->a&&child->a&&equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
 
 void rec_tree_fix(tTag* parent,tTag* child) {
