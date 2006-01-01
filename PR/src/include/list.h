@@ -57,6 +57,6 @@ void  list_drop(tList *list);
 void  list_nextCursor(tList* list);
 void  list_firstCursor(tList* list);
 int   list_moveCursor(tList* list,const void* data);
-const void* list_getCursor(tList* list);
+void* list_getCursor(tList* list);
 
 #endif

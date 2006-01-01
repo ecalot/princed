@@ -120,7 +120,7 @@ int list_moveCursor(tList* list,const void* data) {
 	}
 } 
 
-const void* list_getCursor(tList* list) {
+void* list_getCursor(tList* list) {
 	if (!list->cursor) return NULL;
 	return list->cursor->data;
 } 

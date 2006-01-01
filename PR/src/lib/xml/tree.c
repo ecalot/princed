@@ -21,7 +21,7 @@
 /*
 tree.c: Princed Resources : Tree handling routines
 ¯¯¯¯¯¯
- Copyright 2003 Princed Development Team
+ Copyright 2005 Princed Development Team
   Created: 28 Dec 2005
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
@@ -65,13 +65,15 @@ const void* list_getCursor(tList* list);
 */
 
 typedef struct {
-	char* attr;
+	/*const*/char* attr;
 	int count;
 }tAttrCount;
 
 void attrfree() {}
 
-int attrcmp(const tAttrCount* a,const tAttrCount* b) {
+int attrcmp(const void* x,const void* y) {
+	register const tAttrCount* a=x;
+	register const tAttrCount* b=y;
 	/* the index has the priority */
 	int c=strcmp(a->attr,b->attr);
 	if (c>0) return GT;
@@ -79,12 +81,16 @@ int attrcmp(const tAttrCount* a,const tAttrCount* b) {
 	return EQ;
 }
 
-void increase(char* attr,tList* l) {
+void increase(/*const */char* attr,tList* l) {
 	tAttrCount a;
+	tAttrCount* aux;
+
+	printf("increase: %s\n",attr);
 	a.attr=attr;
-	a.count=0;
+	a.count=1; /* if it appeared for the first time */
 	if (list_moveCursor(l,&a)) {
-		/* TODO: int count */
+		aux=list_getCursor(l);
+		aux->count++;
 	} else {
 		list_insert(l,&a);
 	}
@@ -99,12 +105,16 @@ void commonFactor(tTag* parent) {
 	tList l=list_create(sizeof(tAttrCount),attrcmp,attrfree);
 	
 	for (child=parent->child;child;child=child->next) {
-		increase(child->palette,&l); /* TODO: use an array of attributes */
+		if (child->palette)
+			increase(child->palette,&l); /* TODO: use an array of attributes */
+		else
+			increase(parent->palette,&l); /* TODO: use an array of attributes */
 		c++;
 	}
 	
 	list_firstCursor(&l);
 	while ((a=list_getCursor(&l))) {
+		printf("running through %s (%d)\n",a->attr,a->count);
 		if (a->count>c/2) {
 			if (a->count>max) {
 				max=a->count;
@@ -113,18 +123,50 @@ void commonFactor(tTag* parent) {
 		}
 		list_nextCursor(&l);
 	}
+	printf("result=%s\n",result);
 	if (result) {
-		freeAllocation(parent->palette);
-		parent->palette=strallocandcopy(result);
+		if (parent->palette!=result) { /* it is possible, and is the most probable case, that the parent was already the best choice. In that case, do nothing */
+			freeAllocation(parent->palette);
+			parent->palette=strallocandcopy(result);
+		}
 		for (child=parent->child;child;child=child->next) {
-			freeAllocation(child->palette);
-			child->palette=NULL;
+			if (child->palette&&!strcmp(child->palette,parent->palette)) {
+				freeAllocation(child->palette); /* the first time this is ran, result is released! */
+				child->palette=NULL;
+			}
 		}
 	}
 	list_drop(&l);
 	
-	
 }
+
+void test() {
+	tTag tr[100];
+	memset(tr,sizeof(tr),0);
+
+	tr[0].child=&(tr[1]);
+	tr[1].next =&(tr[2]);
+	tr[2].next =&(tr[3]);
+	tr[3].next =&(tr[4]);
+	tr[4].next =&(tr[5]);
+	tr[5].next =NULL;
+	
+	tr[0].palette=strallocandcopy("jojo");
+/*	tr[1].palette=strallocandcopy("joj1");
+	tr[2].palette=strallocandcopy("joj1");*/
+	tr[3].palette=strallocandcopy("jojo");
+	tr[4].palette=strallocandcopy("joj4");
+	tr[5].palette=strallocandcopy("joj5");
+
+	generateXML(0,tr,stdout); 
+
+	commonFactor(tr);
+	
+	generateXML(0,tr,stdout); 
+
+}
+
+
 
 /***************************************************************\
 |                     Tag generation routines                   |
@@ -304,5 +346,7 @@ void unknown_fixtreeinheritances(tTag* *tree) {
 		freeAllocation((*tree)->path);
 		(*tree)->path=NULL;		
 	}
+
+	test();
 }
 
