@@ -158,20 +158,22 @@ Versions:
   - Support of partial list folder selection wildcards (e.g.
     vdungeon.dat@vdungeon/chopper/*.bmp) '*' and '?' using '&' as escape
  * PR v1.2 (scheduled 2005-12-22)
-  - Add defines for positive return values in XML
+  - Added defines for positive return values in XML
+  - Added --format option for unknown filename generation format
   + Added order to support non-unique resource IDs
-  - Add --format option for unknown filename generation format
-  - Add pop2 flag to xml file
-  - Add pop2 importing
-  - Fix order bug in repeated indexes
-  - Fix uppercase typedef of types
+  - Added parsing feature @400:shape#second
+  - Added pop2 flag to xml file
+  - Added pop2 importing
+  - Finished abstarcting resources.c and renamed to unknown.c
+  - Fixed order bug in repeated indexes
+  - Fixed the language support
+  - Fixed uppercase typedef of types
   - Index long names are supported in XML and replaced to their four-letter
     equivalences
   + Inverted pop2 index names
-  - Add parsing feature @400:shape#second
-  - Fix the language support
-  - Finished abstarcting resources.c and renamed to unknown.c
   - Merged all generated unknown.xml in .. for each extract
+  x Added --xml-optimize=file.xml option
+  x Autoincreasing unknown.xml version (build-13)
  * PR v1.3 (future plans)
   x Add pop2 to resources.xml: nis3vc.dat, nisibm.dat, skeleton.dat,
     flame.dat, head.dat, kid.dat, nismidi.dat, tandysnd.dat, digisnd.dat,

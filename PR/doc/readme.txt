@@ -159,6 +159,14 @@ Binary:
 
  Exports the file bird/long_jump/frame06.bmp and the resource 751 indexed in "pahs" from
  pop2/bird.dat to the pop2 folder.
+
+ $ ./pr --xml-optimize=test/resources.xml
+
+ Optimizes the file test/resources.xml and:
+  - adds doctype
+  - indents tags and arrange line separation
+  - reduces file size by eliminating inheritable attributes
+  - removes comments
  
 4) Requirements
   
