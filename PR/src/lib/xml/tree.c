@@ -54,15 +54,6 @@ tree.c: Princed Resources : Tree handling routines
 /***************************************************************\
 |              Common factor tree reducing routines             |
 \***************************************************************/
-/*
-tList list_create(int dataSize,int dataCmp(const void*,const void*),void dataFree(void* a));
-void  list_insert(tList *list,const void* data);
-void  list_drop(tList *list);
-void  list_nextCursor(tList* list);
-void  list_firstCursor(tList* list);
-int   list_moveCursor(tList* list,const void* data);
-const void* list_getCursor(tList* list);
-*/
 
 typedef struct {
 	/*const*/char* attr;
@@ -123,11 +114,11 @@ void commonFactor(tTag* parent) {
 		}
 		list_nextCursor(&l);
 	}
-	printf("result=%s\n",result);
+
 	if (result) {
 		if (parent->palette!=result) { /* it is possible, and is the most probable case, that the parent was already the best choice. In that case, do nothing */
 			freeAllocation(parent->palette);
-			parent->palette=strallocandcopy(result);
+			parent->palette=strallocandcopy(result); /* TODO: assign result but avoid releasing below */
 		}
 		for (child=parent->child;child;child=child->next) {
 			if (child->palette&&!strcmp(child->palette,parent->palette)) {
@@ -136,37 +127,71 @@ void commonFactor(tTag* parent) {
 			}
 		}
 	}
-	list_drop(&l);
-	
+	list_drop(&l);	
 }
 
+void rec_tree_commonfactor(tTag* tag) {
+	if (tag) {
+		rec_tree_commonfactor(tag->next);
+		rec_tree_commonfactor(tag->child);
+		commonFactor(tag); /* post order */
+	}
+}
+
+#ifdef DEBUG_CF
 void test() {
 	tTag tr[100];
 	memset(tr,sizeof(tr),0);
 
 	tr[0].child=&(tr[1]);
+
 	tr[1].next =&(tr[2]);
+	tr[1].child=&(tr[6]);
 	tr[2].next =&(tr[3]);
 	tr[3].next =&(tr[4]);
 	tr[4].next =&(tr[5]);
 	tr[5].next =NULL;
 	
-	tr[0].palette=strallocandcopy("jojo");
-/*	tr[1].palette=strallocandcopy("joj1");
-	tr[2].palette=strallocandcopy("joj1");*/
-	tr[3].palette=strallocandcopy("jojo");
-	tr[4].palette=strallocandcopy("joj4");
-	tr[5].palette=strallocandcopy("joj5");
+	tr[6].next =&(tr[7]);
+	tr[7].next =&(tr[8]);
+	tr[8].next =&(tr[9]);
+	tr[8].child=&(tr[11]);
+	tr[9].next =&(tr[10]);
+	tr[10].next =NULL;
+	
+	tr[11].next =&(tr[12]);
+	tr[12].next =&(tr[13]);
+	tr[13].next =&(tr[14]);
+	tr[14].child=&(tr[15]);
+	tr[15].next =&(tr[16]);
+	tr[16].next =NULL;
+
+	tr[0].palette=strallocandcopy("joj0");
+	tr[1].palette=strallocandcopy("joj1");
+	tr[2].palette=strallocandcopy("joj0");
+	tr[3].palette=strallocandcopy("joj1");
+	tr[4].palette=strallocandcopy("joj0");
+	tr[5].palette=strallocandcopy("joj1");
+	tr[6].palette=strallocandcopy("joj1");
+	tr[7].palette=strallocandcopy("joj0");
+	tr[8].palette=strallocandcopy("joj0");
+	tr[9].palette=strallocandcopy("joj1");
+	tr[10].palette=strallocandcopy("joj11");
+	tr[11].palette=strallocandcopy("joj11");
+	tr[12].palette=strallocandcopy("joj10");
+	tr[13].palette=strallocandcopy("joj10");
+	tr[14].palette=strallocandcopy("joj11");
+	tr[15].palette=strallocandcopy("joj11");
+	tr[16].palette=strallocandcopy("joj11");
 
 	generateXML(0,tr,stdout); 
 
-	commonFactor(tr);
+	rec_tree_commonfactor(tr);
 	
 	generateXML(0,tr,stdout); 
 
 }
-
-
+#endif
 
 /***************************************************************\
 |                     Tag generation routines                   |
@@ -346,7 +371,5 @@ void unknown_fixtreeinheritances(tTag* *tree) {
 		freeAllocation((*tree)->path);
 		(*tree)->path=NULL;		
 	}
-
-	test();
 }
 

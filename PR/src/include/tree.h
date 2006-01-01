@@ -49,5 +49,7 @@ void unknown_folder(const char* path, const char* file, int palette, const char*
 void unknown_deletetreefile(const char* file, tTag* tree);
 void unknown_fixtreeinheritances(tTag* *tree);
 void generateXML(int n,tTag* t,FILE* outputStream);
+void rec_tree_commonfactor(tTag* tag);
+#define eliminatecommonfactors(a) if (a) rec_tree_commonfactor(a->child) /* this ignores the first tag (resources) */
 
 #endif

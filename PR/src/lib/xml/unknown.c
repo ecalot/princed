@@ -100,6 +100,9 @@ int unknownLogStop () {
 
 	if (!unknownFile.fd) return PR_RESULT_ERR_XML_NOT_OPEN; /* File not open */
 
+	/* common factor tree reducing function */
+	eliminatecommonfactors(unknownFile.tree);
+	
 	/* it is time to fix the inheritances */
 	unknown_fixtreeinheritances(&unknownFile.tree);
 	
@@ -113,8 +116,6 @@ int unknownLogStop () {
 		}
 	}
 
-	/* TODO: create common factor tree reducing function */
-	
 	/* generate the xml file */
 	generateXML(0,unknownFile.tree,unknownFile.fd);
 
