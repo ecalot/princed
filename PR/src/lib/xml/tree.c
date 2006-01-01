@@ -40,6 +40,7 @@ tree.c: Princed Resources : Tree handling routines
 #include <stdio.h>
 #include "common.h"
 #include "memory.h"
+#include "list.h" /* list primitives needed by the Common Factor routines */
 #include "unknown.h" /* typedef tUnknownFile */
 
 /***************************************************************\
@@ -53,8 +54,77 @@ tree.c: Princed Resources : Tree handling routines
 /***************************************************************\
 |              Common factor tree reducing routines             |
 \***************************************************************/
+/*
+tList list_create(int dataSize,int dataCmp(const void*,const void*),void dataFree(void* a));
+void  list_insert(tList *list,const void* data);
+void  list_drop(tList *list);
+void  list_nextCursor(tList* list);
+void  list_firstCursor(tList* list);
+int   list_moveCursor(tList* list,const void* data);
+const void* list_getCursor(tList* list);
+*/
 
-/* TODO */
+typedef struct {
+	char* attr;
+	int count;
+}tAttrCount;
+
+void attrfree() {}
+
+int attrcmp(const tAttrCount* a,const tAttrCount* b) {
+	/* the index has the priority */
+	int c=strcmp(a->attr,b->attr);
+	if (c>0) return GT;
+	if (c<0) return LT;
+	return EQ;
+}
+
+void increase(char* attr,tList* l) {
+	tAttrCount a;
+	a.attr=attr;
+	a.count=0;
+	if (list_moveCursor(l,&a)) {
+		/* TODO: int count */
+	} else {
+		list_insert(l,&a);
+	}
+}
+
+void commonFactor(tTag* parent) {
+	tTag* child;
+	const tAttrCount* a;
+	int c=0;
+	int max=0;
+	const char* result=NULL;
+	tList l=list_create(sizeof(tAttrCount),attrcmp,attrfree);
+	
+	for (child=parent->child;child;child=child->next) {
+		increase(child->palette,&l); /* TODO: use an array of attributes */
+		c++;
+	}
+	
+	list_firstCursor(&l);
+	while ((a=list_getCursor(&l))) {
+		if (a->count>c/2) {
+			if (a->count>max) {
+				max=a->count;
+				result=a->attr;
+			}
+		}
+		list_nextCursor(&l);
+	}
+	if (result) {
+		freeAllocation(parent->palette);
+		parent->palette=strallocandcopy(result);
+		for (child=parent->child;child;child=child->next) {
+			freeAllocation(child->palette);
+			child->palette=NULL;
+		}
+	}
+	list_drop(&l);
+	
+	
+}
 
 /***************************************************************\
 |                     Tag generation routines                   |
