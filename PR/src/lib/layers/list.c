@@ -84,7 +84,7 @@ void list_drop(tList *list) {
 	list->cursor=list->first;
 	while (list->cursor) {
 		aux=list->cursor->next;
-		list->free(list->cursor->data);
+		if (list->free) list->free(list->cursor->data);
 		free(list->cursor->data);
 		free(list->cursor);
 		list->cursor=aux;
