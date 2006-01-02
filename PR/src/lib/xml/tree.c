@@ -85,47 +85,75 @@ void increase(const char* attr,tList* l) {
 	}
 }
 
+#define attributeCount 8
+/* this is the most ugly thing I ever made... nevertheless it was the only way to make it abstract */
+#define bindAttr(name,i) attrInfo[i].offset=(long)(&(parent->name))-(long)(parent)
+#define getAttr(tag) (*( (char**)((long)(tag)+attrInfo[i].offset) ))
+
 void commonFactor(tTag* parent) {
 	tTag* child;
 	const tAttrCount* a;
-	int c=0;
-	int max=0;
-	const char* result=NULL;
-	tList l=list_create(sizeof(tAttrCount),attrcmp,NULL);
+	int i;
+	int max;
+	const char* result;
+	struct attributeInfo {
+		int c;
+		tList l;
+		long offset;
+	} attrInfo[attributeCount];
 	
-	for (child=parent->child;child;child=child->next) {
-		if (child->palette)
-			increase(child->palette,&l); /* TODO: use an array of attributes */
-		else
-			increase(parent->palette,&l); /* TODO: use an array of attributes */
-		c++;
+	bindAttr(palette,0);
+	bindAttr(paletteindex,1);
+	bindAttr(paletteorder,2);
+	bindAttr(type,3);
+	bindAttr(file,4);
+	bindAttr(index,5);
+	bindAttr(order,6);
+	bindAttr(flags,7);
+
+	/* initialize counting list */
+	for (i=0;i<attributeCount;i++) {
+		attrInfo[i].l=list_create(sizeof(tAttrCount),attrcmp,NULL);
+		attrInfo[i].c=0;
 	}
 	
-	list_firstCursor(&l);
-	while ((a=list_getCursor(&l))) {
-		printf("running through %s (%d)\n",a->attr,a->count);
-		if (a->count>c/2) {
-			if (a->count>max) {
+	for (child=parent->child;child;child=child->next) {
+		for (i=0;i<attributeCount;i++) {
+			if (getAttr(child))
+				increase(getAttr(child),&(attrInfo[i].l));
+			else
+				increase(getAttr(child),&(attrInfo[i].l));
+			attrInfo[i].c++;
+		}
+	}
+	
+	for (i=0;i<attributeCount;i++) {
+		max=0;
+		result=NULL;
+		list_firstCursor(&(attrInfo[i].l));
+		while ((a=list_getCursor(&(attrInfo[i].l)))) {
+			printf("running through %s (%d)\n",a->attr,a->count);
+			if (a->count>attrInfo[i].c/2 && a->count>max) {
 				max=a->count;
 				result=a->attr;
 			}
+			list_nextCursor(&(attrInfo[i].l));
 		}
-		list_nextCursor(&l);
-	}
-
-	if (result) {
-		if (parent->palette!=result) { /* it is possible, and is the most probable case, that the parent was already the best choice. In that case, do nothing */
-			freeAllocation(parent->palette);
-			parent->palette=strallocandcopy(result); /* TODO: assign result but avoid releasing below */
-		}
-		for (child=parent->child;child;child=child->next) {
-			if (child->palette&&!strcmp(child->palette,parent->palette)) {
-				freeAllocation(child->palette); /* the first time this is ran, result is released! */
-				child->palette=NULL;
+	
+		if (result) {
+			if (getAttr(parent)!=result) { /* it is possible, and is the most probable case, that the parent was already the best choice. In that case, do nothing */
+				freeAllocation(getAttr(parent));
+				getAttr(parent)=strallocandcopy(result); /* TODO: assign result but avoid releasing below */
+			}
+			for (child=parent->child;child;child=child->next) {
+				if (getAttr(child)&&!strcmp(getAttr(child),getAttr(parent))) {
+					freeAllocation(getAttr(child)); /* the first time this is ran, result is released! */
+					getAttr(child)=NULL;
+				}
 			}
 		}
+		list_drop(&(attrInfo[i].l));
 	}
-	list_drop(&l);	
 }
 
 void rec_tree_commonfactor(tTag* tag) {
@@ -136,7 +164,7 @@ void rec_tree_commonfactor(tTag* tag) {
 	}
 }
 
-#ifdef DEBUG_CF
+#ifndef DEBUG_CF
 void test() {
 	tTag tr[100];
 	memset(tr,sizeof(tr),0);
@@ -369,5 +397,6 @@ void unknown_fixtreeinheritances(tTag* *tree) {
 		freeAllocation((*tree)->path);
 		(*tree)->path=NULL;		
 	}
+	test();
 }
 

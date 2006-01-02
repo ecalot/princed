@@ -108,6 +108,7 @@ int unknownLogStop () {
 	
 	/* now we'll add the new generated part of the tree at the end of the second level (resources id the first) */
 	if (unknownFile.tree) {
+		rec_tree_commonfactor(unknownFile.tree); /* here some common factors are moved up */
 		if (unknownFile.tree->child) {
 			for (t=unknownFile.tree->child;t->next;t=t->next);
 			t->next=unknownFile.status.folderFirst; /* the first folder of the new tree */
