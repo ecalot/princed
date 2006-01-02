@@ -56,11 +56,9 @@ tree.c: Princed Resources : Tree handling routines
 \***************************************************************/
 
 typedef struct {
-	/*const*/char* attr;
+	const char* attr;
 	int count;
 }tAttrCount;
-
-void attrfree() {}
 
 int attrcmp(const void* x,const void* y) {
 	register const tAttrCount* a=x;
@@ -72,7 +70,7 @@ int attrcmp(const void* x,const void* y) {
 	return EQ;
 }
 
-void increase(/*const */char* attr,tList* l) {
+void increase(const char* attr,tList* l) {
 	tAttrCount a;
 	tAttrCount* aux;
 
@@ -93,7 +91,7 @@ void commonFactor(tTag* parent) {
 	int c=0;
 	int max=0;
 	const char* result=NULL;
-	tList l=list_create(sizeof(tAttrCount),attrcmp,attrfree);
+	tList l=list_create(sizeof(tAttrCount),attrcmp,NULL);
 	
 	for (child=parent->child;child;child=child->next) {
 		if (child->palette)
