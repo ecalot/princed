@@ -87,12 +87,14 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 			unknownFile.tree->tag=strallocandcopy(XML_TAG_RESOURCES);
 		}
 	}
-	
+
 	/* Open the file */
 	if (!writeOpen(file,&unknownFile.fd,optionflag)) return PR_RESULT_ERR_XML_FILE; /* file not open */
 
 	return PR_RESULT_SUCCESS; /* Ok */
 }
+
+#define eliminatecommonfactors(a) if (a) resourceTreeCommonFactor(a->child) /* this ignores the first tag (resources) */
 
 int unknownLogStop () {
 	int i;
@@ -102,13 +104,13 @@ int unknownLogStop () {
 
 	/* common factor tree reducing function */
 	eliminatecommonfactors(unknownFile.tree);
-	
+
 	/* it is time to fix the inheritances */
-	unknown_fixtreeinheritances(&unknownFile.tree);
-	
+	resourceTreeFixInheritances(&unknownFile.tree);
+
 	/* now we'll add the new generated part of the tree at the end of the second level (resources id the first) */
 	if (unknownFile.tree) {
-		rec_tree_commonfactor(unknownFile.tree); /* here some common factors are moved up */
+		resourceTreeCommonFactor(unknownFile.tree); /* here some common factors are moved up */
 		if (unknownFile.tree->child) {
 			for (t=unknownFile.tree->child;t->next;t=t->next);
 			t->next=unknownFile.status.folderFirst; /* the first folder of the new tree */
@@ -122,7 +124,7 @@ int unknownLogStop () {
 
 	/* it's time to free the tree */
 	freeParsedStructure (&unknownFile.tree);
-	
+
 	/* and close the file */
 	writeCloseOk(unknownFile.fd,unknownFile.optionflag,unknownFile.backupExtension);
 

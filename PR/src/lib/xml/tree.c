@@ -101,7 +101,7 @@ void commonFactor(tTag* parent) {
 		tList l;
 		long offset;
 	} attrInfo[attributeCount];
-	
+
 	bindAttr(palette,0);
 	bindAttr(paletteindex,1);
 	bindAttr(paletteorder,2);
@@ -116,7 +116,7 @@ void commonFactor(tTag* parent) {
 		attrInfo[i].l=list_create(sizeof(tAttrCount),attrcmp,NULL);
 		attrInfo[i].c=0;
 	}
-	
+
 	for (child=parent->child;child;child=child->next) {
 		for (i=0;i<attributeCount;i++) {
 			if (getAttr(child))
@@ -126,7 +126,7 @@ void commonFactor(tTag* parent) {
 			attrInfo[i].c++;
 		}
 	}
-	
+
 	for (i=0;i<attributeCount;i++) {
 		max=0;
 		result=NULL;
@@ -139,7 +139,7 @@ void commonFactor(tTag* parent) {
 			}
 			list_nextCursor(&(attrInfo[i].l));
 		}
-	
+
 		if (result) {
 			if (getAttr(parent)!=result) { /* it is possible, and is the most probable case, that the parent was already the best choice. In that case, do nothing */
 				freeAllocation(getAttr(parent));
@@ -156,10 +156,10 @@ void commonFactor(tTag* parent) {
 	}
 }
 
-void rec_tree_commonfactor(tTag* tag) {
+void resourceTreeCommonFactor(tTag* tag) {
 	if (tag) {
-		rec_tree_commonfactor(tag->next);
-		rec_tree_commonfactor(tag->child);
+		resourceTreeCommonFactor(tag->next);
+		resourceTreeCommonFactor(tag->child);
 		commonFactor(tag); /* post order */
 	}
 }
@@ -177,14 +177,14 @@ void test() {
 	tr[3].next =&(tr[4]);
 	tr[4].next =&(tr[5]);
 	tr[5].next =NULL;
-	
+
 	tr[6].next =&(tr[7]);
 	tr[7].next =&(tr[8]);
 	tr[8].next =&(tr[9]);
 	tr[8].child=&(tr[11]);
 	tr[9].next =&(tr[10]);
 	tr[10].next =NULL;
-	
+
 	tr[11].next =&(tr[12]);
 	tr[12].next =&(tr[13]);
 	tr[13].next =&(tr[14]);
@@ -210,11 +210,11 @@ void test() {
 	tr[15].palette=strallocandcopy("joj11");
 	tr[16].palette=strallocandcopy("joj11");
 
-	generateXML(0,tr,stdout); 
+	generateXML(0,tr,stdout);
 
-	rec_tree_commonfactor(tr);
-	
-	generateXML(0,tr,stdout); 
+	resourceTreeCommonFactor(tr);
+
+	generateXML(0,tr,stdout);
 
 }
 #endif
@@ -225,7 +225,7 @@ void test() {
 
 void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status) {
 	char number[10];
-	tTag* folder=malloc(sizeof(tTag));	
+	tTag* folder=malloc(sizeof(tTag));
 
 	memset(folder,0,sizeof(tTag));
 	sprintf(number,"%d",palette);
@@ -235,7 +235,7 @@ void unknown_folder(const char* path, const char* file, int palette, const char*
 	folder->file=strallocandcopy(file);
 	folder->palette=strallocandcopy(number);
 	folder->paletteindex=strallocandcopy(paletteindex);
-	
+
 	if (!status->folderFirst) {
 		status->folderFirst=folder;
 	} else {
@@ -247,7 +247,7 @@ void unknown_folder(const char* path, const char* file, int palette, const char*
 
 void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, tTreeStatus* status) {
 	char aux[100];
-	tTag* item=malloc(sizeof(tTag));	
+	tTag* item=malloc(sizeof(tTag));
 
 	memset(item,0,sizeof(tTag));
 	sprintf(aux,"%d",value);
@@ -260,7 +260,7 @@ void unknown_item(int value,const char* index,const char* path,const char* type,
 	item->flags=strallocandcopy(aux);
 	sprintf(aux,"Unknown %s %d",typedesc, count);
 	item->desc=strallocandcopy(aux);
-	
+
 	if (!status->itemCursor) {
 		status->folderCursor->child=item;
 	} else {
@@ -273,7 +273,7 @@ void unknown_item(int value,const char* index,const char* path,const char* type,
 |                       Memory tree --> xml                     |
 \***************************************************************/
 
-void generateXML(int n,tTag* t,FILE* outputStream) {
+void generateXML(int n,/*const*/ tTag* t,FILE* outputStream) {
 	int a;
 	tTag* children;
 
@@ -319,6 +319,13 @@ void generateXML(int n,tTag* t,FILE* outputStream) {
 	}
 }
 
+int generateXMLfile(const char* vFile,/*const*/ tTag* t) {
+	FILE* fd;
+	if (!(fd=fopen(vFile,"wb"))) return PR_RESULT_ERR_XML_NOT_OPEN;
+	generateXML(0,t,fd);
+	return PR_RESULT_SUCCESS;
+}
+
 /***************************************************************\
 |                File attribute deletion routines               |
 \***************************************************************/
@@ -345,7 +352,7 @@ void rec_tree(tTag* *t,const char* file) {
 			if ((*t) && (*t)->next) rec_tree(&((*t)->next),file);
 		}
 	}
-	
+
 	if ((*t) && (*t)->child) rec_tree(&((*t)->child),file);
 }
 
@@ -377,7 +384,7 @@ void rec_tree_fix(tTag* parent,tTag* child) {
 		/* partial */
 		if ((parent->path!=NULL)&&(child->path!=NULL)) {
 			char *p,*c,*aux;
-			
+
 			for (p=parent->path,c=child->path;*p&&*c&&*p==*c;p++,c++);
 			if (*c=='/') c++;
 			aux=strallocandcopy(c);
@@ -386,16 +393,16 @@ void rec_tree_fix(tTag* parent,tTag* child) {
 		}
 
 	}
-	
+
 }
 
-void unknown_fixtreeinheritances(tTag* *tree) {
+void resourceTreeFixInheritances(tTag* *tree) {
 	/*printf("fixing inheritances in tree\n");*/
 	if (*tree) {
 		rec_tree_fix(NULL,(*tree));
-		
+
 		freeAllocation((*tree)->path);
-		(*tree)->path=NULL;		
+		(*tree)->path=NULL;
 	}
 	test();
 }
