@@ -59,7 +59,8 @@ void syntax() {
 
 int main (int argc, char **argv) {
 	/* declare variables */
-	char  dirName[MAX_FILENAME_SIZE]=".";
+	char* dirName          =NULL;
+	char* dirNameDef            ;
 	char* datAuthor        =NULL;
 	char* datFileName      =NULL;
 	char* datfile          =NULL;
@@ -84,7 +85,7 @@ int main (int argc, char **argv) {
 				case 'i':
 					if (hasFlag(classify_flag|export_flag)) setFlag(help_flag);
 					setFlag(import_flag);
-					if (optarg) strncpy(dirName,optarg,MAX_FILENAME_SIZE);
+					dirName=strallocandcopy(optarg);
 					break;
 				case 'g':
 					setFlag(cgi_flag); /* if cgi, a classify must be performed */
@@ -98,7 +99,7 @@ int main (int argc, char **argv) {
 				case 'e':
 					if (hasFlag(classify_flag|import_flag)) setFlag(help_flag);
 					setFlag(export_flag);
-					if (optarg) strncpy(dirName,optarg,MAX_FILENAME_SIZE);
+					dirName=strallocandcopy(optarg);
 					break;
 				case 'b':
 					setFlag(backup_flag);
@@ -178,7 +179,6 @@ int main (int argc, char **argv) {
 		tree=parseXmlFile(optimizeXmlFile,&result);
 		if (result==PR_RESULT_SUCCESS) {
 			if (tree) resourceTreeCommonFactor(tree->child);
-			eliminatecommonfactors(tree);
 			resourceTreeFixInheritances(&tree);
 			result=generateXMLfile(optimizeXmlFile,tree);
 			freeTagStructure(tree);
@@ -189,12 +189,13 @@ int main (int argc, char **argv) {
 		tFileDir2 input;
 
 		fileDirClearOptions(&input);
+		dirNameDef=dirName?dirName:".";
 		if (optind < argc) {
 			while (optind < argc)
 				fileDirAddOption(&input,argv[optind++]);
-    } else {
+        } else {
 				fileDirAddOption(&input,".");
-		}
+        }
 		c=fileDirGetFiles(&input,&files,!hasFlag(import_flag),!hasFlag(recursive_flag),resFile,datFileName!=NULL);
 
 		switch (c) {
@@ -210,7 +211,7 @@ int main (int argc, char **argv) {
 		case 0: {
 			char  unknownFile[MAX_FILENAME_SIZE];
 			if (hasFlag(export_flag)) {
-				sprintf(unknownFile,"%s/" RES_XML_UNKNOWN_PATH "/" RES_XML_UNKNOWN_XML,dirName);
+				sprintf(unknownFile,"%s/" RES_XML_UNKNOWN_PATH "/" RES_XML_UNKNOWN_XML,dirNameDef);
 				unknownLogStart(unknownFile,optionflag,extension);
 			}
 			while ((file=fileDirGetFile(&files,&datfile))) {
@@ -222,8 +223,8 @@ int main (int argc, char **argv) {
 				/* Call PR */
 				if (hasFlag(import_flag)) {
 					/* import */
-					fprintf(outputStream,PR_TEXT_TASK_COMPILE,file,dirName);
-					result=prImportDatOpt(file,dirName,resFile,optionflag,dat,extension);
+					fprintf(outputStream,PR_TEXT_TASK_COMPILE,file,dirNameDef);
+					result=prImportDatOpt(file,dirNameDef,resFile,optionflag,dat,extension);
 					if (result>0) {
 						fprintf(outputStream,PR_TEXT_RESULT_ERR,result,result);
 					} else {
@@ -231,8 +232,8 @@ int main (int argc, char **argv) {
 					}
 				} else if (hasFlag(export_flag)) {
 					/* export */
-					fprintf(outputStream,PR_TEXT_TASK_EXTRACT,file,dirName);
-					result=prExportDatOpt(file,dirName,resFile,optionflag,dat,datAuthor,extension,format);
+					fprintf(outputStream,PR_TEXT_TASK_EXTRACT,file,dirNameDef);
+					result=prExportDatOpt(file,dirNameDef,resFile,optionflag,dat,datAuthor,extension,format);
 					if (result>0) {
 						fprintf(outputStream,PR_TEXT_EXPORT_OK,result,result);
 					} else {
@@ -265,7 +266,8 @@ int main (int argc, char **argv) {
 	freeAllocation(extension);
 	freeAllocation(optimizeXmlFile);
 	freeAllocation(resFile);
-
+	freeAllocation(dirName);
+	
 	return c;
 }
 
