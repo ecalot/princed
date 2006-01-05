@@ -66,6 +66,7 @@ int main (int argc, char **argv) {
 	char* extension        =NULL;
 	char* format           =NULL;
 	char* resFile          =NULL;
+	char* optimizeXmlFile  =NULL;
 	char* file;
 	char* errors[]         =PR_TEXT_ERRORS;
 	char* types[]          =PR_TEXT_TYPES;
@@ -139,6 +140,11 @@ int main (int argc, char **argv) {
 					setFlag(verbose_flag);
 				case -1:
 					break;
+				case 3:
+					freeAllocation(optimizeXmlFile);
+					optimizeXmlFile=strallocandcopy(optarg);
+					if (!optimizeXmlFile) setFlag(help_flag);
+					break;
 				case 1:
 					setFlag(version_flag);
 				default:
@@ -150,7 +156,10 @@ int main (int argc, char **argv) {
 	c=0;
 
 	/* At least one of these options must be selected, if not, the user needs help! */
-	if (!(hasFlag(import_flag|export_flag|classify_flag))) setFlag(help_flag);
+	if (!(optimizeXmlFile||hasFlag(import_flag|export_flag|classify_flag))) setFlag(help_flag);
+
+	/* optimizeXmlFile is incompatible with the 3 main options, perform the check  */
+	if (optimizeXmlFile&&(hasFlag(import_flag|export_flag|classify_flag))) setFlag(help_flag);
 
 	/* Show cgi and about stuff */
 	if (hasFlag(cgi_flag)) fprintf(outputStream,PR_CGI_TEXT1);
@@ -164,6 +173,17 @@ int main (int argc, char **argv) {
 
 	if (hasFlag(help_flag)) {
 		syntax();
+	} else if (optimizeXmlFile) { /* special case optimize */
+		tTag* tree;
+		tree=parseXmlFile(optimizeXmlFile,&result);
+		if (result==PR_RESULT_SUCCESS) {
+			if (tree) resourceTreeCommonFactor(tree->child);
+			eliminatecommonfactors(tree);
+			resourceTreeFixInheritances(&tree);
+			result=generateXMLfile(optimizeXmlFile,tree);
+			freeTagStructure(tree);
+		}
+		fprintf(outputStream,PR_TEXT_RESULT,errors[-result],result);
 	} else {
 		tFileDir2 files;
 		tFileDir2 input;
@@ -243,6 +263,7 @@ int main (int argc, char **argv) {
 	freeAllocation(datAuthor);
 	freeAllocation(datFileName);
 	freeAllocation(extension);
+	freeAllocation(optimizeXmlFile);
 	freeAllocation(resFile);
 
 	return c;
