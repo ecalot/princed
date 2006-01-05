@@ -44,10 +44,10 @@ compress.c: Princed Resources : Image Compression Library
  *  no compression is called RAW
  *  there are 2 algorithms types: RLE and LZG
  *  we can use the modifier: transpose and not transpose (t)
- *  we can use the LZG modifier: Faster (checks faster the LZG window ignoring
- *   less probable pattern) (+)
+ *  we can use the LZG modifier: Higher (checks more extensively the LZG window
+ *   without ignoring less probable patterns) (+)
  *
- *  So the possible compression algorithms are:
+ *  So the possible compression algorithm variants are:
  *   RAW, RLE, RLEt, LZG, LZGt, LZG+, LZGt+
  *  
  *  It is known that LZG+ allways compresses better or equal than LZG
