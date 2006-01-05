@@ -85,7 +85,7 @@ tTag* getTagStructure() {
 	t=(tTag*)malloc(sizeof(tTag));
 	if (t==NULL) return NULL;
 
-	t->child=NULL;
+	t->child=NULL; /* TODO: use memset,0 */
 	t->next=NULL;
 	t->tag=NULL;
 	t->desc=NULL;
@@ -485,7 +485,7 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 		*error=PR_RESULT_ERR_XML_FILE; /* File not open */
 		return NULL;
 	}
-	/* bugfix moved to loadArray */ l[size-1]=0; /* The last character must be an end of line (the > is forbiden) */ 
+	/* bugfix moved to loadArray */ l[size-1]=0; /* The last character must be an end of line (the > is forbiden) */
 	p=l;
 
 	*error=getNextTag(&p, &value);
@@ -503,9 +503,9 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 		free(father);
 		return NULL;
 	}
-	
+
 	*error=getNextTag(&p, &value);
-	
+
 	free(l);
 	if (*error<0) {
 		freeTagStructure(tag);
@@ -534,7 +534,7 @@ int parseStructure(const char* vFile,tTag** structure) {
 	static const char defaultXmlFile[]=RES_XML_RESOURC_XML;
 
 	if (vFile==NULL) vFile=defaultXmlFile;
-	
+
 	/* Generate xml structure if doesn't exist */
 	if (strcmp(lastFile,vFile)) {
 		/* if the file is different than the cached file */
