@@ -22,7 +22,7 @@
 pr.c: Main source file for Princed Resources library
 ¯¯¯¯
 	Princed Resources editor
-	(c) Copyright 2003-2005 Princed Development Team
+	(c) Copyright 2003-2006 Princed Development Team
 
 	Authors
 	 Coding & main routines
