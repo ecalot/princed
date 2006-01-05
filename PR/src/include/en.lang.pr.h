@@ -175,6 +175,7 @@ NULL,NULL,NULL,\
                               any extraction\n\
    -v, --verbose              explain what is being done\n\
        --version              output version information and exit\n\
+       --xml-optimize=XMLFILE optimizes a resources xml file\n\
 \n"
 
 #define PR_TXT_AUTHORS           "Authors"

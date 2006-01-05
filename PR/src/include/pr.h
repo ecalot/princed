@@ -111,6 +111,9 @@ void  freeParsedStructure (tTag** structure);
 void  freeParsingCache    ();
 void  freeTagStructure    (tTag* structure);
 tTag* parseXmlFile        (const char* vFile,int* error);
+int   generateXMLfile     (const char* vFile,/*const*/ tTag* t);
+void  resourceTreeCommonFactor   (tTag* tag);
+void  resourceTreeFixInheritances(tTag* *tree);
 
 /* unknown.xml logging */
 

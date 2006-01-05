@@ -161,13 +161,14 @@ typedef enum {
 {"cgi",         no_argument,       0,'g'},\
 {"help",        no_argument,       0,'?'},\
 {"resource",    required_argument, 0,'s'},\
-{"compression-level",    required_argument, 0,'z'}\
-PARSING_OPTRAW\
+{"compression-level",required_argument, 0,'z'}\
 {"recursive",   no_argument,       0,'R'},\
 {"datfile",     required_argument, 0,'t'},\
 {"unknown",     no_argument,       0,2},\
 {"verbose",     no_argument,       0,'v'},\
 {"version",     no_argument,       0,1},\
+{"xml-optimize",required_argument, 0,3},\
+PARSING_OPTRAW\
 {0, 0, 0, 0}\
 }
 

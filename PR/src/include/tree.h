@@ -19,8 +19,8 @@
 */
 
 /*
-unknown.h: Princed Resources : Unknown.xml generator headers
-¯¯¯¯¯¯¯¯¯
+tree.h: Princed Resources : Unknown.xml generator headers
+¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 
@@ -38,7 +38,7 @@ unknown.h: Princed Resources : Unknown.xml generator headers
 #include "reslist.h"
 #include <stdio.h> /* FILE* */
 
-typedef struct { 
+typedef struct {
 	tTag*        folderCursor;
 	tTag*        folderFirst;
 	tTag*        itemCursor;
@@ -47,9 +47,6 @@ typedef struct {
 void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, tTreeStatus* status);
 void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status);
 void unknown_deletetreefile(const char* file, tTag* tree);
-void unknown_fixtreeinheritances(tTag* *tree);
 void generateXML(int n,tTag* t,FILE* outputStream);
-void rec_tree_commonfactor(tTag* tag);
-#define eliminatecommonfactors(a) if (a) rec_tree_commonfactor(a->child) /* this ignores the first tag (resources) */
 
 #endif
