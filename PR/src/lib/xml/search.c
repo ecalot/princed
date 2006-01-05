@@ -49,7 +49,7 @@ search.c: Princed Resources : specific xml handling functions
 \***************************************************************/
 
 /* parse file */
-int parseFile(const char* vFile, const char* datFile, tResourceList *r) {
+int parseFile(const char* vFile, const char* datFile, tResourceList *rlist) {
 	/* Declare error variable */
 	int error;
 	tPassWork pass;
@@ -60,7 +60,7 @@ int parseFile(const char* vFile, const char* datFile, tResourceList *r) {
 
 	/* Use the xml structure to Generate the resource structure of the file */
 	pass.datFile=datFile;
-	pass.r=r;
+	pass.rlist=rlist;
 	workTree(structure,&pass,workTag);
 
 	/* All done */
@@ -105,7 +105,7 @@ void workTag(const tTag* t,void* pass) {
 
 	/* Declare variables */
 	const char* datFile=((tPassWork*)pass)->datFile;
-	tResourceList* r=((tPassWork*)pass)->r;
+	tResourceList* rlist=((tPassWork*)pass)->rlist;
 	tResource res;
 	char* end;
 
@@ -149,7 +149,7 @@ void workTag(const tTag* t,void* pass) {
 	keepStringAttribute(name);  /* only for plv */
 	keepStringAttribute(path);
 
-	resourceListAdd(r,&res);
+	resourceListAdd(rlist,&res);
 }
 
 void workTree(const tTag* t,void* pass, void (*function)(const tTag*,void*)) {

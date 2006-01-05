@@ -167,7 +167,9 @@ void resourceTreeCommonFactor(tTag* tag) {
 #ifndef DEBUG_CF
 void test() {
 	tTag tr[100];
-	memset(tr,sizeof(tr),0);
+	int i;
+	for (i=0;i<6800;i++) ((char*)tr)[i]=0;
+/*	memset(tr,0,100*sizeof(tTag*));*/
 
 	tr[0].child=&(tr[1]);
 

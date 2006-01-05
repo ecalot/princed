@@ -94,8 +94,6 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 	return PR_RESULT_SUCCESS; /* Ok */
 }
 
-#define eliminatecommonfactors(a) if (a) resourceTreeCommonFactor(a->child) /* this ignores the first tag (resources) */
-
 int unknownLogStop () {
 	int i;
 	tTag* t;
@@ -103,7 +101,7 @@ int unknownLogStop () {
 	if (!unknownFile.fd) return PR_RESULT_ERR_XML_NOT_OPEN; /* File not open */
 
 	/* common factor tree reducing function */
-	eliminatecommonfactors(unknownFile.tree);
+	if (unknownFile.tree) resourceTreeCommonFactor(unknownFile.tree->child);
 
 	/* it is time to fix the inheritances */
 	resourceTreeFixInheritances(&unknownFile.tree);
