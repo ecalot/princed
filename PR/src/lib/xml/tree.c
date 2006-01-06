@@ -55,6 +55,25 @@ tree.c: Princed Resources : Tree handling routines
 |              Common factor tree reducing routines             |
 \***************************************************************/
 
+/*
+Affected attributes: only fully inheritable
+PRE: inheritances are shown in the tree, so if the parent has
+ file="a", then the son comes with file="a" except that other
+ file was explicity specified for the child. NULL is never shown
+ after a non-NULL parent.
+
+POST: if the folder has n childs and there are n/2 equal attributes
+ then those attributes comes to the parent.
+ 
+ if the folder has n childs and there are at most 10/n different attributes
+ we can say that there is a ratio of 10 items per atribute or more.
+ If that happens for at least one attribute, the attribute with the highest
+ ratio will be partitioned that way:
+       if an attribute value is present in 3 or more items, all items goes
+       together under a new folder with this item set.
+
+*/
+
 typedef struct {
 	const char* attr;
 	int count;
@@ -70,11 +89,13 @@ int attrcmp(const void* x,const void* y) {
 	return EQ;
 }
 
-void increase(const char* attr,tList* l) {
+void increase(const char* attr,tList* l,int *lcount) {
 	tAttrCount a;
 	tAttrCount* aux;
+	
+	if (!attr) return; /* if not attribute, do nothing */
 
-	printf("increase: %s\n",attr);
+/*	printf("increase: %s\n",attr);*/
 	a.attr=attr;
 	a.count=1; /* if it appeared for the first time */
 	if (list_moveCursor(l,&a)) {
@@ -82,11 +103,12 @@ void increase(const char* attr,tList* l) {
 		aux->count++;
 	} else {
 		list_insert(l,&a);
+		(*lcount)++;
 	}
 }
 
 #define attributeCount 8
-/* this is the most ugly thing I ever made... nevertheless it was the only way to make it abstract */
+/* this is the most ugly thing I've ever made... nevertheless it was the only way to make it abstract */
 #define bindAttr(name,i) attrInfo[i].offset=(long)(&(parent->name))-(long)(parent)
 #define getAttr(tag) (*( (char**)((long)(tag)+attrInfo[i].offset) ))
 
@@ -99,6 +121,7 @@ void commonFactor(tTag* parent) {
 	struct attributeInfo {
 		int c;
 		tList l;
+		int lcount;
 		long offset;
 	} attrInfo[attributeCount];
 
@@ -115,14 +138,12 @@ void commonFactor(tTag* parent) {
 	for (i=0;i<attributeCount;i++) {
 		attrInfo[i].l=list_create(sizeof(tAttrCount),attrcmp,NULL);
 		attrInfo[i].c=0;
+		attrInfo[i].lcount=0;
 	}
 
 	for (child=parent->child;child;child=child->next) {
 		for (i=0;i<attributeCount;i++) {
-			if (getAttr(child))
-				increase(getAttr(child),&(attrInfo[i].l));
-			else
-				increase(getAttr(child),&(attrInfo[i].l));
+			increase(getAttr(child),&(attrInfo[i].l),&attrInfo[i].lcount);
 			attrInfo[i].c++;
 		}
 	}
@@ -132,8 +153,8 @@ void commonFactor(tTag* parent) {
 		result=NULL;
 		list_firstCursor(&(attrInfo[i].l));
 		while ((a=list_getCursor(&(attrInfo[i].l)))) {
-			printf("running through %s (%d)\n",a->attr,a->count);
-			if (a->count>attrInfo[i].c/2 && a->count>max) {
+/*			printf("running through %s (%d)\n",a->attr,a->count);*/
+			if (a->count*7>attrInfo[i].c*5 && a->count>max) {
 				max=a->count;
 				result=a->attr;
 			}
@@ -164,7 +185,7 @@ void resourceTreeCommonFactor(tTag* tag) {
 	}
 }
 
-#ifndef DEBUG_CF
+#ifdef DEBUG_CF
 void test() {
 	tTag tr[100];
 	int i;
@@ -286,11 +307,11 @@ void generateXML(int n,/*const*/ tTag* t,FILE* outputStream) {
 
 #define FillAttr(a,b) if (a) fprintf(outputStream," %s=\"%s\"",b,a)
 
-	if (t->child) FillAttr(t->desc,"desc");
+	if (t->child) FillAttr(t->desc,"name");
 	FillAttr(t->path,"path");
 	FillAttr(t->file,"file");
 	FillAttr(t->type,"type");
-	FillAttr(t->name,"name");
+	FillAttr(t->desc,"desc");
 	FillAttr(t->palette,"palette");
 	FillAttr(t->value,"value");
 	FillAttr(t->index,"index");
@@ -310,12 +331,12 @@ void generateXML(int n,/*const*/ tTag* t,FILE* outputStream) {
 				children=children->next;
 			}
 			for(a=0;a<n;a++) fprintf (outputStream,"\t");
-			fprintf(outputStream,"</%s>\n",t->tag);
+			fprintf(outputStream,"</%s>\n\n",t->tag);
 		} else {
-			if (t->desc) {
-				fprintf(outputStream,">%s</%s>\n",t->desc,t->tag);
+			if (t->name) {
+				fprintf(outputStream,">%s</%s>\n",t->name,t->tag);
 			} else {
-				fprintf(outputStream," />\n\n");
+				fprintf(outputStream," />\n");
 			}
 		}
 	}
@@ -406,6 +427,5 @@ void resourceTreeFixInheritances(tTag* *tree) {
 		freeAllocation((*tree)->path);
 		(*tree)->path=NULL;
 	}
-	test();
 }
 

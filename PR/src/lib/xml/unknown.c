@@ -54,7 +54,23 @@ unknown.c: Princed Resources : Unknown resources handler
 
 #define RES_XML_UNKNOWN_FILES "%t%03n.%e"
 #define XML_TAG_RESOURCES     "resources"
-#define XML_ATTRV_VERSION     "generated"
+#define XML_ATTRV_VERSION     "build-1"
+
+char* getVersion(const char* oldVersion) {
+      char* newVersion;
+      int l,i;
+
+      if (!oldVersion||!oldVersion[0]) return strallocandcopy(XML_ATTRV_VERSION);
+      l=strlen(oldVersion);
+      newVersion=malloc(l+5); /* l+2 is enough */
+      for (i=0;i<l&&isNumber(oldVersion[l-i-1]);i++);
+
+      if (l!=i) strncpy(newVersion,oldVersion,l-i);
+      if (i)    sprintf(newVersion+(l-i),"%d",atoi(oldVersion+(l-i))+1);
+      else newVersion[l]=0;
+      
+      return newVersion;
+}
 
 tUnknownFile unknownFile;
 
@@ -85,7 +101,11 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 			memset(unknownFile.tree,0,sizeof(tTag));
 			unknownFile.tree->version=strallocandcopy(XML_ATTRV_VERSION);
 			unknownFile.tree->tag=strallocandcopy(XML_TAG_RESOURCES);
-		}
+		} else {
+            char* version=getVersion(unknownFile.tree->version);
+            freeAllocation(unknownFile.tree->version);
+            unknownFile.tree->version=version;
+        }
 	}
 
 	/* Open the file */
