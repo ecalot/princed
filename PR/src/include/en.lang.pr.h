@@ -138,9 +138,11 @@ NULL,NULL,NULL,\
 #define PARSING_RAW ""
 #endif
 #define PARSING_HELP_BEGIN "Usage: \n\
-  pr [OPTIONS] [-x[EXPORTDIR]|-m[IMPORTDIR]|-c] [DATFILEPATH[@resource1[,resource2...]]]...\n\
+  pr [OPTIONS] [-x[EXPORTDIR]|-m[IMPORTDIR]|-c] [DATFILEPATH[ ...]]\n\
   pr --help\n\
   pr --version\n\
+\n\
+   DATFILEPATH syntax is FILE.DAT[@[RESID][:RESINDEX][#ORDER], ...]\n\
 \n\
   Mandatory arguments to long options are mandatory for short options too.\n\
 \n"
@@ -159,7 +161,7 @@ NULL,NULL,NULL,\
 "PARSING_SHOWRAW(PARSING_RAW)
 
 #define PARSING_HELP_PART3 "\
-   -R, --recursive            searches for all dat files (only if DATFILEPATH\n\
+   -r, --recursive            searches for all dat files (only if DATFILEPATH\n\
                               is not a dat file)\n\
    -t, --datfile=DATFILE      specifies a dat file to read resources\n\
                               different than the original file\n\

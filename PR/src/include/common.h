@@ -66,7 +66,7 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 
 #define PR_URL                    "http://www.princed.com.ar"
 #define PR_VERSION                "v1.2-dev"
-#define PR_COPY                   "(c) Copyright 2003 - 2005 Princed Development Team"
+#define PR_COPY                   "(c) Copyright 2003 - 2006 Princed Development Team"
 
 /***************************************************************\
 |                         Other defines                         |
@@ -161,13 +161,13 @@ typedef enum {
 {"cgi",         no_argument,       0,'g'},\
 {"help",        no_argument,       0,'?'},\
 {"resource",    required_argument, 0,'s'},\
-{"compression-level",required_argument, 0,'z'}\
-{"recursive",   no_argument,       0,'R'},\
+{"compression-level",required_argument, 0,'z'},\
+{"recursive",   no_argument,       0,'r'},\
 {"datfile",     required_argument, 0,'t'},\
 {"unknown",     no_argument,       0,2},\
 {"verbose",     no_argument,       0,'v'},\
 {"version",     no_argument,       0,1},\
-{"xml-optimize",required_argument, 0,3},\
+{"xml-optimize",required_argument, 0,3}\
 PARSING_OPTRAW\
 {0, 0, 0, 0}\
 }
