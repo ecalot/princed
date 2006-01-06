@@ -34,6 +34,8 @@ stringformat.c: Princed Resources : format string parsing header
 #ifndef _STRINGFORMAT_H_
 #define _STRINGFORMAT_H_
 
+#define isNumber(k) ('0'<=(k) && (k)<='9')
+
 const char* parseformat(const char* format,long value,const char* index, const char* type, const char* extension, long numberOfThisType, int order, const char* desc);
 	/* This function parses format in this way:
 	 * %v - the value

@@ -35,7 +35,7 @@ reslist.h: Princed Resources : Resource list
 #define _RESLIST_H_
 
 #include "list.h" /* tList */
-#define tResourceList tList
+typedef tList tResourceList;
 
 #include "common.h" /* Item Types */
 
