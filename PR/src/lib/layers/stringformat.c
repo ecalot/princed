@@ -33,6 +33,7 @@ stringformat.c: Princed Resources : format string parsing feature
 
 #include <stdlib.h> /* NULL */
 #include "translate.h" /* index translation */
+#include "stringformat.h"
 #include <string.h> /* strlen */
 
 static int i;
@@ -81,7 +82,6 @@ void emitNumber(int n, int size, int zeroflag) {
 }
 
 #define readk(k) (k=*(format++))
-#define isNumber(k) ('0'<=k && k<='9')
 
 const char* parseformat(const char* format,long value,const char* index, const char* type, const char* extension, long numberOfThisType, int order, const char* desc) {
 	/* This function parses format in this way:
