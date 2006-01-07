@@ -79,7 +79,7 @@ void xemit(tStatus s, char c) {
 int initRM(const char* text, tResourceMatch *r) {
 	tStatus status=eVal;
 	const char* t;
-	
+	/* TODO: add ! as NOT */
 	/* set up default values */
 	result.flag=0;
 	result.value=0;
@@ -89,6 +89,7 @@ int initRM(const char* text, tResourceMatch *r) {
 
 	for (t=text;status!=eDone;t++) {
 		switch (*t) {
+		case '\\':
 		case '/': /* path */
 			status=ePat;
 			result.flag|=dPat;
@@ -99,7 +100,7 @@ int initRM(const char* text, tResourceMatch *r) {
 				status=eInd;
 				if (result.flag&dInd) {
 					freeRM(&result);
-					return -1; /* ind flag has been set, duplicated index? */
+					return PR_RESULT_ERR_COMMAND_LINE_SYNTAX; /* ind flag has been set, duplicated index? */
 				}
 				result.flag|=dInd;
 			} else xemit(status,*t);
@@ -109,7 +110,7 @@ int initRM(const char* text, tResourceMatch *r) {
 				status=eOrd;
 				if (result.flag&dOrd) {
 					freeRM(&result);
-					return -1; /* ord flag has been set, duplicated order? */
+					return PR_RESULT_ERR_COMMAND_LINE_SYNTAX; /* ord flag has been set, duplicated order? */
 				}
 				result.flag|=dOrd;
 			} else xemit(status,*t);
@@ -124,11 +125,10 @@ int initRM(const char* text, tResourceMatch *r) {
 		}
 	}
 	xemit(eDone,0);
-
 	*r=result;
-	
-	return 0; /* Ok */
-}	
+
+	return PR_RESULT_SUCCESS; /* Ok */
+}
 
 /* matches becomes false only if the flag is true and the match is false */
 #define compare(x,a) m=m&&( (!(r->flag&x)) || (a) )
@@ -138,7 +138,7 @@ int runRM(const tResourceMatch *r, const char* path, const tResourceId *id) {
 	const char* null="";
 	const char* rpath;
 	const char* rindex;
-
+#define MATCH_DEBUG
 #ifdef MATCH_DEBUG
 	printf("Matching: path='%s', id=(%d,%s,%d) <=> flag=%x path='%s' id=(%d,%s,%d)\n",
 		path,
@@ -151,13 +151,13 @@ int runRM(const tResourceMatch *r, const char* path, const tResourceId *id) {
 	/* replace NULL with null */
 	rindex=r->index?r->index:null;
 	rpath=r->path?r->path:null;
-	
+
 	/* compare each field */
 	compare(dOrd,r->order==id->order);
 	compare(dVal,r->value==id->value);
 	compare(dInd,matchesIn(id->index,rindex)||matchesIn(translateInt2Ext(id->index),rindex));
 	compare(dPat,matchesIn(path,rpath));
-	
+
 	return m;
 }
 
