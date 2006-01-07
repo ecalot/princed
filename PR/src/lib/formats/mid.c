@@ -54,5 +54,5 @@ int mFormatImportMid(tResource *res) {
 	free(res->data);
 	res->data=file;
 	mWriteFileInDatFile(res);
-	return 1;
+	return 1; /* true */
 }

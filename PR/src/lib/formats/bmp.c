@@ -57,26 +57,26 @@ int mFormatExportBmp(const unsigned char* data, const char *vFileext,unsigned lo
 	result=mExpandGraphic(data,&image,size);
 	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
 		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);
-	if (result==COMPRESS_RESULT_FATAL) return 0;
+	if (result==COMPRESS_RESULT_FATAL) return 0; /* false */
 
 	/* Write bitmap */
 	mWriteBitMap(image,vFileext,optionflag,backupExtension);
 
 	/* free bitmap */
 	free(image.pix);
-	return 1;
+	return 1; /* true */
 }
 
 int mFormatImportBmp(tResource *res) {
 	tImage img;
 
-	if (!mReadBitMap(&img,res->data,res->size)) return 0;
+	if (!mReadBitMap(&img,res->data,res->size)) return 0; /* false */
 	free(res->data);
 	mCompressGraphic(&(res->data),&img,(int*)&(res->size));
 	mWriteFileInDatFile(res);
 	free(img.pix);
 
-	return 1;
+	return 1; /* true */
 }
 
 int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupExtension) {
@@ -98,7 +98,7 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	FILE* bitmap;
 
 	/* open file */
-	if (!writeOpen(vFile,&bitmap,optionflag)) return 0;
+	if (!writeOpen(vFile,&bitmap,optionflag)) return 0; /* false */
 
 	/* initialize variables */
 	width=img.width;
@@ -151,7 +151,7 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	}
 
 	writeCloseOk(bitmap,optionflag,backupExtension);
-	return 1;
+	return 1; /* true */
 }
 
 int mReadBitMap(tImage* image,unsigned char* data, int size) {
@@ -196,7 +196,7 @@ int mReadBitMap(tImage* image,unsigned char* data, int size) {
 	/* if validations==wrong */
 	if (!ok) {
 		freeAllocation(image->pix);
-		return 0; /* this is not a valid bmp file format or memory too low */
+		return 0; /* false: this is not a valid bmp file format or memory too low */
 	}
 
 	/* Serialize bitmap-->raw array */
@@ -207,5 +207,5 @@ int mReadBitMap(tImage* image,unsigned char* data, int size) {
 			image->widthInBytes
 		);
 
-	return 1;
+	return 1; /* true */
 }

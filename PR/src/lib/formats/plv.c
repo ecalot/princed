@@ -172,8 +172,8 @@ int mFormatImportPlv(tResource *res) {
 	unsigned long int oldSize=res->size;
 
 	/* integrity check 1 */
-	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE) return 0;
-	if (memcmp(res->data,PLV_HEADER_A,PLV_HEADER_A_SIZE)) return 0;
+	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE) return 0; /* false */
+	if (memcmp(res->data,PLV_HEADER_A,PLV_HEADER_A_SIZE)) return 0; /* false */
 
 	/* jump to size */
 	pos=res->data+PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE;
@@ -182,7 +182,7 @@ int mFormatImportPlv(tResource *res) {
 	res->size=array2long(pos);pos+=4;
 
 	/* integrity check 2 */
-	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE+res->size) return 0;
+	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE+res->size) return 0; /* false */
 
 	/* validate checksum */
 	if (!checkSum(pos,res->size))
@@ -193,6 +193,6 @@ int mFormatImportPlv(tResource *res) {
 	res->data=pos;
 	mWriteFileInDatFileIgnoreChecksum(res);
 	res->data=posAux;
-	
-	return 1;
+
+	return 1; /* true */
 }

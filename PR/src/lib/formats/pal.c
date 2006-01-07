@@ -97,11 +97,11 @@ int mFormatImportPal(tResource *res,const char* vFile) {
 	int sample1;
 
 	/* check size */
-	if ((res->size)<130) return 0;
+	if ((res->size)<130) return 0; /* false */
 
 	/* verify jasc pal header */
 	while (palh[i]==(res->data)[i++]);
-	if (i!=sizeof(palh)) return 0; /* palette differs with headers */
+	if (i!=sizeof(palh)) return 0; /* false: palette differs with headers */
 
 	/* Read sample */
 	sprintf(aux,"%s.more",vFile);
@@ -125,7 +125,7 @@ int mFormatImportPal(tResource *res,const char* vFile) {
 	/* set current values */
 	data2=strtok((char*)(res->data)+sizeof(palh)-1,enter);
 	while (k--) {
-		if (!sscanf(data2,"%d %d %d",&r,&g,&b)) return 0;
+		if (!sscanf(data2,"%d %d %d",&r,&g,&b)) return 0; /* false */
 		/* Those lines mean a loss of data (palette colors are saved in the nearest multiple of 4) */
 		*(pal2++)=(unsigned char)((r+2)>>2);
 		*(pal2++)=(unsigned char)((g+2)>>2);
@@ -139,6 +139,6 @@ int mFormatImportPal(tResource *res,const char* vFile) {
 	res->data=pal;
 	mWriteFileInDatFile(res);
 
-	return 1;
+	return 1; /* true */
 }
 

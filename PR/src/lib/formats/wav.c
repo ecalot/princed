@@ -66,13 +66,13 @@ int mFormatImportWav(tResource *res) {
 	int i=sizeof(wav);
 	unsigned char* posAux=res->data;
 
-	if (res->size<=i) return 0;
+	if (res->size<=i) return 0; /* false */
 	res->size-=(--i);
 	while ((i==4||i==5||i==6||i==7||i==40||i==41||i==42||i==43||((res->data)[i]==wav[i]))&&(i--));
 	(res->data)[sizeof(wav)-1]=1; /* First character must be a 0x01 (wav type in dat) */
 	res->data+=sizeof(wav)-1;
 	if (i==-1) mWriteFileInDatFile(res);
 	res->data=posAux;
-	return 1;
+	return 1; /* true */
 }
 
