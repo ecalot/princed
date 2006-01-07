@@ -59,7 +59,7 @@ int partialListActive() {
 |                Partial Resource List Functions                |
 \***************************************************************/
 
-void parseGivenPath(char* path) {
+int parseGivenPath(char* path) {
 	/*
 	 * format: \([^@]*\)/(@\([0-9]\+\)?\(:[a-z ]*\)?\(#[a-z0-9]\+\)\)?
 	 * where: \1 is the dat filename, \2 is the partical list whole match if exists,
@@ -89,13 +89,14 @@ void parseGivenPath(char* path) {
 	int separator=0;
 	int j=0;
 	int size;
+	int error=0;
 
 	/* Check if the variable wasn't initialized before */
-	if (partialList.count!=0) return;
+	if (partialList.count!=0) return -2;
 	partialList.list=NULL;
 
 	/* Validates the NULL path */
-	if (path==NULL) return;
+	if (path==NULL) return 0;
 
 	/* Erase the last "/" if exists. */
 	if (path) {
@@ -105,12 +106,12 @@ void parseGivenPath(char* path) {
 			if (isDirSep(path,size)) path[size]=0;
 		}
 	}
-	
+
 	/* Locate the string separation */
 	while (path[separator]&&path[separator]!='@') separator++;
 
 	/* If no separation */
-	if (!path[separator]) return; /* There was no separator */
+	if (!path[separator]) return 0; /* There was no separator */
 
 	/* Count values, separate them with '\0' and alloc memory */
 	partialList.count=1;
@@ -126,11 +127,16 @@ void parseGivenPath(char* path) {
 	partialList.list=(tResourceMatch*)malloc(sizeof(tResourceMatch)*partialList.count);
 
 	/* Parse values and save them in the list */
-	for(i=separator;j!=partialList.count;i++) {
-		initRM(path+i,partialList.list+j); /* TODO: check for parsing error*/
+	for(i=separator;(!error)&&(j!=partialList.count);i++) {
+		error=initRM(path+i,partialList.list+j);
 		while (path[i]) i++;
 		j++;
 	}
+	if (error) {
+		for (i=0;i<j-1;i++) freeRM(partialList.list+i);
+		return -1;
+	}
+	return 0;
 }
 
 int isInThePartialList(const char* vFile, tResourceId id) {
@@ -144,12 +150,12 @@ int isInThePartialList(const char* vFile, tResourceId id) {
 	*/
 	int i;
 
-	if (!partialList.count) return 1;
+	if (!partialList.count) return 1; /* true */
 
 	for (i=0;i<partialList.count;i++)
-		if (runRM(partialList.list+i,repairFolders(vFile?vFile:""),&id)) return 1;
+		if (runRM(partialList.list+i,repairFolders(vFile?vFile:""),&id)) return 1; /* true */
 
-	return 0;
+	return 0; /* false */
 }
 
 void freePartialList() {

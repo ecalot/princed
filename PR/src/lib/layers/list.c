@@ -50,7 +50,7 @@ void list_insert(tList *list,const void* data) {
 	/* I will assume sequential access is very common,
 	 * so it is very possible that data is the next element.
 	 * I will check that and if not I'll start a sequential search */
-	tListNode *node; 
+	tListNode *node;
 	node=(tListNode*)malloc(sizeof(tListNode));
 	node->data=malloc(list->size);
 	memcpy(node->data,data,list->size);
@@ -68,7 +68,7 @@ void list_insert(tList *list,const void* data) {
 			list->first=node;
 		} else {
 			/* search until we find the first higher record or the end of the list */
-			while ((list->cursor->next) && (list->cmp(list->cursor->next->data/*>*/,data)!=GT)) 
+			while ((list->cursor->next) && (list->cmp(list->cursor->next->data/*>*/,data)!=GT))
 				list->cursor=list->cursor->next;
 
 			node->next=list->cursor->next;
@@ -94,15 +94,15 @@ void list_drop(tList *list) {
 
 void list_nextCursor(tList* list) {
 	if (list->cursor) list->cursor=list->cursor->next;
-} 
+}
 
 void list_firstCursor(tList* list) {
-	list->cursor=list->first;	
-} 
+	list->cursor=list->first;
+}
 
 int list_moveCursor(tList* list,const void* data) {
 	if (!list->first) {
-		return 0;
+		return 0; /* false */
 	} else {
 		/* if the data was lower, start searching from the beginning */
 		if ((!list->cursor)||(list->cmp(list->cursor->data/*>*/,data)==GT)) list->cursor=list->first;
@@ -111,17 +111,17 @@ int list_moveCursor(tList* list,const void* data) {
 			return list->cmp(list->first->data/*==*/,data)==EQ;
 		} else {
 			/* search until we find the first higher record or the end of the list */
-			while ((list->cursor->next) && (list->cmp(list->cursor->next->data/*>*/,data)!=GT)) 
+			while ((list->cursor->next) && (list->cmp(list->cursor->next->data/*>*/,data)!=GT))
 				list->cursor=list->cursor->next;
 			/* if the prior to the first higher record is equal to data, we've found it, if not 0 will be returned;
 			 * of course the cursor will be set to the prior to the first higher record in both cases */
 			return (list->cmp(list->cursor->data/*>*/,data)==EQ);
 		}
 	}
-} 
+}
 
 void* list_getCursor(tList* list) {
 	if (!list->cursor) return NULL;
 	return list->cursor->data;
-} 
+}
 

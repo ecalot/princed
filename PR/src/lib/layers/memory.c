@@ -63,17 +63,19 @@ char* toLower(const char* txt) {
 		txt++;
 	}
 	*r=0;
-	return ret;			
+	return ret;
 }
 
 int matchesIn(const char *s, const char *p) {
-  switch(*p) {
-    case 0: return !(*s);
-    case '*': while(*(p+1)=='*') p++; return matchesIn(s,p+1) || ((*s) && matchesIn(s+1,p));
-    case '?': return (*s) && matchesIn(s+1,p+1);
-    case '&': p++;
-    default: return ((*p)==(*s)) && matchesIn(s+1,p+1);
-  }
+	switch(*p) {
+		case 0:   return !(*s);
+		case '*': while(*(p+1)=='*') p++; return matchesIn(s,p+1) || ((*s) && matchesIn(s+1,p));
+		case '?': return (*s) && matchesIn(s+1,p+1);
+		case '\\':
+		case '/': return ('/'==(*s)||'\\'==(*s)) && matchesIn(s+1,p+1);
+		case '&': p++;
+		default:  return ((*p)==(*s)) && matchesIn(s+1,p+1);
+	}
 }
 
 #ifndef IGNORE_EQUALS

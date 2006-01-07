@@ -42,10 +42,8 @@ dat.c: Princed Resources : DAT library
 #include "reslist.h"
 
 /***************************************************************\
-|                     DAT reading primitives                    |
+|                    Private layer structures                   |
 \***************************************************************/
-
-#ifdef PR_DAT_INCLUDE_DATREAD
 
 typedef struct {
 	tPopVersion         popVersion;
@@ -76,8 +74,9 @@ int checkSum(const unsigned char* data,int size) {
 	return !checksum;
 }
 
-/* private functions */
-/* todo: move to datindex.c */
+/***************************************************************\
+|                         Private layer                         |
+\***************************************************************/
 
 #define toLower(a) (('A'<=(a)&&(a)<='Z')?(a)|0x20:(a))
 #define toUpper(a) (('a'<=(a)&&(a)<='z')?(a)&0xDF:(a))
@@ -121,11 +120,11 @@ void saveIndex(char* to, const char* from) {
 int dat_cursorNextIndex(tIndexCursor* r) {
 	if (r->popVersion==pop1) {
 		/* POP1 */
-		return 0;
+		return 0; /* false */
 	} else {
 		/* POP2 */
 		if (r->currentMasterItem==r->masterItems) {
-			return 0; /* its over */
+			return 0; /* false: its over */
 		}
 
 		/* remember the new slave index name */
@@ -139,7 +138,7 @@ int dat_cursorNextIndex(tIndexCursor* r) {
 		r->currentSlaveItem=0;
 		r->currentRecord=r->highData+array2short(r->highData+6+6*r->currentMasterItem)+2;
 	}
-	return 1;
+	return 1; /* true */
 }
 
 int dat_cursorNext(tIndexCursor* r) {
@@ -148,15 +147,15 @@ int dat_cursorNext(tIndexCursor* r) {
 		r->currentSlaveItem++;
 		r->currentRecord+=8;
 		if (r->currentSlaveItem==r->slaveItems)
-			return 0;
+			return 0; /* false */
 	} else {
 		/* POP2 */
-			r->currentSlaveItem++;
-			r->currentRecord+=11;
+		r->currentSlaveItem++;
+		r->currentRecord+=11;
 		if (r->currentSlaveItem==r->slaveItems)
 			return dat_cursorNextIndex(r);
 	}
-	return 1;
+	return 1; /* true */
 }
 
 void dat_cursorFirst(tIndexCursor* r) {
@@ -181,22 +180,22 @@ int dat_cursorMoveId(tIndexCursor* r, tResourceId id) {
 		if (!strcmp(r->slaveIndexName,id.index)) {
 			/* the same index */
 			do {
-				if (strcmp(r->slaveIndexName,id.index)) return 0; /* in case we are passed */
-				if (array2short(r->currentRecord)==id.value) return 1; /* found! */
+				if (strcmp(r->slaveIndexName,id.index)) return 0; /* false: in case we are passed */
+				if (array2short(r->currentRecord)==id.value) return 1; /* true: found! */
 			} while (dat_cursorNext(r));
-			return 0; /* id not found */
+			return 0; /* false: id not found */
 		}
 	} while (dat_cursorNextIndex(r));
-	return 0; /* index name not found */
+	return 0; /* false: index name not found */
 }
 
 int dat_cursorMove(tIndexCursor* r,int pos) {
 	if (r->popVersion==pop1) {
 		/* POP1 */
-		if (r->slaveItems<=pos) return 0;
+		if (r->slaveItems<=pos) return 0; /* false */
 		r->currentSlaveItem=pos;
 		r->currentRecord=r->highData+8*pos+2;
-		return 1;
+		return 1; /* true */
 	} else {
 		/* POP2 */
 		int i;
@@ -216,11 +215,11 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 				r->currentMasterItem=i;
 				r->currentSlaveItem=pos;
 				r->currentRecord=r->highData+array2short(r->highData+6+6*r->currentMasterItem)+2+pos*11;
-				return 1;
+				return 1; /* true */
 			}
 			pos-=itemCount;
 		}
-		return 0; /* we had read all the master index and we didn't read the pos */
+		return 0; /* false: we had read all the master index and we didn't read the pos */
 	}
 }
 
@@ -313,7 +312,15 @@ tIndexCursor dat_createCursor(unsigned char* highData,int highDataSize,unsigned 
 	}
 }
 
-/* public functions */
+/***************************************************************\
+|                          Public Layer                         |
+\***************************************************************/
+
+/***************************************************************\
+|                     DAT reading primitives                    |
+\***************************************************************/
+
+#ifdef PR_DAT_INCLUDE_DATREAD
 
 tPopVersion mReadGetVersion() {
 	return readIndexCursor.popVersion;
@@ -343,7 +350,7 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 			return PR_RESULT_ERR_FILE_DAT_NOT_OPEN_WASDIR;
 		case PR_RESULT_ERR_FILE_NOT_OPEN_NOTFOUND:
 			return PR_RESULT_ERR_FILE_DAT_NOT_OPEN_NOTFOUND;
-		case 0:
+		case PR_RESULT_SUCCESS:
 			return PR_RESULT_ERR_INVALID_DAT;
 		default:
 			return readDatFileSize;
@@ -388,15 +395,15 @@ void dat_readRes(tResource* res) {
 }
 
 int mReadFileInDatFileId(tResource* res) {
-	if (!dat_cursorMoveId(&readIndexCursor,res->id)) return 0; /* 0 means index not found */
+	if (!dat_cursorMoveId(&readIndexCursor,res->id)) return 0; /* false means index not found */
 	dat_readRes(res);
-	return 1;
+	return 1; /* true */
 }
 
 int mReadFileInDatFile(tResource* res, int k) {
-	if (!dat_cursorMove(&readIndexCursor,k)) return 0; /* 0 means out of range */
+	if (!dat_cursorMove(&readIndexCursor,k)) return 0; /* false means out of range */
 	dat_readRes(res);
-	return 1;
+	return 1; /* true */
 }
 
 #endif
@@ -501,7 +508,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 		if (!strncmp(res->id.index,textPop1,4)) { /* POP1 */
 			do {
 				totalItems++;
-				printf("Adding item id (%s,%d)\n",res->id.index,res->id.value);
+				/*printf("Adding item id (%s,%d)\n",res->id.index,res->id.value);*/
 				fwriteshort(&(res->id.value),writeDatFile);
 				fwritelong(&(res->offset),writeDatFile);
 				fwriteshort(&(res->size),writeDatFile);
@@ -575,7 +582,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 	/* Write totalItems */
 	fseek(writeDatFile,size1,SEEK_SET);
 	fwriteshort(&totalItems,writeDatFile); /* Definitive total items count */
-	
+
 	/* Write first 6 bytes header */
 	fseek(writeDatFile,0,SEEK_SET);
 	fwritelong(&size1,writeDatFile);
@@ -606,4 +613,3 @@ int mRWBeginDatFile(const char* vFile, unsigned short int *numberOfItems, int op
 }
 #endif
 #endif
-

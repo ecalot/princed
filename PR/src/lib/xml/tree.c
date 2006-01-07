@@ -42,6 +42,7 @@ tree.c: Princed Resources : Tree handling routines
 #include "memory.h"
 #include "list.h" /* list primitives needed by the Common Factor routines */
 #include "unknown.h" /* typedef tUnknownFile */
+#include "parse.h" /* getTagStructure */
 
 /***************************************************************\
 |                     XML generation defines                    |
@@ -56,23 +57,22 @@ tree.c: Princed Resources : Tree handling routines
 \***************************************************************/
 
 /*
-Affected attributes: only fully inheritable
-PRE: inheritances are shown in the tree, so if the parent has
- file="a", then the son comes with file="a" except that other
- file was explicity specified for the child. NULL is never shown
- after a non-NULL parent.
-
-POST: if the folder has n childs and there are n/2 equal attributes
- then those attributes comes to the parent.
- 
- if the folder has n childs and there are at most 10/n different attributes
- we can say that there is a ratio of 10 items per atribute or more.
- If that happens for at least one attribute, the attribute with the highest
- ratio will be partitioned that way:
-       if an attribute value is present in 3 or more items, all items goes
-       together under a new folder with this item set.
-
-*/
+ * Affected attributes: only fully inheritable
+ * PRE: inheritances are shown in the tree, so if the parent has
+ * file="a", then the son comes with file="a" except that other
+ * file was explicity specified for the child. NULL is never shown
+ * after a non-NULL parent.
+ *
+ * POST: if the folder has n childs and there are n/2 equal attributes
+ * then those attributes comes to the parent.
+ *
+ * if the folder has n childs and there are at most 10/n different attributes
+ * we can say that there is a ratio of 10 items per atribute or more.
+ * If that happens for at least one attribute, the attribute with the highest
+ * ratio will be partitioned that way:
+ *   if an attribute value is present in 3 or more items, all items goes
+ *   together under a new folder with this item set.
+ */
 
 typedef struct {
 	const char* attr;
@@ -92,7 +92,7 @@ int attrcmp(const void* x,const void* y) {
 void increase(const char* attr,tList* l,int *lcount) {
 	tAttrCount a;
 	tAttrCount* aux;
-	
+
 	if (!attr) return; /* if not attribute, do nothing */
 
 /*	printf("increase: %s\n",attr);*/
@@ -164,7 +164,7 @@ void commonFactor(tTag* parent) {
 		if (result) {
 			if (getAttr(parent)!=result) { /* it is possible, and is the most probable case, that the parent was already the best choice. In that case, do nothing */
 				freeAllocation(getAttr(parent));
-				getAttr(parent)=strallocandcopy(result); /* TODO: assign result but avoid releasing below */
+				getAttr(parent)=strallocandcopy(result); /* result is copied to avoid checking each time a string is released below */
 			}
 			for (child=parent->child;child;child=child->next) {
 				if (getAttr(child)&&!strcmp(getAttr(child),getAttr(parent))) {
@@ -248,9 +248,8 @@ void test() {
 
 void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status) {
 	char number[10];
-	tTag* folder=malloc(sizeof(tTag));
+	tTag* folder=getTagStructure();
 
-	memset(folder,0,sizeof(tTag));
 	sprintf(number,"%d",palette);
 	folder->tag=strallocandcopy("folder");
 	folder->name=strallocandcopy("unknown");
@@ -270,9 +269,8 @@ void unknown_folder(const char* path, const char* file, int palette, const char*
 
 void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, tTreeStatus* status) {
 	char aux[100];
-	tTag* item=malloc(sizeof(tTag));
+	tTag* item=getTagStructure();
 
-	memset(item,0,sizeof(tTag));
 	sprintf(aux,"%d",value);
 	item->tag=strallocandcopy("item");
 	item->value=strallocandcopy(aux);
@@ -305,22 +303,22 @@ void generateXML(int n,/*const*/ tTag* t,FILE* outputStream) {
 	if (t!=NULL) {
 		fprintf(outputStream,"<%s",t->tag);
 
-#define FillAttr(a,b) if (a) fprintf(outputStream," %s=\"%s\"",b,a)
+#define FillAttr2(a,b) if (a) fprintf(outputStream," %s=\"%s\"",b,a)
 
-	if (t->child) FillAttr(t->desc,"name");
-	FillAttr(t->path,"path");
-	FillAttr(t->file,"file");
-	FillAttr(t->type,"type");
-	FillAttr(t->desc,"desc");
-	FillAttr(t->palette,"palette");
-	FillAttr(t->value,"value");
-	FillAttr(t->index,"index");
-	FillAttr(t->order,"order");
-	FillAttr(t->paletteindex,"paletteindex");
-	FillAttr(t->paletteorder,"paletteorder");
-	FillAttr(t->version,"version");
-	FillAttr(t->number,"number");
-	FillAttr(t->flags,"flags");
+	if (t->child) FillAttr2(t->desc,"name");
+	FillAttr2(t->path,"path");
+	FillAttr2(t->file,"file");
+	FillAttr2(t->type,"type");
+	FillAttr2(t->desc,"desc");
+	FillAttr2(t->palette,"palette");
+	FillAttr2(t->value,"value");
+	FillAttr2(t->index,"index");
+	FillAttr2(t->order,"order");
+	FillAttr2(t->paletteindex,"paletteindex");
+	FillAttr2(t->paletteorder,"paletteorder");
+	FillAttr2(t->version,"version");
+	FillAttr2(t->number,"number");
+	FillAttr2(t->flags,"flags");
 
 #undef FillAttr
 
@@ -388,21 +386,21 @@ void unknown_deletetreefile(const char* file, tTag* tree) {
 |                  Inheritance fixing routines                  |
 \***************************************************************/
 
-#define TotalInheritance(a) if (parent->a&&child->a&&equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
+#define TotalInheritance2(a) if (parent->a&&child->a&&equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
 
 void rec_tree_fix(tTag* parent,tTag* child) {
 	if (child->next) rec_tree_fix(parent,child->next);
 	if (child->child) rec_tree_fix(child,child->child);
 
 	if (parent) {
-		TotalInheritance(palette);
-		TotalInheritance(paletteindex);
-		TotalInheritance(paletteorder);
-		TotalInheritance(type);
-		TotalInheritance(file);
-		TotalInheritance(index);
-		TotalInheritance(order);
-		TotalInheritance(flags);
+		TotalInheritance2(palette);
+		TotalInheritance2(paletteindex);
+		TotalInheritance2(paletteorder);
+		TotalInheritance2(type);
+		TotalInheritance2(file);
+		TotalInheritance2(index);
+		TotalInheritance2(order);
+		TotalInheritance2(flags);
 
 		/* partial */
 		if ((parent->path!=NULL)&&(child->path!=NULL)) {

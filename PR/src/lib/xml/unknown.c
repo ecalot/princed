@@ -45,6 +45,7 @@ unknown.c: Princed Resources : Unknown resources handler
 #include "memory.h"
 #include "stringformat.h"
 #include "translate.h"
+#include "parse.h" /* getTagStructure */
 
 /***************************************************************\
 |                     Unknown.xml primitives                    |
@@ -57,19 +58,19 @@ unknown.c: Princed Resources : Unknown resources handler
 #define XML_ATTRV_VERSION     "build-1"
 
 char* getVersion(const char* oldVersion) {
-      char* newVersion;
-      int l,i;
+	char* newVersion;
+	int l,i;
 
-      if (!oldVersion||!oldVersion[0]) return strallocandcopy(XML_ATTRV_VERSION);
-      l=strlen(oldVersion);
-      newVersion=malloc(l+5); /* l+2 is enough */
-      for (i=0;i<l&&isNumber(oldVersion[l-i-1]);i++);
+	if (!oldVersion||!oldVersion[0]) return strallocandcopy(XML_ATTRV_VERSION);
+	l=strlen(oldVersion);
+	newVersion=malloc(l+5); /* l+2 is enough */
+	for (i=0;i<l&&isNumber(oldVersion[l-i-1]);i++);
 
-      if (l!=i) strncpy(newVersion,oldVersion,l-i);
-      if (i)    sprintf(newVersion+(l-i),"%d",atoi(oldVersion+(l-i))+1);
-      else newVersion[l]=0;
-      
-      return newVersion;
+	if (l!=i) strncpy(newVersion,oldVersion,l-i);
+	if (i)    sprintf(newVersion+(l-i),"%d",atoi(oldVersion+(l-i))+1);
+	else newVersion[l]=0;
+
+	return newVersion;
 }
 
 tUnknownFile unknownFile;
@@ -97,15 +98,14 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 		unknownFile.status.folderCursor=NULL;
 		unknownFile.tree=parseXmlFile(file,&error);
 		if (error) {
-			unknownFile.tree=malloc(sizeof(tTag));
-			memset(unknownFile.tree,0,sizeof(tTag));
+			unknownFile.tree=getTagStructure();
 			unknownFile.tree->version=strallocandcopy(XML_ATTRV_VERSION);
 			unknownFile.tree->tag=strallocandcopy(XML_TAG_RESOURCES);
 		} else {
-            char* version=getVersion(unknownFile.tree->version);
-            freeAllocation(unknownFile.tree->version);
-            unknownFile.tree->version=version;
-        }
+			char* version=getVersion(unknownFile.tree->version);
+			freeAllocation(unknownFile.tree->version);
+			unknownFile.tree->version=version;
+		}
 	}
 
 	/* Open the file */
@@ -162,7 +162,8 @@ int unknownLogAppend(const char* vFiledat,tResourceId id,const char* ext,tResour
 	if (!unknownFile.currentDat) { /* this is the beginning of the file */
 		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)),&unknownFile.status);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
-		/* TODO: move here the read-parsing-loading and write-opening */
+		/* it could be moved here the read-parsing-loading and write-opening,
+		 * but it is necessary to know the parsing status before the extractions are started */
 		unknown_deletetreefile(vFiledat,unknownFile.tree);
 	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
 		int i;
@@ -193,7 +194,7 @@ void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const cha
 
 		/* set filename */
 		if (!format) format=RES_XML_UNKNOWN_FILES;
-		filename=parseformat(format,r->id.value,r->id.index,getExtDesc(pos),extarray[pos],unknownFile.typeCount[pos],r->id.order,r->desc);
+		filename=parseformat(format,r->id.value,r->id.index,getExtDesc(pos),extarray[pos],unknownFile.typeCount[pos],r->id.order,r->desc,r->name);
 
 		sprintf(vFileext,"%s/"RES_XML_UNKNOWN_PATH"/%s/%s",vDirExt,vDatFileName,filename);
 		unknownLogAppend(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,unknownFile.typeCount[pos],r->flags,filename);

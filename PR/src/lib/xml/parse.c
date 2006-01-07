@@ -82,10 +82,13 @@ const char* getExtDesc(int type) {
 tTag* getTagStructure() {
 	/* initializes */
 	tTag* t;
+	int i;
+
 	t=(tTag*)malloc(sizeof(tTag));
 	if (t==NULL) return NULL;
+	for (i=0;i<sizeof(tTag);i++) ((char*)(t))[i]=0; /* I don't trust memset */
 
-	t->child=NULL; /* TODO: use memset,0 */
+/*	t->child=NULL;
 	t->next=NULL;
 	t->tag=NULL;
 	t->desc=NULL;
@@ -101,7 +104,7 @@ tTag* getTagStructure() {
 	t->paletteorder=NULL;
 	t->version=NULL;
 	t->number=NULL;
-	t->flags=NULL;
+	t->flags=NULL;*/
 
 	return t;
 }
@@ -136,7 +139,7 @@ int attribFill(char* attr,char* val, tTag* t) {
 
 	if (equalsIgnoreCase(attr,"?")) {
 		free(val);
-		return 0;
+		return PR_RESULT_SUCCESS;
 	}
 
 	FillAttr(t->desc,"desc");
@@ -270,7 +273,7 @@ int parseNext(char** pString, tTag* tag) {
 	}
 	free(attribute);
 	*pString=i;
-	return 0;
+	return PR_RESULT_SUCCESS;
 }
 
 int getNextTag(char** pString, char** value) {
@@ -577,7 +580,7 @@ tTag* resourceTreeGetChild(tTag* whereAmI) {
 }
 
 int   resourceTreeGetInfo (tTag* whereAmI, char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number) {
-	if (whereAmI==NULL) return 0;
+	if (whereAmI==NULL) return 0; /* false */
 	*tag=whereAmI->tag;
 	*desc=whereAmI->desc;
 	*path=whereAmI->path;
@@ -588,6 +591,5 @@ int   resourceTreeGetInfo (tTag* whereAmI, char** tag, char** desc, char** path,
 	*value=whereAmI->value;
 	*version=whereAmI->version;
 	*number=whereAmI->number;
-	return 1;
+	return 1; /* true */
 }
-

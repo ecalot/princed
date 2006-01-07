@@ -70,16 +70,16 @@ int parseFile(const char* vFile, const char* datFile, tResourceList *rlist) {
 int getOrder(const char* order) {
 	if (order) {
 		if (equalsIgnoreCase(order,"first")) {
-			return 0;
+			return 0; /* first */
 		} else if (equalsIgnoreCase(order,"second")) {
-			return 1;
+			return 1; /* second */
 		} else if (equalsIgnoreCase(order,"last")) {
-			return 65535;
+			return 65535; /* last */
 		} else {
 			return atoi(order);
 		}
 	} else {
-		return 0;
+		return 0; /* else: first */
 	}
 }
 
@@ -91,13 +91,16 @@ int getOrder(const char* order) {
 
 #define keepStringAttribute(attribute) res.attribute=strallocandcopy(t->attribute)
 #define keepIntAttribute(attribute,type) res.attribute=(type)ptoi(t->attribute);
-#define keepIdAttributes(attribute,idnum,idindex) res.attribute.value=(unsigned short int)ptoi(t->idnum);\
-                                             if (t->idindex) str5lowercpy(res.attribute.index,translateExt2Int(t->idindex));\
-																	           else res.attribute.index[0]=0
-																	 
-#define keepIdAttributesElse(attribute,idnum,idindex,idelse) res.attribute.value=(unsigned short int)ptoi(t->idnum);\
-                                             if (t->idindex) str5lowercpy(res.attribute.index,translateExt2Int(t->idindex));\
-																	           else str5lowercpy(res.attribute.index,t->idelse)
+#define keepIdAttributes(attribute,idnum,idindex) \
+	res.attribute.value=(unsigned short int)ptoi(t->idnum);\
+	if (t->idindex) str5lowercpy(res.attribute.index,translateExt2Int(t->idindex));\
+	else res.attribute.index[0]=0
+
+#define keepIdAttributesElse(attribute,idnum,idindex,idelse) \
+	res.attribute.value=(unsigned short int)ptoi(t->idnum);\
+	if (t->idindex) str5lowercpy(res.attribute.index,translateExt2Int(t->idindex));\
+	else str5lowercpy(res.attribute.index,t->idelse)
+
 void workTag(const tTag* t,void* pass) {
 	/*
 		If the tag matches, it is converted to resource and added to the array
@@ -132,11 +135,11 @@ void workTag(const tTag* t,void* pass) {
 	/* Get the order */
 	res.id.order=getOrder(t->order);
 	res.palette.order=getOrder(t->paletteorder);
-	
-	/* Copy id and palette id */	
+
+	/* Copy id and palette id */
 	keepIdAttributes(id,value,index);
 	keepIdAttributesElse(palette,palette,paletteindex,index);
-	
+
 	/* Copy number, title, desc and path */
 	keepIntAttribute(number,unsigned char);    /* Transforms the char* levelnumer/number attribute into a char value, if error, demo level is used */
 	if (t->flags) {
