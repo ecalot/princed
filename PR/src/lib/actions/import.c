@@ -60,7 +60,7 @@ extern FILE* outputStream;
 
 /* Format detection function (private function, not in header file) */
 int mAddCompiledFileToDatFile(tResource* res,const char* vFile) {
-	/* return 1 	if ok, 0 	if error */
+	/* return true if ok, false if error */
 	switch (res->type) {
 		case eResTypeLevel:
 			return mFormatImportPlv(res);
@@ -78,7 +78,7 @@ int mAddCompiledFileToDatFile(tResource* res,const char* vFile) {
 			mWriteFileInDatFile(res);
 			break;
 	}
-	return 1;
+	return 1; /* true */
 }
 
 /***************************************************************\
@@ -100,14 +100,14 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 	tResource newRes;
 
 	if (mWriteBeginDatFile(vFiledat,optionflag)) return PR_RESULT_ERR_FILE_DAT_NOT_WRITE_ACCESS; /* File couldn't be open */
-	
+
 	list_firstCursor(r);
 	while ((res=list_getCursor(r))) {
 		/* remember only id and type */
 		newRes.id=res->id;
 		newRes.type=res->type;
 		newRes.flags=res->flags;
-	
+
 		if (hasFlag(raw_flag)) newRes.type=0; /* compile from raw */
 		getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 		/* the file is in the archive, so i'll add it to the main dat body */
@@ -164,7 +164,7 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 		resourceListAddInfo(r,&res);
 
 		if (isInThePartialList(res.path,res.id)) { /* If the resource was specified */
-			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size); 
+			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size);
 			if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
 			/* get save file name (if unknown document is in the xml) */
