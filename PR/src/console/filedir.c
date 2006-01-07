@@ -62,7 +62,7 @@ int filedir_push(const char* text, tFileDir** list, int checkEquals) {
 		node=*list;
 		while (node) {
 			if (equalsIgnoreCase(node->text,text)) /* If file was in the list, do nothing */
-				return -1;
+				return -1; /* false */
 			node=node->next;
 		}
 	}
@@ -74,7 +74,7 @@ int filedir_push(const char* text, tFileDir** list, int checkEquals) {
 	node->text=strallocandcopy(text);
 	node->next=*list;
 	*list=node;
-	return 0;
+	return 0; /* true */
 }
 
 char* filedir_pop(tFileDir** list) {
@@ -146,7 +146,7 @@ int listAllDatFiles(const char* vResFile, const char* directory, const char* opt
 
 	/* All done */
 	list=pass.list;
-	return 0;
+	return PR_RESULT_SUCCESS;
 }
 
 /* layer 2, module check if a file is in the xml */
@@ -232,16 +232,16 @@ int fileDirGetFilesImport(tFileDir2* list1,tFileDir2* files,const char* resfile,
 
 	if (dirs>1) {
 		while ((file=filedir_pop(&(files->filenames)))) free(file); /* empty list */
-		return -20;
+		return PR_RESULT_FD_IMPORT_FROM_MORE_THAN_ONE_DIR;
 	}
 	if (!fils&&!dirs)
-		return -22; /* no files selected */
+		return PR_RESULT_FD_NO_FILES_SELECTED; /* no files selected */
 
 	if (parseError) {
 		while ((file=filedir_pop(&(files->filenames)))) free(file); /* empty list */
 		return parseError;
 	}
-	return 0;
+	return PR_RESULT_SUCCESS;
 }
 
 /* layer 2, module Export */
@@ -273,7 +273,7 @@ int fileDirGetFilesExport(tFileDir2* list1,tFileDir2* files,int notHasRecursiveF
 		free(opt);
 		free(file);
 	}
-	return 0;
+	return PR_RESULT_SUCCESS;
 }
 
 /* layer 3, primitives */
@@ -314,7 +314,7 @@ void fileDirAddOption(tFileDir2* list1, const char* option) {
 }
 
 int fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notHasRecursiveFlag,const char* resfile,int given) {
-/* case 1: * import from more than one directory */
+	/* case 1: * import from more than one directory */
 
 	if (!hasExportFlag&&!notHasRecursiveFlag) {
 		char* file;
@@ -322,7 +322,7 @@ int fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notH
 			free(filedir_pop(&(list1->options)));
 			free(file);
 		}
-		return -21; /* import with recursive flag is now allowed */
+		return PR_RESULT_FD_IMPORT_RECURSIVE; /* import with recursive flag is not allowed */
 	}
 
 	if (hasExportFlag)
@@ -336,4 +336,3 @@ char* fileDirGetFile(tFileDir2* files, char** datfile) {
 	*datfile=filedir_pop(&(files->options));
 	return filedir_pop(&(files->filenames));
 }
-

@@ -154,7 +154,7 @@ int main (int argc, char **argv) {
 	} while (c!=-1);
 
 	outputStream=stdout;
-	c=0;
+	/*c=0;*/
 
 	/* At least one of these options must be selected, if not, the user needs help! */
 	if (!(optimizeXmlFile||hasFlag(import_flag|export_flag|classify_flag))) setFlag(help_flag);
@@ -169,7 +169,7 @@ int main (int argc, char **argv) {
 	/* Show version screen if requested */
 	if (hasFlag(version_flag)) {
 		fprintf(outputStream,PARSING_ABOUT);
-		return -1;
+		return PR_RESULT_HELP_SHOWN;
 	}
 
 	if (hasFlag(help_flag)) {
@@ -193,22 +193,12 @@ int main (int argc, char **argv) {
 		if (optind < argc) {
 			while (optind < argc)
 				fileDirAddOption(&input,argv[optind++]);
-        } else {
-				fileDirAddOption(&input,".");
-        }
-		c=fileDirGetFiles(&input,&files,!hasFlag(import_flag),!hasFlag(recursive_flag),resFile,datFileName!=NULL);
+		} else {
+			fileDirAddOption(&input,".");
+		}
+		result=fileDirGetFiles(&input,&files,!hasFlag(import_flag),!hasFlag(recursive_flag),resFile,datFileName!=NULL);
 
-		switch (c) {
-		case -20: /* import from more than one directory */
-			fprintf(stderr,PR_TEXT_ERROR_ONE_DIR);
-			break;
-		case -21: /* import with recursive flag */
-			fprintf(stderr,PR_TEXT_ERROR_IMPORT_NORECURSE);
-			break;
-		case -22: /* no files selected */
-			fprintf(stderr,PR_TEXT_ERROR_NO_FILES_SEL);
-			break;
-		case 0: {
+		if (result==PR_RESULT_SUCCESS) {
 			char  unknownFile[MAX_FILENAME_SIZE];
 			if (hasFlag(export_flag)) {
 				sprintf(unknownFile,"%s/" RES_XML_UNKNOWN_PATH "/" RES_XML_UNKNOWN_XML,dirNameDef);
@@ -254,12 +244,11 @@ int main (int argc, char **argv) {
 			}
 			fprintf(outputStream,"\n");
 			if (hasFlag(export_flag)) unknownLogStop();
-			} break;
-		default:
-			fprintf(stderr,PR_TEXT_ERROR_XML_FILE);
-			break;
+		} else {
+			fprintf(outputStream,PR_TEXT_RESULT,errors[-result],result);
 		}
 	}
+
 	freeParsingCache();
 	freeAllocation(datAuthor);
 	freeAllocation(datFileName);
@@ -267,7 +256,7 @@ int main (int argc, char **argv) {
 	freeAllocation(optimizeXmlFile);
 	freeAllocation(resFile);
 	freeAllocation(dirName);
-	
-	return c;
+
+	return result;
 }
 
