@@ -31,13 +31,14 @@ parse.h: Princed Resources : xml handling functions headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _XMLPARSE_H_
-#define _XMLPARSE_H_
+#ifndef _PARSE_H_
+#define _PARSE_H_
 
+#include "pr.h"
 const char* getExtDesc(int type);
+tTag* getTagStructure();
 
 #ifdef IGNOREVERIFYDATTYPES
-#include "pr.h"
 void showTag(int n,tTag* t);
 #endif
 

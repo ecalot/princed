@@ -43,14 +43,14 @@ unknown.h: Princed Resources : Unknown.xml generator headers
 #include "reslist.h"
 #include "tree.h" /* tTreeStatus */
 
-typedef struct { 
+typedef struct {
 	char*        backupExtension;
 	char*        currentDat;
 	FILE*        fd;
 	tTreeStatus  status;
 	tTag*        tree;
 	unsigned int optionflag;
-	unsigned int typeCount[RES_TYPECOUNT]; /* initialized in 0 */
+	unsigned int typeCount[RES_TYPECOUNT];
 } tUnknownFile;
 
 /* Resources extras */

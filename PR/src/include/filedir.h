@@ -40,20 +40,20 @@ filedir.h: Princed Resources : xml handling functions header file
 
 /* types */
 typedef struct tFileDir {
-        char* file;
-        struct tFileDir* next;
+	char* file;
+	struct tFileDir* next;
 }tFileDir;
 
 typedef struct {
-        tFileDir filenames;
-        tFileDir options;
+	tFileDir filenames;
+	tFileDir options;
 }tFileDir2;
 
 /* prototypes */
 
 void  fileDirClearOptions(tFileDir2* list1);
 void  fileDirAddOption(tFileDir2* list1, const char* option);
-int fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notHasRecursiveFlag,const char* resfile,int givenDatFilename);
+int   fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notHasRecursiveFlag,const char* resfile,int givenDatFilename);
 char* fileDirGetFile(tFileDir2* files,char** datfile);
 
 #endif

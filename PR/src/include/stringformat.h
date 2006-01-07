@@ -36,20 +36,19 @@ stringformat.c: Princed Resources : format string parsing header
 
 #define isNumber(k) ('0'<=(k) && (k)<='9')
 
-const char* parseformat(const char* format,long value,const char* index, const char* type, const char* extension, long numberOfThisType, int order, const char* desc);
+const char* parseformat(const char* format,long value,const char* index, const char* type, const char* extension, long numberOfThisType, int order, const char* desc,const char* name);
 	/* This function parses format in this way:
-	 * %v - the value
-	 * %i - the 4-chars index name
+	 * %% - a % sign
 	 * %I - the human-like index name
-	 * %t - the item type (image, wave, etc)
+	 * %d - the description
 	 * %e - the extension (bmp, wav, etc)
+	 * %i - the 4-chars index name
+	 * %m - the name of the item
 	 * %n - the number of the item typed in %t
 	 * %o - the order number (in case the index and values are the same)
-	 * %d - the description
-	 * %% - a % sign
+	 * %t - the item type (image, wave, etc)
+	 * %v - the value
 	 *
-	 * TODO: add name
-	 *  
 	 * Modifiers: (TODO: truncate flag)
 	 * %5i  - the index truncated to 5 bytes or the index size, whatever comes first
 	 * %05i - the same, but in case the index is sized less than 5 it's filled with spaces
@@ -59,7 +58,7 @@ const char* parseformat(const char* format,long value,const char* index, const c
 	 * Examples:
 	 * "%i%05v.%e" for shap25001.bmp
 	 * "%t%02n.%e" for image01.bmp
-	 * 
+	 *
 	 * Limitations:
 	 * The generated string size has a limit, in case it is reached, a NULL pointer will be returned
 	 */

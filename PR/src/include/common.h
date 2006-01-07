@@ -66,7 +66,7 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 
 #define PR_URL                    "http://www.princed.com.ar"
 #define PR_VERSION                "v1.2-dev"
-#define PR_COPY                   "(c) Copyright 2003 - 2006 Princed Development Team"
+#define PR_COPY                   "(c) Copyright 2003-2006 Princed Development Team"
 
 /***************************************************************\
 |                         Other defines                         |
@@ -195,7 +195,8 @@ PARSING_OPTRAW\
 #define hasFlag(a) (optionflag&(a))
 #define setFlag(a) optionflag|=(a)
 
-#define PR_RESULT_ERR_EXTRACTION -1
+#define PR_RESULT_ERR_COMMAND_LINE_SYNTAX -17
+#define PR_RESULT_ERR_EXTRACTION -18
 #define PR_RESULT_ERR_FILE_DAT_NOT_OPEN_NOTFOUND -2
 #define PR_RESULT_ERR_FILE_DAT_NOT_OPEN_WASDIR -3
 #define PR_RESULT_ERR_FILE_DAT_NOT_READ_ACCESS -4
@@ -206,11 +207,15 @@ PARSING_OPTRAW\
 #define PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS -9
 #define PR_RESULT_ERR_INVALID_DAT -10
 #define PR_RESULT_ERR_MEMORY -11
+#define PR_RESULT_ERR_XML_ALREADY_OPEN -15
 #define PR_RESULT_ERR_XML_ATTR -12
 #define PR_RESULT_ERR_XML_FILE -13
-#define PR_RESULT_ERR_XML_PARSING -14
-#define PR_RESULT_ERR_XML_ALREADY_OPEN -15
 #define PR_RESULT_ERR_XML_NOT_OPEN -16
+#define PR_RESULT_ERR_XML_PARSING -14
+#define PR_RESULT_FD_IMPORT_FROM_MORE_THAN_ONE_DIR -20
+#define PR_RESULT_FD_IMPORT_RECURSIVE -21
+#define PR_RESULT_FD_NO_FILES_SELECTED -22
+#define PR_RESULT_HELP_SHOWN -1
 #define PR_RESULT_SUCCESS 0
 
 #endif

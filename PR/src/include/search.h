@@ -35,8 +35,8 @@ search.h: Princed Resources : xml handling functions header file
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
 
-#ifndef _XMLSEARCH_H_
-#define _XMLSEARCH_H_
+#ifndef _SEARCH_H_
+#define _SEARCH_H_
 
 /* Includes */
 #include "common.h" /* tTag */
@@ -70,7 +70,7 @@ typedef struct tPassCompare {
 	const tTag* tag;
 }tPassCompare;
 
-int getOrder(const char* order); 
+int getOrder(const char* order);
 
 #endif
 

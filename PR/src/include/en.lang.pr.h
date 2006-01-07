@@ -74,8 +74,6 @@ pr.h: Princed Resources : English language strings
 #define PR_TEXT_EXPORT_ERROR      "'%s' has errors, aborting...\n"
 #define PR_TEXT_EXPORT_BMP_WARN   "Warning: Extracted file may be corrupt\n"
 
-#define PR_TEXT_ERROR_IMPORT_NORECURSE "Recursive flag must not be set when you import files\n"
-#define PR_TEXT_ERROR_NO_FILES_SEL "No files selected\n"
 #define PR_TEXT_ERROR_ONE_DIR     "You may select one directory to export all dat files or specifiy dat files.\nBoth actions are not allowed.\n"
 #define PR_TEXT_ERROR_XML_FILE    "Error, check the xml file\n"
 
@@ -85,7 +83,7 @@ pr.h: Princed Resources : English language strings
 
 #define PR_TEXT_ERRORS {\
 	"Success",\
-	"Extraction error",\
+	NULL, /* help shown */\
 	"Dat file not found",\
 	"Expected dat file, but a directory was given",\
 	"DAT file reading permission denied",\
@@ -99,44 +97,50 @@ pr.h: Princed Resources : English language strings
 	"XML parsing attribute error",\
 	"Cannot open XML file",\
 	"XML parsing error",\
-	"-15","-16","-17","-18","-19","-20"}
+	"XML file already open",\
+  "XML file cannot be open",\
+  "Input line syntax error",\
+  "Extraction error",\
+	"-19",\
+	"You may select one directory to export all dat files or specify dat files; both actions are not allowed",\
+	"Recursive flag must not be set when you import files",\
+	"No files selected", /* should never happen because default is "." */\
+	"-23"}
+
 
 #define PR_TEXT_TYPES {\
-NULL,\
-"Levels file",\
-"Graphic DAT file without palette",\
-"Waves/Digital sound file",\
-"Midis file",\
-"Valid DAT file with undefined content",\
-"Graphic DAT file",\
-"Internal PC Speaker dat file",\
-NULL,NULL,NULL,\
-"invalid Pop2 dat file",\
-"Pop2 level file",\
-"Pop2 graphic dat file",\
-"Pop2 wav dat file",\
-"Pop2 midi dat file",\
-"Pop2 valid dat file",\
-"Pop2 graphic dat file"}
+	NULL,\
+	"Levels file",\
+	"Graphic DAT file without palette",\
+	"Waves/Digital sound file",\
+	"Midis file",\
+	"Valid DAT file with undefined content",\
+	"Graphic DAT file",\
+	"Internal PC Speaker dat file",\
+	NULL,NULL,NULL,\
+	"invalid Pop2 dat file",\
+	"Pop2 level file",\
+	"Pop2 graphic dat file",\
+	"Pop2 wav dat file",\
+	"Pop2 midi dat file",\
+	"Pop2 valid dat file",\
+	"Pop2 graphic dat file"}
 
 #define PR_TEXT_IMPORT_ARRAY {\
-"File successfully imported",\
-"DAT file not found or invalid in partial importation",\
-"DAT File couldn't be open",\
-"XML Parseing error",\
-"No memory",\
-"XML Attribute not recognized",\
-"XML File not found"}
+	"File successfully imported",\
+	"DAT file not found or invalid in partial importation",\
+	"DAT File couldn't be open",\
+	"XML Parseing error",\
+	"No memory",\
+	"XML Attribute not recognized",\
+	"XML File not found"}
 
 /***************************************************************\
 |                 Command Line options information              |
 \***************************************************************/
 
-#ifndef PR_IGNORE_RAW_OPTION
-#define PARSING_RAW "   -r, --raw                  uses raw format\n"
-#else
-#define PARSING_RAW ""
-#endif
+#define PARSING_RAW "   -w, --raw                  uses raw format\n"
+
 #define PARSING_HELP_BEGIN "Usage: \n\
   pr [OPTIONS] [-x[EXPORTDIR]|-m[IMPORTDIR]|-c] [DATFILEPATH[ ...]]\n\
   pr --help\n\
@@ -189,4 +193,3 @@ NULL,NULL,NULL,\
 #define PR_TXT_XML               "Resources.xml edition"
 #define PR_TXT_TRANSLATION       ""
 #define PR_TXT_ABOUT_TRANSLATOR  ""
-

@@ -19,8 +19,8 @@
 */
 
 /*
-tasks.h: Princed Resources : Other DAT file handling tasks headers
-¯¯¯¯¯¯¯
+classify.h: Princed Resources : Other DAT file handling tasks headers
+¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 
@@ -31,8 +31,8 @@ tasks.h: Princed Resources : Other DAT file handling tasks headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _TASKS_H_
-#define _TASKS_H_
+#ifndef _CLASSIFY_H_
+#define _CLASSIFY_H_
 
 /*
 	Return values may be:
