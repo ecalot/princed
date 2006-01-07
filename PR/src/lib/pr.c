@@ -133,7 +133,7 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 
 	currentDatFile=strallocandcopy(vDatFile);
 
-	parseGivenPath(currentDatFile);
+	if (parseGivenPath(currentDatFile)) return PR_RESULT_ERR_COMMAND_LINE_SYNTAX;
 
 	if (vDatFileName==NULL) { /* if no special dat file was specified, a path parsed will be used */
 		aux=getFileNameFromPath(currentDatFile);
@@ -209,7 +209,7 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 
 	currentDatFile=strallocandcopy(vDatFile);
 
-	parseGivenPath(currentDatFile);
+	if (parseGivenPath(currentDatFile)) return PR_RESULT_ERR_COMMAND_LINE_SYNTAX;
 
 	if (vDatFileName==NULL) { /* if no special dat file was specified, a path parsed will be used */
 		aux=getFileNameFromPath(currentDatFile);
