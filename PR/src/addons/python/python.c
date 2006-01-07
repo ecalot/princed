@@ -35,7 +35,7 @@ python.c: Princed Resources : PR Python interface
 #include "pr.h"
 
 /* Implemented functions:
- * 
+ *
  * prClassifyDat
  * prExportDat
  * prExportDatOpt
@@ -90,19 +90,19 @@ static PyObject* pr_importDat(PyObject *self, PyObject *args){
 
 /* Python initialization */
 static PyMethodDef SpamMethods[] = {
-    {"setCompressionLevel",  pr_setCompressionLevel, METH_VARARGS,
-     "Sets the compression level to be used by the module."},
-    {"classifyDat",  pr_classifyDat, METH_VARARGS,
-     "Checks if a file is a valid POP DAT file and tries to return the DAT file type."},
-    {"exportDat",  pr_exportDat, METH_VARARGS,
-     "Exports files from a given DAT archive."},
-    {"importDat",  pr_importDat, METH_VARARGS,
-     "Imports files to a given DAT archive."},
-    {NULL, NULL, 0, NULL}        /* Sentinel */
+	{"setCompressionLevel",  pr_setCompressionLevel, METH_VARARGS,
+		"Sets the compression level to be used by the module."},
+	{"classifyDat",  pr_classifyDat, METH_VARARGS,
+		"Checks if a file is a valid POP DAT file and tries to return the DAT file type."},
+	{"exportDat",  pr_exportDat, METH_VARARGS,
+		"Exports files from a given DAT archive."},
+	{"importDat",  pr_importDat, METH_VARARGS,
+		"Imports files to a given DAT archive."},
+	{NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
 PyMODINIT_FUNC initpr(void) {
-    (void) Py_InitModule("pr", SpamMethods);
+	(void) Py_InitModule("pr", SpamMethods);
 }
 
 int main(int argc, char *argv[]) {
