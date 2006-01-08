@@ -19,7 +19,7 @@
 */
 
 /*
-pr.h: Princed Resources : Main header prototypes and definitions
+pr.h: Princed Resources : Main library header prototypes and definitions
 ¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -102,7 +102,7 @@ int   prImportDatOpt(const char* vDatFile, const char* vDirName,
 void  prSetOutput         (FILE* output);
 void  setCompressionLevel (int cl);
 
-/* Xml parsing functions */
+/* XML parsing functions */
 tTag* resourceTreeGetChild(tTag* whereAmI);
 tTag* resourceTreeGetNext (tTag* whereAmI);
 int   resourceTreeGetInfo (tTag* whereAmI,	char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number);

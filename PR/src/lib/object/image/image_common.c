@@ -49,13 +49,13 @@ compress.c: Princed Resources : Image Compression Library
  *
  *  So the possible compression algorithm variants are:
  *   RAW, RLE, RLEt, LZG, LZGt, LZG+, LZGt+
- *  
- *  It is known that LZG+ allways compresses better or equal than LZG
+ *
+ *  It is known that LZG+ always compresses better or equal than LZG
  *
  * Depending on the compression level, the compressor will compress with
  * all the algorithms specified and keep only the smaller result using
  * the following table
- * 
+ *
  * Level  Algorithms
  *   1    RAW
  *   2    RAW, RLE
@@ -67,18 +67,18 @@ compress.c: Princed Resources : Image Compression Library
  *
  * The default level used in PR will be 3.
  *
- * In images with big enthropy that generates DAT files bigger than 64kb, using
+ * In images with big entropy that generates DAT files bigger than 64kb, using
  * a better compression is a must. The POP1 DAT file format has this limitation
  * and the only way to get through with it is improving the compression.
  *
  * For testing DAT files that are not for distribution compression 3 is highly
- * recomended because is much faster and you perform compressions more often.
- * 
+ * recommended because is much faster and you perform compressions more often.
+ *
  * When you release a DAT file a compression level 7 is the best you can use.
  * You'll have to wait some time to get the importing, but the decompression
  * is as faster as the decompression in other levels. The game supports it and
  * decompresses the files very fast. Another advantage is that it is better to
- * distribute smaller dat files.
+ * distribute smaller DAT files.
  *
  */
 
@@ -91,15 +91,15 @@ compress.c: Princed Resources : Image Compression Library
 \***************************************************************/
 
 /* compress and sets the bytes */
-void compressLzg(const unsigned char* input, int inputSize, 
+void compressLzg(const unsigned char* input, int inputSize,
                  unsigned char* output, int *outputSize);
-void compressRle(const unsigned char* input, int inputSize, 
+void compressRle(const unsigned char* input, int inputSize,
                  unsigned char* output, int *outputSize);
 
-/* uncompress and allocates output */
-int expandLzg(const unsigned char* input, int inputSize, 
+/* decompress and allocates output */
+int expandLzg(const unsigned char* input, int inputSize,
                unsigned char** output, int *outputSize);
-int expandRle(const unsigned char* input, int inputSize, 
+int expandRle(const unsigned char* input, int inputSize,
                unsigned char** output, int *outputSize);
 
 /***************************************************************\
@@ -126,7 +126,7 @@ void transposeImage(tImage* image,int size) {
 	unsigned char* outputaux=getMemory(size);
 	int cursor;
 
-	for (cursor=0;cursor<size;cursor++) 
+	for (cursor=0;cursor<size;cursor++)
 		outputaux[transpose(cursor,image->widthInBytes,image->height)]=image->pix[cursor];
 	free(image->pix);
 	image->pix=outputaux;
@@ -136,7 +136,7 @@ void antiTransposeImage(tImage* image,int size) {
 	unsigned char* outputaux=getMemory(size);
 	int cursor;
 
-	for (cursor=0;cursor<size;cursor++) 
+	for (cursor=0;cursor<size;cursor++)
 		outputaux[cursor]=image->pix[transpose(cursor,image->widthInBytes,image->height)];
 	free(image->pix);
 	image->pix=outputaux;
@@ -147,20 +147,20 @@ void antiTransposeImage(tImage* image,int size) {
 \***************************************************************/
 
 /*
-		Header info:
-		 1 byte  - checksum           char checksum
-		 2 bytes - height             short int height
-		 2 bytes - width              short int width
-		 1 byte  - 00                 (char)0
-		 1 byte  - compression type   unsigned char compressionType
-*/
+ * 	Header info:
+ * 	 1 byte  - checksum           char checksum
+ * 	 2 bytes - height             short int height
+ * 	 2 bytes - width              short int width
+ * 	 1 byte  - 00                 (char)0
+ * 	 1 byte  - compression type   unsigned char compressionType
+ */
 
 /* Expands an array into an image */
 int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes) {
 	/*
-		Reads data and extracts tImage
-		returns the next image address or -1 in case of error
-	*/
+	 * Reads data and extracts tImage
+	 * returns the next image address or -1 in case of error
+	 */
 
 	int imageSizeInBytes;
 	int result;
@@ -184,7 +184,7 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 	return COMPRESS_RESULT_FATAL
 #define checkResult if (result==COMPRESS_RESULT_FATAL)\
 	return COMPRESS_RESULT_FATAL
-	
+
 	switch (getAlgor(image->type)) {
 		case COMPRESS_RAW: /* No Compression Algorithm */
 			if ((image->pix=getMemory(dataSizeInBytes))==NULL) return COMPRESS_RESULT_FATAL;
@@ -237,10 +237,10 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	*/
 
 	/* Forward compression */
-	
+
 	/* COMPRESS_RAW
 	 * The allocation size is the image size.
-	 * The algorithm is hardcoded.
+	 * The algorithm is hard-coded.
 	 * There is no need to code a transposed version because
 	 * we have no compression to improve.
 	 */
@@ -249,22 +249,22 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	memcpy(compressed[COMPRESS_RAW],image->pix,imageSizeInBytes);
 
 	/* COMPRESS_RLE_LR
-	 * If all the uncompressed data has a big enthropy, there
+	 * If all the uncompressed data has a big entropy, there
 	 * will be a control byte for a block of 127 bytes.
 	 * The allocation size has a maximum value of the image
 	 * size plus a byte each 127 bytes.
 	 * This is accoted by 2*n+50
 	 */
 	cLevel(2) {
-		compressed[COMPRESS_RLE_LR]=getMemory((2*imageSizeInBytes+50)); 
+		compressed[COMPRESS_RLE_LR]=getMemory((2*imageSizeInBytes+50));
 		compressRle(
 			image->pix,imageSizeInBytes,
 			compressed[COMPRESS_RLE_LR],&(compressedSize[COMPRESS_RLE_LR])
 		);
 		max_alg++;
 	}
-	/* COMPRESS_LZG_LR 
-	 * If all the uncompressed data has a big enthropy, there
+	/* COMPRESS_LZG_LR
+	 * If all the uncompressed data has a big entropy, there
 	 * will be a maskbyte for a block of 8 bytes.
 	 * The allocation size has a maximum value of the image
 	 * size plus a byte in 8.
@@ -292,7 +292,7 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	 * The following algorithms will be the same as above, but
 	 * using the image matrix transposed.
 	 */
-	cLevel(3) 
+	cLevel(3)
 		antiTransposeImage(image,imageSizeInBytes);
 
 	/* COMPRESS_RLE_UD */
@@ -353,6 +353,6 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 
 	/* Free all compression attempts */
 	for (i=COMPRESS_RAW;i<max_alg;i++) free(compressed[i]);
-	return 1;
+	return 1; /* true */
 }
 

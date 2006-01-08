@@ -19,7 +19,7 @@
 */
 
 /*
-disk.h: Princed Resources : Disk Access & File handling functions headers
+disk.h: Princed Resources : Disk Access & File handling prototypes
 ¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 29 Oct 2003
@@ -49,9 +49,9 @@ disk.h: Princed Resources : Disk Access & File handling functions headers
 
 /* Path defines */
 #ifndef WIN32
- #define DIR_SEPARATOR           '/'
+	#define DIR_SEPARATOR           '/'
 #else
- #define DIR_SEPARATOR           '\\'
+	#define DIR_SEPARATOR           '\\'
 #endif
 
 typedef enum {eFile,eDirectory,eNotFound}whatIs;

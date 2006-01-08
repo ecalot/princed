@@ -19,8 +19,8 @@
 */
 
 /*
-unknown.c: Princed Resources : Unknown resources handler
-¯¯¯¯¯¯¯¯¯¯
+unknown.c: Princed Resources : Unknown resources handler implementation
+¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 
@@ -137,7 +137,7 @@ int unknownLogStop () {
 		}
 	}
 
-	/* generate the xml file */
+	/* generate the XML file */
 	generateXML(0,unknownFile.tree,unknownFile.fd);
 
 	/* it's time to free the tree */

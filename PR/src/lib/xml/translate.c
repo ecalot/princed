@@ -19,8 +19,8 @@
 */
 
 /*
-translate.c: Princed Resources : array translating resources
-¯¯¯¯¯¯¯
+translate.c: Princed Resources : Array translating resources
+¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 16 Dec 2005
 

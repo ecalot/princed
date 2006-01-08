@@ -52,12 +52,12 @@ disk.c: Princed Resources : Disk Access & File handling functions
 #endif
 
 #ifndef WIN32
-  #define defmkdir(a) mkdir (a,(mode_t)0755)
-	/* Recursive directory scanning needs <dirent> for posix or "direntwin" for windows */
+	#define defmkdir(a) mkdir (a,(mode_t)0755)
+	/* Recursive directory scanning needs <dirent> for POSIX or "direntwin" for windows */
 	#ifdef DISK_DIR_SCANING
 		#include <dirent.h>
 	#endif
-	/* Terminal manipulation for unix (to avoid the enter after selecting an option) */
+	/* Terminal manipulation for UNIX (to avoid the enter after selecting an option) */
 	#ifdef DISK_TERM_MANIPULATION
 		#include <termios.h>
 		#include <unistd.h>
@@ -65,8 +65,8 @@ disk.c: Princed Resources : Disk Access & File handling functions
 	#endif
 	#define osIndepGetCharacter() getchar()
 #else
-	#include <direct.h> /* mkdir */ 
-  #define defmkdir(a) mkdir (a)
+	#include <direct.h> /* mkdir */
+	#define defmkdir(a) mkdir (a)
 	#ifdef DISK_DIR_SCANING
 		#include "direntwin.h"
 	#endif
@@ -415,7 +415,7 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 	f=isDir(file);
 	if (f==eDirectory) return PR_RESULT_ERR_FILE_NOT_OPEN_WASDIR;
 	if (f==eNotFound)  return PR_RESULT_ERR_FILE_NOT_OPEN_NOTFOUND;
-	
+
 	/* Open the file */
 	if ((fp=fopen(file,"rb"))==NULL) {
 		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
@@ -470,10 +470,10 @@ whatIs isDir(const char *path) {
 
 int recurseDirectory(const char* path,int recursive, void* pass, void (*function)(const char*,void*)) {
 	/*
-		Search for all .dat files in the directory
+		Search for all .DAT files in the directory
 		if recursive flag is set search over the subdirectories
 		if verbose flag is set shows some messages in the screen
-		when .dat files are found it runs prMain form each of them
+		when .DAT files are found it runs prMain form each of them
 	*/
 
 	/* Declare variables */
@@ -504,7 +504,7 @@ int recurseDirectory(const char* path,int recursive, void* pass, void (*function
 			memcpy(recursivePath+sizeOfPath+1,directoryStructure->d_name,sizeOfFile+1);
 
 			if (isDir(recursivePath)==eDirectory&&recursive) {
-				/* Only recurse if we are in a directory and recursive is true */
+				/* Only recourse if we are in a directory and recursive is true */
 				recurseDirectory(recursivePath,recursive,pass,function);
 			} else {
 				function(recursivePath,pass);

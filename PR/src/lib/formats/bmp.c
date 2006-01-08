@@ -45,12 +45,13 @@ extern FILE* outputStream;
 
 int mFormatExportBmp(const unsigned char* data, const char *vFileext,unsigned long int size,tImage image,int optionflag, const char* backupExtension) {
 	/*
-		This function will expand the data into an image structure,
-		then the bitmap structure will be saved to disk
+	 * This function will expand the data into an image structure,
+	 * then the bitmap structure will be saved to disk
+	 *
+	 * Note: The old structure is passed by parameters in order to
+	 *       keep the right palette.
+	 */
 
-		Note: The old structure is passed by paremeters in order to
-		      keep the right palette.
-	*/
 	int result;
 
 	/* Expand graphic and check results */
@@ -196,7 +197,7 @@ int mReadBitMap(tImage* image,unsigned char* data, int size) {
 	/* if validations==wrong */
 	if (!ok) {
 		freeAllocation(image->pix);
-		return 0; /* false: this is not a valid bmp file format or memory too low */
+		return 0; /* false: this is not a valid BMP file format or memory too low */
 	}
 
 	/* Serialize bitmap-->raw array */

@@ -19,7 +19,7 @@
 */
 
 /*
-import.c: Princed Resources : DAT Compiler
+import.c: Princed Resources : DAT Importer
 ¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -110,7 +110,7 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 
 		if (hasFlag(raw_flag)) newRes.type=0; /* compile from raw */
 		getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
-		/* the file is in the archive, so i'll add it to the main dat body */
+		/* the file is in the archive, so I'll add it to the main DAT body */
 		if ((newRes.size=(mLoadFileArray(vFileext,&newRes.data)))>0) {
 			if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
@@ -167,10 +167,10 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size);
 			if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
-			/* get save file name (if unknown document is in the xml) */
+			/* get save file name (if unknown document is in the XML) */
 			getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 
-			/* the file is in the partial list, so i'll import */
+			/* the file is in the partial list, so I'll import */
 			if ((newRes.size=mLoadFileArray(vFileext,&newRes.data))>0) {
 				newRes.id=res.id;
 				newRes.type=res.type;
@@ -187,12 +187,12 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 				errors++;
 			}
 		} else {
-			/* the file wasn't in the partial list, so I'll re-copy it from the open dat file */
+			/* the file wasn't in the partial list, so I'll re-copy it from the open DAT file */
 			mWriteFileInDatFileIgnoreChecksum(&res);
 		}
 	}
 
-	/* Close dat file */
+	/* Close DAT file */
 	mRWCloseDatFile(0);
 
 	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,errors);

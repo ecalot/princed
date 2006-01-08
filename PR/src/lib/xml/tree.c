@@ -19,7 +19,7 @@
 */
 
 /*
-tree.c: Princed Resources : Tree handling routines
+tree.c: Princed Resources : Specific XML tree handling routines
 ¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 28 Dec 2005
@@ -49,8 +49,8 @@ tree.c: Princed Resources : Tree handling routines
 \***************************************************************/
 
 #define XML_HEADER \
-	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
-	"<?xml version=\"1.0\" ?>\n"
+	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/XML/resources/std1.dtd\">\n"\
+	"<?XML version=\"1.0\" ?>\n"
 
 /***************************************************************\
 |              Common factor tree reducing routines             |
@@ -60,14 +60,14 @@ tree.c: Princed Resources : Tree handling routines
  * Affected attributes: only fully inheritable
  * PRE: inheritances are shown in the tree, so if the parent has
  * file="a", then the son comes with file="a" except that other
- * file was explicity specified for the child. NULL is never shown
+ * file was explicitly specified for the child. NULL is never shown
  * after a non-NULL parent.
  *
- * POST: if the folder has n childs and there are n/2 equal attributes
+ * POST: if the folder has n children and there are n/2 equal attributes
  * then those attributes comes to the parent.
  *
- * if the folder has n childs and there are at most 10/n different attributes
- * we can say that there is a ratio of 10 items per atribute or more.
+ * if the folder has n children and there are at most 10/n different attributes
+ * we can say that there is a ratio of 10 items per attribute or more.
  * If that happens for at least one attribute, the attribute with the highest
  * ratio will be partitioned that way:
  *   if an attribute value is present in 3 or more items, all items goes
@@ -190,7 +190,6 @@ void test() {
 	tTag tr[100];
 	int i;
 	for (i=0;i<6800;i++) ((char*)tr)[i]=0;
-/*	memset(tr,0,100*sizeof(tTag*));*/
 
 	tr[0].child=&(tr[1]);
 
@@ -291,7 +290,7 @@ void unknown_item(int value,const char* index,const char* path,const char* type,
 }
 
 /***************************************************************\
-|                       Memory tree --> xml                     |
+|                       Memory tree --> XML                     |
 \***************************************************************/
 
 void generateXML(int n,/*const*/ tTag* t,FILE* outputStream) {
@@ -361,7 +360,7 @@ void rec_tree(tTag* *t,const char* file) {
 				*t=aux->child; /* the children are now replacing his parent */
 				if ((*t)->next) {
 					for(aux2=*t;aux2->next;aux2=aux2->next); /* go to the last child */
-				 	aux2->next=aux->next; /* and set the next siebling as the parent next siebling */
+					aux2->next=aux->next; /* and set the next sibling as the parent next sibling */
 				}
 				aux->child=NULL;
 			} else {

@@ -19,7 +19,7 @@
 */
 
 /*
-dat.h: Princed Resources : DAT library headers
+dat.h: Princed Resources : DAT format library headers
 ¯¯¯¯¯
  Copyright 2004 Princed Development Team
   Created: 15 Mar 2004
@@ -52,7 +52,7 @@ int checkSum(const unsigned char* data,int size);
 
 #ifdef PR_DAT_INCLUDE_DATREAD
 #ifdef PR_DAT_INCLUDE_DATWRITE
-/* DAT reading and writing primitives primitives */
+/* DAT reading and writing primitives */
 int mRWBeginDatFile(const char* vFile, unsigned short int *numberOfItems, int optionflag);
 #define mRWCloseDatFile(dontSave) \
 mReadCloseDatFile();\
@@ -64,8 +64,7 @@ mWriteCloseDatFile(dontSave,optionflag,backupExtension)
 /* DAT reading primitives */
 int  mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFile);
 int  mReadFileInDatFile(tResource* res, int k);
-int mReadFileInDatFileId(tResource* res);
-/*int  mReadInitResource(tResource** res,const unsigned char* data,long size);*/
+int  mReadFileInDatFileId(tResource* res);
 void mReadCloseDatFile();
 #endif
 

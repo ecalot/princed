@@ -19,7 +19,7 @@
 */
 
 /*
-dat.c: Princed Resources : DAT library
+dat.c: Princed Resources : DAT format library implementation
 ¯¯¯¯¯
  Copyright 2004,2005 Princed Development Team
   Created: 15 Mar 2004
@@ -88,7 +88,7 @@ int checkSum(const unsigned char* data,int size) {
 #define dat_readCursorGetOffset(r)    (array2long(r.currentRecord+2))
 #define dat_readCursorGetSize(r)      (array2short(r.currentRecord+6))
 #define dat_readCursorGetFlags(r)     ((r.popVersion==pop1)?(1<<24):(r.currentRecord[8]<<16|r.currentRecord[9]<<8|r.currentRecord[10]))
-#define dat_readCursorGetVersion(r)     (r.popVersion)
+#define dat_readCursorGetVersion(r)   (r.popVersion)
 
 void rememberIndex(char* to, const char* from) {
 	int i=4;
@@ -219,7 +219,7 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 			}
 			pos-=itemCount;
 		}
-		return 0; /* false: we had read all the master index and we didn't read the pos */
+		return 0; /* false: we had read all the master index and we didn't read the "pos" value */
 	}
 }
 
@@ -365,10 +365,10 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	indexOffset=array2long(readDatFile);
 	indexSize=array2short(readDatFile+4);
 
-	/* verify dat format: the index offset belongs to the file and the file size is the index size plus the index offset */
+	/* verify DAT format: the index offset belongs to the file and the file size is the index size plus the index offset */
 	if ((indexOffset>readDatFileSize)&&((indexOffset+indexSize)!=readDatFileSize)) {
 		free(readDatFile);
-		return PR_RESULT_ERR_INVALID_DAT; /* this is not a valid prince dat file */
+		return PR_RESULT_ERR_INVALID_DAT; /* this is not a valid prince DAT file */
 	}
 
 	/* create cursor */
@@ -418,14 +418,14 @@ tResourceList resIndex;
 
 int mWriteBeginDatFile(const char* vFile, int optionflag) {
 	/*
-		Opens safely a dat file for writing mode and
-		reserves space for the headers
-
-		Return Values:
-			 1 Ok
-			 0 File couldn't be open
-
-	*/
+	 * Opens safely a DAT file for writing mode and
+	 * reserves space for the headers
+	 *
+	 * Return Values:
+	 *  PR_RESULT_SUCCESS                       Ok
+	 *  PR_RESULT_ERR_FILE_DAT_NOT_WRITE_ACCESS File couldn't be open
+	 *
+	 */
 	if (writeOpen(vFile,&writeDatFile,optionflag|backup_flag)) {
 		short fill=0;
 		resIndex=resourceListCreate(1);
@@ -459,7 +459,7 @@ void dat_write(const tResource* res,unsigned char checksum) {
 void mWriteFileInDatFileIgnoreChecksum(const tResource* res) {
 	tResource aux;
 
-	/* set up virtual resource aux */
+	/* set up virtual resource auxiliary */
 	aux=*res;
 
 	/* drop the checksum */
@@ -472,9 +472,9 @@ void mWriteFileInDatFileIgnoreChecksum(const tResource* res) {
 
 void mWriteFileInDatFile(const tResource* res) {
 	/*
-		Adds a data resource to a dat file keeping
-		abstractly the checksum verifications
-	*/
+	 * Adds a data resource to a DAT file keeping
+	 * abstractly the checksum verifications
+	 */
 
 	/* Declare variables */
 	int            k        = res->size;
@@ -491,8 +491,8 @@ void mWriteFileInDatFile(const tResource* res) {
 
 void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension) {
 	/*
-		Closes a dat file filling the index and other structures
-	*/
+	 * Closes a DAT file filling the index and other structures
+	 */
 	unsigned short int totalItems=0;
 	unsigned short int size2=2;
 	unsigned long  int size1=ftell(writeDatFile);
@@ -508,7 +508,6 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 		if (!strncmp(res->id.index,textPop1,4)) { /* POP1 */
 			do {
 				totalItems++;
-				/*printf("Adding item id (%s,%d)\n",res->id.index,res->id.value);*/
 				fwriteshort(&(res->id.value),writeDatFile);
 				fwritelong(&(res->offset),writeDatFile);
 				fwriteshort(&(res->size),writeDatFile);
@@ -552,7 +551,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 					numberOfSlaveItems=0;
 					/* return to the end of the file to keep writing */
 					fseek(writeDatFile,0,SEEK_END);
-					slaveCountPos=ftell(writeDatFile); /* remember the juni (II) place */
+					slaveCountPos=ftell(writeDatFile); /* remember the junk (II) place */
 					fwriteshort(&numberOfSlaveItems,writeDatFile); /* junk (II) */
 
 					strncpy(index,res->id.index,5);
@@ -561,7 +560,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 				fwriteshort(&(res->id.value),writeDatFile);
 				fwritelong(&(res->offset),writeDatFile);
 				fwriteshort(&(res->size),writeDatFile);
-				/* this is the flag writen in endian safe */
+				/* this is the flag written in endian-safe */
 				v=(res->flags>>16)&&0xff;
 				fwritechar(&v,writeDatFile);
 				v=(res->flags>>8)&&0xff;
@@ -591,7 +590,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 	/* Closes the file and flushes the buffer */
 	writeClose(writeDatFile,dontSave,optionflag,backupExtension);
 
-	/* drops the index list */
+	/* Drops the index list */
 	resourceListDrop(&resIndex);
 }
 #endif

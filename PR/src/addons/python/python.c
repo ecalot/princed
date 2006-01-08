@@ -20,9 +20,9 @@
 
 /*
 python.c: Princed Resources : PR Python interface
-Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯
+¯¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
-  Created: (check cvs history)
+  Created: (check CVS history)
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
   Version: 1.00

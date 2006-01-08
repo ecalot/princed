@@ -19,7 +19,7 @@
 */
 
 /*
-compress.c: Princed Resources : Image Compression Library
+rle_compress.c: Princed Resources : Image Compression Library
 ¯¯¯¯¯¯¯¯¯¯
  Copyright 2003, 2004 Princed Development Team
   Created: 24 Aug 2003
@@ -35,7 +35,7 @@ compress.c: Princed Resources : Image Compression Library
 #include <stdio.h>
 
 /* Compress using the Run Length Encoding algorithm */
-void compressRle(const unsigned char* input, int inputSize, 
+void compressRle(const unsigned char* input, int inputSize,
                  unsigned char* output, int *outputSize) {
 	/* Declare pointers */
 	unsigned char* cursorData        = output;
@@ -79,7 +79,7 @@ void compressRle(const unsigned char* input, int inputSize,
 			cursorData++;
 		}
 	}
-	/* Write the last char 
+	/* Write the last char
 	if ((*counter)>0) {
 		*(cursorData++)=0;
 		*(cursorData)= ||||||| 0xff |||||  *(cursorPix); |||||||

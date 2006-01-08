@@ -20,7 +20,7 @@
 
 /*
 resourcematch.h: Princed Resources : Partial list matching abstract layer headers
-Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 18 Dec 2005
 
@@ -37,7 +37,7 @@ resourcematch.h: Princed Resources : Partial list matching abstract layer header
 
 #include "reslist.h" /* tResourceId*/
 
-typedef struct resourceMatch {
+typedef struct {
 	int flag;
 	int value;
 	int order;
@@ -46,8 +46,8 @@ typedef struct resourceMatch {
 } tResourceMatch;
 
 void freeRM(tResourceMatch *r);
-int initRM(const char* text, tResourceMatch *r);
-int runRM(const tResourceMatch *r, const char* path, const tResourceId *id);
+int  initRM(const char* text, tResourceMatch *r);
+int  runRM (const tResourceMatch *r, const char* path, const tResourceId *id);
 
 #endif
 

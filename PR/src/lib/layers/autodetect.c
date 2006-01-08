@@ -19,8 +19,8 @@
 */
 
 /*
-autodetect.c: Princed Resources : Autodetect resource types
-¯¯¯¯¯¯¯¯¯¯¯
+autodetect.c: Princed Resources : Automatic detection resource types
+¯¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 

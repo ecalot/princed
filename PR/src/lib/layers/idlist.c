@@ -19,7 +19,7 @@
 */
 
 /*
-idlist.c: Princed Resources : Partial Id list
+idlist.c: Princed Resources : Partial Id list routines
 ¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -62,7 +62,7 @@ int partialListActive() {
 int parseGivenPath(char* path) {
 	/*
 	 * format: \([^@]*\)/(@\([0-9]\+\)?\(:[a-z ]*\)?\(#[a-z0-9]\+\)\)?
-	 * where: \1 is the dat filename, \2 is the partical list whole match if exists,
+	 * where: \1 is the DAT filename, \2 is the partial list whole match if exists,
 	 *        \3 is the resource id, \4 is the index name and \5 is the order
 	 * examples:                         rID Ind  Ord  Restricted to
 	 *  datfile.dat@111:shape#first  --> 111 shap 0    *
@@ -78,12 +78,13 @@ int parseGivenPath(char* path) {
 	 *  datfile.dat@#785             --> *   *    785  *
 	 *  datfile.dat@/a.bmp           --> *   *    *    a.bmp
 	 *  datfile.dat@/img*.bmp        --> *   *    *    img*.bmp
-
-		PRE:  partialList.list was not allocated
-		POST:
-		 partialList.count=0 and partialList.list=NULL if all resources
-		 path was trimed in the "@"
-	*/
+	 *
+	 * PRE:
+	 *  partialList.list was not allocated
+	 * POST:
+	 *  partialList.count=0 and partialList.list=NULL if all resources
+	 *  path was trimmed in the "@"
+	 */
 
 	int i;
 	int separator=0;
@@ -92,11 +93,11 @@ int parseGivenPath(char* path) {
 	int error=0;
 
 	/* Check if the variable wasn't initialized before */
-	if (partialList.count!=0) return -2;
+	if (partialList.count!=0) return PR_RESULT_ERR_WRONG_PRIMITIVE_CALL;
 	partialList.list=NULL;
 
 	/* Validates the NULL path */
-	if (path==NULL) return 0;
+	if (path==NULL) return PR_RESULT_SUCCESS;
 
 	/* Erase the last "/" if exists. */
 	if (path) {
@@ -111,9 +112,9 @@ int parseGivenPath(char* path) {
 	while (path[separator]&&path[separator]!='@') separator++;
 
 	/* If no separation */
-	if (!path[separator]) return 0; /* There was no separator */
+	if (!path[separator]) return PR_RESULT_SUCCESS; /* There was no separator */
 
-	/* Count values, separate them with '\0' and alloc memory */
+	/* Count values, separate them with '\0' and allocate memory */
 	partialList.count=1;
 	path[separator]=0; /* Trim the path to the separator */
 	i=++separator;
@@ -134,9 +135,9 @@ int parseGivenPath(char* path) {
 	}
 	if (error) {
 		for (i=0;i<j-1;i++) freeRM(partialList.list+i);
-		return -1;
+		return PR_RESULT_ERR_COMMAND_LINE_SYNTAX;
 	}
-	return 0;
+	return PR_RESULT_SUCCESS;
 }
 
 int isInThePartialList(const char* vFile, tResourceId id) {

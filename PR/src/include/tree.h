@@ -19,7 +19,7 @@
 */
 
 /*
-tree.h: Princed Resources : Unknown.xml generator headers
+tree.h: Princed Resources : Special XML tree prototypes
 ¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003

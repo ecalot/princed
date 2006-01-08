@@ -19,7 +19,7 @@
 */
 
 /*
-search.c: Princed Resources : specific xml handling functions
+search.c: Princed Resources : Specific XML handling functions
 ¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 23 Oct 2003
@@ -45,7 +45,7 @@ search.c: Princed Resources : specific xml handling functions
 #include "translate.h" /* to translate indexes */
 
 /***************************************************************\
-|            Filtering xml structure to tResourceList           |
+|            Filtering XML structure to tResourceList           |
 \***************************************************************/
 
 /* parse file */
@@ -55,10 +55,10 @@ int parseFile(const char* vFile, const char* datFile, tResourceList *rlist) {
 	tPassWork pass;
 	tTag* structure;
 
-	/* Generate xml structure if doesn't exist */
+	/* Generate XML structure if doesn't exist */
 	if ((error=parseStructure(vFile,&structure))) return error;
 
-	/* Use the xml structure to Generate the resource structure of the file */
+	/* Use the XML structure to Generate the resource structure of the file */
 	pass.datFile=datFile;
 	pass.rlist=rlist;
 	workTree(structure,&pass,workTag);
@@ -113,7 +113,7 @@ void workTag(const tTag* t,void* pass) {
 	char* end;
 
 	/* Skipping conditions */
-	if (!equalsIgnoreCase(t->file,datFile))   return; /* If it doesn't belong to the given dat file */
+	if (!equalsIgnoreCase(t->file,datFile))   return; /* If it doesn't belong to the given DAT file */
 	if (!t->value) return;                            /* If there was not number id */
 	if (!t->index) return;                            /* If there was not index id */
 	if (!equalsIgnoreCase(t->tag,"item"))     return; /* If the tag isn't an item */

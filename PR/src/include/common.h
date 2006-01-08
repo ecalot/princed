@@ -20,7 +20,7 @@
 
 /*
 common.h: Princed Resources : Defines and prototypes common to all PR code
-¯¯¯¯
+¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 
@@ -215,8 +215,8 @@ PARSING_OPTRAW\
 #define PR_RESULT_FD_IMPORT_FROM_MORE_THAN_ONE_DIR -20
 #define PR_RESULT_FD_IMPORT_RECURSIVE -21
 #define PR_RESULT_FD_NO_FILES_SELECTED -22
+#define PR_RESULT_ERR_WRONG_PRIMITIVE_CALL -19
 #define PR_RESULT_HELP_SHOWN -1
 #define PR_RESULT_SUCCESS 0
 
 #endif
-

@@ -37,8 +37,6 @@ idlist.h: Princed Resources : Resource id list headers
 /* Includes */
 #include "reslist.h" /* tResourceId */
 
-#define PARSING_MAX_TOKEN_SIZE 200
-
 int  parseGivenPath(char* path);
 int  partialListActive();
 int  isInThePartialList(const char* vFile, tResourceId id);

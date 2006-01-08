@@ -19,7 +19,7 @@
 */
 
 /*
-tasks.c: Princed Resources : Classify a DAT file
+tasks.c: Princed Resources : File classify routines
 ¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -77,44 +77,44 @@ typedef struct {
 int prClassify(const char* fileName) {
 	int result;
 
-	/* 1) check if it is a dat file */
+	/* 1) check if it is a DAT file */
 	result=prClassifyDat(fileName);
 
-	if (!result) { /* it's not a dat file*/
+	if (!result) { /* it's not a DAT file*/
 		long int fileSize;
 		unsigned char* fileData;
-		
+
 		/* let's get it's content and see what it is */
 		fileSize=mLoadFileArray(fileName,&fileData);
 		if (fileSize<=0) return fileSize;
-		
-		/* 2) let's compare the size with a .sav size */
+
+		/* 2) let's compare the size with a .SAV size */
 		if (fileSize==8) {
 			int framesLeft;
 			/* check that the frames (seconds/12) are in the range [0*12,60*12) */
 			framesLeft=fileData[2]|fileData[3]<<8;
 			if (framesLeft<60*12)
-				result=30; /* sav file */
+				result=30; /* SAV file */
 		}
-		
-		/* 3) let's compare the size with a .hof size */
+
+		/* 3) let's compare the size with a .HOF size */
 		if (fileSize==176) {
 			int records;
 			/* check that the number of stored records are 6 or less */
 			records=fileData[0]|fileData[1]<<8;
 			if (records<=6) {
-				result=31; /* hof file */
+				result=31; /* HOF file */
 				while (records) {
 					int framesLeft;
 					/* wrong seconds left format for this record will invalidate the whole file */
 					framesLeft=fileData[29*records-2]|fileData[29*records-1]<<8;
-					if (framesLeft>=60*12) result=0; 
+					if (framesLeft>=60*12) result=0;
 					records--;
 				}
 			}
 		}
 
-		/* 4) as the last resource, check if it is an exe file */
+		/* 4) as the last resource, check if it is an EXE file */
 		if (!result && fileSize>2 && fileData[0]=='M' && fileData[1]=='Z') {
 			static tExeClassification x[]={
 				/* install.pdm         : 41 */ {717181985,4233},
@@ -123,8 +123,8 @@ int prClassify(const char* fileName) {
 			};
 			unsigned long checkSum=0;
 			int i;
-			result=40; /* generic exe file */
-			/* Now I'll try to recognize some known exe files */
+			result=40; /* generic EXE file */
+			/* Now I'll try to recognize some known EXE files */
 			/* calculate checksum */
 			for (i=0;i<fileSize;i++) {
 				checkSum+=fileData[i]<<((3-(i%4))*8);
@@ -138,10 +138,10 @@ int prClassify(const char* fileName) {
 					break;
 				}
 		}
-		
+
 		free(fileData);
 	}
-	
+
 	return result;
 }
 

@@ -19,8 +19,8 @@
 */
 
 /*
-stringformat.c: Princed Resources : format string parsing feature
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+stringformat.c: Princed Resources : Format string parsing feature routines
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 4 Jul 2005
 
@@ -178,15 +178,15 @@ const char* parseformat(const char* format,long value,const char* index, const c
 
 #ifdef DEBUG_STRINGS
 int main(int a,char** b) {
-printf("%s\n", parseformat(
-b[1],
-233,
-"shap",
-"image",
-"bmp",
- 5,0,"hey man!"
+	printf("%s\n", parseformat(
+		b[1],
+		233,
+		"shap",
+		"image",
+		"bmp",
+		5,0,"hey man!"
 	));
-return 0;
+	return 0;
 }
 #endif
 

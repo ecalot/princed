@@ -19,7 +19,7 @@
 */
 
 /*
-classify.h: Princed Resources : Other DAT file handling tasks headers
+classify.h: Princed Resources : DAT file classify routine headers
 ¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -35,25 +35,23 @@ classify.h: Princed Resources : Other DAT file handling tasks headers
 #define _CLASSIFY_H_
 
 /*
-	Return values may be:
-	 -2 Memory error
-	 -1 File not found or no access error
-
-	 00 Not a valid POP1 DAT file
-
-	 01 Levels file
-	 02 Graphic file with an image in the first valid entry (not common)
-	 03 Waves/Digital sound file
-	 04 Midis file
-	 05 Valid DAT file with Undefined content
-	 06 Graphic file with a palette in the first valid entry (common)
-	 07 PC Speaker dat file
-
-	 11 Pop2 dat files
-*/
+ * Return values may be:
+ *  -2 Memory error
+ *  -1 File not found or no access error
+ *
+ *  00 Not a valid POP1 DAT file
+ *
+ *  01 Levels file
+ *  02 Graphic file with an image in the first valid entry (not common)
+ *  03 Waves/Digital sound file
+ *  04 Midis file
+ *  05 Valid DAT file with Undefined content
+ *  06 Graphic file with a palette in the first valid entry (common)
+ *  07 PC Speaker DAT file
+ *
+ *  11 Pop2 DAT files
+ */
 
 int prVerifyDatType(const char* vFiledat);
-
-void compareFiles(const char* vModified,const char* vOriginal);
 
 #endif

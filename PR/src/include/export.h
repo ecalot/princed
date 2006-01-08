@@ -19,7 +19,7 @@
 */
 
 /*
-export.h: Princed Resources : DAT Extractor headers
+export.h: Princed Resources : DAT extraction prototypes
 ¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003

@@ -15,12 +15,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-    The authors of this program may be contacted at http:/forum.princed.com.ar
+    The authors of this program may be contacted at http://forum.princed.com.ar
 */
 
 /*
-search.h: Princed Resources : xml handling functions header file
-¯¯¯¯¯
+search.h: Princed Resources : Abstract XML tree searching prototypes
+¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 23 Oct 2003
 
@@ -42,7 +42,7 @@ search.h: Princed Resources : xml handling functions header file
 #include "common.h" /* tTag */
 #include "reslist.h"
 
-/* parse xml file */
+/* parse XML file */
 int parseFile(const char* vFile, const char* datFile, tResourceList *r);
 
 /****************************************************************\

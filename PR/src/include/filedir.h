@@ -15,12 +15,12 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-    The authors of this program may be contacted at http:/forum.princed.com.ar
+    The authors of this program may be contacted at http://forum.princed.com.ar
 */
 
 /*
-filedir.h: Princed Resources : xml handling functions header file
-¯¯¯¯¯
+filedir.h: Princed Resources : File list layer for console IDE prototypes
+¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 23 Oct 2003
 

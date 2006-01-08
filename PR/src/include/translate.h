@@ -19,8 +19,8 @@
 */
 
 /*
-translate.c: Princed Resources : array translating resources
-¯¯¯¯¯¯¯
+translate.h: Princed Resources : Array translating resources prototypes
+¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 16 Dec 2005
 
@@ -35,10 +35,10 @@ translate.c: Princed Resources : array translating resources
 #define _TRANSLATE_H_
 
 #define TRANS_ARRAY_INDEX_INT {\
-"pop1", "cust", "fram", "palc", "pals", "palt", "piec", "scr", "shap", "shpl", "strl", "snd", "seqs", "txt4"}
+	"pop1", "cust", "fram", "palc", "pals", "palt", "piec", "scr", "shap", "shpl", "strl", "snd", "seqs", "txt4"}
 
 #define TRANS_ARRAY_INDEX_EXT {\
-"pop 1","custom", "frame", "cga palette", "svga palette", "tga palette", "piece", "screen", "shape", "shape palette", "string", "sound", "sequence", "text4"}
+	"pop 1","custom", "frame", "cga palette", "svga palette", "tga palette", "piece", "screen", "shape", "shape palette", "string", "sound", "sequence", "text4"}
 
 #define TRANS_ARRAY_INDEX_SIZ 13
 

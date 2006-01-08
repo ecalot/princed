@@ -19,8 +19,8 @@
 */
 
 /*
-filedir.c: Princed Resources : read command line file arguments and generate a file list
-¯¯¯¯¯¯
+filedir.c: Princed Resources : Read command line file arguments and generate a file list
+¯¯¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 19 Mar 2005
 
@@ -127,7 +127,7 @@ void addFileToListTag(const tTag* t,void* pass2) {
 	addFileToList(t->file,pass2);
 }
 
-/* Search all files in the xml tree and returns them */
+/* Search all files in the XML tree and returns them */
 int listAllDatFiles(const char* vResFile, const char* directory, const char* opt, tFileDir2* list) {
 	/* Declare error variable */
 	tPassListAndDir pass;
@@ -138,10 +138,10 @@ int listAllDatFiles(const char* vResFile, const char* directory, const char* opt
 	pass.opt=opt;
 	pass.list=list;
 
-	/* Generate xml structure if doesn't exist */
+	/* Generate XML structure if doesn't exist */
 	if ((error=parseStructure(vResFile,&structure))) return error;
 
-	/* Use the xml structure to Generate the file list */
+	/* Use the XML structure to Generate the file list */
 	workTree(structure,&pass,addFileToListTag);
 
 	/* All done */
@@ -149,7 +149,7 @@ int listAllDatFiles(const char* vResFile, const char* directory, const char* opt
 	return PR_RESULT_SUCCESS;
 }
 
-/* layer 2, module check if a file is in the xml */
+/* layer 2, module check if a file is in the XML */
 typedef struct {
 	const char* file;
 	int result;
@@ -169,10 +169,10 @@ int isADatFile(const char* vResFile, const char* file) {
 	pass.file=getFileNameFromPath(file);
 	pass.result=0;
 
-	/* Generate xml structure if doesn't exist */
+	/* Generate XML structure if doesn't exist */
 	if ((error=parseStructure(vResFile,&structure))) return error;
 
-	/* Use the xml structure to Generate the file list */
+	/* Use the XML structure to Generate the file list */
 	workTree(structure,&pass,checkIfFileExists);
 
 	/* All done */
@@ -198,11 +198,11 @@ int fileDirGetFilesImport(tFileDir2* list1,tFileDir2* files,const char* resfile,
 
 		/* a not found file may become either a directory or a file depending on the res file */
 		if (type==eNotFound) {
-			/* first check if the dat type was given by the -t option */
+			/* first check if the DAT type was given by the -t option */
 			if (given) {
 				type=eFile;
 			} else {
-			/* if the dat type wasn't given by the -t option let's use all the files in the XML */
+			/* if the DAT type wasn't given by the -t option let's use all the files in the XML */
 				int isdat;
 				isdat=isADatFile(resfile,file);
 				if (isdat<0) parseError=isdat;

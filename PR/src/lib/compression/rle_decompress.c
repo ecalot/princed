@@ -19,8 +19,8 @@
 */
 
 /*
-compress.c: Princed Resources : Image Compression Library
-¯¯¯¯¯¯¯¯¯¯
+rle_uncompress.c: Princed Resources : Image Compression Library
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2003, 2004 Princed Development Team
   Created: 24 Aug 2003
 
@@ -37,14 +37,14 @@ compress.c: Princed Resources : Image Compression Library
 #include "compress.h"
 
 /* Expands RLE algorithm */
-int expandRle(const unsigned char* input, int inputSize, 
+int expandRle(const unsigned char* input, int inputSize,
                unsigned char** output, int *outputSize) {
 	register signed char rep=1;
 	int oCursor=0;
 	int iCursor=0;
 
 	/* reserve memory */
-	if ((*output=malloc(40000))==NULL) return COMPRESS_RESULT_FATAL; 
+	if ((*output=malloc(40000))==NULL) return COMPRESS_RESULT_FATAL;
 
 	/* main loop */
 	while (iCursor<inputSize) {

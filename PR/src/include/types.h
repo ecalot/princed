@@ -19,7 +19,7 @@
 */
 
 /*
-reslist.h: Princed Resources : Resource list
+reslist.h: Princed Resources : Resource list prototypes
 ¯¯¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 05 Jun 2005
@@ -60,7 +60,9 @@ typedef struct {
 	unsigned long      flags;
 }tResource;
 
-/* void printr(const tResource* record); * for debug purposes */
+#ifdef DEBUG_RESPRINT
+void printr(const tResource* record); /* for debug purposes */
+#endif
 
 #define resourceListStartIteration(l) list_firstCursor(l)
 #define resourceListDrop(r)	list_drop(r)

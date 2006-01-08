@@ -19,8 +19,8 @@
 */
 
 /*
-stringformat.c: Princed Resources : format string parsing header
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+stringformat.h: Princed Resources : Format string parsing header
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 17 Dec 2005
 
@@ -37,6 +37,7 @@ stringformat.c: Princed Resources : format string parsing header
 #define isNumber(k) ('0'<=(k) && (k)<='9')
 
 const char* parseformat(const char* format,long value,const char* index, const char* type, const char* extension, long numberOfThisType, int order, const char* desc,const char* name);
+
 	/* This function parses format in this way:
 	 * %% - a % sign
 	 * %I - the human-like index name

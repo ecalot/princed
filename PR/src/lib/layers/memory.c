@@ -19,7 +19,7 @@
 */
 
 /*
-memory.c: Princed Resources : Memory handling
+memory.c: Princed Resources : Memory handling and comparing routines
 ¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 20 Dec 2003

@@ -19,8 +19,8 @@
 */
 
 /*
-autodetect.h: Princed Resources : Resource autodetection headers
-¯¯¯¯¯¯¯¯¯¯¯
+autodetect.h: Princed Resources : Resource automatic detection headers
+¯¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 

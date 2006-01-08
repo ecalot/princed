@@ -48,7 +48,7 @@ int mFormatImportMid(tResource *res) {
 	unsigned char* file;
 
 	file=malloc(res->size+1);
-	file[0]=(unsigned char)((res->type==4)?2:0); /* Now should be 0x02: First character must be a 0x01 (wav type in dat) */
+	file[0]=(unsigned char)((res->type==4)?2:0); /* Now should be 0x02: First character must be a 0x01 (wav type in DAT) */
 	memcpy(file+1,res->data,res->size);
 	res->size++;
 	free(res->data);

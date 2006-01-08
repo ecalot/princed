@@ -19,8 +19,8 @@
 */
 
 /*
-import.h: Princed Resources : DAT Compiler headers
-¯¯¯¯¯¯¯¯¯
+import.h: Princed Resources : DAT importation prototypes
+¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 

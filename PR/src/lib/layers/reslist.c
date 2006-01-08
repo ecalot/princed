@@ -19,7 +19,7 @@
 */
 
 /*
-reslist.c: Princed Resources : Ordered Read-Only list implementarion
+reslist.c: Princed Resources : Resource list layer implementation
 ¯¯¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 04 Jun 2005
@@ -89,6 +89,7 @@ void resourceListAdd(tResourceList* r,tResource* res) {
 	list_insert(r,res);
 }
 
+#ifdef DEBUG_RESPRINT
 void printr(const tResource* record) {
 		printf("id=(%d,%s,%d)\n",record->id.value,record->id.index,record->id.order);
 		printf("palette=(%d,%s)\n",record->palette.value,record->palette.index);
@@ -106,6 +107,7 @@ void resourceListDebugPrint(tResourceList* r) {
 	}
 	list_firstCursor(r);
 }
+#endif
 
 void resourceListAddInfo(tResourceList* r,tResource* res) {
 	if (!list_moveCursor(r,res)) {
@@ -117,7 +119,7 @@ void resourceListAddInfo(tResourceList* r,tResource* res) {
 		memset(res->palette.index,0,5);
 		res->number=0;
 		res->type=0;
-	} else { 
+	} else {
 		const tResource* resInfo=list_getCursor(r);
 		/* copy only the list information */
 		res->path=resInfo->path;

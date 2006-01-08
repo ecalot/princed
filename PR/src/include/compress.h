@@ -19,7 +19,7 @@
 */
 
 /*
-compress.c: Princed Resources : Image Compressor headers
+compress.h: Princed Resources : Image compression headers
 ¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -58,35 +58,34 @@ typedef struct {
 }tImage;
 
 #define DEFAULT_PALETTE \
-"\x00\x00\x00"\
-"\x00\x00\xa0"\
-"\x00\xa7\x00"\
-"\x00\xa7\xa0"\
-"\xa0\x00\x00"\
-"\xa0\x00\xa0"\
-"\xa0\x50\x00"\
-"\xa0\xa7\xa0"\
-"\x50\x50\x50"\
-"\x50\x50\xff"\
-"\x50\xf8\x50"\
-"\x50\xf8\xff"\
-"\xff\x50\x50"\
-"\xff\x50\xff"\
-"\xff\xf8\x50"\
-"\xff\xff\xff"
+	"\x00\x00\x00"\
+	"\x00\x00\xa0"\
+	"\x00\xa7\x00"\
+	"\x00\xa7\xa0"\
+	"\xa0\x00\x00"\
+	"\xa0\x00\xa0"\
+	"\xa0\x50\x00"\
+	"\xa0\xa7\xa0"\
+	"\x50\x50\x50"\
+	"\x50\x50\xff"\
+	"\x50\xf8\x50"\
+	"\x50\xf8\xff"\
+	"\xff\x50\x50"\
+	"\xff\x50\xff"\
+	"\xff\xf8\x50"\
+	"\xff\xff\xff"
 
 /* Prototypes */
 
 int mCompressGraphic(unsigned char** a,tImage* i, int* size);
-int mExpandGraphic(const unsigned char* array,tImage *image, int size);
+int mExpandGraphic  (const unsigned char* array,tImage *image, int size);
 
 #define cLevel(a) if (compressionLevel>=a)
-#define cHigh if (compressionHigher)
-#define setHigh compressionHigher=1
+#define cHigh     if (compressionHigher)
+#define setHigh   compressionHigher=1
 #define unsetHigh compressionHigher=0
 
 #define getCarry(a) ((a)>>6)
 #define getAlgor(a) a&0x4F
 
 #endif
-

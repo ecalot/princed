@@ -46,7 +46,7 @@ plv.c: Princed Resources : PLV prince level files support
 #include <string.h>
 #include <time.h>
 
-/* Private function to get the currect date/time */
+/* Private function to get the current date/time */
 char* getDate() {
 	/* Code taken from RDR 1.4.1a coded by Enrique Calot */
 

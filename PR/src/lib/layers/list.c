@@ -19,7 +19,7 @@
 */
 
 /*
-list.c: Princed Resources : Ordered Read-Only list implementarion
+list.c: Princed Resources : Order-optimized list implementation
 ¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 04 Jun 2005

@@ -19,7 +19,7 @@
 */
 
 /*
-parse.c: Princed Resources : xml parsing functions
+parse.c: Princed Resources : XML parsing functions
 ¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 23 Oct 2003
@@ -143,7 +143,7 @@ int attribFill(char* attr,char* val, tTag* t) {
 	}
 
 	FillAttr(t->desc,"desc");
-	FillAttr(t->path,"external"); /* external is a path alias for old compatibilities */
+	FillAttr(t->path,"external"); /* external is a path alias for old compatibility */
 	FillAttr(t->path,"path");
 	FillAttr(t->file,"file");
 	FillAttr(t->type,"type");
@@ -347,7 +347,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 	 * PR_RESULT_ERR_XML_ATTR    Attribute not recognized
 	 * PR_RESULT_ERR_MEMORY      No memory
 	 * PR_RESULT_ERR_XML_PARSING Parse error
-	 * PR_RESULT_SUCCESS         If the tag was parsed succesfully
+	 * PR_RESULT_SUCCESS         If the tag was parsed successfully
 	 */
 
 	tTag* tag;
@@ -362,7 +362,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 
 	if ((*error)<0) {freeTagStructure(tag);return NULL;} /* Fatal error */
 	/* (*error) is
-	 * XML_TAG_CLOSE  If tag is closed in the same openning
+	 * XML_TAG_CLOSE  If tag is closed in the same opening
 	 * XML_TAG_OPEN   If tag remains open
 	 */
 	if ((*error)==XML_TAG_CLOSE) {
@@ -371,7 +371,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 	}
 
 	/* In case there are some empty attributes, they may be inherited */
-	/* BEGIN specific xml tag inheritance */
+	/* BEGIN specific XML tag inheritance */
 	{
 		int x;
 		char* str;
@@ -402,7 +402,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 			tag->path=str;
 		}
 	}
-	/* END specific xml tag inheritance */
+	/* END specific XML tag inheritance */
 	/* Parse Child tags */
 	while (1) {
 		(*error)=getNextTag(p, &value);
@@ -488,13 +488,13 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 		*error=PR_RESULT_ERR_XML_FILE; /* File not open */
 		return NULL;
 	}
-	/* bugfix moved to loadArray */ l[size-1]=0; /* The last character must be an end of line (the > is forbiden) */
+	/* bug fix moved to loadArray */ l[size-1]=0; /* The last character must be an end of line (the > is forbidden) */
 	p=l;
 
 	*error=getNextTag(&p, &value);
 	if ((*error)<0) {
 		free(l);
-		return NULL; /* Fatal error will stop the execusion of the parsing */
+		return NULL; /* Fatal error will stop the execution of the parsing */
 	}
 
 	father=getTagStructure();
@@ -513,7 +513,7 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 	if (*error<0) {
 		freeTagStructure(tag);
 		free(father);
-		return NULL; /* Fatal error will stop the execusion of the parsing */
+		return NULL; /* Fatal error will stop the execution of the parsing */
 	}
 	if (*error==XML_WAS_EOD) { /* XML_WAS_EOD means end of document */
 		*error=PR_RESULT_SUCCESS;
@@ -533,12 +533,12 @@ static int xmlStructureError=0;
 
 /* cache parsed structure. If null is passed the default name will be used */
 int parseStructure(const char* vFile,tTag** structure) {
-	/* Resources input xml tree. Private+abstract variable */
+	/* Resources input XML tree. Private+abstract variable */
 	static const char defaultXmlFile[]=RES_XML_RESOURC_XML;
 
 	if (vFile==NULL) vFile=defaultXmlFile;
 
-	/* Generate xml structure if doesn't exist */
+	/* Generate XML structure if doesn't exist */
 	if (strcmp(lastFile,vFile)) {
 		/* if the file is different than the cached file */
 		freeParsedStructure(&xmlStructure);

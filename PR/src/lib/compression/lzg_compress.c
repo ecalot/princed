@@ -1,20 +1,20 @@
-/* 
+/*
  * LZG compression
- * 
- * ---------------------------------------------------------------------------- 
- * 
- * Authors: 
+ *
+ * ----------------------------------------------------------------------------
+ *
+ * Authors:
  *   Enrique Calot <ecalot.cod@princed.com.ar>
  *   Diego Essaya <dessaya@fi.uba.ar>
- * 
+ *
  * Research: Tammo Jan Dijkemma, Anke Balderer, Enrique Calot
  *
  * ----------------------------------------------------------------------------
  *
  * Copyright (C) 2004, 2005 the Princed Team
- * 
+ *
  * This file is part of the Princed project.
- * 
+ *
  * Princed is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -33,7 +33,7 @@
 /*
  * Modus operandi of the compression algorithm
  * -------------------------------------------
- * 
+ *
  * For each input byte we take a window containing the 1023 previous bytes.
  * If the window goes out of bounds (ie, when the current input byte is
  * before position 1024), we consider it filled with zeros.
@@ -43,7 +43,7 @@
  *                    input start   current input byte
  *           |--------------------------------|
  *                    window size=1023
- * 
+ *
  * The algorithm works as follows:
  *
  * While there is unread input data:
@@ -87,14 +87,14 @@ void *memrchr2(unsigned char *s, int c, size_t n) {
 /* Window size */
 #define WIN_SIZE 1024
 
-/* A repetition pattern must have a length of at least MIN_PATTERN_SIZE 
+/* A repetition pattern must have a length of at least MIN_PATTERN_SIZE
  * to be accepted (ie, to be worth for compressing) */
 #define MIN_PATTERN_SIZE 3
 #define MAX_PATTERN_SIZE 66
 
 /* search the longest pattern in the window that matches the first bytes
  * of the input */
-void search_best_pattern(unsigned char *input, int inputSize, 
+void search_best_pattern(unsigned char *input, int inputSize,
                          unsigned char **best_pattern, int *best_pattern_len)
 {
 	unsigned char *pattern;
@@ -110,10 +110,11 @@ void search_best_pattern(unsigned char *input, int inputSize,
 		unsigned char *wc = pattern + 1;
 		pattern_len = 1;
 
-		while ( (ic < (input + inputSize)) &&
-		        (*ic == *wc) &&
-				pattern_len < MAX_PATTERN_SIZE)
-		{
+		while (
+			(ic < (input + inputSize)) &&
+			(*ic == *wc) &&
+			pattern_len < MAX_PATTERN_SIZE
+		)	{
 			ic++; wc++; pattern_len++; /* increase until the pattern is different */
 		}
 
@@ -165,14 +166,14 @@ void addPattern(unsigned char *input, int iCursor,
                 unsigned char *pattern, int pattern_len)
 {
 	int loc = (pattern - input) + WIN_SIZE - MAX_PATTERN_SIZE;
-	output[oCursor] = 
+	output[oCursor] =
 		(((pattern_len - MIN_PATTERN_SIZE) << 2) & 0xfc) + ((loc & 0x0300) >> 8);
 	output[oCursor + 1] = (loc & 0x00FF);
 }
 
 /* Compress using the LZG algorithm */
 /* Assume output has been allocated and the size is very big */
-void compressLzg(const unsigned char* input2, int inputSize, 
+void compressLzg(const unsigned char* input2, int inputSize,
                  unsigned char* output, int *outputSize)
 {
 	int iCursor = 0, oCursor = 0;
@@ -188,7 +189,7 @@ void compressLzg(const unsigned char* input2, int inputSize,
 		unsigned char *best_pattern;
 		int best_pattern_len;
 
-		search_best_pattern(input + iCursor, inputSize - iCursor, 
+		search_best_pattern(input + iCursor, inputSize - iCursor,
 		                    &best_pattern, &best_pattern_len);
 
 		if (best_pattern_len < MIN_PATTERN_SIZE)

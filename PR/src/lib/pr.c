@@ -63,7 +63,7 @@ pr.c: Main source file for Princed Resources library
 #include "memory.h"    /* getMemory, free */
 #include "unknown.h"
 
-#include "search.h" /* parse */
+#include "search.h"    /* parse */
 
 /***************************************************************\
 |                      Main working functions                   |
@@ -82,45 +82,45 @@ int prExportDat(const char* vDatFile, const char* vDirName, const char* vResFile
 
 int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char* vDatFileName,const char* datAuthor, const char* backupExtension,const char* format) {
 	/*
-		Arguments:
-			char* vDatFile        - full Path to the dat file
-			char* vDirName        - full Path to the extracting folder
-			                        (doesn't need to exist)
-			char* vResFile        - full Path to the resources XML file
-			                        NULL is the default file resources.xml
-			char opt              - program options, see below
-			char* vDatFileName    - name of the file to be extracted
-			                        NULL means predict it from vDatFile
-			const char* datAuthor - Author's name when extracting PLV's,
-			                        NULL is default
-			const char* backupExtension
-			                      - If backup_flag is set, the string to attach
-			                        to the backup files
-			const char* format
-			                      - Sets the format the unknown files will be created.
-			                        See stringformat.c documentation.
-
-		Options:
-			unknown_flag   - generate the unknown file without performing
-                       any extraction
-			raw_flag       - uses raw format
-			verbose_flag   - explain what is being done
-			recursive_flag - searches for all dat files (only if vDatFile
-			                 is not a dat file and vDatFileName is NULL)
-			force_flag     - default option, you cannot disable it,
-			                 so please make a backup of your files
-			backup_flag    - backup your files
-
-		Return values:
-			00 Ok
-			-1 Error accessing the file DAT
-			-2 Memory error in extraction
-			-3 Invalid DAT file
-			-4 XML Parse error
-			-5 Memory error in parsing
-			-6 XML Attribute not recognized
-			-7 XML File not found
-	*/
+	 * Arguments:
+	 * 	char* vDatFile        - full Path to the DAT file
+	 * 	char* vDirName        - full Path to the extracting folder
+	 * 	                        (doesn't need to exist)
+	 * 	char* vResFile        - full Path to the resources XML file
+	 * 	                        NULL is the default file resources.xml
+	 * 	char opt              - program options, see below
+	 * 	char* vDatFileName    - name of the file to be extracted
+	 * 	                        NULL means predict it from vDatFile
+	 * 	const char* datAuthor - Author's name when extracting PLV's,
+	 * 	                        NULL is default
+	 * 	const char* backupExtension
+	 * 	                      - If backup_flag is set, the string to attach
+	 * 	                        to the backup files
+	 * 	const char* format
+	 * 	                      - Sets the format the unknown files will be created.
+	 * 	                        See stringformat.c documentation.
+	 *
+	 * Options:
+	 * 	unknown_flag   - generate the unknown file without performing
+	 *                   any extraction
+	 * 	raw_flag       - uses raw format
+	 * 	verbose_flag   - explain what is being done
+	 * 	recursive_flag - searches for all DAT files (only if vDatFile
+	 * 	                 is not a DAT file and vDatFileName is NULL)
+	 * 	force_flag     - default option, you cannot disable it,
+	 * 	                 so please make a backup of your files
+	 * 	backup_flag    - backup your files
+	 *
+	 * Return values:
+	 * 	00 Ok
+	 * 	-1 Error accessing the file DAT
+	 * 	-2 Memory error in extraction
+	 * 	-3 Invalid DAT file
+	 * 	-4 XML Parse error
+	 * 	-5 Memory error in parsing
+	 * 	-6 XML Attribute not recognized
+	 * 	-7 XML File not found
+	 */
 
 	/* Declare variables */
 	tResourceList r;
@@ -135,7 +135,7 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 
 	if (parseGivenPath(currentDatFile)) return PR_RESULT_ERR_COMMAND_LINE_SYNTAX;
 
-	if (vDatFileName==NULL) { /* if no special dat file was specified, a path parsed will be used */
+	if (vDatFileName==NULL) { /* if no special DAT file was specified, a path parsed will be used */
 		aux=getFileNameFromPath(currentDatFile);
 	} else {
 		aux=vDatFileName;
@@ -163,40 +163,40 @@ int prImportDat(const char* vDatFile, const char* vDirName, const char* vResFile
 
 int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResFile,int opt,const char* vDatFileName, const char* backupExtension) {
 	/*
-		Arguments:
-			char* vDatFile        - full Path to the dat file;
-			                        if file use it, if directory, perform it for
-			                        all files
-			char* vDirName        - full Path to the extracting folder
-			                        (doesn't need to exist)
-			char* vResFile        - full Path to the resources XML file
-			                        (resources.xml by default)
-			char opt              - program options, see below
-			char *vDatFileName    - name of the file to be extracted
-			                        NULL means predict it from vDatFile
-			const char* backupExtension
-			                      - If backup_flag is set, the string to attach
-			                        to the backup files
-
-		Options:
-			raw_flag       - uses raw format
-			verbose_flag   - explain what is being done
-			recursive_flag - searches for all dat files (only if vDatFile
-			                 is not a dat file and vDatFileName is NULL)
-			force_flag     - If not set and the file exists it will prompt
-			                 for action
-			backup_flag    - backup your files
-
-		Return values:
-			-1 DAT File couldn't be open for writing
-			-2 DAT file not found or invalid in partial importation
-			-3 XML Parse error
-			-4 No memory
-			-5 XML Attribute not recognized
-			-6 XML File not found
-			00 File successfully imported
-			positive number: number of missing files
-	*/
+	 * Arguments:
+	 * 	char* vDatFile        - full Path to the DAT file;
+	 * 	                        if file use it, if directory, perform it for
+	 * 	                        all files
+	 * 	char* vDirName        - full Path to the extracting folder
+	 * 	                        (doesn't need to exist)
+	 * 	char* vResFile        - full Path to the resources XML file
+	 * 	                        (resources.xml by default)
+	 * 	char opt              - program options, see below
+	 * 	char *vDatFileName    - name of the file to be extracted
+	 * 	                        NULL means predict it from vDatFile
+	 * 	const char* backupExtension
+	 * 	                      - If backup_flag is set, the string to attach
+	 * 	                        to the backup files
+	 *
+	 * Options:
+	 * 	raw_flag       - uses raw format
+	 * 	verbose_flag   - explain what is being done
+	 * 	recursive_flag - searches for all DAT files (only if vDatFile
+	 * 	                 is not a DAT file and vDatFileName is NULL)
+	 * 	force_flag     - If not set and the file exists it will prompt
+	 * 	                 for action
+	 * 	backup_flag    - backup your files
+	 *
+	 * Return values:
+	 * 	-1 DAT File couldn't be open for writing
+	 * 	-2 DAT file not found or invalid in partial importation
+	 * 	-3 XML Parse error
+	 * 	-4 No memory
+	 * 	-5 XML Attribute not recognized
+	 * 	-6 XML File not found
+	 * 	00 File successfully imported
+	 * 	positive number: number of missing files
+	 */
 
 	/* Declare variables */
 	tResourceList r;
@@ -211,7 +211,7 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 
 	if (parseGivenPath(currentDatFile)) return PR_RESULT_ERR_COMMAND_LINE_SYNTAX;
 
-	if (vDatFileName==NULL) { /* if no special dat file was specified, a path parsed will be used */
+	if (vDatFileName==NULL) { /* if no special DAT file was specified, a path parsed will be used */
 		aux=getFileNameFromPath(currentDatFile);
 	} else {
 		aux=vDatFileName;
@@ -231,7 +231,7 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	return a;
 }
 
-/* When compiling in Unix SO libraries */
+/* When compiling in UNIX SO libraries */
 #ifndef WIN32
 void start() {}
 #endif

@@ -64,7 +64,7 @@ extern FILE* outputStream;
 \***************************************************************/
 
 /*
-	Extracts a dat file
+	Extracts a DAT file
 	For parameter documentation, see pr.c
 */
 
@@ -87,7 +87,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	paletteBuffer=resourceListCreate(1);
 	/* initialize the default palette */
 	memcpy(image.pal,DEFAULT_PALETTE,SIZE_OF_PALETTE);
-	
+
 	/* main loop */
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
 
@@ -95,13 +95,13 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
 		/* add to res more information from the resource list */
 		resourceListAddInfo(r,&res);
-		
+
 		if (isInThePartialList(res.path,res.id)) { /* If the resource was specified do the tasks */
-			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size); 
+			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size);
 			if (!(hasFlag(unknown_flag))) { /* If unknown flag is set do nothing but generate the unknown.xml file */
 				if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
-				/* get save file name (if unknown document is in the xml) */
+				/* get save file name (if unknown document is in the XML) */
 				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
 
 				switch (res.type) {
@@ -158,7 +158,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				}
 				if (ok) count++;
 			} else {
-				/* if the dat file is unknown, add it in the xml */
+				/* if the DAT file is unknown, add it in the XML */
 				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
 			}
 		}

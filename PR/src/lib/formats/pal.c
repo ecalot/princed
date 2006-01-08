@@ -40,7 +40,7 @@ pal.c: Princed Resources : JASC PAL files support
 #include "dat.h"
 
 /***************************************************************\
-|                 Jasc Palette handling functions               |
+|                 JASC Palette handling functions               |
 \***************************************************************/
 
 static const char* enter="\r\n";
@@ -99,7 +99,7 @@ int mFormatImportPal(tResource *res,const char* vFile) {
 	/* check size */
 	if ((res->size)<130) return 0; /* false */
 
-	/* verify jasc pal header */
+	/* verify JASC pal header */
 	while (palh[i]==(res->data)[i++]);
 	if (i!=sizeof(palh)) return 0; /* false: palette differs with headers */
 
@@ -126,7 +126,7 @@ int mFormatImportPal(tResource *res,const char* vFile) {
 	data2=strtok((char*)(res->data)+sizeof(palh)-1,enter);
 	while (k--) {
 		if (!sscanf(data2,"%d %d %d",&r,&g,&b)) return 0; /* false */
-		/* Those lines mean a loss of data (palette colors are saved in the nearest multiple of 4) */
+		/* Those lines mean a loss of data (palette colours are saved in the nearest multiple of 4) */
 		*(pal2++)=(unsigned char)((r+2)>>2);
 		*(pal2++)=(unsigned char)((g+2)>>2);
 		*(pal2++)=(unsigned char)((b+2)>>2);

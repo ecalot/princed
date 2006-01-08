@@ -1,19 +1,19 @@
-/* 
+/*
  * LZG extraction
- * 
- * ---------------------------------------------------------------------------- 
- * 
- * Authors: 
+ *
+ * ----------------------------------------------------------------------------
+ *
+ * Authors:
  *   Enrique Calot <ecalot.cod@princed.com.ar>
- * 
+ *
  * Research: Tammo Jan Dijkemma, Anke Balderer, Enrique Calot
  *
  * ----------------------------------------------------------------------------
  *
  * Copyright (C) 2004, 2005 the Princed Team
- * 
+ *
  * This file is part of the Princed project.
- * 
+ *
  * Princed is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -44,7 +44,7 @@ unsigned char popBit(unsigned char *byte) {
 }
 
 /* Expands LZ Groody algorithm. This is the core of PR */
-int expandLzg(const unsigned char* input, int inputSize, 
+int expandLzg(const unsigned char* input, int inputSize,
                unsigned char** output2, int *outputSize) {
 
 	int                    oCursor=0, iCursor=0;
@@ -72,11 +72,11 @@ int expandLzg(const unsigned char* input, int inputSize,
 				 */
 				loc= 66 + ((input[iCursor] & 0x03 /*00000011*/) <<8) + input[iCursor+1];
 				rep= 3  + ((input[iCursor] & 0xfc /*11111100*/) >>2);
-			
+
 				iCursor+=2; /* move the cursor 2 bytes ahead */
-				
+
 				loc=(oCursor-loc)&0x3ff; /* this is the real loc number (allways positive!) */
-				
+
 				while (rep--) { /* repeat pattern in output */
 					output[oCursor]=output[oCursor-loc];
 
@@ -85,7 +85,7 @@ int expandLzg(const unsigned char* input, int inputSize,
 			}
 		}
 	}
-	
+
 	/* ignore the first 1024 bytes */
 	*outputSize=oCursor-LZG_WINDOW_SIZE;
 	*output2=malloc(*outputSize);

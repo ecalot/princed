@@ -19,8 +19,13 @@
 */
 
 /*
-main.c: PR console program parsing routine
-¯¯¯¯
+main.c: PR console program parsing and IDE
+¯¯¯¯¯¯
+ Copyright 2004 Princed Development Team
+  Created: See CVS
+
+  Author: Enrique Calot <ecalot.cod@princed.com.ar>
+  Version: 1.00
 
  Note:
   DO NOT remove this copyright notice
@@ -154,7 +159,6 @@ int main (int argc, char **argv) {
 	} while (c!=-1);
 
 	outputStream=stdout;
-	/*c=0;*/
 
 	/* At least one of these options must be selected, if not, the user needs help! */
 	if (!(optimizeXmlFile||hasFlag(import_flag|export_flag|classify_flag))) setFlag(help_flag);

@@ -43,21 +43,21 @@ plv.h: Princed Resources : PLV prince level files support headers
 #define _PLV_H_
 
 /*
-	PLV 1 SPECS:
-	bytes offset description                     content
-	    7      0 HAS FILE TAG OF 8 LETTERS       "POP_LVL"
-	    1      7 POP VERS                        0x01
-	    1      8 PLV VERS                        0x01
-	    1      9 LEV NUM
-	    4     10 FIELD-PAIR ( NAME / CONTENT ) COUNT
-	    4     14 BLOCK 1: LEVEL SIZE (B1)        2306 (including the checksum)
-	   B1     18 BLOCK 1: LEVEL CODE
-	    4  18+B1 BLOCK 2: USER DATA SIZE VALUE IN BYTES (B2)
-	   B2  22+B1 BLOCK 2: LEVEL CODE NEXT, REST OF FILE
-
-	Total size of file B1+B2+22.
-	All values are unsigned and in the intel x86 architecture
-*/
+ * PLV 1 SPECS:
+ * bytes offset description                     content
+ *     7      0 HAS FILE TAG OF 8 LETTERS       "POP_LVL"
+ *     1      7 POP VERS                        0x01
+ *     1      8 PLV VERS                        0x01
+ *     1      9 LEV NUM
+ *     4     10 FIELD-PAIR ( NAME / CONTENT ) COUNT
+ *     4     14 BLOCK 1: LEVEL SIZE (B1)        2306 (including the checksum)
+ *    B1     18 BLOCK 1: LEVEL CODE
+ *     4  18+B1 BLOCK 2: USER DATA SIZE VALUE IN BYTES (B2)
+ *    B2  22+B1 BLOCK 2: LEVEL CODE NEXT, REST OF FILE
+ *
+ * Total size of file B1+B2+22.
+ * All values are unsigned and in the Intel x86 architecture
+ */
 
 #include "reslist.h"
 #include "common.h" /* for PR_VERSION */
