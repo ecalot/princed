@@ -20,7 +20,7 @@
 
 /*
 resourcematch.c: Princed Resources : Partial list matching abstract layer
-Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯Â¯
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 18 Dec 2005
 
@@ -41,6 +41,11 @@ resourcematch.c: Princed Resources : Partial list matching abstract layer
 #define dInd 2
 #define dOrd 4
 #define dPat 8
+
+#define nVal 16
+#define nInd 32
+#define nOrd 64
+#define nPat 128
 
 typedef enum {eDone=0,eVal,eInd,eOrd,ePat} tStatus;
 
@@ -71,15 +76,15 @@ void xemit(tStatus s, char c) {
 		old=s;
 		a=aux;
 	}
-	if (x==199) {*a=0;return;} /* oups, aux size limit has been reached. this return avoids a buffer overflow */
- 	*(a++)=c;
+	if (x==199) {*a=0;return;} /* oops, "aux" size limit has been reached. this return avoids a buffer overflow */
+	*(a++)=c;
 	x++;
 }
 
 int initRM(const char* text, tResourceMatch *r) {
 	tStatus status=eVal;
 	const char* t;
-	/* TODO: add ! as NOT */
+
 	/* set up default values */
 	result.flag=0;
 	result.value=0;
@@ -89,14 +94,30 @@ int initRM(const char* text, tResourceMatch *r) {
 
 	for (t=text;status!=eDone;t++) {
 		switch (*t) {
+		case '!':
+			if (*(t+1)=='/' || *(t+1)=='\\') {
+				result.flag|=nPat;
+			} else {
+				if (status==eVal) {
+					if (t!=text) return PR_RESULT_ERR_COMMAND_LINE_SYNTAX; /* one ! inside the val number */
+					result.flag|=nVal;
+				} else { /* default action */
+					xemit(status,*t);
+				}
+			}
+			break;
 		case '\\':
 		case '/': /* path */
 			status=ePat;
 			result.flag|=dPat;
-			 xemit(status,'/'); /* starts with / */
+			xemit(status,'/'); /* starts with / */
 			break;
 		case ':': /* index */
 			if (status!=ePat) { /* after path, no index is allowed */
+				if (*(t+1)=='!') {
+					result.flag|=nInd;
+					t++;
+				}
 				status=eInd;
 				if (result.flag&dInd) {
 					freeRM(&result);
@@ -107,6 +128,10 @@ int initRM(const char* text, tResourceMatch *r) {
 			break;
 		case '#': /* order */
 			if (status!=ePat) { /* after path, no order is allowed */
+				if (*(t+1)=='!') {
+					result.flag|=nOrd;
+					t++;
+				}
 				status=eOrd;
 				if (result.flag&dOrd) {
 					freeRM(&result);
@@ -127,19 +152,22 @@ int initRM(const char* text, tResourceMatch *r) {
 	xemit(eDone,0);
 	*r=result;
 
+	if ( ( !(result.flag&dVal) ) && ( result.flag&nVal ) )
+		return PR_RESULT_ERR_COMMAND_LINE_SYNTAX; /* check for this particular case: @!: */
+
 	return PR_RESULT_SUCCESS; /* Ok */
 }
 
 /* matches becomes false only if the flag is true and the match is false */
-#define compare(x,a) m=m&&( (!(r->flag&x)) || (a) )
+#define compare(n,x,a) m=m&&( (!(r->flag&x)) || ( (!(a)) != (!(r->flag&n)) ))
 
 int runRM(const tResourceMatch *r, const char* path, const tResourceId *id) {
 	int m=1; /* by default it matches */
 	const char* null="";
 	const char* rpath;
 	const char* rindex;
-#define MATCH_DEBUG
-#ifdef MATCH_DEBUG
+
+#ifdef DEBUG_MATCH
 	printf("Matching: path='%s', id=(%d,%s,%d) <=> flag=%x path='%s' id=(%d,%s,%d)\n",
 		path,
 		id->value,id->index,id->order,
@@ -148,15 +176,16 @@ int runRM(const tResourceMatch *r, const char* path, const tResourceId *id) {
 		r->value,r->index,r->order
 	);
 #endif
+
 	/* replace NULL with null */
 	rindex=r->index?r->index:null;
 	rpath=r->path?r->path:null;
 
 	/* compare each field */
-	compare(dOrd,r->order==id->order);
-	compare(dVal,r->value==id->value);
-	compare(dInd,matchesIn(id->index,rindex)||matchesIn(translateInt2Ext(id->index),rindex));
-	compare(dPat,matchesIn(path,rpath));
+	compare(nOrd,dOrd,r->order==id->order);
+	compare(nVal,dVal,r->value==id->value);
+	compare(nInd,dInd,matchesIn(id->index,rindex)||matchesIn(translateInt2Ext(id->index),rindex));
+	compare(nPat,dPat,matchesIn(path,rpath));
 
 	return m;
 }
