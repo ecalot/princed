@@ -50,7 +50,7 @@ main.c: PR console program parsing and IDE
 
 FILE* outputStream;
 
-void syntax() {
+void main_syntax() {
 	fprintf(outputStream,PARSING_HELP_BEGIN);
 	fprintf(outputStream,PARSING_HELP_PART1);
 	fprintf(outputStream,PARSING_HELP_PART2);
@@ -177,14 +177,14 @@ int main (int argc, char **argv) {
 	}
 
 	if (hasFlag(help_flag)) {
-		syntax();
+		main_syntax();
 	} else if (optimizeXmlFile) { /* special case optimize */
 		tTag* tree;
-		tree=parseXmlFile(optimizeXmlFile,&result);
+		tree=xmlParseFile(optimizeXmlFile,&result);
 		if (result==PR_RESULT_SUCCESS) {
-			if (tree) resourceTreeCommonFactor(tree->child);
+			if (tree) xmlOptimizeCommonFactor(tree->child);
 			resourceTreeFixInheritances(&tree);
-			result=generateXMLfile(optimizeXmlFile,tree);
+			result=xmlGenerateFile(optimizeXmlFile,tree);
 			freeTagStructure(tree);
 		}
 		fprintf(outputStream,PR_TEXT_RESULT,errors[-result],result);
@@ -253,7 +253,7 @@ int main (int argc, char **argv) {
 		}
 	}
 
-	freeParsingCache();
+	freeXmlCache();
 	freeAllocation(datAuthor);
 	freeAllocation(datFileName);
 	freeAllocation(extension);

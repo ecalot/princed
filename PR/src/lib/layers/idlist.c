@@ -19,7 +19,7 @@
 */
 
 /*
-idlist.c: Princed Resources : Partial Id list routines
+idlist.c: Princed Resources : Matching Id's list routines
 ¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -36,12 +36,12 @@ idlist.c: Princed Resources : Partial Id list routines
 \***************************************************************/
 
 /* Includes */
-#include <stdio.h>
-#include <string.h> /* strcat strlen */
 #include "disk.h"
+#include "idlist.h"
 #include "memory.h"
 #include "resourcematch.h"
-#include "idlist.h"
+#include <stdio.h>
+#include <string.h> /* strcat strlen */
 
 /* Id list for partial manipulation. Private type */
 typedef struct {
@@ -49,10 +49,10 @@ typedef struct {
 	tResourceMatch* list;
 }tResIdList;
 
-static tResIdList partialList;
+static tResIdList itemMatchingList;
 
-int partialListActive() {
-	return partialList.count;
+int itemMatchingListActive() {
+	return itemMatchingList.count;
 }
 
 /***************************************************************\
@@ -74,15 +74,21 @@ int parseGivenPath(char* path) {
 	 *  datfile.dat@#last            --> *   *    last *
 	 *  datfile.dat@#second          --> *   *    1    *
 	 *  datfile.dat@:shap            --> *   shap *    *
+	 *  datfile.dat@:sh*             --> *   sh*  *    *
 	 *  datfile.dat@:tga palette     --> *   palt *    *
 	 *  datfile.dat@#785             --> *   *    785  *
 	 *  datfile.dat@/a.bmp           --> *   *    *    a.bmp
 	 *  datfile.dat@/img*.bmp        --> *   *    *    img*.bmp
+	 *  datfile.dat@!11              --> ¬11 *    *    *
+	 *  datfile.dat@#!first          --> *   *    >=1  *
+	 *  datfile.dat@!/img*.bmp       --> *   *    *    not img*.bmp
+	 *  datfile.dat@:!sh*            --> *   ¬sh* *    *
+	 *  datfile.dat@0,1,2,3          --> <=3 *    *    *
 	 *
 	 * PRE:
-	 *  partialList.list was not allocated
+	 *  itemMatchingList.list was not allocated
 	 * POST:
-	 *  partialList.count=0 and partialList.list=NULL if all resources
+	 *  itemMatchingList.count=0 and itemMatchingList.list=NULL if all resources
 	 *  path was trimmed in the "@"
 	 */
 
@@ -93,8 +99,8 @@ int parseGivenPath(char* path) {
 	int error=0;
 
 	/* Check if the variable wasn't initialized before */
-	if (partialList.count!=0) return PR_RESULT_ERR_WRONG_PRIMITIVE_CALL;
-	partialList.list=NULL;
+	if (itemMatchingList.count!=0) return PR_RESULT_ERR_WRONG_PRIMITIVE_CALL;
+	itemMatchingList.list=NULL;
 
 	/* Validates the NULL path */
 	if (path==NULL) return PR_RESULT_SUCCESS;
@@ -115,56 +121,56 @@ int parseGivenPath(char* path) {
 	if (!path[separator]) return PR_RESULT_SUCCESS; /* There was no separator */
 
 	/* Count values, separate them with '\0' and allocate memory */
-	partialList.count=1;
+	itemMatchingList.count=1;
 	path[separator]=0; /* Trim the path to the separator */
 	i=++separator;
 	while(path[i]) {
 		if (path[i]==',') {
-			partialList.count++;
+			itemMatchingList.count++;
 			path[i]=0;
 		}
 		i++;
 	}
-	partialList.list=(tResourceMatch*)malloc(sizeof(tResourceMatch)*partialList.count);
+	itemMatchingList.list=(tResourceMatch*)malloc(sizeof(tResourceMatch)*itemMatchingList.count);
 
 	/* Parse values and save them in the list */
-	for(i=separator;(!error)&&(j!=partialList.count);i++) {
-		error=initRM(path+i,partialList.list+j);
+	for(i=separator;(!error)&&(j!=itemMatchingList.count);i++) {
+		error=initRM(path+i,itemMatchingList.list+j);
 		while (path[i]) i++;
 		j++;
 	}
 	if (error) {
-		for (i=0;i<j-1;i++) freeRM(partialList.list+i);
+		for (i=0;i<j-1;i++) freeRM(itemMatchingList.list+i);
 		return PR_RESULT_ERR_COMMAND_LINE_SYNTAX;
 	}
 	return PR_RESULT_SUCCESS;
 }
 
-int isInThePartialList(const char* vFile, tResourceId id) {
+int isInTheItemMatchingList(const char* vFile, tResourceId id) {
 	/*
-		Cases:
-			"path/path@"                     all files are false
-			"path/path"                      all files are true
-			"path/path@12file/jjj.bmp,777"   only file "12file/jjj.bmp" and id 777 are true
-			"path/path@1,2,3"                only ids 1, 2 and 3 are true
-			"path/path@12file/?mage1*.bmp"   each file matching "12file/?mage1*.bmp" is true
-	*/
+	 * Cases:
+	 * "path/path@"                     all files are false
+	 * "path/path"                      all files are true
+	 * "path/path@12file/jjj.bmp,777"   only file "12file/jjj.bmp" and id 777 are true
+	 * "path/path@1,2,3"                only ids 1, 2 and 3 are true
+	 * "path/path@12file/?mage1*.bmp"   each file matching "12file/?mage1*.bmp" is true
+	 */
 	int i;
 
-	if (!partialList.count) return 1; /* true */
+	if (!itemMatchingList.count) return 1; /* true */
 
-	for (i=0;i<partialList.count;i++)
-		if (runRM(partialList.list+i,repairFolders(vFile?vFile:""),&id)) return 1; /* true */
+	for (i=0;i<itemMatchingList.count;i++)
+		if (runRM(itemMatchingList.list+i,repairFolders(vFile?vFile:""),&id)) return 1; /* true */
 
 	return 0; /* false */
 }
 
-void freePartialList() {
-	void* aux=partialList.list;
-	if (partialList.list) {
-		while (partialList.count--) freeRM(partialList.list++);
+void freeItemMatchingList() {
+	void* aux=itemMatchingList.list;
+	if (itemMatchingList.list) {
+		while (itemMatchingList.count--) freeRM(itemMatchingList.list++);
 		free(aux);
 	}
-	partialList.list=NULL;
+	itemMatchingList.list=NULL;
 }
 

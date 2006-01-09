@@ -50,9 +50,9 @@ int checkSum(const unsigned char* data,int size);
 #define PR_DAT_INCLUDE_DATREAD
 #define PR_DAT_INCLUDE_DATWRITE
 
+/* DAT reading and writing primitives */
 #ifdef PR_DAT_INCLUDE_DATREAD
 #ifdef PR_DAT_INCLUDE_DATWRITE
-/* DAT reading and writing primitives */
 int mRWBeginDatFile(const char* vFile, unsigned short int *numberOfItems, int optionflag);
 #define mRWCloseDatFile(dontSave) \
 mReadCloseDatFile();\
@@ -60,20 +60,19 @@ mWriteCloseDatFile(dontSave,optionflag,backupExtension)
 #endif
 #endif
 
-#ifdef PR_DAT_INCLUDE_DATREAD
 /* DAT reading primitives */
+#ifdef PR_DAT_INCLUDE_DATREAD
 int  mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFile);
 int  mReadFileInDatFile(tResource* res, int k);
 int  mReadFileInDatFileId(tResource* res);
 void mReadCloseDatFile();
 #endif
 
-#ifdef PR_DAT_INCLUDE_DATWRITE
 /* DAT writing primitives */
+#ifdef PR_DAT_INCLUDE_DATWRITE
 int  mWriteBeginDatFile(const char* vFile, int optionflag);
 void mWriteFileInDatFile(const tResource* res);
 void mWriteFileInDatFileIgnoreChecksum(const tResource* res);
-/*void mWriteInitResource(tResource** res);*/
 void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension);
 #endif
 

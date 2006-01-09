@@ -40,6 +40,8 @@ memory.h: Princed Resources : Memory handling & comparison prototypes
 char* strallocandcopy(const char* text);
 #define freeAllocation(m) if ((m)!=NULL) free(m)
 
+#define ptoi(p) ((p!=NULL)?atoi(p):0)
+
 /* equalsIgnoreCase is built in unless we are in the BSD standards that is taken from string.h */
 #ifdef __USE_BSD
 #include <string.h>
@@ -50,9 +52,9 @@ char* strallocandcopy(const char* text);
 int equalsIgnoreCase2(const char s1[],const char s2[]);
 #endif
 
-char* toLower(const char* txt);
+char* strToLower(const char* txt);
 void str5lowercpy (char* dst,const char* src);
 int matchesIn(const char *s, const char *p);
+int getOrder(const char* order);
 
 #endif
-

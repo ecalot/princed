@@ -35,9 +35,9 @@ dat.c: Princed Resources : DAT format library implementation
 #include <stdlib.h>
 #include <string.h>
 
-#include "disk.h"
 #include "common.h"
 #include "dat.h"
+#include "disk.h"
 
 #include "reslist.h"
 
@@ -90,7 +90,7 @@ int checkSum(const unsigned char* data,int size) {
 #define dat_readCursorGetFlags(r)     ((r.popVersion==pop1)?(1<<24):(r.currentRecord[8]<<16|r.currentRecord[9]<<8|r.currentRecord[10]))
 #define dat_readCursorGetVersion(r)   (r.popVersion)
 
-void rememberIndex(char* to, const char* from) {
+void dat_rememberIndex(char* to, const char* from) {
 	int i=4;
 	from+=3;
 	while (i--) {
@@ -102,7 +102,7 @@ void rememberIndex(char* to, const char* from) {
 	*to=0;
 }
 
-void saveIndex(char* to, const char* from) {
+void dat_saveIndex(char* to, const char* from) {
 	int i=4;
 	int k=0;
 	from+=3;
@@ -128,7 +128,7 @@ int dat_cursorNextIndex(tIndexCursor* r) {
 		}
 
 		/* remember the new slave index name */
-		rememberIndex(r->slaveIndexName,(char*)(r->highData+2+6*r->currentMasterItem));
+		dat_rememberIndex(r->slaveIndexName,(char*)(r->highData+2+6*r->currentMasterItem));
 
 		/* remember the new slave index size */
 		r->slaveItems=array2short(r->highData+array2short(r->highData+6+6*r->currentMasterItem));
@@ -161,7 +161,7 @@ int dat_cursorNext(tIndexCursor* r) {
 void dat_cursorFirst(tIndexCursor* r) {
 	if (r->popVersion==pop2) {
 		/* remember the first slave index name */
-		rememberIndex(r->slaveIndexName,(char*)(r->highData+2));
+		dat_rememberIndex(r->slaveIndexName,(char*)(r->highData+2));
 		r->currentRecord=r->highData+array2short(r->highData+6)+2;
 	} else {
 		r->currentRecord=r->highData+2;
@@ -206,7 +206,7 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 				/* Great! we found it */
 
 				/* remember the new slave index name */
-				rememberIndex(r->slaveIndexName,(char*)(r->highData+2+6*i));
+				dat_rememberIndex(r->slaveIndexName,(char*)(r->highData+2+6*i));
 
 				/* remember the new slave index size */
 				r->slaveItems=itemCount;
@@ -296,7 +296,7 @@ tIndexCursor dat_createCursor(unsigned char* highData,int highDataSize,unsigned 
 		r.masterItems=array2short(highData);
 
 		/* remember the first slave index name */
-		rememberIndex(r.slaveIndexName,(char*)(highData+2));
+		dat_rememberIndex(r.slaveIndexName,(char*)(highData+2));
 
 		/* remember the first slave index size */
 		r.slaveItems=array2short(highData+array2short(highData+6));
@@ -526,7 +526,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 			strcpy(index,"X");
 			do {
 				if (strncmp(res->id.index,index,4)) {
-					saveIndex(aux,res->id.index);
+					dat_saveIndex(aux,res->id.index);
 					for (c=0;c<4;c++)
 						fwritechar((unsigned char*)(aux+c),writeDatFile);
 					fwriteshort(&totalItems,writeDatFile); /* Junk (I) */

@@ -31,13 +31,13 @@ tasks.c: Princed Resources : File classify routines
   DO NOT remove this copyright notice
 */
 
-#include <stdio.h>
+#include "autodetect.h"
 #include "classify.h"
-#include "memory.h"
+#include "common.h"
 #include "dat.h"
 #include "disk.h" /* mLoadFileArray */
-#include "common.h"
-#include "autodetect.h"
+#include "memory.h"
+#include <stdio.h>
 
 /***************************************************************\
 |                    Get the type of a DAT file                 |
@@ -129,7 +129,9 @@ int prClassify(const char* fileName) {
 			for (i=0;i<fileSize;i++) {
 				checkSum+=fileData[i]<<((3-(i%4))*8);
 			}
-			/* printf("{%lu,%ld},\n",checkSum,fileSize); */
+#ifdef DEBUG_GETCHECKSUM
+			printf("{%lu,%ld},\n",checkSum,fileSize);
+#endif
 
 			/* compare checksum*/
 			for (i=0;x[i].size;i++)

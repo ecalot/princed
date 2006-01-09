@@ -50,12 +50,11 @@ void compressRle(const unsigned char* input, int inputSize,
 
 		/* Step 2: Look and copy the string until more than two repeated bytes are found */
 		while (
-			(cursorPix+1<imgEnd)&&  /* bugfix: reads one more */
+			(cursorPix+1<imgEnd)&&  /* reads one more */
 			(
 				(*cursorPix!=*(cursorPix+1))||
 				(
-					/* (*cursorPix==*(cursorPix+1))&& */
-					((cursorPix+2)<imgEnd)&& /* bugfix: reads one more */
+					((cursorPix+2)<imgEnd)&& /* reads one more */
 					(*cursorPix!=*(cursorPix+2))
 				)
 			)&&

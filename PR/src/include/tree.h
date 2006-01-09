@@ -44,9 +44,9 @@ typedef struct {
 	tTag*        itemCursor;
 } tTreeStatus;
 
-void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, tTreeStatus* status);
-void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status);
-void unknown_deletetreefile(const char* file, tTag* tree);
-void generateXML(int n,tTag* t,FILE* outputStream);
+void treeStatusItem  (int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, tTreeStatus* status);
+void treeStatusFolder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status);
+void treeDeleteFile  (const char* file, tTag* tree);
+void treeXmlGenerate (int n,const tTag* t,FILE* outputStream);
 
 #endif

@@ -32,12 +32,12 @@ mid.c: Princed Resources : MIDI files support
 */
 
 /* Includes */
-#include "mid.h"
-#include "disk.h"
 #include "common.h"
 #include "dat.h"
-#include <string.h>
+#include "disk.h"
+#include "mid.h"
 #include <stdlib.h>
+#include <string.h>
 
 int mFormatExportMid(const unsigned char* data, char *vFileext,unsigned long int size,int optionflag,const char* backupExtension) {
 	/* Mid files are saved as raw except you must ignore checksum & sound type */

@@ -42,20 +42,19 @@ search.h: Princed Resources : Abstract XML tree searching prototypes
 #include "common.h" /* tTag */
 #include "reslist.h"
 
-/* parse XML file */
-int parseFile(const char* vFile, const char* datFile, tResourceList *r);
-
 /****************************************************************\
 |                   Tag Tree Searching Functions                 |
 \****************************************************************/
 
-const tTag* searchTree(const tTag* t,const char* datFile, const char* id);
-void workTag(const tTag* t,void* pass);
+/* parse XML file */
+int xmlParseFileForResource(const char* vFile, const char* datFile, tResourceList *r);
 
 /* Abstract function that runs all the tree and executes "function(tag,pass)" for each tag */
-void workTree(const tTag* t,void* pass, void (*function)(const tTag*,void*));
+void xmlRunOverTree(const tTag* t,void* pass, void (*function)(const tTag*,void*));
 
-void compareXmlFile(tTag* modified,tTag* original);
+#ifdef COMPILE_WITH_COMPARISION
+void xmlCompareFiles(tTag* modified,tTag* original);
+#endif
 
 /* File List Functions */
 char* getFileFromList();
@@ -69,8 +68,6 @@ typedef struct tPassWork {
 typedef struct tPassCompare {
 	const tTag* tag;
 }tPassCompare;
-
-int getOrder(const char* order);
 
 #endif
 

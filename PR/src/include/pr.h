@@ -68,10 +68,10 @@ typedef struct tTag {
 \***************************************************************/
 /* The library EXPORTS are:
  * freeParsedStructure
- * freeParsingCache
+ * freeXmlCache
  * freeTagStructure
- * parseStructure
- * parseXmlFile
+ * xmlParseStructure
+ * xmlParseFile
  * prClassifyDat
  * prExportDat
  * prExportDatOpt
@@ -103,17 +103,17 @@ void  prSetOutput         (FILE* output);
 void  setCompressionLevel (int cl);
 
 /* XML parsing functions */
-tTag* resourceTreeGetChild(tTag* whereAmI);
-tTag* resourceTreeGetNext (tTag* whereAmI);
-int   resourceTreeGetInfo (tTag* whereAmI,	char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number);
-int   parseStructure      (const char* vFile, tTag** structure);
 void  freeParsedStructure (tTag** structure);
-void  freeParsingCache    ();
 void  freeTagStructure    (tTag* structure);
-tTag* parseXmlFile        (const char* vFile,int* error);
-int   generateXMLfile     (const char* vFile,/*const*/ tTag* t);
-void  resourceTreeCommonFactor   (tTag* tag);
+void  freeXmlCache        ();
 void  resourceTreeFixInheritances(tTag* *tree);
+tTag* resourceTreeGetChild(tTag* whereAmI);
+int   resourceTreeGetInfo (tTag* whereAmI,	char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number);
+tTag* resourceTreeGetNext (tTag* whereAmI);
+void  xmlOptimizeCommonFactor    (tTag* tag);
+int   xmlGenerateFile     (const char* vFile,const tTag* t);
+tTag* xmlParseFile        (const char* vFile,int* error);
+int   xmlParseStructure   (const char* vFile, tTag** structure);
 
 /* unknown.xml logging */
 

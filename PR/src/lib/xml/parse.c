@@ -62,22 +62,22 @@ const char* getExtDesc(int type) {
 }
 
 /* private defines */
-#define IsSpace(c) ((c==' ')||(c==9))||(c=='\n')||(c=='\r')
-#define IsChar(c) ((('a'<=c)&&(c<='z'))||(('A'<=c)&&(c<='Z'))||(c=='_')||(c=='-')||(c=='?'))
+#define parse_IsSpace(c) ((c==' ')||(c==9))||(c=='\n')||(c=='\r')
+#define parse_IsChar(c) ((('a'<=c)&&(c<='z'))||(('A'<=c)&&(c<='Z'))||(c=='_')||(c=='-')||(c=='?'))
 
-#define Separate while (IsSpace(*i)) i++
-#define NextWord(i) while (IsChar(*(i))) (i)++
+#define parse_Separate while (parse_IsSpace(*i)) i++
+#define parse_NextWord(i) while (parse_IsChar(*(i))) (i)++
 
-#define FillAttr(a,b) if (equalsIgnoreCase(attr,b)) { freeAllocation(a); (a)=(val); return 0;}
+#define parse_FillAttr(a,b) if (equalsIgnoreCase(attr,b)) { freeAllocation(a); (a)=(val); return 0;}
 
-#define TotalInheritance(attribute) \
+#define parse_TotalInheritance(attribute) \
 		if ((tag->attribute==NULL)&&(father->attribute!=NULL)) {\
 			x=strlen(father->attribute)+1;\
 			tag->attribute=(char*)malloc(x);\
 			memcpy(tag->attribute,father->attribute,x);\
 		}
 
-#define ParseError return PR_RESULT_ERR_XML_PARSING
+#define parse_Error return PR_RESULT_ERR_XML_PARSING
 
 tTag* getTagStructure() {
 	/* initializes */
@@ -131,7 +131,7 @@ void freeTagStructure(tTag* t) {
 	free(t);
 }
 
-int attribFill(char* attr,char* val, tTag* t) {
+int parse_attribFill(char* attr,char* val, tTag* t) {
 	/*
 	 * PR_RESULT_ERR_XML_ATTR  Attribute mismatch
 	 * PR_RESULT_SUCCESS       Ok
@@ -142,24 +142,24 @@ int attribFill(char* attr,char* val, tTag* t) {
 		return PR_RESULT_SUCCESS;
 	}
 
-	FillAttr(t->desc,"desc");
-	FillAttr(t->path,"external"); /* external is a path alias for old compatibility */
-	FillAttr(t->path,"path");
-	FillAttr(t->file,"file");
-	FillAttr(t->type,"type");
-	FillAttr(t->type,"itemtype"); /* deprecated alias for type */
-	FillAttr(t->name,"name");
-	FillAttr(t->name,"title"); /* title is a name alias */
-	FillAttr(t->palette,"palette");
-	FillAttr(t->value,"value");
-	FillAttr(t->index,"index");
-	FillAttr(t->order,"order");
-	FillAttr(t->paletteindex,"paletteindex");
-	FillAttr(t->paletteorder,"paletteorder");
-	FillAttr(t->version,"version");
-	FillAttr(t->number,"levelnumber"); /* levelnumber is a number alias */
-	FillAttr(t->number,"number");
-	FillAttr(t->flags,"flags");
+	parse_FillAttr(t->desc,"desc");
+	parse_FillAttr(t->path,"external"); /* external is a path alias for old compatibility */
+	parse_FillAttr(t->path,"path");
+	parse_FillAttr(t->file,"file");
+	parse_FillAttr(t->type,"type");
+	parse_FillAttr(t->type,"itemtype"); /* deprecated alias for type */
+	parse_FillAttr(t->name,"name");
+	parse_FillAttr(t->name,"title"); /* title is a name alias */
+	parse_FillAttr(t->palette,"palette");
+	parse_FillAttr(t->value,"value");
+	parse_FillAttr(t->index,"index");
+	parse_FillAttr(t->order,"order");
+	parse_FillAttr(t->paletteindex,"paletteindex");
+	parse_FillAttr(t->paletteorder,"paletteorder");
+	parse_FillAttr(t->version,"version");
+	parse_FillAttr(t->number,"levelnumber"); /* levelnumber is a number alias */
+	parse_FillAttr(t->number,"number");
+	parse_FillAttr(t->flags,"flags");
 
 	return PR_RESULT_ERR_XML_ATTR;
 }
@@ -169,7 +169,7 @@ int attribFill(char* attr,char* val, tTag* t) {
 \****************************************************************/
 
 /* Parse text functions */
-int parseNext(char** pString, tTag* tag) {
+int parse_parseNext(char** pString, tTag* tag) {
 	/*
 	 * PR_RESULT_ERR_XML_ATTR    Attribute not recognized
 	 * PR_RESULT_ERR_MEMORY      No memory
@@ -186,7 +186,7 @@ int parseNext(char** pString, tTag* tag) {
 	int size;
 	char* i=*pString;
 
-	Separate;
+	parse_Separate;
 
 	if (*i=='>') {
 		*pString=i+1;
@@ -194,21 +194,21 @@ int parseNext(char** pString, tTag* tag) {
 	}
 	if (*i=='/') {
 		i++;
-		Separate;
+		parse_Separate;
 		if (*i=='>') {
 			*pString=i+1;
 			return XML_TAG_CLOSE;
 		} else {
-			ParseError;
+			parse_Error;
 		}
 	}
 
 	start=i;
-	NextWord(i);
-	if (start==i) ParseError;
-	if (*i==0)    ParseError;
+	parse_NextWord(i);
+	if (start==i) parse_Error;
+	if (*i==0)    parse_Error;
 
-	if (!(IsSpace(*i)||(*i=='=')||(*i=='>'))) ParseError;
+	if (!(parse_IsSpace(*i)||(*i=='=')||(*i=='>'))) parse_Error;
 
 	size=(long int)i-(long int)start; /* Note: casted to long for portability with 64 bits architectures */
 	attribute=(char*)malloc(1+size);
@@ -220,7 +220,7 @@ int parseNext(char** pString, tTag* tag) {
 		int k=0;
 		/* It's a text attribute */
 		i++;
-		if (*i!='"') ParseError;
+		if (*i!='"') parse_Error;
 		i++;
 		/* Parse until the next " */
 		for(start=i; (k<MAX_VALUE_SIZE)&&(*i!='"')&&(*i!=0) ;i++) {
@@ -246,7 +246,7 @@ int parseNext(char** pString, tTag* tag) {
 		}
 		if ((*i)!='"') {
 			free(attribute);
-			ParseError;
+			parse_Error;
 		}
 		i++;
 		value=(char*)malloc(k+1);
@@ -266,7 +266,7 @@ int parseNext(char** pString, tTag* tag) {
 		value[0]=0;
 	}
 
-	if (attribFill(attribute,value,tag)) {
+	if (parse_attribFill(attribute,value,tag)) {
 		free(attribute);
 		free(value);
 		return PR_RESULT_ERR_XML_ATTR;
@@ -292,19 +292,19 @@ int getNextTag(char** pString, char** value) {
 	char* start;
 	int   size;
 
-	Separate;
+	parse_Separate;
 
 	if (*i=='<') {
 		/* it is a tag */
 		i++;
-		Separate;
+		parse_Separate;
 		if (*i=='/') {
 			result=XML_WAS_CLOSER;
 			i++;
 		} else {
 			if ((*i=='!')||(*i=='?')) {
 				while ((*i)&&((*i)!='>')) i++;
-				if (!(*i)) ParseError;
+				if (!(*i)) parse_Error;
 				i++;
 				if (!(*i)) return XML_WAS_EOD;
 				result=getNextTag(&i,value);
@@ -315,9 +315,9 @@ int getNextTag(char** pString, char** value) {
 			}
 		}
 		start=i;
-		NextWord(i);
-		if (start==i) ParseError;
-		if (*i==0)    ParseError;
+		parse_NextWord(i);
+		if (start==i) parse_Error;
+		if (*i==0)    parse_Error;
 		i++;
 
 		size=(int)((long int)i-(long int)start); /* Note: casted to long for portability with 64 bits architectures */
@@ -342,7 +342,7 @@ int getNextTag(char** pString, char** value) {
 }
 
 /* Parse Tree functions */
-tTag* makeTree(char** p,char* name, int* error,tTag* father) {
+tTag* parse_makeTree(char** p,char* name, int* error,tTag* father) {
 	/* *error
 	 * PR_RESULT_ERR_XML_ATTR    Attribute not recognized
 	 * PR_RESULT_ERR_MEMORY      No memory
@@ -358,7 +358,7 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 	tag=getTagStructure();
 	tag->tag=name;
 
-	while (!((*error)=parseNext(p, tag)));
+	while (!((*error)=parse_parseNext(p, tag)));
 
 	if ((*error)<0) {freeTagStructure(tag);return NULL;} /* Fatal error */
 	/* (*error) is
@@ -376,15 +376,15 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 		int x;
 		char* str;
 
-		TotalInheritance(palette);
-		TotalInheritance(paletteindex);
-		TotalInheritance(paletteorder);
-		TotalInheritance(type);
-		TotalInheritance(file);
-		TotalInheritance(index);
-		TotalInheritance(order);
-		TotalInheritance(flags);
-		/* PartialConcatInheritance(tag->path,father->path,tag->value); */
+		parse_TotalInheritance(palette);
+		parse_TotalInheritance(paletteindex);
+		parse_TotalInheritance(paletteorder);
+		parse_TotalInheritance(type);
+		parse_TotalInheritance(file);
+		parse_TotalInheritance(index);
+		parse_TotalInheritance(order);
+		parse_TotalInheritance(flags);
+		/* parse_PartialConcatInheritance(tag->path,father->path,tag->value); */
 		if ((tag->value==NULL)||(tag->path!=NULL)) {
 			/* Make sure paths do exist */
 			if (father->path==NULL) {father->path=(char*)malloc(1);*(father->path)=0;}
@@ -418,10 +418,10 @@ tTag* makeTree(char** p,char* name, int* error,tTag* father) {
 		switch (result) {
 			case XML_WAS_TAG:
 				if (children==NULL) {
-					tag->child=makeTree(p,value,error,tag);
+					tag->child=parse_makeTree(p,value,error,tag);
 					children=tag->child;
 				} else {
-					children->next=makeTree(p,value,error,tag);
+					children->next=parse_makeTree(p,value,error,tag);
 					children=children->next;
 				}
 				if (*error) {freeTagStructure(tag); return NULL;}
@@ -468,7 +468,7 @@ void showTag(int n,tTag* t) {
 
 #endif
 
-tTag* parseXmlFile(const char* vFile,int* error) {
+tTag* xmlParseFile(const char* vFile,int* error) {
 	/* error may take the following values:
 	 * PR_RESULT_ERR_XML_PARSING Parse error
 	 * PR_RESULT_ERR_MEMORY      No memory
@@ -498,7 +498,7 @@ tTag* parseXmlFile(const char* vFile,int* error) {
 	}
 
 	father=getTagStructure();
-	tag=makeTree(&p,value,error,father);
+	tag=parse_makeTree(&p,value,error,father);
 
 	if ((*error)<0) {
 		freeTagStructure(tag);
@@ -532,7 +532,7 @@ static char lastFile[256]="";
 static int xmlStructureError=0;
 
 /* cache parsed structure. If null is passed the default name will be used */
-int parseStructure(const char* vFile,tTag** structure) {
+int xmlParseStructure(const char* vFile,tTag** structure) {
 	/* Resources input XML tree. Private+abstract variable */
 	static const char defaultXmlFile[]=RES_XML_RESOURC_XML;
 
@@ -542,7 +542,7 @@ int parseStructure(const char* vFile,tTag** structure) {
 	if (strcmp(lastFile,vFile)) {
 		/* if the file is different than the cached file */
 		freeParsedStructure(&xmlStructure);
-		xmlStructure=parseXmlFile(vFile,&xmlStructureError);
+		xmlStructure=xmlParseFile(vFile,&xmlStructureError);
 		strncpy(lastFile,vFile,256); /* remember the new cached filename */
 	}
 
@@ -555,7 +555,7 @@ int parseStructure(const char* vFile,tTag** structure) {
 	return xmlStructureError;
 }
 
-void freeParsingCache() {
+void freeXmlCache() {
 	freeParsedStructure(&xmlStructure);
 	lastFile[0]=0;
 }

@@ -48,10 +48,10 @@ export.c: Princed Resources : DAT Extractor
 #include "unknown.h"
 
 #include "bmp.h"
-#include "wav.h"
+#include "mid.h"
 #include "pal.h"
 #include "plv.h"
-#include "mid.h"
+#include "wav.h"
 
 extern FILE* outputStream;
 
@@ -96,7 +96,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 		/* add to res more information from the resource list */
 		resourceListAddInfo(r,&res);
 
-		if (isInThePartialList(res.path,res.id)) { /* If the resource was specified do the tasks */
+		if (isInTheItemMatchingList(res.path,res.id)) { /* If the resource was specified do the tasks */
 			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size);
 			if (!(hasFlag(unknown_flag))) { /* If unknown flag is set do nothing but generate the unknown.xml file */
 				if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
@@ -114,12 +114,12 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 						ok=writeData(res.data,1,vFileext,res.size,optionflag,backupExtension); /* Ignore checksum */
 						break;
 					case eResTypePalette: /* save and remember palette file */
-						/* This will remember the palette for the next images
+						/* Remember the palette for the next images
 						 * (because it's more probable to get all the images after its palette) */
 						mLoadPalette(res.data,image,mReadGetVersion());
 						bufferedPalette=res.id;
 						resourceListAdd(&paletteBuffer,&res);
-						/* This will export the palette */
+						/* Export the palette */
 						ok=mFormatExportPal(res.data,vFileext,res.size,optionflag,backupExtension);
 						break;
 					case eResTypePcspeaker: /* save pcs file */
@@ -131,12 +131,12 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 						break;
 					case eResTypeImage: /* save image */
 						/* Palette handling */
-						if (resIdCmp(res.palette,bufferedPalette)) { /* The palette isn't in the buffer */
+						if (resourceListCompareId(res.palette,bufferedPalette)) { /* The palette isn't in the buffer */
 							tResource readPalette;
 							readPalette.id=res.palette;
-							/* read the palette and load it into memory */
+							/* Read the palette and load it into memory */
 							if (mReadFileInDatFileId(&readPalette)) {
-								/* all right, it's not so bad, I can handle it! I'll buffer the new palette */
+								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
 								bufferedPalette=readPalette.id;
 								mLoadPalette(readPalette.data,image,mReadGetVersion());
 								resourceListAdd(&paletteBuffer,&readPalette);
@@ -158,7 +158,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				}
 				if (ok) count++;
 			} else {
-				/* if the DAT file is unknown, add it in the XML */
+				/* If the DAT file is unknown, add it in the XML */
 				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
 			}
 		}

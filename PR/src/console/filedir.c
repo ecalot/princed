@@ -31,10 +31,10 @@ filedir.c: Princed Resources : Read command line file arguments and generate a f
   DO NOT remove this copyright notice
 */
 
-#include "search.h" /* tTag */
-#include "memory.h" /* malloc, strallocandcopy */
-#include <string.h> /* strcat */
 #include "disk.h"
+#include "memory.h" /* malloc, strallocandcopy */
+#include "search.h" /* tTag */
+#include <string.h> /* strcat */
 
 /* Private Searching Structures */
 
@@ -105,7 +105,7 @@ typedef struct {
 	tFileDir2*  list;
 }tPassListAndDir;
 
-void addFileToList(const char* file,void* pass2) {
+void fd_addFileToList(const char* file,void* pass2) {
 	register tPassListAndDir* pass=pass2;
 	char path[256];
 	char* dat;
@@ -123,12 +123,12 @@ void addFileToList(const char* file,void* pass2) {
 	free(dat);
 }
 
-void addFileToListTag(const tTag* t,void* pass2) {
-	addFileToList(t->file,pass2);
+void fd_addFileToListTag(const tTag* t,void* pass2) {
+	fd_addFileToList(t->file,pass2);
 }
 
 /* Search all files in the XML tree and returns them */
-int listAllDatFiles(const char* vResFile, const char* directory, const char* opt, tFileDir2* list) {
+int fd_listAllDatFiles(const char* vResFile, const char* directory, const char* opt, tFileDir2* list) {
 	/* Declare error variable */
 	tPassListAndDir pass;
 	tTag* structure;
@@ -139,10 +139,10 @@ int listAllDatFiles(const char* vResFile, const char* directory, const char* opt
 	pass.list=list;
 
 	/* Generate XML structure if doesn't exist */
-	if ((error=parseStructure(vResFile,&structure))) return error;
+	if ((error=xmlParseStructure(vResFile,&structure))) return error;
 
 	/* Use the XML structure to Generate the file list */
-	workTree(structure,&pass,addFileToListTag);
+	xmlRunOverTree(structure,&pass,fd_addFileToListTag);
 
 	/* All done */
 	list=pass.list;
@@ -155,12 +155,12 @@ typedef struct {
 	int result;
 }tPassFileAndResult;
 
-void checkIfFileExists(const tTag* t,void* pass2) {
+void fd_checkIfFileExists(const tTag* t,void* pass2) {
 	register tPassFileAndResult* pass=pass2;
 	if (equalsIgnoreCase(pass->file,t->file)) pass->result=1;
 }
 
-int isADatFile(const char* vResFile, const char* file) {
+int fd_isADatFile(const char* vResFile, const char* file) {
 	/* Declare error variable */
 	tPassFileAndResult pass;
 	tTag* structure;
@@ -170,10 +170,10 @@ int isADatFile(const char* vResFile, const char* file) {
 	pass.result=0;
 
 	/* Generate XML structure if doesn't exist */
-	if ((error=parseStructure(vResFile,&structure))) return error;
+	if ((error=xmlParseStructure(vResFile,&structure))) return error;
 
 	/* Use the XML structure to Generate the file list */
-	workTree(structure,&pass,checkIfFileExists);
+	xmlRunOverTree(structure,&pass,fd_checkIfFileExists);
 
 	/* All done */
 	return pass.result;
@@ -204,7 +204,7 @@ int fileDirGetFilesImport(tFileDir2* list1,tFileDir2* files,const char* resfile,
 			} else {
 			/* if the DAT type wasn't given by the -t option let's use all the files in the XML */
 				int isdat;
-				isdat=isADatFile(resfile,file);
+				isdat=fd_isADatFile(resfile,file);
 				if (isdat<0) parseError=isdat;
 				if (isdat) {
 					type=eFile;
@@ -215,7 +215,7 @@ int fileDirGetFilesImport(tFileDir2* list1,tFileDir2* files,const char* resfile,
 		}
 
 		if ((!dirs)&&type==eDirectory) {
-			parseError=listAllDatFiles(resfile, file, opt, files);
+			parseError=fd_listAllDatFiles(resfile, file, opt, files);
 		}
 		if (type==eDirectory) dirs++;
 		if (type==eFile) {
@@ -262,7 +262,7 @@ int fileDirGetFilesExport(tFileDir2* list1,tFileDir2* files,int notHasRecursiveF
 			pass.dir=NULL;
 			pass.opt=opt;
 			pass.list=files;
-			recurseDirectory(file,!notHasRecursiveFlag,&pass,addFileToList);
+			recurseDirectory(file,!notHasRecursiveFlag,&pass,fd_addFileToList);
 			files=pass.list;
 		} else {
 			strcpy(output,file);

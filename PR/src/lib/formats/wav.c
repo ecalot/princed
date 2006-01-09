@@ -32,9 +32,9 @@ wav.c: Princed Resources : WAV files support
 */
 
 /* Includes */
-#include "wav.h"
 #include "dat.h"
 #include "disk.h"
+#include "wav.h"
 
 int mFormatExportWav(const unsigned char* data, char *vFileext,unsigned long int size,int optionflag,const char* backupExtension) {
 	FILE*         target;

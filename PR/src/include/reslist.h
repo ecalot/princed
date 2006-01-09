@@ -68,7 +68,7 @@ void printr(const tResource* record); /* for debug purposes */
 #define resourceListDrop(r)	list_drop(r)
 
 int resCmp(const void* a,const void* b);
-int resIdCmp(tResourceId a,tResourceId b);
+int resourceListCompareId(tResourceId a,tResourceId b);
 const tResource* resourceListGetElement(tResourceList* r);
 tResourceList resourceListCreate(int isCopy);
 void resourceListAddInfo(tResourceList* r,tResource* res);

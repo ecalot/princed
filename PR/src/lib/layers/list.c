@@ -32,9 +32,9 @@ list.c: Princed Resources : Order-optimized list implementation
 */
 
 /* Defines */
+#include "list.h"
 #include <stdlib.h>
 #include <string.h> /* memcpy */
-#include "list.h"
 
 tList list_create(int dataSize,int dataCmp(const void*,const void*),void dataFree(void* a)) {
 	tList r;

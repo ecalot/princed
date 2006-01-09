@@ -32,14 +32,14 @@ bmp.c: Princed Resources : BMP file support
   DO NOT remove this copyright notice
 */
 
+#include "bmp.h"
+#include "common.h"
+#include "dat.h"
+#include "disk.h"
+#include "memory.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "common.h"
-#include "bmp.h"
-#include "disk.h"
-#include "memory.h"
-#include "dat.h"
 
 extern FILE* outputStream;
 

@@ -37,15 +37,15 @@ unknown.c: Princed Resources : Unknown resources handler implementation
 \***************************************************************/
 
 /* Includes */
-#include <stdio.h>
-#include "tree.h"
 #include "common.h"
 #include "disk.h"
-#include "unknown.h"
 #include "memory.h"
+#include "parse.h" /* getTagStructure */
 #include "stringformat.h"
 #include "translate.h"
-#include "parse.h" /* getTagStructure */
+#include "tree.h"
+#include "unknown.h"
+#include <stdio.h>
 
 /***************************************************************\
 |                     Unknown.xml primitives                    |
@@ -57,7 +57,7 @@ unknown.c: Princed Resources : Unknown resources handler implementation
 #define XML_TAG_RESOURCES     "resources"
 #define XML_ATTRV_VERSION     "build-1"
 
-char* getVersion(const char* oldVersion) {
+char* unknown_getVersion(const char* oldVersion) {
 	char* newVersion;
 	int l,i;
 
@@ -96,13 +96,13 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 
 		unknownFile.status.folderFirst=NULL;
 		unknownFile.status.folderCursor=NULL;
-		unknownFile.tree=parseXmlFile(file,&error);
+		unknownFile.tree=xmlParseFile(file,&error);
 		if (error) {
 			unknownFile.tree=getTagStructure();
 			unknownFile.tree->version=strallocandcopy(XML_ATTRV_VERSION);
 			unknownFile.tree->tag=strallocandcopy(XML_TAG_RESOURCES);
 		} else {
-			char* version=getVersion(unknownFile.tree->version);
+			char* version=unknown_getVersion(unknownFile.tree->version);
 			freeAllocation(unknownFile.tree->version);
 			unknownFile.tree->version=version;
 		}
@@ -121,14 +121,14 @@ int unknownLogStop () {
 	if (!unknownFile.fd) return PR_RESULT_ERR_XML_NOT_OPEN; /* File not open */
 
 	/* common factor tree reducing function */
-	if (unknownFile.tree) resourceTreeCommonFactor(unknownFile.tree->child);
+	if (unknownFile.tree) xmlOptimizeCommonFactor(unknownFile.tree->child);
 
 	/* it is time to fix the inheritances */
 	resourceTreeFixInheritances(&unknownFile.tree);
 
 	/* now we'll add the new generated part of the tree at the end of the second level (resources id the first) */
 	if (unknownFile.tree) {
-		resourceTreeCommonFactor(unknownFile.tree); /* here some common factors are moved up */
+		xmlOptimizeCommonFactor(unknownFile.tree); /* here some common factors are moved up */
 		if (unknownFile.tree->child) {
 			for (t=unknownFile.tree->child;t->next;t=t->next);
 			t->next=unknownFile.status.folderFirst; /* the first folder of the new tree */
@@ -138,7 +138,7 @@ int unknownLogStop () {
 	}
 
 	/* generate the XML file */
-	generateXML(0,unknownFile.tree,unknownFile.fd);
+	treeXmlGenerate(0,unknownFile.tree,unknownFile.fd);
 
 	/* it's time to free the tree */
 	freeParsedStructure (&unknownFile.tree);
@@ -160,21 +160,21 @@ int unknownLogAppend(const char* vFiledat,tResourceId id,const char* ext,tResour
 	if (!unknownFile.fd) return PR_RESULT_ERR_XML_NOT_OPEN; /* File not open, logging is off, just a warning */
 
 	if (!unknownFile.currentDat) { /* this is the beginning of the file */
-		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)),&unknownFile.status);
+		treeStatusFolder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(strToLower(pal.index)),&unknownFile.status);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
 		/* it could be moved here the read-parsing-loading and write-opening,
 		 * but it is necessary to know the parsing status before the extractions are started */
-		unknown_deletetreefile(vFiledat,unknownFile.tree);
+		treeDeleteFile(vFiledat,unknownFile.tree);
 	} else if (!equalsIgnoreCase(unknownFile.currentDat,vFiledat)) {
 		int i;
-		unknown_folder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(toLower(pal.index)),&unknownFile.status);
+		treeStatusFolder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(strToLower(pal.index)),&unknownFile.status);
 		freeAllocation(unknownFile.currentDat);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
-		unknown_deletetreefile(vFiledat,unknownFile.tree);
+		treeDeleteFile(vFiledat,unknownFile.tree);
 		for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
 	}
 
-	unknown_item(id.value,translateInt2Ext(toLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count,&unknownFile.status);
+	treeStatusItem(id.value,translateInt2Ext(strToLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count,&unknownFile.status);
 
 	return PR_RESULT_SUCCESS;
 }

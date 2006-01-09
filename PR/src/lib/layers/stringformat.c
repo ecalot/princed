@@ -39,32 +39,32 @@ stringformat.c: Princed Resources : Format string parsing feature routines
 static int i;
 static char buffer[200];
 
-int emit(char c) {
+int sf_emit(char c) {
 	if (i==200) return 0; /* false */
 	buffer[i++]=c;
 	return 1; /* true */
 }
 
-void emitString(const char* txt, int size, int zeroflag) {
+void sf_emitString(const char* txt, int size, int zeroflag) {
 	int complete;
 	int length;
 
 	length=strlen(txt);
 	complete=(length>size)?0:size-length;
 
-	while (complete--) emit(zeroflag?'0':' ');
+	while (complete--) sf_emit(zeroflag?'0':' ');
 
-	for (complete=0;complete<length;complete++) emit(txt[complete]);
+	for (complete=0;complete<length;complete++) sf_emit(txt[complete]);
 }
 
-void recEmit(int k) {
+void sf_recursiveEmit(int k) {
 	if (k) {
-		recEmit(k/10);
-		emit('0'+(k%10));
+		sf_recursiveEmit(k/10);
+		sf_emit('0'+(k%10));
 	}
 }
 
-void emitNumber(int n, int size, int zeroflag) {
+void sf_emitNumber(int n, int size, int zeroflag) {
 	int complete;
 	int digits=0;
 	int k=n;
@@ -76,12 +76,12 @@ void emitNumber(int n, int size, int zeroflag) {
 
 	complete=(digits>size)?0:size-digits;
 
-	while (complete--) emit(zeroflag?'0':' ');
+	while (complete--) sf_emit(zeroflag?'0':' ');
 
-	recEmit(n);
+	sf_recursiveEmit(n);
 }
 
-#define readk(k) (k=*(format++))
+#define sf_read_k(k) (k=*(format++))
 
 const char* parseformat(const char* format,long value,const char* index, const char* type, const char* extension, long numberOfThisType, int order, const char* desc,const char* name) {
 	/* This function parses format in this way:
@@ -116,64 +116,64 @@ const char* parseformat(const char* format,long value,const char* index, const c
 
 	i=0; /* initialize buffer */
 
-	while (readk(k)) { /* for each byte in format as k */
+	while (sf_read_k(k)) { /* for each byte in format as k */
 		if (k=='%') {
 			zeroflag=0;
 			size=0;
 
-			readk(k); /* read next char */
+			sf_read_k(k); /* read next char */
 			if (!k) return NULL; /* just in case the string is finished in the wrong place */
 
 			if (k=='0') { /* it's %0... */
 				zeroflag=1;
-				readk(k); /* read next char */
+				sf_read_k(k); /* read next char */
 				if (!k) return NULL; /* just in case the string is finished in the wrong place */
 			}
 			while (isNumber(k)) { /* it's %0[0-9]... */
 				size=size*10+k-'0';
-				readk(k); /* read next char */
+				sf_read_k(k); /* read next char */
 				if (!k) return NULL; /* just in case the string is finished in the wrong place */
 			}
 			switch (k) {
 			case 'v': /* value */
-				emitNumber(value,size,zeroflag);
+				sf_emitNumber(value,size,zeroflag);
 				break;
 			case 'i': /* index name */
-				emitString(index,size,zeroflag);
+				sf_emitString(index,size,zeroflag);
 				break;
 			case 'I': /* index human name */
-				emitString(translateInt2Ext(index),size,zeroflag);
+				sf_emitString(translateInt2Ext(index),size,zeroflag);
 				break;
 			case 't': /* item type (image, wave, etc) */
-				emitString(type,size,zeroflag);
+				sf_emitString(type,size,zeroflag);
 				break;
 			case 'e': /* extension (bmp, wav, etc) */
-				emitString(extension,size,zeroflag);
+				sf_emitString(extension,size,zeroflag);
 				break;
 			case 'n': /* number of the item typed in %t */
-				emitNumber(numberOfThisType,size,zeroflag);
+				sf_emitNumber(numberOfThisType,size,zeroflag);
 				break;
 			case 'o': /* order number (in case the index and values are the same) */
-				emitNumber(order,size,zeroflag);
+				sf_emitNumber(order,size,zeroflag);
 				break;
 			case 'd': /* description */
-				emitString(desc,size,zeroflag);
+				sf_emitString(desc,size,zeroflag);
 				break;
 			case 'm': /* name */
-				emitString(name,size,zeroflag);
+				sf_emitString(name,size,zeroflag);
 				break;
 			case '%': /* the % symbol */
-				emit(k); /* emit it */
+				sf_emit(k); /* sf_emit it */
 				break;
 			default:
 				return NULL;
 			}
-		} else { /* normal characters are emitted */
-			emit(k);
+		} else { /* normal characters are sf_emitted */
+			sf_emit(k);
 		}
 	}
 
-	return emit(0)?buffer:NULL; /* close the string and return it (return NULL in case of error)*/
+	return sf_emit(0)?buffer:NULL; /* close the string and return it (return NULL in case of error)*/
 }
 
 #ifdef DEBUG_STRINGS

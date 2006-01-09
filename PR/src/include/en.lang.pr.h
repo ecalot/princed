@@ -48,10 +48,10 @@ pr.h: Princed Resources : English language strings
 
 #define PR_TEXT_FILE_NOT_FOUND    "Result: File or directory '%s' not found\n"
 
-#define PR_TEXT_SCANNING_CURRENT  "Scanning dat files in current directory\n"
-#define PR_TEXT_SCANNING_GIVEN    "Scanning dat files in given directory\n"
+#define PR_TEXT_SCANNING_CURRENT  "Scanning DAT files in current directory\n"
+#define PR_TEXT_SCANNING_GIVEN    "Scanning DAT files in given directory\n"
 
-#define PR_TEXT_IMPORTING_CURRENT "Importing all valid dat files from the current directory\n"
+#define PR_TEXT_IMPORTING_CURRENT "Importing all valid DAT files from the current directory\n"
 #define PR_TEXT_IMPORTING_GIVEN   "Importing all valid files from given directory\n"
 
 #define PR_TEXT_TASK_COMPILE      "Importing '%s' from '%s'\n"
@@ -74,8 +74,8 @@ pr.h: Princed Resources : English language strings
 #define PR_TEXT_EXPORT_ERROR      "'%s' has errors, aborting...\n"
 #define PR_TEXT_EXPORT_BMP_WARN   "Warning: Extracted file may be corrupt\n"
 
-#define PR_TEXT_ERROR_ONE_DIR     "You may select one directory to export all dat files or specifiy dat files.\nBoth actions are not allowed.\n"
-#define PR_TEXT_ERROR_XML_FILE    "Error, check the xml file\n"
+#define PR_TEXT_ERROR_ONE_DIR     "You may select one directory to export all DAT files or specify DAT files.\nBoth actions are not allowed.\n"
+#define PR_TEXT_ERROR_XML_FILE    "Error, check the XML file\n"
 
 /***************************************************************\
 |                        Text Output Arrays                     |
@@ -84,8 +84,8 @@ pr.h: Princed Resources : English language strings
 #define PR_TEXT_ERRORS {\
 	"Success",\
 	NULL, /* help shown */\
-	"Dat file not found",\
-	"Expected dat file, but a directory was given",\
+	"DAT file not found",\
+	"Expected DAT file, but a directory was given",\
 	"DAT file reading permission denied",\
 	"DAT file writing permission denied",\
 	"File not found",\
@@ -102,7 +102,7 @@ pr.h: Princed Resources : English language strings
   "Input line syntax error",\
   "Extraction error",\
 	"-19",\
-	"You may select one directory to export all dat files or specify dat files; both actions are not allowed",\
+	"You may select one directory to export all DAT files or specify DAT files; both actions are not allowed",\
 	"Recursive flag must not be set when you import files",\
 	"No files selected", /* should never happen because default is "." */\
 	"-23"}
@@ -116,21 +116,21 @@ pr.h: Princed Resources : English language strings
 	"Midis file",\
 	"Valid DAT file with undefined content",\
 	"Graphic DAT file",\
-	"Internal PC Speaker dat file",\
+	"Internal PC Speaker DAT file",\
 	NULL,NULL,NULL,\
-	"invalid Pop2 dat file",\
+	"invalid Pop2 DAT file",\
 	"Pop2 level file",\
-	"Pop2 graphic dat file",\
-	"Pop2 wav dat file",\
-	"Pop2 midi dat file",\
-	"Pop2 valid dat file",\
-	"Pop2 graphic dat file"}
+	"Pop2 graphic DAT file",\
+	"Pop2 wav DAT file",\
+	"Pop2 midi DAT file",\
+	"Pop2 valid DAT file",\
+	"Pop2 graphic DAT file"}
 
 #define PR_TEXT_IMPORT_ARRAY {\
 	"File successfully imported",\
 	"DAT file not found or invalid in partial importation",\
 	"DAT File couldn't be open",\
-	"XML Parseing error",\
+	"XML Parsing error",\
 	"No memory",\
 	"XML Attribute not recognized",\
 	"XML File not found"}
@@ -151,9 +151,9 @@ pr.h: Princed Resources : English language strings
   Mandatory arguments to long options are mandatory for short options too.\n\
 \n"
 #define PARSING_HELP_PART1 "\
-   -i, -m, --import[=DIRNAME] imports from DIRNAME into given dat file\n\
-   -c, --classify             returns the dat file type\n\
-   -e, -x, --export[=DIRNAME] exports given dat file into DIRNAME\n\
+   -i, -m, --import[=DIRNAME] imports from DIRNAME into given DAT file\n\
+   -c, --classify             returns the DAT file type\n\
+   -e, -x, --export[=DIRNAME] exports given DAT file into DIRNAME\n\
 \n"
 #define PARSING_HELP_PART2 "\
    -a, --setauthor=NAME       sets your name in extracted plv files\n\
@@ -161,16 +161,16 @@ pr.h: Princed Resources : English language strings
    -f, --force                rewrites your files without prompting\n\
    -g, --cgi                  run as CGI and output mime headers\n\
    -h, -?, --help             display this help and exit\n\
-   -s, --resource=RESFILE     uses an user-specific resource xml file\n\
+   -s, --resource=RESFILE     uses an user-specific resource XML file\n\
 "PARSING_SHOWRAW(PARSING_RAW)
 
 #define PARSING_HELP_PART3 "\
-   -r, --recursive            searches for all dat files (only if DATFILEPATH\n\
-                              is not a dat file)\n\
-   -t, --datfile=DATFILE      specifies a dat file to read resources\n\
+   -r, --recursive            searches for all DAT files (only if DATFILEPATH\n\
+                              is not a DAT file)\n\
+   -t, --datfile=DATFILE      specifies a DAT file to read resources\n\
                               different than the original file\n\
    -z, --compression-level=N  a number from 1 to 7 specifying how hard has PR\n\
-                              to try to reduce the generated dat files\n"
+                              to try to reduce the generated DAT files\n"
 
 #define PARSING_HELP_PART4 "\
                               1 is high speed, low compression, 7 is high\n\
@@ -181,7 +181,7 @@ pr.h: Princed Resources : English language strings
                               any extraction\n\
    -v, --verbose              explain what is being done\n\
        --version              output version information and exit\n\
-       --xml-optimize=XMLFILE optimizes a resources xml file\n\
+       --xml-optimize=XMLFILE optimizes a resources XML file\n\
 \n"
 
 #define PR_TXT_AUTHORS           "Authors"

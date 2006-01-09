@@ -31,11 +31,10 @@ resourcematch.c: Princed Resources : Partial list matching abstract layer
   DO NOT remove this copyright notice
 */
 
-#include <stdio.h>
 #include "memory.h"
-#include "search.h" /* getOrder */
 #include "resourcematch.h"
 #include "translate.h" /* translate */
+#include <stdio.h>
 
 #define dVal 1
 #define dInd 2
@@ -59,7 +58,7 @@ void freeRM(tResourceMatch *r) {
 	freeAllocation(r->path);
 }
 
-void xemit(tStatus s, char c) {
+void rm_emit(tStatus s, char c) {
 	static tStatus old=eDone;
 	static char* a=aux;
 	static int x=0;
@@ -102,7 +101,7 @@ int initRM(const char* text, tResourceMatch *r) {
 					if (t!=text) return PR_RESULT_ERR_COMMAND_LINE_SYNTAX; /* one ! inside the val number */
 					result.flag|=nVal;
 				} else { /* default action */
-					xemit(status,*t);
+					rm_emit(status,*t);
 				}
 			}
 			break;
@@ -110,7 +109,7 @@ int initRM(const char* text, tResourceMatch *r) {
 		case '/': /* path */
 			status=ePat;
 			result.flag|=dPat;
-			xemit(status,'/'); /* starts with / */
+			rm_emit(status,'/'); /* starts with / */
 			break;
 		case ':': /* index */
 			if (status!=ePat) { /* after path, no index is allowed */
@@ -124,7 +123,7 @@ int initRM(const char* text, tResourceMatch *r) {
 					return PR_RESULT_ERR_COMMAND_LINE_SYNTAX; /* ind flag has been set, duplicated index? */
 				}
 				result.flag|=dInd;
-			} else xemit(status,*t);
+			} else rm_emit(status,*t);
 			break;
 		case '#': /* order */
 			if (status!=ePat) { /* after path, no order is allowed */
@@ -138,18 +137,18 @@ int initRM(const char* text, tResourceMatch *r) {
 					return PR_RESULT_ERR_COMMAND_LINE_SYNTAX; /* ord flag has been set, duplicated order? */
 				}
 				result.flag|=dOrd;
-			} else xemit(status,*t);
+			} else rm_emit(status,*t);
 			break;
 		case 0:
 			status=eDone;
 			break;
 		default: /* by default "value" */
 			if (status==eVal) result.flag|=dVal;
-			xemit(status,*t);
+			rm_emit(status,*t);
 			break;
 		}
 	}
-	xemit(eDone,0);
+	rm_emit(eDone,0);
 	*r=result;
 
 	if ( ( !(result.flag&dVal) ) && ( result.flag&nVal ) )
@@ -159,7 +158,7 @@ int initRM(const char* text, tResourceMatch *r) {
 }
 
 /* matches becomes false only if the flag is true and the match is false */
-#define compare(n,x,a) m=m&&( (!(r->flag&x)) || ( (!(a)) != (!(r->flag&n)) ))
+#define rm_compare(n,x,a) m=m&&( (!(r->flag&x)) || ( (!(a)) != (!(r->flag&n)) ))
 
 int runRM(const tResourceMatch *r, const char* path, const tResourceId *id) {
 	int m=1; /* by default it matches */
@@ -181,11 +180,11 @@ int runRM(const tResourceMatch *r, const char* path, const tResourceId *id) {
 	rindex=r->index?r->index:null;
 	rpath=r->path?r->path:null;
 
-	/* compare each field */
-	compare(nOrd,dOrd,r->order==id->order);
-	compare(nVal,dVal,r->value==id->value);
-	compare(nInd,dInd,matchesIn(id->index,rindex)||matchesIn(translateInt2Ext(id->index),rindex));
-	compare(nPat,dPat,matchesIn(path,rpath));
+	/* rm_compare each field */
+	rm_compare(nOrd,dOrd,r->order==id->order);
+	rm_compare(nVal,dVal,r->value==id->value);
+	rm_compare(nInd,dInd,matchesIn(id->index,rindex)||matchesIn(translateInt2Ext(id->index),rindex));
+	rm_compare(nPat,dPat,matchesIn(path,rpath));
 
 	return m;
 }

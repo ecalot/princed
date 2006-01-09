@@ -49,7 +49,10 @@ int verifyImageHeader(const unsigned char *array, int size) {
 	unsigned char imageBitRate;
 	imageBitRate=((unsigned char)array[6]&0xF0);
 	return (size>7) && (!array[5]) && ((imageBitRate==0xB0));
-	/* return (size>7) && (!array[5]) && ((imageBitRate==0xB0)||(imageBitRate==0x00)); */
+	/* NOTE:
+	 * return (size>7) && (!array[5]) && ((imageBitRate==0xB0)||(imageBitRate==0x00));
+	 * works for monochrome images (but is very common and matches more than that)
+	 */
 }
 
 int verifyPaletteHeader(const unsigned char *array, int size) {

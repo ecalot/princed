@@ -38,8 +38,8 @@ idlist.h: Princed Resources : Resource id list headers
 #include "reslist.h" /* tResourceId */
 
 int  parseGivenPath(char* path);
-int  partialListActive();
-int  isInThePartialList(const char* vFile, tResourceId id);
-void freePartialList();
+int  itemMatchingListActive();
+int  isInTheItemMatchingList(const char* vFile, tResourceId id);
+void freeItemMatchingList();
 
 #endif

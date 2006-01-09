@@ -53,17 +53,17 @@ pr.c: Main source file for Princed Resources library
 
 #include "common.h"
 
+#include "classify.h"
 #include "export.h"
 #include "import.h"
-#include "classify.h"
 
 #include "disk.h"      /* getFileNameFromPath */
 #include "idlist.h"
-#include "reslist.h"
 #include "memory.h"    /* getMemory, free */
-#include "unknown.h"
+#include "reslist.h"
 
 #include "search.h"    /* parse */
+#include "unknown.h"
 
 /***************************************************************\
 |                      Main working functions                   |
@@ -143,7 +143,7 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	currentDatFileName=strallocandcopy(aux);
 
 	/* Parse XML and export the file */
-	a=parseFile(vResFile,currentDatFileName,&r);
+	a=xmlParseFileForResource(vResFile,currentDatFileName,&r);
 	if (a==PR_RESULT_SUCCESS) {
 		/* exporting errors/no errors */
 		a=extract(currentDatFile,vDirName,&r,opt,currentDatFileName,datAuthor,backupExtension,format);
@@ -151,7 +151,7 @@ int prExportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	resourceListDrop(&r);
 	free(currentDatFileName);
 	free(currentDatFile);
-	freePartialList();
+	freeItemMatchingList();
 
 	return a;
 }
@@ -219,7 +219,7 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	currentDatFileName=strallocandcopy(aux);
 
 	/* Parse XML and import files */
-	a=parseFile(vResFile,currentDatFileName,&r);
+	a=xmlParseFileForResource(vResFile,currentDatFileName,&r);
 	if (a==PR_RESULT_SUCCESS) {
 		/* importing errors/no errors */
 		a=compile (currentDatFile, vDirName,&r,opt,currentDatFileName,backupExtension);
@@ -227,7 +227,7 @@ int prImportDatOpt(const char* vDatFile, const char* vDirName, const char* vResF
 	resourceListDrop(&r);
 	free(currentDatFileName);
 	free(currentDatFile);
-	freePartialList();
+	freeItemMatchingList();
 	return a;
 }
 

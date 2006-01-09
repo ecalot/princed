@@ -32,14 +32,14 @@ reslist.c: Princed Resources : Resource list layer implementation
 */
 
 /* Defines */
-#include "reslist.h"
-#include <string.h> /* strncmp */
 #include "memory.h" /* freeAllocation */
+#include "reslist.h"
 #include <stdio.h> /* debug */
+#include <string.h> /* strncmp */
 
 /* resource list layer (that uses the abstract list layer primitives) */
 
-int resIdCmp(const tResourceId a,const tResourceId b) {
+int resourceListCompareId(const tResourceId a,const tResourceId b) {
 	/* the index has the priority */
 	int c=strncmp(a.index,b.index,5);
 	if (c>0) return GT;
@@ -55,18 +55,15 @@ int resIdCmp(const tResourceId a,const tResourceId b) {
 	return EQ;
 }
 
-int resCmp(const void* a,const void* b) {
-	return resIdCmp(((tResource*)a)->id,((tResource*)b)->id);
+int reslist_compare(const void* a,const void* b) {
+	return resourceListCompareId(((tResource*)a)->id,((tResource*)b)->id);
 }
 
-void resFree(void* a) {
+void freeResource(void* a) {
 	tResource* res=a;
 	freeAllocation(res->desc);
 	freeAllocation(res->name);
 	freeAllocation(res->path);
-}
-
-void resFreeDummy(void* a) {
 }
 
 const tResource* resourceListGetElement(tResourceList* r) {
@@ -76,7 +73,7 @@ const tResource* resourceListGetElement(tResourceList* r) {
 }
 
 tResourceList resourceListCreate(int isCopy) {
-	return list_create(sizeof(tResource),resCmp,isCopy?resFreeDummy:resFree);
+	return list_create(sizeof(tResource),reslist_compare,isCopy?NULL:freeResource);
 }
 
 void resourceListAdd(tResourceList* r,tResource* res) {

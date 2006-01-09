@@ -54,7 +54,7 @@ void str5lowercpy (char* dst,const char* src) {
 	*dst=0;
 }
 
-char* toLower(const char* txt) {
+char* strToLower(const char* txt) {
 	static char ret[5];
 	char* r=ret;
 	while (*txt) {
@@ -85,3 +85,20 @@ int equalsIgnoreCase2(const char s1[],const char s2[]) {
 	return !(s1[i]||s2[i]);
 }
 #endif
+
+int getOrder(const char* order) {
+	if (order) {
+		if (equalsIgnoreCase(order,"first")) {
+			return 0; /* first */
+		} else if (equalsIgnoreCase(order,"second")) {
+			return 1; /* second */
+		} else if (equalsIgnoreCase(order,"last")) {
+			return 65535; /* last */
+		} else {
+			return atoi(order);
+		}
+	} else {
+		return 0; /* else: first */
+	}
+}
+

@@ -43,7 +43,7 @@ compress.c: Princed Resources : Image Compression Library
  * Definitions:
  *  no compression is called RAW
  *  there are 2 algorithms types: RLE and LZG
- *  we can use the modifier: transpose and not transpose (t)
+ *  we can use the modifier: cmp_transpose and not cmp_transpose (t)
  *  we can use the LZG modifier: Higher (checks more extensively the LZG window
  *   without ignoring less probable patterns) (+)
  *
@@ -114,30 +114,30 @@ void setCompressionLevel(int cl) {
 }
 
 /***************************************************************\
-|                        Image transpose                        |
+|                        Image cmp_transpose                        |
 \***************************************************************/
 
 /* Determines where the transposed byte must be saved */
-int transpose(int x,int w,int h) {
+int cmp_transpose(int x,int w,int h) {
 	return ((x%h)*(w))+(int)(x/h);
 }
 
-void transposeImage(tImage* image,int size) {
+void cmp_transposeImage(tImage* image,int size) {
 	unsigned char* outputaux=getMemory(size);
 	int cursor;
 
 	for (cursor=0;cursor<size;cursor++)
-		outputaux[transpose(cursor,image->widthInBytes,image->height)]=image->pix[cursor];
+		outputaux[cmp_transpose(cursor,image->widthInBytes,image->height)]=image->pix[cursor];
 	free(image->pix);
 	image->pix=outputaux;
 }
 
-void antiTransposeImage(tImage* image,int size) {
+void cmp_antiTransposeImage(tImage* image,int size) {
 	unsigned char* outputaux=getMemory(size);
 	int cursor;
 
 	for (cursor=0;cursor<size;cursor++)
-		outputaux[cursor]=image->pix[transpose(cursor,image->widthInBytes,image->height)];
+		outputaux[cursor]=image->pix[cmp_transpose(cursor,image->widthInBytes,image->height)];
 	free(image->pix);
 	image->pix=outputaux;
 }
@@ -200,7 +200,7 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 			result=expandRle(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
 			checkResult;
 			checkSize;
-			transposeImage(image,imageSizeInBytes);
+			cmp_transposeImage(image,imageSizeInBytes);
 			break;
 		case COMPRESS_LZG_LR: /* LZ Groody Left to Right Compression Algorithm */
 			result=expandLzg(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
@@ -210,7 +210,7 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 			result=expandLzg(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
 			checkResult;
 			checkSize;
-			transposeImage(image,imageSizeInBytes);
+			cmp_transposeImage(image,imageSizeInBytes);
 			break;
 		default:
 			result=COMPRESS_RESULT_FATAL; /* unknown algorithm */
@@ -233,15 +233,15 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	imageSizeInBytes=image->widthInBytes*image->height;
 
 	/*
-		Perform all compressions
-	*/
+	 * Perform all compressions
+	 */
 
 	/* Forward compression */
 
 	/* COMPRESS_RAW
 	 * The allocation size is the image size.
 	 * The algorithm is hard-coded.
-	 * There is no need to code a transposed version because
+	 * There is no need to code a cmp_transposed version because
 	 * we have no compression to improve.
 	 */
 	compressed[COMPRESS_RAW]=getMemory(imageSizeInBytes);
@@ -293,7 +293,7 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	 * using the image matrix transposed.
 	 */
 	cLevel(3)
-		antiTransposeImage(image,imageSizeInBytes);
+		cmp_antiTransposeImage(image,imageSizeInBytes);
 
 	/* COMPRESS_RLE_UD */
 	cLevel(3) {
@@ -319,8 +319,8 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 		max_alg++;
 	}
 	/*
-		Process results
-	*/
+	 * Process results
+	 */
 
 	/* Select the best compression (find minimum) */
 	*dataSizeInBytes=compressedSize[COMPRESS_RAW];
@@ -338,8 +338,8 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	(*dataSizeInBytes)+=6;
 
 	/*
-		Write header
-	*/
+	 * Write header
+	 */
 
 	/* (16 bits)height (Intel short int format) */
 	(*data)[0]=image->height;
@@ -355,4 +355,3 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	for (i=COMPRESS_RAW;i<max_alg;i++) free(compressed[i]);
 	return 1; /* true */
 }
-

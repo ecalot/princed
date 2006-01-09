@@ -85,7 +85,7 @@ int mAddCompiledFileToDatFile(tResource* res,const char* vFile) {
 |                   M A I N   F U N C T I O N                   |
 \***************************************************************/
 
-int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension) {
+int import_full(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension) {
 	/*
 		Return values:
 			-1 File couldn't be open for writing
@@ -135,7 +135,7 @@ int fullCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 	return error;
 }
 
-int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension) {
+int import_partial(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension) {
 	/*
 		Return values:
 			-2 Previous DAT file was invalid
@@ -163,14 +163,14 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 		/* add to res more information from the resource list */
 		resourceListAddInfo(r,&res);
 
-		if (isInThePartialList(res.path,res.id)) { /* If the resource was specified */
+		if (isInTheItemMatchingList(res.path,res.id)) { /* If the resource was specified */
 			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size);
 			if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
 			/* get save file name (if unknown document is in the XML) */
 			getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 
-			/* the file is in the partial list, so I'll import */
+			/* the file is in the partial matching list, so I'll import */
 			if ((newRes.size=mLoadFileArray(vFileext,&newRes.data))>0) {
 				newRes.id=res.id;
 				newRes.type=res.type;
@@ -187,7 +187,7 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 				errors++;
 			}
 		} else {
-			/* the file wasn't in the partial list, so I'll re-copy it from the open DAT file */
+			/* the file wasn't in the partial matching list, so I'll re-copy it from the open DAT file */
 			mWriteFileInDatFileIgnoreChecksum(&res);
 		}
 	}
@@ -200,11 +200,10 @@ int partialCompile(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 }
 
 int compile(const char* vFiledat, const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName,const char* backupExtension) {
-
-	if (partialListActive()) {
-		return partialCompile(vFiledat,vDirExt,r,optionflag,vDatFileName,backupExtension);
+	if (itemMatchingListActive()) {
+		return import_partial(vFiledat,vDirExt,r,optionflag,vDatFileName,backupExtension);
 	} else {
-		return fullCompile(vFiledat,vDirExt,r,optionflag,vDatFileName,backupExtension);
+		return import_full(vFiledat,vDirExt,r,optionflag,vDatFileName,backupExtension);
 	}
 }
 

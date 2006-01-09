@@ -79,7 +79,7 @@ typedef struct {
 	int count;
 }tAttrCount;
 
-int attrcmp(const void* x,const void* y) {
+int tree_attrcmp(const void* x,const void* y) {
 	register const tAttrCount* a=x;
 	register const tAttrCount* b=y;
 	/* the index has the priority */
@@ -89,13 +89,12 @@ int attrcmp(const void* x,const void* y) {
 	return EQ;
 }
 
-void increase(const char* attr,tList* l,int *lcount) {
+void tree_increaseList(const char* attr,tList* l,int *lcount) {
 	tAttrCount a;
 	tAttrCount* aux;
 
 	if (!attr) return; /* if not attribute, do nothing */
 
-/*	printf("increase: %s\n",attr);*/
 	a.attr=attr;
 	a.count=1; /* if it appeared for the first time */
 	if (list_moveCursor(l,&a)) {
@@ -109,10 +108,10 @@ void increase(const char* attr,tList* l,int *lcount) {
 
 #define attributeCount 8
 /* this is the most ugly thing I've ever made... nevertheless it was the only way to make it abstract */
-#define bindAttr(name,i) attrInfo[i].offset=(long)(&(parent->name))-(long)(parent)
-#define getAttr(tag) (*( (char**)((long)(tag)+attrInfo[i].offset) ))
+#define tree_bindAttr(name,i) attrInfo[i].offset=(long)(&(parent->name))-(long)(parent)
+#define tree_getAttr(tag) (*( (char**)((long)(tag)+attrInfo[i].offset) ))
 
-void commonFactor(tTag* parent) {
+void tree_TagCommonFactor(tTag* parent) {
 	tTag* child;
 	const tAttrCount* a;
 	int i;
@@ -125,25 +124,25 @@ void commonFactor(tTag* parent) {
 		long offset;
 	} attrInfo[attributeCount];
 
-	bindAttr(palette,0);
-	bindAttr(paletteindex,1);
-	bindAttr(paletteorder,2);
-	bindAttr(type,3);
-	bindAttr(file,4);
-	bindAttr(index,5);
-	bindAttr(order,6);
-	bindAttr(flags,7);
+	tree_bindAttr(palette,0);
+	tree_bindAttr(paletteindex,1);
+	tree_bindAttr(paletteorder,2);
+	tree_bindAttr(type,3);
+	tree_bindAttr(file,4);
+	tree_bindAttr(index,5);
+	tree_bindAttr(order,6);
+	tree_bindAttr(flags,7);
 
 	/* initialize counting list */
 	for (i=0;i<attributeCount;i++) {
-		attrInfo[i].l=list_create(sizeof(tAttrCount),attrcmp,NULL);
+		attrInfo[i].l=list_create(sizeof(tAttrCount),tree_attrcmp,NULL);
 		attrInfo[i].c=0;
 		attrInfo[i].lcount=0;
 	}
 
 	for (child=parent->child;child;child=child->next) {
 		for (i=0;i<attributeCount;i++) {
-			increase(getAttr(child),&(attrInfo[i].l),&attrInfo[i].lcount);
+			tree_increaseList(tree_getAttr(child),&(attrInfo[i].l),&attrInfo[i].lcount);
 			attrInfo[i].c++;
 		}
 	}
@@ -153,7 +152,6 @@ void commonFactor(tTag* parent) {
 		result=NULL;
 		list_firstCursor(&(attrInfo[i].l));
 		while ((a=list_getCursor(&(attrInfo[i].l)))) {
-/*			printf("running through %s (%d)\n",a->attr,a->count);*/
 			if (a->count*7>attrInfo[i].c*5 && a->count>max) {
 				max=a->count;
 				result=a->attr;
@@ -162,14 +160,14 @@ void commonFactor(tTag* parent) {
 		}
 
 		if (result) {
-			if (getAttr(parent)!=result) { /* it is possible, and is the most probable case, that the parent was already the best choice. In that case, do nothing */
-				freeAllocation(getAttr(parent));
-				getAttr(parent)=strallocandcopy(result); /* result is copied to avoid checking each time a string is released below */
+			if (tree_getAttr(parent)!=result) { /* it is possible, and is the most probable case, that the parent was already the best choice. In that case, do nothing */
+				freeAllocation(tree_getAttr(parent));
+				tree_getAttr(parent)=strallocandcopy(result); /* result is copied to avoid checking each time a string is released below */
 			}
 			for (child=parent->child;child;child=child->next) {
-				if (getAttr(child)&&!strcmp(getAttr(child),getAttr(parent))) {
-					freeAllocation(getAttr(child)); /* the first time this is ran, result is released! */
-					getAttr(child)=NULL;
+				if (tree_getAttr(child)&&!strcmp(tree_getAttr(child),tree_getAttr(parent))) {
+					freeAllocation(tree_getAttr(child)); /* the first time this is ran, result is released! */
+					tree_getAttr(child)=NULL;
 				}
 			}
 		}
@@ -177,16 +175,16 @@ void commonFactor(tTag* parent) {
 	}
 }
 
-void resourceTreeCommonFactor(tTag* tag) {
+void xmlOptimizeCommonFactor(tTag* tag) {
 	if (tag) {
-		resourceTreeCommonFactor(tag->next);
-		resourceTreeCommonFactor(tag->child);
-		commonFactor(tag); /* post order */
+		xmlOptimizeCommonFactor(tag->next);
+		xmlOptimizeCommonFactor(tag->child);
+		tree_TagCommonFactor(tag); /* post order */
 	}
 }
 
 #ifdef DEBUG_CF
-void test() {
+void tree_test() {
 	tTag tr[100];
 	int i;
 	for (i=0;i<6800;i++) ((char*)tr)[i]=0;
@@ -232,11 +230,11 @@ void test() {
 	tr[15].palette=strallocandcopy("joj11");
 	tr[16].palette=strallocandcopy("joj11");
 
-	generateXML(0,tr,stdout);
+	treeXmlGenerate(0,tr,stdout);
 
-	resourceTreeCommonFactor(tr);
+	xmlOptimizeCommonFactor(tr);
 
-	generateXML(0,tr,stdout);
+	treeXmlGenerate(0,tr,stdout);
 
 }
 #endif
@@ -245,7 +243,7 @@ void test() {
 |                     Tag generation routines                   |
 \***************************************************************/
 
-void unknown_folder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status) {
+void treeStatusFolder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status) {
 	char number[10];
 	tTag* folder=getTagStructure();
 
@@ -266,7 +264,7 @@ void unknown_folder(const char* path, const char* file, int palette, const char*
 	status->itemCursor=NULL;
 }
 
-void unknown_item(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, tTreeStatus* status) {
+void treeStatusItem(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, tTreeStatus* status) {
 	char aux[100];
 	tTag* item=getTagStructure();
 
@@ -293,7 +291,7 @@ void unknown_item(int value,const char* index,const char* path,const char* type,
 |                       Memory tree --> XML                     |
 \***************************************************************/
 
-void generateXML(int n,/*const*/ tTag* t,FILE* outputStream) {
+void treeXmlGenerate(int n,const tTag* t,FILE* outputStream) {
 	int a;
 	tTag* children;
 
@@ -302,29 +300,29 @@ void generateXML(int n,/*const*/ tTag* t,FILE* outputStream) {
 	if (t!=NULL) {
 		fprintf(outputStream,"<%s",t->tag);
 
-#define FillAttr2(a,b) if (a) fprintf(outputStream," %s=\"%s\"",b,a)
+#define tree_FillAttr(a,b) if (a) fprintf(outputStream," %s=\"%s\"",b,a)
 
-	if (t->child) FillAttr2(t->desc,"name");
-	FillAttr2(t->path,"path");
-	FillAttr2(t->file,"file");
-	FillAttr2(t->type,"type");
-	FillAttr2(t->desc,"desc");
-	FillAttr2(t->palette,"palette");
-	FillAttr2(t->value,"value");
-	FillAttr2(t->index,"index");
-	FillAttr2(t->order,"order");
-	FillAttr2(t->paletteindex,"paletteindex");
-	FillAttr2(t->paletteorder,"paletteorder");
-	FillAttr2(t->version,"version");
-	FillAttr2(t->number,"number");
-	FillAttr2(t->flags,"flags");
+	if (t->child) tree_FillAttr(t->desc,"name");
+	tree_FillAttr(t->path,"path");
+	tree_FillAttr(t->file,"file");
+	tree_FillAttr(t->type,"type");
+	tree_FillAttr(t->desc,"desc");
+	tree_FillAttr(t->palette,"palette");
+	tree_FillAttr(t->value,"value");
+	tree_FillAttr(t->index,"index");
+	tree_FillAttr(t->order,"order");
+	tree_FillAttr(t->paletteindex,"paletteindex");
+	tree_FillAttr(t->paletteorder,"paletteorder");
+	tree_FillAttr(t->version,"version");
+	tree_FillAttr(t->number,"number");
+	tree_FillAttr(t->flags,"flags");
 
 #undef FillAttr
 
 		if ((children=t->child)) {
 			fprintf(outputStream,">\n");
 			while (children!=NULL) {
-				generateXML(n+1,children,outputStream);
+				treeXmlGenerate(n+1,children,outputStream);
 				children=children->next;
 			}
 			for(a=0;a<n;a++) fprintf (outputStream,"\t");
@@ -339,10 +337,10 @@ void generateXML(int n,/*const*/ tTag* t,FILE* outputStream) {
 	}
 }
 
-int generateXMLfile(const char* vFile,/*const*/ tTag* t) {
+int xmlGenerateFile(const char* vFile,const tTag* t) {
 	FILE* fd;
 	if (!(fd=fopen(vFile,"wb"))) return PR_RESULT_ERR_XML_NOT_OPEN;
-	generateXML(0,t,fd);
+	treeXmlGenerate(0,t,fd);
 	return PR_RESULT_SUCCESS;
 }
 
@@ -350,7 +348,7 @@ int generateXMLfile(const char* vFile,/*const*/ tTag* t) {
 |                File attribute deletion routines               |
 \***************************************************************/
 
-void rec_tree(tTag* *t,const char* file) {
+void tree_rec(tTag* *t,const char* file) {
 	tTag* aux=*t;
 	tTag* aux2;
 
@@ -367,39 +365,39 @@ void rec_tree(tTag* *t,const char* file) {
 				*t=aux->next;
 			}
 			aux->next=NULL;
-			if (*t) rec_tree(t,file);
+			if (*t) tree_rec(t,file);
 		} else {
-			if ((*t) && (*t)->next) rec_tree(&((*t)->next),file);
+			if ((*t) && (*t)->next) tree_rec(&((*t)->next),file);
 		}
 	}
 
-	if ((*t) && (*t)->child) rec_tree(&((*t)->child),file);
+	if ((*t) && (*t)->child) tree_rec(&((*t)->child),file);
 }
 
-void unknown_deletetreefile(const char* file, tTag* tree) {
+void treeDeleteFile(const char* file, tTag* tree) {
 	if (tree)
-		rec_tree(&(tree->child),file);
+		tree_rec(&(tree->child),file);
 }
 
 /***************************************************************\
 |                  Inheritance fixing routines                  |
 \***************************************************************/
 
-#define TotalInheritance2(a) if (parent->a&&child->a&&equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
+#define tree_TotalInheritance(a) if (parent->a&&child->a&&equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
 
-void rec_tree_fix(tTag* parent,tTag* child) {
-	if (child->next) rec_tree_fix(parent,child->next);
-	if (child->child) rec_tree_fix(child,child->child);
+void tree_rec_fix(tTag* parent,tTag* child) {
+	if (child->next) tree_rec_fix(parent,child->next);
+	if (child->child) tree_rec_fix(child,child->child);
 
 	if (parent) {
-		TotalInheritance2(palette);
-		TotalInheritance2(paletteindex);
-		TotalInheritance2(paletteorder);
-		TotalInheritance2(type);
-		TotalInheritance2(file);
-		TotalInheritance2(index);
-		TotalInheritance2(order);
-		TotalInheritance2(flags);
+		tree_TotalInheritance(palette);
+		tree_TotalInheritance(paletteindex);
+		tree_TotalInheritance(paletteorder);
+		tree_TotalInheritance(type);
+		tree_TotalInheritance(file);
+		tree_TotalInheritance(index);
+		tree_TotalInheritance(order);
+		tree_TotalInheritance(flags);
 
 		/* partial */
 		if ((parent->path!=NULL)&&(child->path!=NULL)) {
@@ -411,18 +409,14 @@ void rec_tree_fix(tTag* parent,tTag* child) {
 			free(child->path);
 			child->path=aux;
 		}
-
 	}
-
 }
 
 void resourceTreeFixInheritances(tTag* *tree) {
-	/*printf("fixing inheritances in tree\n");*/
 	if (*tree) {
-		rec_tree_fix(NULL,(*tree));
+		tree_rec_fix(NULL,(*tree));
 
 		freeAllocation((*tree)->path);
 		(*tree)->path=NULL;
 	}
 }
-
