@@ -77,6 +77,7 @@ tree.c: Princed Resources : Specific XML tree handling routines
 typedef struct {
 	const char* attr;
 	int count;
+	tTag* relatedTag;
 }tAttrCount;
 
 int tree_attrcmp(const void* x,const void* y) {
@@ -89,7 +90,7 @@ int tree_attrcmp(const void* x,const void* y) {
 	return EQ;
 }
 
-void tree_increaseList(const char* attr,tList* l,int *lcount) {
+void tree_increaseList(const char* attr,tList* l) {
 	tAttrCount a;
 	tAttrCount* aux;
 
@@ -102,7 +103,6 @@ void tree_increaseList(const char* attr,tList* l,int *lcount) {
 		aux->count++;
 	} else {
 		list_insert(l,&a);
-		(*lcount)++;
 	}
 }
 
@@ -113,14 +113,12 @@ void tree_increaseList(const char* attr,tList* l,int *lcount) {
 
 void tree_TagCommonFactor(tTag* parent) {
 	tTag* child;
-	const tAttrCount* a;
-	int i;
-	int max;
+	tAttrCount* a;
+	int totalItems, totalAttributes, maxRatio, partitionate, maxCount, i, max;
 	const char* result;
 	struct attributeInfo {
 		int c;
 		tList l;
-		int lcount;
 		long offset;
 	} attrInfo[attributeCount];
 
@@ -137,29 +135,36 @@ void tree_TagCommonFactor(tTag* parent) {
 	for (i=0;i<attributeCount;i++) {
 		attrInfo[i].l=list_create(sizeof(tAttrCount),tree_attrcmp,NULL);
 		attrInfo[i].c=0;
-		attrInfo[i].lcount=0;
 	}
 
 	for (child=parent->child;child;child=child->next) {
 		for (i=0;i<attributeCount;i++) {
-			tree_increaseList(tree_getAttr(child),&(attrInfo[i].l),&attrInfo[i].lcount);
+			tree_increaseList(tree_getAttr(child),&(attrInfo[i].l));
 			attrInfo[i].c++;
 		}
 	}
 
+	maxRatio=0;
+	partitionate=-1;
 	for (i=0;i<attributeCount;i++) {
-		max=0;
+		totalItems=0;
+		totalAttributes=0;
+		maxCount=0;
 		result=NULL;
 		list_firstCursor(&(attrInfo[i].l));
 		while ((a=list_getCursor(&(attrInfo[i].l)))) {
-			if (a->count*7>attrInfo[i].c*5 && a->count>max) {
-				max=a->count;
+			totalItems+=a->count;
+			totalAttributes++;
+printf("ti=%d ac=%d ta=%d\n",totalItems,a->count,totalAttributes);
+			if (a->count*2>attrInfo[i].c && a->count>maxCount) {
+				maxCount=a->count;
 				result=a->attr;
 			}
 			list_nextCursor(&(attrInfo[i].l));
 		}
-
+printf("result?\n");
 		if (result) {
+printf("result=YES result=%s maxRatio=%f totalItems=%d totalAttributes=%d\n",result,maxRatio,totalItems,totalAttributes);
 			if (tree_getAttr(parent)!=result) { /* it is possible, and is the most probable case, that the parent was already the best choice. In that case, do nothing */
 				freeAllocation(tree_getAttr(parent));
 				tree_getAttr(parent)=strallocandcopy(result); /* result is copied to avoid checking each time a string is released below */
@@ -170,7 +175,71 @@ void tree_TagCommonFactor(tTag* parent) {
 					tree_getAttr(child)=NULL;
 				}
 			}
+		} else { /* attribute couldn't be moved up, so let's try to move it down using a partition */
+			if (totalAttributes) {
+				register float ratio=totalItems/totalAttributes;
+printf("result=NO ratio=%f maxRatio=%f totalItems=%d totalAttributes=%d\n",ratio,maxRatio,totalItems,totalAttributes);
+				if (ratio>10 && ratio>maxRatio) {
+					maxRatio=ratio;
+					partitionate=i;
+				}
+			} else printf("result=NO maxRatio=%f totalItems=%d totalAttributes=%d i=%d\n",maxRatio,totalItems,totalAttributes,i);
 		}
+	}
+
+printf("llega acá\n");
+
+	/* in case we need to make a partition by one attribute */
+	if ((i=partitionate)!=-1) {
+		/* separate the parent and the children */
+		tTag* orfans=parent->child;
+		parent->child=NULL;
+
+		/* initialize all relatedTags and creates folders if necessary */
+		list_firstCursor(&(attrInfo[i].l));
+		while ((a=list_getCursor(&(attrInfo[i].l)))) {
+			if (a->count>3) {
+				/* create a new folder */
+				a->relatedTag=getTagStructure();
+				a->relatedTag->tag=strallocandcopy("folder");
+				tree_getAttr(a->relatedTag)=strallocandcopy(a->attr);
+				/* intercalate as the first of the child folders */
+				a->relatedTag->next=parent->child;
+				parent->child=a->relatedTag;
+			} else {
+				/* the original parent will be kept as the parent folder */
+				a->relatedTag=parent;
+			}
+		}
+
+		/* for each orfan */
+		while (orfans) {
+			tTag* aux;
+			tAttrCount info;
+
+			/* search the related tag to this attribute */
+			list_moveCursor(&(attrInfo[i].l),&info);
+			a=list_getCursor(&(attrInfo[i].l));
+
+			/* free the attribute in process */
+			if (a->count>3) { /* of course only if moved down */
+				freeAllocation(tree_getAttr(orfans));
+				tree_getAttr(orfans)=NULL;
+			}
+
+			/* insert the orfan into the tree in the first place */
+			aux=orfans->next;
+			orfans->next=a->relatedTag->child;
+			a->relatedTag->child=orfans;
+
+			/* increase iterator */
+			orfans= /* old orfans->next */ aux;
+		}
+
+	}
+
+	/* finally, free all lists */
+	for (i=0;i<attributeCount;i++) {
 		list_drop(&(attrInfo[i].l));
 	}
 }
