@@ -37,12 +37,12 @@ tree.c: Princed Resources : Specific XML tree handling routines
 \***************************************************************/
 
 /* Includes */
-#include <stdio.h>
 #include "common.h"
-#include "memory.h"
 #include "list.h" /* list primitives needed by the Common Factor routines */
-#include "unknown.h" /* typedef tUnknownFile */
+#include "memory.h"
 #include "parse.h" /* getTagStructure */
+#include "unknown.h" /* typedef tUnknownFile */
+#include <stdio.h>
 
 /***************************************************************\
 |                     XML generation defines                    |
@@ -63,7 +63,7 @@ tree.c: Princed Resources : Specific XML tree handling routines
  * file was explicitly specified for the child. NULL is never shown
  * after a non-NULL parent.
  *
- * POST: if the folder has n children and there are n/2 equal attributes
+ * POST: if the folder has n children and there are n*2/3 equal attributes
  * then those attributes comes to the parent.
  *
  * if the folder has n children and there are at most 10/n different attributes
@@ -73,6 +73,15 @@ tree.c: Princed Resources : Specific XML tree handling routines
  *   if an attribute value is present in 3 or more items, all items goes
  *   together under a new folder with this item set.
  */
+
+/* TODO
+- Fix sigfaults
+- Check memory releasing
+- Calculate the optimum values for the constants
+- transform numbers into defines
+- handle the NULL attribute numbers
+- invert the insertion order orphan
+*/
 
 typedef struct {
 	const char* attr;
@@ -114,13 +123,16 @@ void tree_increaseList(const char* attr,tList* l) {
 void tree_TagCommonFactor(tTag* parent) {
 	tTag* child;
 	tAttrCount* a;
-	int totalItems, totalAttributes, maxRatio, partitionate, maxCount, i, max;
+	int totalItems, totalAttributes, partitionate, maxCount, i, max;
+	float maxRatio;
 	const char* result;
 	struct attributeInfo {
 		int c;
 		tList l;
 		long offset;
 	} attrInfo[attributeCount];
+
+	if (!parent->child) return; /* avoid a full cycle for foils */
 
 	tree_bindAttr(palette,0);
 	tree_bindAttr(paletteindex,1);
@@ -151,20 +163,20 @@ void tree_TagCommonFactor(tTag* parent) {
 		totalAttributes=0;
 		maxCount=0;
 		result=NULL;
+
+		/* for each possible attribute value check if it is possible to move it upper */
 		list_firstCursor(&(attrInfo[i].l));
 		while ((a=list_getCursor(&(attrInfo[i].l)))) {
 			totalItems+=a->count;
 			totalAttributes++;
-printf("ti=%d ac=%d ta=%d\n",totalItems,a->count,totalAttributes);
-			if (a->count*2>attrInfo[i].c && a->count>maxCount) {
+			if (a->count*3>attrInfo[i].c*2 && a->count>maxCount) {
 				maxCount=a->count;
 				result=a->attr;
 			}
 			list_nextCursor(&(attrInfo[i].l));
 		}
-printf("result?\n");
-		if (result) {
-printf("result=YES result=%s maxRatio=%f totalItems=%d totalAttributes=%d\n",result,maxRatio,totalItems,totalAttributes);
+
+		if (result) { /* it is possible to move one attribute upper (result) */
 			if (tree_getAttr(parent)!=result) { /* it is possible, and is the most probable case, that the parent was already the best choice. In that case, do nothing */
 				freeAllocation(tree_getAttr(parent));
 				tree_getAttr(parent)=strallocandcopy(result); /* result is copied to avoid checking each time a string is released below */
@@ -175,67 +187,105 @@ printf("result=YES result=%s maxRatio=%f totalItems=%d totalAttributes=%d\n",res
 					tree_getAttr(child)=NULL;
 				}
 			}
-		} else { /* attribute couldn't be moved up, so let's try to move it down using a partition */
+		} else { /* attribute couldn't be moved up, so let's try to move it down partitionating the folder */
 			if (totalAttributes) {
 				register float ratio=totalItems/totalAttributes;
-printf("result=NO ratio=%f maxRatio=%f totalItems=%d totalAttributes=%d\n",ratio,maxRatio,totalItems,totalAttributes);
-				if (ratio>10 && ratio>maxRatio) {
+				if (ratio>6 && ratio>maxRatio && totalAttributes>1) {
 					maxRatio=ratio;
 					partitionate=i;
+/*printf("result=NO but partition is possible: maxRatio=%f totalItems=%d totalAttributes=%d i=%d\n",maxRatio,totalItems,totalAttributes,i);*/
 				}
-			} else printf("result=NO maxRatio=%f totalItems=%d totalAttributes=%d i=%d\n",maxRatio,totalItems,totalAttributes,i);
+			}
+/*else printf("result=NO maxRatio=%f totalItems=%d totalAttributes=%d i=%d\n",maxRatio,totalItems,totalAttributes,i);*/
 		}
 	}
 
-printf("llega acá\n");
-
-	/* in case we need to make a partition by one attribute */
+	/* in case we need to make a partition by one attribute (the one with the max ratio) */
 	if ((i=partitionate)!=-1) {
 		/* separate the parent and the children */
-		tTag* orfans=parent->child;
+		tTag* orphans=parent->child;
 		parent->child=NULL;
 
+/*printf("here it comes p=%d\n",partitionate);*/
 		/* initialize all relatedTags and creates folders if necessary */
 		list_firstCursor(&(attrInfo[i].l));
 		while ((a=list_getCursor(&(attrInfo[i].l)))) {
 			if (a->count>3) {
+				int l;
+/*printf("partitioned tag=%s %p\n",a->attr,a);*/
 				/* create a new folder */
 				a->relatedTag=getTagStructure();
 				a->relatedTag->tag=strallocandcopy("folder");
-				tree_getAttr(a->relatedTag)=strallocandcopy(a->attr);
+				l=strlen(parent->path);
+				a->relatedTag->path=malloc(l+2);
+				strncpy(a->relatedTag->path,parent->path,l);
+				a->relatedTag->path[l]='/';
+				a->relatedTag->path[l+1]=0;
+				tree_getAttr(a->relatedTag)=(char*)a->attr; /* it's just a type problem, I won't edit it */
+
 				/* intercalate as the first of the child folders */
 				a->relatedTag->next=parent->child;
 				parent->child=a->relatedTag;
+
 			} else {
 				/* the original parent will be kept as the parent folder */
 				a->relatedTag=parent;
+/*printf("not partitioned tag=%s\n",a->attr);*/
 			}
+			list_nextCursor(&(attrInfo[i].l));
 		}
+/*printf("done, now checking orphans (orphan=%p)\n",orphans);*/
 
-		/* for each orfan */
-		while (orfans) {
+		/* for each orphan */
+		while (orphans) {
 			tTag* aux;
 			tAttrCount info;
+/*printf("orphan={%s}\n",tree_getAttr(orphans));*/
 
 			/* search the related tag to this attribute */
-			list_moveCursor(&(attrInfo[i].l),&info);
-			a=list_getCursor(&(attrInfo[i].l));
-
-			/* free the attribute in process */
-			if (a->count>3) { /* of course only if moved down */
-				freeAllocation(tree_getAttr(orfans));
-				tree_getAttr(orfans)=NULL;
+			if (tree_getAttr(orphans)) {
+				info.attr=tree_getAttr(orphans);
+				list_moveCursor(&(attrInfo[i].l),&info);
+				a=list_getCursor(&(attrInfo[i].l));
+			} else {
+				/* the NULL case is handled here */
+				info.attr=NULL;
+				info.count=1;
+				info.relatedTag=parent;
+				a=&info;
 			}
 
-			/* insert the orfan into the tree in the first place */
-			aux=orfans->next;
-			orfans->next=a->relatedTag->child;
-			a->relatedTag->child=orfans;
+			/* free the attribute in process */
+/*printf("orphan for a={%s,%d}\n",a->attr,a->count);*/
+			if (a->count>3) { /* of course only if moved down */
+				char* aux2;
+
+				/* free repeated attribute (only if not on the list) */
+				if (a->attr!=tree_getAttr(orphans)) freeAllocation(tree_getAttr(orphans)); /* as I said, I won't edit it */
+				tree_getAttr(orphans)=NULL;
+
+				/* add a / at the beginning of the path */
+				if ((aux2=orphans->path)) {
+					int ik;
+					ik=strlen(aux2);
+					orphans->path=malloc(ik+2);
+					while ((--ik)&&aux2[ik]!='/');
+					if (ik) strncpy(orphans->path,aux2,ik);
+					        strcpy (orphans->path+ik+1,aux2+ik);
+					orphans->path[ik]='/';
+					free(aux2);
+				}
+			}
+
+			/* insert the orphan into the tree in the first place */
+			aux=orphans->next;
+			orphans->next=a->relatedTag->child;
+			a->relatedTag->child=orphans;
+/*printf("partitioned tag=%s a=%p rt=%p aux=%p of=%p\n",a->attr,a,a->relatedTag,aux,orphans);*/
 
 			/* increase iterator */
-			orfans= /* old orfans->next */ aux;
+			orphans= /* old orphans->next */ aux;
 		}
-
 	}
 
 	/* finally, free all lists */
@@ -477,6 +527,10 @@ void tree_rec_fix(tTag* parent,tTag* child) {
 			aux=strallocandcopy(c);
 			free(child->path);
 			child->path=aux;
+			if (child->path&&!child->path[0]) { /* drop empty paths */
+				free(child->path);
+				child->path=NULL;
+			}
 		}
 	}
 }
