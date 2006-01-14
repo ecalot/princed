@@ -49,8 +49,8 @@ tree.c: Princed Resources : Specific XML tree handling routines
 \***************************************************************/
 
 #define XML_HEADER \
-	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/XML/resources/std1.dtd\">\n"\
-	"<?XML version=\"1.0\" ?>\n"
+	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
+	"<?xml version=\"1.0\" ?>\n"
 
 /***************************************************************\
 |              Common factor tree reducing routines             |
@@ -66,29 +66,37 @@ tree.c: Princed Resources : Specific XML tree handling routines
  * POST: if the folder has n children and there are n*2/3 equal attributes
  * then those attributes comes to the parent.
  *
- * if the folder has n children and there are at most 10/n different attributes
- * we can say that there is a ratio of 10 items per attribute or more.
+ * if the folder has n children and there are at most 6/n different attributes
+ * we can say that there is a ratio of 6 items per attribute or more.
  * If that happens for at least one attribute, the attribute with the highest
  * ratio will be partitioned that way:
  *   if an attribute value is present in 3 or more items, all items goes
  *   together under a new folder with this item set.
  */
 
-/* TODO
-- Fix sigfaults
-- Check memory releasing
-- Calculate the optimum values for the constants
-- transform numbers into defines
-- handle the NULL attribute numbers
-- invert the insertion order orphan
-*/
+#define TREE_PART_ALLOWED_CHILDREN_DEN   3
+#define TREE_PART_ALLOWED_CHILDREN_NUM   2
+#define TREE_PART_ALLOWED_DIFFERENT_ATTR 4
+#define TREE_PART_ALLOWED_MIN_ATTR       2
+#define TREE_PART_ALLOWED_RATIO          6
 
+/* TODO
+ - Fix sigfaults
+ - Check memory releasing
+ - Calculate the optimum values for the constants
+ * transform numbers into defines
+ - handle the NULL attribute numbers
+ - invert the insertion order orphan
+ */
+
+/* private type */
 typedef struct {
 	const char* attr;
 	int count;
 	tTag* relatedTag;
 }tAttrCount;
 
+/* private functions */
 int tree_attrcmp(const void* x,const void* y) {
 	register const tAttrCount* a=x;
 	register const tAttrCount* b=y;
@@ -102,8 +110,6 @@ int tree_attrcmp(const void* x,const void* y) {
 void tree_increaseList(const char* attr,tList* l) {
 	tAttrCount a;
 	tAttrCount* aux;
-
-	if (!attr) return; /* if not attribute, do nothing */
 
 	a.attr=attr;
 	a.count=1; /* if it appeared for the first time */
@@ -127,9 +133,10 @@ void tree_TagCommonFactor(tTag* parent) {
 	float maxRatio;
 	const char* result;
 	struct attributeInfo {
-		int c;
-		tList l;
-		long offset;
+		int   countAll;
+		int   countNull;
+		tList valueList;
+		long  offset;
 	} attrInfo[attributeCount];
 
 	if (!parent->child) return; /* avoid a full cycle for foils */
@@ -145,14 +152,20 @@ void tree_TagCommonFactor(tTag* parent) {
 
 	/* initialize counting list */
 	for (i=0;i<attributeCount;i++) {
-		attrInfo[i].l=list_create(sizeof(tAttrCount),tree_attrcmp,NULL);
-		attrInfo[i].c=0;
+		attrInfo[i].valueList=list_create(sizeof(tAttrCount),tree_attrcmp,NULL);
+		attrInfo[i].countAll=0;
+		attrInfo[i].countNull=0;
 	}
 
+	/* count the attributes */
 	for (child=parent->child;child;child=child->next) {
 		for (i=0;i<attributeCount;i++) {
-			tree_increaseList(tree_getAttr(child),&(attrInfo[i].l));
-			attrInfo[i].c++;
+			if (tree_getAttr(child)) { /* if not attribute, do nothing */
+				tree_increaseList(tree_getAttr(child),&(attrInfo[i].valueList));
+			} else {
+				attrInfo[i].countNull++;
+			}
+			attrInfo[i].countAll++;
 		}
 	}
 
@@ -165,15 +178,20 @@ void tree_TagCommonFactor(tTag* parent) {
 		result=NULL;
 
 		/* for each possible attribute value check if it is possible to move it upper */
-		list_firstCursor(&(attrInfo[i].l));
-		while ((a=list_getCursor(&(attrInfo[i].l)))) {
+		list_firstCursor(&(attrInfo[i].valueList));
+		while ((a=list_getCursor(&(attrInfo[i].valueList)))) {
 			totalItems+=a->count;
 			totalAttributes++;
-			if (a->count*3>attrInfo[i].c*2 && a->count>maxCount) {
+			if (
+					a->count*TREE_PART_ALLOWED_CHILDREN_DEN >
+					attrInfo[i].countAll*TREE_PART_ALLOWED_CHILDREN_NUM
+				&&
+					a->count>maxCount
+			) {
 				maxCount=a->count;
 				result=a->attr;
 			}
-			list_nextCursor(&(attrInfo[i].l));
+			list_nextCursor(&(attrInfo[i].valueList));
 		}
 
 		if (result) { /* it is possible to move one attribute upper (result) */
@@ -190,7 +208,7 @@ void tree_TagCommonFactor(tTag* parent) {
 		} else { /* attribute couldn't be moved up, so let's try to move it down partitionating the folder */
 			if (totalAttributes) {
 				register float ratio=totalItems/totalAttributes;
-				if (ratio>6 && ratio>maxRatio && totalAttributes>1) {
+				if (ratio>TREE_PART_ALLOWED_RATIO && ratio>maxRatio && totalAttributes>=TREE_PART_ALLOWED_MIN_ATTR) {
 					maxRatio=ratio;
 					partitionate=i;
 /*printf("result=NO but partition is possible: maxRatio=%f totalItems=%d totalAttributes=%d i=%d\n",maxRatio,totalItems,totalAttributes,i);*/
@@ -208,9 +226,9 @@ void tree_TagCommonFactor(tTag* parent) {
 
 /*printf("here it comes p=%d\n",partitionate);*/
 		/* initialize all relatedTags and creates folders if necessary */
-		list_firstCursor(&(attrInfo[i].l));
-		while ((a=list_getCursor(&(attrInfo[i].l)))) {
-			if (a->count>3) {
+		list_firstCursor(&(attrInfo[i].valueList));
+		while ((a=list_getCursor(&(attrInfo[i].valueList)))) {
+			if (a->count>=TREE_PART_ALLOWED_DIFFERENT_ATTR) {
 				int l;
 /*printf("partitioned tag=%s %p\n",a->attr,a);*/
 				/* create a new folder */
@@ -232,7 +250,7 @@ void tree_TagCommonFactor(tTag* parent) {
 				a->relatedTag=parent;
 /*printf("not partitioned tag=%s\n",a->attr);*/
 			}
-			list_nextCursor(&(attrInfo[i].l));
+			list_nextCursor(&(attrInfo[i].valueList));
 		}
 /*printf("done, now checking orphans (orphan=%p)\n",orphans);*/
 
@@ -245,8 +263,8 @@ void tree_TagCommonFactor(tTag* parent) {
 			/* search the related tag to this attribute */
 			if (tree_getAttr(orphans)) {
 				info.attr=tree_getAttr(orphans);
-				list_moveCursor(&(attrInfo[i].l),&info);
-				a=list_getCursor(&(attrInfo[i].l));
+				list_moveCursor(&(attrInfo[i].valueList),&info);
+				a=list_getCursor(&(attrInfo[i].valueList));
 			} else {
 				/* the NULL case is handled here */
 				info.attr=NULL;
@@ -257,7 +275,7 @@ void tree_TagCommonFactor(tTag* parent) {
 
 			/* free the attribute in process */
 /*printf("orphan for a={%s,%d}\n",a->attr,a->count);*/
-			if (a->count>3) { /* of course only if moved down */
+			if (a->count>=TREE_PART_ALLOWED_DIFFERENT_ATTR) { /* of course only if moved down */
 				char* aux2;
 
 				/* free repeated attribute (only if not on the list) */
@@ -290,10 +308,11 @@ void tree_TagCommonFactor(tTag* parent) {
 
 	/* finally, free all lists */
 	for (i=0;i<attributeCount;i++) {
-		list_drop(&(attrInfo[i].l));
+		list_drop(&(attrInfo[i].valueList));
 	}
 }
 
+/* public function */
 void xmlOptimizeCommonFactor(tTag* tag) {
 	if (tag) {
 		xmlOptimizeCommonFactor(tag->next);
@@ -308,28 +327,28 @@ void tree_test() {
 	int i;
 	for (i=0;i<6800;i++) ((char*)tr)[i]=0;
 
-	tr[0].child=&(tr[1]);
+	tr[0].countAllhild=&(tr[1]);
 
-	tr[1].next =&(tr[2]);
-	tr[1].child=&(tr[6]);
-	tr[2].next =&(tr[3]);
-	tr[3].next =&(tr[4]);
-	tr[4].next =&(tr[5]);
-	tr[5].next =NULL;
+	tr[1].countNullext =&(tr[2]);
+	tr[1].countAllhild=&(tr[6]);
+	tr[2].countNullext =&(tr[3]);
+	tr[3].countNullext =&(tr[4]);
+	tr[4].countNullext =&(tr[5]);
+	tr[5].countNullext =NULL;
 
-	tr[6].next =&(tr[7]);
-	tr[7].next =&(tr[8]);
-	tr[8].next =&(tr[9]);
-	tr[8].child=&(tr[11]);
-	tr[9].next =&(tr[10]);
-	tr[10].next =NULL;
+	tr[6].countNullext =&(tr[7]);
+	tr[7].countNullext =&(tr[8]);
+	tr[8].countNullext =&(tr[9]);
+	tr[8].countAllhild=&(tr[11]);
+	tr[9].countNullext =&(tr[10]);
+	tr[10].countNullext =NULL;
 
-	tr[11].next =&(tr[12]);
-	tr[12].next =&(tr[13]);
-	tr[13].next =&(tr[14]);
-	tr[14].child=&(tr[15]);
-	tr[15].next =&(tr[16]);
-	tr[16].next =NULL;
+	tr[11].countNullext =&(tr[12]);
+	tr[12].countNullext =&(tr[13]);
+	tr[13].countNullext =&(tr[14]);
+	tr[14].countAllhild=&(tr[15]);
+	tr[15].countNullext =&(tr[16]);
+	tr[16].countNullext =NULL;
 
 	tr[0].palette=strallocandcopy("joj0");
 	tr[1].palette=strallocandcopy("joj1");
@@ -361,6 +380,11 @@ void tree_test() {
 /***************************************************************\
 |                     Tag generation routines                   |
 \***************************************************************/
+
+/*
+ * Simple routines to create new tags from the given attributes. They are
+ * also linked to a tree using a tTreeStatus abstract type.
+ */
 
 void treeStatusFolder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status) {
 	char number[10];
@@ -409,6 +433,15 @@ void treeStatusItem(int value,const char* index,const char* path,const char* typ
 /***************************************************************\
 |                       Memory tree --> XML                     |
 \***************************************************************/
+
+/*
+ * Given a tTag* with a tree, it will be dumped into an XML file.
+ * Empty tags are collapsed and ends with /
+ * Each non-empty tags that only has text inside are put in one line,
+ * the rest of the non-empty tags are expanded using a tab indentation
+ * and the text is dumped in the "name" attribute.
+ * A doctype is added at the beginning of the file.
+ */
 
 void treeXmlGenerate(int n,const tTag* t,FILE* outputStream) {
 	int a;
@@ -467,6 +500,12 @@ int xmlGenerateFile(const char* vFile,const tTag* t) {
 |                File attribute deletion routines               |
 \***************************************************************/
 
+/* Given a tTag* tree, all items and folders containing a specific file
+ * are erased from the tree. In case some items depends on affected folders
+ * they are moved up until this affection is gone.
+ * This process is recursive and checks all the tree.
+ */
+
 void tree_rec(tTag* *t,const char* file) {
 	tTag* aux=*t;
 	tTag* aux2;
@@ -501,6 +540,14 @@ void treeDeleteFile(const char* file, tTag* tree) {
 /***************************************************************\
 |                  Inheritance fixing routines                  |
 \***************************************************************/
+
+/*
+ * Given a tTag* tree, all inheritable attributes that are bellow are dropped
+ * to let the inheritance act and save memory.
+ * The path attribute is re-contracted to let the inheritance act again.
+ * This is very useful before dumping to a file because the file parse will
+ * redo this inheritances.
+ */
 
 #define tree_TotalInheritance(a) if (parent->a&&child->a&&equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
 
