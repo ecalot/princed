@@ -71,11 +71,8 @@ const char* getExtDesc(int type) {
 #define parse_FillAttr(a,b) if (equalsIgnoreCase(attr,b)) { freeAllocation(a); (a)=(val); return 0;}
 
 #define parse_TotalInheritance(attribute) \
-		if ((tag->attribute==NULL)&&(father->attribute!=NULL)) {\
-			x=strlen(father->attribute)+1;\
-			tag->attribute=(char*)malloc(x);\
-			memcpy(tag->attribute,father->attribute,x);\
-		}
+		if ((tag->attribute==NULL)&&(father->attribute!=NULL)) \
+			tag->attribute=strallocandcopy(father->attribute);
 
 #define parse_Error return PR_RESULT_ERR_XML_PARSING
 
@@ -365,44 +362,42 @@ tTag* parse_makeTree(char** p,char* name, int* error,tTag* father) {
 	 * XML_TAG_CLOSE  If tag is closed in the same opening
 	 * XML_TAG_OPEN   If tag remains open
 	 */
+
+	/* In case there are some empty attributes, they may be inherited */
+	/* BEGIN specific XML tag inheritance */
+	parse_TotalInheritance(palette);
+	parse_TotalInheritance(paletteindex);
+	parse_TotalInheritance(paletteorder);
+	parse_TotalInheritance(type);
+	parse_TotalInheritance(file);
+	parse_TotalInheritance(index);
+	parse_TotalInheritance(order);
+	parse_TotalInheritance(flags);
+	/* parse_PartialConcatInheritance(tag->path,father->path,tag->value); */
+	if ((tag->value==NULL /*is folder */)||(tag->path!=NULL)) {
+		char* str;
+
+		/* Make sure paths do exist */
+		if (father->path==NULL) {father->path=(char*)malloc(1);*(father->path)=0;}
+		if (tag->path==NULL) {tag->path=(char*)malloc(1);*(tag->path)=0;}
+
+		/* Create new variable */
+		str=(char*)malloc(strlen(father->path)+strlen(tag->path)+2);
+		if (str==NULL) {*error=PR_RESULT_ERR_MEMORY;return NULL;}
+
+		/* Set variable and destroy old variables */
+		sprintf(str,"%s/%s",father->path,tag->path);
+		free(tag->path);
+		if ((*(father->path))==0) {free(father->path);father->path=NULL;}
+		tag->path=str;
+	}
+	/* END specific XML tag inheritance */
+
 	if ((*error)==XML_TAG_CLOSE) {
 		*error=PR_RESULT_SUCCESS; /* No errors, end of the tag in the same tag <tag /> */
 		return tag;
 	}
 
-	/* In case there are some empty attributes, they may be inherited */
-	/* BEGIN specific XML tag inheritance */
-	{
-		int x;
-		char* str;
-
-		parse_TotalInheritance(palette);
-		parse_TotalInheritance(paletteindex);
-		parse_TotalInheritance(paletteorder);
-		parse_TotalInheritance(type);
-		parse_TotalInheritance(file);
-		parse_TotalInheritance(index);
-		parse_TotalInheritance(order);
-		parse_TotalInheritance(flags);
-		/* parse_PartialConcatInheritance(tag->path,father->path,tag->value); */
-		if ((tag->value==NULL)||(tag->path!=NULL)) {
-			/* Make sure paths do exist */
-			if (father->path==NULL) {father->path=(char*)malloc(1);*(father->path)=0;}
-			if (tag->path==NULL) {tag->path=(char*)malloc(1);*(tag->path)=0;}
-
-			/* Create new variable */
-			x=strlen(father->path)+strlen(tag->path)+2;
-			str=(char*)malloc(x);
-			if (str==NULL) {*error=PR_RESULT_ERR_MEMORY;return NULL;}
-
-			/* Set variable and destroy old variables */
-			sprintf(str,"%s/%s",father->path,tag->path);
-			free(tag->path);
-			if ((*(father->path))==0) {free(father->path);father->path=NULL;}
-			tag->path=str;
-		}
-	}
-	/* END specific XML tag inheritance */
 	/* Parse Child tags */
 	while (1) {
 		(*error)=getNextTag(p, &value);

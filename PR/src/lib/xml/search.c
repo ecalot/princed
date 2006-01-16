@@ -38,11 +38,11 @@ search.c: Princed Resources : Specific XML handling functions
 
 /* Includes */
 #include "common.h"
+#include "memory.h"
 #include "parse.h"
 #include "search.h"
-#include "memory.h"
-#include <string.h>
 #include "translate.h" /* to translate indexes */
+#include <string.h>
 
 /***************************************************************\
 |            Filtering XML structure to tResourceList           |
@@ -96,11 +96,14 @@ void search_workTag(const tTag* t,void* pass) {
 	tResource res;
 	char* end;
 
+/*printf("comienzan las preguntas (t->file,datFile)=(%s,%s)\n",t->file,datFile);
+printf("tv=%s ti=%s tag=%s\n",t->value,t->index,t->tag);*/
 	/* Skipping conditions */
 	if (!equalsIgnoreCase(t->file,datFile))   return; /* If it doesn't belong to the given DAT file */
 	if (!t->value) return;                            /* If there was not number id */
 	if (!t->index) return;                            /* If there was not index id */
 	if (!equalsIgnoreCase(t->tag,"item"))     return; /* If the tag isn't an item */
+/*printf("terminan las preguntas\n");*/
 
 	/* Process tag and copy values to resource: */
 
@@ -125,7 +128,7 @@ void search_workTag(const tTag* t,void* pass) {
 	search_keepIdAttributesElse(palette,palette,paletteindex,index);
 
 	/* Copy number, title, desc and path */
-	search_keepIntAttribute(number,unsigned char);    /* Transforms the char* levelnumer/number attribute into a char value, if error, demo level is used */
+	search_keepIntAttribute(number,unsigned char); /* Transforms the char* levelnumer/number attribute into a char value, if error, demo level is used */
 	if (t->flags) {
 		res.flags=strtol(t->flags,&end,0);
 		if (*end) return;
@@ -169,9 +172,9 @@ extern FILE* outputStream;
 
 const tTag* search_searchTree(const tTag* t,const char* datFile, const char* id) {
 	/* tTag*
-		tag pointer if found
-		NULL if not found
-	*/
+	 * tag pointer if found
+	 * NULL if not found
+	 */
 	tTag* children;
 	const tTag* result;
 
