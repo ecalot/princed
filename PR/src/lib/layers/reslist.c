@@ -39,21 +39,41 @@ reslist.c: Princed Resources : Resource list layer implementation
 
 /* resource list layer (that uses the abstract list layer primitives) */
 
+
+#define byIndex \
+	c=strncmp(a.index,b.index,5);\
+	if (c>0) return GT;\
+	if (c<0) return LT
+
+#define byOrder \
+	if (a.order>b.order) return GT;\
+	if (a.order<b.order) return LT
+
+#define byValue \
+	if (a.value>b.value) return GT;\
+	if (a.value<b.value) return LT
+
+#define byEqual \
+	return EQ
+
 int resourceListCompareId(const tResourceId a,const tResourceId b) {
-	/* the index has the priority */
-	int c=strncmp(a.index,b.index,5);
-	if (c>0) return GT;
-	if (c<0) return LT;
+	int c;
 
-	/* at this point, the indexes are the same, so let's compare the order */
-	if (a.order>b.order) return GT;
-	if (a.order<b.order) return LT;
+	/* order priorities */
+	byIndex;
+	byValue;
+	byOrder;
+	byEqual;
+}
 
-	/* at this point, indexes and order are the same, but this is not enough, we'll use value to be sure it's unique */
-	if (a.value>b.value) return GT;
-	if (a.value<b.value) return LT;
+int resourceListCompareId_OIV(const tResourceId a,const tResourceId b) {
+	int c;
 
-	return EQ;
+	/* order priorities */
+	byOrder;
+	byIndex;
+	byValue;
+	byEqual;
 }
 
 int reslist_compare(const void* a,const void* b) {

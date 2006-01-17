@@ -125,3 +125,32 @@ void* list_getCursor(tList* list) {
 	return list->cursor->data;
 }
 
+void list_reorder(tList* list,int dataCmp(const void*,const void*)) {
+	tList newList;
+	tListNode* aux;
+
+	/* create a new list with the new dataCmp function */
+	newList.size=list->size;
+	newList.cmp=dataCmp;
+	newList.free=list->free;
+	newList.cursor=NULL;
+	newList.first=NULL;
+
+	/* copy and drop the old list */
+	list->cursor=list->first;
+	while (list->cursor) {
+		aux=list->cursor->next;
+
+		list_insert(&newList,list->cursor->data);
+
+		free(list->cursor->data);
+		free(list->cursor);
+		list->cursor=aux;
+	}
+
+	/* overwrite the deprecated old list with the new one */
+	*list=newList;
+
+	/* move the cursor to the first place to re initialize the new list */
+	list_firstCursor(list);
+}
