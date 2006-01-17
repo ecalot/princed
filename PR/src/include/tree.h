@@ -44,7 +44,7 @@ typedef struct {
 	tTag*        itemCursor;
 } tTreeStatus;
 
-void treeStatusItem  (int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, tTreeStatus* status);
+void treeStatusItem  (int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, int order, tTreeStatus* status);
 void treeStatusFolder(const char* path, const char* file, int palette, const char* paletteindex, tTreeStatus* status);
 void treeDeleteFile  (const char* file, tTag* tree);
 void treeXmlGenerate (int n,const tTag* t,FILE* outputStream);
