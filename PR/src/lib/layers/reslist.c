@@ -45,13 +45,14 @@ int resourceListCompareId(const tResourceId a,const tResourceId b) {
 	if (c>0) return GT;
 	if (c<0) return LT;
 
-	/* at this point, the indexes are the same, so let's compare the number */
+	/* at this point, the indexes are the same, so let's compare the order */
+	if (a.order>b.order) return GT;
+	if (a.order<b.order) return LT;
+
+	/* at this point, indexes and order are the same, but this is not enough, we'll use value to be sure it's unique */
 	if (a.value>b.value) return GT;
 	if (a.value<b.value) return LT;
 
-	/* at this point, indexes and values are the same, but this is not enough, we'll use order to be sure it's unique */
-	if (a.order>b.order) return GT;
-	if (a.order<b.order) return LT;
 	return EQ;
 }
 

@@ -67,7 +67,7 @@ static const char*    textPop1="pop1";
 \***************************************************************/
 
 int checkSum(const unsigned char* data,int size) {
-	unsigned char  checksum = 1;
+	unsigned char checksum = 1;
 
 	/* validates the checksum */
 	while (size--) checksum+=*(data++);
@@ -84,6 +84,7 @@ int checkSum(const unsigned char* data,int size) {
 /* the cursor get functions */
 
 #define dat_readCursorGetIndexName(r) (r.slaveIndexName)
+#define dat_readCursorGetOrder(r)     (r.popVersion==pop2?array2long(r.currentRecord+2):0)
 #define dat_readCursorGetId(r)        (array2short(r.currentRecord))
 #define dat_readCursorGetOffset(r)    (array2long(r.currentRecord+2))
 #define dat_readCursorGetSize(r)      (array2short(r.currentRecord+6))
@@ -306,10 +307,28 @@ tIndexCursor dat_createCursor(unsigned char* highData,int highDataSize,unsigned 
 		r.currentSlaveItem=0;
 		r.currentRecord=r.highData+array2short(r.highData+6)+2;
 
+		/* TODO: use jumpToFirst above */
 		return r;
 	default:
 		return r;
 	}
+}
+
+/* the cursor read function */
+
+void dat_readRes(tResource* res) {
+	/* for each archived file the index is read */
+	res->id.value=        dat_readCursorGetId        (readIndexCursor);
+	strncpy(res->id.index,dat_readCursorGetIndexName (readIndexCursor),5);
+	res->id.order=        dat_readCursorGetOrder     (readIndexCursor);
+	res->offset=          dat_readCursorGetOffset    (readIndexCursor);
+	res->size=            dat_readCursorGetSize      (readIndexCursor);
+	res->flags=           dat_readCursorGetFlags     (readIndexCursor);
+
+	res->size++; /* add the checksum */
+
+	res->data=readDatFile+res->offset;
+printf("reading resource: %d:%4s at %d order=%d\n",res->id.value,res->id.index,res->offset,res->id.order);
 }
 
 /***************************************************************\
@@ -378,20 +397,6 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	if (!dat_readCursorGetVersion(readIndexCursor)) return PR_RESULT_ERR_INVALID_DAT;
 
 	return PR_RESULT_SUCCESS;
-}
-
-void dat_readRes(tResource* res) {
-	/* for each archived file the index is read */
-	res->id.value=        dat_readCursorGetId        (readIndexCursor);
-	strncpy(res->id.index,dat_readCursorGetIndexName (readIndexCursor),5);
-	res->id.order=0;
-	res->offset=          dat_readCursorGetOffset    (readIndexCursor);
-	res->size=            dat_readCursorGetSize      (readIndexCursor);
-	res->flags=           dat_readCursorGetFlags     (readIndexCursor);
-
-	res->size++; /* add the checksum */
-
-	res->data=readDatFile+res->offset;
 }
 
 int mReadFileInDatFileId(tResource* res) {
@@ -543,7 +548,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 				if (strncmp(res->id.index,index,4)) {
 					int relativePos=ftell(writeDatFile)-size1;
 					/* go to the master index to write the beginning of this new index */
-					fseek(writeDatFile,size1+6+6*(totalItems++),SEEK_SET);
+					fseek(writeDatFile,size1+6+6*(totalItems++),SEEK_SET); /* size1+6*(++totalItems) */
 					fwriteshort(&relativePos,writeDatFile); /* overwrite junk (I) */
 					/* go to the last junk (II) and write the right value */
 					fseek(writeDatFile,slaveCountPos,SEEK_SET);
@@ -558,6 +563,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 				}
 				/* write slave index content */
 				fwriteshort(&(res->id.value),writeDatFile);
+printf("I'll write: %d:%4s at %d\n",res->id.value,res->id.index,res->offset);
 				fwritelong(&(res->offset),writeDatFile);
 				fwriteshort(&(res->size),writeDatFile);
 				/* this is the flag written in endian-safe */
