@@ -407,13 +407,15 @@ void treeStatusFolder(const char* path, const char* file, int palette, const cha
 	status->itemCursor=NULL;
 }
 
-void treeStatusItem(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, tTreeStatus* status) {
+void treeStatusItem(int value,const char* index,const char* path,const char* type,unsigned long int flags,const char* typedesc,int count, int order, tTreeStatus* status) {
 	char aux[100];
 	tTag* item=getTagStructure();
 
-	sprintf(aux,"%d",value);
 	item->tag=strallocandcopy("item");
+	sprintf(aux,"%d",value);
 	item->value=strallocandcopy(aux);
+	sprintf(aux,"%d",order);
+	item->order=strallocandcopy(aux);
 	item->index=strallocandcopy(index);
 	item->path=strallocandcopy(path);
 	item->type=strallocandcopy(type);

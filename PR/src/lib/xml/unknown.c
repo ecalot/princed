@@ -174,7 +174,7 @@ int unknownLogAppend(const char* vFiledat,tResourceId id,const char* ext,tResour
 		for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
 	}
 
-	treeStatusItem(id.value,translateInt2Ext(strToLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count,&unknownFile.status);
+	treeStatusItem(id.value,translateInt2Ext(strToLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count,id.order,&unknownFile.status);
 
 	return PR_RESULT_SUCCESS;
 }
