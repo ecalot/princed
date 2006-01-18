@@ -76,8 +76,12 @@ int resourceListCompareId_OIV(const tResourceId a,const tResourceId b) {
 	byEqual;
 }
 
-int reslist_compare(const void* a,const void* b) {
+int reslist_compare_IVO(const void* a,const void* b) {
 	return resourceListCompareId(((tResource*)a)->id,((tResource*)b)->id);
+}
+
+int reslist_compare_OIV(const void* a,const void* b) {
+	return resourceListCompareId_OIV(((tResource*)a)->id,((tResource*)b)->id);
 }
 
 void freeResource(void* a) {
@@ -94,7 +98,11 @@ const tResource* resourceListGetElement(tResourceList* r) {
 }
 
 tResourceList resourceListCreate(int isCopy) {
-	return list_create(sizeof(tResource),reslist_compare,isCopy?NULL:freeResource);
+	return list_create(sizeof(tResource),reslist_compare_OIV,isCopy?NULL:freeResource);
+}
+
+void resourceListRebuildForIndex(tResourceList* r) {
+	list_reorder(r,reslist_compare_IVO);
 }
 
 void resourceListAdd(tResourceList* r,tResource* res) {
@@ -110,10 +118,10 @@ void resourceListAdd(tResourceList* r,tResource* res) {
 #ifdef DEBUG_RESPRINT
 void printr(const tResource* record) {
 		printf("id=(%d,%s,%d)\n",record->id.value,record->id.index,record->id.order);
-		printf("palette=(%d,%s)\n",record->palette.value,record->palette.index);
+		/*printf("palette=(%d,%s)\n",record->palette.value,record->palette.index);*/
 		printf("size=%ld offset=%lu\n",record->size,record->offset);
-		printf("number=%d type=%d\n",record->number,record->type);
-		printf("path='%s' name='%s' desc='%s'\n\n",record->path,record->name,record->desc);
+		/*printf("number=%d type=%d\n",record->number,record->type);*/
+		/*printf("path='%s' name='%s' desc='%s'\n\n",record->path,record->name,record->desc);*/
 }
 
 void resourceListDebugPrint(tResourceList* r) {

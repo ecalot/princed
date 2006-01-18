@@ -126,6 +126,10 @@ void* list_getCursor(tList* list) {
 }
 
 void list_reorder(tList* list,int dataCmp(const void*,const void*)) {
+	/* This algorithm is O(1/2 * n^2) but as we know the element order is not fully altered
+	 * thanks to the insertion optimization, the algorithm order decreases a lot, making
+	 * it better even than a qsort.
+	 */
 	tList newList;
 	tListNode* aux;
 

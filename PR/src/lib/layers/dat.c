@@ -54,8 +54,15 @@ typedef struct {
 	int                 currentMasterItem;
 	int                 currentSlaveItem;
 	unsigned char*      currentRecord;
+	int*                order;
+	int*                orderInit;
 	char                slaveIndexName[5];
 } tIndexCursor;
+
+typedef struct {
+	int value;
+	int* pointer;
+} tValuePointer;
 
 static unsigned char* readDatFile;
 static int            readDatFileSize;
@@ -84,7 +91,7 @@ int checkSum(const unsigned char* data,int size) {
 /* the cursor get functions */
 
 #define dat_readCursorGetIndexName(r) (r.slaveIndexName)
-#define dat_readCursorGetOrder(r)     (r.popVersion==pop2?array2long(r.currentRecord+2):0)
+#define dat_readCursorGetOrder(r)     (r.popVersion==pop2?(*(r.order)):0)
 #define dat_readCursorGetId(r)        (array2short(r.currentRecord))
 #define dat_readCursorGetOffset(r)    (array2long(r.currentRecord+2))
 #define dat_readCursorGetSize(r)      (array2short(r.currentRecord+6))
@@ -124,9 +131,10 @@ int dat_cursorNextIndex(tIndexCursor* r) {
 		return 0; /* false */
 	} else {
 		/* POP2 */
-		if (r->currentMasterItem==r->masterItems) {
+		if (r->currentMasterItem+1==r->masterItems) {
 			return 0; /* false: its over */
 		}
+		r->currentMasterItem++;
 
 		/* remember the new slave index name */
 		dat_rememberIndex(r->slaveIndexName,(char*)(r->highData+2+6*r->currentMasterItem));
@@ -135,11 +143,11 @@ int dat_cursorNextIndex(tIndexCursor* r) {
 		r->slaveItems=array2short(r->highData+array2short(r->highData+6+6*r->currentMasterItem));
 
 		/* jump to next index */
-		r->currentMasterItem++;
 		r->currentSlaveItem=0;
 		r->currentRecord=r->highData+array2short(r->highData+6+6*r->currentMasterItem)+2;
 	}
-	return 1; /* true */
+	if (r->order) r->order++;
+	return 2; /* true, but with index change */
 }
 
 int dat_cursorNext(tIndexCursor* r) {
@@ -155,6 +163,7 @@ int dat_cursorNext(tIndexCursor* r) {
 		r->currentRecord+=11;
 		if (r->currentSlaveItem==r->slaveItems)
 			return dat_cursorNextIndex(r);
+		if (r->order) r->order++;
 	}
 	return 1; /* true */
 }
@@ -171,6 +180,7 @@ void dat_cursorFirst(tIndexCursor* r) {
 	/* jump to the first index */
 	r->currentMasterItem=0;
 	r->currentSlaveItem=0;
+	r->order=r->orderInit;
 }
 
 int dat_cursorMoveId(tIndexCursor* r, tResourceId id) {
@@ -199,7 +209,7 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 		return 1; /* true */
 	} else {
 		/* POP2 */
-		int i;
+		int i,oldPos=pos;
 		for (i=0;i<r->masterItems;i++) {
 			/* read how many items are in the slave index number i */
 			int itemCount=array2short(r->highData+array2short(r->highData+6+6*i));
@@ -211,6 +221,7 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 
 				/* remember the new slave index size */
 				r->slaveItems=itemCount;
+				r->order=r->orderInit+oldPos;
 
 				/* jump to next index */
 				r->currentMasterItem=i;
@@ -220,7 +231,7 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 			}
 			pos-=itemCount;
 		}
-		return 0; /* false: we had read all the master index and we didn't read the "pos" value */
+		return 0; /* false: we have read all the master index and we didn't read the "pos" value */
 	}
 }
 
@@ -302,33 +313,72 @@ tIndexCursor dat_createCursor(unsigned char* highData,int highDataSize,unsigned 
 		/* remember the first slave index size */
 		r.slaveItems=array2short(highData+array2short(highData+6));
 
-		/* jump to the first index */
-		r.currentMasterItem=0;
-		r.currentSlaveItem=0;
-		r.currentRecord=r.highData+array2short(r.highData+6)+2;
+		/* the first time will ignore the order */
+		r.orderInit=NULL;
 
-		/* TODO: use jumpToFirst above */
+		/* jump to the first index */
+		dat_cursorFirst(&r);
+
+		/* order array initialization  */
+		{
+		int *list, *listI, *X, *XI;
+		tValuePointer *vp, *vpI;
+		register tValuePointer aux;
+		register int i,j;
+		int total=(highDataSize-8*r.masterItems)/11;
+
+		vp=vpI=malloc(total*sizeof(tValuePointer));
+		list=listI=malloc(total*sizeof(int));
+
+		do {
+			vpI->value=dat_readCursorGetOffset(r);
+			(vpI++)->pointer=listI++;
+		} while (dat_cursorNext(&r));
+
+		/* bubble sort for the moment */
+		i=total;
+		while (i--)
+			for (j=0;j<i;j++)
+				if (vp[j].value>vp[j+1].value) {
+					aux=vp[j];
+					vp[j]=vp[j+1];
+					vp[j+1]=aux;
+				}
+
+		/* initilize list */
+		for (i=0;i<total;i++)
+			*(vp[i].pointer)=i;
+
+		/* bind the list to the cursor and release auxiliary memory */
+		free(vp);
+		r.orderInit=list;
+		dat_cursorFirst(&r);
+
+		}
+
 		return r;
 	default:
 		return r;
 	}
 }
 
+/* TODO: delete cursor: freeAllocation(r->order); */
+
 /* the cursor read function */
 
-void dat_readRes(tResource* res) {
+void dat_readRes(tResource* res, tIndexCursor indexCursor) {
 	/* for each archived file the index is read */
-	res->id.value=        dat_readCursorGetId        (readIndexCursor);
-	strncpy(res->id.index,dat_readCursorGetIndexName (readIndexCursor),5);
-	res->id.order=        dat_readCursorGetOrder     (readIndexCursor);
-	res->offset=          dat_readCursorGetOffset    (readIndexCursor);
-	res->size=            dat_readCursorGetSize      (readIndexCursor);
-	res->flags=           dat_readCursorGetFlags     (readIndexCursor);
+	res->id.value=        dat_readCursorGetId        (indexCursor);
+	strncpy(res->id.index,dat_readCursorGetIndexName (indexCursor),5);
+	res->id.order=        dat_readCursorGetOrder     (indexCursor);
+	res->offset=          dat_readCursorGetOffset    (indexCursor);
+	res->size=            dat_readCursorGetSize      (indexCursor);
+	res->flags=           dat_readCursorGetFlags     (indexCursor);
 
 	res->size++; /* add the checksum */
 
 	res->data=readDatFile+res->offset;
-printf("reading resource: %d:%4s at %d order=%d\n",res->id.value,res->id.index,res->offset,res->id.order);
+/*printf("reading resource: %d:%4s at %d order=%d\n",res->id.value,res->id.index,res->offset,res->id.order);*/
 }
 
 /***************************************************************\
@@ -401,13 +451,13 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 
 int mReadFileInDatFileId(tResource* res) {
 	if (!dat_cursorMoveId(&readIndexCursor,res->id)) return 0; /* false means index not found */
-	dat_readRes(res);
+	dat_readRes(res,readIndexCursor);
 	return 1; /* true */
 }
 
 int mReadFileInDatFile(tResource* res, int k) {
 	if (!dat_cursorMove(&readIndexCursor,k)) return 0; /* false means out of range */
-	dat_readRes(res);
+	dat_readRes(res,readIndexCursor);
 	return 1; /* true */
 }
 
@@ -527,6 +577,10 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 			unsigned char v;
 			char aux[4];
 
+			/* initial step: arrange the index */
+			resourceListRebuildForIndex(&resIndex);
+			res=resourceListGetElement(&resIndex);
+
 			/* first step: read the list to create the master index */
 			strcpy(index,"X");
 			do {
@@ -540,6 +594,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 					flags=res->flags;
 				}
 			} while ((res=resourceListGetElement(&resIndex)));
+
 			/* second step: read the list to create the slave indexes */
 			resourceListStartIteration(&resIndex);
 			res=resourceListGetElement(&resIndex);
@@ -547,13 +602,16 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 			do {
 				if (strncmp(res->id.index,index,4)) {
 					int relativePos=ftell(writeDatFile)-size1;
+
 					/* go to the master index to write the beginning of this new index */
-					fseek(writeDatFile,size1+6+6*(totalItems++),SEEK_SET); /* size1+6*(++totalItems) */
+					fseek(writeDatFile,size1+6*(++totalItems),SEEK_SET);
 					fwriteshort(&relativePos,writeDatFile); /* overwrite junk (I) */
+
 					/* go to the last junk (II) and write the right value */
 					fseek(writeDatFile,slaveCountPos,SEEK_SET);
 					fwriteshort(&numberOfSlaveItems,writeDatFile); /* overwrite junk (II) */
 					numberOfSlaveItems=0;
+
 					/* return to the end of the file to keep writing */
 					fseek(writeDatFile,0,SEEK_END);
 					slaveCountPos=ftell(writeDatFile); /* remember the junk (II) place */
@@ -563,15 +621,16 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 				}
 				/* write slave index content */
 				fwriteshort(&(res->id.value),writeDatFile);
-printf("I'll write: %d:%4s at %d\n",res->id.value,res->id.index,res->offset);
+/*printf("writing resource: %d:%4s at %d f=%08x\n",res->id.value,res->id.index,res->offset,res->flags);*/
 				fwritelong(&(res->offset),writeDatFile);
 				fwriteshort(&(res->size),writeDatFile);
+
 				/* this is the flag written in endian-safe */
-				v=(res->flags>>16)&&0xff;
+				v=res->flags>>16;
 				fwritechar(&v,writeDatFile);
-				v=(res->flags>>8)&&0xff;
+				v=res->flags>>8;
 				fwritechar(&v,writeDatFile);
-				v=(res->flags)&&0xff;
+				v=res->flags;
 				fwritechar(&v,writeDatFile);
 
 				numberOfSlaveItems++;
