@@ -321,7 +321,7 @@ tIndexCursor dat_createCursor(unsigned char* highData,int highDataSize,unsigned 
 
 		/* order array initialization  */
 		{
-		int *list, *listI, *X, *XI;
+		int *list, *listI;
 		tValuePointer *vp, *vpI;
 		register tValuePointer aux;
 		register int i,j;
@@ -362,8 +362,6 @@ tIndexCursor dat_createCursor(unsigned char* highData,int highDataSize,unsigned 
 	}
 }
 
-/* TODO: delete cursor: freeAllocation(r->order); */
-
 /* the cursor read function */
 
 void dat_readRes(tResource* res, tIndexCursor indexCursor) {
@@ -381,6 +379,10 @@ void dat_readRes(tResource* res, tIndexCursor indexCursor) {
 /*printf("reading resource: %d:%4s at %d order=%d\n",res->id.value,res->id.index,res->offset,res->id.order);*/
 }
 
+void dat_releaseCursor(tIndexCursor* indexCursor) {
+	free(indexCursor->order);
+}
+
 /***************************************************************\
 |                          Public Layer                         |
 \***************************************************************/
@@ -396,6 +398,7 @@ tPopVersion mReadGetVersion() {
 }
 
 void mReadCloseDatFile() {
+	dat_releaseCursor(&readIndexCursor);
 	free(readDatFile);
 }
 
