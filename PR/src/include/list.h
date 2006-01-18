@@ -58,5 +58,6 @@ void  list_nextCursor(tList* list);
 void  list_firstCursor(tList* list);
 int   list_moveCursor(tList* list,const void* data);
 void* list_getCursor(tList* list);
+void  list_reorder(tList* list,int dataCmp(const void*,const void*));
 
 #endif

@@ -43,7 +43,7 @@ typedef tList tResourceList;
 typedef struct {
 	unsigned short int value;
 	char               index[5];
-	unsigned short     order;
+	unsigned int       order;
 }tResourceId;
 
 typedef struct {
@@ -62,6 +62,7 @@ typedef struct {
 
 #ifdef DEBUG_RESPRINT
 void printr(const tResource* record); /* for debug purposes */
+void resourceListDebugPrint(tResourceList* r);
 #endif
 
 #define resourceListStartIteration(l) list_firstCursor(l)
@@ -74,5 +75,6 @@ tResourceList resourceListCreate(int isCopy);
 void resourceListAddInfo(tResourceList* r,tResource* res);
 void resourceListAdd(tResourceList* r,tResource* res); /* only increases order */
 void resourceListDebugPrint(tResourceList* r);
+void resourceListRebuildForIndex(tResourceList* r);
 
 #endif

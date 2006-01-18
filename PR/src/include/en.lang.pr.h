@@ -98,9 +98,9 @@ pr.h: Princed Resources : English language strings
 	"Cannot open XML file",\
 	"XML parsing error",\
 	"XML file already open",\
-  "XML file cannot be open",\
-  "Input line syntax error",\
-  "Extraction error",\
+	"XML file cannot be open",\
+	"Input line syntax error",\
+	"Extraction error",\
 	"-19",\
 	"You may select one directory to export all DAT files or specify DAT files; both actions are not allowed",\
 	"Recursive flag must not be set when you import files",\
@@ -151,37 +151,39 @@ pr.h: Princed Resources : English language strings
   Mandatory arguments to long options are mandatory for short options too.\n\
 \n"
 #define PARSING_HELP_PART1 "\
-   -i, -m, --import[=DIRNAME] imports from DIRNAME into given DAT file\n\
-   -c, --classify             returns the DAT file type\n\
-   -e, -x, --export[=DIRNAME] exports given DAT file into DIRNAME\n\
+   -i, -m, --import[=DIRNAME] import from DIRNAME into given DAT file\n\
+   -c, --classify             return the DAT file type\n\
+   -e, -x, --export[=DIRNAME] export given DAT file into DIRNAME\n\
 \n"
 #define PARSING_HELP_PART2 "\
-   -a, --setauthor=NAME       sets your name in extracted plv files\n\
+   -a, --setauthor=NAME       set your name in extracted plv files\n\
    -b, --backup[=EXTENSION]   backup your files\n\
-   -f, --force                rewrites your files without prompting\n\
+   -f, --force                rewrite your files without prompting\n\
    -g, --cgi                  run as CGI and output mime headers\n\
    -h, -?, --help             display this help and exit\n\
-   -s, --resource=RESFILE     uses an user-specific resource XML file\n\
+   -s, --resource=RESFILE     use an user-specific resource XML file\n\
 "PARSING_SHOWRAW(PARSING_RAW)
 
 #define PARSING_HELP_PART3 "\
-   -r, --recursive            searches for all DAT files (only if DATFILEPATH\n\
+   -r, --recursive            searche for all DAT files (only if DATFILEPATH\n\
                               is not a DAT file)\n\
-   -t, --datfile=DATFILE      specifies a DAT file to read resources\n\
-                              different than the original file\n\
-   -z, --compression-level=N  a number from 1 to 7 specifying how hard has PR\n\
-                              to try to reduce the generated DAT files\n"
+   -t, --datfile=DATFILE      specify a DAT file to read resources different\n\
+                              than the original file\n"
 
 #define PARSING_HELP_PART4 "\
+   -z, --compression-level=N  a number from 1 to 7 specifying how hard has PR\n\
+                              to try to reduce the generated DAT files\n\
                               1 is high speed, low compression, 7 is high\n\
-                              compression but low speed\n\
+                              compression but low speed\n"
+
+#define PARSING_HELP_PART5 "\
        --format=FORMAT        generate the item files in the unknown file using\n\
                               the given format\n\
        --unknown              generate the unknown file without performing\n\
                               any extraction\n\
    -v, --verbose              explain what is being done\n\
        --version              output version information and exit\n\
-       --xml-optimize=XMLFILE optimizes a resources XML file\n\
+       --xml-optimize=XMLFILE optimize a resources XML file\n\
 \n"
 
 #define PR_TXT_AUTHORS           "Authors"
