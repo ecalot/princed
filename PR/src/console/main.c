@@ -56,6 +56,7 @@ void main_syntax() {
 	fprintf(outputStream,PARSING_HELP_PART2);
 	fprintf(outputStream,PARSING_HELP_PART3);
 	fprintf(outputStream,PARSING_HELP_PART4);
+	fprintf(outputStream,PARSING_HELP_PART5);
 }
 
 /***************************************************************\
