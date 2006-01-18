@@ -138,7 +138,6 @@ void tree_TagCommonFactor(tTag* parent) {
 		tList valueList;
 		long  offset;
 	} attrInfo[attributeCount];
-printf("aaaaaaaaaaaa\n");
 	if (!parent->child) return; /* avoid a full cycle for foils */
 
 	tree_bindAttr(palette,0);
@@ -554,7 +553,6 @@ void treeDeleteFile(const char* file, tTag* tree) {
 #define tree_TotalInheritance(a) if (parent->a&&child->a&&equalsIgnoreCase(parent->a,child->a)) {freeAllocation(child->a);child->a=NULL;}
 
 void tree_rec_fix(tTag* parent,tTag* child) {
-printf("aaaaaaaaaaaaa\n");
 	if (child->next) tree_rec_fix(parent,child->next);
 	if (child->child) tree_rec_fix(child,child->child);
 
