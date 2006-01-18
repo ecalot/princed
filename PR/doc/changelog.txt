@@ -175,7 +175,7 @@ Versions:
     equivalencies
   - When extracting, generated unknown.xml's are now merged into one
   - Code XML attributes common factors and smart grouping
-  x Raw importation now works for pop2
+  - Raw importation now works for pop2
   x Create a new isDirSep in disk.h and handle all the / and \ as the same char
  * PR v1.3 (future plans)
   x Add POP2 to resources.xml: nis3vc.dat, nisibm.dat, skeleton.dat,
