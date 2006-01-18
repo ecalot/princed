@@ -81,7 +81,7 @@ tree.c: Princed Resources : Specific XML tree handling routines
 #define TREE_PART_ALLOWED_RATIO          6
 
 /* TODO
- - Fix sigfaults
+ * Fix sigfaults
  - Check memory releasing
  - Calculate the optimum values for the constants
  * transform numbers into defines
@@ -129,7 +129,7 @@ void tree_increaseList(const char* attr,tList* l) {
 void tree_TagCommonFactor(tTag* parent) {
 	tTag* child;
 	tAttrCount* a;
-	int totalItems, totalAttributes, partitionate, maxCount, i, max;
+	int totalItems, totalAttributes, partitionate, maxCount, i;
 	float maxRatio;
 	const char* result;
 	struct attributeInfo {
