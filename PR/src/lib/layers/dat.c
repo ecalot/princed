@@ -98,29 +98,59 @@ int checkSum(const unsigned char* data,int size) {
 #define dat_readCursorGetFlags(r)     ((r.popVersion==pop1)?(1<<24):(r.currentRecord[8]<<16|r.currentRecord[9]<<8|r.currentRecord[10]))
 #define dat_readCursorGetVersion(r)   (r.popVersion)
 
-void dat_rememberIndex(char* to, const char* from) {
-	int i=4;
-	from+=3;
-	while (i--) {
-		*to=toLower(*from);
-		from--;
-		if (!*to) continue;
-		to++;
-	}
-	*to=0;
+/* TODO: send some functions to memory.c/h */
+
+#define shift(a,b,c,d) a=b;b=c;c=d;d=0
+
+/* TODO: use common factor here under the pre: from is [4] and to is [5] */
+void dat_datIndexToHuman(char* to, const char* from) {
+	register int i;
+
+	/* copy inverted */
+	to[0]=from[3];
+	to[1]=from[2];
+	to[2]=from[1];
+	to[3]=from[0];
+	to[5]=0;
+
+	/* shift */
+	if (to[0]||to[1]||to[2]||to[3])
+		while (!to[0]) {
+			shift(to[0],to[1],to[2],to[3]);
+		}
+
+	/* to lower */
+	for (i=0;i<4;i++)
+		to[i]=toLower(to[i]);
+
 }
 
-void dat_saveIndex(char* to, const char* from) {
-	int i=4;
-	int k=0;
-	from+=3;
-	while (i--) {
-		to[k]=toUpper(*from);
-		from--;
-		if (!to[k]) continue;
-		k++;
+void dat_humanToDatIndex(char* to, const char* from2) {
+	register int i,nullReached=0;
+	char from[4];
+
+	/* first of all: we don't trust in null terminated strings */
+	for (i=0;i<4;i++) {
+		if (!from2[i]) nullReached=1;
+		from[i]=nullReached?0:from2[i];
 	}
-	for (;k<4;k++) to[k]=0;
+
+	/* copy inverted */
+	to[0]=from[3];
+	to[1]=from[2];
+	to[2]=from[1];
+	to[3]=from[0];
+	to[5]=0;
+
+	/* shift */
+	if (to[0]||to[1]||to[2]||to[3])
+		while (!to[0]) {
+			shift(to[0],to[1],to[2],to[3]);
+		}
+
+	/* to lower */
+	for (i=0;i<4;i++)
+		to[i]=toUpper(to[i]);
 }
 
 /* the cursor move functions */
@@ -137,7 +167,7 @@ int dat_cursorNextIndex(tIndexCursor* r) {
 		r->currentMasterItem++;
 
 		/* remember the new slave index name */
-		dat_rememberIndex(r->slaveIndexName,(char*)(r->highData+2+6*r->currentMasterItem));
+		dat_datIndexToHuman(r->slaveIndexName,(char*)(r->highData+2+6*r->currentMasterItem));
 
 		/* remember the new slave index size */
 		r->slaveItems=array2short(r->highData+array2short(r->highData+6+6*r->currentMasterItem));
@@ -171,7 +201,7 @@ int dat_cursorNext(tIndexCursor* r) {
 void dat_cursorFirst(tIndexCursor* r) {
 	if (r->popVersion==pop2) {
 		/* remember the first slave index name */
-		dat_rememberIndex(r->slaveIndexName,(char*)(r->highData+2));
+		dat_datIndexToHuman(r->slaveIndexName,(char*)(r->highData+2));
 		r->currentRecord=r->highData+array2short(r->highData+6)+2;
 	} else {
 		r->currentRecord=r->highData+2;
@@ -217,7 +247,7 @@ int dat_cursorMove(tIndexCursor* r,int pos) {
 				/* Great! we found it */
 
 				/* remember the new slave index name */
-				dat_rememberIndex(r->slaveIndexName,(char*)(r->highData+2+6*i));
+				dat_datIndexToHuman(r->slaveIndexName,(char*)(r->highData+2+6*i));
 
 				/* remember the new slave index size */
 				r->slaveItems=itemCount;
@@ -308,7 +338,7 @@ tIndexCursor dat_createCursor(unsigned char* highData,int highDataSize,unsigned 
 		r.masterItems=array2short(highData);
 
 		/* remember the first slave index name */
-		dat_rememberIndex(r.slaveIndexName,(char*)(highData+2));
+		dat_datIndexToHuman(r.slaveIndexName,(char*)(highData+2));
 
 		/* remember the first slave index size */
 		r.slaveItems=array2short(highData+array2short(highData+6));
@@ -588,7 +618,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 			strcpy(index,"X");
 			do {
 				if (strncmp(res->id.index,index,4)) {
-					dat_saveIndex(aux,res->id.index);
+					dat_humanToDatIndex(aux,res->id.index);
 					for (c=0;c<4;c++)
 						fwritechar((unsigned char*)(aux+c),writeDatFile);
 					fwriteshort(&totalItems,writeDatFile); /* Junk (I) */
