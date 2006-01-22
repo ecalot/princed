@@ -35,6 +35,9 @@ Table of Contents
 5.1. General file specs, index and checksums .......................... 790
 5.1.1. The master index ............................................... 817
 5.1.2. The slave indexes .............................................. 855
+5.2. Levels ........................................................... 855
+5.2.1 Room mapping .................................................... 855
+5.2.2 Door events ..................................................... 855
 6. PLV v1.0 Format Specifications ..................................... 875
 6.1. User data ........................................................ 901
 6.2. Allowed Date format .............................................. 931
@@ -244,11 +247,11 @@ Table of Contents
  LZG_LR has some kind of variant of the LZ77 algorithm (the sliding windows
         algorithm), here we named it LZG in honour of Lance Groody, the
         original coder.
-        After uncompressed it may be handled as RAW_LR.
+        After decompressed it may be handled as RAW_LR.
  LZG_UD Uses LZG compression but is drawn from top to bottom as RLE_UD
 
 4.2.2.1 Run length encoding (RLE)
- The first byte is allways a control byte, the format is SC. If the control
+ The first byte is always a control byte, the format is SC. If the control
  byte is negative, then the next byte must be repeated n times as the bit
  inverted control byte says, after the next byte (the one that was
  repeated)
@@ -279,97 +282,44 @@ Table of Contents
    window starting with the S'th byte.
 
  After all the maskbyte is read and processed, the following input byte is
- another maskbyte. Use the same procedure to finish uncompressing the file.
+ another maskbyte. Use the same procedure to finish decompressing the file.
+ Remaining unused maskbits should be zeros to validate the file.
 
- This version of the algorithm is limited to 1024 bytes due to the slide
- window size. In case you want to know the full algorithm and see how it
- works for bigger images you should use the source, Luke.
+ This is the modus operandi of the compression algorithm
 
- This is the full uncompression function source. Note that this is part of
- PR that is under the GPL license. The variables «R» and «S» are «rep» and
- «loc» respectively. The array output is the output stream and oCursor is
- the current location. The input array and iCursor variable had the same
- meaning for the input stream. The algorithm ends when the full input has
- been processed. The maskbyte must remain with 0 for the unexistent bytes,
- so if you find the maskbyte not null, it is possible that the input array
- wasn't a LZG compressed stream. In that case that non-zero value is going
- to be returned. This is the only internal way to detect an error in the
- compression layer. All the data that has the latest maskbyte without this
- issue will be detected as valid and unpacked normally.
+ For each input byte we take a window containing the 1023 previous bytes.
+ If the window goes out of bounds (ie, when the current input byte is
+ before position 1024), we consider it filled with zeros.
 
-                   Algorithm 4.1: LZG
-                   ~~~~~~~~~~~~~~~~~~
-  
-  /* A big number (the output must be less that that) */
-  #define LZG_MAX_MEMSIZE    32001
-  
-  /* modulus to be used in the 10 bits of the algorithm */
-  #define LZG_WINDOW_SIZE    0x400 /* =1024=1<<10 */
-  
-  /* LZG expansion algorithm sub function */
-  unsigned char popBit(unsigned char *byte) {
-    register unsigned char bit=(*byte)&1;
-    (*byte)>>=1;
-    return bit;
-  }
-  
-  /* Expands LZ Groody algorithm. This is the core of PR.
-   * returns 0 on success, non-zero on possible data corruption
-   */
-  int expandLzg(const unsigned char* input, int inputSize, 
-                unsigned char* output, int *outputSize) {
-  
-    int           loc, oCursor=0, iCursor=0;
-    unsigned char maskbyte=0, rep, k;
-  
-    /* clean output garbage */
-    for(loc=LZG_MAX_MEMSIZE;loc--;output[loc]=0);
-  
-    /* main loop */
-    while (iCursor<inputSize) {
-      maskbyte=input[iCursor++];
-      for (k=8;k&&(iCursor<inputSize);k--) {
-        if (popBit(&maskbyte)) {
-          output[oCursor++]=input[iCursor++]; /* copy input to output */
-        } else {
-          /*
-           * loc:
-           *  10 bits for the slide iCursorition (S). Add 66 to this number.
-           * rep:
-           *  6 bits for the repetition number (R). Add 3 to this number.
-           */
-          loc= 66 + ((input[iCursor] & 0x03 /*00000011*/) <<8) + input[iCursor+1];
-          rep= 3  + ((input[iCursor] & 0xfc /*11111100*/) >>2);
-          
-          iCursor+=2;
-          
-          while (rep--) { /* repeat pattern in output */
-            loc=loc%LZG_WINDOW_SIZE; /* loc is in range 0-1023 */
-  
-            /*
-             * delta is ((loc-oCursor)%LZG_WINDOW_SIZE)
-             * this is the offset where the bytes will be looked for
-             * in the simple algorithm it is allways negative
-             * in bigger images it can be iCursoritive
-             * 
-             * this value is inside the range -1023 to 1023.
-             * if loc>oCursor the result is iCursoritive
-             * if loc<oCursor the result is negative
-             */
-            
-            output[oCursor]=output[oCursor+((loc-oCursor)%LZG_WINDOW_SIZE)];
-  
-            oCursor++;
-            loc++;
-          }
-        }
-      }
-    }
-    
-    *outputSize=oCursor;
-    return maskbyte;
-  }
-  
+     00000000000000000000********************************
+                         ^                  ^
+                    input start   current input byte
+           |--------------------------------|
+                    window size=1023
+
+ The algorithm works as follows:
+
+ While there is unread input data:
+     Create a maskbyte.
+     For each bit in the maskbyte (and there is still unread input data):
+         Compare the following input bytes with the bytes in the window,
+         and search the longest pattern that is equal to the next bytes.
+         If we found a pattern of length n > 2:
+             Assign 0 to the current bit of the maskbyte.
+             In the next 2 bytes of the output, specify the relative
+             position and length of the pattern.
+             Advance output pointer by 2.
+             Advance input pointer by n.
+         Else:
+             Assign 1 to the current bit of the maskbyte.
+             Copy the current input byte in the next output byte.
+             Advance output pointer by 1.
+             Advance input pointer by 1.
+
+ For a better understanding of the algorithm we strongly recommend to read
+ the PR source files lzg_uncompress.c and lzg_compress.c that may be
+ located at http://www.cvs.fp.princed.com.ar in the PR repository module.
+
 4.3. Palettes
  Palettes have 100 bytes allways, after 4 bytes from the beginning the
  first 16 records of 3 bytes are the VGA colours stored in the RGB-18 bits
@@ -441,13 +391,13 @@ Table of Contents
  It is reserved 1 byte from the wall block and one from the pop1_background
  block for each tile. To locate the appropriate tile you have to do the
  following calculation: tile=(room-1)*30+tileOffset where tileOffset is a
- number from 0 to 29 that means a tile from 0 to 9 if in the upper stage, from
- 10 to 19 if in the middle stage and 20 to 29 if in the bottom stage.
+ number from 0 to 29 that means a tile from 0 to 9 if in the upper stage,
+ from 10 to 19 if in the middle stage and 20 to 29 if in the bottom stage.
  We define this as the location format and will be used also in the start
  position.
  Allways looking from the left to the right.
- So there is a wall and pop1_background byte for each tile in the level and this
- is stored this way.
+ So there is a wall and pop1_background byte for each tile in the level and
+ this is stored this way.
 
  The wall part of the tile stores the main tile form according to the table
  below. Note that those are just a limited number of tiles, each code has a
@@ -813,13 +763,13 @@ Table of Contents
  call this index the «master index» and the sub index the «slave indexes».
  Slave indexes are the real file contents index.
 
-5.1.1. The master index
+5.1.1 The master index
  The master index is made with:
   - Offset HighDataOffset,   size 2, type US: NumberOfSlaveIndexes
            (the number of the high data sections)
-  - Offset HighDataOffset+2, size NumberOfSlaveIndexes*6: The master index record
-           (a list of NumberOfSlaveIndexes blocks of 6-bytes-length index
-           record each corresponding to one slave index)
+  - Offset HighDataOffset+2, size NumberOfSlaveIndexes*6: The master index
+           record (a list of NumberOfSlaveIndexes blocks of 6-bytes-length
+           index record each corresponding to one slave index)
 
  The 6-bytes-length index record (one per item): Size = 6 bytes
   - Relative offset 0, size 4, type sting: 4 ASCII bytes string denoting
@@ -832,10 +782,10 @@ Table of Contents
  points to).
 
  There are different 4 bytes ASCII strings section IDs. When the string is
- less than 4 bytes, they are ended in hex 0x00 is used. We will denote it with
- the cardinal # symbol. The character order is inverted, so for example the
- text SLAP becomes PALS, MARF becomes FRAM, #### becomes empty or
- RCS# becomes SCR. They must be un upper case.
+ less than 4 bytes, they are ended in hex 0x00 is used. We will denote it
+ with the cardinal # symbol. The character order is inverted, so for
+ example the text SLAP becomes PALS, MARF becomes FRAM, #### becomes empty
+ or RCS# becomes SCR. They must be un upper case.
 
                    Table 5.1: Section ID strings
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -859,14 +809,14 @@ Table of Contents
    txt4 4TXT   Text
         ####   Levels
 
-5.1.2. The slave indexes
+5.1.2 The slave indexes
  All encapsulated sections are indexes.
  The slave index is made with:
   - Offset SlaveIndexOffset,   size 2, type US: NumberOfItems
            (the number of the records referring to the file data)
-  - Offset SlaveIndexOffset+2, size NumberOfItems*11: The slave index record
-           (a list of NumberOfItems blocks of 11-bytes-length index record
-           each corresponding to one slave index)
+  - Offset SlaveIndexOffset+2, size NumberOfItems*11: The slave index
+           record (a list of NumberOfItems blocks of 11-bytes-length index
+           record each corresponding to one slave index)
 
  The 11-bytes-length slave index record (one per item): Size = 11 bytes
   - Relative offset 0, size 2, type US: Item ID
@@ -891,7 +841,7 @@ Table of Contents
   ~~~~~~ ~~~~~~  ~~~~~~~~~~
   960    0       wall
   3840   960     pop2_background
-  1280   4800    unknown I (doors)       
+  1280   4800    pop2_doors
   128    6080    links (as explained in section 4.4.3 but having 32 rooms)
   32     6208    unknown II
   3      6240    start_position (as explained in section 4.4.5)
@@ -906,12 +856,12 @@ Table of Contents
  31) because the 0 is be reserved to the null-room.
 
  The wall block has 32 sub-blocks inside. Each sub-block has a size of 30
- bytes and has a room associated. For each byte in this room there is a tile
- in the game. Each byte has a code to represent a tile. There are additional
- attributes to this tile also.
+ bytes and has a room associated. For each byte in this room there is a
+ tile in the game. Each byte has a code to represent a tile. There are
+ additional attributes to this tile also.
  
- To locate the 7th tile in the bottom floor of the room 27 you have to do the
- same calculation as in 4.4.2:
+ To locate the 7th tile in the bottom floor of the room 27 you have to do
+ the same calculation as in 4.4.2:
   tile=(room-1)*30+tileOffset=(27-1)*30+2*10+7=807
  
 
@@ -921,16 +871,16 @@ Table of Contents
   Hex  Binary Group  Description
   ~~~~ ~~~~~~ ~~~~~  ~~~~~~~~~~~
   0x00 000000 (?)    Empty
-  0x01 000001 (?)    Floor
+  0x01 000001 floor  Floor
   0x02 000010 (?)    Wall with spikes
   0x03 000011 (?)    One floor pillar
-  0x04 000100 (?)    Door
-  0x06 000110 (?)    Loose I
+  0x04 000100 door   Door
+  0x06 000110 (?)    Loose hidden
   0x07 000111 (?)    Linked loose
   0x08 001000 (?)    Big pillar base
   0x09 001001 (?)    Big pillar top
   0x0A 001010 (?)    Potion 
-  0x0B 001011 (?)    Loose II
+  0x0B 001011 (?)    Loose not hidden
   0x0E 001110 (?)    Debris
   0x10 010000 (?)    Exit door left
   0x11 010001 (?)    Exit door right
@@ -940,26 +890,50 @@ Table of Contents
   0x17 010111 (?)    Lava (left)
   0x18 011000 (?)    Lava (right)
   0x1B 011011 (?)    Special activator (?)
-  0x21 100001 (?)    Stalactites I
+  0x20 100000 (?)    Debris & torch
+  0x21 100001 floor  Exit door left-top
   0x22 100010 (?)    Activator (floor shooter or door)
-  0x23 100011 (?)    Stalactites II
-  0x24 100100 (?)    Floor shooter
+  0x23 100011 floor  Exit door left-right
+  0x24 100100 door   Floor shooter
 
  The pop2_background is an expansion if the pop1_background and it is sized
  4 times bigger. For each tile there are 4 additional bytes in the 
- pop2_background block to specify further actions or attributes.
- This block is sized 4 bytes/tile * 10 tiles/floor * 3 floors/room * 32 rooms
- that is 3840 bytes.
+ pop2_background block to specify further actions or attributes. This block
+ is sized 4 bytes/tile * 10 tiles/floor * 3 floors/room * 32 rooms that is
+ 3840 bytes.
  We call background mask to each block of 4 bytes associated to a tile. To
  locate a background mask you have to do the following operation:
   960+(room-1)*30*4+tileOffset*4
- Background masks are stored consecutively each after another until the 960
- tiles are specified.
+ Background masks are stored consecutively each after another until the
+ 960 tiles are specified.
  
- The second byte in a background mask is the attribute byte. For example 0x18
- modifies the tile 0x01 and adds two small stalactites.
+ The first byte is an unsigned char association to one of the 256 door
+ event registers (see section 5.2.2) if the tile is an activator or 0 in
+ any other case.
  
- We believe the doors uses the 3rd or 4th byte.
+ The second byte in a background mask is the attribute byte. For example
+ 0x18 modifies the tile 0x01 and adds two small stalactites.
+ 
+ We believe the special images uses the 3rd or 4th byte.
+
+5.2.2 Door events
+ This section explains how doors are handled and specifies the block
+ pop2_door.
+
+ The pop2_door block has 1280 bytes. It is divided in 256 registers of
+ 5 bytes called door events. Like pop1 events have associations to doors
+ and activate them. In POP2 events can also activate a floor shooter.
+ 
+ An event is triggered when an activator (0x22) is pressed. As it is
+ specified in the section 5.2.1, the first byte of the attribute mask
+ belonging to an activator tile points the activator to a door event.
+ There is a maximum of 256 events because of the unsigned char of the first
+ byte if the attribute mask in the pop2_background block and the 256
+ registers in the pop2_door block.
+
+ Each event register is of the form "XX YY TT FD FD" which activates the
+ normal door (0x04), right exit door (0x11) or shooter (0x24) in position
+ YY of the screen XX. TT is 00 for normal activation and FF for exit doors.
 
 
 6. PLV v1.0 Format Specifications
@@ -1115,6 +1089,7 @@ Table of Contents
   Images . . . . . . . . . . . . . . . . . . . . . . .  Tammo Jan Dijkema
   RLE Compression . . . . . . . . . . . . . . . . . . . Tammo Jan Dijkema
   LZG Compression . . . . . . . . . . . . . . . . . . . . . Anke Balderer
+                                                             Diego Essaya
   Sounds . . . . . . . . . . . . . . . . . . . . . . . Christian Lundheim
 
  PLV v1.0:
