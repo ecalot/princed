@@ -107,7 +107,7 @@ typedef enum {
     Enrique Calot\n\
 \n\
    "PR_TXT_COD_ASSIST"\n\
-    Santiago Zamora\n\
+    Santiago Benito Zamora\n\
 \n\
    "PR_TXT_GFX_COMP"\n\
     Tammo Jan Dijkema\n\
