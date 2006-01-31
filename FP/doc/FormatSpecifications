@@ -33,8 +33,8 @@ Table of Contents
 4.8. Binary files ..................................................... 780
 5. DAT v2.0 Format Specifications ..................................... 787
 5.1. General file specs, index and checksums .......................... 790
-5.1.1. The master index ............................................... 817
-5.1.2. The slave indexes .............................................. 855
+5.1.1 The master index ................................................ 817
+5.1.2 The slave indexes ............................................... 855
 5.2. Levels ........................................................... 855
 5.2.1 Room mapping .................................................... 855
 5.2.2 Door events ..................................................... 855
@@ -347,12 +347,12 @@ Table of Contents
   1      2116    unknown III
   24     2119    guard_location
   24     2143    guard_direction
-  24     2167    unknown VI (a)
-  24     2191    unknown VI (b)
+  24     2167    unknown IV (a)
+  24     2191    unknown IV (b)
   24     2215    guard_skill
-  24     2239    unknown VI (c)
+  24     2239    unknown IV (c)
   24     2263    guard_colour
-  16     2287    unknown VI (d)
+  16     2287    unknown IV (d)
   2      2303    0F 09 (2319)
 
  All levels have a size of 2305, except in the original game, that the
@@ -361,7 +361,7 @@ Table of Contents
 4.4.1 Unknown blocks
  Blocks described in this section are: Unknown from I to IV.
 
- Unknown III and VI blocks doesn't affect the level if changed, if you find
+ Unknown III and IV blocks doesn't affect the level if changed, if you find
  out what they are used to we will welcome your specification text.
 
  Unknown I may corrupt the level if edited.
@@ -601,9 +601,9 @@ Table of Contents
  guard_skill and guard_colour.
 
  Each guard section has 24 bytes, each byte of them corresponds to a room
- so byte 0 is related to room 1 and byte 13 is related to room 24.
+ so byte 0 is related to room 1 and byte 23 is related to room 24.
  This room is where the guard is located. The format only allows one
- guard per room. Each block describes a part of the guard.
+ guard per room. Each block describes a property or attribute of the guard.
 
  The guard_location part of a guard describes where in the room the guard
  is located, this is a number from 0 to 29 if the guard is in the room or
@@ -625,7 +625,7 @@ Table of Contents
  The default colours are in this table:
 
                    Table 4.4: Default Guard colours
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Code Pants     Cape
   ~~~~ ~~~~~     ~~~~
@@ -790,8 +790,8 @@ Table of Contents
                    Table 5.1: Section ID strings
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   ID   Stored Size in records
-   ~~   ~~~~~~ ~~~~~~~~~~~~~~~
+   ID   Stored Description
+   ~~   ~~~~~~ ~~~~~~~~~~~
    cust TSUC   Custom 
    font TNOF   Fonts
    fram MARF   Frames
@@ -908,8 +908,10 @@ Table of Contents
  960 tiles are specified.
  
  The first byte is an unsigned char association to one of the 256 door
- event registers (see section 5.2.2) if the tile is an activator or 0 in
- any other case.
+ event registers (see section 5.2.2) if the tile is an activator.
+ In any other case this byte is an extra attibute information byte.
+ For example in wall (0x14) having this byte in 0x04 means the wall is
+ curved.
  
  The second byte in a background mask is the attribute byte. For example
  0x18 modifies the tile 0x01 and adds two small stalactites.
@@ -957,7 +959,8 @@ Table of Contents
      B2  22+B1 Block 2: User data           -
 
  Level code is the exact level as described in 4.4 including the checksum
- byte. Note that Level size also includes the checksum byte in the count.
+ byte. Note that Level size (B1)  also includes the checksum byte in the
+ count.
  POP version is 1 for POP1 and 2 for POP2.
  PLV version is 1 for PLV v1.0.
  Only one level may be saved in a PLV, the level number is saved inside.
