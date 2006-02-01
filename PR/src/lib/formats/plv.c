@@ -100,7 +100,8 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 	const char* nullString="";
 	static const char* author=PLV_DEFAULT_AUTHOR;
 	unsigned long int block2size;
-	const unsigned long int numberOfFieldPairs=10;
+	const unsigned long int numberOfFieldPairs=9;
+	unsigned char version;
 
 	/* Get current time */
 	now=getDate();
@@ -122,6 +123,10 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 
 	/* Write headers */
 	ok=ok&&fwrite(PLV_HEADER_A,PLV_HEADER_A_SIZE,1,target);
+	if (size==12025) version=2; else version=1;/* TODO: check if the checksum is included */
+	ok=ok&&fwritechar(&version,target);
+	version=1;
+	ok=ok&&fwritechar(&version,target);
 	ok=ok&&fwritechar(&level,target);
 	ok=ok&&fwritelong(&numberOfFieldPairs,target);
 	ok=ok&&fwritelong(&size,target);
@@ -136,7 +141,7 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 		sizeof(PLV_FOOT_DESC)+	       strlen(desc)+1+
 		sizeof(PLV_FOOT_TCREAT)+	     sizeOfNow+
 		sizeof(PLV_FOOT_TMODIF)+	     sizeOfNow+
-		sizeof(PLV_FOOT_ORIG_FILE)+	   strlen(filename)+1,
+		sizeof(PLV_FOOT_ORIG_FILE)+	   strlen(filename)+1+
 		sizeof(PLV_FOOT_LEV_NUM_ORIG)+ strlen(levelnum)+1
 	);
 
@@ -176,7 +181,7 @@ int mFormatImportPlv(tResource *res) {
 	if (memcmp(res->data,PLV_HEADER_A,PLV_HEADER_A_SIZE)) return 0; /* false */
 
 	/* jump to size */
-	pos=res->data+PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE;
+	pos=res->data+PLV_HEADER_A_SIZE+7; /* TODO: check this */
 
 	/* read size and jump to data */
 	res->size=array2long(pos);pos+=4;
