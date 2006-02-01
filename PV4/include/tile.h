@@ -6,13 +6,10 @@ using namespace std;
 
 class Tile { // abstract class
 public:
-      int getDoorEvent();
-      int getAttr();
-      int getImg();
-
-      /* used to serialize self created tiles */
-      int getWalls();
-      int getBacks();
+	virtual int getCode()=0;
+	virtual int getDoorEvent()=0;
+	virtual int getAttr()=0;
+	virtual int getImg()=0;
 
 protected:
 	int level; /* this is very important to know what tiles are allowed */

@@ -30,6 +30,7 @@ typedef char* fieldPointer;
 Level::Level(const char* file) { //open
 	//open the file
   iesstream stream(file);
+cout<<"Opening level "<< file <<endl;
 
 	//check the magic
 	char magic[7];
@@ -57,13 +58,18 @@ Level::Level(const char* file) { //open
 	stream.read(b1);
 
 	//level code
+	unsigned char checksum;
+	stream.read(checksum);
+
 	switch (popVersion) {
 		case 1:
+cout<<"is pop1"<<endl;
 			this->level=new Pop1LevelFormat(stream,b1);
+			break;
 		case 2:
 //			this->level=new Pop2LevelFormat(stream,b1);
 		default:
-			throw -2;
+			throw -3;
 	}
 
 	//user data size
@@ -73,6 +79,7 @@ Level::Level(const char* file) { //open
 	//alloc user data (TODO: use integrity checks here)
 	char* ud=new char[b2];
 	stream.read(ud,b2);
+cout<<"nf "<<nf<<endl;
 
 	//process user data
 	fieldPointer* fields=new fieldPointer[nf*2];
@@ -80,15 +87,21 @@ Level::Level(const char* file) { //open
 
 	fields[0]=ud;
 	for (int i=0;i<b2&&currentField<nf*2;i++) {
-		if (!ud[i]) fields[currentField++]=ud+i;
+		if (!ud[i]) fields[currentField++]=ud+i+1;
 	}
 
-	if (currentField!=nf*2-1||ud[b2-1]!=0) throw -2;
+	for (int i=0;i<nf;i++) {
+		cout<<"f['"<<fields[i*2]<<"']='"<<fields[i*2+1]<<"'"<<endl;
+	}
+
+	if (currentField!=nf*2 || ud[b2-1]!=0) throw -2;
+cout<<"cf "<<currentField<<" nf "<<nf<<" b2 "<<b2<<endl;
 
 	//TODO: generate a hash table with this values
 
 	//remember the file name
 	this->fileName=new string(file);
+cout<<"ok"<<endl;
 
 	//Finally arrange the rooms
 	this->arrangeRooms();
@@ -131,8 +144,8 @@ void Level::arrangeRooms() {
  Direction junk2;
 
  //Fill in the matrix with the rooms
- getStartPosition(startScreen,junk,junk2);
- linkRecurse(MATRIX_CENTER_X,MATRIX_CENTER_Y,startScreen);
+ this->level->getStartPosition(startScreen,junk,junk2);
+ this->linkRecurse(MATRIX_CENTER_X,MATRIX_CENTER_Y,startScreen);
 
  //Get the matrix limits
  for (int i=0;i<MATRIX_HEIGHT;i++) {
@@ -164,7 +177,7 @@ void Level::arrangeRooms() {
  }
 
  for (int i=MATRIX_WIDTH;i--;) {
-  for (int j=0;i<MATRIX_HEIGHT;j++) {
+  for (int j=0;j<MATRIX_HEIGHT;j++) {
    if (!matrix(j,i)) {
     this->ce=i;
     i=0;

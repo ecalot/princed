@@ -105,11 +105,11 @@ Pop1LevelFormat::Pop1LevelFormat(iesstream& stream, int blockSize){
 
 	//Read unknown IV (d)
 	this->uIVd=new unsigned char[16];
-	stream.read(this->uIVd,24);
+	stream.read(this->uIVd,16);
 
 	//Read 0F 09 (2319)
 	this->uV=new unsigned char[2];
-	stream.read(this->uV,24);
+	stream.read(this->uV,2);
 
 }
 
@@ -123,10 +123,12 @@ void Pop1LevelFormat::save(ostream* level) {
 Pop1LevelFormat::~Pop1LevelFormat() {
 }
 
+/* Map */
+
 void Pop1LevelFormat::setTile(int screen, int location, Tile* t) {
 	if (screen<1||screen>24||location<0||location>29) throw -10;
-	this->walls[(screen-1)*30+location]=t->getWalls();
-	this->backs[(screen-1)*30+location]=t->getBacks();
+	this->walls[(screen-1)*30+location]=t->getCode();
+	this->backs[(screen-1)*30+location]=t->getAttr();
 }
 
 Tile* Pop1LevelFormat::getTile(int screen, int location) {
@@ -136,6 +138,8 @@ Tile* Pop1LevelFormat::getTile(int screen, int location) {
 		this->backs[(screen-1)*30+location]
 	);
 }
+
+/* Guards */
 
 bool Pop1LevelFormat::addGuard(int screen, int location, Guard* g) {
 	if (this->guard_location[screen-1]>29) return false;
@@ -166,6 +170,8 @@ Guard* Pop1LevelFormat::getGuards(int screen, int number){
 	);
 }
 
+/* Links */
+
 void Pop1LevelFormat::setRoomLink(int screen,int left,int right,int up,int down){
 	this->links[(screen-1)*4]=left;
 	this->links[(screen-1)*4+1]=right;
@@ -180,25 +186,63 @@ void Pop1LevelFormat::getRoomLink(int screen,int &left,int &right,int &up,int &d
 	down=this->links[(screen-1)*4+3];
 }
 
-
+/* Start Positions */
 
 void Pop1LevelFormat::getStartPosition(int &screen, int &location,Direction &direction) {
- screen=this->start_position[0];      
- if (screen<0||screen>24) throw 23; //bad file format
- location=this->start_position[1];      
- if (location>29) throw 23; //bad file format
- direction=(Direction)this->start_position[2];      
-      
-      
-      
-      }
-      
-/*
-setStartPosition(int screen, int location,direction);
-bool getDebugPosition(int &screen, int &location,&direction);
-bool setDebugPosition(int screen, int location,direction);
-clearDebugPosition();
+	screen=this->start_position[0];
+	if (screen<0||screen>24) throw 23; //bad file format
+	location=this->start_position[1];
+	if (location>29) throw 23; //bad file format
+	direction=(Direction)this->start_position[2];
+}
 
 
-*/
+void Pop1LevelFormat::setStartPosition(int screen, int location,Direction direction) {
+	if (screen<0||screen>24) throw 24;
+	this->start_position[0]=screen;
+	if (location>29) throw 24;
+	this->start_position[1]=location;
+	this->start_position[2]=(unsigned char)direction;
+}
+
+bool Pop1LevelFormat::getDebugPosition(int &screen, int &location,Direction &direction) {}
+bool Pop1LevelFormat::setDebugPosition(int screen, int location,Direction direction) {}
+void Pop1LevelFormat::clearDebugPosition() {}
+
+/* Doors */
+
+void Pop1LevelFormat::setDoorEvent(int event, int S,int L, int T) {
+	unsigned char* b1=&this->doorI[event];
+	unsigned char* b2=&this->doorII[event];
+
+	/*
+	 Let's define:
+		Screen as S and it is a number from 1 to 24 (5 bits)
+		 S = s1 s2 s3 s4 s5
+			where sn is the bit n of the binary representation of S
+		Location as L and is a number from 0 to 29 (5 bits)
+		 L = l1 l2 l3 l4 l5
+			where ln is the bit n of the binary representation of L
+		 This number is according to the location format specifications.
+		Trigger-next as T and is a 1 for "on" or a 0 for "off" (1 bit)
+		 T = t1
+
+	 Byte I  has the form: t1 s4 s5 l1 l2 l3 l4 l5
+	 Byte II has the form: s1 s2 s3  0  0  0  0  0
+	*/
+
+	*b1=(T?1:0)<<7|((S&3)<<5)|L;
+	*b2=(S&0x1C)<<5;
+
+}
+
+void Pop1LevelFormat::getDoorEvent(int event, int &S,int &L, int &T) {
+	unsigned char b1=this->doorI[event];
+	unsigned char b2=this->doorII[event];
+
+	T=b1>>7;
+	L=b1&0x1f;
+	S=((b1>>5)&3)|b2>>3;
+
+}
 

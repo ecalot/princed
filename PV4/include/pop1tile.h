@@ -11,6 +11,7 @@ public:
 	int getDoorEvent();
 	int getAttr();
 	int getImg();
+	int getCode();
 
 private:
 	int back;

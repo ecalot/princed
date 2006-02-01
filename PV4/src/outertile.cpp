@@ -15,3 +15,7 @@ int OuterTile::getAttr() {
 int OuterTile::getImg() {
 	return 0;
 }
+
+int OuterTile::getCode() {
+	return this->code; //TODO: calculate the special codes
+}

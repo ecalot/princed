@@ -1,11 +1,24 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "level.h"
+
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    cout<<"hello";
-    system("PAUSE");
-    return EXIT_SUCCESS;
+
+try {
+	Level l("lev\\level001.plv");
+
+	int x,y;
+
+  cout<<"Done";
+} catch (int error) {
+	cout << "error number "<<error<<endl;
+}
+
+cout<<"bye bye"<<endl;
+
+
 }

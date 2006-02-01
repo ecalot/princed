@@ -18,3 +18,7 @@ int Pop2Tile::getAttr() {
 int Pop2Tile::getImg() {
 	return this->img;
 }
+
+int Pop2Tile::getCode() {
+	return this->code;
+}

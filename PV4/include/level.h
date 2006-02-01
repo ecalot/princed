@@ -2,8 +2,12 @@
 #define _LEVEL_H_
 
 #include <string>
+#include "levelFormat.h"
+#include "guard.h"
+#include "tile.h"
 
 class Level {
+public:
 	Level(const char* file); //open
 	Level(int popVersion,int LevelNumber); // new
 

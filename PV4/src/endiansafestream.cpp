@@ -34,13 +34,13 @@ void iesstream::read(unsigned long &l){
 		this->read((char*)&s,2);
 		}
 
-  void iesstream::read(unsigned char* c,int size){
-		this->read((char*)c,size);
-		}
+void iesstream::read(unsigned char* c,int size){
+	this->read((char*)c,size);
+}
 
-  void iesstream::read(char* c,int size){
-		this->read(c,(streamsize)size);
-		}
+void iesstream::read(char* c,int size){
+	((ifstream*)this)->read(c,size);
+}
 
 
 

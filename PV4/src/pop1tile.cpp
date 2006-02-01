@@ -16,3 +16,7 @@ int Pop1Tile::getAttr() {
 int Pop1Tile::getImg() {
 	return 0;
 }
+
+int Pop1Tile::getCode() {
+	return this->code;
+}
