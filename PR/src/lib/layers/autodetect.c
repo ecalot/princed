@@ -42,7 +42,7 @@ autodetect.c: Princed Resources : Automatic detection resource types
 \***************************************************************/
 
 int verifyLevelHeader(const unsigned char *array, int size) {
-	return (((size==2306)||(size==2305))&&!(array[1698]&0x0F)&&!(array[1700]&0x0F)&&!(array[1702]&0x0F));
+	return (size==12025) || (((size==2306)||(size==2305))&&!(array[1698]&0x0F)&&!(array[1700]&0x0F)&&!(array[1702]&0x0F));
 }
 
 int verifyImageHeader(const unsigned char *array, int size) {
