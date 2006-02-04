@@ -132,6 +132,7 @@ void Pop1LevelFormat::setTile(int screen, int location, Tile* t) {
 }
 
 Tile* Pop1LevelFormat::getTile(int screen, int location) {
+//cout << "s="<<screen<<" l="<<location<<endl;
 	if (screen<1||screen>24||location<0||location>29) throw -10;
 	return (Tile*)new Pop1Tile(
 		this->walls[(screen-1)*30+location],

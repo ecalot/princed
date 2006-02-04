@@ -151,7 +151,7 @@ void Level::arrangeRooms() {
  for (int i=0;i<MATRIX_HEIGHT;i++) {
   for (int j=0;j<MATRIX_WIDTH;j++) {
    if (!matrix(i,j)) {
-    this->rs=i;
+    this->cs=i;
     i=j=MATRIX_WIDTH;
    }
   }
@@ -160,7 +160,7 @@ void Level::arrangeRooms() {
  for (int i=MATRIX_HEIGHT;i--;) {
   for (int j=0;j<MATRIX_WIDTH;j++) {
    if (!matrix(i,j)) {
-    this->re=i;
+    this->ce=i;
     i=0;
     j=MATRIX_WIDTH;
    }
@@ -170,7 +170,7 @@ void Level::arrangeRooms() {
  for (int i=0;i<MATRIX_WIDTH;i++) {
   for (int j=0;j<MATRIX_HEIGHT;j++) {
    if (!matrix(j,i)) {
-    this->cs=i;
+    this->rs=i;
     i=j=MATRIX_WIDTH;
    }
   }
@@ -179,12 +179,21 @@ void Level::arrangeRooms() {
  for (int i=MATRIX_WIDTH;i--;) {
   for (int j=0;j<MATRIX_HEIGHT;j++) {
    if (!matrix(j,i)) {
-    this->ce=i;
+    this->re=i;
     i=0;
     j=MATRIX_WIDTH;
    }
   }
  }
+
+cout<<"level=("<<this->rs<<","<<this->cs<<"),("<<this->re<<","<<this->ce<<")"<<endl;
+	for (int j=this->rs;j<=this->re;j++) {
+		for (int i=this->cs;i<=this->ce;i++) {
+			cout<<(int)(matrix(i,j))<<" ";
+		}
+		cout<<endl;
+	}
+
 
 	//Now it's time to add all screens in the screens array
 	this->screens=new int[this->level->countMax()];
@@ -202,15 +211,12 @@ void Level::arrangeRooms() {
 }
 
 int Level::getHeight(){
- return (this->rs-this->re-2)*3+2;
+ return (this->re-this->rs-1)*3+2;
 }
-
 
 int Level::getWidth(){
- return (this->cs-this->ce-2)*10+2;
+ return (this->ce-this->cs-1)*10+2;
 }
-
-int Level::countRooms(){}
 
 bool Level::addGuard(int floor,int col,Guard g){}
 bool Level::delGuard(int floor,int col){}
@@ -288,7 +294,7 @@ Tile* Level::getTile(int floor,int col) {
 	int location;
 
 	this->abstractToFormat(floor,col,screen,location);
-
+//cout<<"f("<<floor<<","<<col<<")=("<<screen<<","<<location<<")"<<endl;
 	if (screen<1) {
 		int r=0;
 		if (!screen) { //only screens 0 (means near to a level)
@@ -306,7 +312,24 @@ Tile* Level::getTile(int floor,int col) {
 	}
 }
 
-void copyTiles(int sfloor,int scol,int efloor,int ecol) {}
+void copyTiles(int sfloor,int scol,int efloor,int ecol,int tfloor, int tcol) {
+
+//equal col and floor are done
+if (sfloor==efloor) return;
+if (scol==ecol) return;
+
+//order col and floor in case the selection is in other order
+if (sfloor<efloor) {int aux=efloor;efloor=sfloor;sfloor=aux;}
+if (scol<ecol)     {int aux=ecol;ecol=scol;scol=aux;}
+
+tTile* t;
+
+for (int i=0;i<efloor-sfloor;i++) {
+	for (int j=0;j<ecol-scol;j++) {
+		t=this->getTile(sfloor+i,scol+j);
+		this->setTile(tfloor+i,tcol+j,t); //TODO: handle sollapations
+	}
+}
 
 /*
 bool addTrigger(int triggerfloor,int triggercol,int targetfloor,int targetcol)
@@ -375,23 +398,18 @@ bool redo();
 
 //Functions
 void Level::floorColToXY(int floor,int col, int &x, int &y){
-	x=this->rs+1+col/10;
-	y=this->cs+1+floor/3;
+	x=this->rs+(floor+2)/3;
+	y=this->cs+(col+9)/10;
 }
 
 void Level::abstractToFormat(int floor,int col, int &screen, int &location){
-
-	//ignore the first col and row
-	col--;
-	floor--;
-
 	//calculate x and y of the screen
 	int x,y;
 	floorColToXY(floor,col,x,y);
 
 	//return values
-	screen=matrix(x,y);
-	location=col%10+(floor%3)*10;
+	screen=matrix(y,x);
+	location=(col-1)%10+((floor-1)%3)*10;
 }
 
 void Level::formatToAbstract(int &floor,int &col, int screen, int location){

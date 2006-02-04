@@ -17,5 +17,5 @@ int OuterTile::getImg() {
 }
 
 int OuterTile::getCode() {
-	return this->code; //TODO: calculate the special codes
+	return 0x14;//this->code; //TODO: calculate the special codes
 }
