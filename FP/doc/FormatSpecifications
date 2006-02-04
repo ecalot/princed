@@ -427,7 +427,7 @@ Table of Contents
   0x08 01000  none   Top Big-pillar
   0x09 01001  none   Bottom Big-pillar
   0x0A 01010  potion Potion
-  0x0B 01011  none   Loose Floor
+  0x0B 01011  none   Loose Board
   0x0C 01100  ttop   Tapestry Top
   0x0D 01101  none   Mirror
   0x0E 01110  none   Debris
@@ -845,7 +845,10 @@ Table of Contents
   128    6080    links (as explained in section 4.4.3 but having 32 rooms)
   32     6208    unknown II
   3      6240    start_position (as explained in section 4.4.5)
-  5782   6243    unknown III
+  4      6243    unknown III (00 01 00 02) (check pop1)
+  3712   6247    pop2_guards
+  2066   9959    unknown IV   
+
 
  All levels have a size of 12025.
 
@@ -926,16 +929,41 @@ Table of Contents
  5 bytes called door events. Like pop1 events have associations to doors
  and activate them. In POP2 events can also activate a floor shooter.
  
- An event is triggered when an activator (0x22) is pressed. As it is
+ An event is triggered when an activator button (0x22) is pressed. As it is
  specified in the section 5.2.1, the first byte of the attribute mask
- belonging to an activator tile points the activator to a door event.
+ belonging to a button tile points it to a door event that is triggered when
+ the button is pressed.
  There is a maximum of 256 events because of the unsigned char of the first
  byte if the attribute mask in the pop2_background block and the 256
  registers in the pop2_door block.
 
- Each event register is of the form "XX YY TT FD FD" which activates the
- normal door (0x04), right exit door (0x11) or shooter (0x24) in position
- YY of the screen XX. TT is 00 for normal activation and FF for exit doors.
+ Each event register is of the form "LL SS TT FD FD" which activates the
+ normal door (0x04), right exit door (0x11) or shooter (0x24) in location
+ LL of the screen SS. TT is 00 for normal activation and FF for exit doors.
+
+5.2.3 Guards
+ This section explains how guards are handled and specifies the block
+ pop2_guards.
+ 
+ For each screen there there is reserved memory space for a maximum of 5
+ guards.
+ 
+ The pop2_guard block has a size of 3712 divided in 32 sub-blocks of 116
+ bytes each. AS there is a correspondance between each sub-block and the
+ room with this number, we'll call those sub-blocks a room guard block.
+ 
+ A room guard block has it'a size of 116 divided this way:
+ - 1 byte for the number of guards present in this room.
+   The value of this byte bay be from 0 to 5.
+ - 5 block divisions of 23 bytes for each guard.
+   The first divisions have the guard information, if the number is less
+   than 5, then the latest divisions corresponding to the missing guards
+   will be filled with zeros or garbage.
+ 
+ If there is a guard corresponding to this division of 23 bytes, the first
+ byte will be the location in this room (same as explained in 4.4.4) of the
+ current guard. The following 22 bytes are still unknown, but we are sure
+ there is a redundancy with the first byte.
 
 
 6. PLV v1.0 Format Specifications
