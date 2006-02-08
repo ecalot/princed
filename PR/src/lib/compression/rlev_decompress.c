@@ -19,8 +19,9 @@
 */
 
 /*
-rlec_uncompress.c: Princed Resources : Image Compression Library
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+rlec_uncompress.c: Princed Resources : Image Compression Library :
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯  Run length encoding with checksum decompressor
+
  Copyright 2003, 2004 Princed Development Team
   Created: 24 Aug 2003
 
@@ -37,9 +38,9 @@ rlec_uncompress.c: Princed Resources : Image Compression Library
 #include "compress.h"
 
 /* Expands RLE algorithm */
-int expandRlev(const unsigned char* input, int inputSize,
+int expandRleC(const unsigned char* input, int inputSize,
                unsigned char** output, int *outputSize,int verif) {
-	register unsigned char rep=1;
+	register unsigned char rep;
 	int oCursor=0;
 	int iCursor=0;
 	int done=0;
@@ -52,8 +53,8 @@ int expandRlev(const unsigned char* input, int inputSize,
 	/* main loop */
 	while (iCursor<inputSize) {
 		rep=(input[iCursor++]);
-
-		if ((oCursor>=28800)||(done)||(oCursor%verif)) {
+printf("o=%d i=%d\n",oCursor,iCursor);
+		if ((oCursor==28800)||(done)||(oCursor%verif)) {
 			done=0;
 			if (rep&0x80) { /* repeat */
 				//rep&=~0x80;
