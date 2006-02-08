@@ -88,7 +88,7 @@ int expandLzg(const unsigned char* input, int inputSize,
 
 	/* ignore the first 1024 bytes */
 	*outputSize=oCursor-LZG_WINDOW_SIZE;
-	*output2=malloc(*outputSize);
+	*output2=(unsigned char*)malloc(*outputSize);
 	for(iCursor=LZG_WINDOW_SIZE;iCursor<oCursor;iCursor++)
 		(*output2)[iCursor-LZG_WINDOW_SIZE]=output[iCursor];
 

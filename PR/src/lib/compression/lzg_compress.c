@@ -177,7 +177,7 @@ void compressLzg(const unsigned char* input2, int inputSize,
                  unsigned char* output, int *outputSize)
 {
 	int iCursor = 0, oCursor = 0;
-	unsigned char* input=malloc(inputSize+WIN_SIZE);
+	unsigned char* input=(unsigned char*)malloc(inputSize+WIN_SIZE);
 
 	/* Create ghost window filled with zeros before input data: */
 	memset(input, 0, WIN_SIZE);
