@@ -19,7 +19,7 @@
 */
 
 /*
-rle_uncompress.c: Princed Resources : Image Compression Library
+rlec_uncompress.c: Princed Resources : Image Compression Library
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2003, 2004 Princed Development Team
   Created: 24 Aug 2003
@@ -37,29 +37,57 @@ rle_uncompress.c: Princed Resources : Image Compression Library
 #include "compress.h"
 
 /* Expands RLE algorithm */
-int expandRle(const unsigned char* input, int inputSize,
-               unsigned char** output, int *outputSize) {
-	register signed char rep=1;
+int expandRlev(const unsigned char* input, int inputSize,
+               unsigned char** output, int *outputSize,int verif) {
+	register unsigned char rep=1;
 	int oCursor=0;
 	int iCursor=0;
+	int done=0;
+	int aux=0;
+	int lineSize;
 
 	/* reserve memory */
-	if ((*output=malloc(40000))==NULL) return COMPRESS_RESULT_FATAL;
+	if ((*output=(unsigned char*)malloc(40000))==NULL) return COMPRESS_RESULT_FATAL;
 
 	/* main loop */
 	while (iCursor<inputSize) {
-		rep=(signed char)(input[iCursor++]);
-		if (rep<0) {
-			/* Negative */
-			while (rep++) (*output)[oCursor++]=input[iCursor];
-			iCursor++;
-		} else {
-			/* Positive */
-			rep=~rep;
-			while ((rep++)&&(iCursor<inputSize)) (*output)[oCursor++]=input[iCursor++];
-		}
-	}
+		rep=(input[iCursor++]);
 
+		if ((oCursor>=28800)||(done)||(oCursor%verif)) {
+			done=0;
+			if (rep&0x80) { /* repeat */
+				//rep&=~0x80;
+				rep-=0x80;
+				rep++;
+				while (rep--) (*output)[oCursor++]=input[iCursor];
+				iCursor++;
+			} else { /* jump */
+				rep++;
+				while ((rep--)&&(iCursor<inputSize)) {
+					(*output)[oCursor++]=input[iCursor++];
+				}
+			}
+		} else {
+			if (aux)
+				if (lineSize!=(iCursor-aux))
+					printf("Error, line size is wrong: lineSize=%d got=%d\n",lineSize,(iCursor-aux));
+
+			lineSize=rep+256*input[iCursor]+1;
+printf("i=%d o=%d\n",iCursor,oCursor);
+			iCursor++;
+			done=1;
+			aux=iCursor;
+			if (oCursor==28800) {
+				printf("error time %02x %02x\n",input[iCursor],input[iCursor+1]);
+				iCursor+=2;
+
+			}
+		}
+
+
+
+	}
+printf("done=%d i=%d but=%d\n",done,iCursor,inputSize);
 	*outputSize=oCursor;
 	return (rep==1)?COMPRESS_RESULT_SUCCESS:COMPRESS_RESULT_WARNING;
 }
