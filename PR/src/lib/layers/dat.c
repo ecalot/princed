@@ -85,8 +85,8 @@ int checkSum(const unsigned char* data,int size) {
 |                         Private layer                         |
 \***************************************************************/
 
-#define toLower(a) (('A'<=(a)&&(a)<='Z')?(a)|0x20:(a))
-#define toUpper(a) (('a'<=(a)&&(a)<='z')?(a)&0xDF:(a))
+#define toLower(a) (((unsigned char)'A'<=(unsigned char)(a)&&(unsigned char)(a)<=(unsigned char)'Z')?(a)|0x20:(a))
+#define toUpper(a) (((unsigned char)'a'<=(unsigned char)(a)&&(unsigned char)(a)<=(unsigned char)'z')?(a)&0xDF:(a))
 
 /* the cursor get functions */
 
