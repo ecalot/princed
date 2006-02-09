@@ -47,7 +47,7 @@ static const char* enter="\r\n";
 
 /* Public functions */
 int mFormatExportPal(const unsigned char* data, char *vFileext,unsigned long int size,int optionflag,const char* backupExtension ) {
-	unsigned char* pal=malloc(240);
+	unsigned char* pal=malloc(256*4+50);
 	unsigned char* aux=malloc(MAX_FILENAME_SIZE);
 	int i;
 
@@ -56,7 +56,7 @@ int mFormatExportPal(const unsigned char* data, char *vFileext,unsigned long int
 	writeData(data,1,(char*)aux,size,optionflag,backupExtension);
 
 	/* Convert palette from POP format to JASC format */
-	strcpy((char*)pal,PAL_HEADER);
+	sprintf((char*)pal,"JASC-PAL\r\n%04d\r\n%d\r\n",100,16);
 	for (i=0;i<16;i++) {
 		strcpy((char*)aux,(char*)pal);
 		sprintf((char*)pal,"%s%d %d %d%s",
@@ -84,7 +84,7 @@ int mFormatImportPal(tResource *res,const char* vFile) {
 	unsigned char* pals;
 	unsigned char* pals1;
 	unsigned char  pals2[]=PAL_SAMPLE;
-	unsigned char  palh []=PAL_HEADER;
+	unsigned char  palh [30];
 	unsigned char* pal;
 	unsigned char* pal2;
 	char* data2;
@@ -99,7 +99,7 @@ int mFormatImportPal(tResource *res,const char* vFile) {
 	/* check size */
 	if ((res->size)<130) return 0; /* false */
 
-	/* verify JASC pal header */
+	/* TODO: fix, pal 256 support. verify JASC pal header */
 	while (palh[i]==(res->data)[i++]);
 	if (i!=sizeof(palh)) return 0; /* false: palette differs with headers */
 

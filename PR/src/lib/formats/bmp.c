@@ -33,6 +33,7 @@ bmp.c: Princed Resources : BMP file support
 */
 
 #include "bmp.h"
+#include "palette.h"
 #include "common.h"
 #include "dat.h"
 #include "disk.h"
@@ -96,6 +97,7 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	unsigned long int width;
 	const unsigned long int zero=0;
 	char lineSerialization;
+	tColor* palette;
 	FILE* bitmap;
 
 	/* open file */
@@ -129,20 +131,15 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	fwritelong (&zero      ,bitmap);    /* Important colours           */
 
 	/* Write ColorTable */
-	if (colours==2) {
-		/* Black & White */
-		fwrite(FORMATS_BMP_PALETTE_BW,8,1,bitmap);    /* 24-bit palette: #000000, #FFFFFF */
-	} else {
-		/* Colours */
-		for (a=0;a<colours;a++) {
-			color=img.pal[3*a+2]<<2;
-			fwritechar(&color,bitmap); /* Blue  */
-			color=img.pal[3*a+1]<<2;
-			fwritechar(&color,bitmap); /* Green */
-			color=img.pal[3*a+0]<<2;
-			fwritechar(&color,bitmap); /* Red   */
-			fwritechar(&zero ,bitmap); /* alpha */
-		}
+	getPalette(&img.pal,bits,&palette);
+	for (a=0;a<colours;a++) {
+		color=palette[a].b;
+		fwritechar(&color,bitmap); /* Blue  */
+		color=palette[a].g;
+		fwritechar(&color,bitmap); /* Green */
+		color=palette[a].r;
+		fwritechar(&color,bitmap); /* Red   */
+		fwritechar(&zero ,bitmap); /* alpha */
 	}
 
 	/* Write data */

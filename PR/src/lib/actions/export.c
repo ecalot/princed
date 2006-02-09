@@ -46,6 +46,7 @@ export.c: Princed Resources : DAT Extractor
 #include "memory.h"
 #include "reslist.h" /* resIdcmp, resourceList primitives for the palette */
 #include "unknown.h"
+#include "palette.h"
 
 #include "bmp.h"
 #include "mid.h"
@@ -86,7 +87,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	/* initialize palette buffer */
 	paletteBuffer=resourceListCreate(1);
 	/* initialize the default palette */
-	memcpy(image.pal,DEFAULT_PALETTE,SIZE_OF_PALETTE);
+	image.pal=createPalette();
 
 	/* main loop */
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
@@ -116,7 +117,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 					case eResTypePalette: /* save and remember palette file */
 						/* Remember the palette for the next images
 						 * (because it's more probable to get all the images after its palette) */
-						mLoadPalette(res.data,image,mReadGetVersion());
+						applyPaletteFromData(res.data,res.size,&image);
 						bufferedPalette=res.id;
 						resourceListAdd(&paletteBuffer,&res);
 						/* Export the palette */
@@ -138,7 +139,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 							if (mReadFileInDatFileId(&readPalette)) {
 								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
 								bufferedPalette=readPalette.id;
-								mLoadPalette(readPalette.data,image,mReadGetVersion());
+								applyPaletteFromData(readPalette.data,readPalette.size,&image);
 								resourceListAdd(&paletteBuffer,&readPalette);
 							} /* else, that's bad, I'll have to use the previous palette, even if it is the default */
 						} /* else, good, the palette is buffered */

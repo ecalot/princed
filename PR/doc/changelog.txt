@@ -157,7 +157,7 @@ Versions:
   - Rewritten resource handling using dynamic structures
   - Support of partial list folder selection wildcards (e.g.
     vdungeon.dat@vdungeon/chopper/*.bmp) '*' and '?' using '&' as escape
- * PR v1.2 (scheduled 2006-01-22)
+ * PR v1.2 (scheduled 2006-02-22)
   + Added order to support non-unique resource IDs
   + Inverted POP2 index names
   - Added --format option for unknown filename generation format
@@ -185,7 +185,9 @@ Versions:
   x Check for memory leak
   x Finish python interface
   x Fix buffer overflows (in entered filename sizes)
-  x Transform flags from the hex form to the a-y form (a is 1, b is 2, c is 4...)
+  x Add support of 256 colours palettes
+  x Transform flags from the hex form to the [a-y]* form (a is 1, b is 2, c is 4...)
+  x Fork compress to code images as a new object in a separated file
  * PR v2.0 beta
   x Add full POP2 support
  * PR v2.0
