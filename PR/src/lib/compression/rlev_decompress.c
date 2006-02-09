@@ -54,7 +54,7 @@ int expandRleC(const unsigned char* input, int inputSize,
 	while (iCursor<inputSize) {
 		rep=(input[iCursor++]);
 printf("o=%d i=%d\n",oCursor,iCursor);
-		if ((oCursor==28800)||(done)||(oCursor%verif)) {
+		if ((done)||(oCursor%verif)) {
 			done=0;
 			if (rep&0x80) { /* repeat */
 				//rep&=~0x80;
@@ -69,20 +69,24 @@ printf("o=%d i=%d\n",oCursor,iCursor);
 				}
 			}
 		} else {
+//printf("aux=%d lineSize=%d (iCursor-aux)=%d\n",aux,lineSize,(iCursor-aux));
 			if (aux)
 				if (lineSize!=(iCursor-aux))
 					printf("Error, line size is wrong: lineSize=%d got=%d\n",lineSize,(iCursor-aux));
 
 			lineSize=rep+256*input[iCursor]+1;
-printf("i=%d o=%d\n",iCursor,oCursor);
+//printf("i=%d aux=%d o=%d\n",iCursor,aux,oCursor);
 			iCursor++;
 			done=1;
 			aux=iCursor;
-			if (oCursor==28800) {
-				printf("error time %02x %02x\n",input[iCursor],input[iCursor+1]);
-				iCursor+=2;
-
-			}
+/*			if (oCursor==28800) {
+				int g;
+				printf("error time: (ls=%d)",lineSize);
+				for (g=-20;g<100;g++)
+					printf(" %02x",input[iCursor+g]);
+				printf("\n");
+				iCursor-=4;
+			}*/
 		}
 
 
