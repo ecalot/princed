@@ -43,64 +43,68 @@ pal.c: Princed Resources : JASC PAL files support
 |                 JASC Palette handling functions               |
 \***************************************************************/
 
-static const char* enter="\r\n";
+/*static const char* enter="\r\n";*/
 
 /* Public functions */
-int mFormatExportPal(const unsigned char* data, char *vFileext,unsigned long int size,int optionflag,const char* backupExtension ) {
-	unsigned char* pal=malloc(256*4+50);
+int mFormatExportPal(const tPalette* p, int bits, char *vFileext, int optionflag, const char* backupExtension) {
+/*	unsigned char* pal=malloc(256*4+50);*/
 	unsigned char* aux=malloc(MAX_FILENAME_SIZE);
+	const tColor* palette;
 	int i;
+	FILE* fd;
 
 	/* Export extra palette information */
-	sprintf((char*)aux,"%s.more",vFileext);
-	writeData(data,1,(char*)aux,size,optionflag,backupExtension);
+	/*sprintf((char*)aux,"%s.more",vFileext);
+	writeData(data,1,(char*)aux,size,optionflag,backupExtension); TODO fix that */
 
-	/* Convert palette from POP format to JASC format */
-	sprintf((char*)pal,"JASC-PAL\r\n%04d\r\n%d\r\n",100,16);
-	for (i=0;i<16;i++) {
-		strcpy((char*)aux,(char*)pal);
-		sprintf((char*)pal,"%s%d %d %d%s",
-			aux,
-			data[(i*3)+5]<<2,
-			data[(i*3)+6]<<2,
-			data[(i*3)+7]<<2,
-			enter
+	/* open file */
+	if (!writeOpen(vFileext,&fd,optionflag)) return 0; /* false */
+
+	/* Convert palette from tPalette format to JASC format */
+	getPalette(p, bits, &palette);
+
+	fprintf(fd,"JASC-PAL\r\n%04d\r\n%d\r\n",100,1<<bits);
+	for (i=0;i<(1<<bits);i++) {
+		fprintf(fd,"%d %d %d\r\n",
+			palette[i].r,
+			palette[i].g,
+			palette[i].b
 		);
 	}
-	for (i=0;pal[i];i++);
-	size=i-1;
+	/*for (i=0;pal[i];i++);
+	size=i-1;*/
 
 	/* save JASC palette */
-	i=writeData(pal,0,vFileext,size,optionflag,backupExtension);
+/*	i=writeData(pal,0,vFileext,size,optionflag,backupExtension);*/
+	writeCloseOk(fd,optionflag,backupExtension);
 
-	free(pal);
+/*	free(pal);*/
 	free(aux);
 	return i;
 }
 
-int mFormatImportPal(tResource *res,const char* vFile) {
-
+int mFormatImportPal(tPalette* p,int* bits, const char* vFile) {
 	/* declare variables */
 	unsigned char* pals;
 	unsigned char* pals1;
-	unsigned char  pals2[]=PAL_SAMPLE;
+	unsigned char  pals2[400]/*PAL_SAMPLE*/;
 	unsigned char  palh [30];
 	unsigned char* pal;
 	unsigned char* pal2;
-	char* data2;
+/*	char* data2;*/
 	char aux[MAX_FILENAME_SIZE];
-	int r;
+/*	int r;
 	int g;
-	int b;
+	int b;*/
 	int i=0;
-	int k=16;
+/*	int k=16;*/
 	int sample1;
 
 	/* check size */
-	if ((res->size)<130) return 0; /* false */
+	/*if ((res->size)<130) return 0; * false */
 
 	/* TODO: fix, pal 256 support. verify JASC pal header */
-	while (palh[i]==(res->data)[i++]);
+	/*while (palh[i]==(res->data)[i++]);*/
 	if (i!=sizeof(palh)) return 0; /* false: palette differs with headers */
 
 	/* Read sample */
@@ -123,22 +127,22 @@ int mFormatImportPal(tResource *res,const char* vFile) {
 	if (sample1) free(pals1);
 
 	/* set current values */
-	data2=strtok((char*)(res->data)+sizeof(palh)-1,enter);
+	/*data2=strtok((char*)(res->data)+sizeof(palh)-1,enter);
 	while (k--) {
-		if (!sscanf(data2,"%d %d %d",&r,&g,&b)) return 0; /* false */
-		/* Those lines mean a loss of data (palette colours are saved in the nearest multiple of 4) */
+		if (!sscanf(data2,"%d %d %d",&r,&g,&b)) return 0; * false *
+		* Those lines mean a loss of data (palette colours are saved in the nearest multiple of 4) *
 		*(pal2++)=(unsigned char)((r+2)>>2);
 		*(pal2++)=(unsigned char)((g+2)>>2);
 		*(pal2++)=(unsigned char)((b+2)>>2);
 		data2=strtok(NULL,enter);
 	}
-
+*/
 	/* save and free palette */
-	res->size=100;
+/*	res->size=100;
 	free(res->data);
 	res->data=pal;
 	mWriteFileInDatFile(res);
-
+*/
 	return 1; /* true */
 }
 

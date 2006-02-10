@@ -72,7 +72,7 @@ int mAddCompiledFileToDatFile(tResource* res,const char* vFile) {
 		case eResTypePcspeaker:
 			return mFormatImportMid(res);
 		case eResTypePalette:
-			return mFormatImportPal(res,vFile);
+			/* return mFormatImportPal(res,vFile); TODO: fix */
 		case eResTypeBinary:
 		default:
 			mWriteFileInDatFile(res);

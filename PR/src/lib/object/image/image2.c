@@ -21,7 +21,7 @@
 /*
 compress.c: Princed Resources : Image Compression Library
 ¯¯¯¯¯¯¯¯¯¯
- Copyright 2003, 2004 Princed Development Team
+ Copyright 2003, 2004, 2005, 2006 Princed Development Team
   Created: 24 Aug 2003
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
@@ -43,8 +43,8 @@ compress.c: Princed Resources : Image Compression Library
  * Definitions:
  *  no compression is called RAW
  *  there are 2 algorithms types: RLE and LZG
- *  we can use the modifier: cmp_transpose and not cmp_transpose (t)
- *  we can use the LZG modifier: Higher (checks more extensively the LZG window
+ *  we can use the modifier: not transposed and transposed (t)
+ *  we can use the LZG modifier: higher (checks more extensively the LZG window
  *   without ignoring less probable patterns) (+)
  *
  *  So the possible compression algorithm variants are:
@@ -101,6 +101,8 @@ int expandLzg(const unsigned char* input, int inputSize,
                unsigned char** output, int *outputSize);
 int expandRle(const unsigned char* input, int inputSize,
                unsigned char** output, int *outputSize);
+int expandRleC(const unsigned char* input, int inputSize,
+               unsigned char** output, int *outputSize,int verif);
 
 /***************************************************************\
 |                   Compression Level Manager                   |
@@ -114,7 +116,7 @@ void setCompressionLevel(int cl) {
 }
 
 /***************************************************************\
-|                        Image cmp_transpose                        |
+|                        Image transpose                        |
 \***************************************************************/
 
 /* Determines where the transposed byte must be saved */
@@ -162,7 +164,7 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 	 * returns the next image address or -1 in case of error
 	 */
 
-	int imageSizeInBytes;
+	int imageSizeInBytes=0;
 	int result;
 
 	data++;
@@ -241,7 +243,7 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	/* COMPRESS_RAW
 	 * The allocation size is the image size.
 	 * The algorithm is hard-coded.
-	 * There is no need to code a cmp_transposed version because
+	 * There is no need to code a transposed version because
 	 * we have no compression to improve.
 	 */
 	compressed[COMPRESS_RAW]=getMemory(imageSizeInBytes);
@@ -355,3 +357,47 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	for (i=COMPRESS_RAW;i<max_alg;i++) free(compressed[i]);
 	return 1; /* true */
 }
+
+void pop2decompress(const char* from, const char* rle, const char* pix) { 
+	/* This function is in an experimental state and hasn't yet been linked to the program */
+	unsigned char* input;
+	unsigned char* output;
+	unsigned char* output2;
+
+	int width;
+	int is,os,os2,os3;
+	int osCheck;
+	FILE* out;
+
+	is=mLoadFileArray(from,&input);
+	if (!is) {
+		printf("Error\n");
+		return;
+	}
+	osCheck=input[7]<<8|input[6];
+
+	printf("w=%d h=%d\n",width=input[3]<<8|input[2],input[1]<<8|input[0]);
+
+
+	out=fopen(rle,"wb");
+	os=osCheck;
+	printf("lzg=%d\n", os3=expandLzg(input+8,is-8,&output,&os));
+	fwrite(output,os,1,out);
+	fclose(out);
+
+	out=fopen(pix,"wb");
+	printf("rle=%d\n", expandRleC(output,os,&output2,&os2,width));
+	fwrite(output2,os2,1,out);
+
+	printf("lzg=%d\n", os3=expandLzg(input+8+is-8-os3+2,os3-2,&output,&os));
+	osCheck=input[7+is-8-os3+2]<<8|input[6+is-8-os3+2];
+
+	printf("rle=%d osCheck=%d\n", expandRleC(output,os,&output2,&os2,width), osCheck);
+	fwrite(output2,os2,1,out);
+
+	fclose(out);
+
+	printf("os=%d oscheck=%d\n",os,osCheck);
+	return;
+}
+

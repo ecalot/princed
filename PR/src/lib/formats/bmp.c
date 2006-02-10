@@ -97,7 +97,7 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	unsigned long int width;
 	const unsigned long int zero=0;
 	char lineSerialization;
-	tColor* palette;
+	const tColor* palette;
 	FILE* bitmap;
 
 	/* open file */

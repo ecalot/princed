@@ -49,7 +49,7 @@ disk.h: Princed Resources : Disk Access & File handling prototypes
 
 /* Path defines */
 #ifndef WIN32
-	#define DIR_SEPARATOR           '/'
+#define DIR_SEPARATOR           '/'
 #else
 	#define DIR_SEPARATOR           '\\'
 #endif

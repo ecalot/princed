@@ -60,12 +60,12 @@ int expandLzg(const unsigned char* input, int inputSize,
 
 	/* main loop */
 	while (iCursor<inputSize&&oCursor<(*outputSize)) {
-printf("i=%d o=%d\n",iCursor,oCursor);
+/*printf("i=%d o=%d\n",iCursor,oCursor);*/
 		maskbyte=input[iCursor++];
 		for (k=8;k&&(iCursor<inputSize);k--) {
 			if (popBit(&maskbyte)) {
 				output[oCursor++]=input[iCursor++]; /* copy input to output */
-printf("%02x ",output[oCursor-1]);
+/*printf("%02x ",output[oCursor-1]);*/
 			} else {
 				/*
 				 * loc:
@@ -83,7 +83,7 @@ printf("%02x ",output[oCursor-1]);
 
 				while (rep--) { /* repeat pattern in output */
 					output[oCursor]=output[oCursor-loc];
-printf("%02x ",output[oCursor]);
+/*printf("%02x ",output[oCursor]);*/
 					oCursor++;
 				}
 			}
@@ -97,7 +97,7 @@ printf("%02x ",output[oCursor]);
 	for(iCursor=LZG_WINDOW_SIZE;iCursor<oCursor;iCursor++)
 		(*output2)[iCursor-LZG_WINDOW_SIZE]=output[iCursor];
 
-printf("oc=%d os=%d ic=%d is=%d\n",oCursor,(*outputSize),iCursor,inputSize);
+/*printf("oc=%d os=%d ic=%d is=%d\n",oCursor,(*outputSize),iCursor,inputSize);*/
 
 	if (oCursor>=(*outputSize)) return inputSize;
 

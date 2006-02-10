@@ -52,26 +52,26 @@ disk.c: Princed Resources : Disk Access & File handling functions
 #endif
 
 #ifndef WIN32
-	#define defmkdir(a) mkdir (a,(mode_t)0755)
+#define defmkdir(a) mkdir (a,(mode_t)0755)
 	/* Recursive directory scanning needs <dirent> for POSIX or "direntwin" for windows */
-	#ifdef DISK_DIR_SCANING
-		#include <dirent.h>
-	#endif
+#ifdef DISK_DIR_SCANING
+#include <dirent.h>
+#endif
 	/* Terminal manipulation for UNIX (to avoid the enter after selecting an option) */
-	#ifdef DISK_TERM_MANIPULATION
-		#include <termios.h>
-		#include <unistd.h>
-		#include <fcntl.h>
-	#endif
-	#define osIndepGetCharacter() getchar()
+#ifdef DISK_TERM_MANIPULATION
+#include <termios.h>
+#include <unistd.h>
+#include <fcntl.h>
+#endif
+#define osIndepGetCharacter() getchar()
 #else
-	#include <direct.h> /* mkdir */
-	#define defmkdir(a) mkdir (a)
-	#ifdef DISK_DIR_SCANING
-		#include "direntwin.h"
-	#endif
-	#include <conio.h> /* getche */
-	#define osIndepGetCharacter() getche()
+#include <direct.h> /* mkdir */
+#define defmkdir(a) mkdir (a)
+#ifdef DISK_DIR_SCANING
+#include "direntwin.h"
+#endif
+#include <conio.h> /* getche */
+#define osIndepGetCharacter() getche()
 #endif
 
 #ifndef DISK_ALLWAYS_FORCE

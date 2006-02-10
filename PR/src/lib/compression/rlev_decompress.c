@@ -40,7 +40,7 @@ rlec_uncompress.c: Princed Resources : Image Compression Library :
 /* Expands RLE algorithm */
 int expandRleC(const unsigned char* input, int inputSize,
                unsigned char** output, int *outputSize,int verif) {
-	register unsigned char rep;
+	register unsigned char rep=0;
 	int oCursor=0;
 	int iCursor=0;
 	int done=0;
@@ -57,7 +57,7 @@ printf("o=%d i=%d\n",oCursor,iCursor);
 		if ((done)||(oCursor%verif)) {
 			done=0;
 			if (rep&0x80) { /* repeat */
-				//rep&=~0x80;
+				/*rep&=~0x80;*/
 				rep-=0x80;
 				rep++;
 				while (rep--) (*output)[oCursor++]=input[iCursor];
@@ -69,13 +69,11 @@ printf("o=%d i=%d\n",oCursor,iCursor);
 				}
 			}
 		} else {
-//printf("aux=%d lineSize=%d (iCursor-aux)=%d\n",aux,lineSize,(iCursor-aux));
 			if (aux)
 				if (lineSize!=(iCursor-aux))
 					printf("Error, line size is wrong: lineSize=%d got=%d\n",lineSize,(iCursor-aux));
 
 			lineSize=rep+256*input[iCursor]+1;
-//printf("i=%d aux=%d o=%d\n",iCursor,aux,oCursor);
 			iCursor++;
 			done=1;
 			aux=iCursor;

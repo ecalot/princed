@@ -37,6 +37,11 @@ autodetect.c: Princed Resources : Automatic detection resource types
 
 #include "autodetect.h"
 
+int isA64kPalette(const unsigned char* d, int s) {
+	while (s--) if (d[s]>>6) return 0; /* false */
+	return 1; /* true */
+}
+
 /***************************************************************\
 |                       Item Type Detector                      |
 \***************************************************************/
@@ -56,8 +61,11 @@ int verifyImageHeader(const unsigned char *array, int size) {
 }
 
 int verifyPaletteHeader(const unsigned char *array, int size) {
-	/* this is only pop2 palette */
-	return ((size==101)&&(!array[2])&&(!array[3])&&(array[4]==0x10));
+	return (
+		((size==101)&&(!array[2])&&(!array[3])&&(array[4]==0x10))
+		||
+		((size==(256*3))&&isA64kPalette(array,size))
+	);
 }
 
 int verifySpeakerHeader(const unsigned char *array, int size) {

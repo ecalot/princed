@@ -37,6 +37,7 @@ palette.c: Princed Resources : The palette object implementation
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "palette.h"
 
 /***************************************************************\
@@ -48,13 +49,13 @@ static tColor sample_pal4[]={{0,0,0},{4,4,4}}; /*SAMPLE_PAL16;*/
 int setPalette(tPalette* p, int bits, tColor* palette) {
 	switch(bits) {
 	case 1:
-		memcpy(p->p1,palette,2);
+		memcpy(p->p1,palette,2*sizeof(tColor));
 		break;
 	case 4:
-		memcpy(p->p4,palette,16);
+		memcpy(p->p4,palette,16*sizeof(tColor));
 		break;
 	case 8:
-		memcpy(p->p8,palette,256);
+		memcpy(p->p8,palette,256*sizeof(tColor));
 		break;
 	default:
 		return -1; /* unsupported bit rate */
@@ -62,16 +63,16 @@ int setPalette(tPalette* p, int bits, tColor* palette) {
 	return 0;
 }
 
-int getPalette(tPalette* p, int bits, tColor** apalette) {
+int getPalette(const tPalette* p, int bits, const tColor** apalette) {
 	switch(bits) {
 	case 1:
-		*apalette=&(p->p1);
+		*apalette=p->p1;
 		break;
 	case 4:
-		*apalette=&(p->p4);
+		*apalette=p->p4;
 		break;
 	case 8:
-		*apalette=&(p->p8);
+		*apalette=p->p8;
 		break;
 	default:
 		return -1; /* unsupported bit rate */
@@ -83,7 +84,7 @@ tPalette createPalette() {
 	tPalette r;
 	int i;
 
-	//Palette 1 bit
+	/* Palette 1 bit */
 	r.p1[0].r=0;
 	r.p1[0].g=0;
 	r.p1[0].b=0;
@@ -91,10 +92,10 @@ tPalette createPalette() {
 	r.p1[1].g=255;
 	r.p1[1].b=255;
 
-	//Palette 4 bits
+	/* Palette 4 bits */
 	memcpy(r.p4, sample_pal4, 16);
 
-	//Palette 8 bits
+	/* Palette 8 bits */
 	for (i=0;i<256;i++) {
 		r.p8[i].r=i;
 		r.p8[i].g=i;
@@ -105,12 +106,42 @@ tPalette createPalette() {
 
 
 /* middle layer */
+#define to8bits_A(a) (((a)<<2)|((a)>>4))
+#define to8bits_B(a) (((a)<<2)         )
+#define to8bits_C(a) (((a)<<2)+2       )
 
 /* reads the information in data and tries to remember it in the palette */
 int readPalette(tPalette* p, unsigned char* data, int dataSize) {
+	tColor c[256];
+	int i,bits=0;
+	*p=createPalette();
+	printf("reading a palette from data (%d)\n",dataSize);
 
+	switch (dataSize) {
+	case 101:
+		for (i=0;i<16;i++) {
+			c[i].r=data[(i*3)+5]<<2;
+			c[i].g=data[(i*3)+6]<<2;
+			c[i].b=data[(i*3)+7]<<2;
+		}
+		bits=4;
+		break;
+	case 3*256:
+		for (i=0;i<256;i++) {
+			c[i].r=data[(i*3)+0]<<2;
+			c[i].g=data[(i*3)+1]<<2;
+			c[i].b=data[(i*3)+2]<<2;
+		}
+		bits=8;
+		break;
+	}
+		
+	if (bits) setPalette(p,bits,c);
+	return bits;
 }
 
 int applyPalette(tPalette* p,tImage *i) {
 	i->pal=*p;
+	return 0;
 }
+

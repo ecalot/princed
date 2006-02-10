@@ -70,9 +70,9 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 #define DATE_MONTHS   "Jan\0Feb\0Mar\0Apr\0May\0Jun\0Jul\0Aug\0Sep\0Oct\0Nov\0Dec"
 
 /* Format stuff */
-#define PLV_HEADER_A           "POP_LVL\x01\x01"
-#define PLV_HEADER_A_SIZE      9
-#define PLV_HEADER_B           "\x09\0\0"
+#define PLV_HEADER_A           "POP_LVL"
+#define PLV_HEADER_A_SIZE      7
+
 #define PLV_HEADER_B_SIZE      4
 
 #define PLV_FOOT_EDITOR        "Editor Name\0PR\0Editor Version\0"PR_VERSION"\0Level Author"

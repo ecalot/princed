@@ -44,7 +44,7 @@ export.c: Princed Resources : DAT Extractor
 #include "disk.h"
 #include "idlist.h"
 #include "memory.h"
-#include "reslist.h" /* resIdcmp, resourceList primitives for the palette */
+#include "pallist.h" 
 #include "unknown.h"
 #include "palette.h"
 
@@ -75,7 +75,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	int                ok;
 	tImage             image; /* this is used to make a persistent palette */
 	unsigned short int numberOfItems;
-	tResourceList      paletteBuffer;
+	tPaletteList       paletteBuffer;
 	tResourceId        bufferedPalette={0,"",0};
 	tResource          res;
 	int                count=0;
@@ -85,9 +85,9 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	ok=1;
 
 	/* initialize palette buffer */
-	paletteBuffer=resourceListCreate(1);
+	paletteBuffer=paletteListCreate();
 	/* initialize the default palette */
-	image.pal=createPalette();
+	image.pal=createPalette(); /* TODO: add the default palette ad 0,"",0 */
 
 	/* main loop */
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
@@ -114,15 +114,18 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 					case eResTypeRaw: /* Raw files */
 						ok=writeData(res.data,1,vFileext,res.size,optionflag,backupExtension); /* Ignore checksum */
 						break;
-					case eResTypePalette: /* save and remember palette file */
+					case eResTypePalette: { /* save and remember palette file */
+						tPaletteListItem e;
 						/* Remember the palette for the next images
 						 * (because it's more probable to get all the images after its palette) */
-						applyPaletteFromData(res.data,res.size,&image);
+						e.bits=readPalette(&e.pal,res.data,res.size);
+						applyPalette(&e.pal,&image);
 						bufferedPalette=res.id;
-						resourceListAdd(&paletteBuffer,&res);
+						e.id=res.id;
+						list_insert(&paletteBuffer,(void*)&e);
 						/* Export the palette */
-						ok=mFormatExportPal(res.data,vFileext,res.size,optionflag,backupExtension);
-						break;
+						ok=mFormatExportPal(&e.pal,e.bits,vFileext,optionflag,backupExtension);
+					}	break;
 					case eResTypePcspeaker: /* save pcs file */
 					case eResTypeMidi:	/* save midi file */
 						ok=mFormatExportMid(res.data,vFileext,res.size,optionflag,backupExtension);
@@ -133,14 +136,17 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 					case eResTypeImage: /* save image */
 						/* Palette handling */
 						if (resourceListCompareId(res.palette,bufferedPalette)) { /* The palette isn't in the buffer */
-							tResource readPalette;
-							readPalette.id=res.palette;
+							tResource otherPalette;
+							otherPalette.id=res.palette;
 							/* Read the palette and load it into memory */
-							if (mReadFileInDatFileId(&readPalette)) {
+							if (mReadFileInDatFileId(&otherPalette)) {
 								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
-								bufferedPalette=readPalette.id;
-								applyPaletteFromData(readPalette.data,readPalette.size,&image);
-								resourceListAdd(&paletteBuffer,&readPalette);
+								tPaletteListItem e;
+								e.bits=readPalette(&e.pal,otherPalette.data,otherPalette.size);
+								applyPalette(&e.pal,&image);
+								bufferedPalette=otherPalette.id;
+								e.id=res.id;
+								list_insert(&paletteBuffer,(void*)&e);
 							} /* else, that's bad, I'll have to use the previous palette, even if it is the default */
 						} /* else, good, the palette is buffered */
 						/* Export bitmap */
@@ -168,7 +174,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	/* Free allocated resources, dynamic strings and the index */
 	resourceListDrop(r);
 	mReadCloseDatFile();
-	resourceListDrop(&paletteBuffer);
+	list_drop(&paletteBuffer);
 
 	/* Close unknownXML */
 	return ok?count:PR_RESULT_ERR_EXTRACTION;

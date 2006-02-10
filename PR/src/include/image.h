@@ -34,7 +34,19 @@ compress.h: Princed Resources : Image compression headers
 #ifndef _COMPRESS_H_
 #define _COMPRESS_H_
 
-#define SIZE_OF_PALETTE 3*16
+typedef struct { /* TODO: move to image.h */
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
+}tColor;
+
+typedef struct {
+	tColor p8[256];
+	tColor p4[16];
+	tColor p1[2];
+}tPalette;
+
+#define SIZE_OF_PALETTE 3*16 /* TODO: erase this line */
 
 #define COMPRESS_RAW    0x00
 #define COMPRESS_RLE_LR 0x01
@@ -48,32 +60,14 @@ compress.h: Princed Resources : Image compression headers
 #define COMPRESS_RESULT_WARNING -1
 #define COMPRESS_RESULT_SUCCESS 0
 
-typedef struct {
+typedef struct { /* TODO: move to image.h */
 	int width;
 	int widthInBytes;
 	int height;
 	unsigned char* pix;
-	unsigned char pal[SIZE_OF_PALETTE];
+	tPalette pal;
 	unsigned char type; /* XY where X=B if 4 bits or X=0 if 1 bit; Y=algorithm */
 }tImage;
-
-#define DEFAULT_PALETTE \
-	"\x00\x00\x00"\
-	"\x00\x00\xa0"\
-	"\x00\xa7\x00"\
-	"\x00\xa7\xa0"\
-	"\xa0\x00\x00"\
-	"\xa0\x00\xa0"\
-	"\xa0\x50\x00"\
-	"\xa0\xa7\xa0"\
-	"\x50\x50\x50"\
-	"\x50\x50\xff"\
-	"\x50\xf8\x50"\
-	"\x50\xf8\xff"\
-	"\xff\x50\x50"\
-	"\xff\x50\xff"\
-	"\xff\xf8\x50"\
-	"\xff\xff\xff"
 
 /* Prototypes */
 
