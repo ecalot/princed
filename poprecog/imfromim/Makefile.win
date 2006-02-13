@@ -1,0 +1,33 @@
+# Project: imfromim
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = imfromim_private.res
+OBJ  = imfromim.o $(RES)
+LINKOBJ  = imfromim.o $(RES)
+LIBS =  -L"d:/devcpp/lib" -lalleg_s -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lole32 -ldinput -lddraw -ldxguid -lwinmm -ldsound  
+INCS =  -I"d:/devcpp/include" 
+CXXINCS =  -I"d:/devcpp/lib/gcc/mingw32/3.4.2/include"  -I"d:/devcpp/include/c++/3.4.2/backward"  -I"d:/devcpp/include/c++/3.4.2/mingw32"  -I"d:/devcpp/include/c++/3.4.2"  -I"d:/devcpp/include" 
+BIN  = imfromim.exe
+CXXFLAGS = $(CXXINCS) -DALLEGRO_STATICLINK  
+CFLAGS = $(INCS) -DALLEGRO_STATICLINK  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before imfromim.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "imfromim.exe" $(LIBS)
+
+imfromim.o: imfromim.cpp
+	$(CPP) -c imfromim.cpp -o imfromim.o $(CXXFLAGS)
+
+imfromim_private.res: imfromim_private.rc 
+	$(WINDRES) -i imfromim_private.rc --input-format=rc -o imfromim_private.res -O coff 
