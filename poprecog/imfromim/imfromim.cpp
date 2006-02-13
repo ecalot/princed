@@ -1,3 +1,5 @@
+/* Program zacz¹³em pisaæ 2006.02.12 */
+
 #include<allegro.h>
 #include<stdio.h>
 #include<vector.h>
