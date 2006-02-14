@@ -86,23 +86,7 @@ compress.c: Princed Resources : Image Compression Library
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
 
-/***************************************************************\
-|                Internal compression prototypes                |
-\***************************************************************/
-
-/* compress and sets the bytes */
-void compressLzg(const unsigned char* input, int inputSize,
-                 unsigned char* output, int *outputSize);
-void compressRle(const unsigned char* input, int inputSize,
-                 unsigned char* output, int *outputSize);
-
-/* decompress and allocates output */
-int expandLzg(const unsigned char* input, int inputSize,
-               unsigned char** output, int *outputSize);
-int expandRle(const unsigned char* input, int inputSize,
-               unsigned char** output, int *outputSize);
-int expandRleC(const unsigned char* input, int inputSize,
-               unsigned char** output, int *outputSize,int verif);
+int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize); 
 
 /***************************************************************\
 |                   Compression Level Manager                   |
@@ -173,14 +157,27 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 	image->width =array2short(data);
 	data+=2;
 
-	if (*(data++)) return COMPRESS_RESULT_FATAL; /* Verify format */
+	if (*(data++)>1) return COMPRESS_RESULT_FATAL; /* Verify format */
 	image->type=(unsigned char)(*(data++));
 	dataSizeInBytes-=7;
-	if (image->type&0xB0) {
+	switch (((image->type>>4)&7)+1) {
+	case 8:
+		image->widthInBytes=(image->width);
+		break;
+	case 4: 
 		image->widthInBytes=(image->width+1)/2;
-	} else {
+		break;
+	case 1:
 		image->widthInBytes=(image->width+7)/8;
+		break;
+	default:
+		return COMPRESS_RESULT_FATAL;
 	}
+
+	/* special format has a special function */
+	if (image->type==0xf3)
+		return pop2decompress(data,dataSizeInBytes-6,image->width,&(image->pix),&imageSizeInBytes);
+
 
 #define checkSize if (imageSizeInBytes!=(image->widthInBytes*image->height))\
 	return COMPRESS_RESULT_FATAL
@@ -358,46 +355,31 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	return 1; /* true */
 }
 
-void pop2decompress(const char* from, const char* rle, const char* pix) { 
+int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize) { 
 	/* This function is in an experimental state and hasn't yet been linked to the program */
-	unsigned char* input;
-	unsigned char* output;
-	unsigned char* output2;
+	unsigned char* tempOutput;
 
-	int width;
-	int is,os,os2,os3;
+	int tempOutputSize;
 	int osCheck;
-	FILE* out;
 
-	is=mLoadFileArray(from,&input);
-	if (!is) {
-		printf("Error\n");
-		return;
-	}
-	osCheck=input[7]<<8|input[6];
+	osCheck=array2short(input)-6;
+	input+=2;
 
-	printf("w=%d h=%d\n",width=input[3]<<8|input[2],input[1]<<8|input[0]);
+	/*os=osCheck;*/
+	tempOutputSize=0;
+	printf("lzg=%d is=%d osc=%d\n", expandLzg(input,inputSize-2,&tempOutput,&tempOutputSize),inputSize,osCheck);
 
-
-	out=fopen(rle,"wb");
-	os=osCheck;
-	printf("lzg=%d\n", os3=expandLzg(input+8,is-8,&output,&os));
-	fwrite(output,os,1,out);
-	fclose(out);
-
-	out=fopen(pix,"wb");
-	printf("rle=%d\n", expandRleC(output,os,&output2,&os2,width));
-	fwrite(output2,os2,1,out);
-
+	printf("rle=%d\n", expandRleC(tempOutput,tempOutputSize,output,outputSize,verify));
+/*
 	printf("lzg=%d\n", os3=expandLzg(input+8+is-8-os3+2,os3-2,&output,&os));
 	osCheck=input[7+is-8-os3+2]<<8|input[6+is-8-os3+2];
 
-	printf("rle=%d osCheck=%d\n", expandRleC(output,os,&output2,&os2,width), osCheck);
+	printf("rle=%d osCheck=%d\n", expandRleC(output,os,&output2,&os2,verify), osCheck);
 	fwrite(output2,os2,1,out);
 
 	fclose(out);
 
-	printf("os=%d oscheck=%d\n",os,osCheck);
-	return;
+	printf("os=%d oscheck=%d\n",os,osCheck);*/
+	return COMPRESS_RESULT_SUCCESS;
 }
 

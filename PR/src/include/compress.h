@@ -66,7 +66,7 @@ typedef struct { /* TODO: move to image.h */
 	int height;
 	unsigned char* pix;
 	tPalette pal;
-	unsigned char type; /* XY where X=B if 4 bits or X=0 if 1 bit; Y=algorithm */
+	unsigned char type; /* XY where X is F for 8 bits, B for 4 bits and 0 for 1 bit; Y=algorithm */
 }tImage;
 
 /* Prototypes */
@@ -79,7 +79,27 @@ int mExpandGraphic  (const unsigned char* array,tImage *image, int size);
 #define setHigh   compressionHigher=1
 #define unsetHigh compressionHigher=0
 
-#define getCarry(a) ((a)>>6)
-#define getAlgor(a) a&0x4F
+#define getCarry(a) ((((a)>>4)&7)+1)
+#define getAlgor(a) a&0x4F /* 0x0F */
+
+/* private declarations */
+
+/***************************************************************\
+|                Internal compression prototypes                |
+\***************************************************************/
+
+/* compress and sets the bytes */
+void compressLzg(const unsigned char* input, int inputSize,
+                 unsigned char* output, int *outputSize);
+void compressRle(const unsigned char* input, int inputSize,
+                 unsigned char* output, int *outputSize);
+
+/* decompress and allocates output */
+int expandLzg(const unsigned char* input, int inputSize,
+               unsigned char** output, int *outputSize);
+int expandRle(const unsigned char* input, int inputSize,
+               unsigned char** output, int *outputSize);
+int expandRleC(const unsigned char* input, int inputSize,
+               unsigned char** output, int *outputSize,int verif);
 
 #endif

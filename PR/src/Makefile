@@ -53,8 +53,8 @@ endif
 
 ACTIONS  = .import.o .export.o .classify.o
 XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
-COMPRESS = .compress.o .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o 
-LAYERS   = .dat.o .memory.o .list.o .reslist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o
+COMPRESS = .compress.o .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o .rlec_uncompress.o 
+LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o .palette.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
 CONSOLE  = .main.o .filedir.o
 MAIN     = .pr.o
@@ -153,6 +153,10 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling resource list module...
 	$(CC) $(OPTIONS) -c lib/layers/reslist.c -o $@
 
+.pallist.o: lib/layers/pallist.c include/memory.h include/pallist.h
+	$(INFO) Compiling palette list module...
+	$(CC) $(OPTIONS) -c lib/layers/pallist.c -o $@
+
 .compress.o: lib/compression/main.c include/compress.h include/disk.h include/memory.h
 	$(INFO) Compiling main compression library...
 	$(CC) $(OPTIONS) -c lib/compression/main.c -o $@
@@ -172,6 +176,10 @@ $(XMLFILE): xml/resources.xml
 .rle_uncompress.o: lib/compression/rle_uncompress.c include/compress.h
 	$(INFO) Compiling RLE uncompression module...
 	$(CC) $(OPTIONS) -c lib/compression/rle_uncompress.c -o $@
+
+.rlec_uncompress.o: lib/compression/rlec_uncompress.c include/compress.h
+	$(INFO) Compiling RLEC uncompression module...
+	$(CC) $(OPTIONS) -c lib/compression/rlec_uncompress.c -o $@
 
 .pr.o: lib/pr.c include/classify.h include/common.h include/disk.h include/export.h include/idlist.h include/import.h include/memory.h include/unknown.h
 	$(INFO) Compiling main library primitives for both modes...
@@ -208,6 +216,10 @@ $(XMLFILE): xml/resources.xml
 .stringformat.o: lib/layers/stringformat.c include/common.h
 	$(INFO) Compiling unknown string format parsing feature...
 	$(CC) $(OPTIONS) -c lib/layers/stringformat.c -o $@
+
+.palette.o: lib/layers/palette.c include/common.h
+	$(INFO) Compiling the palette object support...
+	$(CC) $(OPTIONS) -c lib/layers/palette.c -o $@
 
 .resourcematch.o: lib/layers/resourcematch.c include/search.h include/memory.h include/resourcematch.h
 	$(INFO) Compiling resource list parsing feature...

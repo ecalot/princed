@@ -106,7 +106,7 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	/* initialize variables */
 	width=img.width;
 	height=img.height;
-	bits=1<<getCarry(img.type);
+	bits=getCarry(img.type);
 	colours=1<<bits;
 	headerSize=40;
 	offset=54+(colours<<2);

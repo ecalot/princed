@@ -52,10 +52,11 @@ int verifyLevelHeader(const unsigned char *array, int size) {
 
 int verifyImageHeader(const unsigned char *array, int size) {
 	unsigned char imageBitRate;
-	imageBitRate=((unsigned char)array[6]&0xF0);
-	return (size>7) && (!array[5]) && ((imageBitRate==0xB0));
+	if (size<=7) return 0; /* false */
+	imageBitRate=(( ((unsigned char)array[6])>>4 ) & 7)+1;
+	return (size>7) && (((unsigned char)array[5])<2) && ((imageBitRate==4 || imageBitRate==8));
 	/* NOTE:
-	 * return (size>7) && (!array[5]) && ((imageBitRate==0xB0)||(imageBitRate==0x00));
+	 *   imageBitRate==1
 	 * works for monochrome images (but is very common and matches more than that)
 	 */
 }
