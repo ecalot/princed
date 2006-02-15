@@ -65,7 +65,7 @@ int verifyPaletteHeader(const unsigned char *array, int size) {
 	return (
 		((size==101)&&(!array[2])&&(!array[3])&&(array[4]==0x10))
 		||
-		((size==(256*3))&&isA64kPalette(array,size))
+		((size==(256*3+1)||size==(320*3+1))&&isA64kPalette(array+1,size-1))
 	);
 }
 

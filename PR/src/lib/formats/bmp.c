@@ -33,11 +33,12 @@ bmp.c: Princed Resources : BMP file support
 */
 
 #include "bmp.h"
-#include "palette.h"
 #include "common.h"
+#include "compress.h"
 #include "dat.h"
 #include "disk.h"
 #include "memory.h"
+#include "palette.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

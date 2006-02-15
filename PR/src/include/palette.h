@@ -34,7 +34,7 @@ pal.h: Princed Resources : JASC PAL files support headers
 #ifndef _PALETTE_H_
 #define _PALETTE_H_
 
-#include "compress.h" /* tPalette, tImage */
+#include "image.h" /* tPalette, tImage */
 
 #define SAMPLE_PAL16 {\
 	{0x00,0x00,0x00},\

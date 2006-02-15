@@ -47,7 +47,7 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 
 /* User configuration defines */
 #ifndef WIN32
- #define UNIX
+#define UNIX
 #endif
 
 #ifdef WIN32
@@ -138,7 +138,8 @@ typedef enum {
 |                   Command Line specific options               |
 \***************************************************************/
 
-#define PR_IGNORE_RAW_OPTION
+/*#define PR_IGNORE_RAW_OPTION*/
+#define DEBUG_RESPRINT
 
 #ifndef PR_IGNORE_RAW_OPTION
 #define PARSING_OPTRAW ,{"raw",         no_argument,       0,'w'},

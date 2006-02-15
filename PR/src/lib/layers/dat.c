@@ -111,7 +111,7 @@ void dat_datIndexToHuman(char* to, const char* from) {
 	to[1]=from[2];
 	to[2]=from[1];
 	to[3]=from[0];
-	to[5]=0;
+	to[4]=0;
 
 	/* shift */
 	if (to[0]||to[1]||to[2]||to[3])

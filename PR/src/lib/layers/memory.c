@@ -58,7 +58,7 @@ char* strToLower(const char* txt) {
 	static char ret[5];
 	char* r=ret;
 	while (*txt) {
-		*r=(('A'<=(*txt)) && ((*txt)<='Z'))?(*txt)|0x20:*txt;
+		*r=(((unsigned char)'A'<=(unsigned char)(*txt)) && ((unsigned char)(*txt)<=(unsigned char)'Z'))?(*txt)|0x20:*txt;
 		r++;
 		txt++;
 	}

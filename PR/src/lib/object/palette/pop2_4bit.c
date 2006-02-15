@@ -116,6 +116,7 @@ int readPalette(tPalette* p, unsigned char* data, int dataSize) {
 	int i,bits=0;
 	*p=createPalette();
 	printf("reading a palette from data (%d)\n",dataSize);
+	/* TODO: validate checksum */
 
 	switch (dataSize) {
 	case 101:
@@ -126,11 +127,12 @@ int readPalette(tPalette* p, unsigned char* data, int dataSize) {
 		}
 		bits=4;
 		break;
-	case 3*256:
+	case 3*256+1:
+	case 3*320+1:
 		for (i=0;i<256;i++) {
-			c[i].r=data[(i*3)+0]<<2;
-			c[i].g=data[(i*3)+1]<<2;
-			c[i].b=data[(i*3)+2]<<2;
+			c[i].r=data[(i*3)+1]<<2;
+			c[i].g=data[(i*3)+2]<<2;
+			c[i].b=data[(i*3)+3]<<2;
 		}
 		bits=8;
 		break;

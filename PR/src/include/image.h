@@ -19,9 +19,9 @@
 */
 
 /*
-compress.h: Princed Resources : Image compression headers
-¯¯¯¯¯¯¯¯¯¯
- Copyright 2003 Princed Development Team
+image.h: Princed Resources : Image handling headers
+¯¯¯¯¯¯¯
+ Copyright 2003, 2004, 2005, 2006 Princed Development Team
   Created: 24 Aug 2003
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
@@ -31,10 +31,10 @@ compress.h: Princed Resources : Image compression headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _COMPRESS_H_
-#define _COMPRESS_H_
+#ifndef _IMAGE_H_
+#define _IMAGE_H_
 
-typedef struct { /* TODO: move to image.h */
+typedef struct { 
 	unsigned char r;
 	unsigned char g;
 	unsigned char b;
@@ -46,21 +46,7 @@ typedef struct {
 	tColor p1[2];
 }tPalette;
 
-#define SIZE_OF_PALETTE 3*16 /* TODO: erase this line */
-
-#define COMPRESS_RAW    0x00
-#define COMPRESS_RLE_LR 0x01
-#define COMPRESS_RLE_UD 0x02
-#define COMPRESS_LZG_LR 0x03
-#define COMPRESS_LZG_UD 0x04
-
-#define COMPRESS_WORKING_ALGORITHMS 5
-
-#define COMPRESS_RESULT_FATAL   -2
-#define COMPRESS_RESULT_WARNING -1
-#define COMPRESS_RESULT_SUCCESS 0
-
-typedef struct { /* TODO: move to image.h */
+typedef struct { 
 	int width;
 	int widthInBytes;
 	int height;
@@ -74,12 +60,7 @@ typedef struct { /* TODO: move to image.h */
 int mCompressGraphic(unsigned char** a,tImage* i, int* size);
 int mExpandGraphic  (const unsigned char* array,tImage *image, int size);
 
-#define cLevel(a) if (compressionLevel>=a)
-#define cHigh     if (compressionHigher)
-#define setHigh   compressionHigher=1
-#define unsetHigh compressionHigher=0
-
-#define getCarry(a) ((a)>>6)
+#define getCarry(a) ((((a)>>4)&7)+1)
 #define getAlgor(a) a&0x4F
 
 #endif

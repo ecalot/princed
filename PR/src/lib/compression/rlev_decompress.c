@@ -22,7 +22,7 @@
 rlec_uncompress.c: Princed Resources : Image Compression Library :
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯  Run length encoding with checksum decompressor
 
- Copyright 2003, 2004 Princed Development Team
+ Copyright 2003, 2004, 2005, 2006 Princed Development Team
   Created: 24 Aug 2003
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
@@ -53,7 +53,7 @@ int expandRleC(const unsigned char* input, int inputSize,
 	/* main loop */
 	while (iCursor<inputSize) {
 		rep=(input[iCursor++]);
-printf("o=%d i=%d\n",oCursor,iCursor);
+/*printf("o=%d i=%d\n",oCursor,iCursor);*/
 		if ((done)||(oCursor%verif)) {
 			done=0;
 			if (rep&0x80) { /* repeat */
@@ -90,7 +90,7 @@ printf("o=%d i=%d\n",oCursor,iCursor);
 
 
 	}
-printf("done=%d i=%d but=%d\n",done,iCursor,inputSize);
+/*printf("done=%d i=%d but=%d\n",done,iCursor,inputSize);*/
 	*outputSize=oCursor;
 	return (rep==1)?COMPRESS_RESULT_SUCCESS:COMPRESS_RESULT_WARNING;
 }

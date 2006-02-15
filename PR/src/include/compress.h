@@ -19,7 +19,7 @@
 */
 
 /*
-compress.h: Princed Resources : Image compression headers
+compress.h: Princed Resources : Compression headers
 ¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -34,20 +34,6 @@ compress.h: Princed Resources : Image compression headers
 #ifndef _COMPRESS_H_
 #define _COMPRESS_H_
 
-typedef struct { /* TODO: move to image.h */
-	unsigned char r;
-	unsigned char g;
-	unsigned char b;
-}tColor;
-
-typedef struct {
-	tColor p8[256];
-	tColor p4[16];
-	tColor p1[2];
-}tPalette;
-
-#define SIZE_OF_PALETTE 3*16 /* TODO: erase this line */
-
 #define COMPRESS_RAW    0x00
 #define COMPRESS_RLE_LR 0x01
 #define COMPRESS_RLE_UD 0x02
@@ -60,27 +46,12 @@ typedef struct {
 #define COMPRESS_RESULT_WARNING -1
 #define COMPRESS_RESULT_SUCCESS 0
 
-typedef struct { /* TODO: move to image.h */
-	int width;
-	int widthInBytes;
-	int height;
-	unsigned char* pix;
-	tPalette pal;
-	unsigned char type; /* XY where X is F for 8 bits, B for 4 bits and 0 for 1 bit; Y=algorithm */
-}tImage;
-
 /* Prototypes */
-
-int mCompressGraphic(unsigned char** a,tImage* i, int* size);
-int mExpandGraphic  (const unsigned char* array,tImage *image, int size);
 
 #define cLevel(a) if (compressionLevel>=a)
 #define cHigh     if (compressionHigher)
 #define setHigh   compressionHigher=1
 #define unsetHigh compressionHigher=0
-
-#define getCarry(a) ((((a)>>4)&7)+1)
-#define getAlgor(a) a&0x4F /* 0x0F */
 
 /* private declarations */
 
