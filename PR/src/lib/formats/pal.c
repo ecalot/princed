@@ -83,7 +83,7 @@ int mFormatExportPal(const tPalette* p, int bits, char *vFileext, int optionflag
 	return i;
 }
 
-int mFormatImportPal(tPalette* p,int* bits, const char* vFile) {
+int mFormatImportPal(tPalette* p, int* bits, const char* vFile) {
 	/* declare variables */
 	unsigned char* pals;
 	unsigned char* pals1;

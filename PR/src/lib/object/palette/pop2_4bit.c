@@ -39,6 +39,9 @@ palette.c: Princed Resources : The palette object implementation
 #include <string.h>
 #include <stdio.h>
 #include "palette.h"
+#include "memory.h"
+
+void addPop1Raw(tPalette* p,unsigned char* data, int dataSize);
 
 /***************************************************************\
 |                         Palette Object                        |
@@ -101,6 +104,9 @@ tPalette createPalette() {
 		r.p8[i].g=i;
 		r.p8[i].b=i;
 	}
+
+	/* initialize the rest */
+	r.pop1raw=NULL;
 	return r;
 }
 
@@ -126,6 +132,8 @@ int readPalette(tPalette* p, unsigned char* data, int dataSize) {
 			c[i].b=data[(i*3)+7]<<2;
 		}
 		bits=4;
+		/* this palette needs to be remembered as binary */
+		addPop1Raw(p,data+1,dataSize-1);
 		break;
 	case 3*256+1:
 	case 3*320+1:
@@ -145,5 +153,11 @@ int readPalette(tPalette* p, unsigned char* data, int dataSize) {
 int applyPalette(tPalette* p,tImage *i) {
 	i->pal=*p;
 	return 0;
+}
+
+void addPop1Raw(tPalette* p,unsigned char* data, int dataSize) {
+	freeAllocation(p->pop1raw);
+	p->pop1raw=binaryallocandcopy(data,dataSize);
+	p->pop1rawSize=dataSize;
 }
 

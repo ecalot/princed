@@ -44,6 +44,14 @@ char* strallocandcopy(const char* text) {
 	return aux;
 }
 
+unsigned char* binaryallocandcopy(const unsigned char* bin,int size) {
+	unsigned char* aux;
+	if (bin==NULL) return NULL;
+	aux=(unsigned char*)malloc(size);
+	if (aux) memcpy(aux,bin,size);
+	return aux;
+}
+
 void str5lowercpy (char* dst,const char* src) {
 	int i;
 	for (i=0;(i<4)&&(*src);i++) {

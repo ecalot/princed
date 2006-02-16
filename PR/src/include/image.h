@@ -44,6 +44,8 @@ typedef struct {
 	tColor p8[256];
 	tColor p4[16];
 	tColor p1[2];
+	unsigned char* pop1raw;
+	int pop1rawSize;
 }tPalette;
 
 typedef struct { 

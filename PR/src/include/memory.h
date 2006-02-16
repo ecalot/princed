@@ -38,6 +38,7 @@ memory.h: Princed Resources : Memory handling & comparison prototypes
 
 #define getMemory(size) ((unsigned char*)malloc(size))
 char* strallocandcopy(const char* text);
+unsigned char* binaryallocandcopy(const unsigned char* bin,int size);
 #define freeAllocation(m) if ((m)!=NULL) free(m)
 
 #define ptoi(p) ((p!=NULL)?atoi(p):0)
