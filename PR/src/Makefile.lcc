@@ -196,10 +196,6 @@ reslist.obj: lib\layers\reslist.c
 	$(INFO) Compiling resource list module...
 	$(CC) $(OPTIONS) -c lib\layers\reslist.c
 
-translate.obj: lib\xml\translate.c include\translate.h
-	$(INFO) Compiling array tranlation features...
-	$(CC) $(OPTIONS) -c lib\xml\translate.c
-
 stringformat.obj: lib\layers\stringformat.c include\common.h
 	$(INFO) Compiling unknown string format parsing feature...
 	$(CC) $(OPTIONS) -c lib\layers\stringformat.c
