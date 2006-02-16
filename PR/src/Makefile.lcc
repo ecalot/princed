@@ -39,8 +39,8 @@ FILES    = import.obj export.obj idlist.obj autodetect.obj classify.obj disk.obj
            dat.obj bmp.obj mid.obj pal.obj wav.obj plv.obj\
            memory.obj pr.obj list.obj reslist.obj stringformat.obj resourcematch.obj palette.obj
 
-XML      = parse.obj search.obj unknown.obj tree.obj
-COMPRESS = compress.obj lzg_compress.obj lzg_uncompress.obj rle_compress.obj rle_uncompress.obj 
+XML      = parse.obj search.obj unknown.obj tree.obj translate.obj
+COMPRESS = compress.obj lzg_compress.obj lzg_uncompress.obj rle_compress.obj rle_uncompress.obj rlec_uncompress.obj
 CONSOLE  = main.obj filedir.obj
 
 EXEOBJ   = $(FILES) $(XML) $(COMPRESS) $(CONSOLE) $(PORTS)
@@ -128,6 +128,10 @@ rle_uncompress.obj: lib\compression\rle_uncompress.c
 	$(INFO) Compiling RLE uncompression module...
 	$(CC) $(OPTIONS) -c lib\compression\rle_uncompress.c
 
+rlec_uncompress.obj: lib\compression\rlec_uncompress.c include\compress.h
+	$(INFO) Compiling RLEC uncompression module...
+	$(CC) $(OPTIONS) -c lib\compression\rlec_uncompress.c
+
 main.obj: console\main.c
 	$(INFO) Compiling command parsing module for standard mode...
 	$(CC) $(OPTIONS) -c console\main.c
@@ -163,6 +167,10 @@ parse.obj: lib\xml\parse.c
 search.obj: lib\xml\search.c
 	$(INFO) Compiling XML search features...
 	$(CC) $(OPTIONS) -c lib\xml\search.c
+
+translate.obj: lib\xml\translate.c include\translate.h
+	$(INFO) Compiling array tranlation features...
+	$(CC) $(OPTIONS) -c lib\xml\translate.c
 
 autodetect.obj: lib\layers\autodetect.c include\autodetect.h
 	$(INFO) Compiling resource autodetection module...
