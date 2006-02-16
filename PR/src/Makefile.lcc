@@ -37,7 +37,7 @@ LINKERRELEASE = -s
 
 FILES    = import.obj export.obj idlist.obj autodetect.obj classify.obj disk.obj\
            dat.obj bmp.obj mid.obj pal.obj wav.obj plv.obj\
-           memory.obj pr.obj list.obj reslist.obj stringformat.obj resourcematch.obj palette.obj
+           memory.obj pr.obj list.obj reslist.obj stringformat.obj resourcematch.obj palette.obj pallist.obj
 
 XML      = parse.obj search.obj unknown.obj tree.obj translate.obj
 COMPRESS = compress.obj lzg_compress.obj lzg_uncompress.obj rle_compress.obj rle_uncompress.obj rlec_uncompress.obj
@@ -195,6 +195,10 @@ list.obj: lib\layers\list.c
 reslist.obj: lib\layers\reslist.c
 	$(INFO) Compiling resource list module...
 	$(CC) $(OPTIONS) -c lib\layers\reslist.c
+
+pallist.obj: lib\layers\pallist.c include\memory.h include\pallist.h
+	$(INFO) Compiling palette list module...
+	$(CC) $(OPTIONS) -c lib\layers\pallist.c
 
 stringformat.obj: lib\layers\stringformat.c include\common.h
 	$(INFO) Compiling unknown string format parsing feature...
