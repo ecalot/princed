@@ -2,39 +2,28 @@
 # Programs #
 ############
 
-CC         = @gcc
-LINKER     = @ld
+CC         = @lc
+LINKER     = @lcclnk
 INFO       = @echo
-MAKEDIR    = @mkdir -p
-REMOVER    = @rm -f
+MAKEDIR    = @mkdir
+REMOVER    = @del
 GZIP       = @gzip
-COPY       = @ln -f
 
 #####################
 # Operating Systems #
 #####################
 
-OS      := $(shell uname)
-ifeq ($(OS),Linux)
-  LINUX = -DLINUX
-  OS    = GNU\Linux
-  PORTS =
-else
-  LINUX = -DNOLINUX
-  PORTS = .getopt.obj .getopt1.obj
-	ifeq ($(OS),Darwin)
-		LINUX = -DNOLINUX -DMACOS
-	endif
-endif
+OS    = Win32
+LINUX = -DNOLINUX
+PORTS = getopt.obj getopt1.obj dirent.obj
 
 ####################
 # Compiler options #
 ####################
 
 #Libraries: include path and linked libs
-INCLUDE       = -Iinclude\
-LIBS          = 
-DEFINES       = -DOS=\"$(OS)\" $(LINUX)
+INCLUDE       = -Iinclude\\
+DEFINES       = $(LINUX)
 
 #Release type
 TYPE          = Debug
@@ -43,13 +32,8 @@ TYPE          = Debug
 #  -O2                             for release
 # LINKERRELEASE may be:
 #  -s                              for release
-ifeq ($(TYPE),Debug)
-  RELEASE       = -g -Wall -pedantic 
-  LINKERRELEASE =
-else
-  RELEASE       = -O2 
-  LINKERRELEASE = -s
-endif
+RELEASE       = -ansic
+LINKERRELEASE = -s
 
 ACTIONS  = .import.obj .export.obj .classify.obj
 XML      = .parse.obj .search.obj .unknown.obj .translate.obj .tree.obj
@@ -62,14 +46,15 @@ MAIN     = .pr.obj
 EXEOBJ   = $(MAIN) $(XML) $(COMPRESS) $(ACTIONS) $(LAYERS) $(FORMAT) $(PORTS) $(CONSOLE)
 LIBOBJ   = $(MAIN) $(XML) $(COMPRESS) $(ACTIONS) $(LAYERS) $(FORMAT) $(PORTS)
 
-EXEFILE  = bin\pr
+EXEFILE  = bin\pr.exe
+DLLFILE  = bin\pr.dll
 XMLFILE  = bin\resources.xml
 
 ADDONS   = .python.obj
 
 #Use this to temporary remove an option
 OPTIONS       = $(INCLUDE) $(DEFINES) $(RELEASE)
-LINKEROPTIONS = $(LINKERRELEASE) $(LIBS)
+LINKEROPTIONS = $(LINKERRELEASE)
 
 #main file
 
@@ -91,9 +76,11 @@ clean:
 
 cleanxml:
 	$(INFO) Erasing xml file...
-	$(REMOVER) $(XMLFILE)
+	$(REMOVER) *.obj
+	$(REMOVER) $(EXEFILE)
 
-build: clean bin\pr
+
+build: clean all
 
 all: $(EXEFILE)
 
