@@ -35,8 +35,13 @@ object.h: Princed Resources : Main item class types and prototypes
 
 #include "reslist.h"
 #include "common.h"
+#include "image.h"
 
 tObject getObject(tResource* r, int* error);
 int writeObject(tObject o, const char* file, int optionflag, const char* backupExtension);
+
+int paletteGetBits(tObject pal);
+int paletteGetColors(tObject pal);
+tColor* paletteGetColorArray(tObject pal);
 
 #endif

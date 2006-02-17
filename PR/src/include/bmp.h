@@ -45,4 +45,6 @@ int mFormatImportBmp(tResource *res);
 int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupExtension);
 int mReadBitMap(tImage* img,unsigned char* data, int size); /* Note: this will ignore the palette */
 
+int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits, int colors, tColor* colorArray, int lineWidth, int optionflag, const char* backupExtension);
+
 #endif

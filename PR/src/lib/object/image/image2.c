@@ -40,6 +40,7 @@ image.c: Princed Resources : Image Compression Library
 #include "memory.h"
 #include "disk.h" /* array2short */
 #include "dat.h"
+#include "object.h" /* paletteGet* */
 
 #include "bmp.h"
 
@@ -401,20 +402,36 @@ void* objImageCreate(unsigned char* data, int size, tObject palette, int *error)
 	 */
 
 	tImage* image;
+	int bits;
 	image=(tImage*)malloc(sizeof(tImage));
 
 	/* Expand graphic and check results */
 	*error=mExpandGraphic(data,image,size);
 /*	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
 		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);*/
-	if (*error==COMPRESS_RESULT_FATAL) return NULL;
+	if (*error==COMPRESS_RESULT_FATAL) {
+		free(image);
+		return NULL;
+	}
 
+	bits=paletteGetBits(image->pal);
+	if (bits!=getCarry(image->type)) printf("error, palette mismatch\n");
+	
 	return (void*)image;
 }
 
 int objImageWrite(void* img,const char* file,int optionflag,const char* backupExtension) {
+	tImage* i=img;
+	int bits;
+	int colors;
+	tColor* colorArray;
+
+	bits=paletteGetBits(i->pal);
+	colors=paletteGetColors(i->pal);
+	colorArray=paletteGetColorArray(i->pal);
+	
 	/* Write bitmap */
-	return mWriteBitMap(*((tImage*)img),file,optionflag,backupExtension);
+	return mWriteBmp(file,i->pix,i->width,i->height,bits,colors,colorArray,i->widthInBytes,optionflag,backupExtension);
 }
 
 void objImageFree(void* img) {

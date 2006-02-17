@@ -135,7 +135,7 @@ int readPalette(tPalette* p, unsigned char* data, int dataSize) {
 		}
 		bits=4;
 		/* this palette needs to be remembered as binary */
-		addPop1Raw(p,data+1,dataSize-1);
+		/*addPop1Raw(p,data+1,dataSize-1);*/
 		break;
 	case 3*256+1:
 	case 3*320+1:
@@ -151,7 +151,7 @@ int readPalette(tPalette* p, unsigned char* data, int dataSize) {
 	if (bits) setPalette(p,bits,c);
 	return bits;
 }
-
+/*
 int applyPalette(tPalette* p,tImage *i) {
 	i->pal=*p;
 	return 0;
@@ -162,7 +162,7 @@ void addPop1Raw(tPalette* p,unsigned char* data, int dataSize) {
 	p->pop1raw=binaryallocandcopy(data,dataSize);
 	p->pop1rawSize=dataSize;
 }
-
+*/
 
 typedef struct { 
 	tColor c[16];

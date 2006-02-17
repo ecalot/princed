@@ -43,11 +43,10 @@ bmp.c: Princed Resources : BMP file support
 #include <stdlib.h>
 #include <string.h>
 
-int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupExtension) {
+int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits, int colors, tColor* colorArray, int lineWidth, int optionflag, const char* backupExtension) {
 
 	/* declare variables */
 	int a;
-	unsigned short int bits;
 	unsigned short int planes=1;
 	unsigned long int colours;
 	unsigned long int extra=1000;
@@ -59,21 +58,20 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	unsigned long int width;
 	const unsigned long int zero=0;
 	char lineSerialization;
-	const tColor* palette;
 	FILE* bitmap;
 
 	/* open file */
-	if (!writeOpen(vFile,&bitmap,optionflag)) return 0; /* false */
+	if (!writeOpen(file,&bitmap,optionflag)) return 0; /* false */
 
 	/* initialize variables */
-	width=img.width;
+/*	width=img.width;
 	height=img.height;
 	bits=getCarry(img.type);
-	colours=1<<bits;
+	colours=1<<bits;*/
 	headerSize=40;
-	offset=54+(colours<<2);
-	lineSerialization=(-img.widthInBytes)&3;
-	filesize=offset+(img.widthInBytes+lineSerialization)*height;
+	offset=54+(colors<<2);
+	lineSerialization=(-lineWidth)&3;
+	filesize=offset+(lineWidth+lineSerialization)*height;
 
 	/* Write header */
 	fwrite     ("BM",2,1   ,bitmap);    /* Magic identifier            */
@@ -93,20 +91,19 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 	fwritelong (&zero      ,bitmap);    /* Important colours           */
 
 	/* Write ColorTable */
-	getPalette(&img.pal,bits,&palette);
-	for (a=0;a<colours;a++) {
-		color=palette[a].b;
+	for (a=0;a<colors;a++) {
+		color=colorArray[a].b;
 		fwritechar(&color,bitmap); /* Blue  */
-		color=palette[a].g;
+		color=colorArray[a].g;
 		fwritechar(&color,bitmap); /* Green */
-		color=palette[a].r;
+		color=colorArray[a].r;
 		fwritechar(&color,bitmap); /* Red   */
 		fwritechar(&zero ,bitmap); /* alpha */
 	}
 
 	/* Write data */
-	while (img.height--) {
-		fwrite(img.pix+img.height*img.widthInBytes,img.widthInBytes,1,bitmap);
+	while (h--) {
+		fwrite(data+h*lineWidth,lineWidth,1,bitmap);
 		fwrite(&zero,lineSerialization,1,bitmap);
 	}
 

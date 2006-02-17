@@ -55,7 +55,7 @@ typedef struct {
 	int widthInBytes;
 	int height;
 	unsigned char* pix;
-	tPalette pal;
+	tObject pal;
 	unsigned char type; /* XY where X=B if 4 bits or X=0 if 1 bit; Y=algorithm */
 }tImage;
 

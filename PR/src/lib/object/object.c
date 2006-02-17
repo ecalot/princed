@@ -107,3 +107,6 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 }	
 
 
+int paletteGetBits(tObject pal) { return 4; }
+int paletteGetColors(tObject pal) { return 16; }
+tColor* paletteGetColorArray(tObject pal) { return NULL; }
