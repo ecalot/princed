@@ -119,6 +119,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 					}	break;
 					case eResTypeImage: /* save image */
 						/* Palette handling */
+printf("id=(%d,%s,%d)\n",res.paletteId.value,res.paletteId.index,res.paletteId.order);
 						if (resourceListCompareId(res.paletteId,bufferedPalette) /*TODO: add &&!paletteCheckCompatibility(currentPalette,image) */) { /* The palette isn't in the buffer */
 							tResource otherPalette;
 							otherPalette.id=res.paletteId;

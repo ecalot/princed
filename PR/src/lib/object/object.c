@@ -44,6 +44,7 @@ tObject getObject(tResource* r, int* error) {
 		*error=PR_RESULT_SUCCESS;
 		o.type=eResTypeNone;
 		o.obj=NULL;
+		return o;
 	}
 
 	o.type=r->type;

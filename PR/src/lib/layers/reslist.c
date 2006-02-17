@@ -151,7 +151,7 @@ void resourceListAddInfo(tResourceList* r,tResource* res) {
 		res->path=resInfo->path;
 		res->desc=resInfo->desc;
 		res->name=resInfo->name;
-		res->palette=resInfo->palette;
+		res->paletteId=resInfo->paletteId;
 		res->number=resInfo->number;
 		/* If resource type is invalid or 0, the type will be decided by PR */
 		res->type=resInfo->type;
