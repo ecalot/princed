@@ -44,9 +44,10 @@ export.c: Princed Resources : DAT Extractor
 #include "disk.h"
 #include "idlist.h"
 #include "memory.h"
+#include "object.h"
+#include "palette.h"
 #include "pallist.h" 
 #include "unknown.h"
-#include "palette.h"
 
 #include "bmp.h"
 #include "mid.h"
@@ -101,8 +102,8 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 		if (isInTheItemMatchingList(res.path,res.id)) { /* If the resource was specified do the tasks */
 			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size);
 			if (!(hasFlag(unknown_flag))) { /* If unknown flag is set do nothing but generate the unknown.xml file */
+				tObject o;
 				if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
-				/*tObject o;*/
 
 				/* get save file name (if unknown document is in the XML) */
 				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
@@ -140,60 +141,8 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 						break;
 				}
 				
-				/*o=getObject(&res,&ok);*/
+				o=getObject(&res,&ok);
 				
-				switch (res.type) {
-						case eResTypeLevel:
-						ok=mFormatExportPlv(res.data,vFileext,res.size,res.number,vDatFileName,res.name,res.desc,vDatAuthor,optionflag,backupExtension);
-						break;
-					case eResTypeBinary: /* Binary files */
-					case eResTypeText: /* Text files */
-					case eResTypeRaw: /* Raw files */
-						ok=writeData(res.data,1,vFileext,res.size,optionflag,backupExtension); /* Ignore checksum */
-						break;
-					case eResTypePop1Palette4bits: { /* save and remember palette file */
-						tPaletteListItem e;
-						/* Remember the palette for the next images
-						 * (because it's more probable to get all the images after its palette) */
-						e.bits=readPalette(&e.pal,res.data,res.size);
-						applyPalette(&e.pal,&image);
-						bufferedPalette=res.id;
-						e.id=res.id;
-						list_insert(&paletteBuffer,(void*)&e);
-						/* Export the palette */
-						ok=mFormatExportPal(&e.pal,e.bits,vFileext,optionflag,backupExtension);
-					}	break;
-					case eResTypePcspeaker: /* save pcs file */
-					case eResTypeMidi:	/* save midi file */
-						ok=mFormatExportMid(res.data,vFileext,res.size,optionflag,backupExtension);
-						break;
-					case eResTypeWave: /* save wav file */
-						ok=mFormatExportWav(res.data,vFileext,res.size,optionflag,backupExtension);
-						break;
-					case eResTypeImage: /* save image */
-						/* Palette handling */
-						if (resourceListCompareId(res.palette,bufferedPalette)) { /* The palette isn't in the buffer */
-							tResource otherPalette;
-							otherPalette.id=res.palette;
-							/* Read the palette and load it into memory */
-							if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
-								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
-								tPaletteListItem e;
-								e.bits=readPalette(&e.pal,otherPalette.data,otherPalette.size);
-								applyPalette(&e.pal,&image);
-								bufferedPalette=otherPalette.id;
-								e.id=res.id;
-								list_insert(&paletteBuffer,(void*)&e);
-							} /* else, that's bad, I'll have to use the previous palette, even if it is the default */
-						} /* else, good, the palette is buffered */
-						/* Export bitmap */
-
-						ok=mFormatExportBmp(res.data,vFileext,res.size,image,optionflag,backupExtension);
-
-						break;
-					default:
-						break;
-				}
 				/* Verbose information */
 				if (hasFlag(verbose_flag)) {
 					if (ok) {

@@ -56,11 +56,12 @@ XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
 COMPRESS = .compress.o .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o .rlec_uncompress.o 
 LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o .palette.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
+OBJECT   = .object.o
 CONSOLE  = .main.o .filedir.o
 MAIN     = .pr.o
 
-EXEOBJ   = $(MAIN) $(XML) $(COMPRESS) $(ACTIONS) $(LAYERS) $(FORMAT) $(PORTS) $(CONSOLE)
-LIBOBJ   = $(MAIN) $(XML) $(COMPRESS) $(ACTIONS) $(LAYERS) $(FORMAT) $(PORTS)
+EXEOBJ   = $(MAIN) $(XML) $(COMPRESS) $(ACTIONS) $(LAYERS) $(OBJECT) $(FORMAT) $(PORTS) $(CONSOLE)
+LIBOBJ   = $(MAIN) $(XML) $(COMPRESS) $(ACTIONS) $(LAYERS) $(OBJECT) $(FORMAT) $(PORTS)
 
 EXEFILE  = bin/pr
 XMLFILE  = bin/resources.xml
@@ -156,6 +157,10 @@ $(XMLFILE): xml/resources.xml
 .pallist.o: lib/layers/pallist.c include/memory.h include/pallist.h
 	$(INFO) Compiling palette list module...
 	$(CC) $(OPTIONS) -c lib/layers/pallist.c -o $@
+
+.object.o: lib/object/main.c include/object.h
+	$(INFO) Compiling main item class...
+	$(CC) $(OPTIONS) -c lib/object/main.c -o $@
 
 .compress.o: lib/compression/main.c include/compress.h include/disk.h include/memory.h
 	$(INFO) Compiling main compression library...
