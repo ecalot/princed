@@ -34,6 +34,8 @@ image.h: Princed Resources : Image handling headers
 #ifndef _IMAGE_H_
 #define _IMAGE_H_
 
+#include "reslist.h"
+
 typedef struct { 
 	unsigned char r;
 	unsigned char g;
@@ -59,8 +61,9 @@ typedef struct {
 
 /* Prototypes */
 
-int mCompressGraphic(unsigned char** a,tImage* i, int* size);
-int mExpandGraphic  (const unsigned char* array,tImage *image, int size);
+int mCompressGraphic(unsigned char** a,tImage* i, int* size); /* make it private */
+
+void* objImageCreate(unsigned char* data, int size, tObject palette, int *error);
 
 #define getCarry(a) ((((a)>>4)&7)+1)
 #define getAlgor(a) a&0x4F

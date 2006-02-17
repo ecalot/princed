@@ -32,7 +32,9 @@ main.c: Princed Resources : Main item class implementation
 
 #include "object.h"
 #include "reslist.h"
+
 #include "other.h"
+#include "image.h"
 
 tObject getObject(tResource* r, int* error) {
 	tObject o;
@@ -60,7 +62,7 @@ tObject getObject(tResource* r, int* error) {
 		/*o.obj=objWaveCreate(r->data,r->size,error); */
 		break;
 	case eResTypeImage: /* save image */
-		/*o.obj=objImageCreate(r->data,r->size,r->pal,error); */
+		o.obj=objImageCreate(r->data,r->size,r->palette,error);
 		break;
 	default:
 		break;
