@@ -36,11 +36,6 @@ object.h: Princed Resources : Main item class types and prototypes
 #include "reslist.h"
 #include "common.h"
 
-typedef struct { 
-	tResourceType type;
-	void* obj;
-}tObject;
-
 tObject getObject(tResource* r, int* error);
 
 #endif

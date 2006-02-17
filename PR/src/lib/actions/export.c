@@ -74,7 +74,8 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	char               vFileext[MAX_FILENAME_SIZE];
 	int                indexNumber;
 	int                ok;
-	tImage             image; /* this is used to make a persistent palette */
+/*	tImage             image; * this is used to make a persistent palette */
+	tObject            currentPalette;
 	unsigned short int numberOfItems;
 	tPaletteList       paletteBuffer;
 	tResourceId        bufferedPalette={0,"",0};
@@ -88,7 +89,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	/* initialize palette buffer */
 	paletteBuffer=paletteListCreate();
 	/* initialize the default palette */
-	image.pal=createPalette(); /* TODO: add the default palette ad 0,"",0 */
+	/*currentPalette=objCreatePalette(); * TODO: add the default palette ad 0,"",0 */
 
 	/* main loop */
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
@@ -111,37 +112,30 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				/* handle palette linking */
 				switch (res.type) {
 					case eResTypePop1Palette4bits: { /* save and remember palette file */
-						tPaletteListItem e;
-						/* Remember the palette for the next images
-						 * (because it's more probable to get all the images after its palette) */
-						e.bits=readPalette(&e.pal,res.data,res.size);
-						applyPalette(&e.pal,&image);
-						bufferedPalette=res.id;
+						tPaletteListItem e; /* TODO: decide if the palette list has to be erased from the code */
+						o=e.pal=currentPalette=getObject(&res,&ok);
 						e.id=res.id;
 						list_insert(&paletteBuffer,(void*)&e);
 					}	break;
 					case eResTypeImage: /* save image */
 						/* Palette handling */
-						if (resourceListCompareId(res.palette,bufferedPalette)) { /* The palette isn't in the buffer */
+						if (resourceListCompareId(res.paletteId,bufferedPalette)) { /* The palette isn't in the buffer */
 							tResource otherPalette;
-							otherPalette.id=res.palette;
+							otherPalette.id=res.paletteId;
 							/* Read the palette and load it into memory */
 							if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
-								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
 								tPaletteListItem e;
-								e.bits=readPalette(&e.pal,otherPalette.data,otherPalette.size);
-								applyPalette(&e.pal,&image);
-								bufferedPalette=otherPalette.id;
+								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
+								e.pal=currentPalette=getObject(&res,&ok);
 								e.id=res.id;
 								list_insert(&paletteBuffer,(void*)&e);
 							} /* else, that's bad, I'll have to use the previous palette, even if it is the default */
 						} /* else, good, the palette is buffered */
-						break;
+						res.palette=currentPalette;
 					default:
+						o=getObject(&res,&ok);
 						break;
 				}
-				
-				o=getObject(&res,&ok);
 				
 				/* Verbose information */
 				if (hasFlag(verbose_flag)) {

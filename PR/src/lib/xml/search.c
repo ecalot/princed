@@ -121,11 +121,11 @@ printf("tv=%s ti=%s tag=%s\n",t->value,t->index,t->tag);*/
 
 	/* Get the order */
 	res.id.order=getOrder(t->order);
-	res.palette.order=getOrder(t->paletteorder);
+	res.paletteId.order=getOrder(t->paletteorder);
 
 	/* Copy id and palette id */
 	search_keepIdAttributes(id,value,index);
-	search_keepIdAttributesElse(palette,palette,paletteindex,index);
+	search_keepIdAttributesElse(paletteId,palette,paletteindex,index);
 
 	/* Copy number, title, desc and path */
 	search_keepIntAttribute(number,unsigned char); /* Transforms the char* levelnumer/number attribute into a char value, if error, demo level is used */

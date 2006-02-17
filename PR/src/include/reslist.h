@@ -40,6 +40,11 @@ typedef tList tResourceList;
 #include "common.h" /* Item Types */
 
 /* types */
+typedef struct { 
+	tResourceType type;
+	void* obj;
+}tObject;
+
 typedef struct {
 	unsigned short int value;
 	char               index[5];
@@ -48,7 +53,8 @@ typedef struct {
 
 typedef struct {
 	tResourceId        id;
-	tResourceId        palette;
+	tResourceId        paletteId;
+	tObject            palette;
 	long int           size;
 	unsigned long int  offset; /* Used internally in dat.c to remember the offset */
 	unsigned char      number; /* Used for level number */

@@ -140,9 +140,9 @@ void resourceListAddInfo(tResourceList* r,tResource* res) {
 		res->path=NULL;
 		res->desc=NULL;
 		res->name=NULL;
-		res->palette.value=0;
-		res->palette.order=0;
-		memset(res->palette.index,0,5);
+		res->paletteId.value=0;
+		res->paletteId.order=0;
+		memset(res->paletteId.index,0,5);
 		res->number=0;
 		res->type=0;
 	} else {

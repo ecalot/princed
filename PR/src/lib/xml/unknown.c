@@ -197,7 +197,7 @@ void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const cha
 		filename=parseformat(format,r->id.value,r->id.index,getExtDesc(pos),extarray[pos],unknownFile.typeCount[pos],r->id.order,r->desc,r->name);
 
 		sprintf(vFileext,"%s/"RES_XML_UNKNOWN_PATH"/%s/%s",vDirExt,vDatFileName,filename);
-		unknownLogAppend(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->palette,vFiledat,optionflag,unknownFile.typeCount[pos],r->flags,filename);
+		unknownLogAppend(vDatFileName,r->id,extarray[pos],r->type,vDirExt,r->paletteId,vFiledat,optionflag,unknownFile.typeCount[pos],r->flags,filename);
 	} else {
 		/* set filename */
 		sprintf(vFileext,"%s/%s",vDirExt,r->path);

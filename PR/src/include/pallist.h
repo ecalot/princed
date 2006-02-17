@@ -34,17 +34,17 @@
 #ifndef _PALLIST_H_
 #define _PALLIST_H_
 
-#include "list.h" /* tList */
+#include "list.h"    /* tList */
 typedef tList tPaletteList;
 
-#include "palette.h" /* Item Types */
+#include "common.h"  /* tResourceType */
+#include "object.h"  /* tObject */
 #include "reslist.h" /* tResourceId */
 
 /* types */
 typedef struct {
 	tResourceId        id;
-	tPalette           pal;
-	int                bits;
+	tObject            pal;
 }tPaletteListItem;
 
 tPaletteList paletteListCreate();
