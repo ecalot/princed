@@ -54,9 +54,9 @@ endif
 ACTIONS  = .import.o .export.o .classify.o
 XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
 COMPRESS = .compress.o .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o .rlec_uncompress.o 
-LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o .palette.o
+LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
-OBJECT   = .object.o
+OBJECT   = .object.o .pop1_4bit.o
 CONSOLE  = .main.o .filedir.o
 MAIN     = .pr.o
 
@@ -222,9 +222,9 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling unknown string format parsing feature...
 	$(CC) $(OPTIONS) -c lib/layers/stringformat.c -o $@
 
-.palette.o: lib/layers/palette.c include/common.h
-	$(INFO) Compiling the palette object support...
-	$(CC) $(OPTIONS) -c lib/layers/palette.c -o $@
+.pop1_4bit.o: lib/object/palette/pop1_4bit.c include/common.h
+	$(INFO) Compiling the POP1 16 colors palette object support...
+	$(CC) $(OPTIONS) -c  lib/object/palette/pop1_4bit.c -o $@
 
 .resourcematch.o: lib/layers/resourcematch.c include/search.h include/memory.h include/resourcematch.h
 	$(INFO) Compiling resource list parsing feature...
