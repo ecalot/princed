@@ -91,8 +91,9 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 
 	/* main loop */
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
-
-		if (!mReadFileInDatFile(&res,indexNumber)) return PR_RESULT_ERR_INVALID_DAT; /* Read error */
+		ok=mReadFileInDatFile(&res,indexNumber);
+		if (ok==PR_RESULT_INDEX_NOT_FOUND) return PR_RESULT_ERR_INVALID_DAT; /* Read error */
+		if (ok==PR_RESULT_CHECKSUM_ERROR) fprintf(outputStream,"Warning: Checksum error\n"); /* Warning */
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
 		/* add to res more information from the resource list */
 		resourceListAddInfo(r,&res);
@@ -139,7 +140,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 							tResource otherPalette;
 							otherPalette.id=res.palette;
 							/* Read the palette and load it into memory */
-							if (mReadFileInDatFileId(&otherPalette)) {
+							if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
 								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
 								tPaletteListItem e;
 								e.bits=readPalette(&e.pal,otherPalette.data,otherPalette.size);

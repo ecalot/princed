@@ -394,7 +394,7 @@ tIndexCursor dat_createCursor(unsigned char* highData,int highDataSize,unsigned 
 
 /* the cursor read function */
 
-void dat_readRes(tResource* res, tIndexCursor indexCursor) {
+int dat_readRes(tResource* res, tIndexCursor indexCursor) {
 	/* for each archived file the index is read */
 	res->id.value=        dat_readCursorGetId        (indexCursor);
 	strncpy(res->id.index,dat_readCursorGetIndexName (indexCursor),5);
@@ -403,9 +403,10 @@ void dat_readRes(tResource* res, tIndexCursor indexCursor) {
 	res->size=            dat_readCursorGetSize      (indexCursor);
 	res->flags=           dat_readCursorGetFlags     (indexCursor);
 
-	res->size++; /* add the checksum */
+	/*res->size++; * add the checksum */
 
-	res->data=readDatFile+res->offset;
+	res->data=readDatFile+res->offset+1; /* ignore the checksum */
+	return checkSum(readDatFile+res->offset,res->size+1);
 /*printf("reading resource: %d:%4s at %d order=%d\n",res->id.value,res->id.index,res->offset,res->id.order);*/
 }
 
@@ -483,15 +484,13 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 }
 
 int mReadFileInDatFileId(tResource* res) {
-	if (!dat_cursorMoveId(&readIndexCursor,res->id)) return 0; /* false means index not found */
-	dat_readRes(res,readIndexCursor);
-	return 1; /* true */
+	if (!dat_cursorMoveId(&readIndexCursor,res->id)) return PR_RESULT_INDEX_NOT_FOUND; /* false means index not found */
+	return dat_readRes(res,readIndexCursor)?PR_RESULT_SUCCESS:PR_RESULT_CHECKSUM_ERROR; /* depending on the checksum */
 }
 
 int mReadFileInDatFile(tResource* res, int k) {
-	if (!dat_cursorMove(&readIndexCursor,k)) return 0; /* false means out of range */
-	dat_readRes(res,readIndexCursor);
-	return 1; /* true */
+	if (!dat_cursorMove(&readIndexCursor,k)) return PR_RESULT_INDEX_NOT_FOUND; /* false means out of range */
+	return dat_readRes(res,readIndexCursor)?PR_RESULT_SUCCESS:PR_RESULT_CHECKSUM_ERROR; /* depending on the checksum */
 }
 
 #endif

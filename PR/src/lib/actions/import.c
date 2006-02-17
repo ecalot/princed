@@ -156,7 +156,10 @@ int import_partial(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 
 	/* main loop */
 	for (indexNumber=0;(indexNumber<numberOfItems);indexNumber++) {
-		if (!mReadFileInDatFile(&res,indexNumber)) return PR_RESULT_ERR_INVALID_DAT; /* Read error */
+		int readResult;
+		readResult=mReadFileInDatFile(&res,indexNumber);
+		if (readResult==PR_RESULT_INDEX_NOT_FOUND) return PR_RESULT_ERR_INVALID_DAT; /* Read error */
+		if (readResult==PR_RESULT_CHECKSUM_ERROR) fprintf(outputStream,"Warning: Ignoring checksum error\n"); /* Warning */
 
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
 
