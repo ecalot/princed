@@ -84,6 +84,7 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 #define RES_FILE_TYPES        {"autodetect","level","image","wave","midi","binary","palette","pcspeaker","text"}
 
 typedef enum {
+	eResTypeNone=-1,
 	eResTypeRaw=0,
 	eResTypeLevel=1,
 	eResTypeImage=2,

@@ -84,12 +84,12 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 
 	/* Initialize abstract variables to read this new DAT file */
 	if ((ok=mReadBeginDatFile(&numberOfItems,vFiledat))) return ok;
-	ok=1;
 
 	/* initialize palette buffer */
 	paletteBuffer=paletteListCreate();
 	/* initialize the default palette */
-	/*currentPalette=objCreatePalette(); * TODO: add the default palette ad 0,"",0 */
+	currentPalette=getObject(NULL,&ok); /* The null object will be used until a palette is set */
+	ok=1;
 
 	/* main loop */
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
@@ -119,7 +119,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 					}	break;
 					case eResTypeImage: /* save image */
 						/* Palette handling */
-						if (resourceListCompareId(res.paletteId,bufferedPalette)) { /* The palette isn't in the buffer */
+						if (resourceListCompareId(res.paletteId,bufferedPalette) /*TODO: add &&!paletteCheckCompatibility(currentPalette,image) */) { /* The palette isn't in the buffer */
 							tResource otherPalette;
 							otherPalette.id=res.paletteId;
 							/* Read the palette and load it into memory */

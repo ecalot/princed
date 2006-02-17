@@ -32,6 +32,7 @@ main.c: Princed Resources : Main item class implementation
 
 #include "object.h"
 #include "reslist.h"
+#include "common.h"
 
 #include "other.h"
 #include "image.h"
@@ -39,6 +40,11 @@ main.c: Princed Resources : Main item class implementation
 
 tObject getObject(tResource* r, int* error) {
 	tObject o;
+	if (!r) {
+		*error=PR_RESULT_SUCCESS;
+		o.type=eResTypeNone;
+		o.obj=NULL;
+	}
 
 	o.type=r->type;
 	switch (o.type) {
