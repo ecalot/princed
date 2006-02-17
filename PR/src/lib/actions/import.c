@@ -71,7 +71,7 @@ int mAddCompiledFileToDatFile(tResource* res,const char* vFile) {
 		case eResTypeMidi:
 		case eResTypePcspeaker:
 			return mFormatImportMid(res);
-		case eResTypePalette:
+		case eResTypePop1Palette4bits:
 			/* return mFormatImportPal(res,vFile); TODO: fix */
 		case eResTypeBinary:
 		default:

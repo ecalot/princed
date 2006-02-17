@@ -91,9 +91,9 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 
 	/* main loop */
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
-		ok=mReadFileInDatFile(&res,indexNumber);
-		if (ok==PR_RESULT_INDEX_NOT_FOUND) return PR_RESULT_ERR_INVALID_DAT; /* Read error */
-		if (ok==PR_RESULT_CHECKSUM_ERROR) fprintf(outputStream,"Warning: Checksum error\n"); /* Warning */
+		int ok2=mReadFileInDatFile(&res,indexNumber);
+		if (ok2==PR_RESULT_INDEX_NOT_FOUND) return PR_RESULT_ERR_INVALID_DAT; /* Read error */
+		if (ok2==PR_RESULT_CHECKSUM_ERROR) fprintf(outputStream,"Warning: Checksum error\n"); /* Warning */
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
 		/* add to res more information from the resource list */
 		resourceListAddInfo(r,&res);
@@ -102,10 +102,46 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size);
 			if (!(hasFlag(unknown_flag))) { /* If unknown flag is set do nothing but generate the unknown.xml file */
 				if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
+				/*tObject o;*/
 
 				/* get save file name (if unknown document is in the XML) */
 				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
 
+				/* handle palette linking */
+				switch (res.type) {
+					case eResTypePop1Palette4bits: { /* save and remember palette file */
+						tPaletteListItem e;
+						/* Remember the palette for the next images
+						 * (because it's more probable to get all the images after its palette) */
+						e.bits=readPalette(&e.pal,res.data,res.size);
+						applyPalette(&e.pal,&image);
+						bufferedPalette=res.id;
+						e.id=res.id;
+						list_insert(&paletteBuffer,(void*)&e);
+					}	break;
+					case eResTypeImage: /* save image */
+						/* Palette handling */
+						if (resourceListCompareId(res.palette,bufferedPalette)) { /* The palette isn't in the buffer */
+							tResource otherPalette;
+							otherPalette.id=res.palette;
+							/* Read the palette and load it into memory */
+							if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
+								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
+								tPaletteListItem e;
+								e.bits=readPalette(&e.pal,otherPalette.data,otherPalette.size);
+								applyPalette(&e.pal,&image);
+								bufferedPalette=otherPalette.id;
+								e.id=res.id;
+								list_insert(&paletteBuffer,(void*)&e);
+							} /* else, that's bad, I'll have to use the previous palette, even if it is the default */
+						} /* else, good, the palette is buffered */
+						break;
+					default:
+						break;
+				}
+				
+				/*o=getObject(&res,&ok);*/
+				
 				switch (res.type) {
 						case eResTypeLevel:
 						ok=mFormatExportPlv(res.data,vFileext,res.size,res.number,vDatFileName,res.name,res.desc,vDatAuthor,optionflag,backupExtension);
@@ -115,7 +151,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 					case eResTypeRaw: /* Raw files */
 						ok=writeData(res.data,1,vFileext,res.size,optionflag,backupExtension); /* Ignore checksum */
 						break;
-					case eResTypePalette: { /* save and remember palette file */
+					case eResTypePop1Palette4bits: { /* save and remember palette file */
 						tPaletteListItem e;
 						/* Remember the palette for the next images
 						 * (because it's more probable to get all the images after its palette) */
@@ -154,6 +190,8 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 
 						ok=mFormatExportBmp(res.data,vFileext,res.size,image,optionflag,backupExtension);
 
+						break;
+					default:
 						break;
 				}
 				/* Verbose information */

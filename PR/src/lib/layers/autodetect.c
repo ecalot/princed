@@ -99,7 +99,7 @@ tResourceType verifyHeader(const unsigned char *array, int size) {
 	if (verifyLevelHeader  (array,size)) return eResTypeLevel;
 	if (verifyMidiHeader   (array,size)) return eResTypeMidi;
 	if (verifyImageHeader  (array,size)) return eResTypeImage;
-	if (verifyPaletteHeader(array,size)) return eResTypePalette;
+	if (verifyPaletteHeader(array,size)) return eResTypePop1Palette4bits;
 	if (verifyWaveHeader   (array,size)) return eResTypeWave;
 	if (verifySpeakerHeader(array,size)) return eResTypePcspeaker;
 	return eResTypeBinary;

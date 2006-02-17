@@ -90,9 +90,12 @@ typedef enum {
 	eResTypeWave=3,
 	eResTypeMidi=4,
 	eResTypeBinary=5,
-	eResTypePalette=6,
+	eResTypePop1Palette4bits=6,
 	eResTypePcspeaker=7,
-	eResTypeText=8
+	eResTypeText=8,
+	eResTypePop2Palette320colors=9,
+	eResTypePop2Palette4bits=10,
+	eResTypePop1PaletteGuards=11
 } tResourceType;
 
 /***************************************************************\
