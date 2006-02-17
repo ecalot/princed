@@ -43,45 +43,6 @@ bmp.c: Princed Resources : BMP file support
 #include <stdlib.h>
 #include <string.h>
 
-extern FILE* outputStream;
-
-int mFormatExportBmp(const unsigned char* data, const char *vFileext,unsigned long int size,tImage image,int optionflag, const char* backupExtension) {
-	/*
-	 * This function will expand the data into an image structure,
-	 * then the bitmap structure will be saved to disk
-	 *
-	 * Note: The old structure is passed by parameters in order to
-	 *       keep the right palette.
-	 */
-
-	int result;
-
-	/* Expand graphic and check results */
-	result=mExpandGraphic(data,&image,size);
-	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
-		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);
-	if (result==COMPRESS_RESULT_FATAL) return 0; /* false */
-
-	/* Write bitmap */
-	mWriteBitMap(image,vFileext,optionflag,backupExtension);
-
-	/* free bitmap */
-	free(image.pix);
-	return 1; /* true */
-}
-
-int mFormatImportBmp(tResource *res) {
-	tImage img;
-
-	if (!mReadBitMap(&img,res->data,res->size)) return 0; /* false */
-	free(res->data);
-	mCompressGraphic(&(res->data),&img,(int*)&(res->size));
-	mWriteFileInDatFile(res);
-	free(img.pix);
-
-	return 1; /* true */
-}
-
 int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupExtension) {
 
 	/* declare variables */

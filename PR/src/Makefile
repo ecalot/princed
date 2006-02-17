@@ -53,10 +53,10 @@ endif
 
 ACTIONS  = .import.o .export.o .classify.o
 XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
-COMPRESS = .compress.o .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o .rlec_uncompress.o 
+COMPRESS = .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o .rlec_uncompress.o 
 LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
-OBJECT   = .object.o .pop1_4bit.o
+OBJECT   = .object.o .pop1_4bit.o .image.o
 CONSOLE  = .main.o .filedir.o
 MAIN     = .pr.o
 
@@ -162,9 +162,9 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling main item class...
 	$(CC) $(OPTIONS) -c lib/object/main.c -o $@
 
-.compress.o: lib/compression/main.c include/compress.h include/disk.h include/memory.h
-	$(INFO) Compiling main compression library...
-	$(CC) $(OPTIONS) -c lib/compression/main.c -o $@
+.image.o: lib/object/image/image.c include/image.h include/compress.h include/disk.h include/memory.h
+	$(INFO) Compiling image type class...
+	$(CC) $(OPTIONS) -c lib/object/image/image.c -o $@
 
 .lzg_compress.o: lib/compression/lzg_compress.c include/compress.h
 	$(INFO) Compiling LZG compression module...
