@@ -35,6 +35,7 @@ main.c: Princed Resources : Main item class implementation
 
 #include "other.h"
 #include "image.h"
+#include "palette.h"
 
 tObject getObject(tResource* r, int* error) {
 	tObject o;
@@ -50,7 +51,7 @@ tObject getObject(tResource* r, int* error) {
 		o.obj=objBinaryCreate(r->data,r->size,error); 
 		break;
 	case eResTypePop1Palette4bits: /* save and remember palette file */
-		/*o.obj=objPalette_pop1_4bitsCreate(r->data,r->size,error); */
+		o.obj=objPalette_pop1_4bitsCreate(r->data,r->size,error);
 		break;
 	case eResTypePcspeaker: /* save pcs file */
 		/*o.obj=objPcspeakerCreate(r->data,r->size,error); */

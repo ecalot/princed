@@ -60,4 +60,7 @@ tPalette createPalette();
 int readPalette(tPalette* p, unsigned char* data, int dataSize);
 int applyPalette(tPalette* p,tImage *i);
 
+
+void* objPalette_pop1_4bitsCreate(unsigned char* data, int size, int *error);
+
 #endif

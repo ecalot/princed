@@ -161,3 +161,33 @@ void addPop1Raw(tPalette* p,unsigned char* data, int dataSize) {
 	p->pop1rawSize=dataSize;
 }
 
+
+typedef struct { 
+	tColor c[16];
+	unsigned char raw[100];
+}tPop1_4bitsPalette;
+
+void* objPalette_pop1_4bitsCreate(unsigned char* data, int size, int *error) {
+	int i;
+	tPop1_4bitsPalette* pal;
+	
+	if (size!=100) {
+		*error=PR_RESULT_XML_AND_DAT_FORMAT_DO_NOT_MATCH;
+		return NULL;
+	}
+
+	pal=(tPop1_4bitsPalette*)malloc(sizeof(tPop1_4bitsPalette));
+	
+	for (i=0;i<16;i++) {
+		pal->c[i].r=data[(i*3)+5]<<2;
+		pal->c[i].g=data[(i*3)+6]<<2;
+		pal->c[i].b=data[(i*3)+7]<<2;
+	}
+
+	memcpy(pal->raw,data,100);
+
+	*error=PR_RESULT_SUCCESS;
+	
+	return (void*)pal;
+}
+
