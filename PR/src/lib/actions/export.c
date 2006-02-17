@@ -71,7 +71,7 @@ extern FILE* outputStream;
 */
 
 int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension,const char* format) {
-	char               vFileext[MAX_FILENAME_SIZE];
+	char               file[MAX_FILENAME_SIZE];
 	int                indexNumber;
 	int                ok;
 /*	tImage             image; * this is used to make a persistent palette */
@@ -107,10 +107,10 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
 				/* get save file name (if unknown document is in the XML) */
-				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
+				getFileName(file,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
 
 				/* handle palette linking */
-				switch (res.type) {
+				switch (res.type) { /* TODO: use if and elsif */
 					case eResTypePop1Palette4bits: { /* save and remember palette file */
 						tPaletteListItem e; /* TODO: decide if the palette list has to be erased from the code */
 						o=e.pal=currentPalette=getObject(&res,&ok);
@@ -136,19 +136,23 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 						o=getObject(&res,&ok);
 						break;
 				}
-				
+		/* TODO: warning counting here */	
+/*				if (!fatal(ok)) */
+				ok=writeObject(o,file,optionflag,backupExtension);
+
 				/* Verbose information */
-				if (hasFlag(verbose_flag)) {
+				/*if (hasFlag(verbose_flag)) {
 					if (ok) {
-						fprintf(outputStream,PR_TEXT_EXPORT_WORKING,getFileNameFromPath(vFileext));
+						fprintf(outputStream,PR_TEXT_EXPORT_WORKING,getFileNameFromPath(file));
 					} else {
-						fprintf(outputStream,PR_TEXT_EXPORT_ERROR,getFileNameFromPath(vFileext));
+						fprintf(outputStream,PR_TEXT_EXPORT_ERROR,getFileNameFromPath(file));
 					}
-				}
+				} TODO: add warning counter */
+				ok=1; /* efit the for and add !fatal(ok)*/
 				if (ok) count++;
 			} else {
 				/* If the DAT file is unknown, add it in the XML */
-				getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
+				getFileName(file,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
 			}
 		}
 	}

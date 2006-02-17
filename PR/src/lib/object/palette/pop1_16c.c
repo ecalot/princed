@@ -41,6 +41,8 @@ palette.c: Princed Resources : The palette object implementation
 #include "palette.h"
 #include "memory.h"
 
+#include "pal.h"
+
 void addPop1Raw(tPalette* p,unsigned char* data, int dataSize);
 
 /***************************************************************\
@@ -179,9 +181,9 @@ void* objPalette_pop1_4bitsCreate(unsigned char* data, int size, int *error) {
 	pal=(tPop1_4bitsPalette*)malloc(sizeof(tPop1_4bitsPalette));
 	
 	for (i=0;i<16;i++) {
-		pal->c[i].r=data[(i*3)+5]<<2;
-		pal->c[i].g=data[(i*3)+6]<<2;
-		pal->c[i].b=data[(i*3)+7]<<2;
+		pal->c[i].r=data[(i*3)+4]<<2;
+		pal->c[i].g=data[(i*3)+5]<<2;
+		pal->c[i].b=data[(i*3)+6]<<2;
 	}
 
 	memcpy(pal->raw,data,100);
@@ -189,5 +191,16 @@ void* objPalette_pop1_4bitsCreate(unsigned char* data, int size, int *error) {
 	*error=PR_RESULT_SUCCESS;
 	
 	return (void*)pal;
+}
+
+int objPalette_pop1_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
+	tPop1_4bitsPalette* pal=o;
+	/*unsigned char* aux=malloc(MAX_FILENAME_SIZE);*/
+	/* TODO: add the write of the extra information */
+	/* Export extra palette information */
+	/*sprintf((char*)aux,"%s.more",file);
+	writeData(data,1,(char*)aux,size,optionflag,backupExtension); TODO fix that */
+
+	return writePal(file,16,pal->c,optionflag,backupExtension);
 }
 

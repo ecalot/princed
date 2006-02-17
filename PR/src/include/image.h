@@ -64,6 +64,7 @@ typedef struct {
 int mCompressGraphic(unsigned char** a,tImage* i, int* size); /* make it private */
 
 void* objImageCreate(unsigned char* data, int size, tObject palette, int *error);
+int objImageWrite(void* img,const char* file,int optionflag,const char* backupExtension);
 
 #define getCarry(a) ((((a)>>4)&7)+1)
 #define getAlgor(a) a&0x4F

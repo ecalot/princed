@@ -46,40 +46,25 @@ pal.c: Princed Resources : JASC PAL files support
 /*static const char* enter="\r\n";*/
 
 /* Public functions */
-int mFormatExportPal(const tPalette* p, int bits, char *vFileext, int optionflag, const char* backupExtension) {
-/*	unsigned char* pal=malloc(256*4+50);*/
-	unsigned char* aux=malloc(MAX_FILENAME_SIZE);
-	const tColor* palette;
+int writePal(const char* file, int colors, const tColor* colorArray, int optionflag, const char* backupExtension) {
 	int i;
 	FILE* fd;
 
-	/* Export extra palette information */
-	/*sprintf((char*)aux,"%s.more",vFileext);
-	writeData(data,1,(char*)aux,size,optionflag,backupExtension); TODO fix that */
-
 	/* open file */
-	if (!writeOpen(vFileext,&fd,optionflag)) return 0; /* false */
+	if (!writeOpen(file,&fd,optionflag)) return 0; /* false */
 
-	/* Convert palette from tPalette format to JASC format */
-	getPalette(p, bits, &palette);
-
-	fprintf(fd,"JASC-PAL\r\n%04d\r\n%d\r\n",100,1<<bits);
-	for (i=0;i<(1<<bits);i++) {
+	fprintf(fd,"JASC-PAL\r\n%04d\r\n%d\r\n",100,colors);
+	for (i=0;i<colors;i++) {
 		fprintf(fd,"%d %d %d\r\n",
-			palette[i].r,
-			palette[i].g,
-			palette[i].b
+			colorArray[i].r,
+			colorArray[i].g,
+			colorArray[i].b
 		);
 	}
-	/*for (i=0;pal[i];i++);
-	size=i-1;*/
 
 	/* save JASC palette */
-/*	i=writeData(pal,0,vFileext,size,optionflag,backupExtension);*/
 	writeCloseOk(fd,optionflag,backupExtension);
 
-/*	free(pal);*/
-	free(aux);
 	return i;
 }
 

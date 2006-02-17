@@ -78,5 +78,32 @@ tObject getObject(tResource* r, int* error) {
 	return o;
 }
 
+int writeObject(tObject o, const char* file, int optionflag, const char* backupExtension) {
+	int error;
+	switch (o.type) {
+	case eResTypeLevel:
+		break;
+	case eResTypeBinary: /* Binary files */
+	case eResTypeText: /* Text files */
+	case eResTypeRaw: /* Raw files */
+		break;
+	case eResTypePop1Palette4bits: /* save and remember palette file */
+		error=objPalette_pop1_4bitsWrite(o.obj,file,optionflag,backupExtension);
+		break;
+	case eResTypePcspeaker: /* save pcs file */
+		break;
+	case eResTypeMidi:	/* save midi file */
+		break;
+	case eResTypeWave: /* save wav file */
+		break;
+	case eResTypeImage: /* save image */
+		error=objImageWrite(o.obj,file,optionflag,backupExtension);
+		break;
+	default:
+		break;
+	}
+
+	return error;
+}	
 
 

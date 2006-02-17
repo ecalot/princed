@@ -37,5 +37,6 @@ object.h: Princed Resources : Main item class types and prototypes
 #include "common.h"
 
 tObject getObject(tResource* r, int* error);
+int writeObject(tObject o, const char* file, int optionflag, const char* backupExtension);
 
 #endif
