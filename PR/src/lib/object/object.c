@@ -31,6 +31,8 @@ main.c: Princed Resources : Main item class implementation
 */
 
 #include "object.h"
+#include "reslist.h"
+#include "other.h"
 
 tObject getObject(tResource* r, int* error) {
 	tObject o;
@@ -38,27 +40,27 @@ tObject getObject(tResource* r, int* error) {
 	o.type=r->type;
 	switch (o.type) {
 	case eResTypeLevel:
-		/*o.obj=objLevelCreate(res->data,res->size,res->number,vDatFileName,res->name,res->desc,res->datAuthor,error); */
+		/*o.obj=objLevelCreate(r->data,r->size,r->number,vDatFileName,r->name,r->desc,r->datAuthor,error); */
 		break;
 	case eResTypeBinary: /* Binary files */
 	case eResTypeText: /* Text files */
 	case eResTypeRaw: /* Raw files */
-		/*o.obj=objBinaryCreate(res->data,res->size,error); */
+		o.obj=objBinaryCreate(r->data,r->size,error); 
 		break;
 	case eResTypePop1Palette4bits: /* save and remember palette file */
-		/*o.obj=objPalette_pop1_4bitsCreate(res->data,res->size,error); */
+		/*o.obj=objPalette_pop1_4bitsCreate(r->data,r->size,error); */
 		break;
 	case eResTypePcspeaker: /* save pcs file */
-		/*o.obj=objPcspeakerCreate(res->data,res->size,error); */
+		/*o.obj=objPcspeakerCreate(r->data,r->size,error); */
 		break;
 	case eResTypeMidi:	/* save midi file */
-		/*o.obj=objMidiCreate(res->data,res->size,error); */
+		/*o.obj=objMidiCreate(r->data,r->size,error); */
 		break;
 	case eResTypeWave: /* save wav file */
-		/*o.obj=objWaveCreate(res->data,res->size,error); */
+		/*o.obj=objWaveCreate(r->data,r->size,error); */
 		break;
 	case eResTypeImage: /* save image */
-		/*o.obj=objImageCreate(res->data,res->size,res->pal,error); */
+		/*o.obj=objImageCreate(r->data,r->size,r->pal,error); */
 		break;
 	default:
 		break;

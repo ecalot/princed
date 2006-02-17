@@ -56,7 +56,7 @@ XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
 COMPRESS = .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o .rlec_uncompress.o 
 LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
-OBJECT   = .object.o .pop1_4bit.o .image.o
+OBJECT   = .object.o .pop1_4bit.o .image.o .binary.o
 CONSOLE  = .main.o .filedir.o
 MAIN     = .pr.o
 
@@ -223,8 +223,12 @@ $(XMLFILE): xml/resources.xml
 	$(CC) $(OPTIONS) -c lib/layers/stringformat.c -o $@
 
 .pop1_4bit.o: lib/object/palette/pop1_4bit.c include/common.h
-	$(INFO) Compiling the POP1 16 colors palette object support...
+	$(INFO) Compiling the POP1 16 colors palette class support...
 	$(CC) $(OPTIONS) -c  lib/object/palette/pop1_4bit.c -o $@
+
+.binary.o: lib/object/other/binary.c include/common.h
+	$(INFO) Compiling the binary item class support...
+	$(CC) $(OPTIONS) -c  lib/object/other/binary.c -o $@
 
 .resourcematch.o: lib/layers/resourcematch.c include/search.h include/memory.h include/resourcematch.h
 	$(INFO) Compiling resource list parsing feature...
