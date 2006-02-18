@@ -34,6 +34,8 @@ compress.h: Princed Resources : Compression headers
 #ifndef _COMPRESS_H_
 #define _COMPRESS_H_
 
+#include "common.h"
+
 #define COMPRESS_RAW    0x00
 #define COMPRESS_RLE_LR 0x01
 #define COMPRESS_RLE_UD 0x02
@@ -42,9 +44,9 @@ compress.h: Princed Resources : Compression headers
 
 #define COMPRESS_WORKING_ALGORITHMS 5
 
-#define COMPRESS_RESULT_FATAL   -2
-#define COMPRESS_RESULT_WARNING -1
-#define COMPRESS_RESULT_SUCCESS 0
+#define COMPRESS_RESULT_FATAL   PR_RESULT_COMPRESS_RESULT_FATAL
+#define COMPRESS_RESULT_WARNING PR_RESULT_COMPRESS_RESULT_WARNING
+#define COMPRESS_RESULT_SUCCESS PR_RESULT_SUCCESS 
 
 /* Prototypes */
 

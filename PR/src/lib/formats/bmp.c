@@ -61,7 +61,7 @@ int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits
 	FILE* bitmap;
 
 	/* open file */
-	if (!writeOpen(file,&bitmap,optionflag)) return 0; /* false */
+	if (!writeOpen(file,&bitmap,optionflag)) return PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
 
 	/* initialize variables */
 /*	width=img.width;
@@ -108,7 +108,7 @@ int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits
 	}
 
 	writeCloseOk(bitmap,optionflag,backupExtension);
-	return 1; /* true */
+	return PR_RESULT_SUCCESS; 
 }
 
 int mReadBitMap(tImage* image,unsigned char* data, int size) {

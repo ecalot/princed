@@ -106,6 +106,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				tObject o;
 				if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
+printf("ok=%d ok2=%d type=%d\n",ok,ok2,res.type);
 				/* get save file name (if unknown document is in the XML) */
 				getFileName(file,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
 
@@ -139,7 +140,10 @@ printf("id=(%d,%s,%d)\n",res.paletteId.value,res.paletteId.index,res.paletteId.o
 				}
 		/* TODO: warning counting here */	
 /*				if (!fatal(ok)) */
-				ok=writeObject(o,file,optionflag,backupExtension);
+				if (ok==PR_RESULT_SUCCESS)
+					ok=writeObject(o,file,optionflag,backupExtension);
+				else
+					printf("not ok. result=%d for %s\n",ok,file);
 
 				/* Verbose information */
 				/*if (hasFlag(verbose_flag)) {

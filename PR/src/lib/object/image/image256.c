@@ -157,7 +157,6 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 	int imageSizeInBytes=0;
 	int result;
 
-	data++;
 	image->height=array2short(data);
 	data+=2;
 	image->width =array2short(data);
@@ -165,7 +164,7 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 
 	if (*(data++)>1) return COMPRESS_RESULT_FATAL; /* Verify format */
 	image->type=(unsigned char)(*(data++));
-	dataSizeInBytes-=7;
+	dataSizeInBytes-=6;
 	switch (((image->type>>4)&7)+1) {
 	case 8:
 		image->widthInBytes=(image->width);
