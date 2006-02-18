@@ -204,3 +204,7 @@ int objPalette_pop1_4bitsWrite(void* o, const char* file, int optionflag, const 
 	return writePal(file,16,pal->c,optionflag,backupExtension);
 }
 
+tColor* objPalette_pop1_4bitsGetColors(void* o) {
+	tPop1_4bitsPalette* pal=o;
+	return pal->c;
+}

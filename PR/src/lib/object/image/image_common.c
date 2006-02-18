@@ -413,6 +413,7 @@ void* objImageCreate(unsigned char* data, int size, tObject palette, int *error)
 		return NULL;
 	}
 
+	image->pal=palette;
 	bits=paletteGetBits(image->pal);
 	if (bits!=getCarry(image->type)) printf("error, palette mismatch\n");
 	

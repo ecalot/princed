@@ -110,4 +110,15 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 
 int paletteGetBits(tObject pal) { return 4; }
 int paletteGetColors(tObject pal) { return 16; }
-tColor* paletteGetColorArray(tObject pal) { return NULL; }
+tColor* paletteGetColorArray(tObject pal) {
+	switch (pal.type) {
+	case eResTypePop1Palette4bits: /* save and remember palette file */
+		return objPalette_pop1_4bitsGetColors(pal.obj);
+		break;
+	default:
+		return NULL;
+	}
+}
+
+
+

@@ -64,4 +64,6 @@ int applyPalette(tPalette* p,tImage *i);
 void* objPalette_pop1_4bitsCreate(unsigned char* data, int size, int *error);
 int objPalette_pop1_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 
+tColor* objPalette_pop1_4bitsGetColors(void* o);
+
 #endif
