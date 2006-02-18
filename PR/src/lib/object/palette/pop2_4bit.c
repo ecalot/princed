@@ -208,3 +208,36 @@ tColor* objPalette_pop1_4bitsGetColors(void* o) {
 	tPop1_4bitsPalette* pal=o;
 	return pal->c;
 }
+
+tColor* paletteGetColorArrayForColors(int colors) {
+	static tColor p1[2];
+	static tColor p4[2];
+	static tColor p8[2];
+	int i;
+
+	switch(colors) {
+	case 2:
+		/* Palette 1 bit */
+		p1[0].r=0;
+		p1[0].g=0;
+		p1[0].b=0;
+		p1[1].r=255;
+		p1[1].g=255;
+		p1[1].b=255;
+		return p1;
+	case 16:
+		/* Palette 4 bits */
+		memcpy(p4, sample_pal4, 16);
+		return p4;
+	case 256:
+		/* Palette 8 bits */
+		for (i=0;i<256;i++) {
+			p8[i].r=i;
+			p8[i].g=i;
+			p8[i].b=i;
+		}
+		return p8;
+	default:
+		return NULL; /* unsupported bit rate */
+	}
+}

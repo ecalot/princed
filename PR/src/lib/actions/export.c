@@ -127,8 +127,9 @@ printf("id=(%d,%s,%d)\n",res.paletteId.value,res.paletteId.index,res.paletteId.o
 							/* Read the palette and load it into memory */
 							if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
 								tPaletteListItem e;
+								resourceListAddInfo(r,&otherPalette);
 								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
-								e.pal=currentPalette=getObject(&res,&ok);
+								e.pal=currentPalette=getObject(&otherPalette,&ok);
 								e.id=res.id;
 								list_insert(&paletteBuffer,(void*)&e);
 							} /* else, that's bad, I'll have to use the previous palette, even if it is the default */

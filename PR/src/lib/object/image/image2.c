@@ -42,6 +42,8 @@ image.c: Princed Resources : Image Compression Library
 #include "dat.h"
 #include "object.h" /* paletteGet* */
 
+#include "palette.h" /* getColorArrayByColors */
+
 #include "bmp.h"
 
 /* Compression level explanation:
@@ -426,9 +428,15 @@ int objImageWrite(void* img,const char* file,int optionflag,const char* backupEx
 	int colors;
 	tColor* colorArray;
 
-	bits=paletteGetBits(i->pal);
-	colors=paletteGetColors(i->pal);
-	colorArray=paletteGetColorArray(i->pal);
+	if (i->pal.type!=eResTypeNone) {
+		bits=paletteGetBits(i->pal);
+		colors=paletteGetColors(i->pal);
+		colorArray=paletteGetColorArray(i->pal);
+	} else {
+		bits=getCarry(i->type);
+		colors=1<<bits;
+		colorArray=paletteGetColorArrayForColors(colors);
+	}
 	
 	/* Write bitmap */
 	return mWriteBmp(file,i->pix,i->width,i->height,bits,colors,colorArray,i->widthInBytes,optionflag,backupExtension);
