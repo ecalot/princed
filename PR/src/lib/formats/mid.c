@@ -39,20 +39,21 @@ mid.c: Princed Resources : MIDI files support
 #include <stdlib.h>
 #include <string.h>
 
-int mFormatExportMid(const unsigned char* data, char *vFileext,unsigned long int size,int optionflag,const char* backupExtension) {
-	/* Mid files are saved as raw except you must ignore checksum & sound type */
-	return writeData(data,2,vFileext,size,optionflag,backupExtension);
+int writeMid(const char* file, tBinary* snd, int optionflag, const char* backupExtension) {
+	/* Mid files are saved as raw */
+	return writeData(snd->data,0,file,snd->size,optionflag,backupExtension)?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
 }
 
 int mFormatImportMid(tResource *res) {
 	unsigned char* file;
 
-	file=malloc(res->size+1);
+	file=malloc(res->content.size+1);
 	file[0]=(unsigned char)((res->type==4)?2:0); /* Now should be 0x02: First character must be a 0x01 (wav type in DAT) */
-	memcpy(file+1,res->data,res->size);
-	res->size++;
-	free(res->data);
-	res->data=file;
+	memcpy(file+1,res->content.data,res->content.size);
+	res->content.size++;
+	free(res->content.data);
+	res->content.data=file;
 	mWriteFileInDatFile(res);
 	return 1; /* true */
 }
+

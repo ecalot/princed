@@ -36,43 +36,42 @@ wav.c: Princed Resources : WAV files support
 #include "disk.h"
 #include "wav.h"
 
-int mFormatExportWav(const unsigned char* data, char *vFileext,unsigned long int size,int optionflag,const char* backupExtension) {
+int writeWav(const char* file, tBinary* snd, int optionflag, const char* backupExtension) {
 	FILE*         target;
 	int ok;
 	unsigned char wav[]=WAVE_HEADER;
 
-	size-=2;
-	ok=writeOpen(vFileext,&target,optionflag);
+	ok=writeOpen(file,&target,optionflag);
 
-	wav[4]=(unsigned char)((size+36)&0xFF);
-	wav[5]=(unsigned char)(((size+36)>>8)&0xFF);
-	wav[6]=(unsigned char)(((size+36)>>16)&0xFF);
-	wav[7]=(unsigned char)(((size+36)>>24)&0xFF);
+	wav[4]=(unsigned char)((snd->size+36)&0xFF);
+	wav[5]=(unsigned char)(((snd->size+36)>>8)&0xFF);
+	wav[6]=(unsigned char)(((snd->size+36)>>16)&0xFF);
+	wav[7]=(unsigned char)(((snd->size+36)>>24)&0xFF);
 
-	wav[40]=(unsigned char)((size)&0xFF);
-	wav[41]=(unsigned char)(((size)>>8)&0xFF);
-	wav[42]=(unsigned char)(((size)>>16)&0xFF);
-	wav[43]=(unsigned char)(((size)>>24)&0xFF);
+	wav[40]=(unsigned char)((snd->size)&0xFF);
+	wav[41]=(unsigned char)(((snd->size)>>8)&0xFF);
+	wav[42]=(unsigned char)(((snd->size)>>16)&0xFF);
+	wav[43]=(unsigned char)(((snd->size)>>24)&0xFF);
 
 	ok=ok&&fwrite(wav,sizeof(wav),1,target);
-	ok=ok&&fwrite(data+2,size,1,target);
+	ok=ok&&fwrite(snd->data,snd->size,1,target);
 	ok=ok&&(!writeCloseOk(target,optionflag,backupExtension));
 
-	return ok;
+	return ok?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
 }
 
 int mFormatImportWav(tResource *res) {
 	unsigned char wav[]=WAVE_HEADER;
 	int i=sizeof(wav);
-	unsigned char* posAux=res->data;
+	unsigned char* posAux=res->content.data;
 
-	if (res->size<=i) return 0; /* false */
-	res->size-=(--i);
-	while ((i==4||i==5||i==6||i==7||i==40||i==41||i==42||i==43||((res->data)[i]==wav[i]))&&(i--));
-	(res->data)[sizeof(wav)-1]=1; /* First character must be a 0x01 (wav type in DAT) */
-	res->data+=sizeof(wav)-1;
+	if (res->content.size<=i) return 0; /* false */
+	res->content.size-=(--i);
+	while ((i==4||i==5||i==6||i==7||i==40||i==41||i==42||i==43||((res->content.data)[i]==wav[i]))&&(i--));
+	(res->content.data)[sizeof(wav)-1]=1; /* First character must be a 0x01 (wav type in DAT) */
+	res->content.data+=sizeof(wav)-1;
 	if (i==-1) mWriteFileInDatFile(res);
-	res->data=posAux;
+	res->content.data=posAux;
 	return 1; /* true */
 }
 

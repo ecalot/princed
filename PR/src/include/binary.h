@@ -36,7 +36,7 @@ binary.h: Princed Resources : Memory handling & comparison prototypes
 
 typedef struct {
 	unsigned char* data;
-	int size;
+	long int size;
 }tBinary;
 
 #endif

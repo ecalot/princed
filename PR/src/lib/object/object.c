@@ -56,22 +56,22 @@ tObject getObject(tResource* r, int* error) {
 	case eResTypeBinary: /* Binary files */
 	case eResTypeText: /* Text files */
 	case eResTypeRaw: /* Raw files */
-		o.obj=objBinaryCreate(r->data,r->size,error); 
+		o.obj=objBinaryCreate(r->content.data,r->content.size,error); 
 		break;
 	case eResTypePop1Palette4bits: /* save and remember palette file */
-		o.obj=objPalette_pop1_4bitsCreate(r->data,r->size,error);
+		o.obj=objPalette_pop1_4bitsCreate(r->content.data,r->content.size,error);
 		break;
 	case eResTypePcspeaker: /* save pcs file */
-		o.obj=objPcspeakerCreate(r->data,r->size,error);
+		o.obj=objPcspeakerCreate(r->content.data,r->content.size,error);
 		break;
 	case eResTypeMidi:	/* save midi file */
-		o.obj=objMidiCreate(r->data,r->size,error);
+		o.obj=objMidiCreate(r->content.data,r->content.size,error);
 		break;
 	case eResTypeWave: /* save wav file */
-		o.obj=objWaveCreate(r->data,r->size,error);
+		o.obj=objWaveCreate(r->content.data,r->content.size,error);
 		break;
 	case eResTypeImage: /* save image */
-		o.obj=objImageCreate(r->data,r->size,r->palette,error);
+		o.obj=objImageCreate(r->content.data,r->content.size,r->palette,error);
 		break;
 	default:
 		break;
@@ -93,10 +93,13 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 		error=objPalette_pop1_4bitsWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypePcspeaker: /* save pcs file */
+		error=objPcspeakerWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeMidi:	/* save midi file */
+		error=objMidiWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeWave: /* save wav file */
+		error=objWaveWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeImage: /* save image */
 		error=objImageWrite(o.obj,file,optionflag,backupExtension);

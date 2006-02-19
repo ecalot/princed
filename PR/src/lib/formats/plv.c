@@ -174,30 +174,30 @@ int mFormatImportPlv(tResource *res) {
 	/* declare variables */
 	unsigned char* pos;
 	unsigned char* posAux;
-	unsigned long int oldSize=res->size;
+	unsigned long int oldSize=res->content.size;
 
 	/* integrity check 1 */
 	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE) return 0; /* false */
-	if (memcmp(res->data,PLV_HEADER_A,PLV_HEADER_A_SIZE)) return 0; /* false */
+	if (memcmp(res->content.data,PLV_HEADER_A,PLV_HEADER_A_SIZE)) return 0; /* false */
 
 	/* jump to size */
-	pos=res->data+PLV_HEADER_A_SIZE+7; /* TODO: check this */
+	pos=res->content.data+PLV_HEADER_A_SIZE+7; /* TODO: check this */
 
 	/* read size and jump to data */
-	res->size=array2long(pos);pos+=4;
+	res->content.size=array2long(pos);pos+=4;
 
 	/* integrity check 2 */
-	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE+res->size) return 0; /* false */
+	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE+res->content.size) return 0; /* false */
 
 	/* validate checksum */
-	if (!checkSum(pos,res->size))
+	if (!checkSum(pos,res->content.size))
 		fprintf(outputStream,PR_TEXT_IMPORT_PLV_WARN);
 
 	/* save data */
-	posAux=res->data;
-	res->data=pos;
+	posAux=res->content.data;
+	res->content.data=pos;
 	mWriteFileInDatFileIgnoreChecksum(res);
-	res->data=posAux;
+	res->content.data=posAux;
 
 	return 1; /* true */
 }

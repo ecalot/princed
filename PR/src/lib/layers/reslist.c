@@ -119,7 +119,7 @@ void resourceListAdd(tResourceList* r,tResource* res) {
 void printr(const tResource* record) {
 		printf("id=(%d,%s,%d)\n",record->id.value,record->id.index,record->id.order);
 		/*printf("palette=(%d,%s)\n",record->palette.value,record->palette.index);*/
-		printf("size=%ld offset=%lu\n",record->size,record->offset);
+		printf("size=%ld offset=%lu\n",record->content.size,record->offset);
 		/*printf("number=%d type=%d\n",record->number,record->type);*/
 		/*printf("path='%s' name='%s' desc='%s'\n\n",record->path,record->name,record->desc);*/
 }

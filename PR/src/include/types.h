@@ -37,6 +37,8 @@ reslist.h: Princed Resources : Resource list prototypes
 #include "list.h" /* tList */
 typedef tList tResourceList;
 
+#include "binary.h"
+
 #include "common.h" /* Item Types */
 
 /* types */
@@ -55,14 +57,15 @@ typedef struct {
 	tResourceId        id;
 	tResourceId        paletteId;
 	tObject            palette;
-	long int           size;
+	/*long int           size;
+	unsigned char*     data;*/
+	tBinary            content;
 	unsigned long int  offset; /* Used internally in dat.c to remember the offset */
 	unsigned char      number; /* Used for level number */
 	tResourceType      type;
 	char*              desc;
 	char*              name;
 	char*              path;
-	unsigned char*     data;
 	unsigned long      flags;
 }tResource;
 

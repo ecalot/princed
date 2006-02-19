@@ -178,6 +178,7 @@ Versions:
   + Inverted POP2 index names
   - Raw importation now works for pop2
   - When extracting, generated unknown.xml's are now merged into one
+  - Restructured the repository and source to support an object layer
  * PR v1.3 (scheduled 2006-03-22)
   X Add a fatal error check when importing from a different palette size and a
     warning when importing from an incorrect palette.

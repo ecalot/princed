@@ -400,13 +400,13 @@ int dat_readRes(tResource* res, tIndexCursor indexCursor) {
 	strncpy(res->id.index,dat_readCursorGetIndexName (indexCursor),5);
 	res->id.order=        dat_readCursorGetOrder     (indexCursor);
 	res->offset=          dat_readCursorGetOffset    (indexCursor);
-	res->size=            dat_readCursorGetSize      (indexCursor);
+	res->content.size=    dat_readCursorGetSize      (indexCursor);
 	res->flags=           dat_readCursorGetFlags     (indexCursor);
 
 	/*res->size++; * add the checksum */
 
-	res->data=readDatFile+res->offset+1; /* ignore the checksum */
-	return checkSum(readDatFile+res->offset,res->size+1);
+	res->content.data=readDatFile+res->offset+1; /* ignore the checksum */
+	return checkSum(readDatFile+res->offset,res->content.size+1);
 /*printf("reading resource: %d:%4s at %d order=%d\n",res->id.value,res->id.index,res->offset,res->id.order);*/
 }
 
@@ -531,14 +531,14 @@ void dat_write(const tResource* res,unsigned char checksum) {
 	/* remember only indexed values */
 	insert.id=res->id;
 	insert.flags=res->flags;
-	insert.size=res->size;
+	insert.content.size=res->content.size;
 	insert.offset=((unsigned long)ftell(writeDatFile));
 
 	/* writes the checksum */
 	fwritechar(&checksum,writeDatFile);
 
 	/* do the magic */
-	fwrite(res->data,res->size,1,writeDatFile);
+	fwrite(res->content.data,res->content.size,1,writeDatFile);
 
 	resourceListAdd(&resIndex,&insert);
 }
@@ -550,11 +550,11 @@ void mWriteFileInDatFileIgnoreChecksum(const tResource* res) {
 	aux=*res;
 
 	/* drop the checksum */
-	aux.data++;
-	aux.size--;
+	aux.content.data++;
+	aux.content.size--;
 
 	/* write it */
-	dat_write(&aux,res->data[0]);
+	dat_write(&aux,res->content.data[0]);
 }
 
 void mWriteFileInDatFile(const tResource* res) {
@@ -564,9 +564,9 @@ void mWriteFileInDatFile(const tResource* res) {
 	 */
 
 	/* Declare variables */
-	int            k        = res->size;
+	int            k        = res->content.size;
 	unsigned char  checksum = 0;
-	const unsigned char* dataAux  = res->data;
+	const unsigned char* dataAux  = res->content.data;
 
 	/* calculates the checksum */
 	while (k--) checksum+=*(dataAux++);
@@ -597,7 +597,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 				totalItems++;
 				fwriteshort(&(res->id.value),writeDatFile);
 				fwritelong(&(res->offset),writeDatFile);
-				fwriteshort(&(res->size),writeDatFile);
+				fwriteshort(&(res->content.size),writeDatFile);
 			} while ((res=resourceListGetElement(&resIndex)));
 			size2+=totalItems<<3;
 
@@ -655,7 +655,7 @@ void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension
 				fwriteshort(&(res->id.value),writeDatFile);
 /*printf("writing resource: %d:%4s at %d f=%08x\n",res->id.value,res->id.index,res->offset,res->flags);*/
 				fwritelong(&(res->offset),writeDatFile);
-				fwriteshort(&(res->size),writeDatFile);
+				fwriteshort(&(res->content.size),writeDatFile);
 
 				/* this is the flag written in endian-safe */
 				v=res->flags>>16;

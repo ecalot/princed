@@ -451,9 +451,9 @@ void objImageFree(void* img) {
 int mFormatImportBmp(tResource *res) {
 	tImage img;
 
-	if (!mReadBitMap(&img,res->data,res->size)) return 0; /* false */
-	free(res->data);
-	mCompressGraphic(&(res->data),&img,(int*)&(res->size));
+	if (!mReadBitMap(&img,res->content.data,res->content.size)) return 0; /* false */
+	free(res->content.data);
+	mCompressGraphic(&(res->content.data),&img,(int*)&(res->content.size));
 	mWriteFileInDatFile(res);
 	free(img.pix);
 

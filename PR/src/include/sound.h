@@ -35,13 +35,16 @@ sound.h: Princed Resources :
 
 #include "binary.h"
 
+#include "mid.h"
+#include "wav.h"
+
 int objSoundWrite(void* o, const char* file, int write(const char* file,tBinary* data,int optionflag, const char* backupExtension), int optionflag, const char* backupExtension);
 void* objSoundCreate(unsigned char* data, int size, int *error);
 
 
 #define objWaveWrite(a,b,c,d) objSoundWrite(a,b,writeWav,c,d)
 #define objMidiWrite(a,b,c,d) objSoundWrite(a,b,writeMid,c,d)
-#define objPcspeakerWrite(a,b,c,d) objSoundWrite(a,b,writePcs,c,d)
+#define objPcspeakerWrite(a,b,c,d) objBinaryWrite(a,b,c,d)
 
 #define objWaveCreate(a,b,c) objSoundCreate(a,b,c)
 #define objMidiCreate(a,b,c) objSoundCreate(a,b,c)

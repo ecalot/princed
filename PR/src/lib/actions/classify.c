@@ -65,7 +65,7 @@ int prClassifyDat(const char* vFiledat) {
 		if (ok==PR_RESULT_INDEX_NOT_FOUND) READ_ERROR; /* Read error */
 		/*if (ok==PR_RESULT_CHECKSUM_ERROR) fprintf(outputStream,"Warning: Checksum error\n"); Warning TODO: add an output for the checksum warning */
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
-		type=verifyHeader(res.data,res.size);
+		type=verifyHeader(res.content.data,res.content.size);
 	}
 
 	mReadCloseDatFile();

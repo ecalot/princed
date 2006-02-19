@@ -111,7 +111,7 @@ int import_full(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 		if (hasFlag(raw_flag)) newRes.type=0; /* compile from raw */
 		getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 		/* the file is in the archive, so I'll add it to the main DAT body */
-		if ((newRes.size=(mLoadFileArray(vFileext,&newRes.data)))>0) {
+		if ((newRes.content.size=(mLoadFileArray(vFileext,&newRes.content.data)))>0) { /* TODO: let each format handle the files */
 			if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
 				error++;
@@ -119,7 +119,7 @@ int import_full(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
 				ok++;
 			}
-			free(newRes.data);
+			free(newRes.content.data);
 		} else {
 			if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
 			error++;
@@ -167,14 +167,14 @@ int import_partial(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 		resourceListAddInfo(r,&res);
 
 		if (isInTheItemMatchingList(res.path,res.id)) { /* If the resource was specified */
-			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.data,res.size);
+			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.content.data,res.content.size);
 			if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
 			/* get save file name (if unknown document is in the XML) */
 			getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 
 			/* the file is in the partial matching list, so I'll import */
-			if ((newRes.size=mLoadFileArray(vFileext,&newRes.data))>0) {
+			if ((newRes.content.size=mLoadFileArray(vFileext,&newRes.content.data))>0) {
 				newRes.id=res.id;
 				newRes.type=res.type;
 				if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {
@@ -184,7 +184,7 @@ int import_partial(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 					if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
 					ok++;
 				}
-				free(newRes.data);
+				free(newRes.content.data);
 			} else {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
 				errors++;
