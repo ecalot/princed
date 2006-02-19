@@ -30,13 +30,14 @@ main.c: Princed Resources : Main item class implementation
   DO NOT remove this copyright notice
 */
 
+#include "common.h"
 #include "object.h"
 #include "reslist.h"
-#include "common.h"
 
-#include "other.h"
 #include "image.h"
+#include "other.h"
 #include "palette.h"
+#include "sound.h"
 
 tObject getObject(tResource* r, int* error) {
 	tObject o;
@@ -61,13 +62,13 @@ tObject getObject(tResource* r, int* error) {
 		o.obj=objPalette_pop1_4bitsCreate(r->data,r->size,error);
 		break;
 	case eResTypePcspeaker: /* save pcs file */
-		/*o.obj=objPcspeakerCreate(r->data,r->size,error); */
+		o.obj=objPcspeakerCreate(r->data,r->size,error);
 		break;
 	case eResTypeMidi:	/* save midi file */
-		/*o.obj=objMidiCreate(r->data,r->size,error); */
+		o.obj=objMidiCreate(r->data,r->size,error);
 		break;
 	case eResTypeWave: /* save wav file */
-		/*o.obj=objWaveCreate(r->data,r->size,error); */
+		o.obj=objWaveCreate(r->data,r->size,error);
 		break;
 	case eResTypeImage: /* save image */
 		o.obj=objImageCreate(r->data,r->size,r->palette,error);

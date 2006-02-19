@@ -51,7 +51,7 @@ int writePal(const char* file, int colors, const tColor* colorArray, int optionf
 	FILE* fd;
 
 	/* open file */
-	if (!writeOpen(file,&fd,optionflag)) return 0; /* false */
+	if (!writeOpen(file,&fd,optionflag)) return PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
 
 	fprintf(fd,"JASC-PAL\r\n%04d\r\n%d\r\n",100,colors);
 	for (i=0;i<colors;i++) {
@@ -65,7 +65,7 @@ int writePal(const char* file, int colors, const tColor* colorArray, int optionf
 	/* save JASC palette */
 	writeCloseOk(fd,optionflag,backupExtension);
 
-	return i;
+	return PR_RESULT_SUCCESS; 
 }
 
 int mFormatImportPal(tPalette* p, int* bits, const char* vFile) {

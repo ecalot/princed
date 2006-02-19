@@ -367,7 +367,7 @@ int writeOpen(const char* vFileext, FILE* *fp, int optionflag) {
 }
 #endif
 
-int writeData(const unsigned char* data, int ignoreChars, char* vFileext, int size, int optionflag,const char* backupExtension) {
+int writeData(const unsigned char* data, int ignoreChars, const char* vFileext, int size, int optionflag,const char* backupExtension) {
 	/*
 		Creates vFileext and saves data in it. In case the directory doesn't
 		exist it will be created.

@@ -37,6 +37,7 @@
 
 #include "binary.h" /* tBinary */
 #include "common.h"
+#include "disk.h" /* we are skiping the format layer here */
 #include <stdlib.h>
 
 /***************************************************************\
@@ -53,5 +54,8 @@ void* objBinaryCreate(unsigned char* data, int size, int *error) { /* use get li
 	return (void*)r;
 }
 
-
+int objBinaryWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
+	tBinary* b=o;
+	return writeData(b->data,1,file,b->size,optionflag,backupExtension)?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
+}
 

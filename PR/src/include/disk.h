@@ -60,7 +60,7 @@ typedef enum {eFile,eDirectory,eNotFound}whatIs;
 #define isDirSep(a,i) ((a[i]=='\\')||(a[i]=='/'))
 
 #define writeCloseOk(a,b,c) writeClose(a,0,b,c)
-int  writeData     (const unsigned char* data, int ignoreChars, char* vFileext, int size, int optionflag,const char* backupExtension);
+int  writeData     (const unsigned char* data, int ignoreChars, const char* vFileext, int size, int optionflag,const char* backupExtension);
 int  writeOpen     (const char* vFileext, FILE* *fp, int optionflag);
 int  writeClose    (FILE* fp,int dontSave,int optionflag,const char* backupExtension);
 int  mLoadFileArray(const char* vFile,unsigned char** array);
