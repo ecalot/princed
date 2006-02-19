@@ -48,14 +48,14 @@ int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits
 	/* declare variables */
 	int a;
 	unsigned short int planes=1;
-	unsigned long int colours;
+	unsigned long int colours=colors;
 	unsigned long int extra=1000;
 	unsigned long int filesize;
 	unsigned long int headerSize;
-	unsigned long int height;
+	unsigned long int height=h;
 	unsigned long int offset;
 	unsigned char color;
-	unsigned long int width;
+	unsigned long int width=w;
 	const unsigned long int zero=0;
 	char lineSerialization;
 	FILE* bitmap;

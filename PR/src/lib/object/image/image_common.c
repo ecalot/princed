@@ -185,7 +185,6 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 	if (image->type==0xf3)
 		return pop2decompress(data,dataSizeInBytes-6,image->width,&(image->pix),&imageSizeInBytes);
 
-
 #define checkSize if (imageSizeInBytes!=(image->widthInBytes*image->height))\
 	return COMPRESS_RESULT_FATAL
 #define checkResult if (result==COMPRESS_RESULT_FATAL)\

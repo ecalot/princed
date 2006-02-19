@@ -106,7 +106,6 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				tObject o;
 				if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
-printf("ok=%d ok2=%d type=%d\n",ok,ok2,res.type);
 				/* get save file name (if unknown document is in the XML) */
 				getFileName(file,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
 
@@ -120,7 +119,6 @@ printf("ok=%d ok2=%d type=%d\n",ok,ok2,res.type);
 					}	break;
 					case eResTypeImage: /* save image */
 						/* Palette handling */
-printf("id=(%d,%s,%d)\n",res.paletteId.value,res.paletteId.index,res.paletteId.order);
 						if (resourceListCompareId(res.paletteId,bufferedPalette) /*TODO: add &&!paletteCheckCompatibility(currentPalette,image) */) { /* The palette isn't in the buffer */
 							tResource otherPalette;
 							otherPalette.id=res.paletteId;
