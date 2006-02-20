@@ -473,22 +473,25 @@ tTag* xmlParseFile(const char* vFile,int* error) {
 	 */
 
 	char* p;
-	char* l;
+	/*char* l;*/
 	char* value=NULL;
 	tTag* tag;
 	tTag* father;
-	int size;
+	/*int size;*/
+	tBinary bin;
 
-	if (((size=mLoadFileArray(vFile,(unsigned char**)(&l)))<=0)) {
+	bin=mLoadFileArray(vFile);
+
+	if (bin.size<=0) {
 		*error=PR_RESULT_ERR_XML_FILE; /* File not open */
 		return NULL;
 	}
-	/* bug fix moved to loadArray */ l[size-1]=0; /* The last character must be an end of line (the > is forbidden) */
-	p=l;
+	/* bug fix moved to loadArray */ bin.data[bin.size-1]=0; /* The last character must be an end of line (the > is forbidden) */
+	p=(char*)bin.data;
 
 	*error=getNextTag(&p, &value);
 	if ((*error)<0) {
-		free(l);
+		free(bin.data);
 		return NULL; /* Fatal error will stop the execution of the parsing */
 	}
 
@@ -497,14 +500,14 @@ tTag* xmlParseFile(const char* vFile,int* error) {
 
 	if ((*error)<0) {
 		freeTagStructure(tag);
-		free(l);
+		free(bin.data);
 		free(father);
 		return NULL;
 	}
 
 	*error=getNextTag(&p, &value);
 
-	free(l);
+	free(bin.data);
 	if (*error<0) {
 		freeTagStructure(tag);
 		free(father);

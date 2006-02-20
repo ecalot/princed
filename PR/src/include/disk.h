@@ -54,6 +54,8 @@ disk.h: Princed Resources : Disk Access & File handling prototypes
 	#define DIR_SEPARATOR           '\\'
 #endif
 
+#include "binary.h"
+
 typedef enum {eFile,eDirectory,eNotFound}whatIs;
 
 #define charToUpper(a) ((a)&0xDF)
@@ -63,7 +65,7 @@ typedef enum {eFile,eDirectory,eNotFound}whatIs;
 int  writeData     (const unsigned char* data, int ignoreChars, const char* vFileext, int size, int optionflag,const char* backupExtension);
 int  writeOpen     (const char* vFileext, FILE* *fp, int optionflag);
 int  writeClose    (FILE* fp,int dontSave,int optionflag,const char* backupExtension);
-int  mLoadFileArray(const char* vFile,unsigned char** array);
+tBinary  mLoadFileArray(const char* vFile);
 int  makebase      (const char* p);
 const char* repairFolders(const char* a);
 const char* getFileNameFromPath(const char* path);

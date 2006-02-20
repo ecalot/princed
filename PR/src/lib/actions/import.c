@@ -111,7 +111,9 @@ int import_full(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 		if (hasFlag(raw_flag)) newRes.type=0; /* compile from raw */
 		getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 		/* the file is in the archive, so I'll add it to the main DAT body */
-		if ((newRes.content.size=(mLoadFileArray(vFileext,&newRes.content.data)))>0) { /* TODO: let each format handle the files */
+		newRes.content=mLoadFileArray(vFileext);
+		if (newRes.content.size>0) {
+			/* TODO: let each format handle the files */
 			if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
 				error++;
@@ -174,7 +176,8 @@ int import_partial(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 			getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 
 			/* the file is in the partial matching list, so I'll import */
-			if ((newRes.content.size=mLoadFileArray(vFileext,&newRes.content.data))>0) {
+			newRes.content=mLoadFileArray(vFileext);
+			if (newRes.content.size>0) {
 				newRes.id=res.id;
 				newRes.type=res.type;
 				if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {

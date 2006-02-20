@@ -84,15 +84,16 @@ int prClassify(const char* fileName) {
 	result=prClassifyDat(fileName);
 
 	if (!result) { /* it's not a DAT file*/
-		long int fileSize;
-		unsigned char* fileData;
+		/*long int fileContent.size;
+		unsigned char* fileData;*/
+		tBinary fileContent;
 
 		/* let's get it's content and see what it is */
-		fileSize=mLoadFileArray(fileName,&fileData);
-		if (fileSize<=0) return fileSize;
+		fileContent=mLoadFileArray(fileName);
+		if (fileContent.size<=0) return fileContent.size;
 
 		/* 2) let's compare the size with a .SAV size */
-		if (fileSize==8) {
+		if (fileContent.size==8) {
 			int framesLeft;
 			/* check that the frames (seconds/12) are in the range [0*12,60*12) */
 			framesLeft=fileData[2]|fileData[3]<<8;
@@ -101,7 +102,7 @@ int prClassify(const char* fileName) {
 		}
 
 		/* 3) let's compare the size with a .HOF size */
-		if (fileSize==176) {
+		if (fileContent.size==176) {
 			int records;
 			/* check that the number of stored records are 6 or less */
 			records=fileData[0]|fileData[1]<<8;
@@ -118,7 +119,7 @@ int prClassify(const char* fileName) {
 		}
 
 		/* 4) as the last resource, check if it is an EXE file */
-		if (!result && fileSize>2 && fileData[0]=='M' && fileData[1]=='Z') {
+		if (!result && fileContent.size>2 && fileData[0]=='M' && fileData[1]=='Z') {
 			static tExeClassification x[]={
 				/* install.pdm         : 41 */ {717181985,4233},
 				/* prince.exe v1.0 THG : 42 */ {622612442,123335},
@@ -129,16 +130,16 @@ int prClassify(const char* fileName) {
 			result=40; /* generic EXE file */
 			/* Now I'll try to recognize some known EXE files */
 			/* calculate checksum */
-			for (i=0;i<fileSize;i++) {
+			for (i=0;i<fileContent.size;i++) {
 				checkSum+=fileData[i]<<((3-(i%4))*8);
 			}
 #ifdef DEBUG_GETCHECKSUM
-			printf("{%lu,%ld},\n",checkSum,fileSize);
+			printf("{%lu,%ld},\n",checkSum,fileContent.size);
 #endif
 
 			/* compare checksum*/
 			for (i=0;x[i].size;i++)
-				if ((x[i].checkSum==checkSum) && (x[i].size==fileSize)) {
+				if ((x[i].checkSum==checkSum) && (x[i].size==fileContent.size)) {
 					result=41+i;
 					break;
 				}
