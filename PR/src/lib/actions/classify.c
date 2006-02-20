@@ -85,7 +85,7 @@ int prClassify(const char* fileName) {
 
 	if (!result) { /* it's not a DAT file*/
 		/*long int fileContent.size;
-		unsigned char* fileData;*/
+		unsigned char* fileContent.data;*/
 		tBinary fileContent;
 
 		/* let's get it's content and see what it is */
@@ -96,7 +96,7 @@ int prClassify(const char* fileName) {
 		if (fileContent.size==8) {
 			int framesLeft;
 			/* check that the frames (seconds/12) are in the range [0*12,60*12) */
-			framesLeft=fileData[2]|fileData[3]<<8;
+			framesLeft=fileContent.data[2]|fileContent.data[3]<<8;
 			if (framesLeft<60*12)
 				result=30; /* SAV file */
 		}
@@ -105,13 +105,13 @@ int prClassify(const char* fileName) {
 		if (fileContent.size==176) {
 			int records;
 			/* check that the number of stored records are 6 or less */
-			records=fileData[0]|fileData[1]<<8;
+			records=fileContent.data[0]|fileContent.data[1]<<8;
 			if (records<=6) {
 				result=31; /* HOF file */
 				while (records) {
 					int framesLeft;
 					/* wrong seconds left format for this record will invalidate the whole file */
-					framesLeft=fileData[29*records-2]|fileData[29*records-1]<<8;
+					framesLeft=fileContent.data[29*records-2]|fileContent.data[29*records-1]<<8;
 					if (framesLeft>=60*12) result=0;
 					records--;
 				}
@@ -119,7 +119,7 @@ int prClassify(const char* fileName) {
 		}
 
 		/* 4) as the last resource, check if it is an EXE file */
-		if (!result && fileContent.size>2 && fileData[0]=='M' && fileData[1]=='Z') {
+		if (!result && fileContent.size>2 && fileContent.data[0]=='M' && fileContent.data[1]=='Z') {
 			static tExeClassification x[]={
 				/* install.pdm         : 41 */ {717181985,4233},
 				/* prince.exe v1.0 THG : 42 */ {622612442,123335},
@@ -131,7 +131,7 @@ int prClassify(const char* fileName) {
 			/* Now I'll try to recognize some known EXE files */
 			/* calculate checksum */
 			for (i=0;i<fileContent.size;i++) {
-				checkSum+=fileData[i]<<((3-(i%4))*8);
+				checkSum+=fileContent.data[i]<<((3-(i%4))*8);
 			}
 #ifdef DEBUG_GETCHECKSUM
 			printf("{%lu,%ld},\n",checkSum,fileContent.size);
@@ -145,7 +145,7 @@ int prClassify(const char* fileName) {
 				}
 		}
 
-		free(fileData);
+		free(fileContent.data);
 	}
 
 	return result;

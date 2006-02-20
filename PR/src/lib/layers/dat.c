@@ -64,8 +64,7 @@ typedef struct {
 	int* pointer;
 } tValuePointer;
 
-static unsigned char* readDatFile;
-static int            readDatFileSize;
+static tBinary        readDatFile;
 static tIndexCursor   readIndexCursor;
 static const char*    textPop1="pop1";
 
@@ -405,8 +404,8 @@ int dat_readRes(tResource* res, tIndexCursor indexCursor) {
 
 	/*res->size++; * add the checksum */
 
-	res->content.data=readDatFile+res->offset+1; /* ignore the checksum */
-	return checkSum(readDatFile+res->offset,res->content.size+1);
+	res->content.data=readDatFile.data+res->offset+1; /* ignore the checksum */
+	return checkSum(readDatFile.data+res->offset,res->content.size+1);
 /*printf("reading resource: %d:%4s at %d order=%d\n",res->id.value,res->id.index,res->offset,res->id.order);*/
 }
 
@@ -430,7 +429,7 @@ tPopVersion mReadGetVersion() {
 
 void mReadCloseDatFile() {
 	dat_releaseCursor(&readIndexCursor);
-	free(readDatFile);
+	free(readDatFile.data);
 }
 
 int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
@@ -444,9 +443,9 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	unsigned short int indexSize;
 
 	/* Open file */
-	readDatFileSize=mLoadFileArray(vFiledat,&readDatFile);
-	if (readDatFileSize<=0) {
-		switch (readDatFileSize) {
+	readDatFile=mLoadFileArray(vFiledat);
+	if (readDatFile.size<=0) {
+		switch (readDatFile.size) {
 		case PR_RESULT_ERR_FILE_NOT_READ_ACCESS:
 			return PR_RESULT_ERR_FILE_DAT_NOT_READ_ACCESS;
 		case PR_RESULT_ERR_FILE_NOT_OPEN_WASDIR:
@@ -456,26 +455,26 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 		case PR_RESULT_SUCCESS:
 			return PR_RESULT_ERR_INVALID_DAT;
 		default:
-			return readDatFileSize;
+			return readDatFile.size;
 		}
 	}
-	if (readDatFileSize<=6) {
-		free(readDatFile);
+	if (readDatFile.size<=6) {
+		free(readDatFile.data);
 		return PR_RESULT_ERR_INVALID_DAT;
 	}
 
 	/* read header  */
-	indexOffset=array2long(readDatFile);
-	indexSize=array2short(readDatFile+4);
+	indexOffset=array2long(readDatFile.data);
+	indexSize=array2short(readDatFile.data+4);
 
 	/* verify DAT format: the index offset belongs to the file and the file size is the index size plus the index offset */
-	if ((indexOffset>readDatFileSize)&&((indexOffset+indexSize)!=readDatFileSize)) {
-		free(readDatFile);
+	if ((indexOffset>readDatFile.size)&&((indexOffset+indexSize)!=readDatFile.size)) {
+		free(readDatFile.data);
 		return PR_RESULT_ERR_INVALID_DAT; /* this is not a valid prince DAT file */
 	}
 
 	/* create cursor */
-	readIndexCursor=dat_createCursor(readDatFile+indexOffset,indexSize,numberOfItems);
+	readIndexCursor=dat_createCursor(readDatFile.data+indexOffset,indexSize,numberOfItems);
 
 	/* pop version check */
 	if (!dat_readCursorGetVersion(readIndexCursor)) return PR_RESULT_ERR_INVALID_DAT;

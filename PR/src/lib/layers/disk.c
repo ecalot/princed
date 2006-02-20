@@ -82,8 +82,9 @@ typedef struct tOpenFiles {
 	struct tOpenFiles* next;
 	FILE* file;
 	char* name;
-	unsigned char* content;
-	long int size;
+	tBinary content;
+/*	unsigned char* content;
+	long int size;*/
 }tOpenFiles;
 
 /***************************************************************\
@@ -160,17 +161,17 @@ void addFileToOpenFilesList(const char* fileName,int hasBackup) {
 	newNode->name=strallocandcopy(fileName);
 
 	if (hasBackup) {
-		newNode->size=mLoadFileArray(fileName,&(newNode->content));
-		if (newNode->size<0) newNode->size=0;
+		newNode->content=mLoadFileArray(fileName);
+		if (newNode->content.size<0) newNode->content.size=0;
 	} else {
-		newNode->size=0;
+		newNode->content.size=0;
 	}
 	openFilesList=newNode;
 }
 
 #define addPointerToOpenFilesList(fp) openFilesList->file=fp;
 
-int getFromOpenFilesList(FILE* fp, char** fileName, unsigned char** content, unsigned long int *size) {
+int getFromOpenFilesList(FILE* fp, char** fileName, tBinary *content) {
 	tOpenFiles* currentNode;
 	tOpenFiles* priorNode=NULL;
 
@@ -186,7 +187,7 @@ int getFromOpenFilesList(FILE* fp, char** fileName, unsigned char** content, uns
 	/* Return results */
 	*fileName=currentNode->name;
 	*content=currentNode->content;
-	*size=currentNode->size;
+/*	*size=currentNode->size;*/
 
 	/* free node and set prior pointer to the next */
 	if (priorNode==NULL) {
@@ -200,17 +201,16 @@ int getFromOpenFilesList(FILE* fp, char** fileName, unsigned char** content, uns
 }
 
 int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension) {
-	unsigned char* content;
+	tBinary content;
 	char* fileName;
-	unsigned long int size;
 
-	if (getFromOpenFilesList(fp,&fileName,&content,&size)) {
+	if (getFromOpenFilesList(fp,&fileName,&content)) {
 		if (dontSave) {
 			fclose(fp);
-			if (size) {
+			if (content.size) {
 				fp=fopen(fileName,"wb");
 				if (fp==NULL) return -1;
-				fwrite(content,1,size,fp);
+				fwrite(content.data,1,content.size,fp);
 				fclose(fp);
 			} else {
 				remove(fileName);
@@ -227,7 +227,7 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 				fclose(fp);
 				fp=fopen(aux,"wb");
 				if (fp==NULL) return -2;
-				fwrite(content,1,size,fp);
+				fwrite(content.data,1,content.size,fp);
 				fclose(fp);
 			} else {
 				fclose(fp);
@@ -235,7 +235,7 @@ int writeClose(FILE* fp,int dontSave,int optionflag,const char* backupExtension)
 		}
 
 		free(fileName);
-		if (size) free(content);
+		if (content.size) free(content.data);
 	}
 
 	return 0;
@@ -398,7 +398,7 @@ int writeData(const unsigned char* data, int ignoreChars, const char* vFileext, 
 	return ok;
 }
 
-int mLoadFileArray(const char* vFile,unsigned char** array) {
+tBinary mLoadFileArray(const char* vFile) {
 	/*
 		Using the string in vFile, it opens the file and returns the
 		number of bytes	in it and the content of the file in array.
@@ -407,33 +407,52 @@ int mLoadFileArray(const char* vFile,unsigned char** array) {
 
 	/* declare variables */
 	FILE *fp;
-	int  aux;
+	int  aux; /* TODO: replace by ret.size */
 	const char* file=repairFolders(vFile);
 	whatIs f;
+	tBinary ret;
 
 	/* check type */
 	f=isDir(file);
-	if (f==eDirectory) return PR_RESULT_ERR_FILE_NOT_OPEN_WASDIR;
-	if (f==eNotFound)  return PR_RESULT_ERR_FILE_NOT_OPEN_NOTFOUND;
+	if (f==eDirectory) {
+		ret.size=PR_RESULT_ERR_FILE_NOT_OPEN_WASDIR;
+		ret.data=NULL;
+		return ret;
+	}
+	if (f==eNotFound) {
+		ret.size=PR_RESULT_ERR_FILE_NOT_OPEN_NOTFOUND;
+		ret.data=NULL;
+		return ret;
+	}
 
 	/* Open the file */
 	if ((fp=fopen(file,"rb"))==NULL) {
-		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
+		ret.size=PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
+		ret.data=NULL;
+		return ret;
 	} else {
 		/* get file size */
 		fseek(fp,0,SEEK_END);
 		aux=ftell(fp);
-		if (!aux) {fclose(fp);return 0;}
-		if ((*array=(unsigned char*)malloc(aux+1))==NULL) {
+		if (!aux) {
 			fclose(fp);
-			return PR_RESULT_ERR_MEMORY; /* this is probable to happen in big files! */
+			ret.size=0;
+			ret.data=NULL;
+			return ret;
+		}
+		if ((ret.data=(unsigned char*)malloc(aux+1))==NULL) {
+			fclose(fp);
+			ret.size=PR_RESULT_ERR_MEMORY;
+			ret.data=NULL;
+			return ret; /* this could happen in big files! */
 		} else {
 			/* if the file was successfully open */
 			fseek(fp,0,SEEK_SET);
-			aux=fread (*array,1,aux,fp);
-			(*array)[aux]=0;
+			aux=fread (ret.data,1,aux,fp);
+			ret.data[aux]=0;
 			fclose(fp);
-			return aux;
+			ret.size=aux;
+			return ret;
 		}
 	}
 }

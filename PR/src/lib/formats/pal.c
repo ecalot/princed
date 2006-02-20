@@ -72,12 +72,12 @@ int mFormatImportPal(tPalette* p, int* bits, const char* vFile) {
 	/* declare variables */
 	unsigned char* pals;
 	unsigned char* pals1;
-	unsigned char  pals2[400]/*PAL_SAMPLE*/;
+	/*unsigned char  pals2[400 *PAL_SAMPLE*/
 	unsigned char  palh [30];
 	unsigned char* pal;
 	unsigned char* pal2;
 /*	char* data2;*/
-	char aux[MAX_FILENAME_SIZE];
+	/*char aux[MAX_FILENAME_SIZE];*/
 /*	int r;
 	int g;
 	int b;*/
@@ -93,7 +93,7 @@ int mFormatImportPal(tPalette* p, int* bits, const char* vFile) {
 	if (i!=sizeof(palh)) return 0; /* false: palette differs with headers */
 
 	/* Read sample */
-	sprintf(aux,"%s.more",vFile);
+/*	sprintf(aux,"%s.more",vFile);
 	sample1=mLoadFileArray(aux,&pals1);
 	if (sample1<0) return sample1;
 
@@ -102,7 +102,7 @@ int mFormatImportPal(tPalette* p, int* bits, const char* vFile) {
 	} else {
 		pals=pals2;
 	}
-
+*/
 	/* Allocate palette */
 	pal=malloc(100);
 
