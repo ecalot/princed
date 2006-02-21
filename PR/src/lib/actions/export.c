@@ -101,7 +101,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 		resourceListAddInfo(r,&res);
 
 		if (isInTheItemMatchingList(res.path,res.id)) { /* If the resource was specified do the tasks */
-			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.content.data,res.content.size);
+			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.content);
 			if (!(hasFlag(unknown_flag))) { /* If unknown flag is set do nothing but generate the unknown.xml file */
 				tObject o;
 				if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */

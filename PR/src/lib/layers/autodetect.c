@@ -37,8 +37,8 @@ autodetect.c: Princed Resources : Automatic detection resource types
 
 #include "autodetect.h"
 
-int isA64kPalette(const unsigned char* d, int s) {
-	while (s--) if (d[s]>>6) return 0; /* false */
+int isA64kPalette(tBinary c) {
+	while (c.size--) if (c.data[c.size]>>6) return 0; /* false */
 	return 1; /* true */
 }
 
@@ -46,62 +46,65 @@ int isA64kPalette(const unsigned char* d, int s) {
 |                       Item Type Detector                      |
 \***************************************************************/
 
-int verifyLevelHeader(const unsigned char *array, int size) {
-	return (size==12025) || (((size==2306)||(size==2305))&&!(array[1698]&0x0F)&&!(array[1700]&0x0F)&&!(array[1702]&0x0F));
+int verifyLevelHeader(tBinary c) {
+	return (c.size==12025) || (((c.size==2306)||(c.size==2305))&&!(c.data[1698]&0x0F)&&!(c.data[1700]&0x0F)&&!(c.data[1702]&0x0F));
 }
 
-int verifyImageHeader(const unsigned char *array, int size) {
+int verifyImageHeader(tBinary c) {
 	unsigned char imageBitRate;
-	if (size<=7) return 0; /* false */
-	imageBitRate=(( ((unsigned char)array[6])>>4 ) & 7)+1;
-	return (size>7) && (((unsigned char)array[5])<2) && ((imageBitRate==4 || imageBitRate==8));
+	if (c.size<=7) return 0; /* false */
+	imageBitRate=(( ((unsigned char)c.data[6])>>4 ) & 7)+1;
+	return (c.size>7) && (((unsigned char)c.data[5])<2) && ((imageBitRate==4 || imageBitRate==8));
 	/* NOTE:
 	 *   imageBitRate==1
 	 * works for monochrome images (but is very common and matches more than that)
 	 */
 }
 
-int verifyPaletteHeader(const unsigned char *array, int size) {
+int verifyPaletteHeader(tBinary c) {
+	tBinary c2;
+	c2.size=c.size-1;
+	c2.data=c.data+1;
 	return (
-		((size==101)&&(!array[2])&&(!array[3])&&(array[4]==0x10))
+		((c.size==101)&&(!c.data[2])&&(!c.data[3])&&(c.data[4]==0x10))
 		||
-		((size==(256*3+1)||size==(320*3+1))&&isA64kPalette(array+1,size-1))
+		((c.size==(256*3+1)||c.size==(320*3+1))&&isA64kPalette(c2))
 	);
 }
 
-int verifySpeakerHeader(const unsigned char *array, int size) {
+int verifySpeakerHeader(tBinary c) {
 	/* format: (checksum)+(0x00)+(even number)+3 bytes per note */
 	return
-		(size>4)&&(array[1]==0x00)&&(!(array[2]%2))&&(!(size%3))
+		(c.size>4)&&(c.data[1]==0x00)&&(!(c.data[2]%2))&&(!(c.size%3))
 	;
 }
 
-int verifyWaveHeader(const unsigned char *array, int size) {
+int verifyWaveHeader(tBinary c) {
 	/* format: (checksum)+(0x01)+raw wave */
 	return
-		(size>1)&&(array[1]==0x01)&&((size%3)==2)
+		(c.size>1)&&(c.data[1]==0x01)&&((c.size%3)==2)
 	;
 }
 
-int verifyMidiHeader(const unsigned char *array, int size) {
+int verifyMidiHeader(tBinary c) {
 	/* format: (checksum)+(0x02)+"MThd"... */
 	return
-		(size>6) &&
-		(array[1]==0x02) &&
-		(array[2]=='M') &&
-		(array[3]=='T') &&
-		(array[4]=='h') &&
-		(array[5]=='d')
+		(c.size>6) &&
+		(c.data[1]==0x02) &&
+		(c.data[2]=='M') &&
+		(c.data[3]=='T') &&
+		(c.data[4]=='h') &&
+		(c.data[5]=='d')
 	;
 }
 
-tResourceType verifyHeader(const unsigned char *array, int size) {
-	if (verifyLevelHeader  (array,size)) return eResTypeLevel;
-	if (verifyMidiHeader   (array,size)) return eResTypeMidi;
-	if (verifyImageHeader  (array,size)) return eResTypeImage;
-	if (verifyPaletteHeader(array,size)) return eResTypePop1Palette4bits;
-	if (verifyWaveHeader   (array,size)) return eResTypeWave;
-	if (verifySpeakerHeader(array,size)) return eResTypePcspeaker;
+tResourceType verifyHeader(tBinary c) {
+	if (verifyLevelHeader  (c)) return eResTypeLevel;
+	if (verifyMidiHeader   (c)) return eResTypeMidi;
+	if (verifyImageHeader  (c)) return eResTypeImage;
+	if (verifyPaletteHeader(c)) return eResTypePop1Palette4bits;
+	if (verifyWaveHeader   (c)) return eResTypeWave;
+	if (verifySpeakerHeader(c)) return eResTypePcspeaker;
 	return eResTypeBinary;
 }
 

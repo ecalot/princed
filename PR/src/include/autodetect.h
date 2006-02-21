@@ -36,8 +36,9 @@ autodetect.h: Princed Resources : Resource automatic detection headers
 
 /* Includes */
 #include "reslist.h" /* tResourceType */
+#include "binary.h"
 
 /* Verify  header */
-tResourceType verifyHeader(const unsigned char* array, int size);
+tResourceType verifyHeader(tBinary c);
 
 #endif
