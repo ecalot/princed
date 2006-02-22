@@ -33,7 +33,9 @@ other.h: Princed Resources :
 #ifndef _OTHER_H_
 #define _OTHER_H_
 
-void* objBinaryCreate(unsigned char* data, int size, int *error);
+#include "binary.h"
+
+void* objBinaryCreate(tBinary c, int *error);
 int objBinaryWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 
 #endif

@@ -169,11 +169,11 @@ typedef struct {
 	unsigned char raw[100];
 }tPop1_4bitsPalette;
 
-void* objPalette_pop1_4bitsCreate(unsigned char* data, int size, int *error) {
+void* objPalette_pop1_4bitsCreate(tBinary cont, int *error) {
 	int i;
 	tPop1_4bitsPalette* pal;
 	
-	if (size!=100) {
+	if (cont.size!=100) {
 		*error=PR_RESULT_XML_AND_DAT_FORMAT_DO_NOT_MATCH;
 		return NULL;
 	}
@@ -181,12 +181,12 @@ void* objPalette_pop1_4bitsCreate(unsigned char* data, int size, int *error) {
 	pal=(tPop1_4bitsPalette*)malloc(sizeof(tPop1_4bitsPalette));
 	
 	for (i=0;i<16;i++) {
-		pal->c[i].r=data[(i*3)+4]<<2;
-		pal->c[i].g=data[(i*3)+5]<<2;
-		pal->c[i].b=data[(i*3)+6]<<2;
+		pal->c[i].r=cont.data[(i*3)+4]<<2;
+		pal->c[i].g=cont.data[(i*3)+5]<<2;
+		pal->c[i].b=cont.data[(i*3)+6]<<2;
 	}
 
-	memcpy(pal->raw,data,100);
+	memcpy(pal->raw,cont.data,100);
 
 	*error=PR_RESULT_SUCCESS;
 	

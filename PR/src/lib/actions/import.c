@@ -45,6 +45,7 @@ import.c: Princed Resources : DAT Importer
 #include "idlist.h"
 #include "memory.h"
 #include "unknown.h"
+#include "object.h"
 
 #include "bmp.h"
 #include "mid.h"
@@ -53,33 +54,6 @@ import.c: Princed Resources : DAT Importer
 #include "plv.h"
 
 extern FILE* outputStream;
-
-/***************************************************************\
-|                    Dat compiling primitive                    |
-\***************************************************************/
-
-/* Format detection function (private function, not in header file) */
-int mAddCompiledFileToDatFile(tResource* res,const char* vFile) {
-	/* return true if ok, false if error */
-	switch (res->type) {
-		case eResTypeLevel:
-			return mFormatImportPlv(res);
-		case eResTypeImage:
-			return mFormatImportBmp(res);
-		case eResTypeWave:
-			return mFormatImportWav(res);
-		case eResTypeMidi:
-		case eResTypePcspeaker:
-			return mFormatImportMid(res);
-		case eResTypePop1Palette4bits:
-			/* return mFormatImportPal(res,vFile); TODO: fix */
-		case eResTypeBinary:
-		default:
-			mWriteFileInDatFile(res);
-			break;
-	}
-	return 1; /* true */
-}
 
 /***************************************************************\
 |                   M A I N   F U N C T I O N                   |
@@ -103,6 +77,8 @@ int import_full(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 
 	list_firstCursor(r);
 	while ((res=list_getCursor(r))) {
+		int result;
+		tObject o;
 		/* remember only id and type */
 		newRes.id=res->id;
 		newRes.type=res->type;
@@ -111,21 +87,25 @@ int import_full(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 		if (hasFlag(raw_flag)) newRes.type=0; /* compile from raw */
 		getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 		/* the file is in the archive, so I'll add it to the main DAT body */
-		newRes.content=mLoadFileArray(vFileext);
-		if (newRes.content.size>0) {
+/*		newRes.content=mLoadFileArray(vFileext);*/
+/*		if (newRes.content.size>0) {*/
 			/* TODO: let each format handle the files */
-			if (!mAddCompiledFileToDatFile(&newRes,vFileext)) {
+		o=readObject(vFileext,newRes,&result);
+/*			if (!fatal(ok)) */
+		setObject(o,&result);
+			
+/*			if (!fatal(ok)) {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
 				error++;
 			} else {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
 				ok++;
-			}
-			free(newRes.content.data);
-		} else {
+			}*/
+			/*free(newRes.content.data);*/
+/*		} else {
 			if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
 			error++;
-		}
+		}*/
 
 		list_nextCursor(r);
 	}
@@ -169,14 +149,20 @@ int import_partial(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 		resourceListAddInfo(r,&res);
 
 		if (isInTheItemMatchingList(res.path,res.id)) { /* If the resource was specified */
+			int result;
+			tObject o;
 			if ((!res.type)&&(!hasFlag(raw_flag))) res.type=verifyHeader(res.content);
 			if (hasFlag(raw_flag)) res.type=0; /* If "extract as raw" is set, type is 0 */
 
 			/* get save file name (if unknown document is in the XML) */
 			getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 
+			o=readObject(vFileext,newRes,&result);
+/*			if (!fatal(ok)) */
+			setObject(o,&result);
+			
 			/* the file is in the partial matching list, so I'll import */
-			newRes.content=mLoadFileArray(vFileext);
+/*			newRes.content=mLoadFileArray(vFileext);
 			if (newRes.content.size>0) {
 				newRes.id=res.id;
 				newRes.type=res.type;
@@ -192,6 +178,7 @@ int import_partial(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
 				errors++;
 			}
+			*/
 		} else {
 			/* the file wasn't in the partial matching list, so I'll re-copy it from the open DAT file */
 			mWriteFileInDatFileIgnoreChecksum(&res);

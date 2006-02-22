@@ -35,6 +35,7 @@ pal.h: Princed Resources : JASC PAL files support headers
 #define _PALETTE_H_
 
 #include "image.h" /* tPalette, tImage */
+#include "binary.h"
 
 #define SAMPLE_PAL16 {\
 	{0x00,0x00,0x00},\
@@ -53,15 +54,15 @@ pal.h: Princed Resources : JASC PAL files support headers
 	{0xff,0x50,0xff},\
 	{0xff,0xf8,0x50},\
 	{0xff,0xff,0xff}}
-
+/*
 int getPalette(const tPalette* p, int bits, const tColor** palette);
 int setPalette(tPalette* p, int bits, tColor* palette);
 tPalette createPalette();
 int readPalette(tPalette* p, unsigned char* data, int dataSize);
 int applyPalette(tPalette* p,tImage *i);
+*/
 
-
-void* objPalette_pop1_4bitsCreate(unsigned char* data, int size, int *error);
+void* objPalette_pop1_4bitsCreate(tBinary c, int *error);
 int objPalette_pop1_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 
 tColor* objPalette_pop1_4bitsGetColors(void* o);

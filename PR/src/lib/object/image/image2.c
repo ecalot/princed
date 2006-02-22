@@ -391,7 +391,7 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 
 extern FILE* outputStream;
 
-void* objImageCreate(unsigned char* data, int size, tObject palette, int *error) { /* use get like main.c */
+void* objImageCreate(tBinary cont, tObject palette, int *error) { /* use get like main.c */
 
 	/*
 	 * This function will expand the data into an image structure,
@@ -406,7 +406,7 @@ void* objImageCreate(unsigned char* data, int size, tObject palette, int *error)
 	image=(tImage*)malloc(sizeof(tImage));
 
 	/* Expand graphic and check results */
-	*error=mExpandGraphic(data,image,size);
+	*error=mExpandGraphic(cont.data,image,cont.size); /* TODO: pass tBinary */
 /*	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
 		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);*/
 	if (*error==COMPRESS_RESULT_FATAL) {

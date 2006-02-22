@@ -35,6 +35,7 @@ image.h: Princed Resources : Image handling headers
 #define _IMAGE_H_
 
 #include "reslist.h"
+#include "binary.h"
 
 typedef struct { 
 	unsigned char r;
@@ -63,7 +64,7 @@ typedef struct {
 
 int mCompressGraphic(unsigned char** a,tImage* i, int* size); /* make it private */
 
-void* objImageCreate(unsigned char* data, int size, tObject palette, int *error);
+void* objImageCreate(tBinary c, tObject palette, int *error);
 int objImageWrite(void* img,const char* file,int optionflag,const char* backupExtension);
 
 #define getCarry(a) ((((a)>>4)&7)+1)

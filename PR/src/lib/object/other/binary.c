@@ -44,13 +44,12 @@
 |                         Binary Object                         |
 \***************************************************************/
 
-void* objBinaryCreate(unsigned char* data, int size, int *error) { /* use get like main.c */
+void* objBinaryCreate(tBinary cont, int *error) { /* use get like main.c */
 	tBinary* r;
 	*error=PR_RESULT_SUCCESS;
 	
 	r=(tBinary*)malloc(sizeof(tBinary));
-	r->data=data;
-	r->size=size;
+	*r=cont;
 	return (void*)r;
 }
 

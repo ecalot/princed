@@ -51,27 +51,27 @@ tObject getObject(tResource* r, int* error) {
 	o.type=r->type;
 	switch (o.type) {
 	case eResTypeLevel:
-		/*o.obj=objLevelCreate(r->data,r->size,r->number,vDatFileName,r->name,r->desc,r->datAuthor,error); */
+		/*o.obj=objLevelCreate(r->content,r->number,vDatFileName,r->name,r->desc,r->datAuthor,error); */
 		break;
 	case eResTypeBinary: /* Binary files */
 	case eResTypeText: /* Text files */
 	case eResTypeRaw: /* Raw files */
-		o.obj=objBinaryCreate(r->content.data,r->content.size,error); 
+		o.obj=objBinaryCreate(r->content,error); 
 		break;
 	case eResTypePop1Palette4bits: /* save and remember palette file */
-		o.obj=objPalette_pop1_4bitsCreate(r->content.data,r->content.size,error);
+		o.obj=objPalette_pop1_4bitsCreate(r->content,error);
 		break;
 	case eResTypePcspeaker: /* save pcs file */
-		o.obj=objPcspeakerCreate(r->content.data,r->content.size,error);
+		o.obj=objPcspeakerCreate(r->content,error);
 		break;
 	case eResTypeMidi:	/* save midi file */
-		o.obj=objMidiCreate(r->content.data,r->content.size,error);
+		o.obj=objMidiCreate(r->content,error);
 		break;
 	case eResTypeWave: /* save wav file */
-		o.obj=objWaveCreate(r->content.data,r->content.size,error);
+		o.obj=objWaveCreate(r->content,error);
 		break;
 	case eResTypeImage: /* save image */
-		o.obj=objImageCreate(r->content.data,r->content.size,r->palette,error);
+		o.obj=objImageCreate(r->content,r->palette,error);
 		break;
 	default:
 		break;
@@ -124,5 +124,43 @@ tColor* paletteGetColorArray(tObject pal) {
 	}
 }
 
+/***************************************************************\
+|                    Dat compiling primitive                    |
+\***************************************************************/
 
+void setObject(tObject o,int *result) {
+}
+
+/* Format detection function (private function, not in header file) */
+tObject readObject(const char* file,tResource res,int *result) {
+	/* return true if ok, false if error */
+	tObject o;
+	switch (res.type) {
+		case eResTypeLevel:
+			/*o.obj=objLevelRead(file,res.content,result);*/
+			break;
+		case eResTypeImage:
+			/*o.obj=objImageRead(file,res.content,res.palette,result);*/
+			break;
+		case eResTypeWave:
+			/*o.obj=objWaveRead(file,res.content,result);*/
+			break;
+		case eResTypeMidi:
+			/*o.obj=objMidiRead(file,res.content,result);*/
+			break;
+		case eResTypePcspeaker:
+			/*o.obj=objPcspeakerRead(file,res.content,result);*/
+			break;
+		case eResTypePop1Palette4bits:
+			/*o.obj=objPop1Palette4bitsRead(file,res.content,result);*/
+			break;
+		case eResTypeBinary:
+		default:
+			/*o.obj=objBinatyRead(file,res,result);*/
+			break;
+	}
+	o.type=res.type;
+
+	return o;
+}
 
