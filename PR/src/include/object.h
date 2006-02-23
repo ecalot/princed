@@ -40,7 +40,7 @@ object.h: Princed Resources : Main item class types and prototypes
 tObject getObject(tResource* r, int* error);
 int writeObject(tObject o, const char* file, int optionflag, const char* backupExtension);
 tObject readObject(const char* file,tResource* newRes,int *result);
-void setObject(tObject o,int *result);
+void setObject(tObject o,int *result,tResource* res);
 
 int paletteGetBits(tObject pal);
 int paletteGetColors(tObject pal);

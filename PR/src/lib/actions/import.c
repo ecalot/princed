@@ -92,7 +92,7 @@ int import_full(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 			/* TODO: let each format handle the files */
 		o=readObject(vFileext,&newRes,&result);
 /*			if (!fatal(ok)) */
-		setObject(o,&result);
+		setObject(o,&result,&newRes);
 			
 /*			if (!fatal(ok)) {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
@@ -159,7 +159,7 @@ int import_partial(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 
 			o=readObject(repairFolders(vFileext),&newRes,&result);
 /*			if (!fatal(ok)) */
-			setObject(o,&result);
+			setObject(o,&result,&newRes);
 			
 			/* the file is in the partial matching list, so I'll import */
 /*			newRes.content=mLoadFileArray(vFileext);

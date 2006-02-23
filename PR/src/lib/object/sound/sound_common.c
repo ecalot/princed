@@ -39,6 +39,8 @@ wave.c: Princed Resources :
 #include "common.h"
 #include "wav.h" 
 #include <stdlib.h>
+#include "dat.h" 
+#include "reslist.h" 
 
 /***************************************************************\
 |                         Binary Object                         |
@@ -87,5 +89,11 @@ void* objWaveRead(const char* file, int *result) {
 }
 
 
+int objWaveSet(void* o,tResource* res) {
+	tBinary* wave=o;
+	res->content=*wave;
+	mWriteFileInDatFile(res);
+	return PR_RESULT_SUCCESS;
+}
 
 

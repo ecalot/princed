@@ -130,7 +130,33 @@ tColor* paletteGetColorArray(tObject pal) {
 |                    Dat compiling primitive                    |
 \***************************************************************/
 
-void setObject(tObject o,int *result) {
+void setObject(tObject o,int *result,tResource* res) {
+	switch (o.type) {
+		case eResTypeLevel:
+			/*o.obj=objLevelRead(file,res.content,result);*/
+			break;
+		case eResTypeImage:
+			/*o.obj=objImageRead(file,res.content,res.palette,result);*/
+			break;
+		case eResTypeWave:
+			*result=objWaveSet(o.obj,res);
+			/*o.obj=objWaveRead(file,result);*/
+			break;
+		case eResTypeMidi:
+			/*o.obj=objMidiRead(file,res.content,result);*/
+			break;
+		case eResTypePcspeaker:
+			/*o.obj=objPcspeakerRead(file,res.content,result);*/
+			break;
+		case eResTypePop1Palette4bits:
+			/*o.obj=objPop1Palette4bitsRead(file,res.content,result);*/
+			break;
+		case eResTypeBinary:
+		default:
+			/*o.obj=objBinaryRead(file,result);*/
+			break;
+	}
+	
 }
 
 /* Format detection function (private function, not in header file) */

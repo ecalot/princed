@@ -34,6 +34,7 @@ sound.h: Princed Resources :
 #define _SOUND_H_
 
 #include "binary.h"
+#include "reslist.h"
 
 #include "mid.h"
 #include "wav.h"
@@ -54,5 +55,7 @@ void* objSoundCreate(tBinary c, int *error);
 void* objSoundRead(const char* file, int read(const char* file, tBinary* c, int *pchannels, long *psamplerate, long *pbps), int *result);
 
 void* objWaveRead(const char* file, int *result);
+
+int objWaveSet(void* o,tResource* res);
 
 #endif
