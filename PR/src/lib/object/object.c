@@ -146,6 +146,7 @@ tObject readObject(const char* file,tResource* res,int *result) {
 			break;
 		case eResTypeWave:
 			o.obj=objWaveRead(file,result);
+printf("wav: result=%d\n",*result);
 			break;
 		case eResTypeMidi:
 			/*o.obj=objMidiRead(file,res.content,result);*/

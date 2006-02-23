@@ -74,9 +74,9 @@ void* objWaveRead(const char* file, int *result) {
 	*result=readWav(file,o,&channels,&samplerate,&bps);
 
 	if (*result==PR_RESULT_SUCCESS) {
-		if (bps!=8) *result=PR_RESULT_WAV_UNSUPPORTED_BITRATE;
+		if (bps!=8)            *result=PR_RESULT_WAV_UNSUPPORTED_BITRATE;
 		if (samplerate!=11025) *result=PR_RESULT_WAV_UNSUPPORTED_SAMPLERATE;
-		if (samplerate!=1) *result=PR_RESULT_WAV_UNSUPPORTED_STEREO;
+		if (channels!=1)     *result=PR_RESULT_WAV_UNSUPPORTED_STEREO;
 	}
 	if (*result!=PR_RESULT_SUCCESS) {
 		free(o->data);

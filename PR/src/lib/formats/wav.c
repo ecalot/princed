@@ -101,9 +101,9 @@ int readWav(const char* file, tBinary* snd, int *pchannels, long *psamplerate, l
 	/* Validate input vars */	
   ok=ok&& (AudioFormat   == 1 ); /* PCM */
   ok=ok&& (BlockAlign    == NumChannels * BitsPerSample/8 );
-	ok=ok&& (ByteRate      == SampleRate * NumChannels * BitsPerSample/8 );
-	ok=ok&& (ChunkSize     == 4 + (8 + SubChunk1Size) + (8 + SubChunk2Size) );
-  ok=ok&& (SubChunk1Size == 16 ); /* PCM chunk */
+	ok=ok&& ((int)ByteRate      == (int)(SampleRate * NumChannels * BitsPerSample/8) ); /* why int? because I can't compare it with long, never tried in 32 bits */
+	ok=ok&& ((int)ChunkSize     == (int)(4 + (8 + SubChunk1Size) + (8 + SubChunk2Size)) );
+  ok=ok&& ((int)SubChunk1Size == (int)16 ); /* PCM chunk */
 /*	ok=ok&& (SubChunk2Size == NumSamples * NumChannels * BitsPerSample/8 );*/
 	
 	/* Read data*/
