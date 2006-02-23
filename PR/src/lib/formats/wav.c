@@ -35,6 +35,8 @@ wav.c: Princed Resources : WAV files support
 #include "dat.h"
 #include "disk.h"
 #include "wav.h"
+#include <string.h>
+#include <stdlib.h>
 
 int writeWav(const char* file, tBinary* snd, int optionflag, const char* backupExtension) {
 	FILE*         target;
@@ -60,18 +62,83 @@ int writeWav(const char* file, tBinary* snd, int optionflag, const char* backupE
 	return ok?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
 }
 
-int mFormatImportWav(tResource *res) {
+int readWav(const char* file, tBinary* snd, int *pchannels, long *psamplerate, long *pbps) {
+	FILE* fd;
+	int ok;
+	char magic[4];
+	long int ChunkSize;
+	long int SubChunk1Size;
+	short int AudioFormat;
+	short int NumChannels;
+	long int SampleRate;
+	long int ByteRate;
+	short int BlockAlign;
+	short int BitsPerSample;
+	long int SubChunk2Size;
+	
+	fd=fopen(file,"rb");
+	if (!fd) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; 
+
+	/* Read headers */
+	ok=fread(magic,4,1,fd);
+	ok=ok&&!strncmp(magic,"RIFF",4);
+	ok=ok&&freadlong(&ChunkSize,fd);
+	ok=ok&&fread(magic,4,1,fd);
+	ok=ok&&!strncmp(magic,"WAVE",4);
+	ok=ok&&fread(magic,4,1,fd);
+	ok=ok&&!strncmp(magic,"fmt ",4);
+	ok=ok&&freadlong(&SubChunk1Size,fd);
+	ok=ok&&freadshort(&AudioFormat,fd);
+	ok=ok&&freadshort(&NumChannels,fd);
+	ok=ok&&freadlong(&SampleRate,fd);
+	ok=ok&&freadlong(&ByteRate,fd);
+	ok=ok&&freadshort(&BlockAlign,fd);
+	ok=ok&&freadshort(&BitsPerSample,fd);
+	ok=ok&&fread(magic,4,1,fd);
+	ok=ok&&!strncmp(magic,"data",4);
+	ok=ok&&freadlong(&SubChunk2Size,fd);
+	
+	/* Validate input vars */	
+  ok=ok&& (AudioFormat   == 1 ); /* PCM */
+  ok=ok&& (BlockAlign    == NumChannels * BitsPerSample/8 );
+	ok=ok&& (ByteRate      == SampleRate * NumChannels * BitsPerSample/8 );
+	ok=ok&& (ChunkSize     == 4 + (8 + SubChunk1Size) + (8 + SubChunk2Size) );
+  ok=ok&& (SubChunk1Size == 16 ); /* PCM chunk */
+/*	ok=ok&& (SubChunk2Size == NumSamples * NumChannels * BitsPerSample/8 );*/
+	
+	/* Read data*/
+	if (ok) {
+		snd->size=SubChunk2Size;
+		snd->data=malloc(SubChunk2Size);
+		ok=fread(snd->data,SubChunk2Size,1,fd);
+	} else {
+		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
+	}
+	/* TODO: check eof */
+	
+	/*
 	unsigned char wav[]=WAVE_HEADER;
 	int i=sizeof(wav);
 	unsigned char* posAux=res->content.data;
 
-	if (res->content.size<=i) return 0; /* false */
+	if (res->content.size<=i) return 0; * false *
 	res->content.size-=(--i);
 	while ((i==4||i==5||i==6||i==7||i==40||i==41||i==42||i==43||((res->content.data)[i]==wav[i]))&&(i--));
-	(res->content.data)[sizeof(wav)-1]=1; /* First character must be a 0x01 (wav type in DAT) */
+	(res->content.data)[sizeof(wav)-1]=1; * First character must be a 0x01 (wav type in DAT) *
 	res->content.data+=sizeof(wav)-1;
 	if (i==-1) mWriteFileInDatFile(res);
 	res->content.data=posAux;
-	return 1; /* true */
+	return 1; * true */
+
+	if (!ok) {
+		free(snd->data);
+		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
+	}
+	
+	*pchannels    = NumChannels;
+	*psamplerate  = SampleRate;
+	*pbps         = BitsPerSample;
+	
+	return PR_RESULT_SUCCESS;			
 }
 

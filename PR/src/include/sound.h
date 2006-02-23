@@ -50,4 +50,9 @@ void* objSoundCreate(tBinary c, int *error);
 #define objMidiCreate(a,b) objSoundCreate(a,b)
 #define objPcspeakerCreate(a,b) objSoundCreate(a,b)
 
+/*#define objWaveRead(a,b,c,d,e) objSoundRead(a,readWav,b,c,d,e)*/
+void* objSoundRead(const char* file, int read(const char* file, tBinary* c, int *pchannels, long *psamplerate, long *pbps), int *result);
+
+void* objWaveRead(const char* file, int *result);
+
 #endif

@@ -39,6 +39,8 @@ main.c: Princed Resources : Main item class implementation
 #include "palette.h"
 #include "sound.h"
 
+/* Object polimorphism support layer */
+
 tObject getObject(tResource* r, int* error) {
 	tObject o;
 	if (!r) {
@@ -132,10 +134,10 @@ void setObject(tObject o,int *result) {
 }
 
 /* Format detection function (private function, not in header file) */
-tObject readObject(const char* file,tResource res,int *result) {
+tObject readObject(const char* file,tResource* res,int *result) {
 	/* return true if ok, false if error */
 	tObject o;
-	switch (res.type) {
+	switch (res->type) {
 		case eResTypeLevel:
 			/*o.obj=objLevelRead(file,res.content,result);*/
 			break;
@@ -143,7 +145,7 @@ tObject readObject(const char* file,tResource res,int *result) {
 			/*o.obj=objImageRead(file,res.content,res.palette,result);*/
 			break;
 		case eResTypeWave:
-			/*o.obj=objWaveRead(file,res.content,result);*/
+			o.obj=objWaveRead(file,result);
 			break;
 		case eResTypeMidi:
 			/*o.obj=objMidiRead(file,res.content,result);*/
@@ -156,10 +158,10 @@ tObject readObject(const char* file,tResource res,int *result) {
 			break;
 		case eResTypeBinary:
 		default:
-			/*o.obj=objBinatyRead(file,res,result);*/
+			o.obj=objBinaryRead(file,result);
 			break;
 	}
-	o.type=res.type;
+	o.type=res->type;
 
 	return o;
 }

@@ -58,3 +58,12 @@ int objBinaryWrite(void* o, const char* file, int optionflag, const char* backup
 	return writeData(b->data,1,file,b->size,optionflag,backupExtension)?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
 }
 
+void* objBinaryRead(const char* file,int *result) {
+	tBinary o=mLoadFileArray(file);
+	if (o.size<0) {
+		*result=o.size;
+		return NULL;
+	}
+	return objBinaryCreate(o,result);
+}
+

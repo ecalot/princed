@@ -44,17 +44,48 @@ wave.c: Princed Resources :
 |                         Binary Object                         |
 \***************************************************************/
 
-void* objSoundCreate(unsigned char* data, int size, int *error) { /* use get like main.c */
+void* objSoundCreate(tBinary cont, int *error) { /* use get like main.c */
 	tBinary* r;
 	*error=PR_RESULT_SUCCESS;
 	
 	r=(tBinary*)malloc(sizeof(tBinary));
-	r->data=data+1;
-	r->size=size-1;
+	r->data=cont.data+1;
+	r->size=cont.size-1;
 	return (void*)r;
 }
 
 int objSoundWrite(void* o, const char* file, int write(const char* file,tBinary* data,int optionflag, const char* backupExtension), int optionflag, const char* backupExtension) {
 	return write(file,(tBinary*)o,optionflag,backupExtension);
 }
+
+/*void* objSoundRead(const char* file, int read(const char* file, tBinary* c, int *pchannels, long *psamplerate, long *pbps), int *result, int *pchannels, long *psamplerate, long *pbps) {
+	tBinary* o=(tBinary*)malloc(sizeof(tBinary));
+	*result=read(file,o);
+	return (void*)o;
+}*/
+
+
+void* objWaveRead(const char* file, int *result) {
+	int  channels;
+	long samplerate;
+ 	long bps;
+	tBinary* o=(tBinary*)malloc(sizeof(tBinary));
+	
+	*result=readWav(file,o,&channels,&samplerate,&bps);
+
+	if (*result==PR_RESULT_SUCCESS) {
+		if (bps!=8) *result=PR_RESULT_WAV_UNSUPPORTED_BITRATE;
+		if (samplerate!=11025) *result=PR_RESULT_WAV_UNSUPPORTED_SAMPLERATE;
+		if (samplerate!=1) *result=PR_RESULT_WAV_UNSUPPORTED_STEREO;
+	}
+	if (*result!=PR_RESULT_SUCCESS) {
+		free(o->data);
+		return NULL;
+	}
+	
+	return (void*)o;
+}
+
+
+
 
