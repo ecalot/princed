@@ -61,6 +61,10 @@ int objSoundWrite(void* o, const char* file, int write(const char* file,tBinary*
 	return write(file,(tBinary*)o,optionflag,backupExtension);
 }
 
+int objWaveWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
+	return writeWav(file,(tBinary*)o,optionflag,backupExtension);
+}
+
 /*void* objSoundRead(const char* file, int read(const char* file, tBinary* c, int *pchannels, long *psamplerate, long *pbps), int *result, int *pchannels, long *psamplerate, long *pbps) {
 	tBinary* o=(tBinary*)malloc(sizeof(tBinary));
 	*result=read(file,o);
@@ -100,4 +104,23 @@ int objWaveSet(void* o,tResource* res) {
 	return PR_RESULT_SUCCESS;
 }
 
+int objMidiSet(void* o,tResource* res) {
+	tBinary* midi=o;
+	res->content.size=midi->size+1;
+	res->content.data=malloc(midi->size+1);
+	res->content.data[0]=0x01; /* TODO: use MIDI_MAGIC */
+	memcpy(res->content.data+1,midi->data,midi->size);
+	mWriteFileInDatFile(res);
+	return PR_RESULT_SUCCESS;
+}
+
+int objPcspeakerSet(void* o,tResource* res) {
+	tBinary* pcspeaker=o;
+	res->content.size=pcspeaker->size+1;
+	res->content.data=malloc(pcspeaker->size+1);
+	res->content.data[0]=0x01; /* TODO: use PCSPEAKER_MAGIC */
+	memcpy(res->content.data+1,pcspeaker->data,pcspeaker->size);
+	mWriteFileInDatFile(res);
+	return PR_RESULT_SUCCESS;
+}
 
