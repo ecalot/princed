@@ -143,10 +143,10 @@ void setObject(tObject o,int *result,tResource* res) {
 			/*o.obj=objWaveRead(file,result);*/
 			break;
 		case eResTypeMidi:
-			/*o.obj=objMidiRead(file,res.content,result);*/
+			*result=objMidiSet(o.obj,res);
 			break;
 		case eResTypePcspeaker:
-			/*o.obj=objPcspeakerRead(file,res.content,result);*/
+			*result=objPcspeakerSet(o.obj,res);
 			break;
 		case eResTypePop1Palette4bits:
 			/*o.obj=objPop1Palette4bitsRead(file,res.content,result);*/
@@ -174,10 +174,10 @@ tObject readObject(const char* file,tResource* res,int *result) {
 			o.obj=objWaveRead(file,result);
 			break;
 		case eResTypeMidi:
-			/*o.obj=objMidiRead(file,res.content,result);*/
+			o.obj=objMidiRead(file,result);
 			break;
 		case eResTypePcspeaker:
-			/*o.obj=objPcspeakerRead(file,res.content,result);*/
+			o.obj=objPcspeakerRead(file,result);
 			break;
 		case eResTypePop1Palette4bits:
 			/*o.obj=objPop1Palette4bitsRead(file,res.content,result);*/

@@ -53,6 +53,8 @@ int objWaveWrite(void* o, const char* file, int optionflag, const char* backupEx
 /*void* objSoundRead(const char* file, int read(const char* file, tBinary* c, int *pchannels, long *psamplerate, long *pbps), int *result);*/
 
 void* objWaveRead(const char* file, int *result);
+#define objMidiRead(a,b) objBinaryRead(a,b)
+#define objPcspeakerRead(a,b) objBinaryRead(a,b)
 
 int objWaveSet(void* o,tResource* res);
 int objPcspeakerSet(void* o,tResource* res);
