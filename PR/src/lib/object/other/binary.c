@@ -55,7 +55,7 @@ void* objBinaryCreate(tBinary cont, int *error) { /* use get like main.c */
 
 int objBinaryWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
 	tBinary* b=o;
-	return writeData(b->data,1,file,b->size,optionflag,backupExtension)?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
+	return writeData(b->data,0,file,b->size,optionflag,backupExtension)?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
 }
 
 void* objBinaryRead(const char* file,int *result) {

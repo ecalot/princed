@@ -199,7 +199,7 @@ int objPalette_pop1_4bitsWrite(void* o, const char* file, int optionflag, const 
 	/* TODO: add the write of the extra information */
 	/* Export extra palette information */
 	/*sprintf((char*)aux,"%s.more",file);
-	writeData(data,1,(char*)aux,size,optionflag,backupExtension); TODO fix that */
+	writeData(data,0,(char*)aux,size,optionflag,backupExtension); TODO fix that */
 
 	return writePal(file,16,pal->c,optionflag,backupExtension);
 }
