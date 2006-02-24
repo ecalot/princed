@@ -111,7 +111,7 @@ int import_full(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 	}
 
 	/* Close file. If empty, don't save */
-	mWriteCloseDatFile(!ok,optionflag,backupExtension);
+	mWriteCloseDatFile(ok,optionflag,backupExtension);
 
 	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,error);
 	return error;

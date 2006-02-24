@@ -82,7 +82,7 @@ int verifySpeakerHeader(tBinary c) {
 int verifyWaveHeader(tBinary c) {
 	/* format: (checksum)+(0x01)+raw wave */
 	return
-		(c.size>1)&&(c.data[1]==0x01)&&((c.size%3)==2)
+		(c.size>1)&&(c.data[1]==0x01)&&((c.size%3)==2) /* TODO: use WAVE_MAGIC */
 	;
 }
 

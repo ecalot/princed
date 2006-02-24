@@ -39,6 +39,7 @@ wave.c: Princed Resources :
 #include "common.h"
 #include "wav.h" 
 #include <stdlib.h>
+#include <string.h> /* memcpy */
 #include "dat.h" 
 #include "reslist.h" 
 
@@ -91,7 +92,10 @@ void* objWaveRead(const char* file, int *result) {
 
 int objWaveSet(void* o,tResource* res) {
 	tBinary* wave=o;
-	res->content=*wave;
+	res->content.size=wave->size+1;
+	res->content.data=malloc(wave->size+1);
+	res->content.data[0]=0x01; /* TODO: use WAVE_MAGIC */
+	memcpy(res->content.data+1,wave->data,wave->size);
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
 }

@@ -66,15 +66,15 @@ int readWav(const char* file, tBinary* snd, int *pchannels, long *psamplerate, l
 	FILE* fd;
 	int ok;
 	char magic[4];
-	long int ChunkSize;
-	long int SubChunk1Size;
+	long int ChunkSize=0; /* longs must be initialized to avoid trash in 64 bits architectures */
+	long int SubChunk1Size=0;
 	short int AudioFormat;
 	short int NumChannels;
-	long int SampleRate;
-	long int ByteRate;
+	long int SampleRate=0;
+	long int ByteRate=0;
 	short int BlockAlign;
 	short int BitsPerSample;
-	long int SubChunk2Size;
+	long int SubChunk2Size=0;
 	
 	fd=fopen(file,"rb");
 	if (!fd) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; 
@@ -101,7 +101,7 @@ int readWav(const char* file, tBinary* snd, int *pchannels, long *psamplerate, l
 	/* Validate input vars */	
   ok=ok&& (AudioFormat   == 1 ); /* PCM */
   ok=ok&& (BlockAlign    == NumChannels * BitsPerSample/8 );
-	ok=ok&& ((int)ByteRate      == (int)(SampleRate * NumChannels * BitsPerSample/8) ); /* why int? because I can't compare it with long, never tried in 32 bits */
+/*	ok=ok&& ((int)ByteRate      == (int)(SampleRate * NumChannels * BitsPerSample/8) ); * why int? because I can't compare it with long, never tried in 32 bits */
 	ok=ok&& ((int)ChunkSize     == (int)(4 + (8 + SubChunk1Size) + (8 + SubChunk2Size)) );
   ok=ok&& ((int)SubChunk1Size == (int)16 ); /* PCM chunk */
 /*	ok=ok&& (SubChunk2Size == NumSamples * NumChannels * BitsPerSample/8 );*/
@@ -111,7 +111,9 @@ int readWav(const char* file, tBinary* snd, int *pchannels, long *psamplerate, l
 		snd->size=SubChunk2Size;
 		snd->data=malloc(SubChunk2Size);
 		ok=fread(snd->data,SubChunk2Size,1,fd);
+		fclose(fd);
 	} else {
+		fclose(fd);
 		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
 	}
 	/* TODO: check eof */
