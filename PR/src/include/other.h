@@ -38,5 +38,6 @@ other.h: Princed Resources :
 void* objBinaryCreate(tBinary c, int *error);
 int objBinaryWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 void* objBinaryRead(const char* file,int *result);
+int objBinarySet(void* o,tResource* res);
 
 #endif

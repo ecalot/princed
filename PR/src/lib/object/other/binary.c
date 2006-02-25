@@ -37,6 +37,8 @@
 
 #include "binary.h" /* tBinary */
 #include "common.h"
+#include "dat.h" /* WriteDat */
+#include "reslist.h" /* tResources */
 #include "disk.h" /* we are skiping the format layer here */
 #include <stdlib.h>
 
@@ -67,3 +69,9 @@ void* objBinaryRead(const char* file,int *result) {
 	return objBinaryCreate(o,result);
 }
 
+int objBinarySet(void* o,tResource* res) {
+	tBinary* bin=o;
+	res->content=*bin;
+	mWriteFileInDatFile(res);
+	return PR_RESULT_SUCCESS;
+}

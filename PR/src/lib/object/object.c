@@ -89,7 +89,8 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 		break;
 	case eResTypeBinary: /* Binary files */
 	case eResTypeText: /* Text files */
-	case eResTypeRaw: /* Raw files */
+	case eResTypeRaw: /* Raw/autodetect files */
+		error=objBinaryWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypePop1Palette4bits: /* save and remember palette file */
 		error=objPalette_pop1_4bitsWrite(o.obj,file,optionflag,backupExtension);
@@ -140,7 +141,6 @@ void setObject(tObject o,int *result,tResource* res) {
 			break;
 		case eResTypeWave:
 			*result=objWaveSet(o.obj,res);
-			/*o.obj=objWaveRead(file,result);*/
 			break;
 		case eResTypeMidi:
 			*result=objMidiSet(o.obj,res);
@@ -153,7 +153,7 @@ void setObject(tObject o,int *result,tResource* res) {
 			break;
 		case eResTypeBinary:
 		default:
-			/*o.obj=objBinaryRead(file,result);*/
+			*result=objBinarySet(o.obj,res);
 			break;
 	}
 	
