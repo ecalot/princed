@@ -417,6 +417,7 @@ void* objImageCreate(tBinary cont, tObject palette, int *error) { /* use get lik
 	image->pal=palette;
 	bits=paletteGetBits(image->pal);
 	if (bits!=getCarry(image->type)) printf("error, palette mismatch\n");
+	image->bits=getCarry(image->type);
 	
 	return (void*)image;
 }
@@ -449,7 +450,39 @@ void objImageFree(void* img) {
 }
 
 void* objImageRead(const char* file,tObject palette, int *result) {
-/*int mFormatImportBmp(tResource *res) {*/
+	int bits;
+	tImage* image=(tImage*)malloc(sizeof(tImage));
+	tColor* colorArray;
+	int colors;
+
+	*result=readBmp(file,&(image->pix),&(image->height),&(image->width),&(image->bits),&colors,&colorArray,&(image->widthInBytes));
+	/* check if image was succesfully read loaded */
+	if (*result!=PR_RESULT_SUCCESS) {
+		free(image->pix);
+		free(colorArray);
+		free(image);
+		return NULL;
+	}
+
+	/* check the palette information */
+	
+	image->pal=palette;
+	bits=paletteGetBits(image->pal);
+	if (bits && bits!=getCarry(image->type)) { /* bits=0 means all palettes allowed or ignore palette check */
+		*result=PR_RESULT_ERR_BMP_BITRATE_DIFFERS;
+		free(image->pix);
+		free(colorArray);
+		free(image);
+		return NULL;
+	}
+
+	/* TODO: palette content checks */
+	
+	free(colorArray);
+	return (void*)image;
+}
+
+/*int mFormatImportBmp(tResource *res) { --> objImageSet */
 	/*tImage img;*/
 
 /*	if (!mReadBitMap(&img,)) return 0; * false *
@@ -458,6 +491,3 @@ void* objImageRead(const char* file,tObject palette, int *result) {
 	mWriteFileInDatFile(res);
 	free(img.pix);
 */
-	return NULL;
-}
-

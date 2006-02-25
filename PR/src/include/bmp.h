@@ -46,5 +46,6 @@ int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupE
 int mReadBitMap(tImage* img,unsigned char* data, int size); /* Note: this will ignore the palette */
 
 int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits, int colors, tColor* colorArray, int lineWidth, int optionflag, const char* backupExtension);
+int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbits, int *pcolors, tColor** colorArray, int *plineWidth);
 
 #endif
