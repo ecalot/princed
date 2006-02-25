@@ -86,6 +86,7 @@ int recurseDirectory(const char* path,int recursive, void* pass, void (*function
 #define fwriteshort(var,file) macfwrites((var),file)
 #define fwritelong(var,file)  macfwritel((var),file)
 #define fwritechar(var,file)  fwrite((var),1,1,file)
+#define freadchar(var,file)   fread ((var),1,1,file)
 int macfreads (void* bigEndian,FILE* file);
 int macfreadl (void* var,FILE* file);
 int macfwrites(const void* var,FILE* file);
@@ -96,6 +97,7 @@ int macfwritel(const void* var,FILE* file);
 #define fwriteshort(var,file) fwrite((var),2,1,file)
 #define fwritelong(var,file)  fwrite((var),4,1,file)
 #define fwritechar(var,file)  fwrite((var),1,1,file)
+#define freadchar(var,file)   fread ((var),1,1,file)
 #endif
 
 #endif

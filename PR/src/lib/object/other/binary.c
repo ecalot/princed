@@ -75,3 +75,4 @@ int objBinarySet(void* o,tResource* res) {
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
 }
+

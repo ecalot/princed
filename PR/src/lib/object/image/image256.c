@@ -448,15 +448,16 @@ void objImageFree(void* img) {
 	free(img);
 }
 
-int mFormatImportBmp(tResource *res) {
-	tImage img;
+void* objImageRead(const char* file,tObject palette, int *result) {
+/*int mFormatImportBmp(tResource *res) {*/
+	/*tImage img;*/
 
-	if (!mReadBitMap(&img,res->content.data,res->content.size)) return 0; /* false */
+/*	if (!mReadBitMap(&img,)) return 0; * false *
 	free(res->content.data);
 	mCompressGraphic(&(res->content.data),&img,(int*)&(res->content.size));
 	mWriteFileInDatFile(res);
 	free(img.pix);
-
-	return 1; /* true */
+*/
+	return NULL;
 }
 

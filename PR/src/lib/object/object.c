@@ -168,7 +168,7 @@ tObject readObject(const char* file,tResource* res,int *result) {
 			/*o.obj=objLevelRead(file,res.content,result);*/
 			break;
 		case eResTypeImage:
-			/*o.obj=objImageRead(file,res.content,res.palette,result);*/
+			o.obj=objImageRead(file,res->palette,result);
 			break;
 		case eResTypeWave:
 			o.obj=objWaveRead(file,result);

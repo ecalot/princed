@@ -84,7 +84,7 @@ int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits
 	fwriteshort(&planes    ,bitmap);    /* Number of colour planes     */
 	fwriteshort(&bits      ,bitmap);    /* Bits per pixel              */
 	fwritelong (&zero      ,bitmap);    /* Compression type (0=none)   */
-	fwritelong (&zero      ,bitmap);    /* Image size in bytes         */
+	fwritelong (&zero      ,bitmap);    /* Image size in bytes (may be 0 if no compression) */
 	fwritelong (&extra     ,bitmap);    /* Pixels per meter x          */
 	fwritelong (&extra     ,bitmap);    /* Pixels per meter y          */
 	fwritelong (&colours   ,bitmap);    /* Number of colours           */
@@ -111,19 +111,78 @@ int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits
 	return PR_RESULT_SUCCESS; 
 }
 
-int mReadBitMap(tImage* image,unsigned char* data, int size) {
+int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbits, int *pcolors, tColor** colorArray, int *plineWidth) {
+/*int mReadBitMap(tImage* image,unsigned char* data, int size) {*/
+	FILE* bitmap;
 	char lineSerialization;
 	int ok;
-	int serializedWidth;
-	int x=0;
-	unsigned char carry;
-	unsigned long int colours;
-	unsigned long int filesize;
-	unsigned long int offset;
-	unsigned short int bits;
-	unsigned short int height;
-	unsigned short int width;
+	char magic[2];
+	int a;
+	unsigned long int colours=0;
+	unsigned long int filesize=0;
+	unsigned long int offset=0;
+	unsigned long int aux=0;
+	unsigned short int bits=0;
+	unsigned short int height=0;
+	unsigned short int width=0;
 
+	bitmap=fopen(file,"rb");
+	if (!bitmap) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; 
+
+	/* Read headers */
+		/* file header */
+	ok=fread(magic,2,1         ,bitmap);
+	ok=ok&&!strncmp(magic,"BM",2);
+	ok=ok&&freadlong(&filesize ,bitmap);
+	ok=ok&&freadlong(&aux      ,bitmap);
+	ok=ok&&(!aux);
+	ok=ok&&freadlong(&offset   ,bitmap);
+	
+		/* info header */
+	ok=ok&&freadlong(&aux      ,bitmap);
+	ok=ok&&(aux==40);
+	ok=ok&&freadlong(&width    ,bitmap);
+	ok=ok&&freadlong(&height   ,bitmap);
+	ok=ok&&freadshort(&aux     ,bitmap);
+	ok=ok&&(aux==1);
+	ok=ok&&freadshort(&bits    ,bitmap);
+	ok=ok&&freadlong(&aux      ,bitmap);    /* Compression type (0=none)   */
+	if (ok&&aux!=0) { fclose(bitmap); return -1; /* PR_NO_COMPRESS_SUPPORT */ }
+	ok=ok&&freadlong(&aux      ,bitmap);    /* Image size in bytes (junk)  */
+	ok=ok&&freadlong(&aux      ,bitmap);    /* Pixels per meter x (junk)   */
+	ok=ok&&freadlong(&aux      ,bitmap);    /* Pixels per meter y (junk)   */
+	ok=ok&&freadlong(&colours  ,bitmap);    /* Number of colours (junk)    */
+	ok=ok&&(colours<1000);
+	ok=ok&&freadlong(&aux      ,bitmap);    /* Important colours (junk)    */
+	
+	/* Verify */
+	*plineWidth=width*(8/bits); /* Note: only works in bits=1,2,4,8 */
+	lineSerialization=(-*plineWidth)&3;
+/*	offset=54+(colors<<2);
+	lineSerialization=(-lineWidth)&3;
+	filesize=offset+(lineWidth+lineSerialization)*height;*/
+
+	/* Read ColorTable */
+	aux=0;
+	*colorArray=malloc(sizeof(tColor)*colours);
+	for (a=0;a<colours;a++) {
+		ok=ok&&freadchar(&((*colorArray)[a].b),bitmap); /* Blue  */
+		ok=ok&&freadchar(&((*colorArray)[a].g),bitmap); /* Green */
+		ok=ok&&freadchar(&((*colorArray)[a].r),bitmap); /* Red   */
+		ok=ok&&freadchar(&aux,bitmap); /* alpha */
+	}
+
+	/* Write data */
+	*ph=height;
+	*pw=width;
+	*data=malloc((*plineWidth+lineSerialization)*height);
+	while (height--) {
+		ok=ok&&fread(*data+height**plineWidth,*plineWidth,1,bitmap);
+		ok=ok&&fread(&aux,lineSerialization,1,bitmap);
+	}
+
+	
+#if 0
 	/* Validate if there is header and if it starts in BM */
 	ok    = size>50;
 	ok=ok&& data[0]=='B' && data[1]=='M';
@@ -163,6 +222,16 @@ int mReadBitMap(tImage* image,unsigned char* data, int size) {
 			data+offset+height*serializedWidth,
 			image->widthInBytes
 		);
+#endif
 
-	return 1; /* true */
+	if (!ok) {
+		free(*colorArray);
+		free(*data);
+		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
+	}
+	
+	*pbits        = bits;
+	*pcolors      = colours;
+	
+	return PR_RESULT_SUCCESS;			
 }
