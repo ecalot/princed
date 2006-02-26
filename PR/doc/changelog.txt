@@ -157,7 +157,7 @@ Versions:
   - Rewritten resource handling using dynamic structures
   - Support of partial list folder selection wildcards (e.g.
     vdungeon.dat@vdungeon/chopper/*.bmp) '*' and '?' using '&' as escape
- * PR v1.2 (scheduled 2006-02-22)
+ * PR v1.2 (scheduled 2006-03-22)
   - Added 8 bits palette support
   - Added defines for positive return values in XML
   + Added experimental POP2 RLEC decompression algorithm
@@ -177,9 +177,11 @@ Versions:
     equivalencies
   + Inverted POP2 index names
   - Raw importation now works for pop2
-  - When extracting, generated unknown.xml's are now merged into one
   - Restructured the repository and source to support an object layer
- * PR v1.3 (scheduled 2006-03-22)
+  - When extracting, generated unknown.xml's are now all merged into one
+ * PR v1.3 (scheduled 2006-04-22)
+  x Fix ./pr -ie it -f bug
+  x Move tResource* from reslist to types.h
   X Add a fatal error check when importing from a different palette size and a
     warning when importing from an incorrect palette.
   x Added full POP2 RLEC decompression algorithm
@@ -191,6 +193,7 @@ Versions:
   x Rename "uncompress" to "decomporess"
   x Replaced .bmp by .png files.
   x Transform flags from the hex form to the [a-y]* form (a is 1, b is 2, c is 4...)
+  X Don't create empry unknown.xml
  * PR v1.4 (future plans)
   x Added full POP2 RLEC compression algorithm
   x Code a palette adapting feature

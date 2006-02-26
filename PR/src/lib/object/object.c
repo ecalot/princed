@@ -149,7 +149,7 @@ void setObject(tObject o,int *result,tResource* res) {
 			*result=objPcspeakerSet(o.obj,res);
 			break;
 		case eResTypePop1Palette4bits:
-			/*o.obj=objPop1Palette4bitsRead(file,res.content,result);*/
+			*result=objPop1Palette4bitsSet(o.obj,res);
 			break;
 		case eResTypeBinary:
 		default:
@@ -180,7 +180,7 @@ tObject readObject(const char* file,tResource* res,int *result) {
 			o.obj=objPcspeakerRead(file,result);
 			break;
 		case eResTypePop1Palette4bits:
-			/*o.obj=objPop1Palette4bitsRead(file,res.content,result);*/
+			o.obj=objPop1Palette4bitsRead(file,result);
 			break;
 		case eResTypeBinary:
 		default:

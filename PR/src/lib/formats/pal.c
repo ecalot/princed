@@ -53,7 +53,7 @@ int writePal(const char* file, int colors, const tColor* colorArray, int optionf
 	/* open file */
 	if (!writeOpen(file,&fd,optionflag)) return PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
 
-	fprintf(fd,"JASC-PAL\r\n%04d\r\n%d\r\n",100,colors);
+	fprintf(fd,"JASC-PAL\r\n0100\r\n%d\r\n",colors);
 	for (i=0;i<colors;i++) {
 		fprintf(fd,"%d %d %d\r\n",
 			colorArray[i].r,

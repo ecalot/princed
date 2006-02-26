@@ -40,6 +40,7 @@ palette.c: Princed Resources : The palette object implementation
 #include <stdio.h>
 #include "palette.h"
 #include "memory.h"
+#include "dat.h"
 
 #include "pal.h"
 
@@ -241,3 +242,32 @@ tColor* paletteGetColorArrayForColors(int colors) {
 		return NULL; /* unsupported bit rate */
 	}
 }
+
+void* objPop1Palette4bitsRead(const char* file,int *result) {
+	tPop1_4bitsPalette* pal=(tPop1_4bitsPalette*)malloc(sizeof(tPop1_4bitsPalette));
+	tColor* colorArray;
+	int colors;
+	
+	*result=readPal(file,&colorArray,&colors);
+
+	if (*result==PR_RESULT_SUCCESS && colors!=16) {
+		*result=PR_WRONG_PALETTE_COLOR_COUNT;
+		free(colorArray);
+		return NULL;
+	}
+	memcpy(pal->c,colorArray,sizeof(tColor)*16);
+	free(colorArray);
+	
+	return (void*)pal;
+}
+
+int objPop1Palette4bitsSet(void* o,tResource* res) {
+	tBinary* wave=o;
+	res->content.size=wave->size+1;
+	res->content.data=malloc(wave->size+1);
+	res->content.data[0]=0x01; /* TODO: use WAVE_MAGIC */
+	memcpy(res->content.data+1,wave->data,wave->size);
+	mWriteFileInDatFile(res);
+	return PR_RESULT_SUCCESS;
+}
+
