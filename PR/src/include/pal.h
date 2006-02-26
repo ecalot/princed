@@ -53,5 +53,6 @@ int mFormatImportPal(tPalette* p,int* bits, const char* vFile);
 */
 
 int writePal(const char* file, int colors, const tColor* colorArray, int optionflag, const char* backupExtension);
+int readPal(const char* file,tColor** colorArray,int *colors);
 
 #endif

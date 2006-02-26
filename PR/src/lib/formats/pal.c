@@ -68,7 +68,18 @@ int writePal(const char* file, int colors, const tColor* colorArray, int optionf
 	return PR_RESULT_SUCCESS; 
 }
 
-int mFormatImportPal(tPalette* p, int* bits, const char* vFile) {
+int readPal(const char* file,tColor** colorArray,int *colors) {
+	FILE* fd;
+	/*int ok;
+	char magic[4];*/
+
+	fd=fopen(file,"rb");
+	if (!fd) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; 
+	/* TODO: do the reading */
+	fclose(fd);
+	return PR_RESULT_SUCCESS;
+
+#if 0
 	/* declare variables */
 	unsigned char* pals;
 	unsigned char* pals1;
@@ -129,5 +140,6 @@ int mFormatImportPal(tPalette* p, int* bits, const char* vFile) {
 	mWriteFileInDatFile(res);
 */
 	return 1; /* true */
+#endif
 }
 
