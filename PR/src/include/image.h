@@ -63,11 +63,12 @@ typedef struct {
 
 /* Prototypes */
 
-int mCompressGraphic(unsigned char** a,tImage* i, int* size); /* make it private */
+/*int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes) */
 
 void* objImageCreate(tBinary c, tObject palette, int *error);
 int objImageWrite(void* img,const char* file,int optionflag,const char* backupExtension);
 void* objImageRead(const char* file,tObject palette, int *result);
+int objImageSet(void* o,tResource* res);
 
 #define getCarry(a) ((((a)>>4)&7)+1)
 #define getAlgor(a) a&0x4F

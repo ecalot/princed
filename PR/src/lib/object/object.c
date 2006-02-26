@@ -137,7 +137,7 @@ void setObject(tObject o,int *result,tResource* res) {
 			/*o.obj=objLevelRead(file,res.content,result);*/
 			break;
 		case eResTypeImage:
-			/*o.obj=objImageRead(file,res.content,res.palette,result);*/
+			*result=objImageSet(o.obj,res);
 			break;
 		case eResTypeWave:
 			*result=objWaveSet(o.obj,res);

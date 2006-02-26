@@ -126,14 +126,14 @@ void cmp_transposeImage(tImage* image,int size) {
 	image->pix=outputaux;
 }
 
-void cmp_antiTransposeImage(tImage* image,int size) {
-	unsigned char* outputaux=getMemory(size);
+void cmp_antiTransposeImage(tBinary* b, int widthInBytes, int height) {
+	unsigned char* outputaux=getMemory(b->size);
 	int cursor;
 
-	for (cursor=0;cursor<size;cursor++)
-		outputaux[cursor]=image->pix[cmp_transpose(cursor,image->widthInBytes,image->height)];
-	free(image->pix);
-	image->pix=outputaux;
+	for (cursor=0;cursor<b->size;cursor++)
+		outputaux[cursor]=b->data[cmp_transpose(cursor,widthInBytes,height)];
+	free(b->data);
+	b->data=outputaux;
 }
 
 /***************************************************************\
@@ -225,7 +225,8 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 }
 
 /* Compress an image into binary data */
-int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
+int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes, int w, int h) {
+/*								unsigned char* *data,tImage* image, int* dataSizeInBytes, int ignoreFirstBytes) {*/
 	/* Declare variables */
 	unsigned char* compressed     [COMPRESS_WORKING_ALGORITHMS];
 	int            compressedSize [COMPRESS_WORKING_ALGORITHMS];
@@ -235,7 +236,7 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	int            max_alg=1;
 
 	/* Initialize variables */
-	imageSizeInBytes=image->widthInBytes*image->height;
+	imageSizeInBytes=input->size; /*=image->widthInBytes*image->height;*/
 
 	/*
 	 * Perform all compressions
@@ -251,7 +252,7 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	 */
 	compressed[COMPRESS_RAW]=getMemory(imageSizeInBytes);
 	compressedSize[COMPRESS_RAW]=imageSizeInBytes;
-	memcpy(compressed[COMPRESS_RAW],image->pix,imageSizeInBytes);
+	memcpy(compressed[COMPRESS_RAW],input->data,imageSizeInBytes);
 
 	/* COMPRESS_RLE_LR
 	 * If all the uncompressed data has a big entropy, there
@@ -263,7 +264,7 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	cLevel(2) {
 		compressed[COMPRESS_RLE_LR]=getMemory((2*imageSizeInBytes+50));
 		compressRle(
-			image->pix,imageSizeInBytes,
+			input->data,imageSizeInBytes,
 			compressed[COMPRESS_RLE_LR],&(compressedSize[COMPRESS_RLE_LR])
 		);
 		max_alg++;
@@ -284,7 +285,7 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 			unsetHigh;
 		compressed[COMPRESS_LZG_LR]=getMemory((2*imageSizeInBytes+1050));
 		compressLzg(
-			image->pix,imageSizeInBytes,
+			input->data,imageSizeInBytes,
 			compressed[COMPRESS_LZG_LR],&(compressedSize[COMPRESS_LZG_LR])
 		);
 		max_alg++;
@@ -298,13 +299,13 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	 * using the image matrix transposed.
 	 */
 	cLevel(3)
-		cmp_antiTransposeImage(image,imageSizeInBytes);
+		cmp_antiTransposeImage(input,w,h);
 
 	/* COMPRESS_RLE_UD */
 	cLevel(3) {
 		compressed[COMPRESS_RLE_UD]=getMemory(2*imageSizeInBytes+50);
 		compressRle(
-			image->pix,imageSizeInBytes,
+			input->data,imageSizeInBytes,
 			compressed[COMPRESS_RLE_UD],&(compressedSize[COMPRESS_RLE_UD])
 		);
 		max_alg++;
@@ -318,7 +319,7 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 			unsetHigh;
 		compressed[COMPRESS_LZG_UD]=getMemory(2*imageSizeInBytes+1050);
 		compressLzg(
-			image->pix,imageSizeInBytes,
+			input->data,imageSizeInBytes,
 			compressed[COMPRESS_LZG_UD],&(compressedSize[COMPRESS_LZG_UD])
 		);
 		max_alg++;
@@ -328,37 +329,23 @@ int mCompressGraphic(unsigned char* *data,tImage* image, int* dataSizeInBytes) {
 	 */
 
 	/* Select the best compression (find minimum) */
-	*dataSizeInBytes=compressedSize[COMPRESS_RAW];
+	output->size=compressedSize[COMPRESS_RAW];
 	algorithm=COMPRESS_RAW;
 	for (i=COMPRESS_RLE_LR;i<max_alg;i++) {
-		if ((*dataSizeInBytes)>compressedSize[i]) {
-			(*dataSizeInBytes)=compressedSize[i];
+		if (output->size>compressedSize[i]) {
+			output->size=compressedSize[i];
 			algorithm=i;
 		}
 	}
 
 	/* Copy the best algorithm in the compressed data */
-	*data=getMemory(*dataSizeInBytes+6);
-	memcpy(*data+6,compressed[algorithm],*dataSizeInBytes);
-	(*dataSizeInBytes)+=6;
-
-	/*
-	 * Write header
-	 */
-
-	/* (16 bits)height (Intel short int format) */
-	(*data)[0]=image->height;
-	(*data)[1]=image->height>>8;
-	/* (16 bits)width (Intel short int format) */
-	(*data)[2]=image->width;
-	(*data)[3]=image->width>>8;
-	/* (8 bits)00000000+(4 bits)palette type+(4 bits)algorithm */
-	(*data)[4]=0;
-	(*data)[5]=image->type|algorithm;
+	output->data=getMemory(output->size+ignoreFirstBytes);
+	memcpy(output->data+ignoreFirstBytes,compressed[algorithm],output->size);
+	output->size+=ignoreFirstBytes;
 
 	/* Free all compression attempts */
 	for (i=COMPRESS_RAW;i<max_alg;i++) free(compressed[i]);
-	return 1; /* true */
+	return algorithm;
 }
 
 int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize) { 
@@ -457,9 +444,8 @@ void* objImageRead(const char* file,tObject palette, int *result) {
 
 	*result=readBmp(file,&(image->pix),&(image->height),&(image->width),&(image->bits),&colors,&colorArray,&(image->widthInBytes));
 	/* check if image was succesfully read loaded */
+printf("result=%d\n",*result);
 	if (*result!=PR_RESULT_SUCCESS) {
-		free(image->pix);
-		free(colorArray);
 		free(image);
 		return NULL;
 	}
@@ -468,26 +454,48 @@ void* objImageRead(const char* file,tObject palette, int *result) {
 	
 	image->pal=palette;
 	bits=paletteGetBits(image->pal);
-	if (bits && bits!=getCarry(image->type)) { /* bits=0 means all palettes allowed or ignore palette check */
+	if (bits && bits!=image->bits) { /* bits=0 means all palettes allowed or ignore palette check */
 		*result=PR_RESULT_ERR_BMP_BITRATE_DIFFERS;
 		free(image->pix);
 		free(colorArray);
 		free(image);
 		return NULL;
 	}
-
+				
 	/* TODO: palette content checks */
-	
+
 	free(colorArray);
 	return (void*)image;
 }
+	/* TODO: generate image->type in objImageSet */
 
 /*int mFormatImportBmp(tResource *res) { --> objImageSet */
-	/*tImage img;*/
+int objImageSet(void* o,tResource* res) {
+	tImage* img=o;
+	tBinary decompressed,compressed;
+	int algorithm;
 
-/*	if (!mReadBitMap(&img,)) return 0; * false *
-	free(res->content.data);
-	mCompressGraphic(&(res->content.data),&img,(int*)&(res->content.size));
+	decompressed.data=img->pix;
+	decompressed.size=img->widthInBytes*img->height;
+	
+	algorithm=mCompressGraphic(&decompressed,&compressed,6,img->widthInBytes,img->height);
+
+	/*
+	 * Write header
+	 */
+
+	/* (16 bits)height (Intel short int format) */
+	compressed.data[0]=img->height; /* TODO: use shorttoarray */
+	compressed.data[1]=img->height>>8;
+	/* (16 bits)width (Intel short int format) */
+	compressed.data[2]=img->width;
+	compressed.data[3]=img->width>>8;
+	/* (8 bits)00000000+(4 bits)palette type+(4 bits)algorithm */
+	compressed.data[4]=0;
+	compressed.data[5]=(img->bits==4?0xb0:0x00)|algorithm;
+
+	res->content=compressed;	
 	mWriteFileInDatFile(res);
-	free(img.pix);
-*/
+	return PR_RESULT_SUCCESS;
+}
+

@@ -156,7 +156,7 @@ int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbit
 	ok=ok&&freadlong(&aux      ,bitmap);    /* Important colours (junk)    */
 	
 	/* Verify */
-	*plineWidth=width*(8/bits); /* Note: only works in bits=1,2,4,8 */
+	*plineWidth=width*bits/8; /* Note: only works in bits=1,2,4,8 */
 	lineSerialization=(-*plineWidth)&3;
 /*	offset=54+(colors<<2);
 	lineSerialization=(-lineWidth)&3;
