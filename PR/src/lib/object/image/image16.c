@@ -444,7 +444,6 @@ void* objImageRead(const char* file,tObject palette, int *result) {
 
 	*result=readBmp(file,&(image->pix),&(image->height),&(image->width),&(image->bits),&colors,&colorArray,&(image->widthInBytes));
 	/* check if image was succesfully read loaded */
-printf("result=%d\n",*result);
 	if (*result!=PR_RESULT_SUCCESS) {
 		free(image);
 		return NULL;

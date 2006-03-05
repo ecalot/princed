@@ -41,6 +41,7 @@ palette.c: Princed Resources : The palette object implementation
 #include "palette.h"
 #include "memory.h"
 #include "dat.h"
+#include "disk.h" /* writeData */
 
 #include "pal.h"
 
@@ -196,11 +197,11 @@ void* objPalette_pop1_4bitsCreate(tBinary cont, int *error) {
 
 int objPalette_pop1_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
 	tPop1_4bitsPalette* pal=o;
-	/*unsigned char* aux=malloc(MAX_FILENAME_SIZE);*/
-	/* TODO: add the write of the extra information */
+	char aux[260];
+
 	/* Export extra palette information */
-	/*sprintf((char*)aux,"%s.more",file);
-	writeData(data,0,(char*)aux,size,optionflag,backupExtension); TODO fix that */
+	sprintf(aux,"%s.more",file);
+	writeData(pal->raw,0,aux,100,optionflag,backupExtension);
 
 	return writePal(file,16,pal->c,optionflag,backupExtension);
 }
@@ -247,7 +248,16 @@ void* objPop1Palette4bitsRead(const char* file,int *result) {
 	tPop1_4bitsPalette* pal=(tPop1_4bitsPalette*)malloc(sizeof(tPop1_4bitsPalette));
 	tColor* colorArray;
 	int colors;
-	
+	char aux[260];
+	tBinary raw;
+
+	/* Import extra palette information */
+	sprintf(aux,"%s.more",file);
+	raw=mLoadFileArray(aux);
+	if (raw.size!=100) return NULL; /* TODO; free memory */
+	memcpy(pal->raw,raw.data,100);
+	free(raw.data);
+
 	*result=readPal(file,&colorArray,&colors);
 
 	if (*result==PR_RESULT_SUCCESS && colors!=16) {
@@ -261,12 +271,21 @@ void* objPop1Palette4bitsRead(const char* file,int *result) {
 	return (void*)pal;
 }
 
+#define convert24to18(x) (unsigned char)((x+2)>>2);
+
 int objPop1Palette4bitsSet(void* o,tResource* res) {
-	tBinary* wave=o;
-	res->content.size=wave->size+1;
-	res->content.data=malloc(wave->size+1);
-	res->content.data[0]=0x01; /* TODO: use WAVE_MAGIC */
-	memcpy(res->content.data+1,wave->data,wave->size);
+	tPop1_4bitsPalette* pal=o;
+	int i;
+
+	res->content.size=100;
+	res->content.data=pal->raw;
+	for (i=0;i<16;i++) {
+		res->content.data[(i*3)+4]=convert24to18(pal->c[i].r);
+		res->content.data[(i*3)+5]=convert24to18(pal->c[i].g);
+		res->content.data[(i*3)+6]=convert24to18(pal->c[i].b);
+	}
+	res->content.size=100;
+	res->content.data=pal->raw;
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
 }

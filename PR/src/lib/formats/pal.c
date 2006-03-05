@@ -70,7 +70,7 @@ int writePal(const char* file, int colors, const tColor* colorArray, int optionf
 
 int readPal(const char* file,tColor* *colorArray,int *colors) {
 	FILE* fd;
-	int ok,i;
+	int ok=0,i;
 	int r;
 	int g;
 	int b;
@@ -79,18 +79,16 @@ int readPal(const char* file,tColor* *colorArray,int *colors) {
 	if (!fd) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; 
 	/* TODO: do the reading */
 
-	ok=fscanf(fd,"JASC_PAL\r\n");
-	fscanf(fd,"0100\r\n");
-	fscanf(fd,"%d\r\n",colors);
-	
-	if (*colors<1000) return -40;
+	if (fscanf(fd,"JASC-PAL\n0100\n%d\n",colors)!=1)
+		return -40;
+
+	if (*colors>1000) return -40;
 	*colorArray=malloc(sizeof(tColor)**colors);
-	for (i=0;i<*colors;i++) {
-		fscanf(fd,"%d %d %d\r\n",&r,&g,&b);
+	for (i=0; (i<*colors) && (ok=(fscanf(fd,"%d %d %d\n",&r,&g,&b)==3)) ;i++) {
 		/* Those lines mean a loss of data (palette colours are saved in the nearest multiple of 4) */
-		(*colorArray)[i].r=(unsigned char)((r+2)>>2); /* TODO: use the conversion macro */
-		(*colorArray)[i].g=(unsigned char)((g+2)>>2);
-		(*colorArray)[i].b=(unsigned char)((b+2)>>2);
+		(*colorArray)[i].r=r; /* TODO: use an aux tColor instead of r,g,b */
+		(*colorArray)[i].g=g;
+		(*colorArray)[i].b=b;
 	}
 	fclose(fd);
 	if (!ok) {

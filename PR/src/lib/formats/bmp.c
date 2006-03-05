@@ -156,7 +156,7 @@ int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbit
 	ok=ok&&freadlong(&aux      ,bitmap);    /* Important colours (junk)    */
 	
 	/* Verify */
-	*plineWidth=width*bits/8; /* Note: only works in bits=1,2,4,8 */
+	*plineWidth=(width*bits+7)/8; /* Note: only works in bits=1,2,4,8 */
 	lineSerialization=(-*plineWidth)&3;
 /*	offset=54+(colors<<2);
 	lineSerialization=(-lineWidth)&3;
@@ -178,9 +178,8 @@ int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbit
 	*data=malloc((*plineWidth+lineSerialization)*height);
 	while (height--) {
 		ok=ok&&fread(*data+height**plineWidth,*plineWidth,1,bitmap);
-		ok=ok&&fread(&aux,lineSerialization,1,bitmap);
+		if (lineSerialization) ok=ok&&fread(&aux,lineSerialization,1,bitmap);
 	}
-
 	
 #if 0
 	/* Validate if there is header and if it starts in BM */
@@ -232,6 +231,6 @@ int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbit
 	
 	*pbits        = bits;
 	*pcolors      = colours;
-	
+
 	return PR_RESULT_SUCCESS;			
 }
