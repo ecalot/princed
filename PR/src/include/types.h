@@ -48,7 +48,7 @@ typedef struct {
 }tObject;
 
 typedef struct {
-	unsigned short int value;
+	int                value;
 	char               index[5];
 	unsigned int       order;
 }tResourceId;
@@ -66,6 +66,8 @@ typedef struct {
 	char*              desc;
 	char*              name;
 	char*              path;
+	const char*        datfile;
+	const char*        datAuthor;
 	unsigned long      flags;
 }tResource;
 

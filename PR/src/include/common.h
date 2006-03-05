@@ -92,6 +92,7 @@ typedef enum {
 	eResTypeMidi=4,
 	eResTypeBinary=5,
 	eResTypePop1Palette4bits=6,
+	eResTypePop1PaletteMono=12,
 	eResTypePcspeaker=7,
 	eResTypeText=8,
 	eResTypePop2Palette320colors=9,

@@ -53,7 +53,7 @@ tObject getObject(tResource* r, int* error) {
 	o.type=r->type;
 	switch (o.type) {
 	case eResTypeLevel:
-		/*o.obj=objLevelCreate(r->content,r->number,vDatFileName,r->name,r->desc,r->datAuthor,error); */
+		o.obj=objLevelCreate(r->content,r->number,r->datfile,r->name,r->desc,r->datAuthor,error); 
 		break;
 	case eResTypeBinary: /* Binary files */
 	case eResTypeText: /* Text files */
@@ -114,14 +114,36 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 	return error;
 }	
 
+/* Palette class methods */
 
-int paletteGetBits(tObject pal) { return 4; }
-int paletteGetColors(tObject pal) { return 16; }
+int paletteGetBits(tObject pal) {
+	switch (pal.type) {
+	case eResTypePop1Palette4bits: 
+		return 4;
+	case eResTypePop1PaletteMono: 
+		return 1;
+	default:
+		return 0;
+	}
+}
+			
+int paletteGetColors(tObject pal) {
+	switch (pal.type) {
+	case eResTypePop1Palette4bits: 
+		return 16;
+	case eResTypePop1PaletteMono: 
+		return 2;
+	default:
+		return 0;
+	}
+}
+
 tColor* paletteGetColorArray(tObject pal) {
 	switch (pal.type) {
 	case eResTypePop1Palette4bits: /* save and remember palette file */
 		return objPalette_pop1_4bitsGetColors(pal.obj);
-		break;
+	case eResTypePop1PaletteMono: /* save and remember palette file */
+		return objPalette_pop1_monoGetColors(pal.obj);
 	default:
 		return NULL;
 	}

@@ -56,7 +56,7 @@ XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
 COMPRESS = .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o .rlec_uncompress.o 
 LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
-OBJECT   = .object.o .pop1_4bit.o .image.o .binary.o .sounds.o
+OBJECT   = .object.o .pop1_4bit.o .image.o .binary.o .sounds.o .level.o
 CONSOLE  = .main.o .filedir.o
 MAIN     = .pr.o
 
@@ -153,6 +153,10 @@ $(XMLFILE): xml/resources.xml
 .reslist.o: lib/layers/reslist.c include/memory.h include/reslist.h
 	$(INFO) Compiling resource list module...
 	$(CC) $(OPTIONS) -c lib/layers/reslist.c -o $@
+
+.level.o: lib/object/level/level.c
+	$(INFO) Compiling level class module...
+	$(CC) $(OPTIONS) -c lib/object/level/level.c -o $@
 
 .sounds.o: lib/object/sound/sounds.c
 	$(INFO) Compiling sound list module...

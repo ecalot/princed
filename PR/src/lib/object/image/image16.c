@@ -403,7 +403,7 @@ void* objImageCreate(tBinary cont, tObject palette, int *error) { /* use get lik
 
 	image->pal=palette;
 	bits=paletteGetBits(image->pal);
-	if (bits!=getCarry(image->type)) printf("error, palette mismatch\n");
+	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));
 	image->bits=getCarry(image->type);
 	
 	return (void*)image;

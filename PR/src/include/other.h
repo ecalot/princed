@@ -40,4 +40,6 @@ int objBinaryWrite(void* o, const char* file, int optionflag, const char* backup
 void* objBinaryRead(const char* file,int *result);
 int objBinarySet(void* o,tResource* res);
 
+void* objLevelCreate(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error); /* TODO: move to level.h */ 
+
 #endif

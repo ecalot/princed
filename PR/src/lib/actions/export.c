@@ -109,6 +109,9 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				/* get save file name (if unknown document is in the XML) */
 				getFileName(file,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);
 
+				res.datfile=vFiledat;
+				res.datAuthor=vDatAuthor;
+
 				/* handle palette linking */
 				switch (res.type) { /* TODO: use if and elsif */
 					case eResTypePop1Palette4bits: { /* save and remember palette file */

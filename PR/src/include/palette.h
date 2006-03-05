@@ -68,6 +68,8 @@ void* objPop1Palette4bitsRead(const char* file,int *result);
 int objPop1Palette4bitsSet(void* o,tResource* res);
 
 tColor* objPalette_pop1_4bitsGetColors(void* o);
+#define objPalette_pop1_monoGetColors(o) paletteGetColorArrayForColors(2)
+
 tColor* paletteGetColorArrayForColors(int colors);
 
 #endif

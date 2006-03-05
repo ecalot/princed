@@ -62,8 +62,11 @@ plv.h: Princed Resources : PLV prince level files support headers
 #include "reslist.h"
 #include "common.h" /* for PR_VERSION */
 
-int mFormatImportPlv(tResource *res);
-int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned long int size,unsigned char level, const char* filename, const char* desc, const char* title, const char* vDatAuthor,int optionflag, const char* backupExtension);
+/*int mFormatImportPlv(tResource *res);
+int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned long int size,unsigned char level, const char* filename, const char* desc, const char* title, const char* vDatAuthor,int optionflag, const char* backupExtension);*/
+
+
+int writePlv(const char* file, tBinary content, int popversion, const char* datfile, int level, const char* filename, const char* desc, const char* title, const char* vDatAuthor, int optionflag,const char* backupExtension);
 
 /* Weekdays and months */
 #define DATE_WEEKDAYS "Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat"

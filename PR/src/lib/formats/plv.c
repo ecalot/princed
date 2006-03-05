@@ -88,7 +88,7 @@ char* getDate() {
 	return formated;
 }
 
-int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned long int size,unsigned char level, const char* filename, const char* desc, const char* title, const char* vDatAuthor,int optionflag,const char* backupExtension) {
+int writePlv(const char* file, tBinary content, int popversion, const char* datfile, int level, const char* filename, const char* desc, const char* title, const char* vDatAuthor, int optionflag,const char* backupExtension) {
 	/* Plv files are saved as raw except you must ignore the checksum and add the plv constant file header */
 
 	/* Variables */
@@ -101,7 +101,7 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 	static const char* author=PLV_DEFAULT_AUTHOR;
 	unsigned long int block2size;
 	const unsigned long int numberOfFieldPairs=9;
-	unsigned char version;
+	unsigned char version=popversion;
 
 	/* Get current time */
 	now=getDate();
@@ -119,20 +119,20 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 	/* Writing file */
 
 	/* Safe open for writing mode */
-	ok=writeOpen(vFileext,&target,optionflag);
+	ok=writeOpen(file,&target,optionflag);
 
 	/* Write headers */
 	ok=ok&&fwrite(PLV_HEADER_A,PLV_HEADER_A_SIZE,1,target);
-	if (size==12025) version=2; else version=1;/* TODO: check if the checksum is included */
+	/*if (size==12025) version=2; else version=1; * TODO: check if the checksum is included */
 	ok=ok&&fwritechar(&version,target);
 	version=1;
 	ok=ok&&fwritechar(&version,target);
 	ok=ok&&fwritechar(&level,target);
 	ok=ok&&fwritelong(&numberOfFieldPairs,target);
-	ok=ok&&fwritelong(&size,target);
+	ok=ok&&fwritelong(&content.size,target);
 
 	/* Write block 1: raw data without ignoring checksum */
-	ok=ok&&fwrite(data,size,1,target);
+	ok=ok&&fwrite(content.data,content.size,1,target);
 
 	/* Write footers */
 	block2size=(
@@ -170,7 +170,7 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 
 extern FILE* outputStream;
 
-int mFormatImportPlv(tResource *res) {
+int readPlv(tResource *res) {
 	/* declare variables */
 	unsigned char* pos;
 	unsigned char* posAux;

@@ -81,7 +81,8 @@ int xmlParseFileForResource(const char* vFile, const char* datFile, tResourceLis
 	else res.attribute.index[0]=0
 
 #define search_keepIdAttributesElse(attribute,idnum,idindex,idelse) \
-	res.attribute.value=(unsigned short int)ptoi(t->idnum);\
+	if (t->idnum && !strcmp(t->idnum,"monochrome")) res.attribute.value=-1;\
+	else res.attribute.value=(unsigned short int)ptoi(t->idnum);\
 	if (t->idindex) str5lowercpy(res.attribute.index,translateExt2Int(t->idindex));\
 	else str5lowercpy(res.attribute.index,t->idelse)
 
