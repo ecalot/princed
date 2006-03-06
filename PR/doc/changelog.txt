@@ -168,7 +168,7 @@ Versions:
   - Added POP2 importing
   - Added --xml-optimize=file.xml option to optimize XML files
   - Automatic increasing unknown.xml version
-  - Code XML attributes common factors and smart grouping
+  - Coded XML attributes common factors and smart grouping
   - Finished abstracting resources.c and forked to unknown.c and tree.c
   - Fixed order bug in repeated indexes
   - Fixed the language support
@@ -186,14 +186,15 @@ Versions:
     warning when importing from an incorrect palette.
   x Added full POP2 RLEC decompression algorithm
   x Check for memory leak
+  x Clean the source
   x Common factor in LGZ compression (a .h) for win size, etc.
   x Common palette calculation
   x Create a new isDirSep in disk.h and handle all the / and \ as the same char
+  x Don't create empry unknown.xml
   x Fork compress to code images as a new object in a separated file
   x Rename "uncompress" to "decomporess"
   x Replaced .bmp by .png files.
   x Transform flags from the hex form to the [a-y]* form (a is 1, b is 2, c is 4...)
-  X Don't create empry unknown.xml
  * PR v1.4 (future plans)
   x Added full POP2 RLEC compression algorithm
   x Code a palette adapting feature
