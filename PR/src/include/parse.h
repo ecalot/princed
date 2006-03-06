@@ -44,7 +44,7 @@ void showTag(int n,tTag* t);
 
 /* Constants */
 #define MAX_VALUE_SIZE        3000
-#define RES_TYPECOUNT         9
+/*#define RES_TYPECOUNT         9*/
 
 /* for RES_FILE_TYPES */
 #include "common.h"

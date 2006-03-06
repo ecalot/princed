@@ -158,7 +158,7 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 
 	int imageSizeInBytes=0;
 	int result;
-
+				
 	image->height=array2short(data);
 	data+=2;
 	image->width =array2short(data);

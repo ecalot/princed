@@ -151,7 +151,7 @@ int unknownLogStop () {
 	freeAllocation(unknownFile.backupExtension);
 	unknownFile.backupExtension=NULL;
 	unknownFile.fd=NULL;
-	for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
+	for (i=0;i<RES_FILE_TYPES_COUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
 
 	return PR_RESULT_SUCCESS; /* Ok */
 }
@@ -171,7 +171,7 @@ int unknownLogAppend(const char* vFiledat,tResourceId id,const char* ext,tResour
 		freeAllocation(unknownFile.currentDat);
 		unknownFile.currentDat=strallocandcopy(vFiledat);
 		treeDeleteFile(vFiledat,unknownFile.tree);
-		for (i=0;i<RES_TYPECOUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
+		for (i=0;i<RES_FILE_TYPES_COUNT;i++) unknownFile.typeCount[i]=0; /* re-initialize in 0 for next file processing */
 	}
 
 	treeStatusItem(id.value,translateInt2Ext(strToLower(id.index)),filename,getExtDesc(type),flags,getExtDesc(type),count,id.order,&unknownFile.status);
@@ -189,7 +189,7 @@ void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const cha
 	int pos;
 
 	if (r->path==NULL) {
-		pos=((r->type<RES_TYPECOUNT)&&(r->type>=0))?r->type:eResTypeBinary;
+		pos=((r->type<RES_FILE_TYPES_COUNT)&&(r->type>=0))?r->type:eResTypeBinary;
 		unknownFile.typeCount[pos]++;
 
 		/* set filename */

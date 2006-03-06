@@ -112,7 +112,7 @@ printf("tv=%s ti=%s tag=%s\n",t->value,t->index,t->tag);*/
 	res.type=0;
 #ifndef IGNORERESOURCEFUNCTIONS
 	if (t->type!=NULL) { /* NULL tells the extractor that the type should be auto detected */
-		int i=RES_TYPECOUNT;
+		int i=RES_FILE_TYPES_COUNT;
 		while((!res.type)&&(i--))
 			if (equalsIgnoreCase(t->type,getExtDesc(i)))
 				res.type=i;

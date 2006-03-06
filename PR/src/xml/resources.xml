@@ -53,9 +53,9 @@ resources.xml: Princed Resources : Resource tree
    <item value="45" path="credits.bmp">Text credits (45)</item>
   </folder>
   <folder type="image" path="main titles"> 
-   <item value="40" path="text background.pal" type="palette">Unknown Resource number 40</item>
+   <item value="40" path="text background.pal" type="palette-pop1-4bits">Unknown Resource number 40</item>
    <item value="41" path="text background.bmp" palette="40">Unknown Resource number 41</item>
-   <item value="50" path="titles.pal" type="palette">Unknown Resource number 50</item>
+   <item value="50" path="titles.pal" type="palette-pop1-4bits">Unknown Resource number 50</item>
    <folder palette="50">
     <item value="51" path="main background.bmp">Image main background (51)</item>
     <item value="52" path="presents.bmp">Image presents (52)</item>
@@ -67,7 +67,7 @@ resources.xml: Princed Resources : Resource tree
  </folder>
 
  <folder type="image" index="pop1" name="vga dungeon enviornment" file="vdungeon.dat" path="vdungeon" palette="200">
-  <folder type="palette" name="palette" path="palette">
+  <folder type="palette-pop1-4bits" name="palette" path="palette">
    <item value="200" path="dungeon.pal">Dungeon Palette</item> 
   </folder>
   <folder name="big pillar" path="bigpillar">
@@ -206,7 +206,7 @@ resources.xml: Princed Resources : Resource tree
    <item value="377" path="mark04.bmp">dungeon wall</item> 
   </folder>
   <folder name="binary" path="binary">
-   <item type="palette" value="360" path="other.pal">unloadable</item> 
+   <item type="palette-pop1-4bits" value="360" path="other.pal">unloadable</item> 
    <item value="1314" path="res1314.bin" type="binary">200</item>
    <item value="1315" path="res1315.bin" type="binary">200</item>
    <item value="1316" path="res1316.bin" type="binary">200</item>
@@ -311,7 +311,7 @@ resources.xml: Princed Resources : Resource tree
  </folder>
 
  <folder type="image" index="pop1" name="vga palace enviornment" file="vpalace.dat" path="vpalace" palette="200">
-  <folder path="palettes" name="palettes" type="palette">
+  <folder path="palettes" name="palettes" type="palette-pop1-4bits">
    <item value="200" path="palace.pal">Main palace palette</item>
    <item value="360" path="wall.pal">Wall palette for res 361</item>
   </folder>
@@ -597,7 +597,7 @@ resources.xml: Princed Resources : Resource tree
 
  <folder index="pop1" name="binary" file="pv.dat" path="pv" palette="800" type="image">
   <folder path="jaffar" palette="850">
-   <item value="850" path="palette.pal" type="palette">Unknown Resource number 850</item>
+   <item value="850" path="palette.pal" type="palette-pop1-4bits">Unknown Resource number 850</item>
    <folder path="walking">
     <item value="851" path="frame01.bmp">Image frame01 (851)</item>
     <item value="852" path="frame02.bmp">Image frame02 (852)</item>
@@ -643,11 +643,11 @@ resources.xml: Princed Resources : Resource tree
   </folder>
   
   <folder path="princess" palette="900">
-   <item value="900" path="palette.pal" type="palette">Unknown Resource number 900</item>
+   <item value="900" path="palette.pal" type="palette-pop1-4bits">Unknown Resource number 900</item>
    <item value="901" path="resting.bmp">Image resting (901)</item>
    <item value="902" path="colour.bmp">Image colour (902)</item>
    <folder path="in story" palette="800">
-    <item value="800" path="palette.pal" type="palette">Unknown Resource number 800</item>
+    <item value="800" path="palette.pal" type="palette-pop1-4bits">Unknown Resource number 800</item>
     <item value="801" path="frame01.bmp">Image frame01 (801)</item>
     <item value="802" path="frame02.bmp">Image frame02 (802)</item>
     <item value="803" path="frame03.bmp">Image frame03 (803)</item>
@@ -701,7 +701,7 @@ resources.xml: Princed Resources : Resource tree
   </folder>
   
   <folder path="objects" palette="950">
-   <item value="950" path="room and clock.pal" type="palette">Unknown Resource number 950</item>
+   <item value="950" path="room and clock.pal" type="palette-pop1-4bits">Unknown Resource number 950</item>
    <item value="951" path="room.bmp">Image room (951)</item>
    <item value="952" path="room pillar.bmp">Image room pillar (952)</item>
    <item value="953" path="clock01.bmp">Image clock01 (953)</item>
@@ -714,13 +714,13 @@ resources.xml: Princed Resources : Resource tree
    <item value="960" path="clocksand01.bmp">Image clocksand01 (960)</item>
    <item value="961" path="clocksand02.bmp">Image clocksand02 (961)</item>
    <item value="962" path="clocksand03.bmp">Image clocksand03 (962)</item>
-   <item value="980" path="room bed.pal" type="palette">Unknown Resource number 980</item>
+   <item value="980" path="room bed.pal" type="palette-pop1-4bits">Unknown Resource number 980</item>
    <item value="981" path="room bed.bmp" palette="980" type="image">Unknown Resource number 981</item>
   </folder>
  </folder>
 
  <folder index="pop1" name="binary" file="prince.dat" path="prince" palette="150">
-  <item value="150" path="main.pal" type="palette">Unknown Resource number 150</item>
+  <item value="150" path="main.pal" type="palette-pop1-4bits">Unknown Resource number 150</item>
 
   <folder name="fire animation" path="fire" type="image" palette="150">
    <item value="151" path="frame1.bmp">Image frame1 (151)</item>
@@ -767,7 +767,7 @@ resources.xml: Princed Resources : Resource tree
    </folder>
  
    <folder name="fighting" path="fighting" type="image" palette="700">
-    <item value="700" path="sword.pal" type="palette">Unknown Resource number 700</item>
+    <item value="700" path="sword.pal" type="palette-pop1-4bits">Unknown Resource number 700</item>
     <item value="701" path="sword01.bmp">Image sword01 (701)</item>
     <item value="702" path="sword02.bmp">Image sword02 (702)</item>
     <item value="703" path="sword03.bmp">Image sword03 (703)</item>
@@ -808,7 +808,7 @@ resources.xml: Princed Resources : Resource tree
 
 
  <folder index="pop1" name="binary" file="kid.dat" path="kid" palette="400" type="image">
-  <item value="400" path="kid.pal" type="palette">Resource number 400</item>
+  <item value="400" path="kid.pal" type="palette-pop1-4bits">Resource number 400</item>
   <folder path="running">
    <item value="401" path="frame01.bmp">Image frame01 (401)</item>
    <item value="402" path="frame02.bmp">Image frame02 (402)</item>
@@ -1202,7 +1202,7 @@ resources.xml: Princed Resources : Resource tree
  <!-- guards -->
 
  <folder index="pop1" name="binary" file="skel.dat" path="skel" palette="750">
-  <item value="750" path="res750.pal" type="palette">Unknown Resource number 750</item>
+  <item value="750" path="res750.pal" type="palette-pop1-4bits">Unknown Resource number 750</item>
   <item value="751" path="res751.bin" type="binary">Unknown Resource number 751</item>
   <item value="752" path="res752.bin" type="binary">Unknown Resource number 752</item>
   <item value="753" path="res753.bmp" type="image">Unknown Resource number 753</item>
@@ -1234,7 +1234,7 @@ resources.xml: Princed Resources : Resource tree
  </folder>
 
  <folder index="pop1" name="binary" file="vizier.dat" path="vizier" palette="750">
-  <item value="750" path="res750.pal" type="palette">Unknown Resource number 750</item>
+  <item value="750" path="res750.pal" type="palette-pop1-4bits">Unknown Resource number 750</item>
   <item value="751" path="hit points.bmp" type="image">Unknown Resource number 751</item>
   <item value="752" path="splash.bmp" type="image">Unknown Resource number 752</item>
   <item value="753" path="res753.bmp" type="image">Unknown Resource number 753</item>
@@ -1272,7 +1272,7 @@ resources.xml: Princed Resources : Resource tree
  </folder>
 
  <folder index="pop1" name="binary" file="shadow.dat" path="shadow" palette="750">
-  <item value="750" path="res750.pal" type="palette">Unknown Resource number 750</item>
+  <item value="750" path="res750.pal" type="palette-pop1-4bits">Unknown Resource number 750</item>
   <item value="751" path="hit points.bmp" type="image">Unknown Resource number 751</item>
   <item value="752" path="splash.bmp" type="image">Unknown Resource number 752</item>
   <item value="753" path="res753.bmp" type="image">Unknown Resource number 753</item>
@@ -1308,7 +1308,7 @@ resources.xml: Princed Resources : Resource tree
  </folder>
 
  <folder index="pop1" name="binary" file="fat.dat" path="fat" palette="750">
-  <item value="750" path="res750.pal" type="palette">Unknown Resource number 750</item>
+  <item value="750" path="res750.pal" type="palette-pop1-4bits">Unknown Resource number 750</item>
   <item value="751" path="hit points.bmp" type="image">Unknown Resource number 751</item>
   <item value="752" path="splash.bmp" type="image">Unknown Resource number 752</item>
   <item value="753" path="res753.bmp" type="image">Unknown Resource number 753</item>
@@ -1381,10 +1381,10 @@ resources.xml: Princed Resources : Resource tree
   <item value="784" path="res784.bmp" type="image">Unknown Resource number 784</item>
  </folder>
  <folder index="pop1" name="binary" file="guard1.dat" path="guards" palette="750">
-  <item value="750" path="palette1.pal" type="palette">Unknown Resource number 750</item>
+  <item value="750" path="palette1.pal" type="palette-pop1-4bits">Unknown Resource number 750</item>
  </folder>
  <folder index="pop1" name="binary" file="guard2.dat" path="guards" palette="750">
-  <item value="750" path="palette2.pal" type="palette">Unknown Resource number 750</item>
+  <item value="750" path="palette2.pal" type="palette-pop1-4bits">Unknown Resource number 750</item>
  </folder>
 
  <folder index="pop1" name="binary" file="levels.dat" type="level" path="levels">
@@ -1410,7 +1410,7 @@ resources.xml: Princed Resources : Resource tree
       pop2: bird.dat
   -->
  <folder index="shape" name="the pop2 bird guard" file="bird.dat" type="image" path="bird" palette="750" paletteindex="palc" flags="0x400000">
-  <item value="750" index="pals" path="bird.pal" type="palette">The bird palette</item>
+  <item value="750" index="pals" path="bird.pal" type="palette-pop1-4bits">The bird palette</item>
   <folder path="fighting">
    <item value="751" path="frame01.bmp" type="image">Frame 01 (751)</item>
    <item value="752" path="frame02.bmp" type="image">Frame 02 (752)</item>
@@ -1598,8 +1598,8 @@ resources.xml: Princed Resources : Resource tree
       pop2: kid.dat
   -->
  <folder index="shap" name="prince" type="image" path="kid" file="kid.dat" palette="25001" paletteindex="palc" flags="0x400000">
-  <item value="25001" index="palc" path="binary001.bin" type="palette" flags="0x0">Unknown binary 1</item>
-  <item value="25001" index="pals" path="prince.pal" type="palette" flags="0x0">The prince palette</item>
+  <item value="25001" index="palc" path="binary001.bin" type="palette-pop1-4bits" flags="0x0">Unknown binary 1</item>
+  <item value="25001" index="pals" path="prince.pal" type="palette-pop1-4bits" flags="0x0">The prince palette</item>
   <item value="24824" index="shap" path="image001.bmp" type="image" flags="0x400000">Unknown image 1</item>
   <item value="24825" index="shap" path="image002.bmp" type="image" flags="0x400000">Unknown image 2</item>
   <item value="24826" index="shap" path="image003.bmp" type="image" flags="0x400000">Unknown image 3</item>

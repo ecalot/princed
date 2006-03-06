@@ -80,26 +80,27 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 #define DEFAULT_BACKUP_EXTENSION "bak"
 
 /* File extensions */
-#define RES_FILE_EXTENSIONS   {"raw","plv","bmp","wav","mid","bin","pal","pcs","txt"}
-#define RES_FILE_TYPES        {"autodetect","level","image","wave","midi","binary","palette","pcspeaker","text"}
+#define RES_FILE_EXTENSIONS   {"raw","bin","bmp","bmp","bmp","plv","mid","pcs","pal","pal","pal","pal","pal","txt","wav"}
+#define RES_FILE_TYPES        {"autodetect","binary","image","image-mono","image-full","level","mini","pcspeaker","palette-pop1-4bits","palette-pop1-guards","palette-mono","palette-pop2-320cols","palette-pop2-4bits","text","wave"}
+#define RES_FILE_TYPES_COUNT  15
 
 typedef enum {
 	eResTypeNone=-1,
 	eResTypeRaw=0,
-	eResTypeLevel=1,
+	eResTypeBinary=1,
 	eResTypeImage16=2,
-	eResTypeImage2=12,
-	eResTypeImage256=13,
-	eResTypeWave=3,
-	eResTypeMidi=4,
-	eResTypeBinary=5,
-	eResTypePop1Palette4bits=6,
-	eResTypePop1PaletteMono=12,
+	eResTypeImage2=3,
+	eResTypeImage256=4,
+	eResTypeLevel=5,
+	eResTypeMidi=6,
 	eResTypePcspeaker=7,
-	eResTypeText=8,
-	eResTypePop2Palette320colors=9,
-	eResTypePop2Palette4bits=10,
-	eResTypePop1PaletteGuards=11
+	eResTypePop1Palette4bits=8,
+	eResTypePop1PaletteGuards=9,
+	eResTypePop1PaletteMono=10,
+	eResTypePop2Palette320colors=11,
+	eResTypePop2Palette4bits=12,
+	eResTypeText=13,
+	eResTypeWave=14
 } tResourceType;
 
 /***************************************************************\

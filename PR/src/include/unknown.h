@@ -41,6 +41,7 @@ unknown.h: Princed Resources : Unknown.xml generator headers
 /* Includes */
 #include "parse.h"
 #include "reslist.h"
+#include "common.h" /* RES_FILE_TYPES_COUNT */
 #include "tree.h" /* tTreeStatus */
 
 typedef struct {
@@ -50,7 +51,7 @@ typedef struct {
 	tTreeStatus  status;
 	tTag*        tree;
 	unsigned int optionflag;
-	unsigned int typeCount[RES_TYPECOUNT];
+	unsigned int typeCount[RES_FILE_TYPES_COUNT];
 } tUnknownFile;
 
 /* Resources extras */
