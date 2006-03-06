@@ -50,11 +50,22 @@ int verifyLevelHeader(tBinary c) {
 	return (c.size==12025) || (((c.size==2306)||(c.size==2305))&&!(c.data[1698]&0x0F)&&!(c.data[1700]&0x0F)&&!(c.data[1702]&0x0F));
 }
 
-int verifyImageHeader(tBinary c) {
+int verifyImage16Header(tBinary c) {
 	unsigned char imageBitRate;
 	if (c.size<=7) return 0; /* false */
-	imageBitRate=(( ((unsigned char)c.data[6])>>4 ) & 7)+1;
-	return (c.size>7) && (((unsigned char)c.data[5])<2) && ((imageBitRate==4 || imageBitRate==8));
+	imageBitRate=(( (c.data[6])>>4 ) & 7)+1;
+	return (c.size>7) && ((c.data[5])==0) && (imageBitRate==4);
+	/* NOTE:
+	 *   imageBitRate==1
+	 * works for monochrome images (but is very common and matches more than that)
+	 */
+}
+
+int verifyImage256Header(tBinary c) {
+	unsigned char imageBitRate;
+	if (c.size<=7) return 0; /* false */
+	imageBitRate=(( (c.data[6])>>4 ) & 7)+1;
+	return (c.size>7) && ((c.data[5])==1) && (imageBitRate==8);
 	/* NOTE:
 	 *   imageBitRate==1
 	 * works for monochrome images (but is very common and matches more than that)
@@ -99,12 +110,13 @@ int verifyMidiHeader(tBinary c) {
 }
 
 tResourceType verifyHeader(tBinary c) { /* TODO: add the pop version as another parameter to detect types */
-	if (verifyLevelHeader  (c)) return eResTypeLevel;
-	if (verifyMidiHeader   (c)) return eResTypeMidi;
-	if (verifyImageHeader  (c)) return eResTypeImage16;
-	if (verifyPaletteHeader(c)) return eResTypePop1Palette4bits;
-	if (verifyWaveHeader   (c)) return eResTypeWave;
-	if (verifySpeakerHeader(c)) return eResTypePcspeaker;
+	if (verifyLevelHeader    (c)) return eResTypeLevel;
+	if (verifyMidiHeader     (c)) return eResTypeMidi;
+	if (verifyImage16Header  (c)) return eResTypeImage16;
+	if (verifyImage256Header (c)) return eResTypeImage256;
+	if (verifyPaletteHeader  (c)) return eResTypePop1Palette4bits;
+	if (verifyWaveHeader     (c)) return eResTypeWave;
+	if (verifySpeakerHeader  (c)) return eResTypePcspeaker;
 	return eResTypeBinary;
 }
 
