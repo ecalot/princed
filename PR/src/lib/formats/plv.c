@@ -96,6 +96,7 @@ int writePlv(const char* file, tBinary content, int popversion, const char* datf
 	int ok;
 	unsigned char sizeOfNow;
 	char* now;
+	unsigned char checksum;
 	char levelnum[10];
 	const char* nullString="";
 	static const char* author=PLV_DEFAULT_AUTHOR;
@@ -132,6 +133,8 @@ int writePlv(const char* file, tBinary content, int popversion, const char* datf
 	ok=ok&&fwritelong(&content.size,target);
 
 	/* Write block 1: raw data without ignoring checksum */
+	checksum=getChecksum(content);
+	ok=ok&&fwritechar(&checksum,target);
 	ok=ok&&fwrite(content.data,content.size,1,target);
 
 	/* Write footers */
@@ -165,7 +168,7 @@ int writePlv(const char* file, tBinary content, int popversion, const char* datf
 
 	/* Close file and return */
 	ok=ok&&(!writeCloseOk(target,optionflag,backupExtension));
-	return ok;
+	return ok?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
 }
 
 extern FILE* outputStream;

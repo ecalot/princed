@@ -118,6 +118,20 @@ printf("tv=%s ti=%s tag=%s\n",t->value,t->index,t->tag);*/
 				res.type=i;
 		/* If error it returns 0 and the verifyHeader will try to detect the type */
 	}
+	if (res.type==eResTypeImage16) {
+		switch (ptoi(t->colors)) {
+		case 2:
+			res.type=eResTypeImage2;
+			break;										
+		case 256:
+			res.type=eResTypeImage256;
+			break;										
+		case 16:
+		default:
+			res.type=eResTypeImage16;
+			break;	
+		}
+	}
 #endif
 
 	/* Get the order */

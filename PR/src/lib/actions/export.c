@@ -120,7 +120,9 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 						e.id=res.id;
 						list_insert(&paletteBuffer,(void*)&e);
 					}	break;
-					case eResTypeImage: /* save image */
+					case eResTypeImage16: /* save image */
+					case eResTypeImage2: /* save image */
+					case eResTypeImage256: /* save image */
 						/* Palette handling */
 						if (resourceListCompareId(res.paletteId,bufferedPalette) /*TODO: add &&!paletteCheckCompatibility(currentPalette,image) */) { /* The palette isn't in the buffer */
 							tResource otherPalette;

@@ -556,23 +556,22 @@ void mWriteFileInDatFileIgnoreChecksum(const tResource* res) {
 	dat_write(&aux,res->content.data[0]);
 }
 
+unsigned char getChecksum(tBinary c) {
+	unsigned char  checksum = 0;
+
+	/* calculates the checksum */
+	while (c.size--) checksum+=*(c.data++);
+	return ~checksum;
+}
+
 void mWriteFileInDatFile(const tResource* res) {
 	/*
 	 * Adds a data resource to a DAT file keeping
 	 * abstractly the checksum verifications
 	 */
 
-	/* Declare variables */
-	int            k        = res->content.size;
-	unsigned char  checksum = 0;
-	const unsigned char* dataAux  = res->content.data;
-
-	/* calculates the checksum */
-	while (k--) checksum+=*(dataAux++);
-	checksum=~checksum;
-
 	/* write the resource contents */
-	dat_write(res,checksum);
+	dat_write(res,getChecksum(res->content));
 }
 
 void mWriteCloseDatFile(int dontSave,int optionflag, const char* backupExtension) {

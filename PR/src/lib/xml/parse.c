@@ -125,6 +125,7 @@ void freeTagStructure(tTag* t) {
 	freeAllocation(t->version);
 	freeAllocation(t->number);
 	freeAllocation(t->flags);
+	freeAllocation(t->colors);
 	free(t);
 }
 
@@ -157,6 +158,7 @@ int parse_attribFill(char* attr,char* val, tTag* t) {
 	parse_FillAttr(t->number,"levelnumber"); /* levelnumber is a number alias */
 	parse_FillAttr(t->number,"number");
 	parse_FillAttr(t->flags,"flags");
+	parse_FillAttr(t->colors,"colors");
 
 	return PR_RESULT_ERR_XML_ATTR;
 }
@@ -373,6 +375,7 @@ tTag* parse_makeTree(char** p,char* name, int* error,tTag* father) {
 	parse_TotalInheritance(index);
 	parse_TotalInheritance(order);
 	parse_TotalInheritance(flags);
+	parse_TotalInheritance(colors);
 	/* parse_PartialConcatInheritance(tag->path,father->path,tag->value); */
 	if ((tag->value==NULL /*is folder */)||(tag->path!=NULL)) {
 		char* str;
@@ -577,7 +580,7 @@ tTag* resourceTreeGetChild(tTag* whereAmI) {
 	return whereAmI->child;
 }
 
-int   resourceTreeGetInfo (tTag* whereAmI, char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number) {
+int   resourceTreeGetInfo (tTag* whereAmI, char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number,char** colors) {
 	if (whereAmI==NULL) return 0; /* false */
 	*tag=whereAmI->tag;
 	*desc=whereAmI->desc;
@@ -589,5 +592,7 @@ int   resourceTreeGetInfo (tTag* whereAmI, char** tag, char** desc, char** path,
 	*value=whereAmI->value;
 	*version=whereAmI->version;
 	*number=whereAmI->number;
+	*colors=whereAmI->colors;
 	return 1; /* true */
 }
+

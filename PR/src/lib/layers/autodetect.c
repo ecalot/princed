@@ -98,10 +98,10 @@ int verifyMidiHeader(tBinary c) {
 	;
 }
 
-tResourceType verifyHeader(tBinary c) {
+tResourceType verifyHeader(tBinary c) { /* TODO: add the pop version as another parameter to detect types */
 	if (verifyLevelHeader  (c)) return eResTypeLevel;
 	if (verifyMidiHeader   (c)) return eResTypeMidi;
-	if (verifyImageHeader  (c)) return eResTypeImage;
+	if (verifyImageHeader  (c)) return eResTypeImage16;
 	if (verifyPaletteHeader(c)) return eResTypePop1Palette4bits;
 	if (verifyWaveHeader   (c)) return eResTypeWave;
 	if (verifySpeakerHeader(c)) return eResTypePcspeaker;

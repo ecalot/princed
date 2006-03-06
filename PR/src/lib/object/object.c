@@ -72,7 +72,7 @@ tObject getObject(tResource* r, int* error) {
 	case eResTypeWave: /* save wav file */
 		o.obj=objWaveCreate(r->content,error);
 		break;
-	case eResTypeImage: /* save image */
+	case eResTypeImage16: /* save image */
 		o.obj=objImageCreate(r->content,r->palette,error);
 		break;
 	default:
@@ -86,6 +86,7 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 	int error;
 	switch (o.type) {
 	case eResTypeLevel:
+		error=objLevelWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeBinary: /* Binary files */
 	case eResTypeText: /* Text files */
@@ -104,7 +105,7 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 	case eResTypeWave: /* save wav file */
 		error=objWaveWrite(o.obj,file,optionflag,backupExtension);
 		break;
-	case eResTypeImage: /* save image */
+	case eResTypeImage16: /* save image */
 		error=objImageWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	default:
@@ -158,7 +159,7 @@ void setObject(tObject o,int *result,tResource* res) {
 		case eResTypeLevel:
 			/*o.obj=objLevelRead(file,res.content,result);*/
 			break;
-		case eResTypeImage:
+		case eResTypeImage16:
 			*result=objImageSet(o.obj,res);
 			break;
 		case eResTypeWave:
@@ -189,7 +190,7 @@ tObject readObject(const char* file,tResource* res,int *result) {
 		case eResTypeLevel:
 			/*o.obj=objLevelRead(file,res.content,result);*/
 			break;
-		case eResTypeImage:
+		case eResTypeImage16:
 			o.obj=objImageRead(file,res->palette,result);
 			break;
 		case eResTypeWave:

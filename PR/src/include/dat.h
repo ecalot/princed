@@ -46,7 +46,8 @@ typedef enum {
 tPopVersion mReadGetVersion();
 
 /* CheckSum verification */
-int checkSum(const unsigned char* data,int size);
+int checkSum(const unsigned char* data,int size); /* True or false if the checksum is right */
+unsigned char getChecksum(tBinary c); /* return the checksum value */
 
 #define PR_DAT_INCLUDE_DATREAD
 #define PR_DAT_INCLUDE_DATWRITE

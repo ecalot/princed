@@ -61,6 +61,7 @@ typedef struct tTag {
 	char* version;
 	char* number;
 	char* flags;
+	char* colors;
 }tTag;
 
 /***************************************************************\
@@ -108,7 +109,7 @@ void  freeTagStructure    (tTag* structure);
 void  freeXmlCache        ();
 void  resourceTreeFixInheritances(tTag* *tree);
 tTag* resourceTreeGetChild(tTag* whereAmI);
-int   resourceTreeGetInfo (tTag* whereAmI,	char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number);
+int   resourceTreeGetInfo (tTag* whereAmI, char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number,char** colors);
 tTag* resourceTreeGetNext (tTag* whereAmI);
 void  xmlOptimizeCommonFactor    (tTag* tag);
 int   xmlGenerateFile     (const char* vFile,const tTag* t);
