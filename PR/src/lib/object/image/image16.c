@@ -181,10 +181,6 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 		return COMPRESS_RESULT_FATAL;
 	}
 
-	/* special format has a special function */
-	if (image->type==0xf3)
-		return pop2decompress(data,dataSizeInBytes-6,image->width,&(image->pix),&imageSizeInBytes);
-
 #define checkSize if (imageSizeInBytes!=(image->widthInBytes*image->height))\
 	return COMPRESS_RESULT_FATAL
 #define checkResult if (result==COMPRESS_RESULT_FATAL)\
@@ -346,34 +342,6 @@ int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes, int 
 	/* Free all compression attempts */
 	for (i=COMPRESS_RAW;i<max_alg;i++) free(compressed[i]);
 	return algorithm;
-}
-
-int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize) { 
-	/* This function is in an experimental state and hasn't yet been linked to the program */
-	unsigned char* tempOutput;
-
-	int tempOutputSize;
-	int osCheck;
-
-	osCheck=array2short(input)-6;
-	input+=2;
-
-	/*os=osCheck;*/
-	tempOutputSize=0;
-	printf("lzg=%d is=%d osc=%d\n", expandLzg(input,inputSize-2,&tempOutput,&tempOutputSize),inputSize,osCheck);
-
-	printf("rle=%d\n", expandRleC(tempOutput,tempOutputSize,output,outputSize,verify));
-/*
-	printf("lzg=%d\n", os3=expandLzg(input+8+is-8-os3+2,os3-2,&output,&os));
-	osCheck=input[7+is-8-os3+2]<<8|input[6+is-8-os3+2];
-
-	printf("rle=%d osCheck=%d\n", expandRleC(output,os,&output2,&os2,verify), osCheck);
-	fwrite(output2,os2,1,out);
-
-	fclose(out);
-
-	printf("os=%d oscheck=%d\n",os,osCheck);*/
-	return COMPRESS_RESULT_SUCCESS;
 }
 
 extern FILE* outputStream;

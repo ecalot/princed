@@ -56,7 +56,7 @@ XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
 COMPRESS = .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o .rlec_uncompress.o 
 LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
-OBJECT   = .object.o .pop1_4bit.o .image.o .binary.o .sounds.o .level.o
+OBJECT   = .object.o .pop1_4bit.o .image16.o .image256.o .binary.o .sounds.o .level.o
 CONSOLE  = .main.o .filedir.o
 MAIN     = .pr.o
 
@@ -170,9 +170,13 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling main item class...
 	$(CC) $(OPTIONS) -c lib/object/main.c -o $@
 
-.image.o: lib/object/image/image.c include/image.h include/compress.h include/disk.h include/memory.h
-	$(INFO) Compiling image type class...
-	$(CC) $(OPTIONS) -c lib/object/image/image.c -o $@
+.image16.o: lib/object/image/image16.c include/image.h include/compress.h include/disk.h include/memory.h
+	$(INFO) Compiling 16 colors image type class...
+	$(CC) $(OPTIONS) -c lib/object/image/image16.c -o $@
+
+.image256.o: lib/object/image/image256.c include/image.h include/compress.h include/disk.h include/memory.h
+	$(INFO) Compiling 256 colors image type class...
+	$(CC) $(OPTIONS) -c lib/object/image/image256.c -o $@
 
 .lzg_compress.o: lib/compression/lzg_compress.c include/compress.h
 	$(INFO) Compiling LZG compression module...
