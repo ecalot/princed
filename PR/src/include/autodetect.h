@@ -40,5 +40,6 @@ autodetect.h: Princed Resources : Resource automatic detection headers
 
 /* Verify  header */
 tResourceType verifyHeader(tBinary c);
+int isA64kPalette(tBinary c);
 
 #endif

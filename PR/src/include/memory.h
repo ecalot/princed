@@ -58,4 +58,7 @@ void str5lowercpy (char* dst,const char* src);
 int matchesIn(const char *s, const char *p);
 int getOrder(const char* order);
 
+#include "binary.h"
+tBinary tbinaryallocandcopy(tBinary c);
+
 #endif

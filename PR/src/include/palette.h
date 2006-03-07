@@ -69,4 +69,11 @@ int objPop1Palette4bitsSet(void* o,tResource* res);
 
 tColor* objPalette_pop1_4bitsGetColors(void* o);
 
+/* middle layer */
+#define to8bits_A(a) (((a)<<2)|((a)>>4))
+#define to8bits_B(a) (((a)<<2)         )
+#define to8bits_C(a) (((a)<<2)+2       )
+
+#define convert24to18(x) (unsigned char)((x+2)>>2);
+
 #endif

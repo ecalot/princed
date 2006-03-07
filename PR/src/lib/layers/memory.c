@@ -32,6 +32,7 @@ memory.c: Princed Resources : Memory handling and comparing routines
 */
 
 #include "memory.h"
+#include "binary.h"
 #include <string.h>
 
 char* strallocandcopy(const char* text) {
@@ -44,11 +45,22 @@ char* strallocandcopy(const char* text) {
 	return aux;
 }
 
-unsigned char* binaryallocandcopy(const unsigned char* bin,int size) {
+unsigned char* binaryallocandcopy(const unsigned char* bin,int size) { /* TODO: replace by the next function */
 	unsigned char* aux;
 	if (bin==NULL) return NULL;
 	aux=(unsigned char*)malloc(size);
 	if (aux) memcpy(aux,bin,size);
+	return aux;
+}
+
+tBinary tbinaryallocandcopy(tBinary c) {
+	tBinary aux;
+	if (c.data==NULL) return c;
+
+	aux.data=(unsigned char*)malloc(c.size);
+	aux.size=c.size;
+	
+	if (aux.data) memcpy(aux.data,c.data,c.size);
 	return aux;
 }
 

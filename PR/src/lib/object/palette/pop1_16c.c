@@ -115,11 +115,6 @@ tPalette createPalette() {
 }
 
 
-/* middle layer */
-#define to8bits_A(a) (((a)<<2)|((a)>>4))
-#define to8bits_B(a) (((a)<<2)         )
-#define to8bits_C(a) (((a)<<2)+2       )
-
 /* reads the information in data and tries to remember it in the palette */
 int readPalette(tPalette* p, unsigned char* data, int dataSize) {
 	tColor c[256];
@@ -270,8 +265,6 @@ void* objPop1Palette4bitsRead(const char* file,int *result) {
 	
 	return (void*)pal;
 }
-
-#define convert24to18(x) (unsigned char)((x+2)>>2);
 
 int objPop1Palette4bitsSet(void* o,tResource* res) {
 	tPop1_4bitsPalette* pal=o;
