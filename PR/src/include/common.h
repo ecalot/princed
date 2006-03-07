@@ -97,7 +97,7 @@ typedef enum {
 	eResTypePop1Palette4bits=8,
 	eResTypePop1PaletteGuards=9,
 	eResTypePop1PaletteMono=10,
-	eResTypePop2Palette320colors=11,
+	eResTypePop2PaletteNColors=11,
 	eResTypePop2Palette4bits=12,
 	eResTypeText=13,
 	eResTypeWave=14

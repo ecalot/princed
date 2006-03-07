@@ -120,7 +120,7 @@ tResourceType verifyHeader(tBinary c) { /* TODO: add the pop version as another 
 	if (verifyImage256Header (c)) return eResTypeImage256;
 	if (verifyPaletteHeaderPop1  (c)) return eResTypePop1Palette4bits;
 /*	if (verifyPaletteHeaderPop2  (c)) return eResTypePop2Palette4bits;*/
-	if (verifyPaletteHeaderPop2_256  (c)) return eResTypePop2Palette320colors;
+	if (verifyPaletteHeaderPop2_256  (c)) return eResTypePop2PaletteNColors;
 	if (verifyWaveHeader     (c)) return eResTypeWave;
 	if (verifySpeakerHeader  (c)) return eResTypePcspeaker;
 	return eResTypeBinary;

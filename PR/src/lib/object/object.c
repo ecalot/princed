@@ -63,6 +63,9 @@ tObject getObject(tResource* r, int* error) {
 	case eResTypePop1Palette4bits: /* save and remember palette file */
 		o.obj=objPalette_pop1_4bitsCreate(r->content,error);
 		break;
+	case eResTypePop2PaletteNColors: /* save and remember palette file */
+		o.obj=objPop2PaletteNColorsCreate(r->content,error);
+		break;
 	case eResTypePcspeaker: /* save pcs file */
 		o.obj=objPcspeakerCreate(r->content,error);
 		break;
@@ -133,6 +136,8 @@ printf("hello\n");
 
 int paletteGetBits(tObject pal) {
 	switch (pal.type) {
+	case eResTypePop2PaletteNColors:
+		return 8;
 	case eResTypePop1Palette4bits: 
 		return 4;
 	case eResTypePop1PaletteMono: 
@@ -144,6 +149,8 @@ int paletteGetBits(tObject pal) {
 			
 int paletteGetColors(tObject pal) {
 	switch (pal.type) {
+	case eResTypePop2PaletteNColors:
+		return 256;
 	case eResTypePop1Palette4bits: 
 		return 16;
 	case eResTypePop1PaletteMono: 
@@ -157,6 +164,8 @@ tColor* paletteGetColorArray(tObject pal) {
 	switch (pal.type) {
 	case eResTypePop1Palette4bits: /* save and remember palette file */
 		return objPalette_pop1_4bitsGetColors(pal.obj);
+	case eResTypePop2PaletteNColors:
+		return objPalette_pop2_ncolorsGetColors(pal.obj);
 	default:
 		return NULL;
 	}
