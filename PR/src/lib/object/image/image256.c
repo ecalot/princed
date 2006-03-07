@@ -258,6 +258,18 @@ void* objImage256Create(tBinary cont, tObject palette, int *error) { /* use get 
 	return (void*)image;
 }
 
+tColor* objPalette_256() {
+	static tColor c[256]={{0,0,0},{0,0,0}};
+	int i;
+	if (!c[2].r)
+		for (i=0;i<256;i++) { /* The greyscale */
+			c[i].r=i;
+			c[i].g=i;
+			c[i].b=i;
+		}
+	return c;
+}
+
 int objImage256Write(void* img,const char* file,int optionflag,const char* backupExtension) {
 	tImage* i=img;
 	int bits;
@@ -271,7 +283,7 @@ int objImage256Write(void* img,const char* file,int optionflag,const char* backu
 	} else {
 		bits=getCarry(i->type);
 		colors=1<<bits;
-		colorArray=paletteGetColorArrayForColors(colors);
+		colorArray=objPalette_256();
 	}
 	
 	/* Write bitmap */

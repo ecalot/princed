@@ -346,6 +346,11 @@ int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes, int 
 
 extern FILE* outputStream;
 
+tColor* objPalette_16() {
+	static tColor c[16]=SAMPLE_PAL16;
+	return c;
+}
+
 void* objImage16Create(tBinary cont, tObject palette, int *error) { /* use get like main.c */
 
 	/*
@@ -390,7 +395,7 @@ int objImage16Write(void* img,const char* file,int optionflag,const char* backup
 	} else {
 		bits=getCarry(i->type);
 		colors=1<<bits;
-		colorArray=paletteGetColorArrayForColors(colors);
+		colorArray=objPalette_16();
 	}
 	
 	/* Write bitmap */
@@ -459,7 +464,7 @@ int objImage16Set(void* o,tResource* res) {
 	compressed.data[3]=img->width>>8;
 	/* (8 bits)00000000+(4 bits)palette type+(4 bits)algorithm */
 	compressed.data[4]=0;
-	compressed.data[5]=(img->bits==4?0xb0:0x00)|algorithm;
+	compressed.data[5]=0xb0|algorithm;
 
 	res->content=compressed;	
 	mWriteFileInDatFile(res);

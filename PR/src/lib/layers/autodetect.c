@@ -47,14 +47,14 @@ int isA64kPalette(tBinary c) {
 \***************************************************************/
 
 int verifyLevelHeader(tBinary c) {
-	return (c.size==12025) || (((c.size==2306)||(c.size==2305))&&!(c.data[1698]&0x0F)&&!(c.data[1700]&0x0F)&&!(c.data[1702]&0x0F));
+	return (c.size==12025) || (((c.size==2306)||(c.size==2305))&&!(c.data[1697]&0x0F)&&!(c.data[1699]&0x0F)&&!(c.data[1701]&0x0F));
 }
 
 int verifyImage16Header(tBinary c) {
 	unsigned char imageBitRate;
 	if (c.size<=7) return 0; /* false */
-	imageBitRate=(( (c.data[6])>>4 ) & 7)+1;
-	return (c.size>7) && ((c.data[5])==0) && (imageBitRate==4);
+	imageBitRate=(( (c.data[5])>>4 ) & 7)+1;
+	return (c.size>7) && ((c.data[4])==0) && (imageBitRate==4);
 	/* NOTE:
 	 *   imageBitRate==1
 	 * works for monochrome images (but is very common and matches more than that)
@@ -64,8 +64,8 @@ int verifyImage16Header(tBinary c) {
 int verifyImage256Header(tBinary c) {
 	unsigned char imageBitRate;
 	if (c.size<=7) return 0; /* false */
-	imageBitRate=(( (c.data[6])>>4 ) & 7)+1;
-	return (c.size>7) && ((c.data[5])==1) && (imageBitRate==8);
+	imageBitRate=(( (c.data[5])>>4 ) & 7)+1;
+	return (c.size>7) && ((c.data[4])==1) && (imageBitRate==8);
 	/* NOTE:
 	 *   imageBitRate==1
 	 * works for monochrome images (but is very common and matches more than that)
@@ -86,14 +86,14 @@ int verifyPaletteHeader(tBinary c) {
 int verifySpeakerHeader(tBinary c) {
 	/* format: (checksum)+(0x00)+(even number)+3 bytes per note */
 	return
-		(c.size>4)&&(c.data[1]==0x00)&&(!(c.data[2]%2))&&(!(c.size%3))
+		(c.size>4)&&(c.data[0]==0x00)&&(!(c.data[1]%2))&&(!(c.size%3))
 	;
 }
 
 int verifyWaveHeader(tBinary c) {
 	/* format: (checksum)+(0x01)+raw wave */
 	return
-		(c.size>1)&&(c.data[1]==0x01)&&((c.size%3)==2) /* TODO: use WAVE_MAGIC */
+		(c.size>1)&&(c.data[0]==0x01)&&((c.size%3)==2) /* TODO: use WAVE_MAGIC */
 	;
 }
 
@@ -101,11 +101,11 @@ int verifyMidiHeader(tBinary c) {
 	/* format: (checksum)+(0x02)+"MThd"... */
 	return
 		(c.size>6) &&
-		(c.data[1]==0x02) &&
-		(c.data[2]=='M') &&
-		(c.data[3]=='T') &&
-		(c.data[4]=='h') &&
-		(c.data[5]=='d')
+		(c.data[0]==0x02) &&
+		(c.data[1]=='M') &&
+		(c.data[2]=='T') &&
+		(c.data[3]=='h') &&
+		(c.data[4]=='d')
 	;
 }
 

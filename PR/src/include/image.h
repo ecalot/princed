@@ -81,4 +81,7 @@ void* objImage2Read(const char* file,tObject palette, int *result);
 #define getCarry(a) ((((a)>>4)&7)+1)
 #define getAlgor(a) a&0x4F
 
+int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes);
+int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes, int w, int h);
+
 #endif

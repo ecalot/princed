@@ -112,8 +112,15 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 	case eResTypeWave: /* save wav file */
 		error=objWaveWrite(o.obj,file,optionflag,backupExtension);
 		break;
+	case eResTypeImage2: /* save image */
+		error=objImage2Write(o.obj,file,optionflag,backupExtension);
+		break;
 	case eResTypeImage16: /* save image */
 		error=objImage16Write(o.obj,file,optionflag,backupExtension);
+		break;
+	case eResTypeImage256: /* save image */
+printf("hello\n");
+		error=objImage256Write(o.obj,file,optionflag,backupExtension);
 		break;
 	default:
 		break;
@@ -150,8 +157,6 @@ tColor* paletteGetColorArray(tObject pal) {
 	switch (pal.type) {
 	case eResTypePop1Palette4bits: /* save and remember palette file */
 		return objPalette_pop1_4bitsGetColors(pal.obj);
-	case eResTypePop1PaletteMono: /* save and remember palette file */
-		return objPalette_pop1_monoGetColors(pal.obj);
 	default:
 		return NULL;
 	}
