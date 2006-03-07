@@ -346,7 +346,7 @@ int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes, int 
 
 extern FILE* outputStream;
 
-void* objImageCreate(tBinary cont, tObject palette, int *error) { /* use get like main.c */
+void* objImage16Create(tBinary cont, tObject palette, int *error) { /* use get like main.c */
 
 	/*
 	 * This function will expand the data into an image structure,
@@ -377,7 +377,7 @@ void* objImageCreate(tBinary cont, tObject palette, int *error) { /* use get lik
 	return (void*)image;
 }
 
-int objImageWrite(void* img,const char* file,int optionflag,const char* backupExtension) {
+int objImage16Write(void* img,const char* file,int optionflag,const char* backupExtension) {
 	tImage* i=img;
 	int bits;
 	int colors;
@@ -404,7 +404,7 @@ void objImageFree(void* img) {
 	free(img);
 }
 
-void* objImageRead(const char* file,tObject palette, int *result) {
+void* objImage16Read(const char* file,tObject palette, int *result) {
 	int bits;
 	tImage* image=(tImage*)malloc(sizeof(tImage));
 	tColor* colorArray;
@@ -437,7 +437,7 @@ void* objImageRead(const char* file,tObject palette, int *result) {
 	/* TODO: generate image->type in objImageSet */
 
 /*int mFormatImportBmp(tResource *res) { --> objImageSet */
-int objImageSet(void* o,tResource* res) {
+int objImage16Set(void* o,tResource* res) {
 	tImage* img=o;
 	tBinary decompressed,compressed;
 	int algorithm;

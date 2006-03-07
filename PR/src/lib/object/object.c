@@ -72,10 +72,17 @@ tObject getObject(tResource* r, int* error) {
 	case eResTypeWave: /* save wav file */
 		o.obj=objWaveCreate(r->content,error);
 		break;
+	case eResTypeImage2: /* save image */
+		o.obj=objImage2Create(r->content,error);
+		break;
 	case eResTypeImage16: /* save image */
-		o.obj=objImageCreate(r->content,r->palette,error);
+		o.obj=objImage16Create(r->content,r->palette,error);
+		break;
+	case eResTypeImage256: /* save image */
+		o.obj=objImage256Create(r->content,r->palette,error);
 		break;
 	default:
+		*error=PR_RESULT_SUCCESS; /* NOTE: change to 1 to detect unhooked types */
 		break;
 	}
 	
@@ -106,7 +113,7 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 		error=objWaveWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeImage16: /* save image */
-		error=objImageWrite(o.obj,file,optionflag,backupExtension);
+		error=objImage16Write(o.obj,file,optionflag,backupExtension);
 		break;
 	default:
 		break;
@@ -160,7 +167,7 @@ void setObject(tObject o,int *result,tResource* res) {
 			/*o.obj=objLevelRead(file,res.content,result);*/
 			break;
 		case eResTypeImage16:
-			*result=objImageSet(o.obj,res);
+			*result=objImage16Set(o.obj,res);
 			break;
 		case eResTypeWave:
 			*result=objWaveSet(o.obj,res);
@@ -191,7 +198,7 @@ tObject readObject(const char* file,tResource* res,int *result) {
 			/*o.obj=objLevelRead(file,res.content,result);*/
 			break;
 		case eResTypeImage16:
-			o.obj=objImageRead(file,res->palette,result);
+			o.obj=objImage16Read(file,res->palette,result);
 			break;
 		case eResTypeWave:
 			o.obj=objWaveRead(file,result);

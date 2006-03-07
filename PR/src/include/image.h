@@ -65,10 +65,18 @@ typedef struct {
 
 /*int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes) */
 
-void* objImageCreate(tBinary c, tObject palette, int *error);
-int objImageWrite(void* img,const char* file,int optionflag,const char* backupExtension);
-void* objImageRead(const char* file,tObject palette, int *result);
-int objImageSet(void* o,tResource* res);
+int objImage16Set(void* o,tResource* res);
+int objImage16Write(void* img,const char* file,int optionflag,const char* backupExtension);
+int objImage256Set(void* o,tResource* res);
+int objImage256Write(void* img,const char* file,int optionflag,const char* backupExtension);
+int objImage2Set(void* o,tResource* res);
+int objImage2Write(void* img,const char* file,int optionflag,const char* backupExtension);
+void* objImage16Create(tBinary c, tObject palette, int *error);
+void* objImage16Read(const char* file,tObject palette, int *result);
+void* objImage256Create(tBinary c, tObject palette, int *error);
+void* objImage256Read(const char* file,tObject palette, int *result);
+void* objImage2Create(tBinary c, int *error);
+void* objImage2Read(const char* file,tObject palette, int *result);
 
 #define getCarry(a) ((((a)>>4)&7)+1)
 #define getAlgor(a) a&0x4F

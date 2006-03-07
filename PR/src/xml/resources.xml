@@ -46,7 +46,7 @@ resources.xml: Princed Resources : Resource tree
 
 <resources version="1.0">
  <folder index="pop1" name="binary" file="title.dat" path="title">
-  <folder path="texts" type="image" palette="monochrome">
+  <folder path="texts" type="image" colors="2">
    <item value="42" path="in the absence.bmp">Text in the absence (42)</item>
    <item value="43" path="marry jaffar.bmp">Text marry jaffar (43)</item>
    <item value="44" path="the tyrant.bmp">Text the tyrant (44)</item>
@@ -748,7 +748,7 @@ resources.xml: Princed Resources : Resource tree
     <item value="165" path="big palace.bmp" type="image">Unknown Resource number 165</item>
    </folder>
 
-   <folder name="bubble animation" path="bubble animation" type="image" palette="monochrome">
+   <folder name="bubble animation" path="bubble animation" type="image" colors="2">
     <item value="166" path="frame01.bmp">Image frame01 (166)</item>
     <item value="167" path="frame02.bmp">Image frame02 (167)</item>
     <item value="168" path="frame03.bmp">Image frame03 (168)</item>
