@@ -115,6 +115,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				/* handle palette linking */
 				switch (res.type) { /* TODO: use if and elsif */
 					case eResTypePop2Palette4bits: 
+					case eResTypePop2PaletteNColors: 
 					case eResTypePop1Palette4bits: { /* save and remember palette file */
 						tPaletteListItem e; /* TODO: decide if the palette list has to be erased from the code */
 						o=e.pal=currentPalette=getObject(&res,&ok);

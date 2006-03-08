@@ -54,7 +54,7 @@ endif
 ACTIONS  = .import.o .export.o .classify.o
 XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
 COMPRESS = .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o .rlec_uncompress.o 
-LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o
+LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o .auxiliary.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
 OBJECT   = .object.o .pop2_256c.o .pop1_4bit.o .image2.o .image16.o .image256.o .binary.o .sounds.o .level.o
 CONSOLE  = .main.o .filedir.o
@@ -253,6 +253,10 @@ $(XMLFILE): xml/resources.xml
 .resourcematch.o: lib/layers/resourcematch.c include/search.h include/memory.h include/resourcematch.h
 	$(INFO) Compiling resource list parsing feature...
 	$(CC) $(OPTIONS) -c lib/layers/resourcematch.c -o $@
+
+.auxiliary.o: lib/layers/auxiliary.c include/memory.h include/auxiliary.h
+	$(INFO) Compiling object auxiliary routines...
+	$(CC) $(OPTIONS) -c lib/layers/auxiliary.c -o $@
 
 .bmp.o: lib/formats/bmp.c include/bmp.h include/common.h include/dat.h include/disk.h include/memory.h
 	$(INFO) Compiling bitmap files support \(bmp\)...

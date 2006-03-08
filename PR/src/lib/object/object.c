@@ -122,7 +122,6 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 		error=objImage16Write(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeImage256: /* save image */
-printf("hello\n");
 		error=objImage256Write(o.obj,file,optionflag,backupExtension);
 		break;
 	default:

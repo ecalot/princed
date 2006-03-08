@@ -275,7 +275,7 @@ int objImage256Write(void* img,const char* file,int optionflag,const char* backu
 	int bits;
 	int colors;
 	tColor* colorArray;
-
+	
 	if (i->pal.type!=eResTypeNone) {
 		bits=paletteGetBits(i->pal);
 		colors=paletteGetColors(i->pal);
@@ -333,12 +333,11 @@ void* objImage256Read(const char* file,tObject palette, int *result) {
 int objImage256Set(void* o,tResource* res) {
 	tImage* img=o;
 	tBinary decompressed,compressed;
-	int algorithm;
 
 	decompressed.data=img->pix;
 	decompressed.size=img->widthInBytes*img->height;
 	
-	algorithm=mCompressGraphic256(&decompressed,&compressed,6,img->widthInBytes,img->height);
+	mCompressGraphic256(&decompressed,&compressed,6,img->widthInBytes,img->height);
 
 	/*
 	 * Write header
@@ -352,7 +351,7 @@ int objImage256Set(void* o,tResource* res) {
 	compressed.data[3]=img->width>>8;
 	/* (8 bits)00000000+(4 bits)palette type+(4 bits)algorithm */
 	compressed.data[4]=0;
-	compressed.data[5]=(img->bits==4?0xb0:0x00)|algorithm;
+	compressed.data[5]=0xf3;
 
 	res->content=compressed;	
 	mWriteFileInDatFile(res);

@@ -36,11 +36,7 @@ autodetect.c: Princed Resources : Automatic detection resource types
 \***************************************************************/
 
 #include "autodetect.h"
-
-int isA64kPalette(tBinary c) {
-	while (c.size--) if (c.data[c.size]>>6) return 0; /* false */
-	return 1; /* true */
-}
+#include "auxiliary.h"
 
 /***************************************************************\
 |                       Item Type Detector                      |
@@ -83,7 +79,7 @@ int verifyPaletteHeaderPop2_256(tBinary c) {
 	c2.size=c.size-1;
 	c2.data=c.data+1;*/
 	return (
-		((c.size==(256*3)||c.size==(320*3))&&isA64kPalette(c))
+		((c.size==(256*3+1)||c.size==(320*3))&&isA64kPalette(c)) /* TODO: the +1 is for debug purposes, it must be eliminated */
 	);
 }
 

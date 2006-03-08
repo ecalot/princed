@@ -19,26 +19,21 @@
 */
 
 /*
-autodetect.h: Princed Resources : Resource automatic detection headers
-¯¯¯¯¯¯¯¯¯¯¯¯
- Copyright 2003 Princed Development Team
-  Created: 24 Aug 2003
+auxiliary.h: Princed Resources : Memory handling & comparison prototypes
+¯¯¯¯¯¯¯¯
+ Copyright 2006 Princed Development Team
+  Created: 8 Mar 2006
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
-  Version: 1.01 (2003-Oct-23)
 
  Note:
   DO NOT remove this copyright notice
 */
 
-#ifndef _AUTODETECT_H_
-#define _AUTODETECT_H_
+#ifndef _AUXILIARY_H_
+#define _AUXILIARY_H_
 
-/* Includes */
-#include "reslist.h" /* tResourceType */
 #include "binary.h"
-
-/* Verify  header */
-tResourceType verifyHeader(tBinary c);
+int isA64kPalette(tBinary c);
 
 #endif

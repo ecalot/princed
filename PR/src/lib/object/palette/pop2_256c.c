@@ -42,7 +42,7 @@ palette.c: Princed Resources : The palette object implementation
 #include "memory.h"
 #include "dat.h"
 #include "disk.h" /* writeData */
-#include "autodetect.h" /* isA64kPalette */
+#include "auxiliary.h" /* isA64kPalette */
 
 #include "pal.h"
 
@@ -54,7 +54,7 @@ typedef struct {
 void* objPop2PaletteNColorsCreate(tBinary cont, int *error) {
 	tGenericPalette* r;
 	int i,j;
-
+	
 	*error=PR_RESULT_SUCCESS;
 
 	if (!isA64kPalette(cont)) {
@@ -69,7 +69,7 @@ void* objPop2PaletteNColorsCreate(tBinary cont, int *error) {
 		r->colorArray[j].g=to8bits_B(cont.data[i+1]);
 		r->colorArray[j].b=to8bits_B(cont.data[i+2]);
 	}
-	if (j!=256 || j!=320) return NULL; /*TODO: add free */
+	if (j!=256 && j!=320) return NULL; /*TODO: add free */
 	r->size=j;
 	
 	return (void*)r;
