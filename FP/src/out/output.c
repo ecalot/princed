@@ -118,7 +118,7 @@ void initText ()
 	}
 
 	/* Load Texture */
-	aux=outputLoadBitmap(fonts,TEXT_IMG_SIZE,pal,TEXT_IMG_H,TEXT_IMG_W,0,1,0,0);
+	aux=(tSurface*)outputLoadBitmap(fonts,TEXT_IMG_SIZE,pal,TEXT_IMG_H,TEXT_IMG_W,0,1,0,0);
 	font=aux->surface;
 					
 	font_init = 1;
