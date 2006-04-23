@@ -35,8 +35,8 @@ output.h: Free Prince : Output Devices Handler
   DO NOT remove this copyright notice
 */
 
-#ifndef _OUTPUT_H_
-#define _OUTPUT_H_
+#ifndef _PR_OUTPUT_H_
+#define _PR_OUTPUT_H_
 
 #include "resources.h"
 

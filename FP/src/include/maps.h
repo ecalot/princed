@@ -30,8 +30,8 @@ maps.c: Freeprince : Map handling library
   DO NOT remove this copyright notice
 */
 
-#ifndef _MAPS_H_
-#define _MAPS_H_
+#ifndef _PR_MAPS_H_
+#define _PR_MAPS_H_
 
 #include "map_defs.h"
 #include "room.h"

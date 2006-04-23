@@ -30,8 +30,8 @@ kid.h: Free Prince : Generic objects
   DO NOT remove this copyright notice
 */
 
-#ifndef _OBJECT_H_
-#define _OBJECT_H_
+#ifndef _PR_OBJECT_H_
+#define _PR_OBJECT_H_
 
 #include "resources.h"
 #include "input.h"

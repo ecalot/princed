@@ -30,8 +30,8 @@ resources.h: Free Prince : Resource Handler
   DO NOT remove this copyright notice
 */
 
-#ifndef _RESOURCES_H_
-#define _RESOURCES_H_
+#ifndef _PR_RESOURCES_H_
+#define _PR_RESOURCES_H_
 
 #include "config.h"
 

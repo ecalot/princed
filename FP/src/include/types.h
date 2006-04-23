@@ -25,13 +25,14 @@ types.h: FreePrince : Kernel types
   Created: 23 Aug 2004
 
   Author:  Enrique Calot <ecalot.cod@princed.com.ar>
+  Dev Cpp port: Hélder Maurício Gomes Ferreira Filho
 
  Note:
   DO NOT remove this copyright notice
 */
 
-#ifndef _TYPES_H_
-#define _TYPES_H_
+#ifndef _PR_TYPES_H_
+#define _PR_TYPES_H_
 
 #include "resources.h"
 

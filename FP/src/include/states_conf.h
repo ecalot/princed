@@ -4,8 +4,8 @@
  */
 
 
-#ifndef _STATES_CONF_H_
-#define _STATES_CONF_H_
+#ifndef _STATES_PR_CONF_H_
+#define _STATES_PR_CONF_H_
 
 /* animation frame flag options */
 #include "states_conf_flags.h"

@@ -30,8 +30,8 @@ tiles.h: FreePrince : Tile functions
   DO NOT remove this copyright notice
 */
 
-#ifndef _TILES_H_
-#define _TILES_H_
+#ifndef _PR_TILES_H_
+#define _PR_TILES_H_
 
 #include "types.h"
 #include "tiles_conf.h"

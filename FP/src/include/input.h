@@ -30,8 +30,8 @@ input.h: Free Prince : Input devices handling
   DO NOT remove this copyright notice
 */
 
-#ifndef _INPUT_H_
-#define _INPUT_H_
+#ifndef _PR_INPUT_H_
+#define _PR_INPUT_H_
 
 #include "common.h"
 

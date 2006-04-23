@@ -29,8 +29,8 @@ common.h: Princed Resources : Resource Handler headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _COMMON_H_
-#define _COMMON_H_
+#ifndef _PR_COMMON_H_
+#define _PR_COMMON_H_
 
 #define DEBUG_POS
 

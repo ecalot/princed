@@ -30,8 +30,8 @@ anims.h: FreePrince : Animation functions
   DO NOT remove this copyright notice
 */
 
-#ifndef _ANIMS_H_
-#define _ANIMS_H_
+#ifndef _PR_ANIMS_H_
+#define _PR_ANIMS_H_
 
 #include "res_conf.h"    /* RES_FILE_*    */
 #include "states_conf.h" /* STATES_MARK_* */

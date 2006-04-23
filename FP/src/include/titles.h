@@ -31,8 +31,8 @@ titles.h: FreePrince : Titles, animation and presentation
   DO NOT remove this copyright notice
 */
 
-#ifndef _TITLES_H_
-#define _TITLES_H_
+#ifndef _PR_TITLES_H_
+#define _PR_TITLES_H_
 
 typedef enum {menuQuit=0,menuLoad=1,menuStart,menuNone}tMenuOption;
 

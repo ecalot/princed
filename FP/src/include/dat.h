@@ -31,8 +31,8 @@ dat.h: Princed Resources : DAT library headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _DAT_H_
-#define _DAT_H_
+#ifndef _PR_DAT_H_
+#define _PR_DAT_H_
 
 #include "resources.h"
 

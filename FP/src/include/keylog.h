@@ -30,8 +30,8 @@ input.h: Free Prince : Input devices handling
   DO NOT remove this copyright notice
 */
 
-#ifndef _KEYLOG_H_
-#define _KEYLOG_H_
+#ifndef _PR_KEYLOG_H_
+#define _PR_KEYLOG_H_
 
 #include "input.h"
 

@@ -31,8 +31,8 @@ memory.h: Princed Resources : Memory handling headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _MEMORY_H_
-#define _MEMORY_H_
+#ifndef _PR_MEMORY_H_
+#define _PR_MEMORY_H_
 
 /* #define MEM_CHECK */
 

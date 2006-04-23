@@ -4,8 +4,8 @@
  */
 
 
-#ifndef _TILES_CONF_H_
-#define _TILES_CONF_H_
+#ifndef _TILES_PR_CONF_H_
+#define _TILES_PR_CONF_H_
 
 /* tile types */
 #include "tiles_conf_types.h"

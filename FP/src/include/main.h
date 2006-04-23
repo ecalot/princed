@@ -30,8 +30,8 @@ main.h: Princed Resources : Main function and parser headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _MAIN_H_
-#define _MAIN_H_
+#ifndef _PR_MAIN_H_
+#define _PR_MAIN_H_
 
 /***************************************************************\
 |                   Command Line specific options               |

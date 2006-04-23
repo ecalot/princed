@@ -30,8 +30,8 @@ kid.h: Free Prince : Kid object
   DO NOT remove this copyright notice
 */
 
-#ifndef _KID_H_
-#define _KID_H_
+#ifndef _PR_KID_H_
+#define _PR_KID_H_
 
 #include "resources.h"
 #include "room.h"

@@ -31,8 +31,8 @@ room.h: FreePrince : Draw Screen
   DO NOT remove this copyright notice
 */
 
-#ifndef _ROOM_H_
-#define _ROOM_H_
+#ifndef _PR_ROOM_H_
+#define _PR_ROOM_H_
 
 #define TILE_W 32
 #define TILE_H 62

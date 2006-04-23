@@ -36,8 +36,8 @@ disk.h: Princed Resources : Disk Access & File handling functions headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _DISK_H_
-#define _DISK_H_
+#ifndef _PR_DISK_H_
+#define _PR_DISK_H_
 
 #include <stdio.h>
 

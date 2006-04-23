@@ -30,8 +30,8 @@ walls.h: FreePrince : Walls functions
   DO NOT remove this copyright notice
 */
 
-#ifndef _WALLS_H_
-#define _WALLS_H_
+#ifndef _PR_WALLS_H_
+#define _PR_WALLS_H_
 
 #include "walls_conf.h"
 

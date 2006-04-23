@@ -31,8 +31,8 @@ kernel.h: Princed Resources : Resource Handler headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _KERNEL_H_
-#define _KERNEL_H_
+#ifndef _PR_KERNEL_H_
+#define _PR_KERNEL_H_
 
 /* Flags */
 #define megahit_flag     0x0001

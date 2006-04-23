@@ -1,5 +1,5 @@
-#ifndef _STATES_H_
-#define _STATES_H_
+#ifndef _PR_STATES_H_
+#define _PR_STATES_H_
 
 /* Structs */
 
