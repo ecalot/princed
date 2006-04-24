@@ -70,7 +70,7 @@ tree.c: Princed Resources : Specific XML tree handling routines
  * we can say that there is a ratio of 6 items per attribute or more.
  * If that happens for at least one attribute, the attribute with the highest
  * ratio will be partitioned that way:
- *   if an attribute value is present in 3 or more items, all items goes
+ *   if an attribute value is present in 3 or more items, all items go
  *   together under a new folder with this item set.
  */
 
