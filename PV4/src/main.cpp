@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
 
 try {
-	Level l("lev\\level002.plv");
+	Level l("lev/level2.plv");
 
 	int w,h;
 

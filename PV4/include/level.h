@@ -1,10 +1,12 @@
 #ifndef _LEVEL_H_
 #define _LEVEL_H_
 
-#include <string>
 #include "levelformat.h"
 #include "guard.h"
 #include "tile.h"
+
+#include <map>
+#include <string>
 
 class Level {
 public:
@@ -16,6 +18,7 @@ public:
 
 	~Level();
 
+	map<const char*,const char*>* getInfo();
 	/*
 	plvInfo getInfo();
 	setInfo(plvInfo i);
@@ -54,8 +57,11 @@ public:
 	bool redo()
 	*/
 
+	map<const char*,const char*> info;
+
 private:
 	string* fileName;
+
 #define MATRIX_HEIGHT (31+1+31)
 #define MATRIX_WIDTH (31+1+31)
 
@@ -89,6 +95,11 @@ private:
 
 	int addScreen(int x, int y);
 
+	//Configuration
+	bool checkIntegrity;
+	bool genericLinks;
+	
 };
 
 #endif
+

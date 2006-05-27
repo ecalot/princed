@@ -206,8 +206,8 @@ void Pop1LevelFormat::setStartPosition(int screen, int location,Direction direct
 	this->start_position[2]=(unsigned char)direction;
 }
 
-bool Pop1LevelFormat::getDebugPosition(int &screen, int &location,Direction &direction) {}
-bool Pop1LevelFormat::setDebugPosition(int screen, int location,Direction direction) {}
+bool Pop1LevelFormat::getDebugPosition(int &screen, int &location,Direction &direction) {return false;}
+bool Pop1LevelFormat::setDebugPosition(int screen, int location,Direction direction) {return false;}
 void Pop1LevelFormat::clearDebugPosition() {}
 
 /* Doors */

@@ -30,7 +30,7 @@ typedef char* fieldPointer;
 Level::Level(const char* file) { //open
 	//open the file
   iesstream stream(file);
-cout<<"Opening level "<< file <<endl;
+//cout<<"Opening level "<< file <<endl;
 
 	//check the magic
 	char magic[7];
@@ -63,7 +63,7 @@ cout<<"Opening level "<< file <<endl;
 
 	switch (popVersion) {
 		case 1:
-cout<<"is pop1"<<endl;
+//cout<<"is pop1"<<endl;
 			this->level=new Pop1LevelFormat(stream,b1);
 			break;
 		case 2:
@@ -75,11 +75,11 @@ cout<<"is pop1"<<endl;
 	//user data size
 	unsigned long b2;
 	stream.read(b2);
+//cout<<"b2 "<<b2<<endl;
 
-	//alloc user data (TODO: use integrity checks here)
+	//alloc user data (TODO: use integrity checks here before doing the allocation)
 	char* ud=new char[b2];
 	stream.read(ud,b2);
-cout<<"nf "<<nf<<endl;
 
 	//process user data
 	fieldPointer* fields=new fieldPointer[nf*2];
@@ -92,19 +92,24 @@ cout<<"nf "<<nf<<endl;
 
 	for (unsigned int i=0;i<nf;i++) {
 		cout<<"f['"<<fields[i*2]<<"']='"<<fields[i*2+1]<<"'"<<endl;
+		info[fields[i*2]]=fields[i*2+1];
 	}
 
-	if (currentField!=nf*2 || ud[b2-1]!=0) throw -2;
-cout<<"cf "<<currentField<<" nf "<<nf<<" b2 "<<b2<<endl;
+	if (currentField!=nf*2 || ud[b2-1]!=0) throw -4;
+//cout<<"cf "<<currentField<<" nf "<<nf<<" b2 "<<b2<<endl;
 
 	//TODO: generate a hash table with this values
 
 	//remember the file name
 	this->fileName=new string(file);
-cout<<"ok"<<endl;
+//cout<<"ok"<<endl;
 
 	//Finally arrange the rooms
 	this->arrangeRooms();
+
+	//Free memory
+	//delete[] fields;
+	delete[] ud;
 }
 
 Level::Level(int popVersion,int LevelNumber){} // new
@@ -114,10 +119,9 @@ void Level::save(const char* file){}
 
 Level::~Level(){}
 
-/*
-plvInfo Level::getInfo()
-Level::setInfo(plvInfo i)
-*/
+map<const char*,const char*>* Level::getInfo() { //TODO: decide if let map as public and forget about this
+	return &(this->info);
+}
 
 void Level::linkRecurse(int x, int y, int room) {
  if (matrix(x,y)==-1) {
@@ -218,10 +222,10 @@ int Level::getWidth(){
  return (this->ce-this->cs-1)*10+2;
 }
 
-bool Level::addGuard(int floor,int col,Guard g){}
-bool Level::delGuard(int floor,int col){}
-bool Level::moveGuard(int floor,int col,int nfloor,int ncol){}
-bool Level::getGuard(int floor,int col,Guard &g){}
+bool Level::addGuard(int floor,int col,Guard g){return false;}
+bool Level::delGuard(int floor,int col){return false;}
+bool Level::moveGuard(int floor,int col,int nfloor,int ncol){return false;}
+bool Level::getGuard(int floor,int col,Guard &g){return false;}
 /*vector <floor,col> getGuards()*/
 
 
@@ -285,6 +289,7 @@ int Level::addScreen(int x, int y) {
 
 	//recalculate
 	this->arrangeRooms();
+	return 0; //TODO: return true if the level must be redrawn!
 }
 
 //TODO: delScreen
