@@ -16,8 +16,7 @@ public:
 	LevelFormat(int levelNumber); // new
 	LevelFormat(); // dummy constructor (?)
 
-	~LevelFormat();
-
+	virtual ~LevelFormat()=0;
 
 	virtual void save(ostream* level)=0;
 	virtual void setTile(int screen, int location, Tile* t)=0;

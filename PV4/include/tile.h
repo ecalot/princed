@@ -10,6 +10,7 @@ public:
 	virtual int getDoorEvent()=0;
 	virtual int getAttr()=0;
 	virtual int getImg()=0;
+	virtual ~Tile()=0;
 
 protected:
 	int level; /* this is very important to know what tiles are allowed */

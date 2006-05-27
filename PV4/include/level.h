@@ -2,7 +2,7 @@
 #define _LEVEL_H_
 
 #include <string>
-#include "levelFormat.h"
+#include "levelformat.h"
 #include "guard.h"
 #include "tile.h"
 
@@ -33,7 +33,7 @@ public:
 
 	void setTile(int floor,int col,Tile* tile);
 	Tile* getTile(int floor,int col);
-	void copyTiles(int sfloor,int scol,int efloor,int ecol);
+	void copyTiles(int sfloor,int scol,int efloor,int ecol,int tfloor, int tcol);
 
 
 	bool addTrigger(int triggerfloor,int triggercol,int targetfloor,int targetcol);

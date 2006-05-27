@@ -1,8 +1,8 @@
 #include <iostream>
 #include "endiansafestream.h"
 
-#include "levelFormat.h"
-#include "pop1levelFormat.h"
+#include "levelformat.h"
+#include "pop1levelformat.h"
 #include "level.h"
 #include "guard.h"
 #include "tile.h"
@@ -83,14 +83,14 @@ cout<<"nf "<<nf<<endl;
 
 	//process user data
 	fieldPointer* fields=new fieldPointer[nf*2];
-	int currentField=1;
+	unsigned int currentField=1;
 
 	fields[0]=ud;
-	for (int i=0;i<b2&&currentField<nf*2;i++) {
+	for (unsigned int i=0;i<b2&&currentField<nf*2;i++) {
 		if (!ud[i]) fields[currentField++]=ud+i+1;
 	}
 
-	for (int i=0;i<nf;i++) {
+	for (unsigned int i=0;i<nf;i++) {
 		cout<<"f['"<<fields[i*2]<<"']='"<<fields[i*2+1]<<"'"<<endl;
 	}
 
@@ -312,22 +312,23 @@ Tile* Level::getTile(int floor,int col) {
 	}
 }
 
-void copyTiles(int sfloor,int scol,int efloor,int ecol,int tfloor, int tcol) {
-
-//equal col and floor are done
-if (sfloor==efloor) return;
-if (scol==ecol) return;
-
-//order col and floor in case the selection is in other order
-if (sfloor<efloor) {int aux=efloor;efloor=sfloor;sfloor=aux;}
-if (scol<ecol)     {int aux=ecol;ecol=scol;scol=aux;}
-
-tTile* t;
-
-for (int i=0;i<efloor-sfloor;i++) {
-	for (int j=0;j<ecol-scol;j++) {
-		t=this->getTile(sfloor+i,scol+j);
-		this->setTile(tfloor+i,tcol+j,t); //TODO: handle sollapations
+void Level::copyTiles(int sfloor,int scol,int efloor,int ecol,int tfloor, int tcol) {
+	
+	//equal col and floor are done
+	if (sfloor==efloor) return;
+	if (scol==ecol) return;
+	
+	//order col and floor in case the selection is in other order
+	if (sfloor<efloor) {int aux=efloor;efloor=sfloor;sfloor=aux;}
+	if (scol<ecol)     {int aux=ecol;ecol=scol;scol=aux;}
+	
+	Tile* t;
+	
+	for (int i=0;i<efloor-sfloor;i++) {
+		for (int j=0;j<ecol-scol;j++) {
+			t=this->getTile(sfloor+i,scol+j);
+			this->setTile(tfloor+i,tcol+j,t); //TODO: handle sollapations
+		}
 	}
 }
 
