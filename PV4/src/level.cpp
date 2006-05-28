@@ -119,9 +119,9 @@ void Level::save(const char* file){}
 
 Level::~Level(){}
 
-map<const char*,const char*>* Level::getInfo() { //TODO: decide if let map as public and forget about this
+/*map<const char*,const char*>* Level::getInfo() { //TODO: decide if let map as public and forget about this
 	return &(this->info);
-}
+}*/
 
 void Level::linkRecurse(int x, int y, int room) {
  if (matrix(x,y)==-1) {
@@ -222,18 +222,18 @@ int Level::getWidth(){
  return (this->ce-this->cs-1)*10+2;
 }
 
-bool Level::addGuard(int floor,int col,Guard g){return false;}
-bool Level::delGuard(int floor,int col){return false;}
-bool Level::moveGuard(int floor,int col,int nfloor,int ncol){return false;}
-bool Level::getGuard(int floor,int col,Guard &g){return false;}
+bool Level::addGuard(tPos pos,Guard g){return false;}
+bool Level::delGuard(tPos pos){return false;}
+bool Level::moveGuard(tPos spos,tPos tpos){return false;}
+bool Level::getGuard(tPos pos,Guard &g){return false;}
 /*vector <floor,col> getGuards()*/
 
 
-void Level::setTile(int floor,int col,Tile* tile) {
+void Level::setTile(tPos pos,Tile* tile) {
 	int screen;
 	int location;
 
-	this->abstractToFormat(floor,col,screen,location);
+	this->abstractToFormat(pos,screen,location);
 
 	//check if the screen exists
 	if (screen<1) {
@@ -241,7 +241,7 @@ void Level::setTile(int floor,int col,Tile* tile) {
 
 		//the screen doesn't exist, but it's near, we'll try to create it
 		int x,y;
-		this->floorColToXY(floor,col,x,y);
+		this->floorColToXY(pos,x,y);
 
 		screen=this->addScreen(x,y);
 	}
@@ -294,22 +294,22 @@ int Level::addScreen(int x, int y) {
 
 //TODO: delScreen
 
-Tile* Level::getTile(int floor,int col) {
+Tile* Level::getTile(tPos pos) {
 	int screen;
 	int location;
 
-	this->abstractToFormat(floor,col,screen,location);
+	this->abstractToFormat(pos,screen,location);
 //cout<<"f("<<floor<<","<<col<<")=("<<screen<<","<<location<<")"<<endl;
 	if (screen<1) {
 		int r=0;
 		if (!screen) { //only screens 0 (means near to a level)
 			//calculate x and y of the screen
 			int x,y;
-			this->floorColToXY(floor,col,x,y);
-			if (col%10==0  && matrix(x-1,y)>0) r|=DL;
-			if (col%10==9  && matrix(x+1,y)>0) r|=DR;
-			if (floor%3==0 && matrix(x,y-1)>0) r|=DU;
-			if (floor%3==2 && matrix(x,y+1)>0) r|=DD;
+			this->floorColToXY(pos,x,y);
+			if (pos.col%10==0  && matrix(x-1,y)>0) r|=DL;
+			if (pos.col%10==9  && matrix(x+1,y)>0) r|=DR;
+			if (pos.floor%3==0 && matrix(x,y-1)>0) r|=DU;
+			if (pos.floor%3==2 && matrix(x,y+1)>0) r|=DD;
 		}
 		return (Tile*)new OuterTile(r);
 	} else {
@@ -317,22 +317,27 @@ Tile* Level::getTile(int floor,int col) {
 	}
 }
 
-void Level::copyTiles(int sfloor,int scol,int efloor,int ecol,int tfloor, int tcol) {
+void Level::copyTiles(tPos spos, tPos epos, tPos tpos) {
 	
-	//equal col and floor are done
-	if (sfloor==efloor) return;
-	if (scol==ecol) return;
+	//equal col and floor are done spos==epos
+	if (spos.floor==epos.floor) return;
+	if (spos.col==epos.col) return;
 	
 	//order col and floor in case the selection is in other order
-	if (sfloor<efloor) {int aux=efloor;efloor=sfloor;sfloor=aux;}
-	if (scol<ecol)     {int aux=ecol;ecol=scol;scol=aux;}
+	if (spos.floor<epos.floor) {int aux=epos.floor;epos.floor=spos.floor;spos.floor=aux;}
+	if (spos.col<epos.col)     {int aux=epos.col;epos.col=spos.col;spos.col=aux;}
 	
 	Tile* t;
 	
-	for (int i=0;i<efloor-sfloor;i++) {
-		for (int j=0;j<ecol-scol;j++) {
-			t=this->getTile(sfloor+i,scol+j);
-			this->setTile(tfloor+i,tcol+j,t); //TODO: handle sollapations
+	for (int i=0;i<epos.floor-spos.floor;i++) { //TODO: run over eux.floor and col
+		for (int j=0;j<epos.col-spos.col;j++) {
+			tPos aux;
+			aux.floor=spos.floor+i;
+			aux.col=spos.col+j;
+			t=this->getTile(aux);
+			aux.floor=tpos.floor+i;
+			aux.col=tpos.col+j;
+			this->setTile(aux,t); //TODO: handle sollapations
 		}
 	}
 }
@@ -343,33 +348,33 @@ bool delTrigger(int triggerfloor,int triggercol,int targetfloor,int targetcol)
 vector <floor,col> getTargets(int triggerfloor,int triggercol)
 vector <floor,col> getTriggers(int targetfloor,int targetcol)
 */
-void Level::getStartPosition(int &floor,int &col,Direction &direction){
+void Level::getStartPosition(tPos &pos,Direction &direction){
 	int screen;
 	int location;
 	this->level->getStartPosition(screen,location,direction);
-	this->formatToAbstract(floor,col,screen,location);
+	this->formatToAbstract(pos,screen,location);
 }
 
-void Level::setStartPosition(int floor,int col,Direction direction){
+void Level::setStartPosition(tPos pos,Direction direction){
 	int screen;
 	int location;
-	this->abstractToFormat(floor,col,screen,location);
+	this->abstractToFormat(pos,screen,location);
 	if (screen<1) throw -90;
 	this->level->setStartPosition(screen,location,direction);
 }
 
-bool Level::getDebugPosition(int &floor,int &col,Direction &direction){
+bool Level::getDebugPosition(tPos &pos,Direction &direction){
 	int screen;
 	int location;
 	this->level->getDebugPosition(screen,location,direction);
-	this->formatToAbstract(floor,col,screen,location);
+	this->formatToAbstract(pos,screen,location);
 	return screen!=0;
 }
 
-void Level::setDebugPosition(int floor,int col,Direction direction){
+void Level::setDebugPosition(tPos pos,Direction direction){
 	int screen;
 	int location;
-	this->abstractToFormat(floor,col,screen,location);
+	this->abstractToFormat(pos,screen,location);
 	if (screen<1) throw -90;
 	this->level->setDebugPosition(screen,location,direction);
 }
@@ -403,32 +408,32 @@ bool redo();
 */
 
 //Functions
-void Level::floorColToXY(int floor,int col, int &x, int &y){
-	x=this->rs+(floor+2)/3;
-	y=this->cs+(col+9)/10;
+void Level::floorColToXY(tPos pos, int &x, int &y){
+	x=this->rs+(pos.floor+2)/3;
+	y=this->cs+(pos.col+9)/10;
 }
 
-void Level::abstractToFormat(int floor,int col, int &screen, int &location){
+void Level::abstractToFormat(tPos pos, int &screen, int &location){
 	//calculate x and y of the screen
 	int x,y;
-	floorColToXY(floor,col,x,y);
+	floorColToXY(pos,x,y);
 
 	//return values
 	screen=matrix(y,x);
-	location=(col-1)%10+((floor-1)%3)*10;
+	location=(pos.col-1)%10+((pos.floor-1)%3)*10;
 }
 
-void Level::formatToAbstract(int &floor,int &col, int screen, int location){
+void Level::formatToAbstract(tPos &pos, int screen, int location){
 	if (screen<1||screen>this->level->countMax()) throw -14;
 
-	int pos=this->screens[screen];
+	int posaux=this->screens[screen];
 
-	int y=pos/MATRIX_WIDTH;
-	int x=pos%MATRIX_WIDTH;
+	int y=posaux/MATRIX_WIDTH;
+	int x=posaux%MATRIX_WIDTH;
 
 	y-=this->rs;
 	x-=this->cs;
 
-	col=x*10+1;
-	floor=y*3+1;
+	pos.col=x*10+1;
+	pos.floor=y*3+1;
 }

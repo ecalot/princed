@@ -12,7 +12,7 @@ class LevelFormat { //abstract class
 
 public:
 
-	LevelFormat::LevelFormat(iesstream& level, int blockSize); //open
+	LevelFormat(iesstream& level, int blockSize); //open
 	LevelFormat(int levelNumber); // new
 	LevelFormat(); // dummy constructor (?)
 
@@ -24,7 +24,7 @@ public:
 
 	virtual bool addGuard(int screen, int location, Guard* g)=0;
 	virtual bool delGuard(int screen, int location)=0;
-virtual Guard* getGuards(int screen, int number)=0;
+	virtual Guard* getGuards(int screen, int number)=0;
 	virtual void setRoomLink(int screen,int left,int right,int up,int down)=0;
 	virtual void getRoomLink(int screen,int &left,int &right,int &up,int &down)=0;
 
@@ -45,3 +45,4 @@ protected:
 };
 
 #endif
+

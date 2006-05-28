@@ -21,9 +21,11 @@ try {
 
 	Tile* t;
 
-	for (int i=0;i<h;i++) {
-		for (int j=0;j<w;j++) {
-			t=l.getTile(i,j);
+	tPos pos;
+	
+	for (pos.floor=0;pos.floor<h;pos.floor++) {
+		for (pos.col=0;pos.col<w;pos.col++) {
+			t=l.getTile(pos);
 			printf("%02X ",t->getCode()&0x1f);
 		}
 		cout<<endl;

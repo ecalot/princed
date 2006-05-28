@@ -8,59 +8,61 @@
 #include <map>
 #include <string>
 
+typedef struct {
+	int floor;
+	int col;
+} tPos;
+
 class Level {
 public:
-	Level(const char* file); //open
-	Level(int popVersion,int LevelNumber); // new
+	Level (const char *file);	//open
+	Level (int popVersion, int LevelNumber);	// new
 
-	void save();
-	void save(const char* file);
+	void save ();
+	void save (const char *file);
 
-	~Level();
+	~Level ();
 
-	map<const char*,const char*>* getInfo();
+	map < const char *, const char *>info;
+	//map<const char*,const char*>* getInfo(); //warning: will be string in a future
+
+	int getHeight ();
+	int getWidth ();
+	int countRooms ();
+
+	bool addGuard (tPos pos, Guard g);
+	bool delGuard (tPos pos);
+	bool moveGuard (tPos spos, tPos tpos);
+	bool getGuard (tPos pos, Guard & g);
+	//vector<tPos> getGuardPositions();
+
+	void setTile (tPos pos, Tile * tile);
+	Tile *getTile (tPos pos);
+	void copyTiles (tPos ssource, tPos esource, tPos target);
+
+
+	bool addTrigger (int triggerfloor, int triggercol, int targetfloor,
+			 int targetcol);
+	bool delTrigger (int triggerfloor, int triggercol, int targetfloor,
+			 int targetcol);
+	//vector <tPos> getTargets(tPos trigger);
+	//vector <tPos> getTriggers(tPos target);
+
+
+	void getStartPosition (tPos & pos, Direction & direction);
+	void setStartPosition (tPos pos, Direction direction);
+	bool getDebugPosition (tPos & pos, Direction & direction);
+	void setDebugPosition (tPos pos, Direction direction);
+	void clearDebugPosition ();
+	void switchPositions ();
+
 	/*
-	plvInfo getInfo();
-	setInfo(plvInfo i);
-	*/
-
-	int getHeight();
-	int getWidth();
-	int countRooms();
-
-	bool addGuard(int floor,int col,Guard g);
-	bool delGuard(int floor,int col);
-	bool moveGuard(int floor,int col,int nfloor,int ncol);
-	bool getGuard(int floor,int col,Guard &g);
-	/*vector <floor,col> getGuards()*/
-
-	void setTile(int floor,int col,Tile* tile);
-	Tile* getTile(int floor,int col);
-	void copyTiles(int sfloor,int scol,int efloor,int ecol,int tfloor, int tcol);
-
-
-	bool addTrigger(int triggerfloor,int triggercol,int targetfloor,int targetcol);
-	bool delTrigger(int triggerfloor,int triggercol,int targetfloor,int targetcol);
-	/*vector <floor,col> getTargets(int triggerfloor,int triggercol);
-	vector <floor,col> getTriggers(int targetfloor,int targetcol);
-	*/
-
-	void getStartPosition(int &floor,int &col,Direction &direction);
-	void setStartPosition(int floor,int col,Direction direction);
-	bool getDebugPosition(int &floor,int &col,Direction &direction);
-	void setDebugPosition(int floor,int col,Direction direction);
-	void clearDebugPosition();
-	void switchPositions();
-
-	/*
-	bool undo()
-	bool redo()
-	*/
-
-	map<const char*,const char*> info;
+	   bool undo()
+	   bool redo()
+	 */
 
 private:
-	string* fileName;
+	string * fileName;
 
 #define MATRIX_HEIGHT (31+1+31)
 #define MATRIX_WIDTH (31+1+31)
@@ -77,28 +79,28 @@ private:
 	int re;
 	int ce;
 
-	LevelFormat* level;
+	LevelFormat *level;
 
 	int firstFreeTarget;
 
-	int* screens;
+	int *screens;
 
 	//Functions
-	void abstractToFormat(int floor,int col, int &screen, int &location);
-	void formatToAbstract(int &floor,int &col, int screen, int location);
+	void abstractToFormat (tPos pos, int &screen, int &location);
+	void formatToAbstract (tPos & pos, int screen, int location);
 
-	void floorColToXY(int floor,int col, int &x, int &y);
+	void floorColToXY (tPos pos, int &x, int &y);
 
 
-	void arrangeRooms(); /* throws: roomsNotAdjacent */
-	void linkRecurse(int x, int y, int room);
+	void arrangeRooms ();		/* throws: roomsNotAdjacent */
+	void linkRecurse (int x, int y, int room);
 
-	int addScreen(int x, int y);
+	int addScreen (int x, int y);
 
 	//Configuration
 	bool checkIntegrity;
 	bool genericLinks;
-	
+
 };
 
 #endif
