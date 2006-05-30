@@ -200,18 +200,43 @@ int mCompressGraphic256(tBinary* input, tBinary* output, int ignoreFirstBytes, i
 int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize) { 
 	/* This function is in an experimental state and hasn't yet been linked to the program */
 	unsigned char* tempOutput;
+	unsigned char* lineI; /* chunk */
+	unsigned char* lineO; /* chunk */
+	int            lineSize;
+	int aux;
 
 	int tempOutputSize;
 	int osCheck;
+
+	*output=malloc(40000);
+	lineO=*output;
+	*outputSize=0;
 
 	osCheck=array2short(input)-6;
 	input+=2;
 
 	/*os=osCheck;*/
-	tempOutputSize=0;
+	/* First layer: expand the lgz */
+	/*tempOutputSize=0;*/
+	tempOutputSize=osCheck;
 	printf("lzg=%d is=%d osc=%d\n", expandLzg(input,inputSize-2,&tempOutput,&tempOutputSize),inputSize,osCheck);
 
-	printf("rle=%d\n", expandRleC(tempOutput,tempOutputSize,output,outputSize,verify));
+	/* Second layer expand each rle line */
+	lineI=tempOutput;
+	do {
+		aux=array2short(lineI);
+		lineI+=2;
+		printf("rle=%d\n", expandRleC(lineI,aux,lineO,&lineSize,1000));
+		printf("linesize=%d of %d. size=%d r=%d.\n",lineSize,verify,tempOutputSize,tempOutputSize-aux-2);
+		lineO+=lineSize;
+		outputSize+=lineSize;
+		tempOutputSize-=aux;
+		tempOutputSize-=2;
+		lineI+=aux;
+	} while (lineSize==verify && tempOutputSize>0);
+	
+
+/*	printf("rle=%d\n", expandRleC(tempOutput,tempOutputSize,output,outputSize,verify));*/
 /*
 	printf("lzg=%d\n", os3=expandLzg(input+8+is-8-os3+2,os3-2,&output,&os));
 	osCheck=input[7+is-8-os3+2]<<8|input[6+is-8-os3+2];

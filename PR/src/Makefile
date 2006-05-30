@@ -44,7 +44,8 @@ TYPE          = Debug
 # LINKERRELEASE may be:
 #  -s                              for release
 ifeq ($(TYPE),Debug)
-  RELEASE       = -g -Wall -pedantic 
+  #RELEASE       = -g -Wall -pedantic -fPIC for .so files
+  RELEASE       = -g -Wall -pedantic
   LINKERRELEASE =
 else
   RELEASE       = -O2 
@@ -84,7 +85,7 @@ $(EXEFILE): $(EXEOBJ) $(XMLFILE)
 	$(INFO)
 
 #command options
-.PHONY: clean cleanxml build all lib
+.PHONY: clean cleanxml build all libs
 
 clean:
 	$(INFO) Erasing temporary object files...
@@ -98,10 +99,10 @@ build: clean bin/pr
 
 all: $(EXEFILE)
 
-lib: $(LIBOBJ)
+libs: $(LIBOBJ)
 	$(MAKEDIR) bin
 	$(INFO) Making dynamic library...
-	$(CC) $(OPTIONS) -o bin/pr.so $(LIBOBJ) -Llibc -shared -dynamic -o $@
+	$(CC) $(OPTIONS) -o bin/pr.so $(LIBOBJ) -Llibc -shared -dynamic
 	$(INFO) Library successfully compiled
 	$(INFO)
 	$(INFO) Please read readme.coders.txt and pr.h for interfaces
@@ -299,4 +300,22 @@ pylib: .python.o $(LIBOBJ)
 	$(INFO) Building the python module
 	$(MAKEDIR) addons/python/bin
 	$(CC) -pthread -shared .python.o $(LIBOBJ) -o addons/python/bin/pr.so -o $@
+
+#cpp
+.cppdat.o: addons/cpp/dat.cpp include/pr.h
+	$(INFO) Building the C++ DAT handling interface
+	g++ -c addons/cpp/dat.cpp -Iinclude -o .cppdat.o
+
+.cppxml.o: addons/cpp/xml.cpp include/pr.h
+	$(INFO) Building the C++ XML handling interface
+	g++ -c addons/cpp/xml.cpp -Iinclude -o .cppxml.o
+
+cpp: .cppdat.o .cppxml.o
+
+
+
+
+
+
+
 

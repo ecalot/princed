@@ -39,7 +39,7 @@ rlec_uncompress.c: Princed Resources : Image Compression Library :
 
 /* Expands RLE algorithm */
 int expandRleC(const unsigned char* input, int inputSize,
-               unsigned char** output, int *outputSize,int verif) {
+               unsigned char* output, int *outputSize,int verif) {
 	register unsigned char rep=0;
 	int oCursor=0;
 	int iCursor=0;
@@ -48,24 +48,24 @@ int expandRleC(const unsigned char* input, int inputSize,
 	int lineSize;
 
 	/* reserve memory */
-	if ((*output=(unsigned char*)malloc(40000))==NULL) return COMPRESS_RESULT_FATAL;
+/*	if ((*output=(unsigned char*)malloc(40000))==NULL) return COMPRESS_RESULT_FATAL;*/
 
 	/* main loop */
 	while (iCursor<inputSize) {
 		rep=(input[iCursor++]);
 /*printf("o=%d i=%d\n",oCursor,iCursor);*/
-		if ((done)||(oCursor%verif)) {
+		if (1||(done)||(oCursor%verif)) {
 			done=0;
 			if (rep&0x80) { /* repeat */
 				/*rep&=~0x80;*/
 				rep-=0x80;
 				rep++;
-				while (rep--) (*output)[oCursor++]=input[iCursor];
+				while (rep--) (output)[oCursor++]=input[iCursor];
 				iCursor++;
 			} else { /* jump */
 				rep++;
 				while ((rep--)&&(iCursor<inputSize)) {
-					(*output)[oCursor++]=input[iCursor++];
+					(output)[oCursor++]=input[iCursor++];
 				}
 			}
 		} else {
@@ -92,6 +92,7 @@ int expandRleC(const unsigned char* input, int inputSize,
 	}
 /*printf("done=%d i=%d but=%d\n",done,iCursor,inputSize);*/
 	*outputSize=oCursor;
+	printf("rep=%d\n",rep);
 	return (rep==1)?COMPRESS_RESULT_SUCCESS:COMPRESS_RESULT_WARNING;
 }
 
