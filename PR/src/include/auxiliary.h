@@ -30,8 +30,8 @@ auxiliary.h: Princed Resources : Memory handling & comparison prototypes
   DO NOT remove this copyright notice
 */
 
-#ifndef _AUXILIARY_H_
-#define _AUXILIARY_H_
+#ifndef _PR_AUXILIARY_H_
+#define _PR_AUXILIARY_H_
 
 #include "binary.h"
 int isA64kPalette(tBinary c);

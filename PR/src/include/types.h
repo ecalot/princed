@@ -31,8 +31,8 @@ reslist.h: Princed Resources : Resource list prototypes
   DO NOT remove this copyright notice
 */
 
-#ifndef _RESLIST_H_
-#define _RESLIST_H_
+#ifndef _PR_RESLIST_H_
+#define _PR_RESLIST_H_
 
 #include "list.h" /* tList */
 typedef tList tResourceList;

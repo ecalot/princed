@@ -39,8 +39,8 @@ pr.h: Princed Resources : Main library header prototypes and definitions
   DO NOT remove this copyright notice
 */
 
-#ifndef _PR_H_
-#define _PR_H_
+#ifndef _PR_PR_H_
+#define _PR_PR_H_
 
 /* types */
 typedef struct tTag {

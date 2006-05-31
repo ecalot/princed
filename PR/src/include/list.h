@@ -32,8 +32,8 @@ list.h: Princed Resources : Ordered Read-Only list headers
 */
 
 /* Defines */
-#ifndef _LIST_H_
-#define _LIST_H_
+#ifndef _PR_LIST_H_
+#define _PR_LIST_H_
 
 #define GT 1
 #define EQ 0

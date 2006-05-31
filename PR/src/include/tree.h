@@ -31,8 +31,8 @@ tree.h: Princed Resources : Special XML tree prototypes
   DO NOT remove this copyright notice
 */
 
-#ifndef _TREE_H_
-#define _TREE_H_
+#ifndef _PR_TREE_H_
+#define _PR_TREE_H_
 
 /* Includes */
 #include "reslist.h"

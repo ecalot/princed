@@ -31,8 +31,8 @@ compress.h: Princed Resources : Compression headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _COMPRESS_H_
-#define _COMPRESS_H_
+#ifndef _PR_COMPRESS_H_
+#define _PR_COMPRESS_H_
 
 #include "common.h"
 

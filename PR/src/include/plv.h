@@ -39,8 +39,8 @@ plv.h: Princed Resources : PLV prince level files support headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _PLV_H_
-#define _PLV_H_
+#ifndef _PR_PLV_H_
+#define _PR_PLV_H_
 
 /*
  * PLV 1 SPECS:

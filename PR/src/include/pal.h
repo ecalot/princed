@@ -31,8 +31,8 @@ pal.h: Princed Resources : JASC PAL files support headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _PAL_H_
-#define _PAL_H_
+#ifndef _PR_PAL_H_
+#define _PR_PAL_H_
 
 #include "image.h"
 #include "palette.h"

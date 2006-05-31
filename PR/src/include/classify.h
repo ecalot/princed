@@ -31,8 +31,8 @@ classify.h: Princed Resources : DAT file classify routine headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _CLASSIFY_H_
-#define _CLASSIFY_H_
+#ifndef _PR_CLASSIFY_H_
+#define _PR_CLASSIFY_H_
 
 /*
  * Return values may be:

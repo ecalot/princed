@@ -36,8 +36,8 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
   DO NOT remove this copyright notice
 */
 
-#ifndef _COMMON_H_
-#define _COMMON_H_
+#ifndef _PR_COMMON_H_
+#define _PR_COMMON_H_
 
 /***************************************************************\
 |                Princed Resource Library Functions             |
@@ -65,7 +65,7 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 \***************************************************************/
 
 #define PR_URL                    "http://www.princed.com.ar"
-#define PR_VERSION                "v1.2-dev"
+#define PR_VERSION                "v1.2-beta-BlackChar"
 #define PR_COPY                   "(c) Copyright 2003-2006 Princed Development Team"
 
 /***************************************************************\

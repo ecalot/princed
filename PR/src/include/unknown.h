@@ -31,8 +31,8 @@ unknown.h: Princed Resources : Unknown.xml generator headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _UNKNOWN_H_
-#define _UNKNOWN_H_
+#ifndef _PR_UNKNOWN_H_
+#define _PR_UNKNOWN_H_
 
 /* Note:
  * To use the functions as a library you must include pr.h

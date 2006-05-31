@@ -35,8 +35,8 @@ search.h: Princed Resources : Abstract XML tree searching prototypes
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
 
-#ifndef _SEARCH_H_
-#define _SEARCH_H_
+#ifndef _PR_SEARCH_H_
+#define _PR_SEARCH_H_
 
 /* Includes */
 #include "common.h" /* tTag */

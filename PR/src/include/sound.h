@@ -30,8 +30,8 @@ sound.h: Princed Resources :
   DO NOT remove this copyright notice
 */
 
-#ifndef _SOUND_H_
-#define _SOUND_H_
+#ifndef _PR_SOUND_H_
+#define _PR_SOUND_H_
 
 #include "binary.h"
 #include "reslist.h"

@@ -31,8 +31,8 @@ parse.h: Princed Resources : XML parsing prototypes
   DO NOT remove this copyright notice
 */
 
-#ifndef _PARSE_H_
-#define _PARSE_H_
+#ifndef _PR_PARSE_H_
+#define _PR_PARSE_H_
 
 #include "pr.h"
 const char* getExtDesc(int type);

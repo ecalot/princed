@@ -35,8 +35,8 @@ filedir.h: Princed Resources : File list layer for console IDE prototypes
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
 
-#ifndef _FILEDIR_H_
-#define _FILEDIR_H_
+#ifndef _PR_FILEDIR_H_
+#define _PR_FILEDIR_H_
 
 /* types */
 typedef struct tFileDir {

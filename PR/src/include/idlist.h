@@ -31,8 +31,8 @@ idlist.h: Princed Resources : Resource id list headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _IDLIST_H_
-#define _IDLIST_H_
+#ifndef _PR_IDLIST_H_
+#define _PR_IDLIST_H_
 
 /* Includes */
 #include "reslist.h" /* tResourceId */

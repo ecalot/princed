@@ -32,8 +32,8 @@ bmp.h: Princed Resources : BMP file support headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _BMP_H_
-#define _BMP_H_
+#ifndef _PR_BMP_H_
+#define _PR_BMP_H_
 
 #include "reslist.h" /* tResource */
 #include "image.h" /* tImage */

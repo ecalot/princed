@@ -31,8 +31,8 @@ binary.h: Princed Resources : Memory handling & comparison prototypes
   DO NOT remove this copyright notice
 */
 
-#ifndef _BINARY_H_
-#define _BINARY_H_
+#ifndef _PR_BINARY_H_
+#define _PR_BINARY_H_
 
 typedef struct {
 	unsigned char* data;

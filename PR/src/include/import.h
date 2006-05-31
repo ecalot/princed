@@ -31,8 +31,8 @@ import.h: Princed Resources : DAT importation prototypes
   DO NOT remove this copyright notice
 */
 
-#ifndef _IMPORT_H_
-#define _IMPORT_H_
+#ifndef _PR_IMPORT_H_
+#define _PR_IMPORT_H_
 
 #include "reslist.h"
 

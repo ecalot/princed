@@ -31,8 +31,8 @@ stringformat.h: Princed Resources : Format string parsing header
   DO NOT remove this copyright notice
 */
 
-#ifndef _STRINGFORMAT_H_
-#define _STRINGFORMAT_H_
+#ifndef _PR_STRINGFORMAT_H_
+#define _PR_STRINGFORMAT_H_
 
 #define isNumber(k) ('0'<=(k) && (k)<='9')
 

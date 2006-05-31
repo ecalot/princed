@@ -30,8 +30,8 @@ object.h: Princed Resources : Main item class types and prototypes
   DO NOT remove this copyright notice
 */
 
-#ifndef _OBJECT_H_
-#define _OBJECT_H_
+#ifndef _PR_OBJECT_H_
+#define _PR_OBJECT_H_
 
 #include "reslist.h"
 #include "common.h"

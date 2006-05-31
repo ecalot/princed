@@ -31,8 +31,8 @@ mid.h: Princed Resources : MIDI files support headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _MID_H_
-#define _MID_H_
+#ifndef _PR_MID_H_
+#define _PR_MID_H_
 
 #include "binary.h"
 #include "reslist.h"

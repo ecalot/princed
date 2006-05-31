@@ -31,8 +31,8 @@
   DO NOT remove this copyright notice
 */
 
-#ifndef _PALLIST_H_
-#define _PALLIST_H_
+#ifndef _PR_PALLIST_H_
+#define _PR_PALLIST_H_
 
 #include "list.h"    /* tList */
 typedef tList tPaletteList;

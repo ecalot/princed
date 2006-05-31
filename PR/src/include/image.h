@@ -31,8 +31,8 @@ image.h: Princed Resources : Image handling headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _IMAGE_H_
-#define _IMAGE_H_
+#ifndef _PR_IMAGE_H_
+#define _PR_IMAGE_H_
 
 #include "reslist.h"
 #include "binary.h"

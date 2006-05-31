@@ -31,8 +31,8 @@ export.h: Princed Resources : DAT extraction prototypes
   DO NOT remove this copyright notice
 */
 
-#ifndef _EXPORT_H_
-#define _EXPORT_H_
+#ifndef _PR_EXPORT_H_
+#define _PR_EXPORT_H_
 
 #include "reslist.h"
 

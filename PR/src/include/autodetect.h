@@ -31,8 +31,8 @@ autodetect.h: Princed Resources : Resource automatic detection headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _AUTODETECT_H_
-#define _AUTODETECT_H_
+#ifndef _PR_AUTODETECT_H_
+#define _PR_AUTODETECT_H_
 
 /* Includes */
 #include "reslist.h" /* tResourceType */

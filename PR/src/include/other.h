@@ -30,8 +30,8 @@ other.h: Princed Resources :
   DO NOT remove this copyright notice
 */
 
-#ifndef _OTHER_H_
-#define _OTHER_H_
+#ifndef _PR_OTHER_H_
+#define _PR_OTHER_H_
 
 #include "binary.h"
 

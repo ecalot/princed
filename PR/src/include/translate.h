@@ -31,8 +31,8 @@ translate.h: Princed Resources : Array translating resources prototypes
   DO NOT remove this copyright notice
 */
 
-#ifndef _TRANSLATE_H_
-#define _TRANSLATE_H_
+#ifndef _PR_TRANSLATE_H_
+#define _PR_TRANSLATE_H_
 
 #define TRANS_ARRAY_INDEX_INT {\
 	"pop1", "cust", "fram", "palc", "pals", "palt", "piec", "scr", "shap", "shpl", "strl", "snd", "seqs", "txt4"}
