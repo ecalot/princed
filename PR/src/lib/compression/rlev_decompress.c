@@ -44,8 +44,8 @@ int expandRleC(const unsigned char* input, int inputSize,
 	int oCursor=0;
 	int iCursor=0;
 	int done=0;
-	int aux=0;
-	int lineSize;
+	/*int aux=0;*/
+	/*int lineSize;*/
 
 	/* reserve memory */
 /*	if ((*output=(unsigned char*)malloc(40000))==NULL) return COMPRESS_RESULT_FATAL;*/
@@ -54,7 +54,7 @@ int expandRleC(const unsigned char* input, int inputSize,
 	while (iCursor<inputSize) {
 		rep=(input[iCursor++]);
 /*printf("o=%d i=%d\n",oCursor,iCursor);*/
-		if (1||(done)||(oCursor%verif)) {
+/*		if (1||(done)||(oCursor%verif)) {*/
 			done=0;
 			if (rep&0x80) { /* repeat */
 				/*rep&=~0x80;*/
@@ -68,7 +68,7 @@ int expandRleC(const unsigned char* input, int inputSize,
 					(output)[oCursor++]=input[iCursor++];
 				}
 			}
-		} else {
+/*		} else {
 			if (aux)
 				if (lineSize!=(iCursor-aux))
 					printf("Error, line size is wrong: lineSize=%d got=%d\n",lineSize,(iCursor-aux));
@@ -77,7 +77,7 @@ int expandRleC(const unsigned char* input, int inputSize,
 			iCursor++;
 			done=1;
 			aux=iCursor;
-/*			if (oCursor==28800) {
+*			if (oCursor==28800) {
 				int g;
 				printf("error time: (ls=%d)",lineSize);
 				for (g=-20;g<100;g++)
@@ -85,14 +85,14 @@ int expandRleC(const unsigned char* input, int inputSize,
 				printf("\n");
 				iCursor-=4;
 			}*/
-		}
+	/*	}*/
 
 
 
 	}
 /*printf("done=%d i=%d but=%d\n",done,iCursor,inputSize);*/
 	*outputSize=oCursor;
-	printf("rep=%d\n",rep);
-	return (rep==1)?COMPRESS_RESULT_SUCCESS:COMPRESS_RESULT_WARNING;
+/*	printf("rep=%d\n",rep);*/
+	return (rep==255)?COMPRESS_RESULT_SUCCESS:COMPRESS_RESULT_WARNING;
 }
 

@@ -141,7 +141,7 @@ int mExpandGraphic256(const unsigned char* data,tImage *image, int dataSizeInByt
 	}
 
 	/* special format has a special function */
-	return pop2decompress(data,dataSizeInBytes-6,image->width,&(image->pix),&imageSizeInBytes);
+	return pop2decompress(data,dataSizeInBytes,image->width,&(image->pix),&imageSizeInBytes);
 }
 
 /* Compress an image into binary data */
@@ -203,10 +203,11 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 	unsigned char* lineI; /* chunk */
 	unsigned char* lineO; /* chunk */
 	int            lineSize;
-	int aux;
+	int            aux,aux2,remaining;
+	int            tempOutputSize;
+	int            osCheck;
 
-	int tempOutputSize;
-	int osCheck;
+	printf("\n\nNew image!\n");
 
 	*output=malloc(40000);
 	lineO=*output;
@@ -215,29 +216,69 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 	osCheck=array2short(input)-6;
 	input+=2;
 
-	/*os=osCheck;*/
 	/* First layer: expand the lgz */
-	/*tempOutputSize=0;*/
-	tempOutputSize=osCheck;
-	printf("lzg=%d is=%d osc=%d\n", expandLzg(input,inputSize-2,&tempOutput,&tempOutputSize),inputSize,osCheck);
+	tempOutputSize=osCheck+6;
+
+	remaining=expandLzg(input,inputSize-2,&tempOutput,&tempOutputSize);
+	printf("Call:\n return=%d function input size=%d\n internal output size=%d result output size=%d\n",
+	remaining,inputSize,osCheck,tempOutputSize);
+	if ((osCheck+6)!=tempOutputSize)
+		printf(" Special case: more is coming\n");
 
 	/* Second layer expand each rle line */
 	lineI=tempOutput;
+	printf("RLE loop layer:\n");
 	do {
 		aux=array2short(lineI);
 		lineI+=2;
-		printf("rle=%d\n", expandRleC(lineI,aux,lineO,&lineSize,1000));
-		printf("linesize=%d of %d. size=%d r=%d.\n",lineSize,verify,tempOutputSize,tempOutputSize-aux-2);
+		if (aux>tempOutputSize) {
+			printf(" error: aux=%d tempOutputSize=%d\n",aux,tempOutputSize);
+			return COMPRESS_RESULT_WARNING;
+		}
+		aux2= expandRleC(lineI,aux,lineO,&lineSize,1000);
+		if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-aux-2);
 		lineO+=lineSize;
-		outputSize+=lineSize;
+		*outputSize+=lineSize;
 		tempOutputSize-=aux;
 		tempOutputSize-=2;
 		lineI+=aux;
 	} while (lineSize==verify && tempOutputSize>0);
-	
+	printf(" return: linesize=%d verify=%d tempOutputSize=%d\n", lineSize, verify, tempOutputSize);
+	if (remaining) {
+		const unsigned char* start=input+(inputSize-0)-remaining;
+		printf("Remaining tailing data: size=%d first=%02x %02x\n", remaining,start[0],start[1]);
+		tempOutputSize=0;
+		remaining=expandLzg(start,remaining,&tempOutput,&tempOutputSize);
+		
+		lineI=tempOutput;
 
-/*	printf("rle=%d\n", expandRleC(tempOutput,tempOutputSize,output,outputSize,verify));*/
+		do {
+			aux=array2short(lineI);
+			lineI+=2;
+			if (aux>tempOutputSize) {
+				printf(" error: aux=%d tempOutputSize=%d\n",aux,tempOutputSize);
+				return COMPRESS_RESULT_WARNING;
+			}
+			aux2= expandRleC(lineI,aux,lineO,&lineSize,1000);
+			if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-aux-2);
+			lineO+=lineSize;
+			*outputSize+=lineSize;
+			tempOutputSize-=aux;
+			tempOutputSize-=2;
+			lineI+=aux;
+		} while (lineSize==verify && tempOutputSize>0);
 /*
+		aux=array2short(lineI);
+		lineI+=2;
+		if (aux>tempOutputSize) printf(" error: aux=%d tempOutputSize=%d\n",aux,tempOutputSize);
+		aux2= expandRleC(lineI,tempOutputSize,lineO,&lineSize,1000);
+		if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-aux-2);
+*/
+	}
+
+/*
+	printf("rle=%d\n", expandRleC(tempOutput,tempOutputSize,output,outputSize,verify));
+
 	printf("lzg=%d\n", os3=expandLzg(input+8+is-8-os3+2,os3-2,&output,&os));
 	osCheck=input[7+is-8-os3+2]<<8|input[6+is-8-os3+2];
 
@@ -246,7 +287,9 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 
 	fclose(out);
 
-	printf("os=%d oscheck=%d\n",os,osCheck);*/
+	printf("os=%d oscheck=%d\n",os,osCheck);
+*/
+
 	return COMPRESS_RESULT_SUCCESS;
 }
 
