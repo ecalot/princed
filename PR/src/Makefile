@@ -48,7 +48,7 @@ ifeq ($(TYPE),Debug)
   RELEASE       = -g -Wall -pedantic
   LINKERRELEASE =
 else
-  RELEASE       = -O2 
+  RELEASE       = -O3 
   LINKERRELEASE = -s
 endif
 

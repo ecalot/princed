@@ -65,7 +65,7 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 \***************************************************************/
 
 #define PR_URL                    "http://www.princed.com.ar"
-#define PR_VERSION                "v1.2-beta-BlackChar"
+#define PR_VERSION                "v1.2-beta-BlackChar-2"
 #define PR_COPY                   "(c) Copyright 2003-2006 Princed Development Team"
 
 /***************************************************************\
@@ -236,6 +236,6 @@ PARSING_OPTRAW\
 #define PR_RESULT_WAV_UNSUPPORTED_SAMPLERATE -29
 #define PR_RESULT_WAV_UNSUPPORTED_STEREO -30
 #define PR_RESULT_ERR_BMP_BITRATE_DIFFERS -31
-#define PR_WRONG_PALETTE_COLOR_COUNT -32 /*TODO: use RESULT_PAL_UNSUPPORTED */
+#define RESULT_PAL_UNSUPPORTED -32
 
 #endif
