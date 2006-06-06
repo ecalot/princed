@@ -172,6 +172,7 @@ void* objPalette_pop1_4bitsCreate(tBinary cont, int *error) {
 	
 	if (cont.size!=100) {
 		*error=PR_RESULT_XML_AND_DAT_FORMAT_DO_NOT_MATCH;
+printf("yes\n");
 		return NULL;
 	}
 

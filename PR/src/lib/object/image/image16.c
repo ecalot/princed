@@ -391,6 +391,7 @@ int objImage16Write(void* img,const char* file,int optionflag,const char* backup
 	if (i->pal.type!=eResTypeNone) {
 		bits=paletteGetBits(i->pal);
 		colors=paletteGetColors(i->pal);
+printf("paso por aqui\n");
 		colorArray=paletteGetColorArray(i->pal);
 	} else {
 		bits=getCarry(i->type);

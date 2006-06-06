@@ -180,18 +180,20 @@ Versions:
   - Restructured the repository and source to support an object layer
   - When extracting, generated unknown.xml's are now all merged into one
  * PR v1.3 (scheduled 2006-04-22)
-  x Fix ./pr -ie it -f bug
-  x Move tResource* from reslist to types.h
   X Add a fatal error check when importing from a different palette size and a
     warning when importing from an incorrect palette.
   x Added full POP2 RLEC decompression algorithm
+  x Add the pop2 4-bits palette object
   x Check for memory leak
   x Clean the source
   x Common factor in LGZ compression (a .h) for win size, etc.
   x Common palette calculation
   x Create a new isDirSep in disk.h and handle all the / and \ as the same char
   x Don't create empry unknown.xml
+  x Fix ./pr -ie it -f bug
+  x Fix repeated resource name in CPALACE.DAT bug
   x Fork compress to code images as a new object in a separated file
+  x Move tResource* from reslist to types.h
   x Rename "uncompress" to "decomporess"
   x Replaced .bmp by .png files.
   x Transform flags from the hex form to the [a-y]* form (a is 1, b is 2, c is 4...)

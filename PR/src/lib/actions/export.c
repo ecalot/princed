@@ -118,9 +118,12 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 					case eResTypePop2PaletteNColors: 
 					case eResTypePop1Palette4bits: { /* save and remember palette file */
 						tPaletteListItem e; /* TODO: decide if the palette list has to be erased from the code */
-						o=e.pal=currentPalette=getObject(&res,&ok);
-						e.id=res.id;
-						list_insert(&paletteBuffer,(void*)&e);
+						o=getObject(&res,&ok);
+						if (!ok) { /* if SUCCESS remember the palette, otherwise keep using the default one */
+							e.pal=currentPalette=o;
+							e.id=res.id;
+							list_insert(&paletteBuffer,(void*)&e);
+						}
 					}	break;
 					case eResTypeImage16: /* save image */
 					case eResTypeImage256: /* save image */
