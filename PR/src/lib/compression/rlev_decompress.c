@@ -39,60 +39,30 @@ rlec_uncompress.c: Princed Resources : Image Compression Library :
 
 /* Expands RLE algorithm */
 int expandRleC(const unsigned char* input, int inputSize,
-               unsigned char* output, int *outputSize,int verif) {
+               unsigned char* output, int *outputSize) {
 	register unsigned char rep=0;
 	int oCursor=0;
 	int iCursor=0;
 	int done=0;
-	/*int aux=0;*/
-	/*int lineSize;*/
-
-	/* reserve memory */
-/*	if ((*output=(unsigned char*)malloc(40000))==NULL) return COMPRESS_RESULT_FATAL;*/
 
 	/* main loop */
 	while (iCursor<inputSize) {
 		rep=(input[iCursor++]);
-/*printf("o=%d i=%d\n",oCursor,iCursor);*/
-/*		if (1||(done)||(oCursor%verif)) {*/
-			done=0;
-			if (rep&0x80) { /* repeat */
-				/*rep&=~0x80;*/
-				rep-=0x80;
-				rep++;
-				while (rep--) (output)[oCursor++]=input[iCursor];
-				iCursor++;
-			} else { /* jump */
-				rep++;
-				while ((rep--)&&(iCursor<inputSize)) {
-					(output)[oCursor++]=input[iCursor++];
-				}
-			}
-/*		} else {
-			if (aux)
-				if (lineSize!=(iCursor-aux))
-					printf("Error, line size is wrong: lineSize=%d got=%d\n",lineSize,(iCursor-aux));
-
-			lineSize=rep+256*input[iCursor]+1;
+		done=0;
+		if (rep&0x80) { /* repeat */
+			rep&=(~0x80);
+			rep++;
+			while (rep--) (output)[oCursor++]=input[iCursor];
 			iCursor++;
-			done=1;
-			aux=iCursor;
-*			if (oCursor==28800) {
-				int g;
-				printf("error time: (ls=%d)",lineSize);
-				for (g=-20;g<100;g++)
-					printf(" %02x",input[iCursor+g]);
-				printf("\n");
-				iCursor-=4;
-			}*/
-	/*	}*/
-
-
-
+		} else { /* jump */
+			rep++;
+			while ((rep--)&&(iCursor<inputSize)) {
+				(output)[oCursor++]=input[iCursor++];
+			}
+		}
 	}
-/*printf("done=%d i=%d but=%d\n",done,iCursor,inputSize);*/
+	
 	*outputSize=oCursor;
-/*	printf("rep=%d\n",rep);*/
 	return (rep==255)?COMPRESS_RESULT_SUCCESS:COMPRESS_RESULT_WARNING;
 }
 

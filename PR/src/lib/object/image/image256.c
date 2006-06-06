@@ -207,8 +207,6 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 	int            tempOutputSize;
 	int            osCheck;
 
-	printf("\n\nNew image!\n");
-
 	*output=malloc(40000);
 	lineO=*output;
 	*outputSize=0;
@@ -220,33 +218,33 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 	tempOutputSize=osCheck+6;
 
 	remaining=expandLzg(input,inputSize-2,&tempOutput,&tempOutputSize);
-	printf("Call:\n return=%d function input size=%d\n internal output size=%d result output size=%d\n",
-	remaining,inputSize,osCheck,tempOutputSize);
-	if ((osCheck+6)!=tempOutputSize)
-		printf(" Special case: more is coming\n");
+	/*printf("Call:\n return=%d function input size=%d\n internal output size=%d result output size=%d\n",
+		remaining,inputSize,osCheck,tempOutputSize);*/
+	/*if ((osCheck+6)!=tempOutputSize)
+		printf(" Special case: more is coming\n");*/
 
 	/* Second layer expand each rle line */
 	lineI=tempOutput;
-	printf("RLE loop layer:\n");
+	/*printf("RLE loop layer:\n");*/
 	do {
 		aux=array2short(lineI);
 		lineI+=2;
 		if (aux>tempOutputSize) {
-			printf(" error: aux=%d tempOutputSize=%d\n",aux,tempOutputSize);
+			/*printf(" error: aux=%d tempOutputSize=%d\n",aux,tempOutputSize);*/
 			return COMPRESS_RESULT_WARNING;
 		}
-		aux2= expandRleC(lineI,aux,lineO,&lineSize,1000);
-		if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-aux-2);
+		aux2= expandRleC(lineI,aux,lineO,&lineSize);
+		/*if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-aux-2);*/
 		lineO+=lineSize;
 		*outputSize+=lineSize;
 		tempOutputSize-=aux;
 		tempOutputSize-=2;
 		lineI+=aux;
 	} while (lineSize==verify && tempOutputSize>0);
-	printf(" return: linesize=%d verify=%d tempOutputSize=%d\n", lineSize, verify, tempOutputSize);
+	/*printf(" return: linesize=%d verify=%d tempOutputSize=%d\n", lineSize, verify, tempOutputSize);*/
 	if (remaining) {
 		const unsigned char* start=input+(inputSize-0)-remaining;
-		printf("Remaining tailing data: size=%d first=%02x %02x\n", remaining,start[0],start[1]);
+		/*printf("Remaining tailing data: size=%d first=%02x %02x\n", remaining,start[0],start[1]);*/
 		tempOutputSize=0;
 		remaining=expandLzg(start,remaining,&tempOutput,&tempOutputSize);
 		
@@ -256,10 +254,10 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 			aux=array2short(lineI);
 			lineI+=2;
 			if (aux>tempOutputSize) {
-				printf(" error: aux=%d tempOutputSize=%d\n",aux,tempOutputSize);
+				/*printf(" error: aux=%d tempOutputSize=%d\n",aux,tempOutputSize);*/
 				return COMPRESS_RESULT_WARNING;
 			}
-			aux2= expandRleC(lineI,aux,lineO,&lineSize,1000);
+			aux2= expandRleC(lineI,aux,lineO,&lineSize);
 			if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-aux-2);
 			lineO+=lineSize;
 			*outputSize+=lineSize;

@@ -807,7 +807,7 @@ resources.xml: Princed Resources : Resource tree
  </folder>
 
 
- <folder index="pop1" name="binary" file="ikid.dat" path="kid" palette="400" type="image">
+ <folder index="pop1" name="binary" file="kid.dat" path="kid" palette="400" type="image">
   <item value="400" path="kid.pal" type="palette-pop1-4bits">Resource number 400</item>
   <folder path="running">
    <item value="401" path="frame01.bmp">Image frame01 (401)</item>

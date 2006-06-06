@@ -73,6 +73,6 @@ int expandLzg(const unsigned char* input, int inputSize,
 int expandRle(const unsigned char* input, int inputSize,
                unsigned char** output, int *outputSize);
 int expandRleC(const unsigned char* input, int inputSize,
-               unsigned char* output, int *outputSize,int verif);
+               unsigned char* output, int *outputSize);
 
 #endif
