@@ -55,19 +55,15 @@ int expandLzg(const unsigned char* input, int inputSize,
 
 	if (*outputSize) (*outputSize)+=LZG_WINDOW_SIZE; else *outputSize=65000;
 
-printf("Entering LZG layer:\n Init:\n  input: size=%d\n  output: allocated size=%d\n",inputSize,(*outputSize));
-
 	/* initialize the first 1024 bytes of the window with zeros */
 	for(oCursor=0;oCursor<LZG_WINDOW_SIZE;output[oCursor++]=0);
 
 	/* main loop */
 	while (iCursor<inputSize&&oCursor<(*outputSize)) {
-/*printf("i=%d o=%d\n",iCursor,oCursor);*/
 		maskbyte=input[iCursor++];
 		for (k=8;k&&(iCursor<inputSize);k--) {
 			if (popBit(&maskbyte)) {
 				output[oCursor++]=input[iCursor++]; /* copy input to output */
-/*printf("%02x ",output[oCursor-1]);*/
 			} else {
 				/*
 				 * loc:
@@ -85,7 +81,6 @@ printf("Entering LZG layer:\n Init:\n  input: size=%d\n  output: allocated size=
 
 				while (rep--) { /* repeat pattern in output */
 					output[oCursor]=output[oCursor-loc];
-/*printf("%02x ",output[oCursor]);*/
 					oCursor++;
 				}
 			}
@@ -96,13 +91,10 @@ printf("Entering LZG layer:\n Init:\n  input: size=%d\n  output: allocated size=
 	/* ignore the first 1024 bytes */
 	*outputSize=oCursor-LZG_WINDOW_SIZE;
 	*output2=(unsigned char*)malloc(*outputSize);
-printf(" results:\n  input: read cursor=%d input size resulted=%d\n",iCursor,inputSize);
 	for(iCursor=LZG_WINDOW_SIZE;iCursor<oCursor;iCursor++)
 		(*output2)[iCursor-LZG_WINDOW_SIZE]=output[iCursor];
 
-printf("  output: size=%d (without window=%d)\n  error control: maskbyte=%01x\n",oCursor,(*outputSize),maskbyte);
-
-	if (oCursor>=(*outputSize)) return inputSize; /* TODO: this case never happens !!! */
+	if (oCursor>=(*outputSize)) return inputSize; /* TODO: check if this case never happens !!! */
 
 	return (!maskbyte)-1;
 	/*return rep?COMPRESS_RESULT_WARNING:COMPRESS_RESULT_SUCCESS;*/

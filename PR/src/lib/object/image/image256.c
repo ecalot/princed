@@ -258,7 +258,7 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 				return COMPRESS_RESULT_WARNING;
 			}
 			aux2= expandRleC(lineI,aux,lineO,&lineSize);
-			if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-aux-2);
+			/*if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-aux-2);*/
 			lineO+=lineSize;
 			*outputSize+=lineSize;
 			tempOutputSize-=aux;

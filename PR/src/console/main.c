@@ -230,7 +230,7 @@ int main (int argc, char **argv) {
 					fprintf(outputStream,PR_TEXT_TASK_EXTRACT,file,dirNameDef);
 					result=prExportDatOpt(file,dirNameDef,resFile,optionflag,dat,datAuthor,extension,format);
 					if (result>0) {
-						fprintf(outputStream,PR_TEXT_EXPORT_OK,result,result);
+						fprintf(outputStream,PR_TEXT_EXPORT_SUCCESS,result,result);
 					} else {
 						fprintf(outputStream,PR_TEXT_RESULT,errors[-result],result);
 					}

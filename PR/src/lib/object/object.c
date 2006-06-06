@@ -61,7 +61,6 @@ tObject getObject(tResource* r, int* error) {
 		o.obj=objBinaryCreate(r->content,error); 
 		break;
 	case eResTypePop1Palette4bits: /* save and remember palette file */
-printf("debug\n");
 		o.obj=objPalette_pop1_4bitsCreate(r->content,error);
 		break;
 	case eResTypePop2PaletteNColors: /* save and remember palette file */

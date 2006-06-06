@@ -151,14 +151,14 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				if (ok==PR_RESULT_SUCCESS)
 					ok=writeObject(o,file,optionflag,backupExtension);
 				else
-					printf("not ok. result=%d for %s\n",ok,file);
+				/*	printf("not ok. result=%d for %s\n",ok,file);*/
 
 				/* Verbose information */
-				/*if (hasFlag(verbose_flag)) {
+				if (hasFlag(verbose_flag)) /*{
 					if (ok) {
 						fprintf(outputStream,PR_TEXT_EXPORT_WORKING,getFileNameFromPath(file));
 					} else {
-						fprintf(outputStream,PR_TEXT_EXPORT_ERROR,getFileNameFromPath(file));
+*/						fprintf(outputStream,"Error in file %s (code %d)\n"/*PR_TEXT_EXPORT_ERROR*/,getFileNameFromPath(file),ok);/*
 					}
 				} TODO: add warning counter */
 				ok=1; /* efit the for and add !fatal(ok)*/

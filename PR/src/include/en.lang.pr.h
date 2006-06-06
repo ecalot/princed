@@ -70,7 +70,7 @@ pr.h: Princed Resources : English language strings
 #define PR_TEXT_IMPORT_PLV_WARN   "Warning: PLV file may be corrupt\n"
 
 #define PR_TEXT_EXPORT_WORKING    "'%s' successfully exported\n"
-#define PR_TEXT_EXPORT_OK         "%d files successfully exported (%d)\n"
+#define PR_TEXT_EXPORT_SUCCESS    "Result: %d files successfully exported (%d)\n"
 #define PR_TEXT_EXPORT_ERROR      "'%s' has errors, aborting...\n"
 #define PR_TEXT_EXPORT_BMP_WARN   "Warning: Extracted file may be corrupt\n"
 
