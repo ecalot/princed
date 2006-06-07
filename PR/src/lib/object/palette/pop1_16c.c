@@ -256,7 +256,7 @@ void* objPop1Palette4bitsRead(const char* file,int *result) {
 	*result=readPal(file,&colorArray,&colors);
 
 	if (*result==PR_RESULT_SUCCESS && colors!=16) {
-		*result=RESULT_PAL_UNSUPPORTED;
+		*result=PR_RESULT_PAL_UNSUPPORTED;
 		free(colorArray);
 		return NULL;
 	}

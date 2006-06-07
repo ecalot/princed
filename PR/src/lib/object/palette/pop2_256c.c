@@ -93,7 +93,7 @@ void* objPop2PaletteNColorsRead(const char* file,int *result) {
 	*result=readPal(file,&r->colorArray,&r->size);
 
 	if (*result==PR_RESULT_SUCCESS && !(r->size==256 || r->size==320)) {
-		*result=RESULT_PAL_UNSUPPORTED;
+		*result=PR_RESULT_PAL_UNSUPPORTED;
 		free(r->colorArray);
 		free(r);
 		return NULL;
