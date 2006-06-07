@@ -57,8 +57,6 @@ typedef struct {
 	tResourceId        id;
 	tResourceId        paletteId;
 	tObject            palette;
-	/*long int           size;
-	unsigned char*     data;*/
 	tBinary            content;
 	unsigned long int  offset; /* Used internally in dat.c to remember the offset */
 	unsigned char      number; /* Used for level number */
