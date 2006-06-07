@@ -115,7 +115,7 @@ $(XMLFILE): xml/resources.xml
 	$(MAKEDIR) bin
 	$(COPY) xml/resources.xml $(XMLFILE)
 
-.import.o: lib/actions/import.c include/autodetect.h include/bmp.h include/common.h include/dat.h include/disk.h include/idlist.h include/import.h include/memory.h include/mid.h include/pal.h include/plv.h include/unknown.h include/wav.h
+.import.o: lib/actions/import.c include/common.h include/import.h include/autodetect.h include/dat.h include/disk.h include/idlist.h include/memory.h include/unknown.h include/object.h include/bmp.h include/mid.h include/wav.h include/pal.h include/plv.h
 	$(INFO) Compiling import module...
 	$(CC) $(OPTIONS) -c lib/actions/import.c -o $@
 
@@ -123,19 +123,19 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling classification module...
 	$(CC) $(OPTIONS) -c lib/actions/classify.c -o $@
 
-.export.o: lib/actions/export.c include/autodetect.h include/bmp.h include/common.h include/dat.h include/disk.h include/export.h include/idlist.h include/memory.h include/mid.h include/pal.h include/plv.h include/reslist.h include/unknown.h include/wav.h
+.export.o: lib/actions/export.c include/common.h include/export.h include/autodetect.h include/dat.h include/disk.h include/idlist.h include/memory.h include/object.h include/palette.h include/pallist.h include/unknown.h include/bmp.h include/mid.h include/pal.h include/plv.h include/wav.h
 	$(INFO) Compiling export module...
 	$(CC) $(OPTIONS) -c lib/actions/export.c -o $@
 
-.autodetect.o: lib/layers/autodetect.c include/autodetect.h
+.autodetect.o: lib/layers/autodetect.c include/autodetect.h include/auxiliary.h
 	$(INFO) Compiling resource autodetection module...
 	$(CC) $(OPTIONS) -c lib/layers/autodetect.c -o $@
 
-.idlist.o: lib/layers/idlist.c include/disk.h include/idlist.h include/memory.h
+.idlist.o: lib/layers/idlist.c include/disk.h include/idlist.h include/memory.h include/resourcematch.h
 	$(INFO) Compiling id list layer...
 	$(CC) $(OPTIONS) -c lib/layers/idlist.c -o $@
 
-.disk.o: lib/layers/disk.c include/common.h include/direntwin.h include/disk.h include/memory.h
+.disk.o: lib/layers/disk.c include/memory.h include/disk.h include/common.h include/direntwin.h
 	$(INFO) Compiling disk access library...
 	$(CC) $(OPTIONS) -c lib/layers/disk.c -o $@
 
@@ -143,7 +143,7 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling DAT editing library...
 	$(CC) $(OPTIONS) -c lib/layers/dat.c -o $@
 
-.memory.o: lib/layers/memory.c include/memory.h
+.memory.o: lib/layers/memory.c include/memory.h include/binary.h
 	$(INFO) Compiling memory manager...
 	$(CC) $(OPTIONS) -c lib/layers/memory.c -o $@
 
@@ -163,23 +163,23 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling sound list module...
 	$(CC) $(OPTIONS) -c lib/object/sound/sounds.c -o $@
 
-.pallist.o: lib/layers/pallist.c include/memory.h include/pallist.h
+.pallist.o: lib/layers/pallist.c include/pallist.h include/reslist.h
 	$(INFO) Compiling palette list module...
 	$(CC) $(OPTIONS) -c lib/layers/pallist.c -o $@
 
-.object.o: lib/object/main.c include/object.h
+.object.o: lib/object/main.c include/common.h include/object.h include/types.h include/image.h include/other.h include/palette.h include/sound.h
 	$(INFO) Compiling main item class...
 	$(CC) $(OPTIONS) -c lib/object/main.c -o $@
 
-.image2.o: lib/object/image/image2.c include/image.h include/compress.h include/disk.h include/memory.h
+.image2.o: lib/object/image/image2.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bmp.h
 	$(INFO) Compiling 2 colors image type class...
 	$(CC) $(OPTIONS) -c lib/object/image/image2.c -o $@
 
-.image16.o: lib/object/image/image16.c include/image.h include/compress.h include/disk.h include/memory.h
+.image16.o: lib/object/image/image16.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bmp.h
 	$(INFO) Compiling 16 colors image type class...
 	$(CC) $(OPTIONS) -c lib/object/image/image16.c -o $@
 
-.image256.o: lib/object/image/image256.c include/image.h include/compress.h include/disk.h include/memory.h
+.image256.o: lib/object/image/image256.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bmp.h
 	$(INFO) Compiling 256 colors image type class...
 	$(CC) $(OPTIONS) -c lib/object/image/image256.c -o $@
 
@@ -203,11 +203,11 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling RLEC decompression module...
 	$(CC) $(OPTIONS) -c lib/compression/rlev_decompress.c -o $@
 
-.pr.o: lib/pr.c include/classify.h include/common.h include/disk.h include/export.h include/idlist.h include/import.h include/memory.h include/unknown.h
+.pr.o: lib/pr.c include/common.h include/classify.h include/export.h include/import.h include/disk.h include/idlist.h include/memory.h include/types.h include/search.h include/unknown.h
 	$(INFO) Compiling main library primitives for both modes...
 	$(CC) $(OPTIONS) -c lib/pr.c -o $@
 	
-.main.o: console/main.c include/common.h include/compress.h include/disk.h include/filedir.h include/getopt.h include/memory.h include/parse.h
+.main.o: console/main.c include/getopt.h include/getopt.h include/common.h include/memory.h include/filedir.h include/disk.h include/compress.h include/parse.h
 	$(INFO) Compiling command parsing module for standard mode...
 	$(CC) $(OPTIONS) -c console/main.c -o $@
 
@@ -215,19 +215,19 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling directory and recursive file reading module for standard mode...
 	$(CC) $(OPTIONS) -c console/filedir.c -o $@
 
-.unknown.o: lib/xml/unknown.c include/common.h include/disk.h include/unknown.h include/tree.h include/search.h
+.unknown.o: lib/xml/unknown.c include/common.h include/disk.h include/memory.h include/parse.h include/stringformat.h include/translate.h include/tree.h include/unknown.h
 	$(INFO) Compiling unknown.xml generating module...
 	$(CC) $(OPTIONS) -c lib/xml/unknown.c -o $@
 
-.tree.o: lib/xml/tree.c include/common.h include/disk.h include/tree.h include/search.h
+.tree.o: lib/xml/tree.c include/common.h include/list.h include/memory.h include/parse.h include/unknown.h
 	$(INFO) Compiling XML tree special handling routines...
 	$(CC) $(OPTIONS) -c lib/xml/tree.c -o $@
 
-.parse.o: lib/xml/parse.c include/common.h include/disk.h include/memory.h include/parse.h
+.parse.o: lib/xml/parse.c include/parse.h include/disk.h include/memory.h include/common.h
 	$(INFO) Compiling XML parsing module...
 	$(CC) $(OPTIONS) -c lib/xml/parse.c -o $@
 
-.search.o: lib/xml/search.c include/common.h include/memory.h include/parse.h include/reslist.h include/search.h
+.search.o: lib/xml/search.c include/common.h include/memory.h include/parse.h include/search.h include/translate.h
 	$(INFO) Compiling XML search features...
 	$(CC) $(OPTIONS) -c lib/xml/search.c -o $@
 
@@ -235,31 +235,31 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling array tranlation features...
 	$(CC) $(OPTIONS) -c lib/xml/translate.c -o $@
 
-.stringformat.o: lib/layers/stringformat.c include/common.h
+.stringformat.o: lib/layers/stringformat.c include/translate.h include/stringformat.h
 	$(INFO) Compiling unknown string format parsing feature...
 	$(CC) $(OPTIONS) -c lib/layers/stringformat.c -o $@
 
-.pop2_256c.o: lib/object/palette/pop2_256c.c include/common.h
+.pop2_256c.o: lib/object/palette/pop2_256c.c include/palette.h include/memory.h include/dat.h include/disk.h include/auxiliary.h include/pal.h
 	$(INFO) Compiling the POP2 256 colors palette class support...
 	$(CC) $(OPTIONS) -c  lib/object/palette/pop2_256c.c -o $@
 
-.pop1_4bit.o: lib/object/palette/pop1_4bit.c include/common.h
+.pop1_4bit.o: lib/object/palette/pop1_4bit.c include/palette.h include/memory.h include/dat.h include/disk.h include/pal.h
 	$(INFO) Compiling the POP1 16 colors palette class support...
 	$(CC) $(OPTIONS) -c  lib/object/palette/pop1_4bit.c -o $@
 
-.binary.o: lib/object/other/binary.c include/common.h
+.binary.o: lib/object/other/binary.c include/binary.h include/common.h include/dat.h include/types.h include/disk.h
 	$(INFO) Compiling the binary item class support...
 	$(CC) $(OPTIONS) -c  lib/object/other/binary.c -o $@
 
-.resourcematch.o: lib/layers/resourcematch.c include/search.h include/memory.h include/resourcematch.h
+.resourcematch.o: lib/layers/resourcematch.c include/memory.h include/resourcematch.h include/translate.h
 	$(INFO) Compiling resource list parsing feature...
 	$(CC) $(OPTIONS) -c lib/layers/resourcematch.c -o $@
 
-.auxiliary.o: lib/layers/auxiliary.c include/memory.h include/auxiliary.h
+.auxiliary.o: lib/layers/auxiliary.c include/auxiliary.h include/disk.h
 	$(INFO) Compiling object auxiliary routines...
 	$(CC) $(OPTIONS) -c lib/layers/auxiliary.c -o $@
 
-.bmp.o: lib/formats/bmp.c include/bmp.h include/common.h include/dat.h include/disk.h include/memory.h
+.bmp.o: lib/formats/bmp.c include/bmp.h include/common.h include/compress.h include/dat.h include/disk.h include/memory.h include/palette.h
 	$(INFO) Compiling bitmap files support \(bmp\)...
 	$(CC) $(OPTIONS) -c lib/formats/bmp.c -o $@
 
@@ -267,11 +267,11 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling MIDI audio files support \(mid\)...
 	$(CC) $(OPTIONS) -c lib/formats/mid.c -o $@
 
-.plv.o: lib/formats/plv.c include/dat.h include/disk.h include/plv.h
+.plv.o: lib/formats/plv.c include/plv.h include/disk.h include/dat.h
 	$(INFO) Compiling prince level files support \(plv\)...
 	$(CC) $(OPTIONS) -c lib/formats/plv.c -o $@
 
-.pal.o: lib/formats/pal.c include/dat.h include/disk.h include/pal.h
+.pal.o: lib/formats/pal.c include/pal.h include/disk.h include/dat.h
 	$(INFO) Compiling JASC palette support \(pal\)...
 	$(CC) $(OPTIONS) -c lib/formats/pal.c -o $@
 
@@ -311,11 +311,4 @@ pylib: .python.o $(LIBOBJ)
 	g++ -c addons/cpp/xml.cpp -Iinclude -o .cppxml.o
 
 cpp: .cppdat.o .cppxml.o
-
-
-
-
-
-
-
 
