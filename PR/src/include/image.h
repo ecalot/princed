@@ -34,7 +34,7 @@ image.h: Princed Resources : Image handling headers
 #ifndef _PR_IMAGE_H_
 #define _PR_IMAGE_H_
 
-#include "reslist.h"
+#include "types.h"
 #include "binary.h"
 
 typedef struct { 

@@ -33,7 +33,7 @@ object.h: Princed Resources : Main item class types and prototypes
 #ifndef _PR_OBJECT_H_
 #define _PR_OBJECT_H_
 
-#include "reslist.h"
+#include "types.h"
 #include "common.h"
 #include "image.h"
 

@@ -19,8 +19,8 @@
 */
 
 /*
-reslist.h: Princed Resources : Resource list prototypes
-¯¯¯¯¯¯¯¯¯
+types.h: Princed Resources : Common types
+¯¯¯¯¯¯¯
  Copyright 2005 Princed Development Team
   Created: 05 Jun 2005
 
@@ -31,15 +31,11 @@ reslist.h: Princed Resources : Resource list prototypes
   DO NOT remove this copyright notice
 */
 
-#ifndef _PR_RESLIST_H_
-#define _PR_RESLIST_H_
+#ifndef _PR_TYPES_H_
+#define _PR_TYPES_H_
 
-#include "list.h" /* tList */
-typedef tList tResourceList;
-
-#include "binary.h"
-
-#include "common.h" /* Item Types */
+#include "binary.h" /* tBinary */
+#include "common.h" /* tResourceType */
 
 /* types */
 typedef struct { 
@@ -68,22 +64,5 @@ typedef struct {
 	const char*        datAuthor;
 	unsigned long      flags;
 }tResource;
-
-#ifdef DEBUG_RESPRINT
-void printr(const tResource* record); /* for debug purposes */
-void resourceListDebugPrint(tResourceList* r);
-#endif
-
-#define resourceListStartIteration(l) list_firstCursor(l)
-#define resourceListDrop(r)	list_drop(r)
-
-int resCmp(const void* a,const void* b);
-int resourceListCompareId(tResourceId a,tResourceId b);
-const tResource* resourceListGetElement(tResourceList* r);
-tResourceList resourceListCreate(int isCopy);
-void resourceListAddInfo(tResourceList* r,tResource* res);
-void resourceListAdd(tResourceList* r,tResource* res); /* only increases order */
-void resourceListDebugPrint(tResourceList* r);
-void resourceListRebuildForIndex(tResourceList* r);
 
 #endif

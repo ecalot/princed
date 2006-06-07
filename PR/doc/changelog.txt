@@ -193,7 +193,7 @@ Versions:
   x Fix ./pr -ie it -f bug
   x Fix repeated resource name in CPALACE.DAT bug
   x Fork compress to code images as a new object in a separated file
-  x Move tResource* from reslist to types.h
+  - Moved tResource* from reslist to types.h
   - Rename "uncompress" to "decomporess"
   x Transform flags from the hex form to the [a-y]* form (a is 1, b is 2, c is 4...)
  * PR v1.4 (future plans)

@@ -35,7 +35,7 @@ bmp.h: Princed Resources : BMP file support headers
 #ifndef _PR_BMP_H_
 #define _PR_BMP_H_
 
-#include "reslist.h" /* tResource */
+#include "types.h" /* tResource */
 #include "image.h" /* tImage */
 
 #define FORMATS_BMP_PALETTE_BW "\x00\x00\x00\0\xFF\xFF\xFF"

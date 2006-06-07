@@ -41,7 +41,7 @@ wave.c: Princed Resources :
 #include <stdlib.h>
 #include <string.h> /* memcpy */
 #include "dat.h" 
-#include "reslist.h" 
+#include "types.h" 
 
 /***************************************************************\
 |                         Binary Object                         |

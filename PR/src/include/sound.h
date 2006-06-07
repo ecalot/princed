@@ -34,7 +34,7 @@ sound.h: Princed Resources :
 #define _PR_SOUND_H_
 
 #include "binary.h"
-#include "reslist.h"
+#include "types.h"
 
 #include "mid.h"
 #include "wav.h"

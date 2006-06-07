@@ -40,7 +40,7 @@ unknown.h: Princed Resources : Unknown.xml generator headers
 
 /* Includes */
 #include "parse.h"
-#include "reslist.h"
+#include "types.h"
 #include "common.h" /* RES_FILE_TYPES_COUNT */
 #include "tree.h" /* tTreeStatus */
 

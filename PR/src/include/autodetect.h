@@ -35,7 +35,7 @@ autodetect.h: Princed Resources : Resource automatic detection headers
 #define _PR_AUTODETECT_H_
 
 /* Includes */
-#include "reslist.h" /* tResourceType */
+#include "common.h" /* tResourceType */
 #include "binary.h"
 
 /* Verify  header */

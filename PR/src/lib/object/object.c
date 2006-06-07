@@ -32,7 +32,7 @@ main.c: Princed Resources : Main item class implementation
 
 #include "common.h"
 #include "object.h"
-#include "reslist.h"
+#include "types.h"
 
 #include "image.h"
 #include "other.h"

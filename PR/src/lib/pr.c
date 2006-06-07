@@ -60,7 +60,7 @@ pr.c: Main source file for Princed Resources library
 #include "disk.h"      /* getFileNameFromPath */
 #include "idlist.h"
 #include "memory.h"    /* getMemory, free */
-#include "reslist.h"
+#include "types.h"
 
 #include "search.h"    /* parse */
 #include "unknown.h"

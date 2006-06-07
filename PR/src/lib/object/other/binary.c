@@ -38,7 +38,7 @@
 #include "binary.h" /* tBinary */
 #include "common.h"
 #include "dat.h" /* WriteDat */
-#include "reslist.h" /* tResources */
+#include "types.h" /* tResources */
 #include "disk.h" /* we are skiping the format layer here */
 #include <stdlib.h>
 

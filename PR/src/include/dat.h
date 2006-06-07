@@ -34,7 +34,7 @@ dat.h: Princed Resources : DAT format library headers
 #ifndef _PR_DAT_H_
 #define _PR_DAT_H_
 
-#include "reslist.h" /* tResource* */
+#include "types.h" /* tResource* */
 #include "binary.h" /* tBinary */
 
 typedef enum {

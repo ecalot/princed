@@ -35,7 +35,7 @@ resourcematch.h: Princed Resources : Partial list matching abstract layer header
 #ifndef _PR_RESOURCEMATCH_H_
 #define _PR_RESOURCEMATCH_H_
 
-#include "reslist.h" /* tResourceId*/
+#include "types.h" /* tResourceId*/
 
 typedef struct {
 	int flag;

@@ -39,7 +39,7 @@ typedef tList tPaletteList;
 
 #include "common.h"  /* tResourceType */
 #include "object.h"  /* tObject */
-#include "reslist.h" /* tResourceId */
+#include "types.h"   /* tResourceId */
 
 /* types */
 typedef struct {

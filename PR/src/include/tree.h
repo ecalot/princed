@@ -35,7 +35,7 @@ tree.h: Princed Resources : Special XML tree prototypes
 #define _PR_TREE_H_
 
 /* Includes */
-#include "reslist.h"
+#include "types.h"
 #include <stdio.h> /* FILE* */
 
 typedef struct {

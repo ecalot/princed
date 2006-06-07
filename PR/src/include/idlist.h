@@ -35,7 +35,7 @@ idlist.h: Princed Resources : Resource id list headers
 #define _PR_IDLIST_H_
 
 /* Includes */
-#include "reslist.h" /* tResourceId */
+#include "types.h" /* tResourceId */
 
 int  parseGivenPath(char* path);
 int  itemMatchingListActive();

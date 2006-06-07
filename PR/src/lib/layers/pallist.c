@@ -33,6 +33,7 @@ pallist.c: Princed Resources : Palette list layer implementation
 
 /* Defines */
 #include "pallist.h"
+#include "reslist.h" /* resourceListCompareId */
 
 /* palette list layer (that uses the abstract list layer primitives) */
 
