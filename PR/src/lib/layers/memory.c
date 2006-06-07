@@ -59,6 +59,7 @@ tBinary tbinaryallocandcopy(tBinary c) {
 
 	aux.data=(unsigned char*)malloc(c.size);
 	aux.size=c.size;
+	aux.isCopy=0;
 	
 	if (aux.data) memcpy(aux.data,c.data,c.size);
 	return aux;
@@ -122,3 +123,6 @@ int getOrder(const char* order) {
 	}
 }
 
+void freeBinary(tBinary b) {
+	if (!b.isCopy && b.data) free(b.data);
+}

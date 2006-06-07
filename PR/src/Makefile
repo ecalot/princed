@@ -54,7 +54,7 @@ endif
 
 ACTIONS  = .import.o .export.o .classify.o
 XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
-COMPRESS = .lzg_compress.o .lzg_uncompress.o .rle_compress.o .rle_uncompress.o .rlec_uncompress.o 
+COMPRESS = .lzg_compress.o .lzg_decompress.o .rle_compress.o .rle_decompress.o .rlev_decompress.o 
 LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o .auxiliary.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
 OBJECT   = .object.o .pop2_256c.o .pop1_4bit.o .image2.o .image16.o .image256.o .binary.o .sounds.o .level.o
@@ -191,17 +191,17 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling RLE compression module...
 	$(CC) $(OPTIONS) -c lib/compression/rle_compress.c -o $@
 
-.lzg_uncompress.o: lib/compression/lzg_uncompress.c include/compress.h
-	$(INFO) Compiling LZG uncompression module...
-	$(CC) $(OPTIONS) -c lib/compression/lzg_uncompress.c -o $@
+.lzg_decompress.o: lib/compression/lzg_decompress.c include/compress.h
+	$(INFO) Compiling LZG decompression module...
+	$(CC) $(OPTIONS) -c lib/compression/lzg_decompress.c -o $@
 
-.rle_uncompress.o: lib/compression/rle_uncompress.c include/compress.h
-	$(INFO) Compiling RLE uncompression module...
-	$(CC) $(OPTIONS) -c lib/compression/rle_uncompress.c -o $@
+.rle_decompress.o: lib/compression/rle_decompress.c include/compress.h
+	$(INFO) Compiling RLE decompression module...
+	$(CC) $(OPTIONS) -c lib/compression/rle_decompress.c -o $@
 
-.rlec_uncompress.o: lib/compression/rlec_uncompress.c include/compress.h
-	$(INFO) Compiling RLEC uncompression module...
-	$(CC) $(OPTIONS) -c lib/compression/rlec_uncompress.c -o $@
+.rlev_decompress.o: lib/compression/rlev_decompress.c include/compress.h
+	$(INFO) Compiling RLEC decompression module...
+	$(CC) $(OPTIONS) -c lib/compression/rlev_decompress.c -o $@
 
 .pr.o: lib/pr.c include/classify.h include/common.h include/disk.h include/export.h include/idlist.h include/import.h include/memory.h include/unknown.h
 	$(INFO) Compiling main library primitives for both modes...

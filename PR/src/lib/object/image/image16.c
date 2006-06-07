@@ -164,7 +164,7 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 	image->width =array2short(data);
 	data+=2;
 
-	if (*(data++)>1) return COMPRESS_RESULT_FATAL; /* Verify format */
+	if (*(data++)>1) return PR_RESULT_COMPRESS_RESULT_FATAL; /* Verify format */
 	image->type=(unsigned char)(*(data++));
 	dataSizeInBytes-=6;
 	switch (((image->type>>4)&7)+1) {
@@ -178,20 +178,20 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 		image->widthInBytes=(image->width+7)/8;
 		break;
 	default:
-		return COMPRESS_RESULT_FATAL;
+		return PR_RESULT_COMPRESS_RESULT_FATAL;
 	}
 
 #define checkSize if (imageSizeInBytes!=(image->widthInBytes*image->height))\
-	return COMPRESS_RESULT_FATAL
-#define checkResult if (result==COMPRESS_RESULT_FATAL)\
-	return COMPRESS_RESULT_FATAL
+	return PR_RESULT_COMPRESS_RESULT_FATAL
+#define checkResult if (result==PR_RESULT_COMPRESS_RESULT_FATAL)\
+	return PR_RESULT_COMPRESS_RESULT_FATAL
 
 	switch (getAlgor(image->type)) {
 		case COMPRESS_RAW: /* No Compression Algorithm */
-			if ((image->pix=getMemory(dataSizeInBytes))==NULL) return COMPRESS_RESULT_FATAL;
+			if ((image->pix=getMemory(dataSizeInBytes))==NULL) return PR_RESULT_COMPRESS_RESULT_FATAL;
 			memcpy(image->pix,data,dataSizeInBytes);
 			imageSizeInBytes=image->widthInBytes*image->height;
-			result=COMPRESS_RESULT_SUCCESS;
+			result=PR_RESULT_SUCCESS;
 			break;
 		case COMPRESS_RLE_LR: /* RLE Left to Right Compression Algorithm */
 			result=expandRle(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
@@ -214,7 +214,7 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 			cmp_transposeImage(image,imageSizeInBytes);
 			break;
 		default:
-			result=COMPRESS_RESULT_FATAL; /* unknown algorithm */
+			result=PR_RESULT_COMPRESS_RESULT_FATAL; /* unknown algorithm */
 			break;
 	}
 	return result; /* Ok */
@@ -369,7 +369,7 @@ void* objImage16Create(tBinary cont, tObject palette, int *error) { /* use get l
 	*error=mExpandGraphic(cont.data,image,cont.size); /* TODO: pass tBinary */
 /*	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
 		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);*/
-	if (*error==COMPRESS_RESULT_FATAL) {
+	if (*error==PR_RESULT_COMPRESS_RESULT_FATAL) {
 		free(image);
 		return NULL;
 	}

@@ -118,7 +118,7 @@ void* objImage2Create(tBinary cont, int *error) { /* use get like main.c */
 	*error=mExpandGraphic(cont.data,image,cont.size); /* TODO: pass tBinary */
 /*	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
 		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);*/
-	if (*error==COMPRESS_RESULT_FATAL) {
+	if (*error==PR_RESULT_COMPRESS_RESULT_FATAL) {
 		free(image);
 		return NULL;
 	}

@@ -52,6 +52,7 @@ void* objBinaryCreate(tBinary cont, int *error) { /* use get like main.c */
 	
 	r=(tBinary*)malloc(sizeof(tBinary));
 	*r=cont;
+	r->isCopy=1;
 	return (void*)r;
 }
 
@@ -66,7 +67,7 @@ void* objBinaryRead(const char* file,int *result) {
 		*result=o.size;
 		return NULL;
 	}
-	return objBinaryCreate(o,result);
+	return objBinaryCreate(o,result); /* TODO: isCopy=0 */
 }
 
 int objBinarySet(void* o,tResource* res) {

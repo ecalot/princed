@@ -44,7 +44,7 @@ int expandRle(const unsigned char* input, int inputSize,
 	int iCursor=0;
 
 	/* reserve memory */
-	if ((*output=malloc(40000))==NULL) return COMPRESS_RESULT_FATAL;
+	if ((*output=malloc(40000))==NULL) return PR_RESULT_COMPRESS_RESULT_FATAL;
 
 	/* main loop */
 	while (iCursor<inputSize) {
@@ -61,6 +61,6 @@ int expandRle(const unsigned char* input, int inputSize,
 	}
 
 	*outputSize=oCursor;
-	return (rep==1)?COMPRESS_RESULT_SUCCESS:COMPRESS_RESULT_WARNING;
+	return (rep==1)?PR_RESULT_SUCCESS:PR_RESULT_COMPRESS_RESULT_WARNING;
 }
 

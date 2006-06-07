@@ -20,7 +20,7 @@
 
 /*
 rlec_uncompress.c: Princed Resources : Image Compression Library :
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯  Run length encoding with checksum decompressor
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯  Run length encoding variant for POP2
 
  Copyright 2003, 2004, 2005, 2006 Princed Development Team
   Created: 24 Aug 2003
@@ -38,7 +38,7 @@ rlec_uncompress.c: Princed Resources : Image Compression Library :
 #include "compress.h"
 
 /* Expands RLE algorithm */
-int expandRleC(const unsigned char* input, int inputSize,
+int expandRleV(const unsigned char* input, int inputSize,
                unsigned char* output, int *outputSize) {
 	register unsigned char rep=0;
 	int oCursor=0;
@@ -63,6 +63,6 @@ int expandRleC(const unsigned char* input, int inputSize,
 	}
 	
 	*outputSize=oCursor;
-	return (rep==255)?COMPRESS_RESULT_SUCCESS:COMPRESS_RESULT_WARNING;
+	return (rep==255)?PR_RESULT_SUCCESS:PR_RESULT_COMPRESS_RESULT_WARNING;
 }
 

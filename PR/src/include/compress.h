@@ -44,9 +44,11 @@ compress.h: Princed Resources : Compression headers
 
 #define COMPRESS_WORKING_ALGORITHMS 5
 
+/*
 #define COMPRESS_RESULT_FATAL   PR_RESULT_COMPRESS_RESULT_FATAL
 #define COMPRESS_RESULT_WARNING PR_RESULT_COMPRESS_RESULT_WARNING
 #define COMPRESS_RESULT_SUCCESS PR_RESULT_SUCCESS 
+*/
 
 /* Prototypes */
 
@@ -72,7 +74,7 @@ int expandLzg(const unsigned char* input, int inputSize,
                unsigned char** output, int *outputSize);
 int expandRle(const unsigned char* input, int inputSize,
                unsigned char** output, int *outputSize);
-int expandRleC(const unsigned char* input, int inputSize,
+int expandRleV(const unsigned char* input, int inputSize,
                unsigned char* output, int *outputSize);
 
 #endif

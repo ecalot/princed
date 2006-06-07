@@ -123,7 +123,7 @@ int mExpandGraphic256(const unsigned char* data,tImage *image, int dataSizeInByt
 	image->width =array2short(data);
 	data+=2;
 
-	if (*(data++)>1) return COMPRESS_RESULT_FATAL; /* Verify format */
+	if (*(data++)>1) return PR_RESULT_COMPRESS_RESULT_FATAL; /* Verify format */
 	image->type=(unsigned char)(*(data++));
 	dataSizeInBytes-=6;
 	switch (((image->type>>4)&7)+1) {
@@ -137,7 +137,7 @@ int mExpandGraphic256(const unsigned char* data,tImage *image, int dataSizeInByt
 		image->widthInBytes=(image->width+7)/8;
 		break;
 	default:
-		return COMPRESS_RESULT_FATAL;
+		return PR_RESULT_COMPRESS_RESULT_FATAL;
 	}
 
 	/* special format has a special function */
@@ -231,9 +231,9 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 		lineI+=2;
 		if (aux>tempOutputSize) {
 			/*printf(" error: aux=%d tempOutputSize=%d\n",aux,tempOutputSize);*/
-			return COMPRESS_RESULT_WARNING;
+			return PR_RESULT_COMPRESS_RESULT_WARNING;
 		}
-		aux2= expandRleC(lineI,aux,lineO,&lineSize);
+		aux2= expandRleV(lineI,aux,lineO,&lineSize);
 		/*if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-aux-2);*/
 		lineO+=lineSize;
 		*outputSize+=lineSize;
@@ -255,9 +255,9 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 			lineI+=2;
 			if (aux>tempOutputSize) {
 				/*printf(" error: aux=%d tempOutputSize=%d\n",aux,tempOutputSize);*/
-				return COMPRESS_RESULT_WARNING;
+				return PR_RESULT_COMPRESS_RESULT_WARNING;
 			}
-			aux2= expandRleC(lineI,aux,lineO,&lineSize);
+			aux2= expandRleV(lineI,aux,lineO,&lineSize);
 			/*if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-aux-2);*/
 			lineO+=lineSize;
 			*outputSize+=lineSize;
@@ -288,7 +288,7 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 	printf("os=%d oscheck=%d\n",os,osCheck);
 */
 
-	return COMPRESS_RESULT_SUCCESS;
+	return PR_RESULT_SUCCESS;
 }
 
 extern FILE* outputStream;
@@ -311,7 +311,7 @@ void* objImage256Create(tBinary cont, tObject palette, int *error) { /* use get 
 	*error=mExpandGraphic256(cont.data,image,cont.size); /* TODO: pass tBinary */
 /*	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
 		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);*/
-	if (*error==COMPRESS_RESULT_FATAL) {
+	if (*error==PR_RESULT_COMPRESS_RESULT_FATAL) {
 		free(image);
 		return NULL;
 	}

@@ -60,5 +60,6 @@ int getOrder(const char* order);
 
 #include "binary.h"
 tBinary tbinaryallocandcopy(tBinary c);
+void freeBinary(tBinary b);
 
 #endif
