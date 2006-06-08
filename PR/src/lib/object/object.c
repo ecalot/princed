@@ -90,6 +90,7 @@ tObject getObject(tResource* r, int* error) {
 	default:
 printf("Exception: Unhooked type %d\n",o.type);
 		*error=PR_RESULT_SUCCESS; /* NOTE: change to 1 to detect unhooked types */
+		o.obj=NULL;
 		break;
 	}
 	
@@ -110,6 +111,9 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 	case eResTypePop1Palette4bits: /* save and remember palette file */
 		error=objPalette_pop1_4bitsWrite(o.obj,file,optionflag,backupExtension);
 		break;
+	case eResTypePop2Palette4bits: /* save and remember palette file */
+		error=objPalette_pop2_4bitsWrite(o.obj,file,optionflag,backupExtension);
+		break;
 	case eResTypePcspeaker: /* save pcs file */
 		error=objPcspeakerWrite(o.obj,file,optionflag,backupExtension);
 		break;
@@ -129,6 +133,7 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 		error=objImage256Write(o.obj,file,optionflag,backupExtension);
 		break;
 	default:
+printf("Warning: Couldn't write unhooked type %d\n",o.type);
 		break;
 	}
 
@@ -142,6 +147,7 @@ int paletteGetBits(tObject pal) {
 	case eResTypePop2PaletteNColors:
 		return 8;
 	case eResTypePop1Palette4bits: 
+	case eResTypePop2Palette4bits: 
 		return 4;
 	case eResTypePop1PaletteMono: 
 		return 1;
@@ -155,6 +161,7 @@ int paletteGetColors(tObject pal) {
 	case eResTypePop2PaletteNColors:
 		return 256;
 	case eResTypePop1Palette4bits: 
+	case eResTypePop2Palette4bits: 
 		return 16;
 	case eResTypePop1PaletteMono: 
 		return 2;
@@ -167,6 +174,8 @@ tColor* paletteGetColorArray(tObject pal) {
 	switch (pal.type) {
 	case eResTypePop1Palette4bits: /* save and remember palette file */
 		return objPalette_pop1_4bitsGetColors(pal.obj);
+	case eResTypePop2Palette4bits: /* save and remember palette file */
+		return objPalette_pop2_4bitsGetColors(pal.obj);
 	case eResTypePop2PaletteNColors:
 		return objPalette_pop2_ncolorsGetColors(pal.obj);
 	default:
@@ -181,7 +190,7 @@ tColor* paletteGetColorArray(tObject pal) {
 void setObject(tObject o,int *result,tResource* res) {
 	switch (o.type) {
 		case eResTypeLevel:
-			/*o.obj=objLevelRead(file,res.content,result);*/
+			/*result=objLevelSet(o.obj,res); TODO */
 			break;
 		case eResTypeImage16:
 			*result=objImage16Set(o.obj,res);
@@ -212,7 +221,7 @@ tObject readObject(const char* file,tResource* res,int *result) {
 	tObject o;
 	switch (res->type) {
 		case eResTypeLevel:
-			/*o.obj=objLevelRead(file,res.content,result);*/
+			/*o.obj=objLevelRead(file,res.content,result); TODO */
 			break;
 		case eResTypeImage16:
 			o.obj=objImage16Read(file,res->palette,result);
