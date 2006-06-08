@@ -19,7 +19,7 @@
 */
 
 /*
-palette.c: Princed Resources : The palette object implementation
+pop2_4bit.c: Princed Resources : The POP2 16 colors palette object implementation
 ¯¯¯¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 09 Feb 2006
@@ -45,142 +45,40 @@ palette.c: Princed Resources : The palette object implementation
 
 #include "pal.h"
 
-void addPop1Raw(tPalette* p,unsigned char* data, int dataSize);
+void addPop2Raw(tPalette* p,unsigned char* data, int dataSize);
 
 /***************************************************************\
 |                         Palette Object                        |
 \***************************************************************/
 
-static tColor sample_pal4[]={{0,0,0},{4,4,4}}; /*SAMPLE_PAL16;*/
-
-int setPalette(tPalette* p, int bits, tColor* palette) {
-	switch(bits) {
-	case 1:
-		memcpy(p->p1,palette,2*sizeof(tColor));
-		break;
-	case 4:
-		memcpy(p->p4,palette,16*sizeof(tColor));
-		break;
-	case 8:
-		memcpy(p->p8,palette,256*sizeof(tColor));
-		break;
-	default:
-		return -1; /* unsupported bit rate */
-	}
-	return 0;
-}
-
-int getPalette(const tPalette* p, int bits, const tColor** apalette) {
-	switch(bits) {
-	case 1:
-		*apalette=p->p1;
-		break;
-	case 4:
-		*apalette=p->p4;
-		break;
-	case 8:
-		*apalette=p->p8;
-		break;
-	default:
-		return -1; /* unsupported bit rate */
-	}
-	return 0;
-}
-
-tPalette createPalette() {
-	tPalette r;
-	int i;
-
-	/* Palette 1 bit */
-	r.p1[0].r=0;
-	r.p1[0].g=0;
-	r.p1[0].b=0;
-	r.p1[1].r=255;
-	r.p1[1].g=255;
-	r.p1[1].b=255;
-
-	/* Palette 4 bits */
-	memcpy(r.p4, sample_pal4, 16);
-
-	/* Palette 8 bits */
-	for (i=0;i<256;i++) {
-		r.p8[i].r=i;
-		r.p8[i].g=i;
-		r.p8[i].b=i;
-	}
-
-	/* initialize the rest */
-	r.pop1raw=NULL;
-	return r;
-}
-
-
+/* TODO: use comon factor or drop */
+int setPalette(tPalette* p, int bits, tColor* palette);
+int getPalette(const tPalette* p, int bits, const tColor** apalette);
+tPalette createPalette();
+				
 /* middle layer */
 #define to8bits_A(a) (((a)<<2)|((a)>>4))
 #define to8bits_B(a) (((a)<<2)         )
 #define to8bits_C(a) (((a)<<2)+2       )
 
 /* reads the information in data and tries to remember it in the palette */
-int readPalette(tPalette* p, unsigned char* data, int dataSize) {
-	tColor c[256];
-	int i,bits=0;
-	*p=createPalette();
-	printf("reading a palette from data (%d)\n",dataSize);
-	/* TODO: validate checksum */
-
-	switch (dataSize) {
-	case 101:
-		for (i=0;i<16;i++) {
-			c[i].r=data[(i*3)+5]<<2;
-			c[i].g=data[(i*3)+6]<<2;
-			c[i].b=data[(i*3)+7]<<2;
-		}
-		bits=4;
-		/* this palette needs to be remembered as binary */
-		/*addPop1Raw(p,data+1,dataSize-1);*/
-		break;
-	case 3*256+1:
-	case 3*320+1:
-		for (i=0;i<256;i++) {
-			c[i].r=data[(i*3)+1]<<2;
-			c[i].g=data[(i*3)+2]<<2;
-			c[i].b=data[(i*3)+3]<<2;
-		}
-		bits=8;
-		break;
-	}
-		
-	if (bits) setPalette(p,bits,c);
-	return bits;
-}
-/*
-int applyPalette(tPalette* p,tImage *i) {
-	i->pal=*p;
-	return 0;
-}
-
-void addPop1Raw(tPalette* p,unsigned char* data, int dataSize) {
-	freeAllocation(p->pop1raw);
-	p->pop1raw=binaryallocandcopy(data,dataSize);
-	p->pop1rawSize=dataSize;
-}
-*/
+int readPalette(tPalette* p, unsigned char* data, int dataSize);
 
 typedef struct { 
 	tColor c[16];
-	unsigned char raw[100];
-}tPop1_4bitsPalette;
+	unsigned char raw[384];
+}tPop2_4bitsPalette;
 
-void* objPalette_pop1_4bitsCreate(tBinary cont, int *error) {
+void* objPalette_pop2_4bitsCreate(tBinary cont, int *error) {
 	int i;
-	tPop1_4bitsPalette* pal;
+	tPop2_4bitsPalette* pal;
 	
-	if (cont.size!=100) {
+	if (cont.size!=384) {
 		*error=PR_RESULT_XML_AND_DAT_FORMAT_DO_NOT_MATCH;
 		return NULL;
 	}
 
-	pal=(tPop1_4bitsPalette*)malloc(sizeof(tPop1_4bitsPalette));
+	pal=(tPop2_4bitsPalette*)malloc(sizeof(tPop2_4bitsPalette));
 	
 	for (i=0;i<16;i++) {
 		pal->c[i].r=cont.data[(i*3)+4]<<2;
@@ -188,64 +86,33 @@ void* objPalette_pop1_4bitsCreate(tBinary cont, int *error) {
 		pal->c[i].b=cont.data[(i*3)+6]<<2;
 	}
 
-	memcpy(pal->raw,cont.data,100);
+	memcpy(pal->raw,cont.data,384);
 
 	*error=PR_RESULT_SUCCESS;
 	
 	return (void*)pal;
 }
 
-int objPalette_pop1_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
-	tPop1_4bitsPalette* pal=o;
+int objPalette_pop2_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
+	tPop2_4bitsPalette* pal=o;
 	char aux[260];
 
 	/* Export extra palette information */
 	sprintf(aux,"%s.more",file);
-	writeData(pal->raw,0,aux,100,optionflag,backupExtension);
+	writeData(pal->raw,0,aux,384,optionflag,backupExtension);
 
 	return writePal(file,16,pal->c,optionflag,backupExtension);
 }
 
-tColor* objPalette_pop1_4bitsGetColors(void* o) {
-	tPop1_4bitsPalette* pal=o;
+tColor* objPalette_pop2_4bitsGetColors(void* o) {
+	tPop2_4bitsPalette* pal=o;
 	return pal->c;
 }
 
-tColor* paletteGetColorArrayForColors(int colors) {
-	static tColor p1[2];
-	static tColor p4[2];
-	static tColor p8[2];
-	int i;
+tColor* paletteGetColorArrayForColors(int colors); /* TODO: this function should be in a common.c inside palette object */
 
-	switch(colors) {
-	case 2:
-		/* Palette 1 bit */
-		p1[0].r=0;
-		p1[0].g=0;
-		p1[0].b=0;
-		p1[1].r=255;
-		p1[1].g=255;
-		p1[1].b=255;
-		return p1;
-	case 16:
-		/* Palette 4 bits */
-		memcpy(p4, sample_pal4, 16);
-		return p4;
-	case 256:
-		/* Palette 8 bits */
-		for (i=0;i<256;i++) {
-			p8[i].r=i;
-			p8[i].g=i;
-			p8[i].b=i;
-		}
-		return p8;
-	default:
-		return NULL; /* unsupported bit rate */
-	}
-}
-
-void* objPop1Palette4bitsRead(const char* file,int *result) {
-	tPop1_4bitsPalette* pal=(tPop1_4bitsPalette*)malloc(sizeof(tPop1_4bitsPalette));
+void* objPop2Palette4bitsRead(const char* file,int *result) {
+	tPop2_4bitsPalette* pal=(tPop2_4bitsPalette*)malloc(sizeof(tPop2_4bitsPalette));
 	tColor* colorArray;
 	int colors;
 	char aux[260];
@@ -261,7 +128,7 @@ void* objPop1Palette4bitsRead(const char* file,int *result) {
 	*result=readPal(file,&colorArray,&colors);
 
 	if (*result==PR_RESULT_SUCCESS && colors!=16) {
-		*result=PR_WRONG_PALETTE_COLOR_COUNT;
+		*result=PR_RESULT_PAL_UNSUPPORTED;
 		free(colorArray);
 		return NULL;
 	}
@@ -271,20 +138,20 @@ void* objPop1Palette4bitsRead(const char* file,int *result) {
 	return (void*)pal;
 }
 
-#define convert24to18(x) (unsigned char)((x+2)>>2);
+#define convert24to18(x) (unsigned char)((x+2)>>2); /* TODO: send to a common palette header */
 
-int objPop1Palette4bitsSet(void* o,tResource* res) {
-	tPop1_4bitsPalette* pal=o;
+int objPop2Palette4bitsSet(void* o,tResource* res) {
+	tPop2_4bitsPalette* pal=o;
 	int i;
 
-	res->content.size=100;
+	res->content.size=384;
 	res->content.data=pal->raw;
 	for (i=0;i<16;i++) {
 		res->content.data[(i*3)+4]=convert24to18(pal->c[i].r);
 		res->content.data[(i*3)+5]=convert24to18(pal->c[i].g);
 		res->content.data[(i*3)+6]=convert24to18(pal->c[i].b);
 	}
-	res->content.size=100;
+	res->content.size=384;
 	res->content.data=pal->raw;
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;

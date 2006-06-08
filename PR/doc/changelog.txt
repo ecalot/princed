@@ -186,7 +186,7 @@ Versions:
   x Add the POP2 4-bits palette object
   x Check for memory leak
   x Clean the source
-  x Common factor in LGZ compression (a .h) for win size, etc.
+  x Common factor in LGZ compression (a .h or compress.h) for win size, etc.
   x Common palette calculation
   x Create a new isDirSep in disk.h and handle all the / and \ as the same char
   x Don't create empty unknown.xml
@@ -194,7 +194,7 @@ Versions:
   x Fix repeated resource name in CPALACE.DAT bug
   x Fork compress to code images as a new object in a separated file
   - Moved tResource* from reslist to types.h
-  - Rename "uncompress" to "decomporess"
+  - Renamed "uncompress" to "decomporess"
   x Transform flags from the hex form to the [a-y]* form (a is 1, b is 2, c is 4...)
  * PR v1.4 (future plans)
   x Added full POP2 RLEV compression algorithm

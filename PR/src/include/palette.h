@@ -62,6 +62,7 @@ int readPalette(tPalette* p, unsigned char* data, int dataSize);
 int applyPalette(tPalette* p,tImage *i);
 */
 
+void* objPalette_pop2_4bitsCreate(tBinary c, int *error);
 void* objPalette_pop1_4bitsCreate(tBinary c, int *error);
 int objPalette_pop1_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 void* objPop1Palette4bitsRead(const char* file,int *result);

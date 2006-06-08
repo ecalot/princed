@@ -63,6 +63,9 @@ tObject getObject(tResource* r, int* error) {
 	case eResTypePop1Palette4bits: /* save and remember palette file */
 		o.obj=objPalette_pop1_4bitsCreate(r->content,error);
 		break;
+	case eResTypePop2Palette4bits: /* save and remember palette file */
+		o.obj=objPalette_pop2_4bitsCreate(r->content,error);
+		break;
 	case eResTypePop2PaletteNColors: /* save and remember palette file */
 		o.obj=objPop2PaletteNColorsCreate(r->content,error);
 		break;
@@ -85,6 +88,7 @@ tObject getObject(tResource* r, int* error) {
 		o.obj=objImage256Create(r->content,r->palette,error);
 		break;
 	default:
+printf("Exception: Unhooked type %d\n",o.type);
 		*error=PR_RESULT_SUCCESS; /* NOTE: change to 1 to detect unhooked types */
 		break;
 	}

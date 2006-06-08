@@ -57,7 +57,7 @@ XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
 COMPRESS = .lzg_compress.o .lzg_decompress.o .rle_compress.o .rle_decompress.o .rlev_decompress.o 
 LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o .auxiliary.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
-OBJECT   = .object.o .pop2_256c.o .pop1_4bit.o .image2.o .image16.o .image256.o .binary.o .sounds.o .level.o
+OBJECT   = .object.o .pop2_256c.o .pop2_4bit.o .pop1_4bit.o .image2.o .image16.o .image256.o .binary.o .sounds.o .level.o
 CONSOLE  = .main.o .filedir.o
 MAIN     = .pr.o
 
@@ -246,6 +246,10 @@ $(XMLFILE): xml/resources.xml
 .pop1_4bit.o: lib/object/palette/pop1_4bit.c include/palette.h include/memory.h include/dat.h include/disk.h include/pal.h
 	$(INFO) Compiling the POP1 16 colors palette class support...
 	$(CC) $(OPTIONS) -c  lib/object/palette/pop1_4bit.c -o $@
+
+.pop2_4bit.o: lib/object/palette/pop2_4bit.c include/palette.h include/memory.h include/dat.h include/disk.h include/pal.h
+	$(INFO) Compiling the POP2 16 colors palette class support...
+	$(CC) $(OPTIONS) -c  lib/object/palette/pop2_4bit.c -o $@
 
 .binary.o: lib/object/other/binary.c include/binary.h include/common.h include/dat.h include/types.h include/disk.h
 	$(INFO) Compiling the binary item class support...

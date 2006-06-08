@@ -19,7 +19,7 @@
 */
 
 /*
-palette.c: Princed Resources : The palette object implementation
+pop1_4bit.c: Princed Resources : The palette object implementation
 ¯¯¯¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 09 Feb 2006
