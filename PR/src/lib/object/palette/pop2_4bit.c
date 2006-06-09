@@ -81,9 +81,9 @@ void* objPalette_pop2_4bitsCreate(tBinary cont, int *error) {
 	pal=(tPop2_4bitsPalette*)malloc(sizeof(tPop2_4bitsPalette));
 	
 	for (i=0;i<16;i++) {
-		pal->c[i].r=cont.data[(i*3)+4]<<2;
-		pal->c[i].g=cont.data[(i*3)+5]<<2;
-		pal->c[i].b=cont.data[(i*3)+6]<<2;
+		pal->c[i].r=cont.data[(i*3)+0]<<2;
+		pal->c[i].g=cont.data[(i*3)+1]<<2;
+		pal->c[i].b=cont.data[(i*3)+2]<<2;
 	}
 
 	memcpy(pal->raw,cont.data,384);
