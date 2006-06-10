@@ -51,11 +51,13 @@ void addPop2Raw(tPalette* p,unsigned char* data, int dataSize);
 |                         Palette Object                        |
 \***************************************************************/
 
+#if 0
 /* TODO: use comon factor or drop */
 int setPalette(tPalette* p, int bits, tColor* palette);
 int getPalette(const tPalette* p, int bits, const tColor** apalette);
 tPalette createPalette();
-				
+#endif
+
 /* middle layer */
 #define to8bits_A(a) (((a)<<2)|((a)>>4))
 #define to8bits_B(a) (((a)<<2)         )

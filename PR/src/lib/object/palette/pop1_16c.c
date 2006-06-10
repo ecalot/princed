@@ -53,6 +53,7 @@ void addPop1Raw(tPalette* p,unsigned char* data, int dataSize);
 
 static tColor sample_pal4[]={{0,0,0},{4,4,4}}; /*SAMPLE_PAL16;*/
 
+#if 0
 int setPalette(tPalette* p, int bits, tColor* palette) {
 	switch(bits) {
 	case 1:
@@ -160,6 +161,7 @@ void addPop1Raw(tPalette* p,unsigned char* data, int dataSize) {
 	p->pop1rawSize=dataSize;
 }
 */
+#endif
 
 typedef struct { 
 	tColor c[16];
