@@ -66,17 +66,17 @@ int readPalette(tPalette* p, unsigned char* data, int dataSize);
 
 typedef struct { 
 	tColor c[16];
-	unsigned char raw[384];
+	tBinary raw;
 }tPop2_4bitsPalette;
 
 void* objPalette_pop2_4bitsCreate(tBinary cont, int *error) {
 	int i;
 	tPop2_4bitsPalette* pal;
 	
-	if (cont.size!=384) {
+/*	if (cont.size!=384) {
 		*error=PR_RESULT_XML_AND_DAT_FORMAT_DO_NOT_MATCH;
 		return NULL;
-	}
+	} TODO: use the check from autodetect */
 
 	pal=(tPop2_4bitsPalette*)malloc(sizeof(tPop2_4bitsPalette));
 	
@@ -86,7 +86,8 @@ void* objPalette_pop2_4bitsCreate(tBinary cont, int *error) {
 		pal->c[i].b=cont.data[(i*3)+2]<<2;
 	}
 
-	memcpy(pal->raw,cont.data,384);
+	/*memcpy(pal->raw,cont.data,384);*/
+	pal->raw=tbinaryallocandcopy(cont); /* TODO: check if it is mandatory to copy */
 
 	*error=PR_RESULT_SUCCESS;
 	
@@ -99,7 +100,7 @@ int objPalette_pop2_4bitsWrite(void* o, const char* file, int optionflag, const 
 
 	/* Export extra palette information */
 	sprintf(aux,"%s.more",file);
-	writeData(pal->raw,0,aux,384,optionflag,backupExtension);
+	writeData(pal->raw.data,0,aux,pal->raw.size,optionflag,backupExtension);
 
 	return writePal(file,16,pal->c,optionflag,backupExtension);
 }
@@ -122,7 +123,7 @@ void* objPop2Palette4bitsRead(const char* file,int *result) {
 	sprintf(aux,"%s.more",file);
 	raw=mLoadFileArray(aux);
 	if (raw.size!=100) return NULL; /* TODO; free memory */
-	memcpy(pal->raw,raw.data,100);
+	/*memcpy(pal->raw,raw.data,100);*/
 	free(raw.data);
 
 	*result=readPal(file,&colorArray,&colors);
@@ -144,15 +145,15 @@ int objPop2Palette4bitsSet(void* o,tResource* res) {
 	tPop2_4bitsPalette* pal=o;
 	int i;
 
-	res->content.size=384;
-	res->content.data=pal->raw;
+	/*res->content.size=384;
+	res->content.data=pal->raw;*/
 	for (i=0;i<16;i++) {
 		res->content.data[(i*3)+4]=convert24to18(pal->c[i].r);
 		res->content.data[(i*3)+5]=convert24to18(pal->c[i].g);
 		res->content.data[(i*3)+6]=convert24to18(pal->c[i].b);
 	}
-	res->content.size=384;
-	res->content.data=pal->raw;
+	/*res->content.size=384;
+	res->content.data=pal->raw;*/
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
 }

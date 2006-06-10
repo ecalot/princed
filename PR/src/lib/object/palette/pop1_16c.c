@@ -277,8 +277,8 @@ int objPop1Palette4bitsSet(void* o,tResource* res) {
 		res->content.data[(i*3)+5]=convert24to18(pal->c[i].g);
 		res->content.data[(i*3)+6]=convert24to18(pal->c[i].b);
 	}
-	res->content.size=100;
-	res->content.data=pal->raw;
+/*	res->content.size=100;
+	res->content.data=pal->raw;*/
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
 }
