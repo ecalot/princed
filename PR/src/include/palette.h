@@ -85,4 +85,10 @@ tColor* objPalette_pop2_ncolorsGetColors(void* o);
 
 #define convert24to18(x) (unsigned char)((x+2)>>2);
 
+/* Hooks */
+
+#define PAL_COLORS_eResTypePop2PaletteNColors 256
+#define PAL_COLORS_eResTypePop1Palette4bits 16
+#define PAL_COLORS_eResTypePop1PaletteMono 2
+
 #endif

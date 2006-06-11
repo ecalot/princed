@@ -45,3 +45,49 @@ tPaletteList paletteListCreate() {
 	return list_create(sizeof(tPaletteListItem),pallist_compare,NULL);
 }
 
+/* Priority list */
+
+#include "object.h"
+
+typedef enum {highPriority, lowPriority}tPriority;
+typedef struct pln{
+	tResourceId resid;			 
+	tObject*    object;
+	struct pln* next;
+}	tPL_Node;
+
+typedef struct {
+	struct {
+		tResourceId idres;			 
+		tObject*    object;
+	} priority_field;
+	tPL_Node*   list_first;
+	tPL_Node*   list_deleted_first;
+}	tPL;
+
+void pl_free  (tPL* pl);
+int  pl_tryAdd(tPL* pl, tResourceId resid, tPriority p);
+int  pl_add   (tPL* pl, tObject* o, tResourceId resid, tPriority p);
+int  pl_hasPriority(tPL* pl, tResourceId resid);
+void pl_free  (tPL* pl);
+tPL  pl_create();
+tObject* pl_get(int* priorityRight, int colors);
+
+tPL  pl_create() {
+	tPL r;
+
+	r.priority_field.object=NULL;
+	r.list_first=NULL;
+	r.list_deleted_first=NULL;
+
+	return r;
+}
+
+int  pl_hasPriority(tPL* pl, tResourceId resid) {
+	if (!pl->priority_field.object) return 0; /* false */
+	return resourceListCompareId(resid,pl->priority_field.idres);	
+}
+
+
+
+

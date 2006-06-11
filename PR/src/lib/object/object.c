@@ -159,12 +159,14 @@ int paletteGetBits(tObject pal) {
 int paletteGetColors(tObject pal) {
 	switch (pal.type) {
 	case eResTypePop2PaletteNColors:
-		return 256;
+		return PAL_COLORS_eResTypePop2PaletteNColors; /*256;*/
 	case eResTypePop1Palette4bits: 
 	case eResTypePop2Palette4bits: 
-		return 16;
+		return PAL_COLORS_eResTypePop1Palette4bits; /*16;*/
 	case eResTypePop1PaletteMono: 
-		return 2;
+		return  PAL_COLORS_eResTypePop1PaletteMono; /*2;*/
+	case eResTypeNone: 
+		return 256; /*256; TODO: use the pal none object */
 	default:
 		return 0;
 	}

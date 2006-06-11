@@ -189,6 +189,8 @@ Versions:
   x Common factor in LGZ compression (a .h or compress.h) for win size, etc.
   x Common palette calculation
   x Create a new isDirSep in disk.h and handle all the / and \ as the same char
+  x Rename all xbit names with xcolor
+  x Create a priority list for the palettes
   x Don't create empty unknown.xml
   x Fix ./pr -ie it -f bug
   x Fix repeated resource name in CPALACE.DAT bug
@@ -196,6 +198,7 @@ Versions:
   - Moved tResource* from reslist to types.h
   - Renamed "uncompress" to "decomporess"
   x Transform flags from the hex form to the [a-y]* form (a is 1, b is 2, c is 4...)
+  x Prepeare the skeletton abstraction layer for bitmap to support .png files
  * PR v1.4 (future plans)
   x Added full POP2 RLEV compression algorithm
   x Code a palette adapting feature
