@@ -130,10 +130,13 @@ int pl_add(tPL* pl, tObject* o, tResourceId resid, tPriority p) {
 tObject* pl_get(tPL* pl, int* priorityRight, int colors) {
 	tPL_Node* node;
 				
+	*priorityRight=1;
 	if (pl->priority_field.object) {
-		*priorityRight=(colors<=paletteGetColors(*pl->priority_field.object));
-		 /* true iif the object palette has more colors than the given variable */
-		return pl->priority_field.object;
+		if (colors<=paletteGetColors(*pl->priority_field.object)) {
+			return pl->priority_field.object;
+		} else {
+			*priorityRight=0;
+		}
 	}
 
 	node=pl->list_first;
@@ -141,7 +144,6 @@ tObject* pl_get(tPL* pl, int* priorityRight, int colors) {
 	while (node && colors>paletteGetColors(*node->object))
 		node=node->next;
 	
-	*priorityRight=1;
 	return node?node->object:NULL;
 }
 
@@ -163,7 +165,8 @@ int main(int a,char** b) {
 	pl_add(&pl, tests, ress[0], lowPriority);
 	pl_add(&pl, tests+1, ress[1], lowPriority);
 	pl_add(&pl, tests, ress[0], lowPriority);
-	pl_add(&pl, tests+2, ress[1], lowPriority);
+	pl_add(&pl, tests, ress[1], highPriority);
+	pl_add(&pl, tests+2, ress[0], highPriority);
 
 	{
 		tPL_Node* nodo=pl.list_first;
