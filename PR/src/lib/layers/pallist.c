@@ -85,9 +85,22 @@ tPL  pl_create() {
 
 int  pl_hasPriority(tPL* pl, tResourceId resid) {
 	if (!pl->priority_field.object) return 0; /* false */
-	return resourceListCompareId(resid,pl->priority_field.idres);	
+	return resourceListCompareId(resid,pl->priority_field.idres)==0;
 }
 
+int  pl_tryAdd(tPL* pl, tResourceId resid, tPriority p) {
+/*	if (p==highPriority) {
+		if (pl->priority_field.object) {
+			if (resourceListCompareId(resid,pl->priority_field.idres)!=0) {
+				tObject* o=pl->priority_field.object;
+				pl->priority_field.object=NULL;
+				pl_add(pl,o,pl->priority_field.idres,lowPriority);
+			}
+		}
 
+	}
+*/
 
+	return 0;
+}
 
