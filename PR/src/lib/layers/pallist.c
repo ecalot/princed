@@ -112,3 +112,26 @@ int pl_add(tPL* pl, tObject* o, tResourceId resid, tPriority p) {
 	return 1;
 }
 
+void showobj(tObject o) {
+	printf("object type=%d colors=%d\n",o.type,paletteGetColors(o));
+}
+
+int main(int a,char** b) {
+	tObject tests[]={
+		{eResTypeNone,NULL},
+		{eResTypePop2PaletteNColors,(void*)((int)320)},
+		{eResTypePop1Palette4bits,NULL}
+	};
+	tResourceId ress[]={
+		{0,"POP1",4},
+		{2,"LALA",6}
+	};
+	
+	printf("hello world\n");
+	showobj(tests[1]);
+	
+
+
+	return 0;
+}
+

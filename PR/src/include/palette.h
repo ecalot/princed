@@ -87,7 +87,7 @@ tColor* objPalette_pop2_ncolorsGetColors(void* o);
 
 /* Hooks */
 
-#define PAL_COLORS_eResTypePop2PaletteNColors 256
+#define PAL_COLORS_eResTypePop2PaletteNColors /*256*/ (int)(pal.obj)
 #define PAL_COLORS_eResTypePop1Palette4bits 16
 #define PAL_COLORS_eResTypePop1PaletteMono 2
 
