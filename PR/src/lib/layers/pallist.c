@@ -89,18 +89,26 @@ int  pl_hasPriority(tPL* pl, tResourceId resid) {
 }
 
 int  pl_tryAdd(tPL* pl, tResourceId resid, tPriority p) {
-/*	if (p==highPriority) {
-		if (pl->priority_field.object) {
-			if (resourceListCompareId(resid,pl->priority_field.idres)!=0) {
-				tObject* o=pl->priority_field.object;
-				pl->priority_field.object=NULL;
-				pl_add(pl,o,pl->priority_field.idres,lowPriority);
-			}
+	return 0; /* always false, optimization disabled */
+}
+
+int pl_add(tPL* pl, tObject* o, tResourceId resid, tPriority p) {
+	if (p==highPriority) {
+		/* high priority insertion */
+		if (pl->priority_field.object) { /* if there was another object proprized, move it to the list */
+			tObject* obj_old_priority=pl->priority_field.object;
+			if (resourceListCompareId(resid,pl->priority_field.idres)==0) return 0; /* same object, take no action */
+			/* drop the object from the priority field and reinsert it with low priority */
+			pl->priority_field.object=NULL;
+			pl_add(pl,obj_old_priority,pl->priority_field.idres,lowPriority);
 		}
+		/* now, we know there is no object in the priority field, so we insert it */
+		pl->priority_field.object=o;
+		pl->priority_field.idres=resid;
+	} else {
+		/* low priority insertion */
 
 	}
-*/
-
-	return 0;
+	return 1;
 }
 
