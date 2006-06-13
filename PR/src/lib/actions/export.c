@@ -69,20 +69,21 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	int                indexNumber;
 	int                ok;
 /*	tImage             image; * this is used to make a persistent palette */
-	tObject            currentPalette;
+	tObject            currentPalette=getObject(NULL,&ok); /*TODO: move to pallist */
 	unsigned short int numberOfItems;
-	tPaletteList       paletteBuffer;
 	tResourceId        bufferedPalette={0,"",0};
-	tResource          res;
+/*	tPaletteList       paletteBuffer;
+	tResource          res;*/
+	tPL                palettes=pl_create();
 	int                count=0;
 
 	/* Initialize abstract variables to read this new DAT file */
 	if ((ok=mReadBeginDatFile(&numberOfItems,vFiledat))) return ok;
 
 	/* initialize palette buffer */
-	paletteBuffer=paletteListCreate();
+	/*paletteBuffer=paletteListCreate();*/
 	/* initialize the default palette */
-	currentPalette=getObject(NULL,&ok); /* The null object will be used until a palette is set */
+	pl_add(&palettes,&currentPalette,bufferedPalette,lowPriority); /* The null object will be used until a palette is set */
 	ok=1;
 
 	/* main loop */

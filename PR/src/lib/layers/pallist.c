@@ -47,35 +47,30 @@ tPaletteList paletteListCreate() {
 
 /* Priority list */
 #include <stdlib.h>
-
 #include "object.h"
 
+#ifdef DEBUG_TEST_PALLST
 void showobj(tObject o) {
 	printf("object type=%d colors=%d\n",o.type,paletteGetColors(o));
 }
+#endif
 
-typedef enum {highPriority, lowPriority}tPriority;
-typedef struct pln{
-	tResourceId resid;			 
-	tObject*    object;
-	struct pln* next;
-}	tPL_Node;
+#if 0
+pl_dellist_add(tPL* pl, tResourceId idres, tObject* obj) {
+	/* TODO: use an ordered list */
+	/*	result=resourceListCompareId(idres,);*/
+	tPL_Node* node=pl->list_deleted_first;
 
-typedef struct {
-	struct {
-		tResourceId idres;			 
-		tObject*    object;
-	} priority_field;
-	tPL_Node*   list_first;
-	tPL_Node*   list_deleted_first;
-}	tPL;
+	while (node) {
+		if (resourceListCompareId(node->resid,idres)==0)e
+	}
+	
+	
 
-void pl_free  (tPL* pl);
-int  pl_tryAdd(tPL* pl, tResourceId resid, tPriority p);
-int  pl_add   (tPL* pl, tObject* o, tResourceId resid, tPriority p);
-int  pl_hasPriority(tPL* pl, tResourceId resid);
-tPL  pl_create();
-tObject* pl_get(tPL* pl, int* priorityRight, int colors);
+				
+}
+
+#endif
 
 tPL  pl_create() {
 	tPL r;
@@ -96,7 +91,7 @@ int  pl_tryAdd(tPL* pl, tResourceId resid, tPriority p) {
 	return 0; /* always false, optimization disabled */
 }
 
-int pl_add(tPL* pl, tObject* o, tResourceId resid, tPriority p) {
+void pl_add(tPL* pl, tObject* o, tResourceId resid, tPriority p) {
 	if (p==highPriority) {
 		/* high priority insertion */
 		if (pl->priority_field.object) { /* if there was another object proprized, move it to the list */
@@ -115,8 +110,8 @@ int pl_add(tPL* pl, tObject* o, tResourceId resid, tPriority p) {
 		int colors=paletteGetColors(*o);
 		
 		while (pl->list_first && colors>=paletteGetColors(*(pl->list_first->object))) {
-			printf("deleting: ");
-			showobj(*pl->list_first->object);
+			/*printf("deleting: ");
+			showobj(*pl->list_first->object);*/
 			pl->list_first=pl->list_first->next; /* Delete */
 		}
 		insertNode->next=pl->list_first;
@@ -124,7 +119,7 @@ int pl_add(tPL* pl, tObject* o, tResourceId resid, tPriority p) {
 		insertNode->resid=resid;
 		pl->list_first=insertNode;
 	}
-	return 1;
+	return;
 }
 
 tObject* pl_get(tPL* pl, int* priorityRight, int colors) {
@@ -147,6 +142,7 @@ tObject* pl_get(tPL* pl, int* priorityRight, int colors) {
 	return node?node->object:NULL;
 }
 
+#ifdef DEBUG_TEST_PALLST
 int main(int a,char** b) {
 	tObject tests[]={
 		{eResTypeNone,NULL},
@@ -166,7 +162,7 @@ int main(int a,char** b) {
 	pl_add(&pl, tests+1, ress[1], lowPriority);
 	pl_add(&pl, tests, ress[0], lowPriority);
 	pl_add(&pl, tests, ress[1], highPriority);
-	pl_add(&pl, tests+2, ress[0], highPriority);
+	pl_add(&pl, tests, ress[1], lowPriority);
 
 	{
 		tPL_Node* nodo=pl.list_first;
@@ -206,4 +202,5 @@ int main(int a,char** b) {
 	}
 	return 0;
 }
+#endif
 

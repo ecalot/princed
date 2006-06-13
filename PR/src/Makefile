@@ -58,8 +58,7 @@ COMPRESS = .lzg_compress.o .lzg_decompress.o .rle_compress.o .rle_decompress.o .
 LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o .auxiliary.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
 OBJECT   = .object.o .pop2_256c.o .pop2_4bit.o .pop1_4bit.o .image2.o .image16.o .image256.o .binary.o .sounds.o .level.o
-CONSOLE  = 
-#.main.o .filedir.o
+CONSOLE  = .main.o .filedir.o
 MAIN     = .pr.o
 
 EXEOBJ   = $(MAIN) $(XML) $(COMPRESS) $(ACTIONS) $(LAYERS) $(OBJECT) $(FORMAT) $(PORTS) $(CONSOLE)
