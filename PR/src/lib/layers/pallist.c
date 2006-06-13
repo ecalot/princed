@@ -46,8 +46,13 @@ tPaletteList paletteListCreate() {
 }
 
 /* Priority list */
+#include <stdlib.h>
 
 #include "object.h"
+
+void showobj(tObject o) {
+	printf("object type=%d colors=%d\n",o.type,paletteGetColors(o));
+}
 
 typedef enum {highPriority, lowPriority}tPriority;
 typedef struct pln{
@@ -107,13 +112,20 @@ int pl_add(tPL* pl, tObject* o, tResourceId resid, tPriority p) {
 		pl->priority_field.idres=resid;
 	} else {
 		/* low priority insertion */
-
+		tPL_Node* insertNode=malloc(sizeof(tPL_Node));
+		int colors=paletteGetColors(*o);
+		
+		while (pl->list_first && colors>=paletteGetColors(*(pl->list_first->object))) {
+			printf("deleting: ");
+			showobj(*pl->list_first->object);
+			pl->list_first=pl->list_first->next; /* Delete */
+		}
+		insertNode->next=pl->list_first;
+		insertNode->object=o;
+		insertNode->resid=resid;
+		pl->list_first=insertNode;
 	}
 	return 1;
-}
-
-void showobj(tObject o) {
-	printf("object type=%d colors=%d\n",o.type,paletteGetColors(o));
 }
 
 int main(int a,char** b) {
@@ -126,12 +138,32 @@ int main(int a,char** b) {
 		{0,"POP1",4},
 		{2,"LALA",6}
 	};
+	tPL pl=pl_create();
 	
 	printf("hello world\n");
 	showobj(tests[1]);
 	
+	pl_add(&pl, tests, ress[0], lowPriority);
+	pl_add(&pl, tests+1, ress[1], lowPriority);
+	pl_add(&pl, tests, ress[0], lowPriority);
+	pl_add(&pl, tests+2, ress[1], lowPriority);
+	pl_add(&pl, tests, ress[1], lowPriority);
 
-
+	{
+		tPL_Node* nodo=pl.list_first;
+		printf("yeah list:\n");
+		printf(" pri:\n");
+		if (pl.priority_field.object) {
+			showobj(*pl.priority_field.object);
+		} else {
+			printf("nada!\n");
+		}
+		printf(" no pri:\n");
+		while (nodo) {
+			showobj(*(nodo->object));
+			nodo=nodo->next;
+		}
+	}
 	return 0;
 }
 
