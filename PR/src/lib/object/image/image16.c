@@ -44,7 +44,7 @@ image.c: Princed Resources : Image Compression Library
 
 #include "palette.h" /* getColorArrayByColors */
 
-#include "bmp.h"
+#include "bitmap.h"
 
 /* Compression level explanation:
  *

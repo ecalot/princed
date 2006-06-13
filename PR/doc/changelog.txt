@@ -198,7 +198,7 @@ Versions:
   - Moved tResource* from reslist to types.h
   - Renamed "uncompress" to "decomporess"
   x Transform flags from the hex form to the [a-y]* form (a is 1, b is 2, c is 4...)
-  x Prepeare the skeletton abstraction layer for bitmap to support .png files
+  - Prepeare the skeletton abstraction layer for bitmap to support .png files
  * PR v1.4 (future plans)
   x Added full POP2 RLEV compression algorithm
   x Code a palette adapting feature

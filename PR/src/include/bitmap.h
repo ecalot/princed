@@ -19,33 +19,52 @@
 */
 
 /*
-bmp.h: Princed Resources : BMP file support headers
-¯¯¯¯¯
+bitmap.h: Princed Resources : BMP/PNG support common headers
+¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 
   Author: Enrique Calot <ecalot.cod@princed.com.ar>
   Version: 1.01 (2003-Oct-23)
   Version: 1.10 (2004-Feb-17)
+  Version: 2.00 (2006-Jun-13)
 
  Note:
   DO NOT remove this copyright notice
 */
 
-#ifndef _PR_BMP_H_
-#define _PR_BMP_H_
+#ifndef _PR_BITMAP_H_
+#define _PR_BITMAP_H_
 
-#include "types.h" /* tResource */
-#include "image.h" /* tImage */
+#ifdef _PR_USE_PNG_
 
-#define FORMATS_BMP_PALETTE_BW "\x00\x00\x00\0\xFF\xFF\xFF"
+#define mFormatExportBitmap(data,vFileext,size,image,optionflag,backupExtension) \
+        mFormatExportPng(data,vFileext,size,image,optionflag,backupExtension)
+#define mFormatImportBitmap(res) \
+        mFormatImportPng(res)
 
-int mFormatExportBmp(const unsigned char* data, const char *vFileext,unsigned long int size,tImage image,int optionflag,const char* backupExtension);
-int mFormatImportBmp(tResource *res);
-int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupExtension);
-int mReadBitMap(tImage* img,unsigned char* data, int size); /* Note: this will ignore the palette */
+#define mWriteBitmap(file,data,w,h,bits,colors,colorArray,lineWidth,optionflag,backupExtension) \
+        mWritePng(file,data,w,h,bits,colors,colorArray,lineWidth,optionflag,backupExtension)
+#define readBitmap(file,data,ph,pw,pbits,pcolors,colorArray,plineWidth) \
+        readPng(file,data,ph,pw,pbits,pcolors,colorArray,plineWidth)
 
-int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits, int colors, tColor* colorArray, int lineWidth, int optionflag, const char* backupExtension);
-int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbits, int *pcolors, tColor** colorArray, int *plineWidth);
+#include "png.h"
+
+#else
+
+#define mFormatExportBitmap(data,vFileext,size,image,optionflag,backupExtension) \
+        mFormatExportBmp(data,vFileext,size,image,optionflag,backupExtension)
+#define mFormatImportBitmap(res) \
+        mFormatImportBmp(res)
+
+#define mWriteBitmap(file,data,w,h,bits,colors,colorArray,lineWidth,optionflag,backupExtension) \
+        mWriteBmp(file,data,w,h,bits,colors,colorArray,lineWidth,optionflag,backupExtension)
+#define readBitmap(file,data,ph,pw,pbits,pcolors,colorArray,plineWidth) \
+        readBmp(file,data,ph,pw,pbits,pcolors,colorArray,plineWidth)
+
+#include "bmp.h"
 
 #endif
+
+#endif
+

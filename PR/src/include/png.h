@@ -19,7 +19,7 @@
 */
 
 /*
-bmp.h: Princed Resources : BMP file support headers
+png.h: Princed Resources : PNG file support headers
 ¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
@@ -32,20 +32,17 @@ bmp.h: Princed Resources : BMP file support headers
   DO NOT remove this copyright notice
 */
 
-#ifndef _PR_BMP_H_
-#define _PR_BMP_H_
+#ifndef _PR_PNG_H_
+#define _PR_PNG_H_
 
 #include "types.h" /* tResource */
 #include "image.h" /* tImage */
 
-#define FORMATS_BMP_PALETTE_BW "\x00\x00\x00\0\xFF\xFF\xFF"
+int mFormatExportPng(const unsigned char* data, const char *vFileext,unsigned long int size,tImage image,int optionflag,const char* backupExtension);
+int mFormatImportPng(tResource *res);
 
-int mFormatExportBmp(const unsigned char* data, const char *vFileext,unsigned long int size,tImage image,int optionflag,const char* backupExtension);
-int mFormatImportBmp(tResource *res);
-int mWriteBitMap(tImage img,const char* vFile,int optionflag,const char* backupExtension);
-int mReadBitMap(tImage* img,unsigned char* data, int size); /* Note: this will ignore the palette */
-
-int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits, int colors, tColor* colorArray, int lineWidth, int optionflag, const char* backupExtension);
-int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbits, int *pcolors, tColor** colorArray, int *plineWidth);
+int mWritePng(const char* file,const unsigned char* data, int w, int h, int bits, int colors, tColor* colorArray, int lineWidth, int optionflag, const char* backupExtension);
+int readPng(const char* file, unsigned char** data, int *ph, int *pw,  int *pbits, int *pcolors, tColor** colorArray, int *plineWidth);
 
 #endif
+

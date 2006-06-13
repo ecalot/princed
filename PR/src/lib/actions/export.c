@@ -49,12 +49,6 @@ export.c: Princed Resources : DAT Extractor
 #include "pallist.h" 
 #include "unknown.h"
 
-#include "bmp.h"
-#include "mid.h"
-#include "pal.h"
-#include "plv.h"
-#include "wav.h"
-
 extern FILE* outputStream;
 
 /***************************************************************\

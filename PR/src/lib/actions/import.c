@@ -47,12 +47,6 @@ import.c: Princed Resources : DAT Importer
 #include "unknown.h"
 #include "object.h"
 
-#include "bmp.h"
-#include "mid.h"
-#include "wav.h"
-#include "pal.h"
-#include "plv.h"
-
 extern FILE* outputStream;
 
 /***************************************************************\
