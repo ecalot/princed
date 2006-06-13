@@ -74,9 +74,8 @@ void pl_free  (tPL* pl);
 int  pl_tryAdd(tPL* pl, tResourceId resid, tPriority p);
 int  pl_add   (tPL* pl, tObject* o, tResourceId resid, tPriority p);
 int  pl_hasPriority(tPL* pl, tResourceId resid);
-void pl_free  (tPL* pl);
 tPL  pl_create();
-tObject* pl_get(int* priorityRight, int colors);
+tObject* pl_get(tPL* pl, int* priorityRight, int colors);
 
 tPL  pl_create() {
 	tPL r;
@@ -128,6 +127,24 @@ int pl_add(tPL* pl, tObject* o, tResourceId resid, tPriority p) {
 	return 1;
 }
 
+tObject* pl_get(tPL* pl, int* priorityRight, int colors) {
+	tPL_Node* node;
+				
+	if (pl->priority_field.object) {
+		*priorityRight=(colors<=paletteGetColors(*pl->priority_field.object));
+		 /* true iif the object palette has more colors than the given variable */
+		return pl->priority_field.object;
+	}
+
+	node=pl->list_first;
+	
+	while (node && colors>paletteGetColors(*node->object))
+		node=node->next;
+	
+	*priorityRight=1;
+	return node?node->object:NULL;
+}
+
 int main(int a,char** b) {
 	tObject tests[]={
 		{eResTypeNone,NULL},
@@ -147,7 +164,6 @@ int main(int a,char** b) {
 	pl_add(&pl, tests+1, ress[1], lowPriority);
 	pl_add(&pl, tests, ress[0], lowPriority);
 	pl_add(&pl, tests+2, ress[1], lowPriority);
-	pl_add(&pl, tests, ress[1], lowPriority);
 
 	{
 		tPL_Node* nodo=pl.list_first;
@@ -163,6 +179,27 @@ int main(int a,char** b) {
 			showobj(*(nodo->object));
 			nodo=nodo->next;
 		}
+	}
+
+	{
+		tObject* o;
+		int p;
+		o=pl_get(&pl,&p, 16);
+		printf("result of 16 colors: p=%d\n",p);
+		showobj(*o);
+		o=pl_get(&pl,&p, 106);
+		printf("result of 106 colors: p=%d\n",p);
+		showobj(*o);
+		o=pl_get(&pl,&p, 216);
+		printf("result of 216 colors: p=%d\n",p);
+		showobj(*o);
+		o=pl_get(&pl,&p, 316);
+		printf("result of 316 colors: p=%d\n",p);
+		showobj(*o);
+		o=pl_get(&pl,&p, 416);
+		printf("result of 416 colors: p=%d %p\n",p,(void*)o);
+		showobj(*o);
+
 	}
 	return 0;
 }
