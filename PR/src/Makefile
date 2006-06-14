@@ -167,9 +167,9 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling palette list module...
 	$(CC) $(OPTIONS) -c lib/layers/pallist.c -o $@
 
-.object.o: lib/object/main.c include/common.h include/object.h include/types.h include/image.h include/other.h include/palette.h include/sound.h
+.object.o: lib/object/object.c include/common.h include/object.h include/types.h include/image.h include/other.h include/palette.h include/sound.h
 	$(INFO) Compiling main item class...
-	$(CC) $(OPTIONS) -c lib/object/main.c -o $@
+	$(CC) $(OPTIONS) -c lib/object/object.c -o $@
 
 .image2.o: lib/object/image/image2.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bmp.h
 	$(INFO) Compiling 2 colors image type class...

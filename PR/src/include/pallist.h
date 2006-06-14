@@ -67,7 +67,7 @@ typedef struct {
 
 void pl_free  (tPL* pl);
 int  pl_tryAdd(tPL* pl, tResourceId resid, tPriority p);
-int  pl_add   (tPL* pl, tObject* o, tResourceId resid, tPriority p);
+void pl_add   (tPL* pl, tObject* o, tResourceId resid, tPriority p);
 int  pl_hasPriority(tPL* pl, tResourceId resid);
 tPL  pl_create();
 tObject* pl_get(tPL* pl, int* priorityRight, int colors);

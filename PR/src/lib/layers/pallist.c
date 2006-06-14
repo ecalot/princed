@@ -96,7 +96,7 @@ void pl_add(tPL* pl, tObject* o, tResourceId resid, tPriority p) {
 		/* high priority insertion */
 		if (pl->priority_field.object) { /* if there was another object proprized, move it to the list */
 			tObject* obj_old_priority=pl->priority_field.object;
-			if (resourceListCompareId(resid,pl->priority_field.idres)==0) return 0; /* same object, take no action */
+			if (resourceListCompareId(resid,pl->priority_field.idres)==0) return; /* same object, take no action */
 			/* drop the object from the priority field and reinsert it with low priority */
 			pl->priority_field.object=NULL;
 			pl_add(pl,obj_old_priority,pl->priority_field.idres,lowPriority);

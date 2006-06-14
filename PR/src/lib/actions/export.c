@@ -72,8 +72,8 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	tObject            currentPalette=getObject(NULL,&ok); /*TODO: move to pallist */
 	unsigned short int numberOfItems;
 	tResourceId        bufferedPalette={0,"",0};
-/*	tPaletteList       paletteBuffer;
-	tResource          res;*/
+/*	tPaletteList       paletteBuffer;*/
+	tResource          res;
 	tPL                palettes=pl_create();
 	int                count=0;
 
@@ -117,7 +117,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 						if (!ok) { /* if SUCCESS remember the palette, otherwise keep using the default one */
 							e.pal=currentPalette=o;
 							e.id=res.id;
-							list_insert(&paletteBuffer,(void*)&e);
+							/*list_insert(&paletteBuffer,(void*)&e);*/
 						}
 					}	break;
 					case eResTypeImage16: /* save image */
@@ -133,7 +133,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
 								e.pal=currentPalette=getObject(&otherPalette,&ok);
 								e.id=res.id;
-								list_insert(&paletteBuffer,(void*)&e);
+								/*list_insert(&paletteBuffer,(void*)&e);*/
 							} /* else, that's bad, I'll have to use the previous palette, even if it is the default */
 						} /* else, good, the palette is buffered */
 						res.palette=currentPalette;
@@ -168,7 +168,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	/* Free allocated resources, dynamic strings and the index */
 	resourceListDrop(r);
 	mReadCloseDatFile();
-	list_drop(&paletteBuffer);
+	/*list_drop(&paletteBuffer);*/
 
 	/* Close unknownXML */
 	return ok?count:PR_RESULT_ERR_EXTRACTION;
