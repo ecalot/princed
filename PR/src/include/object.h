@@ -46,4 +46,6 @@ int paletteGetBits(tObject pal);
 int paletteGetColors(tObject pal);
 tColor* paletteGetColorArray(tObject pal);
 
+int getColorsByType(tResourceType type);
+
 #endif

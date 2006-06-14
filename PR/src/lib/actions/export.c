@@ -108,35 +108,46 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				res.datAuthor=vDatAuthor;
 
 				/* handle palette linking */
-				switch (res.type) { /* TODO: use if and elsif */
+				switch (res.type) {
 					case eResTypePop2Palette4bits: 
 					case eResTypePop2PaletteNColors: 
 					case eResTypePop1Palette4bits: { /* save and remember palette file */
-						tPaletteListItem e; /* TODO: decide if the palette list has to be erased from the code */
+						/*tPaletteListItem e; * deprecated */
 						o=getObject(&res,&ok);
 						if (!ok) { /* if SUCCESS remember the palette, otherwise keep using the default one */
-							e.pal=currentPalette=o;
+
+							pl_add(&palettes,&o,res.id,lowPriority);
+							/*e.pal=currentPalette=o;
 							e.id=res.id;
-							/*list_insert(&paletteBuffer,(void*)&e);*/
+							list_insert(&paletteBuffer,(void*)&e);*/
 						}
 					}	break;
 					case eResTypeImage16: /* save image */
-					case eResTypeImage256: /* save image */
+					case eResTypeImage256: { /* save image */
 						/* Palette handling */
-						if (resourceListCompareId(res.paletteId,bufferedPalette) /*TODO: add &&!paletteCheckCompatibility(currentPalette,image) */) { /* The palette isn't in the buffer */
-							tResource otherPalette;
-							otherPalette.id=res.paletteId;
+/*						if (resourceListCompareId(res.paletteId,bufferedPalette) * add &&!paletteCheckCompatibility(currentPalette,image) *) { * The palette isn't in the buffer */
+						tResource otherPalette;
+						int priorityRight;
+						otherPalette.id=res.paletteId; /* TODO: use the try system */
 							/* Read the palette and load it into memory */
-							if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
-								tPaletteListItem e;
-								resourceListAddInfo(r,&otherPalette);
+						if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
+							o=getObject(&otherPalette,&ok);
+							pl_add(&palettes,&o,res.paletteId,highPriority);
+
+								/*tPaletteListItem e;
+								resourceListAddInfo(r,&otherPalette);*/
 								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
-								e.pal=currentPalette=getObject(&otherPalette,&ok);
-								e.id=res.id;
+								/*e.pal=currentPalette=getObject(&otherPalette,&ok);
+								e.id=res.id;*/
 								/*list_insert(&paletteBuffer,(void*)&e);*/
-							} /* else, that's bad, I'll have to use the previous palette, even if it is the default */
-						} /* else, good, the palette is buffered */
-						res.palette=currentPalette;
+						} /* else, that's bad, I'll have to use the previous palette, even if it is the default */
+						 /* else, good, the palette is buffered */
+						/*res.palette=currentPalette;*/
+						res.palette=pl_get(&palettes,&priorityRight,getColorsByType(res.type));
+						if (!priorityRight) {
+							printf("Warning: the selected palette can't be applied to the image\n");
+						}
+					}
 					default:
 						o=getObject(&res,&ok);
 						break;

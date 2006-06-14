@@ -82,10 +82,10 @@ tObject getObject(tResource* r, int* error) {
 		o.obj=objImage2Create(r->content,error);
 		break;
 	case eResTypeImage16: /* save image */
-		o.obj=objImage16Create(r->content,r->palette,error);
+		o.obj=objImage16Create(r->content,*r->palette,error);
 		break;
 	case eResTypeImage256: /* save image */
-		o.obj=objImage256Create(r->content,r->palette,error);
+		o.obj=objImage256Create(r->content,*r->palette,error);
 		break;
 	default:
 printf("Exception: Unhooked type %d\n",o.type);
@@ -226,7 +226,7 @@ tObject readObject(const char* file,tResource* res,int *result) {
 			/*o.obj=objLevelRead(file,res.content,result); TODO */
 			break;
 		case eResTypeImage16:
-			o.obj=objImage16Read(file,res->palette,result);
+			o.obj=objImage16Read(file,*res->palette,result);
 			break;
 		case eResTypeWave:
 			o.obj=objWaveRead(file,result);
