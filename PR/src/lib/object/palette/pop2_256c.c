@@ -57,7 +57,7 @@ void* objPop2PaletteNColorsCreate(tBinary cont, int *error) {
 	
 	*error=PR_RESULT_SUCCESS;
 
-	if (!isA64kPalette(cont)) {
+	if (!isA64kPalette(cont)) { /* TODO: use autodetect function to verify */
 		*error=-14; /* TODO FIX or assign error code */
 		return NULL;
 	}
@@ -65,12 +65,13 @@ void* objPop2PaletteNColorsCreate(tBinary cont, int *error) {
 	r=(tGenericPalette*)malloc(sizeof(tGenericPalette));
 	r->colorArray=(tColor*)malloc(sizeof(tColor)*((cont.size+2)/3));
 	for (i=0,j=0;i<cont.size;i+=3,j++) {
-		r->colorArray[j].r=to8bits_B(cont.data[i+0]);
+		r->colorArray[j].r=to8bits_B(cont.data[i+0]); /* TODO: use increase per line i++ */
 		r->colorArray[j].g=to8bits_B(cont.data[i+1]);
 		r->colorArray[j].b=to8bits_B(cont.data[i+2]);
 	}
-	if (j!=256 && j!=320) return NULL; /*TODO: add free */
+	/*if (j!=256 && j!=320) return NULL; *TODO: add free */
 	r->size=j;
+printf("created a palette with %d colors. cs=%d\n",j,cont.size);
 	
 	return (void*)r;
 }

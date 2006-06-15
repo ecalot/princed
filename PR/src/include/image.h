@@ -56,6 +56,7 @@ typedef struct {
 	int widthInBytes;
 	int height;
 	int bits;
+	int colorCount;
 	unsigned char* pix;
 	tObject pal;
 	unsigned char type; /* XY where X=B if 4 bits or X=0 if 1 bit; Y=algorithm */
@@ -71,9 +72,9 @@ int objImage256Set(void* o,tResource* res);
 int objImage256Write(void* img,const char* file,int optionflag,const char* backupExtension);
 int objImage2Set(void* o,tResource* res);
 int objImage2Write(void* img,const char* file,int optionflag,const char* backupExtension);
-void* objImage16Create(tBinary c, tObject palette, int *error);
+void* objImage16Create(tBinary c, int *error);
 void* objImage16Read(const char* file,tObject palette, int *result);
-void* objImage256Create(tBinary c, tObject palette, int *error);
+void* objImage256Create(tBinary c, int *error);
 void* objImage256Read(const char* file,tObject palette, int *result);
 void* objImage2Create(tBinary c, int *error);
 void* objImage2Read(const char* file,tObject palette, int *result);
@@ -83,5 +84,8 @@ void* objImage2Read(const char* file,tObject palette, int *result);
 
 int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes);
 int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes, int w, int h);
+
+int objImageGetColorCount(void* img);
+void applyPalette(tObject image, tObject palette);
 
 #endif

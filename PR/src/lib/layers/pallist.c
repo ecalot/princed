@@ -49,7 +49,7 @@ tPaletteList paletteListCreate() {
 #include <stdlib.h>
 #include "object.h"
 
-#ifdef DEBUG_TEST_PALLST
+#ifndef DEBUG_TEST_PALLST
 void showobj(tObject o) {
 	printf("object type=%d colors=%d\n",o.type,paletteGetColors(o));
 }
@@ -75,7 +75,7 @@ pl_dellist_add(tPL* pl, tResourceId idres, tObject* obj) {
 tPL  pl_create() {
 	tPL r;
 
-	r.priority_field.object=NULL;
+	r.priority_field.enabled=0;
 	r.list_first=NULL;
 	r.list_deleted_first=NULL;
 
@@ -83,7 +83,7 @@ tPL  pl_create() {
 }
 
 int  pl_hasPriority(tPL* pl, tResourceId resid) {
-	if (!pl->priority_field.object) return 0; /* false */
+	if (!pl->priority_field.enabled) return 0; /* false */
 	return resourceListCompareId(resid,pl->priority_field.idres)==0;
 }
 
@@ -91,43 +91,53 @@ int  pl_tryAdd(tPL* pl, tResourceId resid, tPriority p) {
 	return 0; /* always false, optimization disabled */
 }
 
-void pl_add(tPL* pl, tObject* o, tResourceId resid, tPriority p) {
+void pl_add(tPL* pl, tObject o, tResourceId resid, tPriority p) {
 	if (p==highPriority) {
+printf("adding with high priority:\n");
+showobj(o);
 		/* high priority insertion */
-		if (pl->priority_field.object) { /* if there was another object proprized, move it to the list */
-			tObject* obj_old_priority=pl->priority_field.object;
+		if (pl->priority_field.enabled) { /* if there was another object proprized, move it to the list */
+			tObject obj_old_priority=pl->priority_field.object;
+			pl->priority_field.enabled=0;
 			if (resourceListCompareId(resid,pl->priority_field.idres)==0) return; /* same object, take no action */
 			/* drop the object from the priority field and reinsert it with low priority */
-			pl->priority_field.object=NULL;
 			pl_add(pl,obj_old_priority,pl->priority_field.idres,lowPriority);
 		}
 		/* now, we know there is no object in the priority field, so we insert it */
 		pl->priority_field.object=o;
 		pl->priority_field.idres=resid;
+		pl->priority_field.enabled=1;
 	} else {
 		/* low priority insertion */
 		tPL_Node* insertNode=malloc(sizeof(tPL_Node));
-		int colors=paletteGetColors(*o);
+		int colors=paletteGetColors(o);
+printf("adding with low priority:\n");
+showobj(o);
 		
-		while (pl->list_first && colors>=paletteGetColors(*(pl->list_first->object))) {
-			/*printf("deleting: ");
-			showobj(*pl->list_first->object);*/
+		while (pl->list_first && colors>=paletteGetColors(pl->list_first->object)) {
+			printf("deleting: ");
+			showobj(pl->list_first->object);
 			pl->list_first=pl->list_first->next; /* Delete */
 		}
 		insertNode->next=pl->list_first;
 		insertNode->object=o;
 		insertNode->resid=resid;
 		pl->list_first=insertNode;
+printf("inserting ");
+showobj(pl->list_first->object);
 	}
 	return;
 }
 
-tObject* pl_get(tPL* pl, int* priorityRight, int colors) {
+tObject pl_get(tPL* pl, int* priorityRight, int colors) {
 	tPL_Node* node;
-				
+	int junk;
+printf("getting PL\n");
+	
 	*priorityRight=1;
-	if (pl->priority_field.object) {
-		if (colors<=paletteGetColors(*pl->priority_field.object)) {
+	if (pl->priority_field.enabled) {
+		if (colors<=paletteGetColors(pl->priority_field.object)) {
+showobj(pl->priority_field.object);
 			return pl->priority_field.object;
 		} else {
 			*priorityRight=0;
@@ -135,11 +145,13 @@ tObject* pl_get(tPL* pl, int* priorityRight, int colors) {
 	}
 
 	node=pl->list_first;
+printf("first=%p with ",(void*)pl->list_first);
+showobj(pl->list_first->object);
 	
-	while (node && colors>paletteGetColors(*node->object))
-		node=node->next;
+	while (node && colors>paletteGetColors(node->object))
+	{		node=node->next; printf("next %p\n",node); }
 	
-	return node?node->object:NULL;
+	return node?node->object:getObject(NULL,&junk);
 }
 
 #ifdef DEBUG_TEST_PALLST

@@ -293,7 +293,7 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 
 extern FILE* outputStream;
 
-void* objImage256Create(tBinary cont, tObject palette, int *error) { /* use get like main.c */
+void* objImage256Create(tBinary cont, int *error) { /* use get like main.c */
 
 	/*
 	 * This function will expand the data into an image structure,
@@ -304,7 +304,7 @@ void* objImage256Create(tBinary cont, tObject palette, int *error) { /* use get 
 	 */
 
 	tImage* image;
-	int bits;
+	/*int bits;*/
 	image=(tImage*)malloc(sizeof(tImage));
 
 	/* Expand graphic and check results */
@@ -316,9 +316,18 @@ void* objImage256Create(tBinary cont, tObject palette, int *error) { /* use get 
 		return NULL;
 	}
 
+	{ int i;
+		int max=0;
+		for (i=0;i<image->height*image->widthInBytes;i++) {
+			if (image->pix[i]>max) max=image->pix[i];
+		}
+		printf("max pixel in this image is %d\n",max);
+		image->colorCount=max;
+	}
+	/*
 	image->pal=palette;
 	bits=paletteGetBits(image->pal);
-	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));
+	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));*/
 	image->bits=getCarry(image->type);
 	
 	return (void*)image;
@@ -424,3 +433,13 @@ int objImage256Set(void* o,tResource* res) {
 	return PR_RESULT_SUCCESS;
 }
 
+/* common function TODO: move */
+int objImageGetColorCount(void* img) {
+	tImage* i=img;
+	return i->colorCount;
+}
+
+void applyPalette(tObject image, tObject palette) {
+	tImage* i=image.obj;
+	i->pal=palette;
+}

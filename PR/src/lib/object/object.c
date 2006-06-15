@@ -39,7 +39,7 @@ main.c: Princed Resources : Main item class implementation
 #include "palette.h"
 #include "sound.h"
 
-/* Object polimorphism support layer */
+/* Object polimorphism hook layer */
 
 tObject getObject(tResource* r, int* error) {
 	tObject o;
@@ -82,10 +82,10 @@ tObject getObject(tResource* r, int* error) {
 		o.obj=objImage2Create(r->content,error);
 		break;
 	case eResTypeImage16: /* save image */
-		o.obj=objImage16Create(r->content,*r->palette,error);
+		o.obj=objImage16Create(r->content,error);
 		break;
 	case eResTypeImage256: /* save image */
-		o.obj=objImage256Create(r->content,*r->palette,error);
+		o.obj=objImage256Create(r->content,error);
 		break;
 	default:
 printf("Exception: Unhooked type %d\n",o.type);
@@ -111,8 +111,8 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 	case eResTypePop1Palette4bits: /* save and remember palette file */
 		error=objPalette_pop1_4bitsWrite(o.obj,file,optionflag,backupExtension);
 		break;
-	case eResTypePop2Palette4bits: /* save and remember palette file */
-		error=objPalette_pop2_4bitsWrite(o.obj,file,optionflag,backupExtension);
+	case eResTypePop2PaletteNColors: /* save and remember palette file */
+		error=objPop2PaletteNColorsWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypePcspeaker: /* save pcs file */
 		error=objPcspeakerWrite(o.obj,file,optionflag,backupExtension);
@@ -156,8 +156,8 @@ int paletteGetBits(tObject pal) {
 	}
 }
 			
-int paletteGetColors(tObject pal) {
-	switch (pal.type) {
+int paletteGetColors(tObject object) { /* TODO: rename to objectGetColors */
+	switch (object.type) {
 	case eResTypePop2PaletteNColors:
 		return PAL_COLORS_eResTypePop2PaletteNColors; /*256;*/
 	case eResTypePop1Palette4bits: 
@@ -166,12 +166,16 @@ int paletteGetColors(tObject pal) {
 	case eResTypePop1PaletteMono: 
 		return  PAL_COLORS_eResTypePop1PaletteMono; /*2;*/
 	case eResTypeNone: 
-		return 256; /*256; TODO: use the pal none object */
+		return 256; /*256; TODO: use the object none object */
+	case eResTypeImage16:
+	case eResTypeImage2:
+	case eResTypeImage256:
+		return objImageGetColorCount(object.obj);
 	default:
 		return 0;
 	}
 }
-
+/*
 int getColorsByType(tResourceType t) {
 	switch (t) {
 	case eResTypeImage16:
@@ -184,7 +188,7 @@ int getColorsByType(tResourceType t) {
 		return 0;
 	}
 }
-
+*/
 
 tColor* paletteGetColorArray(tObject pal) {
 	switch (pal.type) {

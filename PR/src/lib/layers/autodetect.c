@@ -77,9 +77,9 @@ int verifyPaletteHeaderPop1(tBinary c) {
 int verifyPaletteHeaderPop2(tBinary c) {
 	return (
 		(c.size>=(3*16)) &&
-		(c.data[0]==0x00) &&
+/*		(c.data[0]==0x00) &&
 		(c.data[1]==0x00) &&
-		(c.data[2]==0x00) &&
+		(c.data[2]==0x00) &&*/
 		(c.size % 3 == 0 ) &&
 		isA64kPalette(c)
 	);
@@ -89,7 +89,7 @@ int verifyPaletteHeaderPop2_256(tBinary c) {
 /*	tBinary c2;
 	c2.size=c.size-1;
 	c2.data=c.data+1;*/
-	return (
+	return 0&&(
 		((c.size==(256*3+1)||c.size==(320*3))&&isA64kPalette(c)) /* TODO: the +1 is for debug purposes, it must be eliminated */
 	);
 }
@@ -126,8 +126,8 @@ tResourceType verifyHeader(tBinary c) { /* TODO: add the pop version as another 
 	if (verifyImage16Header  (c)) return eResTypeImage16;
 	if (verifyImage256Header (c)) return eResTypeImage256;
 	if (verifyPaletteHeaderPop1  (c)) return eResTypePop1Palette4bits;
-	if (verifyPaletteHeaderPop2_256  (c)) return eResTypePop2PaletteNColors;
-	if (verifyPaletteHeaderPop2  (c)) return eResTypePop2Palette4bits;
+	/*if (verifyPaletteHeaderPop2  (c)) return eResTypePop2Palette4bits;*/
+	if (verifyPaletteHeaderPop2  (c)) return eResTypePop2PaletteNColors;
 	if (verifyWaveHeader     (c)) return eResTypeWave;
 	if (verifySpeakerHeader  (c)) return eResTypePcspeaker;
 	return eResTypeBinary;

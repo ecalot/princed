@@ -160,6 +160,7 @@ void* objImage2Read(const char* file,tObject palette, int *result) {
 		free(image);
 		return NULL;
 	}
+	image->colorCount=2;
 				
 	return (void*)image;
 }

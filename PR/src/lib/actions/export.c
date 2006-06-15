@@ -63,6 +63,7 @@ extern FILE* outputStream;
 	Extracts a DAT file
 	For parameter documentation, see pr.c
 */
+void showobj(tObject o); /* TODO: only for debug purposes, delete this line */
 
 int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension,const char* format) {
 	char               file[MAX_FILENAME_SIZE];
@@ -83,7 +84,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	/* initialize palette buffer */
 	/*paletteBuffer=paletteListCreate();*/
 	/* initialize the default palette */
-	pl_add(&palettes,&currentPalette,bufferedPalette,lowPriority); /* The null object will be used until a palette is set */
+	pl_add(&palettes,currentPalette,bufferedPalette,lowPriority); /* The null object will be used until a palette is set */
 	ok=1;
 
 	/* main loop */
@@ -114,9 +115,10 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 					case eResTypePop1Palette4bits: { /* save and remember palette file */
 						/*tPaletteListItem e; * deprecated */
 						o=getObject(&res,&ok);
+printf("new palette object: o=%p type=%d\n",o.obj,o.type);
 						if (!ok) { /* if SUCCESS remember the palette, otherwise keep using the default one */
 
-							pl_add(&palettes,&o,res.id,lowPriority);
+							pl_add(&palettes,o,res.id,lowPriority);
 							/*e.pal=currentPalette=o;
 							e.id=res.id;
 							list_insert(&paletteBuffer,(void*)&e);*/
@@ -128,11 +130,14 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 /*						if (resourceListCompareId(res.paletteId,bufferedPalette) * add &&!paletteCheckCompatibility(currentPalette,image) *) { * The palette isn't in the buffer */
 						tResource otherPalette;
 						int priorityRight;
+						tObject pal;
 						otherPalette.id=res.paletteId; /* TODO: use the try system */
 							/* Read the palette and load it into memory */
 						if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
 							o=getObject(&otherPalette,&ok);
-							pl_add(&palettes,&o,res.paletteId,highPriority);
+printf("adding ");
+showobj(o);
+							pl_add(&palettes,o,res.paletteId,highPriority);
 
 								/*tPaletteListItem e;
 								resourceListAddInfo(r,&otherPalette);*/
@@ -140,13 +145,22 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 								/*e.pal=currentPalette=getObject(&otherPalette,&ok);
 								e.id=res.id;*/
 								/*list_insert(&paletteBuffer,(void*)&e);*/
-						} /* else, that's bad, I'll have to use the previous palette, even if it is the default */
+						} else { /*, that's bad, I'll have to use the previous palette, even if it is the default */
+							printf("Warning: the selected palette doesn't exist in the file, the extracted image could result in a wrong palette\n");
+						}
 						 /* else, good, the palette is buffered */
 						/*res.palette=currentPalette;*/
-						res.palette=pl_get(&palettes,&priorityRight,getColorsByType(res.type));
+						o=getObject(&res,&ok);
+printf("getting the palette for the %d colours object ",paletteGetColors(o));	
+showobj(o);
+						pal=pl_get(&palettes,&priorityRight,paletteGetColors(o));
+printf("palette ");
+showobj(pal);
+						applyPalette(o,pal);
 						if (!priorityRight) {
 							printf("Warning: the selected palette can't be applied to the image\n");
 						}
+						break;
 					}
 					default:
 						o=getObject(&res,&ok);
@@ -169,6 +183,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				} TODO: add warning counter */
 				ok=1; /* efit the for and add !fatal(ok)*/
 				if (ok) count++;
+				printf("done with %s\n",file);
 			} else {
 				/* If the DAT file is unknown, add it in the XML */
 				getFileName(file,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,format);

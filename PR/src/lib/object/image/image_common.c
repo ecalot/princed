@@ -351,7 +351,7 @@ tColor* objPalette_16() {
 	return c;
 }
 
-void* objImage16Create(tBinary cont, tObject palette, int *error) { /* use get like main.c */
+void* objImage16Create(tBinary cont, int *error) { /* use get like main.c */
 
 	/*
 	 * This function will expand the data into an image structure,
@@ -362,7 +362,7 @@ void* objImage16Create(tBinary cont, tObject palette, int *error) { /* use get l
 	 */
 
 	tImage* image;
-	int bits;
+	/*int bits;*/
 	image=(tImage*)malloc(sizeof(tImage));
 
 	/* Expand graphic and check results */
@@ -373,11 +373,13 @@ void* objImage16Create(tBinary cont, tObject palette, int *error) { /* use get l
 		free(image);
 		return NULL;
 	}
-
+/*
 	image->pal=palette;
 	bits=paletteGetBits(image->pal);
 	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));
-	image->bits=getCarry(image->type);
+	image->bits=getCarry(image->type);*/
+	
+	image->colorCount=2;
 	
 	return (void*)image;
 }

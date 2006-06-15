@@ -52,14 +52,15 @@ tPaletteList paletteListCreate();
 typedef enum {highPriority, lowPriority}tPriority;
 typedef struct pln{
 	tResourceId resid;			 
-	tObject*    object;
+	tObject     object;
 	struct pln* next;
 }	tPL_Node;
 
 typedef struct {
 	struct {
+		int         enabled;
 		tResourceId idres;			 
-		tObject*    object;
+		tObject     object;
 	} priority_field;
 	tPL_Node*   list_first;
 	tPL_Node*   list_deleted_first;
@@ -67,9 +68,9 @@ typedef struct {
 
 void pl_free  (tPL* pl);
 int  pl_tryAdd(tPL* pl, tResourceId resid, tPriority p);
-void pl_add   (tPL* pl, tObject* o, tResourceId resid, tPriority p);
+void pl_add   (tPL* pl, tObject o, tResourceId resid, tPriority p);
 int  pl_hasPriority(tPL* pl, tResourceId resid);
 tPL  pl_create();
-tObject* pl_get(tPL* pl, int* priorityRight, int colors);
+tObject pl_get(tPL* pl, int* priorityRight, int colors);
 
 #endif
