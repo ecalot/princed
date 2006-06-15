@@ -80,6 +80,12 @@ tColor* objPalette_pop2_ncolorsGetColors(void* o) {
 	return pal->colorArray;
 }
 
+
+int getColorsByPop2PaletteObject(void* o) {
+	tGenericPalette* pal=o;
+	return pal->size;
+}
+
 int objPop2PaletteNColorsWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
 	tGenericPalette* p=o;
 	return writePal(file,p->size,p->colorArray,optionflag,backupExtension);
@@ -118,4 +124,3 @@ int objPop2PaletteNColorsSet(void* o,tResource* res) {
 	mWriteFileInDatFile(res);*/
 	return PR_RESULT_SUCCESS;
 }
-

@@ -172,6 +172,20 @@ int paletteGetColors(tObject pal) {
 	}
 }
 
+int getColorsByType(tResourceType t) {
+	switch (t) {
+	case eResTypeImage16:
+		return 16;
+	case eResTypeImage2:
+		return 2;
+	case eResTypeImage256:
+		return 256;
+	default:
+		return 0;
+	}
+}
+
+
 tColor* paletteGetColorArray(tObject pal) {
 	switch (pal.type) {
 	case eResTypePop1Palette4bits: /* save and remember palette file */
