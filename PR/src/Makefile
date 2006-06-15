@@ -115,7 +115,7 @@ $(XMLFILE): xml/resources.xml
 	$(MAKEDIR) bin
 	$(COPY) xml/resources.xml $(XMLFILE)
 
-.import.o: lib/actions/import.c include/common.h include/import.h include/autodetect.h include/dat.h include/disk.h include/idlist.h include/memory.h include/unknown.h include/object.h include/bmp.h include/mid.h include/wav.h include/pal.h include/plv.h
+.import.o: lib/actions/import.c include/common.h include/import.h include/autodetect.h include/dat.h include/disk.h include/idlist.h include/memory.h include/unknown.h include/object.h
 	$(INFO) Compiling import module...
 	$(CC) $(OPTIONS) -c lib/actions/import.c -o $@
 
@@ -123,7 +123,7 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling classification module...
 	$(CC) $(OPTIONS) -c lib/actions/classify.c -o $@
 
-.export.o: lib/actions/export.c include/common.h include/export.h include/autodetect.h include/dat.h include/disk.h include/idlist.h include/memory.h include/object.h include/palette.h include/pallist.h include/unknown.h include/bmp.h include/mid.h include/pal.h include/plv.h include/wav.h
+.export.o: lib/actions/export.c include/common.h include/export.h include/autodetect.h include/dat.h include/disk.h include/idlist.h include/memory.h include/object.h include/palette.h include/pallist.h include/unknown.h
 	$(INFO) Compiling export module...
 	$(CC) $(OPTIONS) -c lib/actions/export.c -o $@
 
@@ -163,7 +163,7 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling sound list module...
 	$(CC) $(OPTIONS) -c lib/object/sound/sounds.c -o $@
 
-.pallist.o: lib/layers/pallist.c include/pallist.h include/reslist.h
+.pallist.o: lib/layers/pallist.c include/pallist.h include/reslist.h include/object.h
 	$(INFO) Compiling palette list module...
 	$(CC) $(OPTIONS) -c lib/layers/pallist.c -o $@
 
@@ -171,15 +171,15 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling main item class...
 	$(CC) $(OPTIONS) -c lib/object/object.c -o $@
 
-.image2.o: lib/object/image/image2.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bmp.h
+.image2.o: lib/object/image/image2.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bitmap.h
 	$(INFO) Compiling 2 colors image type class...
 	$(CC) $(OPTIONS) -c lib/object/image/image2.c -o $@
 
-.image16.o: lib/object/image/image16.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bmp.h
+.image16.o: lib/object/image/image16.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bitmap.h
 	$(INFO) Compiling 16 colors image type class...
 	$(CC) $(OPTIONS) -c lib/object/image/image16.c -o $@
 
-.image256.o: lib/object/image/image256.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bmp.h
+.image256.o: lib/object/image/image256.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bitmap.h
 	$(INFO) Compiling 256 colors image type class...
 	$(CC) $(OPTIONS) -c lib/object/image/image256.c -o $@
 
