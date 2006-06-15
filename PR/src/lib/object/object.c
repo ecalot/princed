@@ -52,7 +52,7 @@ tObject getObject(tResource* r, int* error) {
 
 	o.type=r->type;
 	switch (o.type) {
-	case eResTypeLevel:
+	case eResTypePop1Level:
 		o.obj=objLevelCreate(r->content,r->number,r->datfile,r->name,r->desc,r->datAuthor,error); 
 		break;
 	case eResTypeBinary: /* Binary files */
@@ -62,9 +62,6 @@ tObject getObject(tResource* r, int* error) {
 		break;
 	case eResTypePop1Palette4bits: /* save and remember palette file */
 		o.obj=objPalette_pop1_4bitsCreate(r->content,error);
-		break;
-	case eResTypePop2Palette4bits: /* save and remember palette file */
-		o.obj=objPalette_pop2_4bitsCreate(r->content,error);
 		break;
 	case eResTypePop2PaletteNColors: /* save and remember palette file */
 		o.obj=objPop2PaletteNColorsCreate(r->content,error);
@@ -100,7 +97,7 @@ printf("Exception: Unhooked type %d\n",o.type);
 int writeObject(tObject o, const char* file, int optionflag, const char* backupExtension) {
 	int error;
 	switch (o.type) {
-	case eResTypeLevel:
+	case eResTypePop1Level:
 		error=objLevelWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeBinary: /* Binary files */
@@ -147,7 +144,6 @@ int paletteGetBits(tObject pal) {
 	case eResTypePop2PaletteNColors:
 		return 8;
 	case eResTypePop1Palette4bits: 
-	case eResTypePop2Palette4bits: 
 		return 4;
 	case eResTypePop1PaletteMono: 
 		return 1;
@@ -161,7 +157,6 @@ int paletteGetColors(tObject object) { /* TODO: rename to objectGetColors */
 	case eResTypePop2PaletteNColors:
 		return PAL_COLORS_eResTypePop2PaletteNColors; /*256;*/
 	case eResTypePop1Palette4bits: 
-	case eResTypePop2Palette4bits: 
 		return PAL_COLORS_eResTypePop1Palette4bits; /*16;*/
 	case eResTypePop1PaletteMono: 
 		return  PAL_COLORS_eResTypePop1PaletteMono; /*2;*/
@@ -194,8 +189,6 @@ tColor* paletteGetColorArray(tObject pal) {
 	switch (pal.type) {
 	case eResTypePop1Palette4bits: /* save and remember palette file */
 		return objPalette_pop1_4bitsGetColors(pal.obj);
-	case eResTypePop2Palette4bits: /* save and remember palette file */
-		return objPalette_pop2_4bitsGetColors(pal.obj);
 	case eResTypePop2PaletteNColors:
 		return objPalette_pop2_ncolorsGetColors(pal.obj);
 	default:
@@ -209,7 +202,7 @@ tColor* paletteGetColorArray(tObject pal) {
 
 void setObject(tObject o,int *result,tResource* res) {
 	switch (o.type) {
-		case eResTypeLevel:
+		case eResTypePop1Level:
 			/*result=objLevelSet(o.obj,res); TODO */
 			break;
 		case eResTypeImage16:
@@ -240,7 +233,7 @@ tObject readObject(const char* file,tResource* res,int *result) {
 	/* return true if ok, false if error */
 	tObject o;
 	switch (res->type) {
-		case eResTypeLevel:
+		case eResTypePop1Level:
 			/*o.obj=objLevelRead(file,res.content,result); TODO */
 			break;
 		case eResTypeImage16:

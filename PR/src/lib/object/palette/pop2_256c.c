@@ -71,7 +71,7 @@ void* objPop2PaletteNColorsCreate(tBinary cont, int *error) {
 	}
 	/*if (j!=256 && j!=320) return NULL; *TODO: add free */
 	r->size=j;
-printf("created a palette with %d colors. cs=%d\n",j,cont.size);
+printf("created a palette with %d colors. cs=%ld\n",j,cont.size);
 	
 	return (void*)r;
 }

@@ -42,8 +42,12 @@ autodetect.c: Princed Resources : Automatic detection resource types
 |                       Item Type Detector                      |
 \***************************************************************/
 
-int verifyLevelHeader(tBinary c) {
-	return (c.size==12025) || (((c.size==2306)||(c.size==2305))&&!(c.data[1697]&0x0F)&&!(c.data[1699]&0x0F)&&!(c.data[1701]&0x0F));
+int verifyPop1LevelHeader(tBinary c) {
+	return (((c.size==2306)||(c.size==2305))&&!(c.data[1697]&0x0F)&&!(c.data[1699]&0x0F)&&!(c.data[1701]&0x0F));
+}
+
+int verifyPop2LevelHeader(tBinary c) {
+	return (c.size==12025);
 }
 
 int verifyImage16Header(tBinary c) {
@@ -121,15 +125,15 @@ int verifyMidiHeader(tBinary c) {
 }
 
 tResourceType verifyHeader(tBinary c) { /* TODO: add the pop version as another parameter to detect types */
-	if (verifyLevelHeader    (c)) return eResTypeLevel;
-	if (verifyMidiHeader     (c)) return eResTypeMidi;
-	if (verifyImage16Header  (c)) return eResTypeImage16;
-	if (verifyImage256Header (c)) return eResTypeImage256;
-	if (verifyPaletteHeaderPop1  (c)) return eResTypePop1Palette4bits;
-	/*if (verifyPaletteHeaderPop2  (c)) return eResTypePop2Palette4bits;*/
-	if (verifyPaletteHeaderPop2  (c)) return eResTypePop2PaletteNColors;
-	if (verifyWaveHeader     (c)) return eResTypeWave;
-	if (verifySpeakerHeader  (c)) return eResTypePcspeaker;
+	if (verifyPop1LevelHeader (c)) return eResTypePop1Level;
+	if (verifyPop2LevelHeader (c)) return eResTypePop2Level;
+	if (verifyMidiHeader      (c)) return eResTypeMidi;
+	if (verifyImage16Header   (c)) return eResTypeImage16;
+	if (verifyImage256Header  (c)) return eResTypeImage256;
+	if (verifyPaletteHeaderPop1 (c)) return eResTypePop1Palette4bits;
+	if (verifyPaletteHeaderPop2 (c)) return eResTypePop2PaletteNColors;
+	if (verifyWaveHeader      (c)) return eResTypeWave;
+	if (verifySpeakerHeader   (c)) return eResTypePcspeaker;
 	return eResTypeBinary;
 }
 

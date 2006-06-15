@@ -110,7 +110,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 
 				/* handle palette linking */
 				switch (res.type) {
-					case eResTypePop2Palette4bits: 
+					/*case eResTypePop2Palette4bits: */
 					case eResTypePop2PaletteNColors: 
 					case eResTypePop1Palette4bits: { /* save and remember palette file */
 						/*tPaletteListItem e; * deprecated */

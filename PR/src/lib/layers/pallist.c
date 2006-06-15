@@ -149,7 +149,7 @@ printf("first=%p with ",(void*)pl->list_first);
 showobj(pl->list_first->object);
 	
 	while (node && colors>paletteGetColors(node->object))
-	{		node=node->next; printf("next %p\n",node); }
+	{		node=node->next; printf("next %p\n",(void*)node); }
 	
 	return node?node->object:getObject(NULL,&junk);
 }
