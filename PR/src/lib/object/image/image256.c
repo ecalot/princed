@@ -129,6 +129,7 @@ int mExpandGraphic256(const unsigned char* data,tImage *image, int dataSizeInByt
 	switch (((image->type>>4)&7)+1) {
 	case 8:
 		image->widthInBytes=(image->width);
+		imageSizeInBytes=image->widthInBytes*image->height;
 		break;
 	case 4: 
 		image->widthInBytes=(image->width+1)/2;
@@ -209,6 +210,7 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 
 	*output=malloc(40000);
 	lineO=*output;
+	for (aux=0;aux<*outputSize;aux++) (*output)[aux]=0; /* initialize the array (TODO: only for debug, in fixed images it won't be necessary) */
 	*outputSize=0;
 
 	osCheck=array2short(input)-6;
