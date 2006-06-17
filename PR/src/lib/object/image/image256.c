@@ -208,7 +208,7 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 	int            tempOutputSize;
 	int            osCheck;
 
-	*output=malloc(40000);
+	*output=malloc(*outputSize);
 	lineO=*output;
 	for (aux=0;aux<*outputSize;aux++) (*output)[aux]=0; /* initialize the array (TODO: only for debug, in fixed images it won't be necessary) */
 	*outputSize=0;
@@ -252,7 +252,7 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 		
 		lineI=tempOutput;
 
-		do {
+		while (lineSize==verify && tempOutputSize>0) {
 			aux=array2short(lineI);
 			lineI+=2;
 			if (aux>tempOutputSize) {
@@ -266,7 +266,7 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 			tempOutputSize-=aux;
 			tempOutputSize-=2;
 			lineI+=aux;
-		} while (lineSize==verify && tempOutputSize>0);
+		}
 /*
 		aux=array2short(lineI);
 		lineI+=2;
@@ -358,8 +358,8 @@ int objImage256Write(void* img,const char* file,int optionflag,const char* backu
 		colors=paletteGetColors(i->pal);
 		colorArray=paletteGetColorArray(i->pal);
 	} else {
-		bits=getCarry(i->type);
-		colors=1<<bits;
+		bits=8; /*getCarry(i->type);*/
+		colors=256; /*1<<bits;*/
 		colorArray=objPalette_256();
 	}
 	

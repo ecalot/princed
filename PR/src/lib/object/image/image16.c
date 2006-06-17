@@ -391,12 +391,13 @@ int objImage16Write(void* img,const char* file,int optionflag,const char* backup
 	tColor* colorArray;
 
 	if (i->pal.type!=eResTypeNone) {
-		bits=paletteGetBits(i->pal);
-		colors=paletteGetColors(i->pal);
+		bits=4; /*paletteGetBits(i->pal);*/
+		colors=16; /*paletteGetColors(i->pal);*/
 		colorArray=paletteGetColorArray(i->pal);
 	} else {
-		bits=getCarry(i->type);
-		colors=1<<bits;
+	/*	bits=getCarry(i->type);
+		colors=1<<bits;*/
+		colors=16;
 		colorArray=objPalette_16();
 	}
 	

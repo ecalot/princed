@@ -72,7 +72,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 /*	tImage             image; * this is used to make a persistent palette */
 	tObject            currentPalette=getObject(NULL,&ok); /*TODO: move to pallist */
 	unsigned short int numberOfItems;
-	tResourceId        bufferedPalette={0,"",0};
+	tResourceId        nullPalette={0,"",0};
 /*	tPaletteList       paletteBuffer;*/
 	tResource          res;
 	tPL                palettes=pl_create();
@@ -84,7 +84,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	/* initialize palette buffer */
 	/*paletteBuffer=paletteListCreate();*/
 	/* initialize the default palette */
-	pl_add(&palettes,currentPalette,bufferedPalette,lowPriority); /* The null object will be used until a palette is set */
+	pl_add(&palettes,currentPalette,nullPalette,lowPriority); /* The null object will be used until a palette is set */
 	ok=1;
 
 	/* main loop */
@@ -127,12 +127,12 @@ printf("new palette object: o=%p type=%d\n",o.obj,o.type);
 					case eResTypeImage16: /* save image */
 					case eResTypeImage256: { /* save image */
 						/* Palette handling */
-/*						if (resourceListCompareId(res.paletteId,bufferedPalette) * add &&!paletteCheckCompatibility(currentPalette,image) *) { * The palette isn't in the buffer */
 						tResource otherPalette;
 						int priorityRight;
 						tObject pal;
 						otherPalette.id=res.paletteId; /* TODO: use the try system */
-							/* Read the palette and load it into memory */
+						/* Read the palette and load it into memory */
+						if (resourceListCompareId(res.paletteId,nullPalette) /* add &&!paletteCheckCompatibility(currentPalette,image) */) { /* The palette isn't in the buffer */
 						if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
 							o=getObject(&otherPalette,&ok);
 printf("adding ");
@@ -148,7 +148,7 @@ showobj(o);
 						} else { /*, that's bad, I'll have to use the previous palette, even if it is the default */
 							printf("Warning: the selected palette doesn't exist in the file, the extracted image could result in a wrong palette\n");
 						}
-						 /* else, good, the palette is buffered */
+						}
 						/*res.palette=currentPalette;*/
 						o=getObject(&res,&ok);
 printf("getting the palette for the %d colours object ",paletteGetColors(o));	

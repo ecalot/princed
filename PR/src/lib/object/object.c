@@ -161,7 +161,7 @@ int paletteGetColors(tObject object) { /* TODO: rename to objectGetColors */
 	case eResTypePop1PaletteMono: 
 		return  PAL_COLORS_eResTypePop1PaletteMono; /*2;*/
 	case eResTypeNone: 
-		return 256; /*256; TODO: use the object none object */
+		return 256; 
 	case eResTypeImage16:
 	case eResTypeImage2:
 	case eResTypeImage256:

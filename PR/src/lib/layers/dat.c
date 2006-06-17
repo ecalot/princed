@@ -401,12 +401,10 @@ int dat_readRes(tResource* res, tIndexCursor indexCursor) {
 	res->offset=          dat_readCursorGetOffset    (indexCursor);
 	res->content.size=    dat_readCursorGetSize      (indexCursor);
 	res->flags=           dat_readCursorGetFlags     (indexCursor);
+	res->content.isCopy=  1;
+	res->content.data=    readDatFile.data+res->offset+1; /* ignore the checksum */
 
-	/*res->size++; * add the checksum */
-
-	res->content.data=readDatFile.data+res->offset+1; /* ignore the checksum */
 	return checkSum(readDatFile.data+res->offset,res->content.size+1);
-/*printf("reading resource: %d:%4s at %d order=%d\n",res->id.value,res->id.index,res->offset,res->id.order);*/
 }
 
 void dat_releaseCursor(tIndexCursor* indexCursor) {
