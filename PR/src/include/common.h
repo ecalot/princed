@@ -86,21 +86,21 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 
 typedef enum {
 	eResTypeNone=-1,
-	eResTypeRaw=0,
-	eResTypeBinary=1,
+	eResTypeOtherRaw=0,
+	eResTypeOtherBinary=1,
 	eResTypeImage16=2,
 	eResTypeImage2=3,
 	eResTypeImage256=4,
-	eResTypePop1Level=5,
-	eResTypeMidi=6,
+	eResTypeLevelPop1=5,
+	eResTypeSoundMidi=6,
 	eResTypePcspeaker=7,
-	eResTypePop1Palette4bits=8,
-	eResTypePop1PaletteGuards=9,
-	eResTypePop1PaletteMono=10,
-	eResTypePop2PaletteNColors=11,
-	eResTypePop2Level=12,
-	eResTypeText=13,
-	eResTypeWave=14
+	eResTypePalettePop1_16=8,
+	eResTypePalettePop1_Guards=9,
+	eResTypePalettePop1_Mono=10,
+	eResTypePalettePop2_NColors=11,
+	eResTypeLevelPop2=12,
+	eResTypeOtherText=13,
+	eResTypeSoundWave=14
 } tResourceType;
 
 /***************************************************************\

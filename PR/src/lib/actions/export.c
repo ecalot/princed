@@ -111,8 +111,8 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				/* handle palette linking */
 				switch (res.type) {
 					/*case eResTypePop2Palette4bits: */
-					case eResTypePop2PaletteNColors: 
-					case eResTypePop1Palette4bits: { /* save and remember palette file */
+					case eResTypePalettePop2_NColors: 
+					case eResTypePalettePop1_16: { /* save and remember palette file */
 						/*tPaletteListItem e; * deprecated */
 						o=getObject(&res,&ok);
 printf("new palette object: o=%p type=%d\n",o.obj,o.type);

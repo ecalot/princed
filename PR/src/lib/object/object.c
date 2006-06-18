@@ -52,27 +52,27 @@ tObject getObject(tResource* r, int* error) {
 
 	o.type=r->type;
 	switch (o.type) {
-	case eResTypePop1Level:
+	case eResTypeLevelPop1:
 		o.obj=objLevelCreate(r->content,r->number,r->datfile,r->name,r->desc,r->datAuthor,error); 
 		break;
-	case eResTypeBinary: /* Binary files */
-	case eResTypeText: /* Text files */
-	case eResTypeRaw: /* Raw files */
+	case eResTypeOtherBinary: /* Binary files */
+	case eResTypeOtherText: /* Text files */
+	case eResTypeOtherRaw: /* Raw files */
 		o.obj=objBinaryCreate(r->content,error); 
 		break;
-	case eResTypePop1Palette4bits: /* save and remember palette file */
+	case eResTypePalettePop1_16: /* save and remember palette file */
 		o.obj=objPalette_pop1_4bitsCreate(r->content,error);
 		break;
-	case eResTypePop2PaletteNColors: /* save and remember palette file */
+	case eResTypePalettePop2_NColors: /* save and remember palette file */
 		o.obj=objPop2PaletteNColorsCreate(r->content,error);
 		break;
 	case eResTypePcspeaker: /* save pcs file */
 		o.obj=objPcspeakerCreate(r->content,error);
 		break;
-	case eResTypeMidi:	/* save midi file */
+	case eResTypeSoundMidi:	/* save midi file */
 		o.obj=objMidiCreate(r->content,error);
 		break;
-	case eResTypeWave: /* save wav file */
+	case eResTypeSoundWave: /* save wav file */
 		o.obj=objWaveCreate(r->content,error);
 		break;
 	case eResTypeImage2: /* save image */
@@ -97,27 +97,27 @@ printf("Exception: Unhooked type %d\n",o.type);
 int writeObject(tObject o, const char* file, int optionflag, const char* backupExtension) {
 	int error;
 	switch (o.type) {
-	case eResTypePop1Level:
+	case eResTypeLevelPop1:
 		error=objLevelWrite(o.obj,file,optionflag,backupExtension);
 		break;
-	case eResTypeBinary: /* Binary files */
-	case eResTypeText: /* Text files */
-	case eResTypeRaw: /* Raw/autodetect files */
+	case eResTypeOtherBinary: /* Binary files */
+	case eResTypeOtherText: /* Text files */
+	case eResTypeOtherRaw: /* Raw/autodetect files */
 		error=objBinaryWrite(o.obj,file,optionflag,backupExtension);
 		break;
-	case eResTypePop1Palette4bits: /* save and remember palette file */
+	case eResTypePalettePop1_16: /* save and remember palette file */
 		error=objPalette_pop1_4bitsWrite(o.obj,file,optionflag,backupExtension);
 		break;
-	case eResTypePop2PaletteNColors: /* save and remember palette file */
+	case eResTypePalettePop2_NColors: /* save and remember palette file */
 		error=objPop2PaletteNColorsWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypePcspeaker: /* save pcs file */
 		error=objPcspeakerWrite(o.obj,file,optionflag,backupExtension);
 		break;
-	case eResTypeMidi:	/* save midi file */
+	case eResTypeSoundMidi:	/* save midi file */
 		error=objMidiWrite(o.obj,file,optionflag,backupExtension);
 		break;
-	case eResTypeWave: /* save wav file */
+	case eResTypeSoundWave: /* save wav file */
 		error=objWaveWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeImage2: /* save image */
@@ -141,11 +141,11 @@ printf("Warning: Couldn't write unhooked type %d\n",o.type);
 
 int paletteGetBits(tObject pal) {
 	switch (pal.type) {
-	case eResTypePop2PaletteNColors:
+	case eResTypePalettePop2_NColors:
 		return 8;
-	case eResTypePop1Palette4bits: 
+	case eResTypePalettePop1_16: 
 		return 4;
-	case eResTypePop1PaletteMono: 
+	case eResTypePalettePop1_Mono: 
 		return 1;
 	default:
 		return 0;
@@ -154,12 +154,12 @@ int paletteGetBits(tObject pal) {
 			
 int paletteGetColors(tObject object) { /* TODO: rename to objectGetColors */
 	switch (object.type) {
-	case eResTypePop2PaletteNColors:
-		return PAL_COLORS_eResTypePop2PaletteNColors; /*256;*/
-	case eResTypePop1Palette4bits: 
-		return PAL_COLORS_eResTypePop1Palette4bits; /*16;*/
-	case eResTypePop1PaletteMono: 
-		return  PAL_COLORS_eResTypePop1PaletteMono; /*2;*/
+	case eResTypePalettePop2_NColors:
+		return PAL_COLORS_eResTypePalettePop2_NColors; /*256;*/
+	case eResTypePalettePop1_16: 
+		return PAL_COLORS_eResTypePalettePop1_16; /*16;*/
+	case eResTypePalettePop1_Mono: 
+		return  PAL_COLORS_eResTypePalettePop1_Mono; /*2;*/
 	case eResTypeNone: 
 		return 256; 
 	case eResTypeImage16:
@@ -187,9 +187,9 @@ int getColorsByType(tResourceType t) {
 
 tColor* paletteGetColorArray(tObject pal) {
 	switch (pal.type) {
-	case eResTypePop1Palette4bits: /* save and remember palette file */
+	case eResTypePalettePop1_16: /* save and remember palette file */
 		return objPalette_pop1_4bitsGetColors(pal.obj);
-	case eResTypePop2PaletteNColors:
+	case eResTypePalettePop2_NColors:
 		return objPalette_pop2_ncolorsGetColors(pal.obj);
 	default:
 		return NULL;
@@ -202,25 +202,25 @@ tColor* paletteGetColorArray(tObject pal) {
 
 void setObject(tObject o,int *result,tResource* res) {
 	switch (o.type) {
-		case eResTypePop1Level:
+		case eResTypeLevelPop1:
 			/*result=objLevelSet(o.obj,res); TODO */
 			break;
 		case eResTypeImage16:
 			*result=objImage16Set(o.obj,res);
 			break;
-		case eResTypeWave:
+		case eResTypeSoundWave:
 			*result=objWaveSet(o.obj,res);
 			break;
-		case eResTypeMidi:
+		case eResTypeSoundMidi:
 			*result=objMidiSet(o.obj,res);
 			break;
 		case eResTypePcspeaker:
 			*result=objPcspeakerSet(o.obj,res);
 			break;
-		case eResTypePop1Palette4bits:
+		case eResTypePalettePop1_16:
 			*result=objPop1Palette4bitsSet(o.obj,res);
 			break;
-		case eResTypeBinary:
+		case eResTypeOtherBinary:
 		default:
 			*result=objBinarySet(o.obj,res);
 			break;
@@ -233,25 +233,25 @@ tObject readObject(const char* file,tResource* res,int *result) {
 	/* return true if ok, false if error */
 	tObject o;
 	switch (res->type) {
-		case eResTypePop1Level:
+		case eResTypeLevelPop1:
 			/*o.obj=objLevelRead(file,res.content,result); TODO */
 			break;
 		case eResTypeImage16:
 			o.obj=objImage16Read(file,*res->palette,result);
 			break;
-		case eResTypeWave:
+		case eResTypeSoundWave:
 			o.obj=objWaveRead(file,result);
 			break;
-		case eResTypeMidi:
+		case eResTypeSoundMidi:
 			o.obj=objMidiRead(file,result);
 			break;
 		case eResTypePcspeaker:
 			o.obj=objPcspeakerRead(file,result);
 			break;
-		case eResTypePop1Palette4bits:
+		case eResTypePalettePop1_16:
 			o.obj=objPop1Palette4bitsRead(file,result);
 			break;
-		case eResTypeBinary:
+		case eResTypeOtherBinary:
 		default:
 			o.obj=objBinaryRead(file,result);
 			break;

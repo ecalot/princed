@@ -47,7 +47,7 @@ tasks.c: Princed Resources : File classify routines
 
 int prClassifyDat(const char* vFiledat) {
 	int                indexNumber;
-	tResourceType      type=eResTypeBinary;
+	tResourceType      type=eResTypeOtherBinary;
 	unsigned short int numberOfItems;
 	tPopVersion        popVersion;
 	tResource          res;
@@ -59,7 +59,7 @@ int prClassifyDat(const char* vFiledat) {
 	popVersion=mReadGetVersion();
 
 	/* main loop */
-	for (indexNumber=0;(indexNumber<numberOfItems)&&(type==eResTypeBinary);indexNumber++) {
+	for (indexNumber=0;(indexNumber<numberOfItems)&&(type==eResTypeOtherBinary);indexNumber++) {
 		int ok;
 		ok=mReadFileInDatFile(&res,indexNumber);
 		if (ok==PR_RESULT_INDEX_NOT_FOUND) READ_ERROR; /* Read error */

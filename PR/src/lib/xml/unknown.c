@@ -189,7 +189,7 @@ void getFileName(char* vFileext,const char* vDirExt,const tResource* r,const cha
 	int pos;
 
 	if (r->path==NULL) {
-		pos=((r->type<RES_FILE_TYPES_COUNT)&&(r->type>=0))?r->type:eResTypeBinary;
+		pos=((r->type<RES_FILE_TYPES_COUNT)&&(r->type>=0))?r->type:eResTypeOtherBinary;
 		unknownFile.typeCount[pos]++;
 
 		/* set filename */
