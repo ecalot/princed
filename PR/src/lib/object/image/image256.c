@@ -355,7 +355,7 @@ int objImage256Write(void* img,const char* file,int optionflag,const char* backu
 	
 	if (i->pal.type!=eResTypeNone) {
 		bits=paletteGetBits(i->pal);
-		colors=paletteGetColors(i->pal);
+		colors=i->colorCount; /*paletteGetColors(i->pal);*/
 		colorArray=paletteGetColorArray(i->pal);
 	} else {
 		bits=8; /*getCarry(i->type);*/
