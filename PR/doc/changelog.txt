@@ -180,15 +180,14 @@ Versions:
   - Restructured the repository and source to support an object layer
   - When extracting, generated unknown.xml's are now all merged into one
  * PR v1.3 (scheduled 2006-07-08)
+  - Added support for all POP2 palettes
+  - Created a priority list for the palettes
+  - Moved tResource* from reslist to types.h
+  - Prepared the skeleton abstraction layer for bitmap to support .png files
+  - Renamed "uncompress" to "decompress"
   x Add a fatal error check when importing from a different palette size and a
     warning when importing from an incorrect palette.
-  - Added support for all POP2 palettes
-  - Create a priority list for the palettes
-  - Moved tResource* from reslist to types.h
-  - Prepeare the skeletton abstraction layer for bitmap to support .png files
-  - Renamed "uncompress" to "decomporess"
   x Added full POP2 RLEV decompression algorithm
-  x Check for memory leak
   x Clean the source
   x Common factor in LGZ compression (a .h or compress.h) for win size, etc.
   x Common palette calculation
@@ -197,10 +196,11 @@ Versions:
   x Fix ./pr -ie it -f bug
   x Fix repeated resource name in CPALACE.DAT bug
   x Fork compress to code images as a new object in a separated file
-  x Rename all xbit names with xcolor
+  - Rename all xbit names with xcolor
   x Transform flags from the hex form to the [a-y]* form (a is 1, b is 2, c is 4...)
  * PR v1.4 (future plans)
   x Added full POP2 RLEV compression algorithm
+  x Check for memory leak
   x Code a palette adapting feature
   x Finish python interface
   x Fix buffer overflows (in entered filename sizes)

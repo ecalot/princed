@@ -35,16 +35,6 @@ pallist.c: Princed Resources : Palette list layer implementation
 #include "pallist.h"
 #include "reslist.h" /* resourceListCompareId */
 
-/* palette list layer (that uses the abstract list layer primitives) */
-#if 0
-int pallist_compare(const void* a,const void* b) {
-	return resourceListCompareId(((tPaletteListItem*)a)->id,((tPaletteListItem*)b)->id);
-}
-
-tPaletteList paletteListCreate() {
-	return list_create(sizeof(tPaletteListItem),pallist_compare,NULL);
-}
-#endif
 /* Priority list */
 #include <stdlib.h>
 #include "object.h"
@@ -53,23 +43,6 @@ tPaletteList paletteListCreate() {
 void showobj(tObject o) {
 	printf("object type=%d colors=%d\n",o.type,objectGetColors(o));
 }
-#endif
-
-#if 0
-pl_dellist_add(tPL* pl, tResourceId idres, tObject* obj) {
-	/* TODO: use an ordered list */
-	/*	result=resourceListCompareId(idres,);*/
-	tPL_Node* node=pl->list_deleted_first;
-
-	while (node) {
-		if (resourceListCompareId(node->resid,idres)==0)e
-	}
-
-
-
-
-}
-
 #endif
 
 tPL  pl_create() {
