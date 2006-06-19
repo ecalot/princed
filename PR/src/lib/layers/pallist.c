@@ -64,10 +64,10 @@ pl_dellist_add(tPL* pl, tResourceId idres, tObject* obj) {
 	while (node) {
 		if (resourceListCompareId(node->resid,idres)==0)e
 	}
-	
-	
 
-				
+
+
+
 }
 
 #endif
@@ -113,7 +113,7 @@ showobj(o);
 		int colors=paletteGetColors(o);
 printf("adding with low priority:\n");
 showobj(o);
-		
+
 		while (pl->list_first && colors>=paletteGetColors(pl->list_first->object)) {
 			printf("deleting: ");
 			showobj(pl->list_first->object);
@@ -133,7 +133,7 @@ tObject pl_get(tPL* pl, int* priorityRight, int colors) {
 	tPL_Node* node;
 	int junk;
 printf("getting PL\n");
-	
+
 	*priorityRight=1;
 	if (pl->priority_field.enabled) {
 		if (colors<=paletteGetColors(pl->priority_field.object)) {
@@ -147,10 +147,10 @@ showobj(pl->priority_field.object);
 	node=pl->list_first;
 printf("first=%p with ",(void*)pl->list_first);
 showobj(pl->list_first->object);
-	
+
 	while (node && colors>paletteGetColors(node->object))
 	{		node=node->next; printf("next %p\n",(void*)node); }
-	
+
 	return node?node->object:getObject(NULL,&junk);
 }
 
@@ -158,18 +158,18 @@ showobj(pl->list_first->object);
 int main(int a,char** b) {
 	tObject tests[]={
 		{eResTypeNone,NULL},
-		{eResTypePop2PaletteNColors,(void*)((int)320)},
-		{eResTypePop1Palette4bits,NULL}
+		{eResTypePalettePop2_NColors,(void*)((int)320)},
+		{eResTypePalettePop1_16,NULL}
 	};
 	tResourceId ress[]={
 		{0,"POP1",4},
 		{2,"LALA",6}
 	};
 	tPL pl=pl_create();
-	
+
 	printf("hello world\n");
 	showobj(tests[1]);
-	
+
 	pl_add(&pl, tests, ress[0], lowPriority);
 	pl_add(&pl, tests+1, ress[1], lowPriority);
 	pl_add(&pl, tests, ress[0], lowPriority);

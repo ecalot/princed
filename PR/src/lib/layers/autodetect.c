@@ -125,15 +125,15 @@ int verifyMidiHeader(tBinary c) {
 }
 
 tResourceType verifyHeader(tBinary c) { /* TODO: add the pop version as another parameter to detect types */
-	if (verifyPop1LevelHeader (c)) return eResTypePop1Level;
-	if (verifyPop2LevelHeader (c)) return eResTypePop2Level;
-	if (verifyMidiHeader      (c)) return eResTypeMidi;
+	if (verifyPop1LevelHeader (c)) return eResTypeLevelPop1;
+	if (verifyPop2LevelHeader (c)) return eResTypeLevelPop2;
+	if (verifyMidiHeader      (c)) return eResTypeSoundMidi;
 	if (verifyImage16Header   (c)) return eResTypeImage16;
 	if (verifyImage256Header  (c)) return eResTypeImage256;
-	if (verifyPaletteHeaderPop1 (c)) return eResTypePop1Palette4bits;
-	if (verifyPaletteHeaderPop2 (c)) return eResTypePop2PaletteNColors;
-	if (verifyWaveHeader      (c)) return eResTypeWave;
+	if (verifyPaletteHeaderPop1 (c)) return eResTypePalettePop1_16;
+	if (verifyPaletteHeaderPop2 (c)) return eResTypePalettePop2_NColors;
+	if (verifyWaveHeader      (c)) return eResTypeSoundWave;
 	if (verifySpeakerHeader   (c)) return eResTypePcspeaker;
-	return eResTypeBinary;
+	return eResTypeOtherBinary;
 }
 
