@@ -19,7 +19,7 @@
 */
 
 /*
-.c: Princed Resources : 
+.c: Princed Resources :
 ¯¯¯¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 5 Mar 2006
@@ -55,8 +55,8 @@ typedef struct {
 	const char* datAuthor;
 }tPop1Level;
 
-void* objLevelCreate(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error) { 
-	tPop1Level* r;	
+void* objectLevelPop1Create(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error) {
+	tPop1Level* r;
 	*error=PR_RESULT_SUCCESS;
 	/*TODO: fix the original file name path (lala///lele/demo.plv--> demo.plv) */
 
@@ -70,7 +70,7 @@ void* objLevelCreate(tBinary content,int number,const char* datfile,const char* 
 	return (void*)r;
 }
 
-int objLevelWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
+int objectLevelPop1Write(void* o, const char* file, int optionflag, const char* backupExtension) {
 	tPop1Level* b=o;
 	return writePlv(file,b->content,b->content.size==12025?2:1,b->datfile,b->number,file,b->desc,b->name,b->datAuthor,optionflag,backupExtension);
 }
@@ -82,7 +82,7 @@ void* objLevelRead(const char* file,int *result) {
 		*result=o.size;
 		return NULL;
 	}
-	return objLevelCreate(o,result);
+	return objectLevelPop1Create(o,result);
 }
 
 int objLevelSet(void* o,tResource* res) {

@@ -101,7 +101,7 @@ tColor* objPalette_pop1_monoGetColors() {
 
 extern FILE* outputStream;
 
-void* objImage2Create(tBinary cont, int *error) { /* use get like main.c */
+void* objectImage2Create(tBinary cont, int *error) { /* use get like main.c */
 
 	/*
 	 * This function will expand the data into an image structure,
@@ -124,7 +124,7 @@ void* objImage2Create(tBinary cont, int *error) { /* use get like main.c */
 	}
 
 	if (getCarry(image->type) != 1 ) printf("error, monochrome palette fromat wrong\n");
-	
+
 	return (void*)image;
 }
 
@@ -148,11 +148,11 @@ void* objImage2Read(const char* file,tObject palette, int *result) {
 		free(image);
 		return NULL;
 	}
-	
+
 	free(colorArray);
 
 	/* check the palette information */
-	
+
 	bits=paletteGetBits(image->pal);
 	if (image->bits!=1) {
 		*result=PR_RESULT_ERR_BMP_BITRATE_DIFFERS;
@@ -161,7 +161,7 @@ void* objImage2Read(const char* file,tObject palette, int *result) {
 		return NULL;
 	}
 	image->colorCount=2;
-				
+
 	return (void*)image;
 }
 
@@ -172,7 +172,7 @@ int objImage2Set(void* o,tResource* res) {
 
 	decompressed.data=img->pix;
 	decompressed.size=img->widthInBytes*img->height;
-	
+
 	algorithm=mCompressGraphic(&decompressed,&compressed,6,img->widthInBytes,img->height);
 
 	/*
@@ -189,7 +189,7 @@ int objImage2Set(void* o,tResource* res) {
 	compressed.data[4]=0;
 	compressed.data[5]=algorithm;
 
-	res->content=compressed;	
+	res->content=compressed;
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
 }

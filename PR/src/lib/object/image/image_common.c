@@ -94,7 +94,7 @@ image.c: Princed Resources : Image Compression Library
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
 
-int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize); 
+int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize);
 
 /***************************************************************\
 |                   Compression Level Manager                   |
@@ -158,7 +158,7 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 
 	int imageSizeInBytes=0;
 	int result;
-				
+
 	image->height=array2short(data);
 	data+=2;
 	image->width =array2short(data);
@@ -171,7 +171,7 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 	case 8:
 		image->widthInBytes=(image->width);
 		break;
-	case 4: 
+	case 4:
 		image->widthInBytes=(image->width+1)/2;
 		break;
 	case 1:
@@ -351,7 +351,7 @@ tColor* objPalette_16() {
 	return c;
 }
 
-void* objImage16Create(tBinary cont, int *error) { /* use get like main.c */
+void* objectImage16Create(tBinary cont, int *error) { /* use get like main.c */
 
 	/*
 	 * This function will expand the data into an image structure,
@@ -378,9 +378,9 @@ void* objImage16Create(tBinary cont, int *error) { /* use get like main.c */
 	bits=paletteGetBits(image->pal);
 	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));
 	image->bits=getCarry(image->type);*/
-	
+
 	image->colorCount=2;
-	
+
 	return (void*)image;
 }
 
@@ -400,7 +400,7 @@ int objImage16Write(void* img,const char* file,int optionflag,const char* backup
 		colors=16;
 		colorArray=objPalette_16();
 	}
-	
+
 	/* Write bitmap */
 	return mWriteBmp(file,i->pix,i->width,i->height,bits,colors,colorArray,i->widthInBytes,optionflag,backupExtension);
 }
@@ -426,7 +426,7 @@ void* objImage16Read(const char* file,tObject palette, int *result) {
 	}
 
 	/* check the palette information */
-	
+
 	image->pal=palette;
 	bits=paletteGetBits(image->pal);
 	if (bits && bits!=image->bits) { /* bits=0 means all palettes allowed or ignore palette check */
@@ -436,7 +436,7 @@ void* objImage16Read(const char* file,tObject palette, int *result) {
 		free(image);
 		return NULL;
 	}
-				
+
 	/* TODO: palette content checks */
 
 	free(colorArray);
@@ -452,7 +452,7 @@ int objImage16Set(void* o,tResource* res) {
 
 	decompressed.data=img->pix;
 	decompressed.size=img->widthInBytes*img->height;
-	
+
 	algorithm=mCompressGraphic(&decompressed,&compressed,6,img->widthInBytes,img->height);
 
 	/*
@@ -469,7 +469,7 @@ int objImage16Set(void* o,tResource* res) {
 	compressed.data[4]=0;
 	compressed.data[5]=0xb0|algorithm;
 
-	res->content=compressed;	
+	res->content=compressed;
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
 }

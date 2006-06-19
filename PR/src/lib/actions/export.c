@@ -46,7 +46,7 @@ export.c: Princed Resources : DAT Extractor
 #include "memory.h"
 #include "object.h"
 #include "palette.h"
-#include "pallist.h" 
+#include "pallist.h"
 #include "unknown.h"
 
 extern FILE* outputStream;
@@ -70,7 +70,7 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	int                indexNumber;
 	int                ok;
 /*	tImage             image; * this is used to make a persistent palette */
-	tObject            currentPalette=getObject(NULL,&ok); /*TODO: move to pallist */
+	tObject            currentPalette=objectCreate(NULL,&ok); /*TODO: move to pallist */
 	unsigned short int numberOfItems;
 	tResourceId        nullPalette={0,"",0};
 /*	tPaletteList       paletteBuffer;*/
@@ -111,10 +111,10 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 				/* handle palette linking */
 				switch (res.type) {
 					/*case eResTypePop2Palette4bits: */
-					case eResTypePalettePop2_NColors: 
+					case eResTypePalettePop2_NColors:
 					case eResTypePalettePop1_16: { /* save and remember palette file */
 						/*tPaletteListItem e; * deprecated */
-						o=getObject(&res,&ok);
+						o=objectCreate(&res,&ok);
 printf("new palette object: o=%p type=%d\n",o.obj,o.type);
 						if (!ok) { /* if SUCCESS remember the palette, otherwise keep using the default one */
 
@@ -134,7 +134,7 @@ printf("new palette object: o=%p type=%d\n",o.obj,o.type);
 						/* Read the palette and load it into memory */
 						if (resourceListCompareId(res.paletteId,nullPalette) /* add &&!paletteCheckCompatibility(currentPalette,image) */) { /* The palette isn't in the buffer */
 						if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
-							o=getObject(&otherPalette,&ok);
+							o=objectCreate(&otherPalette,&ok);
 printf("adding ");
 showobj(o);
 							pl_add(&palettes,o,res.paletteId,highPriority);
@@ -142,7 +142,7 @@ showobj(o);
 								/*tPaletteListItem e;
 								resourceListAddInfo(r,&otherPalette);*/
 								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
-								/*e.pal=currentPalette=getObject(&otherPalette,&ok);
+								/*e.pal=currentPalette=objectCreate(&otherPalette,&ok);
 								e.id=res.id;*/
 								/*list_insert(&paletteBuffer,(void*)&e);*/
 						} else { /*, that's bad, I'll have to use the previous palette, even if it is the default */
@@ -150,8 +150,8 @@ showobj(o);
 						}
 						}
 						/*res.palette=currentPalette;*/
-						o=getObject(&res,&ok);
-printf("getting the palette for the %d colours object ",paletteGetColors(o));	
+						o=objectCreate(&res,&ok);
+printf("getting the palette for the %d colours object ",paletteGetColors(o));
 showobj(o);
 						pal=pl_get(&palettes,&priorityRight,paletteGetColors(o));
 printf("palette ");
@@ -163,13 +163,13 @@ showobj(pal);
 						break;
 					}
 					default:
-						o=getObject(&res,&ok);
+						o=objectCreate(&res,&ok);
 						break;
 				}
-		/* TODO: warning counting here */	
+		/* TODO: warning counting here */
 /*				if (!fatal(ok)) */
 				if (ok==PR_RESULT_SUCCESS)
-					ok=writeObject(o,file,optionflag,backupExtension);
+					ok=objectWrite(o,file,optionflag,backupExtension);
 				else
 				/*	printf("not ok. result=%d for %s\n",ok,file);*/
 

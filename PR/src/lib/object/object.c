@@ -41,7 +41,7 @@ main.c: Princed Resources : Main item class implementation
 
 /* Object polimorphism hook layer */
 
-tObject getObject(tResource* r, int* error) {
+tObject objectCreate(tResource* r, int* error) {
 	tObject o;
 	if (!r) {
 		*error=PR_RESULT_SUCCESS;
@@ -53,36 +53,36 @@ tObject getObject(tResource* r, int* error) {
 	o.type=r->type;
 	switch (o.type) {
 	case eResTypeLevelPop1:
-		o.obj=objLevelCreate(r->content,r->number,r->datfile,r->name,r->desc,r->datAuthor,error); 
+		o.obj=objectLevelPop1Create(r->content,r->number,r->datfile,r->name,r->desc,r->datAuthor,error);
 		break;
 	case eResTypeOtherBinary: /* Binary files */
 	case eResTypeOtherText: /* Text files */
 	case eResTypeOtherRaw: /* Raw files */
-		o.obj=objBinaryCreate(r->content,error); 
+		o.obj=objectBinaryCreate(r->content,error);
 		break;
 	case eResTypePalettePop1_16: /* save and remember palette file */
-		o.obj=objPalette_pop1_4bitsCreate(r->content,error);
+		o.obj=objectPalettePop1_16Create(r->content,error);
 		break;
 	case eResTypePalettePop2_NColors: /* save and remember palette file */
-		o.obj=objPop2PaletteNColorsCreate(r->content,error);
+		o.obj=objectPalettePop2_NColorsCreate(r->content,error);
 		break;
-	case eResTypePcspeaker: /* save pcs file */
-		o.obj=objPcspeakerCreate(r->content,error);
+	case eResTypeSoundPcspeaker: /* save pcs file */
+		o.obj=objectSoundPcspeakerCreate(r->content,error);
 		break;
 	case eResTypeSoundMidi:	/* save midi file */
-		o.obj=objMidiCreate(r->content,error);
+		o.obj=objectSoundMidiCreate(r->content,error);
 		break;
 	case eResTypeSoundWave: /* save wav file */
-		o.obj=objWaveCreate(r->content,error);
+		o.obj=objectSoundWaveCreate(r->content,error);
 		break;
 	case eResTypeImage2: /* save image */
-		o.obj=objImage2Create(r->content,error);
+		o.obj=objectImage2Create(r->content,error);
 		break;
 	case eResTypeImage16: /* save image */
-		o.obj=objImage16Create(r->content,error);
+		o.obj=objectImage16Create(r->content,error);
 		break;
 	case eResTypeImage256: /* save image */
-		o.obj=objImage256Create(r->content,error);
+		o.obj=objectImage256Create(r->content,error);
 		break;
 	default:
 printf("Exception: Unhooked type %d\n",o.type);
@@ -90,20 +90,20 @@ printf("Exception: Unhooked type %d\n",o.type);
 		o.obj=NULL;
 		break;
 	}
-	
+
 	return o;
 }
 
-int writeObject(tObject o, const char* file, int optionflag, const char* backupExtension) {
+int objectWrite(tObject o, const char* file, int optionflag, const char* backupExtension) {
 	int error;
 	switch (o.type) {
 	case eResTypeLevelPop1:
-		error=objLevelWrite(o.obj,file,optionflag,backupExtension);
+		error=objectLevelPop1Write(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeOtherBinary: /* Binary files */
 	case eResTypeOtherText: /* Text files */
 	case eResTypeOtherRaw: /* Raw/autodetect files */
-		error=objBinaryWrite(o.obj,file,optionflag,backupExtension);
+		error=objectBinaryWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypePalettePop1_16: /* save and remember palette file */
 		error=objPalette_pop1_4bitsWrite(o.obj,file,optionflag,backupExtension);
@@ -111,7 +111,7 @@ int writeObject(tObject o, const char* file, int optionflag, const char* backupE
 	case eResTypePalettePop2_NColors: /* save and remember palette file */
 		error=objPop2PaletteNColorsWrite(o.obj,file,optionflag,backupExtension);
 		break;
-	case eResTypePcspeaker: /* save pcs file */
+	case eResTypeSoundPcspeaker: /* save pcs file */
 		error=objPcspeakerWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeSoundMidi:	/* save midi file */
@@ -135,7 +135,7 @@ printf("Warning: Couldn't write unhooked type %d\n",o.type);
 	}
 
 	return error;
-}	
+}
 
 /* Palette class methods */
 
@@ -143,25 +143,25 @@ int paletteGetBits(tObject pal) {
 	switch (pal.type) {
 	case eResTypePalettePop2_NColors:
 		return 8;
-	case eResTypePalettePop1_16: 
+	case eResTypePalettePop1_16:
 		return 4;
-	case eResTypePalettePop1_Mono: 
+	case eResTypePalettePop1_Mono:
 		return 1;
 	default:
 		return 0;
 	}
 }
-			
+
 int paletteGetColors(tObject object) { /* TODO: rename to objectGetColors */
 	switch (object.type) {
 	case eResTypePalettePop2_NColors:
 		return PAL_COLORS_eResTypePalettePop2_NColors; /*256;*/
-	case eResTypePalettePop1_16: 
+	case eResTypePalettePop1_16:
 		return PAL_COLORS_eResTypePalettePop1_16; /*16;*/
-	case eResTypePalettePop1_Mono: 
+	case eResTypePalettePop1_Mono:
 		return  PAL_COLORS_eResTypePalettePop1_Mono; /*2;*/
-	case eResTypeNone: 
-		return 256; 
+	case eResTypeNone:
+		return 256;
 	case eResTypeImage16:
 	case eResTypeImage2:
 	case eResTypeImage256:
@@ -214,7 +214,7 @@ void setObject(tObject o,int *result,tResource* res) {
 		case eResTypeSoundMidi:
 			*result=objMidiSet(o.obj,res);
 			break;
-		case eResTypePcspeaker:
+		case eResTypeSoundPcspeaker:
 			*result=objPcspeakerSet(o.obj,res);
 			break;
 		case eResTypePalettePop1_16:
@@ -225,7 +225,7 @@ void setObject(tObject o,int *result,tResource* res) {
 			*result=objBinarySet(o.obj,res);
 			break;
 	}
-	
+
 }
 
 /* Format detection function (private function, not in header file) */
@@ -245,7 +245,7 @@ tObject readObject(const char* file,tResource* res,int *result) {
 		case eResTypeSoundMidi:
 			o.obj=objMidiRead(file,result);
 			break;
-		case eResTypePcspeaker:
+		case eResTypeSoundPcspeaker:
 			o.obj=objPcspeakerRead(file,result);
 			break;
 		case eResTypePalettePop1_16:

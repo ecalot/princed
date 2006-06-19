@@ -19,7 +19,7 @@
 */
 
 /*
-.c: Princed Resources : 
+.c: Princed Resources :
 ¯¯¯¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 17 Feb 2006
@@ -46,17 +46,17 @@
 |                         Binary Object                         |
 \***************************************************************/
 
-void* objBinaryCreate(tBinary cont, int *error) { /* use get like main.c */
+void* objectBinaryCreate(tBinary cont, int *error) { /* use get like main.c */
 	tBinary* r;
 	*error=PR_RESULT_SUCCESS;
-	
+
 	r=(tBinary*)malloc(sizeof(tBinary));
 	*r=cont;
 	r->isCopy=1;
 	return (void*)r;
 }
 
-int objBinaryWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
+int objectBinaryWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
 	tBinary* b=o;
 	return writeData(b->data,0,file,b->size,optionflag,backupExtension)?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
 }
@@ -67,7 +67,7 @@ void* objBinaryRead(const char* file,int *result) {
 		*result=o.size;
 		return NULL;
 	}
-	return objBinaryCreate(o,result); /* TODO: isCopy=0 */
+	return objectBinaryCreate(o,result); /* TODO: isCopy=0 */
 }
 
 int objBinarySet(void* o,tResource* res) {

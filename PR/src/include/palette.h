@@ -64,12 +64,12 @@ int applyPalette(tPalette* p,tImage *i);
 
 void* objPalette_pop2_4bitsCreate(tBinary c, int *error);
 int objPalette_pop2_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension);
-void* objPalette_pop1_4bitsCreate(tBinary c, int *error);
+void* objectPalettePop1_16Create(tBinary c, int *error);
 int objPalette_pop1_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 void* objPop1Palette4bitsRead(const char* file,int *result);
 int objPop1Palette4bitsSet(void* o,tResource* res);
 /*int objPop2Palette4bitsSet(void* o,tResource* res);*/
-void* objPop2PaletteNColorsCreate(tBinary cont, int *error);
+void* objectPalettePop2_NColorsCreate(tBinary cont, int *error);
 int objPop2PaletteNColorsWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 void* objPop2PaletteNColorsRead(const char* file,int *result);
 int objPop2PaletteNColorsSet(void* o,tResource* res);
@@ -92,6 +92,6 @@ tColor* objPalette_pop2_ncolorsGetColors(void* o);
 #define PAL_COLORS_eResTypePalettePop1_Mono 2
 
 int getColorsByPop2PaletteObject(void* o);
-				
+
 #endif
 

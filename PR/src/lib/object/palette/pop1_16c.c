@@ -145,7 +145,7 @@ int readPalette(tPalette* p, unsigned char* data, int dataSize) {
 		bits=8;
 		break;
 	}
-		
+
 	if (bits) setPalette(p,bits,c);
 	return bits;
 }
@@ -163,22 +163,22 @@ void addPop1Raw(tPalette* p,unsigned char* data, int dataSize) {
 */
 #endif
 
-typedef struct { 
+typedef struct {
 	tColor c[16];
 	unsigned char raw[100];
 }tPop1_4bitsPalette;
 
-void* objPalette_pop1_4bitsCreate(tBinary cont, int *error) {
+void* objectPalettePop1_16Create(tBinary cont, int *error) {
 	int i;
 	tPop1_4bitsPalette* pal;
-	
+
 	if (cont.size!=100) {
 		*error=PR_RESULT_XML_AND_DAT_FORMAT_DO_NOT_MATCH;
 		return NULL;
 	}
 
 	pal=(tPop1_4bitsPalette*)malloc(sizeof(tPop1_4bitsPalette));
-	
+
 	for (i=0;i<16;i++) {
 		pal->c[i].r=cont.data[(i*3)+4]<<2;
 		pal->c[i].g=cont.data[(i*3)+5]<<2;
@@ -188,7 +188,7 @@ void* objPalette_pop1_4bitsCreate(tBinary cont, int *error) {
 	memcpy(pal->raw,cont.data,100);
 
 	*error=PR_RESULT_SUCCESS;
-	
+
 	return (void*)pal;
 }
 
@@ -264,7 +264,7 @@ void* objPop1Palette4bitsRead(const char* file,int *result) {
 	}
 	memcpy(pal->c,colorArray,sizeof(tColor)*16);
 	free(colorArray);
-	
+
 	return (void*)pal;
 }
 

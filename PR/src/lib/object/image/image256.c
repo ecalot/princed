@@ -94,7 +94,7 @@ image.c: Princed Resources : Image Compression Library
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
 
-int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize); 
+int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize);
 
 /***************************************************************\
 |               Main compress and expand graphics               |
@@ -131,7 +131,7 @@ int mExpandGraphic256(const unsigned char* data,tImage *image, int dataSizeInByt
 		image->widthInBytes=(image->width);
 		imageSizeInBytes=image->widthInBytes*image->height;
 		break;
-	case 4: 
+	case 4:
 		image->widthInBytes=(image->width+1)/2;
 		break;
 	case 1:
@@ -198,7 +198,7 @@ int mCompressGraphic256(tBinary* input, tBinary* output, int ignoreFirstBytes, i
 	return algorithm;
 }
 
-int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize) { 
+int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize) {
 	/* This function is in an experimental state and hasn't yet been linked to the program */
 	unsigned char* tempOutput;
 	unsigned char* lineI; /* chunk */
@@ -249,7 +249,7 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 		/*printf("Remaining tailing data: size=%d first=%02x %02x\n", remaining,start[0],start[1]);*/
 		tempOutputSize=0;
 		remaining=expandLzg(start,remaining,&tempOutput,&tempOutputSize);
-		
+
 		lineI=tempOutput;
 
 		while (lineSize==verify && tempOutputSize>0) {
@@ -295,7 +295,7 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 
 extern FILE* outputStream;
 
-void* objImage256Create(tBinary cont, int *error) { /* use get like main.c */
+void* objectImage256Create(tBinary cont, int *error) { /* use get like main.c */
 
 	/*
 	 * This function will expand the data into an image structure,
@@ -331,7 +331,7 @@ void* objImage256Create(tBinary cont, int *error) { /* use get like main.c */
 	bits=paletteGetBits(image->pal);
 	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));*/
 	image->bits=getCarry(image->type);
-	
+
 	return (void*)image;
 }
 
@@ -352,7 +352,7 @@ int objImage256Write(void* img,const char* file,int optionflag,const char* backu
 	int bits;
 	int colors;
 	tColor* colorArray;
-	
+
 	if (i->pal.type!=eResTypeNone) {
 		bits=paletteGetBits(i->pal);
 		colors=i->colorCount; /*paletteGetColors(i->pal);*/
@@ -362,7 +362,7 @@ int objImage256Write(void* img,const char* file,int optionflag,const char* backu
 		colors=256; /*1<<bits;*/
 		colorArray=objPalette_256();
 	}
-	
+
 	/* Write bitmap */
 	return mWriteBmp(file,i->pix,i->width,i->height,bits,colors,colorArray,i->widthInBytes,optionflag,backupExtension);
 }
@@ -388,7 +388,7 @@ void* objImage256Read(const char* file,tObject palette, int *result) {
 	}
 
 	/* check the palette information */
-	
+
 	image->pal=palette;
 	bits=paletteGetBits(image->pal);
 	if (bits && bits!=image->bits) { /* bits=0 means all palettes allowed or ignore palette check */
@@ -398,7 +398,7 @@ void* objImage256Read(const char* file,tObject palette, int *result) {
 		free(image);
 		return NULL;
 	}
-				
+
 	/* TODO: palette content checks */
 
 	free(colorArray);
@@ -413,7 +413,7 @@ int objImage256Set(void* o,tResource* res) {
 
 	decompressed.data=img->pix;
 	decompressed.size=img->widthInBytes*img->height;
-	
+
 	mCompressGraphic256(&decompressed,&compressed,6,img->widthInBytes,img->height);
 
 	/*
@@ -430,7 +430,7 @@ int objImage256Set(void* o,tResource* res) {
 	compressed.data[4]=0;
 	compressed.data[5]=0xf3;
 
-	res->content=compressed;	
+	res->content=compressed;
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
 }

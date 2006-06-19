@@ -151,7 +151,7 @@ showobj(pl->list_first->object);
 	while (node && colors>paletteGetColors(node->object))
 	{		node=node->next; printf("next %p\n",(void*)node); }
 
-	return node?node->object:getObject(NULL,&junk);
+	return node?node->object:objectCreate(NULL,&junk);
 }
 
 #ifdef DEBUG_TEST_PALLST

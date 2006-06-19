@@ -19,7 +19,7 @@
 */
 
 /*
-other.h: Princed Resources : 
+other.h: Princed Resources :
 ¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 17 Feb 2006
@@ -35,12 +35,12 @@ other.h: Princed Resources :
 
 #include "binary.h"
 
-void* objBinaryCreate(tBinary c, int *error);
-int objBinaryWrite(void* o, const char* file, int optionflag, const char* backupExtension);
+void* objectBinaryCreate(tBinary c, int *error);
+int objectBinaryWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 void* objBinaryRead(const char* file,int *result);
 int objBinarySet(void* o,tResource* res);
 
-void* objLevelCreate(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error); /* TODO: move to level.h */ 
-int objLevelWrite(void* o, const char* file, int optionflag, const char* backupExtension);
+void* objectLevelPop1Create(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error); /* TODO: move to level.h */
+int objectLevelPop1Write(void* o, const char* file, int optionflag, const char* backupExtension);
 
 #endif

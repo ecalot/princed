@@ -1,7 +1,7 @@
 [Project]
 FileName=pr.dev
 Name=pr
-UnitCount=95
+UnitCount=94
 Type=1
 Ver=1
 ObjFiles=
@@ -830,17 +830,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit82]
-FileName=..\..\lib\object\palette\pop1_4bit.c
-CompileCpp=0
-Folder=src/lib/object/palette
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit83]
-FileName=..\..\lib\object\palette\pop2_4bit.c
+FileName=..\..\lib\object\palette\pop1_16c.c
 CompileCpp=0
 Folder=src/lib/object/palette
 Compile=1
@@ -850,16 +840,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit84]
-FileName=..\..\lib\object\palette\pop2_256c.c
-CompileCpp=0
-Folder=src/lib/object/palette
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit85]
 FileName=..\..\lib\object\sound\sounds.c
 CompileCpp=0
 Folder=src/lib/object/sound
@@ -869,7 +849,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit86]
+[Unit85]
 FileName=..\..\lib\xml\parse.c
 CompileCpp=0
 Folder=src/lib/xml
@@ -879,7 +859,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit87]
+[Unit86]
 FileName=..\..\lib\xml\search.c
 CompileCpp=0
 Folder=src/lib/xml
@@ -889,7 +869,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit88]
+[Unit87]
 FileName=..\..\lib\xml\translate.c
 CompileCpp=0
 Folder=src/lib/xml
@@ -899,7 +879,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit89]
+[Unit88]
 FileName=..\..\lib\xml\tree.c
 CompileCpp=0
 Folder=src/lib/xml
@@ -909,7 +889,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit90]
+[Unit89]
 FileName=..\..\lib\xml\unknown.c
 CompileCpp=0
 Folder=src/lib/xml
@@ -919,7 +899,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit91]
+[Unit90]
 FileName=..\..\lib\pr.c
 CompileCpp=0
 Folder=src/lib
@@ -929,8 +909,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit92]
+[Unit91]
 FileName=..\..\..\doc\readme.coders.txt
+CompileCpp=0
+Folder=doc
+Compile=0
+Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit92]
+FileName=..\..\..\doc\readme.txt
 CompileCpp=0
 Folder=doc
 Compile=0
@@ -943,7 +933,7 @@ BuildCmd=
 Major=1
 Minor=3
 Release=0
-Build=15
+Build=27
 LanguageID=2057
 CharsetID=1252
 CompanyName=Princed development team
@@ -958,7 +948,7 @@ ProductVersion=
 AutoIncBuildNr=1
 
 [Unit93]
-FileName=..\..\..\doc\readme.txt
+FileName=..\..\..\doc\changelog.txt
 Folder=doc
 Compile=0
 Link=0
@@ -967,13 +957,14 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit94]
-FileName=..\..\..\doc\changelog.txt
-Folder=doc
-Compile=0
-Link=0
+FileName=..\..\lib\object\object.c
+Folder=src/lib/object
+Compile=1
+Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
 [Unit95]
 FileName=..\..\lib\object\object.c
@@ -989,6 +980,16 @@ CompileCpp=0
 FileName=..\..\lib\object\image\image2.c
 CompileCpp=0
 Folder=src/lib/object/image
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit83]
+FileName=..\..\lib\object\palette\pop2_256c.c
+CompileCpp=0
+Folder=src/lib/object/palette
 Compile=1
 Link=1
 Priority=1000

@@ -19,7 +19,7 @@
 */
 
 /*
-sound.h: Princed Resources : 
+sound.h: Princed Resources :
 ¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 19 Feb 2006
@@ -45,9 +45,9 @@ void* objSoundCreate(tBinary c, int *error);
 
 int objWaveWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 
-#define objWaveCreate(a,b) objSoundCreate(a,b)
-#define objMidiCreate(a,b) objSoundCreate(a,b)
-#define objPcspeakerCreate(a,b) objSoundCreate(a,b)
+#define objectSoundWaveCreate(a,b) objSoundCreate(a,b)
+#define objectSoundMidiCreate(a,b) objSoundCreate(a,b)
+#define objectSoundPcspeakerCreate(a,b) objSoundCreate(a,b)
 
 /*#define objWaveRead(a,b,c,d,e) objSoundRead(a,readWav,b,c,d,e)*/
 /*void* objSoundRead(const char* file, int read(const char* file, tBinary* c, int *pchannels, long *psamplerate, long *pbps), int *result);*/
@@ -60,7 +60,7 @@ int objWaveSet(void* o,tResource* res);
 int objPcspeakerSet(void* o,tResource* res);
 int objMidiSet(void* o,tResource* res);
 
-#define objMidiWrite(a,b,c,d) objBinaryWrite(a,b,c,d)
-#define objPcspeakerWrite(a,b,c,d) objBinaryWrite(a,b,c,d)
+#define objMidiWrite(a,b,c,d) objectBinaryWrite(a,b,c,d)
+#define objPcspeakerWrite(a,b,c,d) objectBinaryWrite(a,b,c,d)
 
 #endif

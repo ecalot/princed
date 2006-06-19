@@ -93,7 +93,7 @@ typedef enum {
 	eResTypeImage256=4,
 	eResTypeLevelPop1=5,
 	eResTypeSoundMidi=6,
-	eResTypePcspeaker=7,
+	eResTypeSoundPcspeaker=7,
 	eResTypePalettePop1_16=8,
 	eResTypePalettePop1_Guards=9,
 	eResTypePalettePop1_Mono=10,
@@ -205,7 +205,7 @@ PARSING_OPTRAW\
 #define setFlag(a) optionflag|=(a)
 
 #define PR_RESULT_CHECKSUM_ERROR -24
-#define PR_RESULT_COMPRESS_RESULT_FATAL -26 
+#define PR_RESULT_COMPRESS_RESULT_FATAL -26
 #define PR_RESULT_COMPRESS_RESULT_WARNING -27
 #define PR_RESULT_ERR_BMP_BITRATE_DIFFERS -31
 #define PR_RESULT_ERR_COMMAND_LINE_SYNTAX -17

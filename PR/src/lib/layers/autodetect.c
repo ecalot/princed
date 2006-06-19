@@ -133,7 +133,7 @@ tResourceType verifyHeader(tBinary c) { /* TODO: add the pop version as another 
 	if (verifyPaletteHeaderPop1 (c)) return eResTypePalettePop1_16;
 	if (verifyPaletteHeaderPop2 (c)) return eResTypePalettePop2_NColors;
 	if (verifyWaveHeader      (c)) return eResTypeSoundWave;
-	if (verifySpeakerHeader   (c)) return eResTypePcspeaker;
+	if (verifySpeakerHeader   (c)) return eResTypeSoundPcspeaker;
 	return eResTypeOtherBinary;
 }
 

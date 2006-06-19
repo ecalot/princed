@@ -37,7 +37,7 @@ image.h: Princed Resources : Image handling headers
 #include "types.h"
 #include "binary.h"
 
-typedef struct { 
+typedef struct {
 	unsigned char r;
 	unsigned char g;
 	unsigned char b;
@@ -51,7 +51,7 @@ typedef struct {
 	int pop1rawSize;
 }tPalette;
 
-typedef struct { 
+typedef struct {
 	int width;
 	int widthInBytes;
 	int height;
@@ -72,11 +72,11 @@ int objImage256Set(void* o,tResource* res);
 int objImage256Write(void* img,const char* file,int optionflag,const char* backupExtension);
 int objImage2Set(void* o,tResource* res);
 int objImage2Write(void* img,const char* file,int optionflag,const char* backupExtension);
-void* objImage16Create(tBinary c, int *error);
+void* objectImage16Create(tBinary c, int *error);
 void* objImage16Read(const char* file,tObject palette, int *result);
-void* objImage256Create(tBinary c, int *error);
+void* objectImage256Create(tBinary c, int *error);
 void* objImage256Read(const char* file,tObject palette, int *result);
-void* objImage2Create(tBinary c, int *error);
+void* objectImage2Create(tBinary c, int *error);
 void* objImage2Read(const char* file,tObject palette, int *result);
 
 #define getCarry(a) ((((a)>>4)&7)+1)

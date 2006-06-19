@@ -46,22 +46,22 @@ palette.c: Princed Resources : The palette object implementation
 
 #include "pal.h"
 
-typedef struct { 
+typedef struct {
 	tColor* colorArray;
 	int size;
 }tGenericPalette;
 
-void* objPop2PaletteNColorsCreate(tBinary cont, int *error) {
+void* objectPalettePop2_NColorsCreate(tBinary cont, int *error) {
 	tGenericPalette* r;
 	int i,j;
-	
+
 	*error=PR_RESULT_SUCCESS;
 
 	if (!isA64kPalette(cont)) { /* TODO: use autodetect function to verify */
 		*error=-14; /* TODO FIX or assign error code */
 		return NULL;
 	}
-	
+
 	r=(tGenericPalette*)malloc(sizeof(tGenericPalette));
 	r->colorArray=(tColor*)malloc(sizeof(tColor)*((cont.size+2)/3));
 	for (i=0,j=0;i<cont.size;i+=3,j++) {
@@ -72,7 +72,7 @@ void* objPop2PaletteNColorsCreate(tBinary cont, int *error) {
 	/*if (j!=256 && j!=320) return NULL; *TODO: add free */
 	r->size=j;
 printf("created a palette with %d colors. cs=%ld\n",j,cont.size);
-	
+
 	return (void*)r;
 }
 
@@ -94,9 +94,9 @@ int objPop2PaletteNColorsWrite(void* o, const char* file, int optionflag, const 
 
 void* objPop2PaletteNColorsRead(const char* file,int *result) {
 	tGenericPalette *r;
-	
+
 	r=(tGenericPalette*)malloc(sizeof(tGenericPalette));
-				
+
 	*result=readPal(file,&r->colorArray,&r->size);
 
 	if (*result==PR_RESULT_SUCCESS && !(r->size==256 || r->size==320)) {
@@ -105,7 +105,7 @@ void* objPop2PaletteNColorsRead(const char* file,int *result) {
 		free(r);
 		return NULL;
 	}
-	
+
 	return (void*)r;
 }
 
