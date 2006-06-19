@@ -19,7 +19,7 @@
 */
 
 /*
-pop1_4bit.c: Princed Resources : The palette object implementation
+pop1_16c.c: Princed Resources : The palette object implementation
 ¯¯¯¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 09 Feb 2006
@@ -166,18 +166,18 @@ void addPop1Raw(tPalette* p,unsigned char* data, int dataSize) {
 typedef struct {
 	tColor c[16];
 	unsigned char raw[100];
-}tPop1_4bitsPalette;
+}tPalettePop1_16c;
 
 void* objectPalettePop1_16Create(tBinary cont, int *error) {
 	int i;
-	tPop1_4bitsPalette* pal;
+	tPalettePop1_16c* pal;
 
 	if (cont.size!=100) {
 		*error=PR_RESULT_XML_AND_DAT_FORMAT_DO_NOT_MATCH;
 		return NULL;
 	}
 
-	pal=(tPop1_4bitsPalette*)malloc(sizeof(tPop1_4bitsPalette));
+	pal=(tPalettePop1_16c*)malloc(sizeof(tPalettePop1_16c));
 
 	for (i=0;i<16;i++) {
 		pal->c[i].r=cont.data[(i*3)+4]<<2;
@@ -193,7 +193,7 @@ void* objectPalettePop1_16Create(tBinary cont, int *error) {
 }
 
 int objectPalettePop1_16Write(void* o, const char* file, int optionflag, const char* backupExtension) {
-	tPop1_4bitsPalette* pal=o;
+	tPalettePop1_16c* pal=o;
 	char aux[260];
 
 	/* Export extra palette information */
@@ -204,7 +204,7 @@ int objectPalettePop1_16Write(void* o, const char* file, int optionflag, const c
 }
 
 tColor* objectPalettePop1_16GetColors(void* o) {
-	tPop1_4bitsPalette* pal=o;
+	tPalettePop1_16c* pal=o;
 	return pal->c;
 }
 
@@ -242,7 +242,7 @@ tColor* objectGetColorsArrayForColors(int colors) {
 }
 
 void* objectPalettePop1_16Read(const char* file,int *result) {
-	tPop1_4bitsPalette* pal=(tPop1_4bitsPalette*)malloc(sizeof(tPop1_4bitsPalette));
+	tPalettePop1_16c* pal=(tPalettePop1_16c*)malloc(sizeof(tPalettePop1_16c));
 	tColor* colorArray;
 	int colors;
 	char aux[260];
@@ -269,7 +269,7 @@ void* objectPalettePop1_16Read(const char* file,int *result) {
 }
 
 int objectPalettePop1_16Set(void* o,tResource* res) {
-	tPop1_4bitsPalette* pal=o;
+	tPalettePop1_16c* pal=o;
 	int i;
 
 	res->content.size=100;

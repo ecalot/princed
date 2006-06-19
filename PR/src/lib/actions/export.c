@@ -110,18 +110,12 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 
 				/* handle palette linking */
 				switch (res.type) {
-					/*case eResTypePop2Palette4bits: */
 					case eResTypePalettePop2_NColors:
 					case eResTypePalettePop1_16: { /* save and remember palette file */
-						/*tPaletteListItem e; * deprecated */
 						o=objectCreate(&res,&ok);
 printf("new palette object: o=%p type=%d\n",o.obj,o.type);
 						if (!ok) { /* if SUCCESS remember the palette, otherwise keep using the default one */
-
 							pl_add(&palettes,o,res.id,lowPriority);
-							/*e.pal=currentPalette=o;
-							e.id=res.id;
-							list_insert(&paletteBuffer,(void*)&e);*/
 						}
 					}	break;
 					case eResTypeImage16: /* save image */
@@ -130,26 +124,18 @@ printf("new palette object: o=%p type=%d\n",o.obj,o.type);
 						tResource otherPalette;
 						int priorityRight;
 						tObject pal;
-						otherPalette.id=res.paletteId; /* TODO: use the try system */
+						otherPalette.id=res.paletteId;
 						/* Read the palette and load it into memory */
-						if (resourceListCompareId(res.paletteId,nullPalette) /* add &&!paletteCheckCompatibility(currentPalette,image) */) { /* The palette isn't in the buffer */
-						if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
-							o=objectCreate(&otherPalette,&ok);
+						if (resourceListCompareId(res.paletteId,nullPalette)) { /* The palette isn't in the buffer */
+							if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
+								o=objectCreate(&otherPalette,&ok);
 printf("adding ");
 showobj(o);
-							pl_add(&palettes,o,res.paletteId,highPriority);
-
-								/*tPaletteListItem e;
-								resourceListAddInfo(r,&otherPalette);*/
-								/* All right, it's not so bad, I can handle it! I'll buffer the new palette */
-								/*e.pal=currentPalette=objectCreate(&otherPalette,&ok);
-								e.id=res.id;*/
-								/*list_insert(&paletteBuffer,(void*)&e);*/
-						} else { /*, that's bad, I'll have to use the previous palette, even if it is the default */
-							printf("Warning: the selected palette doesn't exist in the file, the extracted image could result in a wrong palette\n");
+								pl_add(&palettes,o,res.paletteId,highPriority);
+							} else { /*, that's bad, I'll have to use the previous palette, even if it is the default */
+								printf("Warning: the selected palette doesn't exist in the file, the extracted image could result in a wrong palette\n");
+							}
 						}
-						}
-						/*res.palette=currentPalette;*/
 						o=objectCreate(&res,&ok);
 printf("getting the palette for the %d colours object ",objectGetColors(o));
 showobj(o);
@@ -166,7 +152,7 @@ showobj(pal);
 						o=objectCreate(&res,&ok);
 						break;
 				}
-		/* TODO: warning counting here */
+/* TODO: warning counting here */
 /*				if (!fatal(ok)) */
 				if (ok==PR_RESULT_SUCCESS)
 					ok=objectWrite(o,file,optionflag,backupExtension);
@@ -194,7 +180,7 @@ showobj(pal);
 	/* Free allocated resources, dynamic strings and the index */
 	resourceListDrop(r);
 	mReadCloseDatFile();
-	/*list_drop(&paletteBuffer);*/
+	/*pl_free(&paletteBuffer);*/
 
 	/* Close unknownXML */
 	return ok?count:PR_RESULT_ERR_EXTRACTION;

@@ -36,7 +36,7 @@ pallist.c: Princed Resources : Palette list layer implementation
 #include "reslist.h" /* resourceListCompareId */
 
 /* palette list layer (that uses the abstract list layer primitives) */
-
+#if 0
 int pallist_compare(const void* a,const void* b) {
 	return resourceListCompareId(((tPaletteListItem*)a)->id,((tPaletteListItem*)b)->id);
 }
@@ -44,7 +44,7 @@ int pallist_compare(const void* a,const void* b) {
 tPaletteList paletteListCreate() {
 	return list_create(sizeof(tPaletteListItem),pallist_compare,NULL);
 }
-
+#endif
 /* Priority list */
 #include <stdlib.h>
 #include "object.h"
