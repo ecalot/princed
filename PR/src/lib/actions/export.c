@@ -151,9 +151,9 @@ showobj(o);
 						}
 						/*res.palette=currentPalette;*/
 						o=objectCreate(&res,&ok);
-printf("getting the palette for the %d colours object ",paletteGetColors(o));
+printf("getting the palette for the %d colours object ",objectGetColors(o));
 showobj(o);
-						pal=pl_get(&palettes,&priorityRight,paletteGetColors(o));
+						pal=pl_get(&palettes,&priorityRight,objectGetColors(o));
 printf("palette ");
 showobj(pal);
 						applyPalette(o,pal);

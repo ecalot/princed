@@ -85,11 +85,11 @@ int import_full(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 /*		newRes.content=mLoadFileArray(vFileext);*/
 /*		if (newRes.content.size>0) {*/
 			/* TODO: let each format handle the files */
-		o=readObject(vFileext,&newRes,&result);
+		o=objectRead(vFileext,&newRes,&result);
 /*			if (!fatal(result)) */
 				if (!result)
-			setObject(o,&result,&newRes);
-			
+			objectSet(o,&result,&newRes);
+
 /*			if (!fatal(ok)) {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
 				error++;
@@ -153,11 +153,11 @@ int import_partial(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 			/* get save file name (if unknown document is in the XML) */
 			getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 
-			o=readObject(repairFolders(vFileext),&newRes,&result);
+			o=objectRead(repairFolders(vFileext),&newRes,&result);
 /*			if (!fatal(ok)) */
 			if (!ok)
-				setObject(o,&result,&newRes);
-			
+				objectSet(o,&result,&newRes);
+
 			/* the file is in the partial matching list, so I'll import */
 /*			newRes.content=mLoadFileArray(vFileext);
 			if (newRes.content.size>0) {

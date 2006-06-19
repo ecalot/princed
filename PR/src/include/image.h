@@ -66,18 +66,18 @@ typedef struct {
 
 /*int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes) */
 
-int objImage16Set(void* o,tResource* res);
-int objImage16Write(void* img,const char* file,int optionflag,const char* backupExtension);
-int objImage256Set(void* o,tResource* res);
-int objImage256Write(void* img,const char* file,int optionflag,const char* backupExtension);
-int objImage2Set(void* o,tResource* res);
-int objImage2Write(void* img,const char* file,int optionflag,const char* backupExtension);
+int objectImage16Set(void* o,tResource* res);
+int objectImage16Write(void* img,const char* file,int optionflag,const char* backupExtension);
+int objectImage256Set(void* o,tResource* res);
+int objectImage256Write(void* img,const char* file,int optionflag,const char* backupExtension);
+int objectImage2Set(void* o,tResource* res);
+int objectImage2Write(void* img,const char* file,int optionflag,const char* backupExtension);
 void* objectImage16Create(tBinary c, int *error);
-void* objImage16Read(const char* file,tObject palette, int *result);
+void* objectImage16Read(const char* file,tObject palette, int *result);
 void* objectImage256Create(tBinary c, int *error);
-void* objImage256Read(const char* file,tObject palette, int *result);
+void* objectImage256Read(const char* file,tObject palette, int *result);
 void* objectImage2Create(tBinary c, int *error);
-void* objImage2Read(const char* file,tObject palette, int *result);
+void* objectImage2Read(const char* file,tObject palette, int *result);
 
 #define getCarry(a) ((((a)>>4)&7)+1)
 #define getAlgor(a) a&0x4F
@@ -85,7 +85,7 @@ void* objImage2Read(const char* file,tObject palette, int *result);
 int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes);
 int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes, int w, int h);
 
-int objImageGetColorCount(void* img);
+int objectImageGetColorCount(void* img);
 void applyPalette(tObject image, tObject palette);
 
 #endif

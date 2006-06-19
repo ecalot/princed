@@ -39,12 +39,12 @@ object.h: Princed Resources : Main item class types and prototypes
 
 tObject objectCreate(tResource* r, int* error);
 int objectWrite(tObject o, const char* file, int optionflag, const char* backupExtension);
-tObject readObject(const char* file,tResource* newRes,int *result);
-void setObject(tObject o,int *result,tResource* res);
+tObject objectRead(const char* file,tResource* newRes,int *result);
+void objectSet(tObject o,int *result,tResource* res);
 
-int paletteGetBits(tObject pal);
-int paletteGetColors(tObject pal);
-tColor* paletteGetColorArray(tObject pal);
+int objectPaletteGetBits(tObject pal);
+int objectGetColors(tObject pal);
+tColor* objectGetColorsArray(tObject pal);
 
 int getColorsByType(tResourceType type);
 

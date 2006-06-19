@@ -375,7 +375,7 @@ void* objectImage16Create(tBinary cont, int *error) { /* use get like main.c */
 	}
 /*
 	image->pal=palette;
-	bits=paletteGetBits(image->pal);
+	bits=objectPaletteGetBits(image->pal);
 	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));
 	image->bits=getCarry(image->type);*/
 
@@ -384,16 +384,16 @@ void* objectImage16Create(tBinary cont, int *error) { /* use get like main.c */
 	return (void*)image;
 }
 
-int objImage16Write(void* img,const char* file,int optionflag,const char* backupExtension) {
+int objectImage16Write(void* img,const char* file,int optionflag,const char* backupExtension) {
 	tImage* i=img;
 	int bits;
 	int colors;
 	tColor* colorArray;
 
 	if (i->pal.type!=eResTypeNone) {
-		bits=4; /*paletteGetBits(i->pal);*/
-		colors=16; /*paletteGetColors(i->pal);*/
-		colorArray=paletteGetColorArray(i->pal);
+		bits=4; /*objectPaletteGetBits(i->pal);*/
+		colors=16; /*objectGetColors(i->pal);*/
+		colorArray=objectGetColorsArray(i->pal);
 	} else {
 	/*	bits=getCarry(i->type);
 		colors=1<<bits;*/
@@ -405,14 +405,14 @@ int objImage16Write(void* img,const char* file,int optionflag,const char* backup
 	return mWriteBmp(file,i->pix,i->width,i->height,bits,colors,colorArray,i->widthInBytes,optionflag,backupExtension);
 }
 
-void objImageFree(void* img) {
+void objectImageFree(void* img) {
 	if (!img) return;
 	/* free bitmap */
 	free(((tImage*)img)->pix);
 	free(img);
 }
 
-void* objImage16Read(const char* file,tObject palette, int *result) {
+void* objectImage16Read(const char* file,tObject palette, int *result) {
 	int bits;
 	tImage* image=(tImage*)malloc(sizeof(tImage));
 	tColor* colorArray;
@@ -428,7 +428,7 @@ void* objImage16Read(const char* file,tObject palette, int *result) {
 	/* check the palette information */
 
 	image->pal=palette;
-	bits=paletteGetBits(image->pal);
+	bits=objectPaletteGetBits(image->pal);
 	if (bits && bits!=image->bits) { /* bits=0 means all palettes allowed or ignore palette check */
 		*result=PR_RESULT_ERR_BMP_BITRATE_DIFFERS;
 		free(image->pix);
@@ -442,10 +442,10 @@ void* objImage16Read(const char* file,tObject palette, int *result) {
 	free(colorArray);
 	return (void*)image;
 }
-	/* TODO: generate image->type in objImageSet */
+	/* TODO: generate image->type in objectImageSet */
 
-/*int mFormatImportBmp(tResource *res) { --> objImageSet */
-int objImage16Set(void* o,tResource* res) {
+/*int mFormatImportBmp(tResource *res) { --> objectImageSet */
+int objectImage16Set(void* o,tResource* res) {
 	tImage* img=o;
 	tBinary decompressed,compressed;
 	int algorithm;

@@ -61,6 +61,6 @@ int objPcspeakerSet(void* o,tResource* res);
 int objMidiSet(void* o,tResource* res);
 
 #define objMidiWrite(a,b,c,d) objectBinaryWrite(a,b,c,d)
-#define objPcspeakerWrite(a,b,c,d) objectBinaryWrite(a,b,c,d)
+#define objectSoundPcspeakerWrite(a,b,c,d) objectBinaryWrite(a,b,c,d)
 
 #endif

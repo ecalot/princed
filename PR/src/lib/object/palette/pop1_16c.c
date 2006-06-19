@@ -192,7 +192,7 @@ void* objectPalettePop1_16Create(tBinary cont, int *error) {
 	return (void*)pal;
 }
 
-int objPalette_pop1_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
+int objectPalettePop1_16Write(void* o, const char* file, int optionflag, const char* backupExtension) {
 	tPop1_4bitsPalette* pal=o;
 	char aux[260];
 
@@ -203,12 +203,12 @@ int objPalette_pop1_4bitsWrite(void* o, const char* file, int optionflag, const 
 	return writePal(file,16,pal->c,optionflag,backupExtension);
 }
 
-tColor* objPalette_pop1_4bitsGetColors(void* o) {
+tColor* objectPalettePop1_16GetColors(void* o) {
 	tPop1_4bitsPalette* pal=o;
 	return pal->c;
 }
 
-tColor* paletteGetColorArrayForColors(int colors) {
+tColor* objectGetColorsArrayForColors(int colors) {
 	static tColor p1[2];
 	static tColor p4[2];
 	static tColor p8[2];
@@ -241,7 +241,7 @@ tColor* paletteGetColorArrayForColors(int colors) {
 	}
 }
 
-void* objPop1Palette4bitsRead(const char* file,int *result) {
+void* objectPalettePop1_16Read(const char* file,int *result) {
 	tPop1_4bitsPalette* pal=(tPop1_4bitsPalette*)malloc(sizeof(tPop1_4bitsPalette));
 	tColor* colorArray;
 	int colors;
@@ -268,7 +268,7 @@ void* objPop1Palette4bitsRead(const char* file,int *result) {
 	return (void*)pal;
 }
 
-int objPop1Palette4bitsSet(void* o,tResource* res) {
+int objectPalettePop1_16Set(void* o,tResource* res) {
 	tPop1_4bitsPalette* pal=o;
 	int i;
 

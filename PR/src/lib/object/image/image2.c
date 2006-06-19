@@ -128,7 +128,7 @@ void* objectImage2Create(tBinary cont, int *error) { /* use get like main.c */
 	return (void*)image;
 }
 
-int objImage2Write(void* img,const char* file,int optionflag,const char* backupExtension) {
+int objectImage2Write(void* img,const char* file,int optionflag,const char* backupExtension) {
 	tImage* i=img;
 	tColor* colorArray=objPalette_pop1_monoGetColors();
 
@@ -136,7 +136,7 @@ int objImage2Write(void* img,const char* file,int optionflag,const char* backupE
 	return mWriteBmp(file,i->pix,i->width,i->height,1,2,colorArray,i->widthInBytes,optionflag,backupExtension);
 }
 
-void* objImage2Read(const char* file,tObject palette, int *result) {
+void* objectImage2Read(const char* file,tObject palette, int *result) {
 	int bits;
 	tImage* image=(tImage*)malloc(sizeof(tImage));
 	tColor* colorArray;
@@ -153,7 +153,7 @@ void* objImage2Read(const char* file,tObject palette, int *result) {
 
 	/* check the palette information */
 
-	bits=paletteGetBits(image->pal);
+	bits=objectPaletteGetBits(image->pal);
 	if (image->bits!=1) {
 		*result=PR_RESULT_ERR_BMP_BITRATE_DIFFERS;
 		free(image->pix);
@@ -165,7 +165,7 @@ void* objImage2Read(const char* file,tObject palette, int *result) {
 	return (void*)image;
 }
 
-int objImage2Set(void* o,tResource* res) {
+int objectImage2Set(void* o,tResource* res) {
 	tImage* img=o;
 	tBinary decompressed,compressed;
 	int algorithm;

@@ -328,7 +328,7 @@ void* objectImage256Create(tBinary cont, int *error) { /* use get like main.c */
 	}
 	/*
 	image->pal=palette;
-	bits=paletteGetBits(image->pal);
+	bits=objectPaletteGetBits(image->pal);
 	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));*/
 	image->bits=getCarry(image->type);
 
@@ -347,16 +347,16 @@ tColor* objPalette_256() {
 	return c;
 }
 
-int objImage256Write(void* img,const char* file,int optionflag,const char* backupExtension) {
+int objectImage256Write(void* img,const char* file,int optionflag,const char* backupExtension) {
 	tImage* i=img;
 	int bits;
 	int colors;
 	tColor* colorArray;
 
 	if (i->pal.type!=eResTypeNone) {
-		bits=paletteGetBits(i->pal);
-		colors=i->colorCount; /*paletteGetColors(i->pal);*/
-		colorArray=paletteGetColorArray(i->pal);
+		bits=objectPaletteGetBits(i->pal);
+		colors=i->colorCount; /*objectGetColors(i->pal);*/
+		colorArray=objectGetColorsArray(i->pal);
 	} else {
 		bits=8; /*getCarry(i->type);*/
 		colors=256; /*1<<bits;*/
@@ -367,14 +367,14 @@ int objImage256Write(void* img,const char* file,int optionflag,const char* backu
 	return mWriteBmp(file,i->pix,i->width,i->height,bits,colors,colorArray,i->widthInBytes,optionflag,backupExtension);
 }
 
-void objImage256Free(void* img) {
+void objectImage256Free(void* img) {
 	if (!img) return;
 	/* free bitmap */
 	free(((tImage*)img)->pix);
 	free(img);
 }
 
-void* objImage256Read(const char* file,tObject palette, int *result) {
+void* objectImage256Read(const char* file,tObject palette, int *result) {
 	int bits;
 	tImage* image=(tImage*)malloc(sizeof(tImage));
 	tColor* colorArray;
@@ -390,7 +390,7 @@ void* objImage256Read(const char* file,tObject palette, int *result) {
 	/* check the palette information */
 
 	image->pal=palette;
-	bits=paletteGetBits(image->pal);
+	bits=objectPaletteGetBits(image->pal);
 	if (bits && bits!=image->bits) { /* bits=0 means all palettes allowed or ignore palette check */
 		*result=PR_RESULT_ERR_BMP_BITRATE_DIFFERS;
 		free(image->pix);
@@ -404,10 +404,10 @@ void* objImage256Read(const char* file,tObject palette, int *result) {
 	free(colorArray);
 	return (void*)image;
 }
-	/* TODO: generate image->type in objImageSet */
+	/* TODO: generate image->type in objectImageSet */
 
-/*int mFormatImportBmp(tResource *res) { --> objImageSet */
-int objImage256Set(void* o,tResource* res) {
+/*int mFormatImportBmp(tResource *res) { --> objectImageSet */
+int objectImage256Set(void* o,tResource* res) {
 	tImage* img=o;
 	tBinary decompressed,compressed;
 
@@ -436,7 +436,7 @@ int objImage256Set(void* o,tResource* res) {
 }
 
 /* common function TODO: move */
-int objImageGetColorCount(void* img) {
+int objectImageGetColorCount(void* img) {
 	tImage* i=img;
 	return i->colorCount;
 }

@@ -65,18 +65,18 @@ int applyPalette(tPalette* p,tImage *i);
 void* objPalette_pop2_4bitsCreate(tBinary c, int *error);
 int objPalette_pop2_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 void* objectPalettePop1_16Create(tBinary c, int *error);
-int objPalette_pop1_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension);
-void* objPop1Palette4bitsRead(const char* file,int *result);
-int objPop1Palette4bitsSet(void* o,tResource* res);
+int objectPalettePop1_16Write(void* o, const char* file, int optionflag, const char* backupExtension);
+void* objectPalettePop1_16Read(const char* file,int *result);
+int objectPalettePop1_16Set(void* o,tResource* res);
 /*int objPop2Palette4bitsSet(void* o,tResource* res);*/
 void* objectPalettePop2_NColorsCreate(tBinary cont, int *error);
-int objPop2PaletteNColorsWrite(void* o, const char* file, int optionflag, const char* backupExtension);
+int objectPalettePop2_NColorsWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 void* objPop2PaletteNColorsRead(const char* file,int *result);
 int objPop2PaletteNColorsSet(void* o,tResource* res);
 
-tColor* objPalette_pop1_4bitsGetColors(void* o);
+tColor* objectPalettePop1_16GetColors(void* o);
 tColor* objPalette_pop2_4bitsGetColors(void* o);
-tColor* objPalette_pop2_ncolorsGetColors(void* o);
+tColor* objectPalettePop2_NColorsGetColors(void* o);
 
 /* middle layer */
 #define to8bits_A(a) (((a)<<2)|((a)>>4))

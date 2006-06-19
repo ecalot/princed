@@ -51,7 +51,7 @@ tPaletteList paletteListCreate() {
 
 #ifndef DEBUG_TEST_PALLST
 void showobj(tObject o) {
-	printf("object type=%d colors=%d\n",o.type,paletteGetColors(o));
+	printf("object type=%d colors=%d\n",o.type,objectGetColors(o));
 }
 #endif
 
@@ -110,11 +110,11 @@ showobj(o);
 	} else {
 		/* low priority insertion */
 		tPL_Node* insertNode=malloc(sizeof(tPL_Node));
-		int colors=paletteGetColors(o);
+		int colors=objectGetColors(o);
 printf("adding with low priority:\n");
 showobj(o);
 
-		while (pl->list_first && colors>=paletteGetColors(pl->list_first->object)) {
+		while (pl->list_first && colors>=objectGetColors(pl->list_first->object)) {
 			printf("deleting: ");
 			showobj(pl->list_first->object);
 			pl->list_first=pl->list_first->next; /* Delete */
@@ -136,7 +136,7 @@ printf("getting PL\n");
 
 	*priorityRight=1;
 	if (pl->priority_field.enabled) {
-		if (colors<=paletteGetColors(pl->priority_field.object)) {
+		if (colors<=objectGetColors(pl->priority_field.object)) {
 showobj(pl->priority_field.object);
 			return pl->priority_field.object;
 		} else {
@@ -148,7 +148,7 @@ showobj(pl->priority_field.object);
 printf("first=%p with ",(void*)pl->list_first);
 showobj(pl->list_first->object);
 
-	while (node && colors>paletteGetColors(node->object))
+	while (node && colors>objectGetColors(node->object))
 	{		node=node->next; printf("next %p\n",(void*)node); }
 
 	return node?node->object:objectCreate(NULL,&junk);
