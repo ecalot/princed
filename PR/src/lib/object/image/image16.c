@@ -386,23 +386,12 @@ void* objectImage16Create(tBinary cont, int *error) { /* use get like main.c */
 
 int objectImage16Write(void* img,const char* file,int optionflag,const char* backupExtension) {
 	tImage* i=img;
-	int bits;
-	int colors;
 	tColor* colorArray;
 
-	if (i->pal.type!=eResTypeNone) {
-		bits=4; /*objectPaletteGetBits(i->pal);*/
-		colors=16; /*objectGetColors(i->pal);*/
-		colorArray=objectGetColorsArray(i->pal);
-	} else {
-	/*	bits=getCarry(i->type);
-		colors=1<<bits;*/
-		colors=16;
-		colorArray=objPalette_16();
-	}
+	colorArray=(i->pal.type!=eResTypeNone)?objectGetColorsArray(i->pal):objPalette_16();
 
 	/* Write bitmap */
-	return mWriteBmp(file,i->pix,i->width,i->height,bits,colors,colorArray,i->widthInBytes,optionflag,backupExtension);
+	return mWriteBmp(file,i->pix,i->width,i->height,4,16,colorArray,i->widthInBytes,optionflag,backupExtension);
 }
 
 void objectImageFree(void* img) {

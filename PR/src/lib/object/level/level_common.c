@@ -55,7 +55,7 @@ typedef struct {
 	const char* datAuthor;
 }tPop1Level;
 
-void* objectLevelPop1Create(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error) {
+void* objectLevelCreate(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error) {
 	tPop1Level* r;
 	*error=PR_RESULT_SUCCESS;
 	/*TODO: fix the original file name path (lala///lele/demo.plv--> demo.plv) */
@@ -70,9 +70,9 @@ void* objectLevelPop1Create(tBinary content,int number,const char* datfile,const
 	return (void*)r;
 }
 
-int objectLevelPop1Write(void* o, const char* file, int optionflag, const char* backupExtension) {
+int objectLevelWrite(void* o, const char* file, int optionflag, const char* backupExtension,int version) {
 	tPop1Level* b=o;
-	return writePlv(file,b->content,b->content.size==12025?2:1,b->datfile,b->number,file,b->desc,b->name,b->datAuthor,optionflag,backupExtension);
+	return writePlv(file,b->content,version,b->datfile,b->number,file,b->desc,b->name,b->datAuthor,optionflag,backupExtension);
 }
 
 /*

@@ -54,13 +54,6 @@ pal.h: Princed Resources : JASC PAL files support headers
 	{0xff,0x50,0xff},\
 	{0xff,0xf8,0x50},\
 	{0xff,0xff,0xff}}
-/*
-int getPalette(const tPalette* p, int bits, const tColor** palette);
-int setPalette(tPalette* p, int bits, tColor* palette);
-tPalette createPalette();
-int readPalette(tPalette* p, unsigned char* data, int dataSize);
-int applyPalette(tPalette* p,tImage *i);
-*/
 
 void* objPalette_pop2_4bitsCreate(tBinary c, int *error);
 int objPalette_pop2_4bitsWrite(void* o, const char* file, int optionflag, const char* backupExtension);
@@ -68,14 +61,12 @@ void* objectPalettePop1_16Create(tBinary c, int *error);
 int objectPalettePop1_16Write(void* o, const char* file, int optionflag, const char* backupExtension);
 void* objectPalettePop1_16Read(const char* file,int *result);
 int objectPalettePop1_16Set(void* o,tResource* res);
-/*int objPop2Palette4bitsSet(void* o,tResource* res);*/
 void* objectPalettePop2_NColorsCreate(tBinary cont, int *error);
 int objectPalettePop2_NColorsWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 void* objPop2PaletteNColorsRead(const char* file,int *result);
 int objPop2PaletteNColorsSet(void* o,tResource* res);
 
 tColor* objectPalettePop1_16GetColors(void* o);
-tColor* objPalette_pop2_4bitsGetColors(void* o);
 tColor* objectPalettePop2_NColorsGetColors(void* o);
 
 /* middle layer */
@@ -88,10 +79,12 @@ tColor* objectPalettePop2_NColorsGetColors(void* o);
 /* Hooks */
 
 #define PAL_COLORS_eResTypePalettePop2_NColors getColorsByPop2PaletteObject(object.obj)
-#define PAL_COLORS_eResTypePalettePop1_16 16
-#define PAL_COLORS_eResTypePalettePop1_Mono 2
+#define PAL_COLORS_eResTypePalettePop1_16      16
+#define PAL_COLORS_eResTypePalettePop1_Mono    2
 
-int getColorsByPop2PaletteObject(void* o);
+int getColorsByPop2PaletteObject(void* o); /* TODO: rename by objectPalettePop2_NColorsGetColors */
+int objectPaletteGetBits(tObject pal);
+tColor* objectGetColorsArray(tObject pal); /* TODO: rename by objectPaletteGetColorsArray */
 
 #endif
 

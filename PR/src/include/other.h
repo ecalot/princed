@@ -40,7 +40,14 @@ int objectBinaryWrite(void* o, const char* file, int optionflag, const char* bac
 void* objBinaryRead(const char* file,int *result);
 int objBinarySet(void* o,tResource* res);
 
-void* objectLevelPop1Create(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error); /* TODO: move to level.h */
-int objectLevelPop1Write(void* o, const char* file, int optionflag, const char* backupExtension);
+/* TODO: move to level.h */
+
+#define objectLevelPop1Create(a,b,c,d,e,f,g) objectLevelCreate(a,b,c,d,e,f,g)
+#define objectLevelPop2Create(a,b,c,d,e,f,g) objectLevelCreate(a,b,c,d,e,f,g)
+#define objectLevelPop1Write(a,b,c,d) objectLevelWrite(a,b,c,d,1)
+#define objectLevelPop2Write(a,b,c,d) objectLevelWrite(a,b,c,d,2)
+
+void* objectLevelCreate(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error);
+int objectLevelWrite(void* o, const char* file, int optionflag, const char* backupExtension,int popVersion);
 
 #endif

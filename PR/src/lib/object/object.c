@@ -55,6 +55,9 @@ tObject objectCreate(tResource* r, int* error) {
 	case eResTypeLevelPop1:
 		o.obj=objectLevelPop1Create(r->content,r->number,r->datfile,r->name,r->desc,r->datAuthor,error);
 		break;
+	case eResTypeLevelPop2:
+		o.obj=objectLevelPop2Create(r->content,r->number,r->datfile,r->name,r->desc,r->datAuthor,error);
+		break;
 	case eResTypeOtherBinary: /* Binary files */
 	case eResTypeOtherText: /* Text files */
 	case eResTypeOtherRaw: /* Raw files */
@@ -99,6 +102,9 @@ int objectWrite(tObject o, const char* file, int optionflag, const char* backupE
 	switch (o.type) {
 	case eResTypeLevelPop1:
 		error=objectLevelPop1Write(o.obj,file,optionflag,backupExtension);
+		break;
+	case eResTypeLevelPop2:
+		error=objectLevelPop2Write(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeOtherBinary: /* Binary files */
 	case eResTypeOtherText: /* Text files */
@@ -152,7 +158,7 @@ int objectPaletteGetBits(tObject pal) {
 	}
 }
 
-int objectGetColors(tObject object) { /* TODO: rename to objectGetColors */
+int objectGetColors(tObject object) {
 	switch (object.type) {
 	case eResTypePalettePop2_NColors:
 		return PAL_COLORS_eResTypePalettePop2_NColors;
