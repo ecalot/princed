@@ -247,10 +247,6 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling the POP1 16 colors palette class support...
 	$(CC) $(OPTIONS) -c  lib/object/palette/pop1_16c.c -o $@
 
-#.pop2_4bit.o: lib/object/palette/pop2_4bit.c include/palette.h include/memory.h include/dat.h include/disk.h include/pal.h
-#	$(INFO) Compiling the POP2 16 colors palette class support...
-#	$(CC) $(OPTIONS) -c  lib/object/palette/pop2_4bit.c -o $@
-
 .binary.o: lib/object/other/binary.c include/binary.h include/common.h include/dat.h include/types.h include/disk.h
 	$(INFO) Compiling the binary item class support...
 	$(CC) $(OPTIONS) -c  lib/object/other/binary.c -o $@
