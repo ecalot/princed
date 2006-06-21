@@ -37,10 +37,11 @@
 
 #include "binary.h" /* tBinary */
 #include "common.h"
-#include "dat.h" /* WriteDat */
-#include "types.h" /* tResources */
+#include "dat.h"    /* WriteDat */
+#include "disk.h"   /* getFileNameFromPath */
 #include "plv.h"
 #include <stdlib.h>
+#include "types.h"  /* tResources */
 
 /***************************************************************\
 |                         Level Object                         |
@@ -72,7 +73,7 @@ void* objectLevelCreate(tBinary content,int number,const char* datfile,const cha
 
 int objectLevelWrite(void* o, const char* file, int optionflag, const char* backupExtension,int version) {
 	tPop1Level* b=o;
-	return writePlv(file,b->content,version,b->datfile,b->number,file,b->desc,b->name,b->datAuthor,optionflag,backupExtension);
+	return writePlv(file,b->content,version,b->datfile,b->number,getFileNameFromPath(file),b->desc,b->name,b->datAuthor,optionflag,backupExtension);
 }
 
 /*

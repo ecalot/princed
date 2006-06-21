@@ -89,27 +89,24 @@ char* getDate() {
 }
 
 int writePlv(const char* file, tBinary content, int popversion, const char* datfile, int level, const char* filename, const char* desc, const char* title, const char* vDatAuthor, int optionflag,const char* backupExtension) {
-	/* Plv files are saved as raw except you must ignore the checksum and add the plv constant file header */
+	/* PLV files are saved as raw except you must add the checksum and the plv constant file header and footer */
 
 	/* Variables */
+	char levelnum[10];
+	char* now;
+	const char* nullString="";
+	const unsigned long int numberOfFieldPairs=9;
 	FILE* target;
 	int ok;
-	unsigned char sizeOfNow;
-	char* now;
-	unsigned char checksum;
-	char levelnum[10];
-	const char* nullString="";
 	static const char* author=PLV_DEFAULT_AUTHOR;
-	unsigned long int block2size;
-	const unsigned long int numberOfFieldPairs=9;
+	unsigned char checksum;
+	unsigned char sizeOfNow;
 	unsigned char version=popversion;
+	unsigned long int block2size;
 
 	/* Get current time */
 	now=getDate();
 	sizeOfNow=(unsigned char)(strlen(now)+1);
-
-	/* Ignore checksum */
-	/* size--; */
 
 	/* Validate null strings when no description is set */
 	if (desc==NULL) desc=nullString;
@@ -123,19 +120,18 @@ int writePlv(const char* file, tBinary content, int popversion, const char* datf
 	ok=writeOpen(file,&target,optionflag);
 
 	/* Write headers */
-	ok=ok&&fwrite(PLV_HEADER_A,PLV_HEADER_A_SIZE,1,target);
-	/*if (size==12025) version=2; else version=1; * TODO: check if the checksum is included */
-	ok=ok&&fwritechar(&version,target);
+	ok=ok&&fwrite(PLV_HEADER_MAGIC,PLV_HEADER_MAGIC_SIZE,1,target);
+	ok=ok&&fwritechar(&version,target); /* POP version */
 	version=1;
-	ok=ok&&fwritechar(&version,target);
+	ok=ok&&fwritechar(&version,target); /* PLV version */
 	ok=ok&&fwritechar(&level,target);
 	ok=ok&&fwritelong(&numberOfFieldPairs,target);
 	ok=ok&&fwritelong(&content.size,target);
 
-	/* Write block 1: raw data without ignoring checksum */
+	/* Write block 1: checksum and raw data */
 	checksum=getChecksum(content);
 	ok=ok&&fwritechar(&checksum,target);
-	ok=ok&&fwrite(content.data,content.size,1,target);
+	ok=ok&&fwritebinary(content,target);
 
 	/* Write footers */
 	block2size=(
@@ -180,17 +176,17 @@ int readPlv(tResource *res) {
 	unsigned long int oldSize=res->content.size;
 
 	/* integrity check 1 */
-	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE) return 0; /* false */
-	if (memcmp(res->content.data,PLV_HEADER_A,PLV_HEADER_A_SIZE)) return 0; /* false */
+	if (oldSize<=PLV_HEADER_MAGIC_SIZE+1+PLV_HEADER_B_SIZE) return 0; /* false */
+	if (memcmp(res->content.data,PLV_HEADER_MAGIC,PLV_HEADER_MAGIC_SIZE)) return 0; /* false */
 
 	/* jump to size */
-	pos=res->content.data+PLV_HEADER_A_SIZE+7; /* TODO: check this */
+	pos=res->content.data+PLV_HEADER_MAGIC_SIZE+7; /* TODO: check this */
 
 	/* read size and jump to data */
 	res->content.size=array2long(pos);pos+=4;
 
 	/* integrity check 2 */
-	if (oldSize<=PLV_HEADER_A_SIZE+1+PLV_HEADER_B_SIZE+res->content.size) return 0; /* false */
+	if (oldSize<=PLV_HEADER_MAGIC_SIZE+1+PLV_HEADER_B_SIZE+res->content.size) return 0; /* false */
 
 	/* validate checksum */
 	if (!checkSum(pos,res->content.size))

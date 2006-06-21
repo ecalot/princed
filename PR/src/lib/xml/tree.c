@@ -38,11 +38,12 @@ tree.c: Princed Resources : Specific XML tree handling routines
 
 /* Includes */
 #include "common.h"
-#include "list.h" /* list primitives needed by the Common Factor routines */
+#include "list.h"    /* list primitives needed by the Common Factor routines */
 #include "memory.h"
-#include "parse.h" /* getTagStructure */
+#include "parse.h"   /* getTagStructure */
 #include "unknown.h" /* typedef tUnknownFile */
 #include <stdio.h>
+#include <string.h>
 
 /***************************************************************\
 |                     XML generation defines                    |

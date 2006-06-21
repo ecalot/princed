@@ -155,11 +155,11 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling resource list module...
 	$(CC) $(OPTIONS) -c lib/layers/reslist.c -o $@
 
-.level.o: lib/object/level/level.c
+.level.o: lib/object/level/level.c include/binary.h include/common.h include/dat.h include/disk.h include/plv.h include/types.h
 	$(INFO) Compiling level class module...
 	$(CC) $(OPTIONS) -c lib/object/level/level.c -o $@
 
-.sounds.o: lib/object/sound/sounds.c
+.sounds.o: lib/object/sound/sounds.c include/binary.h include/common.h include/wav.h include/dat.h include/types.h
 	$(INFO) Compiling sound list module...
 	$(CC) $(OPTIONS) -c lib/object/sound/sounds.c -o $@
 

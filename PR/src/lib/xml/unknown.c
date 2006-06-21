@@ -46,6 +46,7 @@ unknown.c: Princed Resources : Unknown resources handler implementation
 #include "tree.h"
 #include "unknown.h"
 #include <stdio.h>
+#include <string.h>
 
 /***************************************************************\
 |                     Unknown.xml primitives                    |

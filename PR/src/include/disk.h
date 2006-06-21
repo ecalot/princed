@@ -100,5 +100,7 @@ int macfwritel(const void* var,FILE* file);
 #define freadchar(var,file)   fread ((var),1,1,file)
 #endif
 
+#define fwritebinary(c,fd) fwrite((c).data,(c).size,1,fd)
+
 #endif
 
