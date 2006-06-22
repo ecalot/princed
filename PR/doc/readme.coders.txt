@@ -198,6 +198,8 @@ Usage:
 
 9) Make rules
 
+First make sure you have installed gmake
+
 To clean the object files type
  make clean
 
