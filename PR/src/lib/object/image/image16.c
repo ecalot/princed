@@ -150,23 +150,23 @@ void cmp_antiTransposeImage(tBinary* b, int widthInBytes, int height) {
  */
 
 /* Expands an array into an image */
-int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes) {
+int mExpandGraphic(tBinary input, tImage *image) {
 	/*
-	 * Reads data and extracts tImage
+	 * Reads input.data and extracts tImage
 	 * returns the next image address or -1 in case of error
 	 */
 
 	int imageSizeInBytes=0;
 	int result;
 
-	image->height=array2short(data);
-	data+=2;
-	image->width =array2short(data);
-	data+=2;
+	image->height=array2short(input.data);
+	input.data+=2;
+	image->width =array2short(input.data);
+	input.data+=2;
 
-	if (*(data++)>1) return PR_RESULT_COMPRESS_RESULT_FATAL; /* Verify format */
-	image->type=(unsigned char)(*(data++));
-	dataSizeInBytes-=6;
+	if (*(input.data++)>1) return PR_RESULT_COMPRESS_RESULT_FATAL; /* Verify format */
+	image->type=(unsigned char)(*(input.data++));
+	input.size-=6;
 	switch (((image->type>>4)&7)+1) {
 	case 8:
 		image->widthInBytes=(image->width);
@@ -188,27 +188,27 @@ int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes)
 
 	switch (getAlgor(image->type)) {
 		case COMPRESS_RAW: /* No Compression Algorithm */
-			if ((image->pix=getMemory(dataSizeInBytes))==NULL) return PR_RESULT_COMPRESS_RESULT_FATAL;
-			memcpy(image->pix,data,dataSizeInBytes);
+			if ((image->pix=getMemory(input.size))==NULL) return PR_RESULT_COMPRESS_RESULT_FATAL;
+			memcpy(image->pix,input.data,input.size);
 			imageSizeInBytes=image->widthInBytes*image->height;
 			result=PR_RESULT_SUCCESS;
 			break;
 		case COMPRESS_RLE_LR: /* RLE Left to Right Compression Algorithm */
-			result=expandRle(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
+			result=expandRle(input.data,input.size,&(image->pix),&imageSizeInBytes);
 			checkSize;
 			break;
 		case COMPRESS_RLE_UD: /* RLE Up to Down Compression Algorithm */
-			result=expandRle(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
+			result=expandRle(input.data,input.size,&(image->pix),&imageSizeInBytes);
 			checkResult;
 			checkSize;
 			cmp_transposeImage(image,imageSizeInBytes);
 			break;
 		case COMPRESS_LZG_LR: /* LZ Groody Left to Right Compression Algorithm */
-			result=expandLzg(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
+			result=expandLzg(input.data,input.size,&(image->pix),&imageSizeInBytes);
 			checkSize;
 			break;
 		case COMPRESS_LZG_UD: /* LZ Groody Up to Down Compression Algorithm */
-			result=expandLzg(data,dataSizeInBytes,&(image->pix),&imageSizeInBytes);
+			result=expandLzg(input.data,input.size,&(image->pix),&imageSizeInBytes);
 			checkResult;
 			checkSize;
 			cmp_transposeImage(image,imageSizeInBytes);
@@ -366,7 +366,7 @@ void* objectImage16Create(tBinary cont, int *error) { /* use get like main.c */
 	image=(tImage*)malloc(sizeof(tImage));
 
 	/* Expand graphic and check results */
-	*error=mExpandGraphic(cont.data,image,cont.size); /* TODO: pass tBinary */
+	*error=mExpandGraphic(cont,image); /* TODO: pass tBinary */
 /*	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
 		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);*/
 	if (*error==PR_RESULT_COMPRESS_RESULT_FATAL) {

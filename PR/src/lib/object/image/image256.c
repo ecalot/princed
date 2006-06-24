@@ -142,7 +142,7 @@ int mExpandGraphic256(const unsigned char* data,tImage *image, int dataSizeInByt
 	}
 
 	/* special format has a special function */
-	return pop2decompress(data,dataSizeInBytes,image->width,&(image->pix),&imageSizeInBytes);
+	return pop2decompress(data,dataSizeInBytes,image->width,&(image->pix),&imageSizeInBytes); /* TODO: use tBinary */
 }
 
 /* Compress an image into binary data */

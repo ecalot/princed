@@ -82,7 +82,8 @@ void* objectImage2Read(const char* file,tObject palette, int *result);
 #define getCarry(a) ((((a)>>4)&7)+1)
 #define getAlgor(a) a&0x4F
 
-int mExpandGraphic(const unsigned char* data,tImage *image, int dataSizeInBytes);
+int mExpandGraphic(tBinary data,tImage *image);
+/*int mExpandGraphic(const unsigned char* data, int dataSizeInBytes,tImage *image);*/
 int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes, int w, int h);
 
 int objectImageGetColorCount(void* img);
