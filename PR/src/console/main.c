@@ -32,12 +32,12 @@ main.c: PR console program parsing and IDE
 */
 
 #ifdef UNIX
- #include <unistd.h>
- #ifndef LINUX
-  #include "getopt.h"
- #endif
+#include <unistd.h>
+#ifndef LINUX
+#include "getopt.h"
+#endif
 #else
- #include "getopt.h"
+#include "getopt.h"
 #endif
 
 #include "common.h"
@@ -264,4 +264,3 @@ int main (int argc, char **argv) {
 
 	return result;
 }
-

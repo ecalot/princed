@@ -19,8 +19,8 @@
 */
 
 /*
-.c: Princed Resources :
-¯¯¯¯¯¯¯¯¯¯
+binary.c: Princed Resources : Binary object implementation
+¯¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 17 Feb 2006
 

@@ -19,8 +19,8 @@
 */
 
 /*
-pal.h: Princed Resources : JASC PAL files support headers
-¯¯¯¯¯
+palette.h: Princed Resources : Palette object support headers
+¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 

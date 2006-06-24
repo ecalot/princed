@@ -19,8 +19,8 @@
 */
 
 /*
-.c: Princed Resources :
-¯¯¯¯¯¯¯¯¯¯
+level.c: Princed Resources : Common POP level object implementation
+¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 5 Mar 2006
 

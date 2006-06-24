@@ -19,8 +19,8 @@
 */
 
 /*
-main.c: Princed Resources : Main item class implementation
-¯¯¯¯¯¯
+object.c: Princed Resources : Main item class implementation
+¯¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 16 Feb 2006
 

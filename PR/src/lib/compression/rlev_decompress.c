@@ -19,7 +19,7 @@
 */
 
 /*
-rlec_uncompress.c: Princed Resources : Image Compression Library :
+rlev_decompress.c: Princed Resources : Image Compression Library :
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯  Run length encoding variant for POP2
 
  Copyright 2003, 2004, 2005, 2006 Princed Development Team
@@ -61,7 +61,7 @@ int expandRleV(const unsigned char* input, int inputSize,
 			}
 		}
 	}
-	
+
 	*outputSize=oCursor;
 	return (rep==255)?PR_RESULT_SUCCESS:PR_RESULT_COMPRESS_RESULT_WARNING;
 }

@@ -197,7 +197,7 @@ Versions:
   x Fix repeated resource name in CPALACE.DAT bug
   x Fork compress to code images as a new object in a separated file
   - Rename all xbit names with xcolor
-  x Transform flags from the hex form to the [a-y]* form (a is 1, b is 2, c is 4...)
+  x Transform flags from the hex form to the comma-separated form (010=2; 110=2,3)
  * PR v1.4 (future plans)
   x Added full POP2 RLEV compression algorithm
   x Check for memory leak

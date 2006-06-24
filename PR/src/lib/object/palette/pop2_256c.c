@@ -19,8 +19,8 @@
 */
 
 /*
-palette.c: Princed Resources : The palette object implementation
-¯¯¯¯¯¯¯¯¯¯
+pop2_256c.c: Princed Resources : The POP2 palette object implementation
+¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 09 Feb 2006
 

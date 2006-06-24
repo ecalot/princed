@@ -19,8 +19,8 @@
 */
 
 /*
-tasks.c: Princed Resources : File classify routines
-¯¯¯¯¯¯¯
+classify.c: Princed Resources : File classify routines
+¯¯¯¯¯¯¯¯¯¯
  Copyright 2003 Princed Development Team
   Created: 24 Aug 2003
 

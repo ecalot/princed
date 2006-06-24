@@ -19,7 +19,7 @@
 */
 
 /*
-.h: Princed Resources : Resource list prototypes
+pallist.h: Princed Resources : Resource list prototypes
 ¯¯¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 05 Jun 2005
@@ -45,26 +45,26 @@ typedef tList tPaletteList;
 typedef struct {
 	tResourceId        id;
 	tObject            pal;
-}tPaletteListItem;
+} tPaletteListItem;
 
 tPaletteList paletteListCreate();
 
 typedef enum {highPriority, lowPriority}tPriority;
-typedef struct pln{
-	tResourceId resid;			 
+typedef struct pln {
+	tResourceId resid;
 	tObject     object;
 	struct pln* next;
-}	tPL_Node;
+} tPL_Node;
 
 typedef struct {
 	struct {
 		int         enabled;
-		tResourceId idres;			 
+		tResourceId idres;
 		tObject     object;
 	} priority_field;
 	tPL_Node*   list_first;
 	tPL_Node*   list_deleted_first;
-}	tPL;
+} tPL;
 
 void pl_free  (tPL* pl);
 int  pl_tryAdd(tPL* pl, tResourceId resid, tPriority p);

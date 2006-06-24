@@ -19,7 +19,7 @@
 */
 
 /*
-other.h: Princed Resources :
+other.h: Princed Resources : Other objects headers
 ¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 17 Feb 2006

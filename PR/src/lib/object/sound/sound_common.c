@@ -19,8 +19,8 @@
 */
 
 /*
-wave.c: Princed Resources : 
-¯¯¯¯¯¯¯¯¯¯
+sounds.c: Princed Resources : Common sound object implementation
+¯¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 19 Feb 2006
 
@@ -37,11 +37,11 @@ wave.c: Princed Resources :
 
 #include "binary.h" /* tBinary */
 #include "common.h"
-#include "wav.h" 
+#include "wav.h"
 #include <stdlib.h>
 #include <string.h> /* memcpy */
-#include "dat.h" 
-#include "types.h" 
+#include "dat.h"
+#include "types.h"
 
 /***************************************************************\
 |                         Binary Object                         |
@@ -50,7 +50,7 @@ wave.c: Princed Resources :
 void* objSoundCreate(tBinary cont, int *error) { /* use get like main.c */
 	tBinary* r;
 	*error=PR_RESULT_SUCCESS;
-	
+
 	r=(tBinary*)malloc(sizeof(tBinary));
 	r->data=cont.data+1;
 	r->size=cont.size-1;
@@ -74,21 +74,21 @@ int objWaveWrite(void* o, const char* file, int optionflag, const char* backupEx
 void* objWaveRead(const char* file, int *result) {
 	int  channels;
 	long samplerate;
- 	long bps;
+	long bps;
 	tBinary* o=(tBinary*)malloc(sizeof(tBinary));
-	
+
 	*result=readWav(file,o,&channels,&samplerate,&bps);
 
 	if (*result==PR_RESULT_SUCCESS) {
 		if (bps!=8)            *result=PR_RESULT_WAV_UNSUPPORTED_BITRATE;
 		if (samplerate!=11025) *result=PR_RESULT_WAV_UNSUPPORTED_SAMPLERATE;
-		if (channels!=1)     *result=PR_RESULT_WAV_UNSUPPORTED_STEREO;
+		if (channels!=1)       *result=PR_RESULT_WAV_UNSUPPORTED_STEREO;
 	}
 	if (*result!=PR_RESULT_SUCCESS) {
 		free(o->data);
 		return NULL;
 	}
-	
+
 	return (void*)o;
 }
 

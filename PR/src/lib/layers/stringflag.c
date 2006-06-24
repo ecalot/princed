@@ -19,7 +19,7 @@
 */
 
 /*
-stringflag.c: Princed Resources : Format string parsing feature routines
+stringflag.c: Princed Resources : Flag string parsing feature routines
 ¯¯¯¯¯¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 22 Jun 2006

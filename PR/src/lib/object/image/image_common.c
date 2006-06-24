@@ -19,8 +19,8 @@
 */
 
 /*
-image.c: Princed Resources : Image Compression Library
-¯¯¯¯¯¯¯¯¯¯
+image16.c: Princed Resources : Image Compression Library
+¯¯¯¯¯¯¯¯¯
  Copyright 2003, 2004, 2005, 2006 Princed Development Team
   Created: 24 Aug 2003
 

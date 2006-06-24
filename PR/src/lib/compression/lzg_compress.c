@@ -163,8 +163,7 @@ void pushBit(int b, unsigned char *output, int *oCursor)
 /* Insert the two bytes describing the pattern repetition to the output. */
 void addPattern(unsigned char *input, int iCursor,
                 unsigned char *output, int oCursor,
-                unsigned char *pattern, int pattern_len)
-{
+                unsigned char *pattern, int pattern_len) {
 	int loc = (pattern - input) + WIN_SIZE - MAX_PATTERN_SIZE;
 	output[oCursor] =
 		(((pattern_len - MIN_PATTERN_SIZE) << 2) & 0xfc) + ((loc & 0x0300) >> 8);
