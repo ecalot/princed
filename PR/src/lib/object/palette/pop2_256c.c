@@ -76,20 +76,20 @@ printf("created a palette with %d colors. cs=%ld\n",j,cont.size);
 	return (void*)r;
 }
 
-tColor* objectPalettePop2_NColorsGetColors(void* o) {
+tColor* objectPalettePop2_NColorsGetColorArray(void* o) {
 	tGenericPalette* pal=o;
 	return pal->colorArray;
 }
 
 
-int getColorsByPop2PaletteObject(void* o) {
+int objectPalettePop2_NColorsGetColorCount(void* o) {
 	tGenericPalette* pal=o;
 	return pal->size;
 }
 
 int objectPalettePop2_NColorsWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
-	tGenericPalette* p=o;
-	return writePal(file,p->size,p->colorArray,optionflag,backupExtension);
+	tGenericPalette* pal=o;
+	return writePal(file,pal->size,pal->colorArray,optionflag,backupExtension);
 }
 
 void* objPop2PaletteNColorsRead(const char* file,int *result) {

@@ -66,8 +66,8 @@ int objectPalettePop2_NColorsWrite(void* o, const char* file, int optionflag, co
 void* objPop2PaletteNColorsRead(const char* file,int *result);
 int objPop2PaletteNColorsSet(void* o,tResource* res);
 
-tColor* objectPalettePop1_16GetColors(void* o);
-tColor* objectPalettePop2_NColorsGetColors(void* o);
+tColor* objectPalettePop1_16GetColorArray(void* o);
+tColor* objectPalettePop2_NColorsGetColorArray(void* o);
 
 /* middle layer */
 #define to8bits_A(a) (((a)<<2)|((a)>>4))
@@ -78,13 +78,13 @@ tColor* objectPalettePop2_NColorsGetColors(void* o);
 
 /* Hooks */
 
-#define PAL_COLORS_eResTypePalettePop2_NColors getColorsByPop2PaletteObject(object.obj)
+#define PAL_COLORS_eResTypePalettePop2_NColors objectPalettePop2_NColorsGetColorCount(object.obj)
 #define PAL_COLORS_eResTypePalettePop1_16      16
 #define PAL_COLORS_eResTypePalettePop1_Mono    2
 
-int getColorsByPop2PaletteObject(void* o); /* TODO: rename by objectPalettePop2_NColorsGetColors */
-int objectPaletteGetBits(tObject pal);
-tColor* objectGetColorsArray(tObject pal); /* TODO: rename by objectPaletteGetColorsArray */
+int objectPalettePop2_NColorsGetColorCount(void* o);
+int objectPaletteGetBitRate(tObject pal);
+tColor* objectPaletteGetColorArray(tObject pal);
 
 #endif
 

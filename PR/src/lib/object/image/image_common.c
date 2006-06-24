@@ -375,7 +375,7 @@ void* objectImage16Create(tBinary cont, int *error) { /* use get like main.c */
 	}
 /*
 	image->pal=palette;
-	bits=objectPaletteGetBits(image->pal);
+	bits=objectPaletteGetBitRate(image->pal);
 	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));
 	image->bits=getCarry(image->type);*/
 
@@ -388,7 +388,7 @@ int objectImage16Write(void* img,const char* file,int optionflag,const char* bac
 	tImage* i=img;
 	tColor* colorArray;
 
-	colorArray=(i->pal.type!=eResTypeNone)?objectGetColorsArray(i->pal):objPalette_16();
+	colorArray=(i->pal.type!=eResTypeNone)?objectPaletteGetColorArray(i->pal):objPalette_16();
 
 	/* Write bitmap */
 	return mWriteBmp(file,i->pix,i->width,i->height,4,16,colorArray,i->widthInBytes,optionflag,backupExtension);
@@ -417,7 +417,7 @@ void* objectImage16Read(const char* file,tObject palette, int *result) {
 	/* check the palette information */
 
 	image->pal=palette;
-	bits=objectPaletteGetBits(image->pal);
+	bits=objectPaletteGetBitRate(image->pal);
 	if (bits && bits!=image->bits) { /* bits=0 means all palettes allowed or ignore palette check */
 		*result=PR_RESULT_ERR_BMP_BITRATE_DIFFERS;
 		free(image->pix);

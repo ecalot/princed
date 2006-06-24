@@ -153,7 +153,7 @@ void* objectImage2Read(const char* file,tObject palette, int *result) {
 
 	/* check the palette information */
 
-	bits=objectPaletteGetBits(image->pal);
+	bits=objectPaletteGetBitRate(image->pal);
 	if (image->bits!=1) {
 		*result=PR_RESULT_ERR_BMP_BITRATE_DIFFERS;
 		free(image->pix);

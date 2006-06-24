@@ -42,6 +42,6 @@ int objectWrite(tObject o, const char* file, int optionflag, const char* backupE
 tObject objectRead(const char* file,tResource* newRes,int *result);
 void objectSet(tObject o,int *result,tResource* res);
 
-int objectGetColors(tObject obj);
+int objectGetColorCount(tObject obj);
 
 #endif

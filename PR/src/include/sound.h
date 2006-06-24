@@ -19,7 +19,7 @@
 */
 
 /*
-sound.h: Princed Resources :
+sound.h: Princed Resources : Common sound objects interfaces
 ¯¯¯¯¯¯¯
  Copyright 2006 Princed Development Team
   Created: 19 Feb 2006
@@ -39,18 +39,12 @@ sound.h: Princed Resources :
 #include "mid.h"
 #include "wav.h"
 
-/*int objSoundWrite(void* o, const char* file, int write(const char* file,tBinary* data,int optionflag, const char* backupExtension), int optionflag, const char* backupExtension);*/
-
-void* objSoundCreate(tBinary c, int *error);
-
 int objectSoundWaveWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 
-#define objectSoundWaveCreate(a,b) objSoundCreate(a,b)
-#define objectSoundMidiCreate(a,b) objSoundCreate(a,b)
+void* objSoundCreate(tBinary c, int *error);
+#define objectSoundWaveCreate(a,b)      objSoundCreate(a,b)
+#define objectSoundMidiCreate(a,b)      objSoundCreate(a,b)
 #define objectSoundPcspeakerCreate(a,b) objSoundCreate(a,b)
-
-/*#define objectSoundWaveRead(a,b,c,d,e) objSoundRead(a,readWav,b,c,d,e)*/
-/*void* objSoundRead(const char* file, int read(const char* file, tBinary* c, int *pchannels, long *psamplerate, long *pbps), int *result);*/
 
 void* objectSoundWaveRead(const char* file, int *result);
 #define objectSoundMidiRead(a,b) objectOtherBinaryRead(a,b)

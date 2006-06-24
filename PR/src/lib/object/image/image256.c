@@ -328,7 +328,7 @@ void* objectImage256Create(tBinary cont, int *error) { /* use get like main.c */
 	}
 	/*
 	image->pal=palette;
-	bits=objectPaletteGetBits(image->pal);
+	bits=objectPaletteGetBitRate(image->pal);
 	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));*/
 	image->bits=getCarry(image->type);
 
@@ -354,9 +354,9 @@ int objectImage256Write(void* img,const char* file,int optionflag,const char* ba
 	tColor* colorArray;
 
 	if (i->pal.type!=eResTypeNone) {
-		bits=objectPaletteGetBits(i->pal);
-		colors=i->colorCount; /*objectGetColors(i->pal);*/
-		colorArray=objectGetColorsArray(i->pal);
+		bits=objectPaletteGetBitRate(i->pal);
+		colors=i->colorCount; /*objectGetColorCount(i->pal);*/
+		colorArray=objectPaletteGetColorArray(i->pal);
 	} else {
 		bits=8; /*getCarry(i->type);*/
 		colors=256; /*1<<bits;*/
@@ -390,7 +390,7 @@ void* objectImage256Read(const char* file,tObject palette, int *result) {
 	/* check the palette information */
 
 	image->pal=palette;
-	bits=objectPaletteGetBits(image->pal);
+	bits=objectPaletteGetBitRate(image->pal);
 	if (bits && bits!=image->bits) { /* bits=0 means all palettes allowed or ignore palette check */
 		*result=PR_RESULT_ERR_BMP_BITRATE_DIFFERS;
 		free(image->pix);

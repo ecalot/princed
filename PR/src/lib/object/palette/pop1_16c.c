@@ -93,12 +93,12 @@ int objectPalettePop1_16Write(void* o, const char* file, int optionflag, const c
 	return writePal(file,16,pal->c,optionflag,backupExtension);
 }
 
-tColor* objectPalettePop1_16GetColors(void* o) {
+tColor* objectPalettePop1_16GetColorArray(void* o) {
 	tPalettePop1_16c* pal=o;
 	return pal->c;
 }
 
-tColor* objectGetColorsArrayForColors(int colors) {
+tColor* objectPaletteGetColorArrayForColors(int colors) {
 	static tColor p1[2];
 	static tColor p4[2];
 	static tColor p8[2];

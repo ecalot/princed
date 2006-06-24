@@ -145,7 +145,7 @@ fprintf(stderr,"Exception: Couldn't write unhooked type %d\n",o.type);
 
 /* Palette class methods */
 
-int objectPaletteGetBits(tObject pal) {
+int objectPaletteGetBitRate(tObject pal) {
 	switch (pal.type) {
 	case eResTypePalettePop2_NColors:
 		return 8;
@@ -158,7 +158,7 @@ int objectPaletteGetBits(tObject pal) {
 	}
 }
 
-int objectGetColors(tObject object) {
+int objectGetColorCount(tObject object) {
 	switch (object.type) {
 	case eResTypePalettePop2_NColors:
 		return PAL_COLORS_eResTypePalettePop2_NColors;
@@ -177,12 +177,12 @@ int objectGetColors(tObject object) {
 	}
 }
 
-tColor* objectGetColorsArray(tObject pal) {
+tColor* objectPaletteGetColorArray(tObject pal) {
 	switch (pal.type) {
 	case eResTypePalettePop1_16: /* save and remember palette file */
-		return objectPalettePop1_16GetColors(pal.obj);
+		return objectPalettePop1_16GetColorArray(pal.obj);
 	case eResTypePalettePop2_NColors:
-		return objectPalettePop2_NColorsGetColors(pal.obj);
+		return objectPalettePop2_NColorsGetColorArray(pal.obj);
 	default:
 		return NULL;
 	}
