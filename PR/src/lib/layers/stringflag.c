@@ -58,7 +58,7 @@ unsigned long parseflag(const char* stringflag) {
 	return result;
 }
 
-#define DEBUG_STRINGS
+/*#define DEBUG_STRINGS*/
 
 #ifdef DEBUG_STRINGS
 int main(int a,char** b) {

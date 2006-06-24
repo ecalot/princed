@@ -108,7 +108,7 @@ int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits
 	}
 
 	writeCloseOk(bitmap,optionflag,backupExtension);
-	return PR_RESULT_SUCCESS; 
+	return PR_RESULT_SUCCESS;
 }
 
 int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbits, int *pcolors, tColor** colorArray, int *plineWidth) {
@@ -127,7 +127,7 @@ int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbit
 	unsigned short int width=0;
 
 	bitmap=fopen(file,"rb");
-	if (!bitmap) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; 
+	if (!bitmap) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
 
 	/* Read headers */
 		/* file header */
@@ -137,7 +137,7 @@ int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbit
 	ok=ok&&freadlong(&aux      ,bitmap);
 	ok=ok&&(!aux);
 	ok=ok&&freadlong(&offset   ,bitmap);
-	
+
 		/* info header */
 	ok=ok&&freadlong(&aux      ,bitmap);
 	ok=ok&&(aux==40);
@@ -154,7 +154,7 @@ int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbit
 	ok=ok&&freadlong(&colours  ,bitmap);    /* Number of colours (junk)    */
 	ok=ok&&(colours<1000);
 	ok=ok&&freadlong(&aux      ,bitmap);    /* Important colours (junk)    */
-	
+
 	/* Verify */
 	*plineWidth=(width*bits+7)/8; /* Note: only works in bits=1,2,4,8 */
 	lineSerialization=(-*plineWidth)&3;
@@ -180,7 +180,7 @@ int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbit
 		ok=ok&&fread(*data+height**plineWidth,*plineWidth,1,bitmap);
 		if (lineSerialization) ok=ok&&fread(&aux,lineSerialization,1,bitmap);
 	}
-	
+
 #if 0
 	/* Validate if there is header and if it starts in BM */
 	ok    = size>50;
@@ -228,9 +228,9 @@ int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbit
 		free(*data);
 		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
 	}
-	
+
 	*pbits        = bits;
 	*pcolors      = colours;
 
-	return PR_RESULT_SUCCESS;			
+	return PR_RESULT_SUCCESS;
 }

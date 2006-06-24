@@ -38,16 +38,16 @@ types.h: Princed Resources : Common types
 #include "common.h" /* tResourceType */
 
 /* types */
-typedef struct { 
-	tResourceType type;
-	void* obj;
-}tObject;
+typedef struct {
+	tResourceType      type;
+	void*              obj;
+} tObject;
 
 typedef struct {
 	int                value;
 	char               index[5];
 	unsigned int       order;
-}tResourceId;
+} tResourceId;
 
 typedef struct {
 	tResourceId        id;
@@ -63,6 +63,6 @@ typedef struct {
 	const char*        datfile;
 	const char*        datAuthor;
 	unsigned long      flags;
-}tResource;
+} tResource;
 
 #endif

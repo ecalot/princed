@@ -88,7 +88,7 @@ tObject objectCreate(tResource* r, int* error) {
 		o.obj=objectImage256Create(r->content,error);
 		break;
 	default:
-printf("Exception: Unhooked type %d\n",o.type);
+fprintf(stderr,"Exception: Unhooked type %d\n",o.type);
 		*error=PR_RESULT_SUCCESS; /* NOTE: change to 1 to detect unhooked types */
 		o.obj=NULL;
 		break;
@@ -121,10 +121,10 @@ int objectWrite(tObject o, const char* file, int optionflag, const char* backupE
 		error=objectSoundPcspeakerWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeSoundMidi:	/* save midi file */
-		error=objMidiWrite(o.obj,file,optionflag,backupExtension);
+		error=objectSoundMidiWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeSoundWave: /* save wav file */
-		error=objWaveWrite(o.obj,file,optionflag,backupExtension);
+		error=objectSoundWaveWrite(o.obj,file,optionflag,backupExtension);
 		break;
 	case eResTypeImage2: /* save image */
 		error=objectImage2Write(o.obj,file,optionflag,backupExtension);
@@ -136,7 +136,7 @@ int objectWrite(tObject o, const char* file, int optionflag, const char* backupE
 		error=objectImage256Write(o.obj,file,optionflag,backupExtension);
 		break;
 	default:
-printf("Warning: Couldn't write unhooked type %d\n",o.type);
+fprintf(stderr,"Exception: Couldn't write unhooked type %d\n",o.type);
 		break;
 	}
 
@@ -168,8 +168,8 @@ int objectGetColors(tObject object) {
 		return  PAL_COLORS_eResTypePalettePop1_Mono;
 	case eResTypeNone:
 		return 256;
-	case eResTypeImage16:
 	case eResTypeImage2:
+	case eResTypeImage16:
 	case eResTypeImage256:
 		return objectImageGetColorCount(object.obj);
 	default:
@@ -201,23 +201,22 @@ void objectSet(tObject o,int *result,tResource* res) {
 			*result=objectImage16Set(o.obj,res);
 			break;
 		case eResTypeSoundWave:
-			*result=objWaveSet(o.obj,res);
+			*result=objectSoundWaveSet(o.obj,res);
 			break;
 		case eResTypeSoundMidi:
-			*result=objMidiSet(o.obj,res);
+			*result=objectSoundMidiSet(o.obj,res);
 			break;
 		case eResTypeSoundPcspeaker:
-			*result=objPcspeakerSet(o.obj,res);
+			*result=objectSoundPcspeakerSet(o.obj,res);
 			break;
 		case eResTypePalettePop1_16:
 			*result=objectPalettePop1_16Set(o.obj,res);
 			break;
 		case eResTypeOtherBinary:
 		default:
-			*result=objBinarySet(o.obj,res);
+			*result=objectOtherBinarySet(o.obj,res);
 			break;
 	}
-
 }
 
 /* Format detection function (private function, not in header file) */
@@ -226,30 +225,29 @@ tObject objectRead(const char* file,tResource* res,int *result) {
 	tObject o;
 	switch (res->type) {
 		case eResTypeLevelPop1:
-			/*o.obj=objLevelRead(file,res.content,result); TODO */
+			/*o.obj=objectLevelPop1Read(file,res.content,result); TODO */
 			break;
 		case eResTypeImage16:
 			o.obj=objectImage16Read(file,*res->palette,result);
 			break;
 		case eResTypeSoundWave:
-			o.obj=objWaveRead(file,result);
+			o.obj=objectSoundWaveRead(file,result);
 			break;
 		case eResTypeSoundMidi:
-			o.obj=objMidiRead(file,result);
+			o.obj=objectSoundMidiRead(file,result);
 			break;
 		case eResTypeSoundPcspeaker:
-			o.obj=objPcspeakerRead(file,result);
+			o.obj=objectSoundPcspeakerRead(file,result);
 			break;
 		case eResTypePalettePop1_16:
 			o.obj=objectPalettePop1_16Read(file,result);
 			break;
 		case eResTypeOtherBinary:
 		default:
-			o.obj=objBinaryRead(file,result);
+			o.obj=objectOtherBinaryRead(file,result);
 			break;
 	}
 	o.type=res->type;
 
 	return o;
 }
-

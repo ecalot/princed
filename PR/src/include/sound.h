@@ -43,24 +43,24 @@ sound.h: Princed Resources :
 
 void* objSoundCreate(tBinary c, int *error);
 
-int objWaveWrite(void* o, const char* file, int optionflag, const char* backupExtension);
+int objectSoundWaveWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 
 #define objectSoundWaveCreate(a,b) objSoundCreate(a,b)
 #define objectSoundMidiCreate(a,b) objSoundCreate(a,b)
 #define objectSoundPcspeakerCreate(a,b) objSoundCreate(a,b)
 
-/*#define objWaveRead(a,b,c,d,e) objSoundRead(a,readWav,b,c,d,e)*/
+/*#define objectSoundWaveRead(a,b,c,d,e) objSoundRead(a,readWav,b,c,d,e)*/
 /*void* objSoundRead(const char* file, int read(const char* file, tBinary* c, int *pchannels, long *psamplerate, long *pbps), int *result);*/
 
-void* objWaveRead(const char* file, int *result);
-#define objMidiRead(a,b) objBinaryRead(a,b)
-#define objPcspeakerRead(a,b) objBinaryRead(a,b)
+void* objectSoundWaveRead(const char* file, int *result);
+#define objectSoundMidiRead(a,b) objectOtherBinaryRead(a,b)
+#define objectSoundPcspeakerRead(a,b) objectOtherBinaryRead(a,b)
 
-int objWaveSet(void* o,tResource* res);
-int objPcspeakerSet(void* o,tResource* res);
-int objMidiSet(void* o,tResource* res);
+int objectSoundWaveSet(void* o,tResource* res);
+int objectSoundPcspeakerSet(void* o,tResource* res);
+int objectSoundMidiSet(void* o,tResource* res);
 
-#define objMidiWrite(a,b,c,d) objectBinaryWrite(a,b,c,d)
+#define objectSoundMidiWrite(a,b,c,d) objectBinaryWrite(a,b,c,d)
 #define objectSoundPcspeakerWrite(a,b,c,d) objectBinaryWrite(a,b,c,d)
 
 #endif

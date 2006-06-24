@@ -44,20 +44,12 @@ compress.h: Princed Resources : Compression headers
 
 #define COMPRESS_WORKING_ALGORITHMS 5
 
-/*
-#define COMPRESS_RESULT_FATAL   PR_RESULT_COMPRESS_RESULT_FATAL
-#define COMPRESS_RESULT_WARNING PR_RESULT_COMPRESS_RESULT_WARNING
-#define COMPRESS_RESULT_SUCCESS PR_RESULT_SUCCESS 
-*/
-
 /* Prototypes */
 
 #define cLevel(a) if (compressionLevel>=a)
 #define cHigh     if (compressionHigher)
 #define setHigh   compressionHigher=1
 #define unsetHigh compressionHigher=0
-
-/* private declarations */
 
 /***************************************************************\
 |                Internal compression prototypes                |

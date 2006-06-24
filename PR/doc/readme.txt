@@ -1,4 +1,4 @@
-Princed Resources v1.1
+Princed Resources v1.3
 (c) Copyright 2003 - 2006 - Princed Development Team
 http://www.princed.com.ar
 This program is open source under the GNU General Public License terms

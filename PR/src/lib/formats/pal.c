@@ -65,7 +65,7 @@ int writePal(const char* file, int colors, const tColor* colorArray, int optionf
 	/* save JASC palette */
 	writeCloseOk(fd,optionflag,backupExtension);
 
-	return PR_RESULT_SUCCESS; 
+	return PR_RESULT_SUCCESS;
 }
 
 int readPal(const char* file,tColor* *colorArray,int *colors) {
@@ -76,7 +76,7 @@ int readPal(const char* file,tColor* *colorArray,int *colors) {
 	int b;
 
 	fd=fopen(file,"rb");
-	if (!fd) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; 
+	if (!fd) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
 	/* TODO: do the reading */
 
 	if (fscanf(fd,"JASC-PAL\n0100\n%d\n",colors)!=1)

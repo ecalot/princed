@@ -1,5 +1,5 @@
-#ifndef _XML_H_
-#define _XML_H_
+#ifndef _PR_XML_H_
+#define _PR_XML_H_
 
 
 /* types */
@@ -18,13 +18,13 @@ class Xml {
 		void optimize(TagReference t);
 		void optimize();
 		// POST: all TagReferences becomes invalid
-		
+
 
 
 		int getTag (TagReference t, char** tag, char** desc, char** path, char** file, char** type, char** name, char** palette, char** value, char** version, char** number,char** colors);
 		int setTag (TagReference t, const char* tag, const char* desc, const char* path, const char* file, const char* type, const char* name, const char* palette, const char* value, const char* version, const char* number,const char* colors);
-		
-		
+
+
 	private:
 		void* structure;
 

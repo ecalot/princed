@@ -37,8 +37,8 @@ other.h: Princed Resources : Other objects headers
 
 void* objectBinaryCreate(tBinary c, int *error);
 int objectBinaryWrite(void* o, const char* file, int optionflag, const char* backupExtension);
-void* objBinaryRead(const char* file,int *result);
-int objBinarySet(void* o,tResource* res);
+void* objectOtherBinaryRead(const char* file,int *result);
+int objectOtherBinarySet(void* o,tResource* res);
 
 /* TODO: move to level.h */
 

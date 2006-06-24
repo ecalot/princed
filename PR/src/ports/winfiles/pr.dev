@@ -1,7 +1,7 @@
 [Project]
 FileName=pr.dev
 Name=pr
-UnitCount=94
+UnitCount=95
 Type=1
 Ver=1
 ObjFiles=
@@ -20,7 +20,7 @@ ObjectOutput=..\..\..\src\.obj
 OverrideOutput=0
 OverrideOutputName=pr.exe
 HostApplication=
-Folders=doc,src,src/console,src/includes,src/lib,src/lib/actions,src/lib/compression,src/lib/formats,src/lib/layers,src/lib/object,src/lib/object/image,src/lib/object/level,src/lib/object/other,src/lib/object/palette,src/lib/object/sound,src/lib/xml,src/ports
+Folders=doc,src,src/console,src/includes,src/includes/lang,src/lib,src/lib/actions,src/lib/compression,src/lib/formats,src/lib/layers,src/lib/object,src/lib/object/image,src/lib/object/level,src/lib/object/other,src/lib/object/palette,src/lib/object/sound,src/lib/xml,src/ports
 CommandLine=
 UseCustomMakefile=0
 CustomMakefile=
@@ -142,7 +142,7 @@ BuildCmd=
 [Unit12]
 FileName=..\..\include\ee.lang.pr.h
 CompileCpp=0
-Folder=src/includes
+Folder=src/includes/lang
 Compile=1
 Link=1
 Priority=1000
@@ -152,7 +152,7 @@ BuildCmd=
 [Unit13]
 FileName=..\..\include\en.lang.pr.h
 CompileCpp=0
-Folder=src/includes
+Folder=src/includes/lang
 Compile=1
 Link=1
 Priority=1000
@@ -162,7 +162,7 @@ BuildCmd=
 [Unit14]
 FileName=..\..\include\es.lang.pr.h
 CompileCpp=0
-Folder=src/includes
+Folder=src/includes/lang
 Compile=1
 Link=1
 Priority=1000
@@ -272,7 +272,7 @@ BuildCmd=
 [Unit25]
 FileName=..\..\include\nl.lang.pr.h
 CompileCpp=0
-Folder=src/includes
+Folder=src/includes/lang
 Compile=1
 Link=1
 Priority=1000
@@ -282,7 +282,7 @@ BuildCmd=
 [Unit26]
 FileName=..\..\include\no.lang.pr.h
 CompileCpp=0
-Folder=src/includes
+Folder=src/includes/lang
 Compile=1
 Link=1
 Priority=1000
@@ -352,7 +352,7 @@ BuildCmd=
 [Unit33]
 FileName=..\..\include\pl.lang.pr.h
 CompileCpp=0
-Folder=src/includes
+Folder=src/includes/lang
 Compile=1
 Link=1
 Priority=1000
@@ -392,7 +392,7 @@ BuildCmd=
 [Unit37]
 FileName=..\..\include\pt.lang.pr.h
 CompileCpp=0
-Folder=src/includes
+Folder=src/includes/lang
 Compile=1
 Link=1
 Priority=1000
@@ -933,7 +933,7 @@ BuildCmd=
 Major=1
 Minor=3
 Release=0
-Build=43
+Build=51
 LanguageID=2057
 CharsetID=1252
 CompanyName=Princed development team
@@ -967,8 +967,8 @@ BuildCmd=
 CompileCpp=0
 
 [Unit95]
-FileName=..\..\lib\object\object.c
-Folder=src/lib/object
+FileName=..\..\lib\layers\stringflag.c
+Folder=src/lib/layers
 Compile=1
 Link=1
 Priority=1000

@@ -61,7 +61,7 @@ int objSoundWrite(void* o, const char* file, int write(const char* file,tBinary*
 	return write(file,(tBinary*)o,optionflag,backupExtension);
 }
 
-int objWaveWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
+int objectSoundWaveWrite(void* o, const char* file, int optionflag, const char* backupExtension) {
 	return writeWav(file,(tBinary*)o,optionflag,backupExtension);
 }
 
@@ -71,7 +71,7 @@ int objWaveWrite(void* o, const char* file, int optionflag, const char* backupEx
 	return (void*)o;
 }*/
 
-void* objWaveRead(const char* file, int *result) {
+void* objectSoundWaveRead(const char* file, int *result) {
 	int  channels;
 	long samplerate;
 	long bps;
@@ -93,7 +93,7 @@ void* objWaveRead(const char* file, int *result) {
 }
 
 /* TODO: factorize */
-int objWaveSet(void* o,tResource* res) {
+int objectSoundWaveSet(void* o,tResource* res) {
 	tBinary* wave=o;
 	res->content.size=wave->size+1;
 	res->content.data=malloc(wave->size+1);
@@ -103,7 +103,7 @@ int objWaveSet(void* o,tResource* res) {
 	return PR_RESULT_SUCCESS;
 }
 
-int objMidiSet(void* o,tResource* res) {
+int objectSoundMidiSet(void* o,tResource* res) {
 	tBinary* midi=o;
 	res->content.size=midi->size+1;
 	res->content.data=malloc(midi->size+1);
@@ -113,7 +113,7 @@ int objMidiSet(void* o,tResource* res) {
 	return PR_RESULT_SUCCESS;
 }
 
-int objPcspeakerSet(void* o,tResource* res) {
+int objectSoundPcspeakerSet(void* o,tResource* res) {
 	tBinary* pcspeaker=o;
 	res->content.size=pcspeaker->size+1;
 	res->content.data=malloc(pcspeaker->size+1);
