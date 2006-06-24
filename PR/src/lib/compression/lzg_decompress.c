@@ -44,7 +44,7 @@ unsigned char popBit(unsigned char *byte) {
 }
 
 /* Expands LZ Groody algorithm. This is the core of PR */
-int expandLzg(const unsigned char* input, int inputSize,
+int expandLzg(/*const unsigned char* input, int inputSize,*/ tBinary input,
                unsigned char** output2, int *outputSize) {
 
 	int                    oCursor=0, iCursor=0;
@@ -59,11 +59,11 @@ int expandLzg(const unsigned char* input, int inputSize,
 	for(oCursor=0;oCursor<LZG_WINDOW_SIZE;output[oCursor++]=0);
 
 	/* main loop */
-	while (iCursor<inputSize&&oCursor<(*outputSize)) {
-		maskbyte=input[iCursor++];
-		for (k=8;k&&(iCursor<inputSize);k--) {
+	while (iCursor<input.size&&oCursor<(*outputSize)) {
+		maskbyte=input.data[iCursor++];
+		for (k=8;k&&(iCursor<input.size);k--) {
 			if (popBit(&maskbyte)) {
-				output[oCursor++]=input[iCursor++]; /* copy input to output */
+				output[oCursor++]=input.data[iCursor++]; /* copy input.data to output */
 			} else {
 				/*
 				 * loc:
@@ -72,8 +72,8 @@ int expandLzg(const unsigned char* input, int inputSize,
 				 * rep:
 				 *  6 bits for the repetition number (R). Add 3 to this number.
 				 */
-				loc= 66 + ((input[iCursor] & 0x03 /*00000011*/) <<8) + input[iCursor+1];
-				rep= 3  + ((input[iCursor] & 0xfc /*11111100*/) >>2);
+				loc= 66 + ((input.data[iCursor] & 0x03 /*00000011*/) <<8) + input.data[iCursor+1];
+				rep= 3  + ((input.data[iCursor] & 0xfc /*11111100*/) >>2);
 
 				iCursor+=2; /* move the cursor 2 bytes ahead */
 
@@ -87,14 +87,14 @@ int expandLzg(const unsigned char* input, int inputSize,
 		}
 	}
 
-	inputSize-=iCursor;
+	input.size-=iCursor;
 	/* ignore the first 1024 bytes */
 	*outputSize=oCursor-LZG_WINDOW_SIZE;
 	*output2=(unsigned char*)malloc(*outputSize);
 	for(iCursor=LZG_WINDOW_SIZE;iCursor<oCursor;iCursor++)
 		(*output2)[iCursor-LZG_WINDOW_SIZE]=output[iCursor];
 
-	if (oCursor>=(*outputSize)) return inputSize; /* TODO: check if this case never happens !!! */
+	if (oCursor>=(*outputSize)) return input.size; /* TODO: check if this case never happens !!! */
 
 	return (!maskbyte)-1;
 	/*return rep?COMPRESS_RESULT_WARNING:COMPRESS_RESULT_SUCCESS;*/

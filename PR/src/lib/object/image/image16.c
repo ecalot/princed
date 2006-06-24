@@ -204,11 +204,11 @@ int mExpandGraphic(tBinary input, tImage *image) {
 			cmp_transposeImage(image,imageSizeInBytes);
 			break;
 		case COMPRESS_LZG_LR: /* LZ Groody Left to Right Compression Algorithm */
-			result=expandLzg(input.data,input.size,&(image->pix),&imageSizeInBytes);
+			result=expandLzg(input/*.data,input.size*/,&(image->pix),&imageSizeInBytes);
 			checkSize;
 			break;
 		case COMPRESS_LZG_UD: /* LZ Groody Up to Down Compression Algorithm */
-			result=expandLzg(input.data,input.size,&(image->pix),&imageSizeInBytes);
+			result=expandLzg(input/*.data,input.size*/,&(image->pix),&imageSizeInBytes);
 			checkResult;
 			checkSize;
 			cmp_transposeImage(image,imageSizeInBytes);
@@ -220,7 +220,7 @@ int mExpandGraphic(tBinary input, tImage *image) {
 	return result; /* Ok */
 }
 
-/* Compress an image into binary data */
+/* Compress an image into binary data TODO: send to common image */
 int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes, int w, int h) {
 /*								unsigned char* *data,tImage* image, int* dataSizeInBytes, int ignoreFirstBytes) {*/
 	/* Declare variables */

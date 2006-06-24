@@ -35,6 +35,7 @@ compress.h: Princed Resources : Compression headers
 #define _PR_COMPRESS_H_
 
 #include "common.h"
+#include "types.h"  /* tBinary */
 
 #define COMPRESS_RAW    0x00
 #define COMPRESS_RLE_LR 0x01
@@ -62,7 +63,7 @@ void compressRle(const unsigned char* input, int inputSize,
                  unsigned char* output, int *outputSize);
 
 /* decompress and allocates output */
-int expandLzg(const unsigned char* input, int inputSize,
+int expandLzg(/*const unsigned char* input, int inputSize*/ tBinary input,
                unsigned char** output, int *outputSize);
 int expandRle(const unsigned char* input, int inputSize,
                unsigned char** output, int *outputSize);

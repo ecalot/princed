@@ -38,9 +38,9 @@ image256.c: Princed Resources : Image Compression Library
 #include "common.h"
 #include "image.h"
 #include "memory.h"
-#include "disk.h" /* array2short */
+#include "disk.h"    /* array2short */
 #include "dat.h"
-#include "object.h" /* paletteGet* */
+#include "object.h"  /* paletteGet* */
 
 #include "palette.h" /* getColorArrayByColors */
 
@@ -94,7 +94,7 @@ image256.c: Princed Resources : Image Compression Library
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
 
-int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize);
+int pop2decompress(tBinary input, int verify, unsigned char** output,int* outputSize);
 
 /***************************************************************\
 |               Main compress and expand graphics               |
@@ -110,22 +110,23 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
  */
 
 /* Expands an array into an image */
-int mExpandGraphic256(const unsigned char* data,tImage *image, int dataSizeInBytes) {
+int mExpandGraphic256(tBinary input, tImage *image) {
 	/*
-	 * Reads data and extracts tImage
+	 * Reads input and extracts tImage
 	 * returns the next image address or -1 in case of error
 	 */
 
 	int imageSizeInBytes=0;
 
-	image->height=array2short(data);
-	data+=2;
-	image->width =array2short(data);
-	data+=2;
+	image->height=array2short(input.data);
+	input.data+=2;
+	image->width =array2short(input.data);
+	input.data+=2;
 
-	if (*(data++)>1) return PR_RESULT_COMPRESS_RESULT_FATAL; /* Verify format */
-	image->type=(unsigned char)(*(data++));
-	dataSizeInBytes-=6;
+	if (*(input.data++)>1) return PR_RESULT_COMPRESS_RESULT_FATAL; /* Verify format */
+	image->type=(unsigned char)(*(input.data++));
+	/* TODO: check the header knowing it has 256 colours and 8 bits/pixel */
+	input.size-=6;
 	switch (((image->type>>4)&7)+1) {
 	case 8:
 		image->widthInBytes=(image->width);
@@ -142,12 +143,12 @@ int mExpandGraphic256(const unsigned char* data,tImage *image, int dataSizeInByt
 	}
 
 	/* special format has a special function */
-	return pop2decompress(data,dataSizeInBytes,image->width,&(image->pix),&imageSizeInBytes); /* TODO: use tBinary */
+	return pop2decompress(input,image->width,&(image->pix),&imageSizeInBytes); /* TODO: use tBinary */
 }
 
 /* Compress an image into binary data */
 int mCompressGraphic256(tBinary* input, tBinary* output, int ignoreFirstBytes, int w, int h) {
-/*								unsigned char* *data,tImage* image, int* dataSizeInBytes, int ignoreFirstBytes) {*/
+
 	/* Declare variables */
 	unsigned char* compressed     [COMPRESS_WORKING_ALGORITHMS];
 	int            compressedSize [COMPRESS_WORKING_ALGORITHMS];
@@ -156,7 +157,7 @@ int mCompressGraphic256(tBinary* input, tBinary* output, int ignoreFirstBytes, i
 	int            imageSizeInBytes;
 	int            max_alg=1;
 
-	/* Initialize variables */
+	/* Initialise variables */
 	imageSizeInBytes=input->size; /*=image->widthInBytes*image->height;*/
 
 	/*
@@ -198,8 +199,7 @@ int mCompressGraphic256(tBinary* input, tBinary* output, int ignoreFirstBytes, i
 	return algorithm;
 }
 
-int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize) {
-	/* This function is in an experimental state and hasn't yet been linked to the program */
+int pop2decompress(tBinary input, int verify, unsigned char** output,int* outputSize) {
 	unsigned char* tempOutput;
 	unsigned char* lineI; /* chunk */
 	unsigned char* lineO; /* chunk */
@@ -210,18 +210,19 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 
 	*output=malloc(*outputSize);
 	lineO=*output;
-	for (aux=0;aux<*outputSize;aux++) (*output)[aux]=0; /* initialize the array (TODO: only for debug, in fixed images it won't be necessary) */
+	for (aux=0;aux<*outputSize;aux++) (*output)[aux]=0; /* initialise the array (TODO: only for debug, in fixed images it won't be necessary) */
 	*outputSize=0;
 
-	osCheck=array2short(input)-6;
-	input+=2;
+	osCheck=array2short(input.data)-6;
+	input.data+=2;
+	input.size-=2; /* TODO: code binaryCrop(tBinary b, int heading, int trailing) */
 
-	/* First layer: expand the lgz */
+	/* First layer: expand the LGZ */
 	tempOutputSize=osCheck+6;
 
-	remaining=expandLzg(input,inputSize-2,&tempOutput,&tempOutputSize);
-	/*printf("Call:\n return=%d function input size=%d\n internal output size=%d result output size=%d\n",
-		remaining,inputSize,osCheck,tempOutputSize);*/
+	remaining=expandLzg(input/*.data,input.size*/,&tempOutput,&tempOutputSize);
+	/*printf("Call:\n return=%d function input.data size=%d\n internal output size=%d result output size=%d\n",
+		remaining,input.size,osCheck,tempOutputSize);*/
 	/*if ((osCheck+6)!=tempOutputSize)
 		printf(" Special case: more is coming\n");*/
 
@@ -235,7 +236,7 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 			/*printf(" error: aux=%d tempOutputSize=%d\n",aux,tempOutputSize);*/
 			return PR_RESULT_COMPRESS_RESULT_WARNING;
 		}
-		aux2= expandRleV(lineI,aux,lineO,&lineSize);
+		aux2=expandRleV(lineI,aux,lineO,&lineSize);
 		/*if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-aux-2);*/
 		lineO+=lineSize;
 		*outputSize+=lineSize;
@@ -245,10 +246,15 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 	} while (lineSize==verify && tempOutputSize>0);
 	/*printf(" return: linesize=%d verify=%d tempOutputSize=%d\n", lineSize, verify, tempOutputSize);*/
 	if (remaining) {
-		const unsigned char* start=input+(inputSize-0)-remaining;
+		/*const unsigned char* start=input.data+(input.size+2)-remaining;*/
+		tBinary tail;
+
+		tail.data=input.data+(input.size+2-remaining);
+		tail.size=remaining;
+
 		/*printf("Remaining tailing data: size=%d first=%02x %02x\n", remaining,start[0],start[1]);*/
 		tempOutputSize=0;
-		remaining=expandLzg(start,remaining,&tempOutput,&tempOutputSize);
+		expandLzg(tail/*.data,tail.size*/,&tempOutput,&tempOutputSize); /* TODO: check error output */
 
 		lineI=tempOutput;
 
@@ -279,8 +285,8 @@ int pop2decompress(const unsigned char* input, int inputSize, int verify, unsign
 /*
 	printf("rle=%d\n", expandRleC(tempOutput,tempOutputSize,output,outputSize,verify));
 
-	printf("lzg=%d\n", os3=expandLzg(input+8+is-8-os3+2,os3-2,&output,&os));
-	osCheck=input[7+is-8-os3+2]<<8|input[6+is-8-os3+2];
+	printf("lzg=%d\n", os3=expandLzg(input.data+8+is-8-os3+2,os3-2,&output,&os));
+	osCheck=input.data[7+is-8-os3+2]<<8|input.data[6+is-8-os3+2];
 
 	printf("rle=%d osCheck=%d\n", expandRleC(output,os,&output2,&os2,verify), osCheck);
 	fwrite(output2,os2,1,out);
@@ -310,7 +316,7 @@ void* objectImage256Create(tBinary cont, int *error) { /* use get like main.c */
 	image=(tImage*)malloc(sizeof(tImage));
 
 	/* Expand graphic and check results */
-	*error=mExpandGraphic256(cont.data,image,cont.size); /* TODO: pass tBinary */
+	*error=mExpandGraphic256(cont,image);
 /*	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
 		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);*/
 	if (*error==PR_RESULT_COMPRESS_RESULT_FATAL) {
@@ -338,8 +344,8 @@ void* objectImage256Create(tBinary cont, int *error) { /* use get like main.c */
 tColor* objPalette_256() {
 	static tColor c[256]={{0,0,0},{0,0,0}};
 	int i;
-	if (!c[2].r)
-		for (i=0;i<256;i++) { /* The greyscale */
+	if (!c[1].r)
+		for (i=0;i<256;i++) { /* The grayscale */
 			c[i].r=i;
 			c[i].g=i;
 			c[i].b=i;
@@ -381,7 +387,7 @@ void* objectImage256Read(const char* file,tObject palette, int *result) {
 	int colors;
 
 	*result=readBmp(file,&(image->pix),&(image->height),&(image->width),&(image->bits),&colors,&colorArray,&(image->widthInBytes));
-	/* check if image was succesfully read loaded */
+	/* check if image was successfully read loaded */
 	if (*result!=PR_RESULT_SUCCESS) {
 		free(image);
 		return NULL;
