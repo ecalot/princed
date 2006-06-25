@@ -1,7 +1,7 @@
 [Project]
 FileName=pr.dev
 Name=pr
-UnitCount=95
+UnitCount=96
 Type=1
 Ver=1
 ObjFiles=
@@ -933,7 +933,7 @@ BuildCmd=
 Major=1
 Minor=3
 Release=0
-Build=72
+Build=80
 LanguageID=2057
 CharsetID=1252
 CompanyName=Princed development team
@@ -990,6 +990,16 @@ BuildCmd=
 FileName=..\..\lib\object\palette\pop2_256c.c
 CompileCpp=0
 Folder=src/lib/object/palette
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit96]
+FileName=..\..\lib\object\image\image_common.c
+CompileCpp=0
+Folder=src/lib/object/image
 Compile=1
 Link=1
 Priority=1000

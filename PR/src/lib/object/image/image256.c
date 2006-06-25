@@ -46,50 +46,6 @@ image256.c: Princed Resources : Image Compression Library
 
 #include "bitmap.h"
 
-/* Compression level explanation:
- *
- * Definitions:
- *  no compression is called RAW
- *  there are 2 algorithms types: RLE and LZG
- *  we can use the modifier: not transposed and transposed (t)
- *  we can use the LZG modifier: higher (checks more extensively the LZG window
- *   without ignoring less probable patterns) (+)
- *
- *  So the possible compression algorithm variants are:
- *   RAW, RLE, RLEt, LZG, LZGt, LZG+, LZGt+
- *
- *  It is known that LZG+ always compresses better or equal than LZG
- *
- * Depending on the compression level, the compressor will compress with
- * all the algorithms specified and keep only the smaller result using
- * the following table
- *
- * Level  Algorithms
- *   1    RAW
- *   2    RAW, RLE
- *   3    RAW, RLE, RLEt
- *   4    RAW, RLE, RLEt, LZG
- *   5    RAW, RLE, RLEt, LZG, LZGt
- *   6    RAW, RLE, RLEt, LZG+, LZGt
- *   7    RAW, RLE, RLEt, LZG+, LZGt+
- *
- * The default level used in PR will be 3.
- *
- * In images with big entropy that generates DAT files bigger than 64kb, using
- * a better compression is a must. The POP1 DAT file format has this limitation
- * and the only way to get through with it is improving the compression.
- *
- * For testing DAT files that are not for distribution compression 3 is highly
- * recommended because is much faster and you perform compressions more often.
- *
- * When you release a DAT file a compression level 7 is the best you can use.
- * You'll have to wait some time to get the importing, but the decompression
- * is as faster as the decompression in other levels. The game supports it and
- * decompresses the files very fast. Another advantage is that it is better to
- * distribute smaller DAT files.
- *
- */
-
 /***************************************************************\
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
@@ -112,38 +68,24 @@ int pop2decompress(tBinary input, int verify, unsigned char** output,int* output
 /* Expands an array into an image */
 int mExpandGraphic256(tBinary input, tImage *image) {
 	/*
-	 * Reads input and extracts tImage
-	 * returns the next image address or -1 in case of error
+	 * Reads tBinary input and extracts tImage image
+	 * returns an error code or 0 if success
 	 */
 
 	int imageSizeInBytes=0;
 
 	image->height=array2short(input.data);
-	input.data+=2;
-	image->width =array2short(input.data);
-	input.data+=2;
+	image->width =array2short(input.data+2);
 
-	if (*(input.data++)>1) return PR_RESULT_COMPRESS_RESULT_FATAL; /* Verify format */
-	image->type=(unsigned char)(*(input.data++));
-	/* TODO: check the header knowing it has 256 colours and 8 bits/pixel */
-	input.size-=6;
-	switch (((image->type>>4)&7)+1) {
-	case 8:
-		image->widthInBytes=(image->width);
-		imageSizeInBytes=image->widthInBytes*image->height;
-		break;
-	case 4:
-		image->widthInBytes=(image->width+1)/2;
-		break;
-	case 1:
-		image->widthInBytes=(image->width+7)/8;
-		break;
-	default:
-		return PR_RESULT_COMPRESS_RESULT_FATAL;
-	}
+	if (*(input.data+4)!=1) return PR_RESULT_COMPRESS_RESULT_FATAL; /* Verify format */
+	/* if (*(input.data+5)!=0xb4) return PR_RESULT_COMPRESS_RESULT_FATAL; * Verify format */
+
+	image->type=(unsigned char)(*(input.data+5));
+	image->widthInBytes=(image->width);
+	imageSizeInBytes=image->widthInBytes*image->height;
 
 	/* special format has a special function */
-	return pop2decompress(input,image->width,&(image->pix),&imageSizeInBytes); /* TODO: use tBinary */
+	return pop2decompress(binaryCrop(input,6,0),image->width,&(image->pix),&imageSizeInBytes); /* TODO: use tBinary */
 }
 
 /* Compress an image into binary data */
@@ -199,6 +141,7 @@ int mCompressGraphic256(tBinary* input, tBinary* output, int ignoreFirstBytes, i
 	return algorithm;
 }
 
+/* TODO: send to its own compression file */
 int pop2decompress(tBinary input, int verify, unsigned char** output,int* outputSize) {
 	unsigned char* tempOutput;
 	tBinary        lineI; /* chunk */
@@ -440,15 +383,4 @@ int objectImage256Set(void* o,tResource* res) {
 	res->content=compressed;
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
-}
-
-/* common function TODO: move */
-int objectImageGetColorCount(void* img) {
-	tImage* i=img;
-	return i->colorCount;
-}
-
-void applyPalette(tObject image, tObject palette) {
-	tImage* i=image.obj;
-	i->pal=palette;
 }

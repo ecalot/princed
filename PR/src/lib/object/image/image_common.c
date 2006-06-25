@@ -94,12 +94,6 @@ image16.c: Princed Resources : Image Compression Library
 |                  I M P L E M E N T A T I O N                  |
 \***************************************************************/
 
-int pop2decompress(const unsigned char* input, int inputSize, int verify, unsigned char** output,int* outputSize);
-
-/***************************************************************\
-|                   Compression Level Manager                   |
-\***************************************************************/
-
 int compressionLevel=3;
 int compressionHigher;
 
@@ -344,122 +338,12 @@ int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes, int 
 	return algorithm;
 }
 
-extern FILE* outputStream;
-
-tColor* objPalette_16() {
-	static tColor c[16]=SAMPLE_PAL16;
-	return c;
-}
-
-void* objectImage16Create(tBinary cont, int *error) { /* use get like main.c */
-
-	/*
-	 * This function will expand the data into an image structure,
-	 * then the bitmap structure will be saved to disk
-	 *
-	 * Note: The old structure is passed by parameters in order to
-	 *       keep the right palette.
-	 */
-
-	tImage* image;
-	/*int bits;*/
-	image=(tImage*)malloc(sizeof(tImage));
-
-	/* Expand graphic and check results */
-	*error=mExpandGraphic(cont,image); /* TODO: pass tBinary */
-/*	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
-		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);*/
-	if (*error==PR_RESULT_COMPRESS_RESULT_FATAL) {
-		free(image);
-		return NULL;
-	}
-/*
-	image->pal=palette;
-	bits=objectPaletteGetBitRate(image->pal);
-	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));
-	image->bits=getCarry(image->type);*/
-
-	image->colorCount=2;
-
-	return (void*)image;
-}
-
-int objectImage16Write(void* img,const char* file,int optionflag,const char* backupExtension) {
+int objectImageGetColorCount(void* img) {
 	tImage* i=img;
-	tColor* colorArray;
-
-	colorArray=(i->pal.type!=eResTypeNone)?objectPaletteGetColorArray(i->pal):objPalette_16();
-
-	/* Write bitmap */
-	return mWriteBmp(file,i->pix,i->width,i->height,4,16,colorArray,i->widthInBytes,optionflag,backupExtension);
+	return i->colorCount;
 }
 
-void objectImageFree(void* img) {
-	if (!img) return;
-	/* free bitmap */
-	free(((tImage*)img)->pix);
-	free(img);
+void applyPalette(tObject image, tObject palette) {
+	tImage* i=image.obj;
+	i->pal=palette;
 }
-
-void* objectImage16Read(const char* file,tObject palette, int *result) {
-	int bits;
-	tImage* image=(tImage*)malloc(sizeof(tImage));
-	tColor* colorArray;
-	int colors;
-
-	*result=readBmp(file,&(image->pix),&(image->height),&(image->width),&(image->bits),&colors,&colorArray,&(image->widthInBytes));
-	/* check if image was successfully read loaded */
-	if (*result!=PR_RESULT_SUCCESS) {
-		free(image);
-		return NULL;
-	}
-
-	/* check the palette information */
-
-	image->pal=palette;
-	bits=objectPaletteGetBitRate(image->pal);
-	if (bits && bits!=image->bits) { /* bits=0 means all palettes allowed or ignore palette check */
-		*result=PR_RESULT_ERR_BMP_BITRATE_DIFFERS;
-		free(image->pix);
-		free(colorArray);
-		free(image);
-		return NULL;
-	}
-
-	/* TODO: palette content checks */
-
-	free(colorArray);
-	return (void*)image;
-}
-	/* TODO: generate image->type in objectImageSet */
-
-/*int mFormatImportBmp(tResource *res) { --> objectImageSet */
-int objectImage16Set(void* o,tResource* res) {
-	tImage* img=o;
-	tBinary decompressed,compressed;
-	int algorithm;
-
-	decompressed.data=img->pix;
-	decompressed.size=img->widthInBytes*img->height;
-
-	algorithm=mCompressGraphic(&decompressed,&compressed,6,img->widthInBytes,img->height);
-
-	/*
-	 * Write header
-	 */
-
-	/* (16 bits)height (Intel short int format) */
-	compressed.data[0]=img->height; /* TODO: use shorttoarray */
-	compressed.data[1]=img->height>>8;
-	/* (16 bits)width (Intel short int format) */
-	compressed.data[2]=img->width;
-	compressed.data[3]=img->width>>8;
-	/* (8 bits)00000000+(4 bits)palette type+(4 bits)algorithm */
-	compressed.data[4]=0;
-	compressed.data[5]=0xb0|algorithm;
-
-	res->content=compressed;
-	mWriteFileInDatFile(res);
-	return PR_RESULT_SUCCESS;
-}
-
