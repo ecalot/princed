@@ -157,8 +157,7 @@ int pop2decompress(tBinary input, int verify, unsigned char** output,int* output
 	*outputSize=0;
 
 	osCheck=array2short(input.data)-6;
-	input.data+=2;
-	input.size-=2; /* TODO: code binaryCrop(tBinary b, int heading, int trailing) */
+	input=binaryCrop(input,2,0);
 
 	/* First layer: expand the LGZ */
 	tempOutputSize=osCheck+6;
@@ -242,8 +241,6 @@ int pop2decompress(tBinary input, int verify, unsigned char** output,int* output
 	return PR_RESULT_SUCCESS;
 }
 
-extern FILE* outputStream;
-
 void* objectImage256Create(tBinary cont, int *error) { /* use get like main.c */
 
 	/*
@@ -255,30 +252,25 @@ void* objectImage256Create(tBinary cont, int *error) { /* use get like main.c */
 	 */
 
 	tImage* image;
+	int i;
+	int max=0;
+
 	/*int bits;*/
 	image=(tImage*)malloc(sizeof(tImage));
 
 	/* Expand graphic and check results */
 	*error=mExpandGraphic256(cont,image);
-/*	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
-		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);*/
+
 	if (*error==PR_RESULT_COMPRESS_RESULT_FATAL) {
 		free(image);
 		return NULL;
 	}
 
-	{ int i;
-		int max=0;
-		for (i=0;i<image->height*image->widthInBytes;i++) {
-			if (image->pix[i]>max) max=image->pix[i];
-		}
-		printf("max pixel in this image is %d\n",max);
-		image->colorCount=max;
+	for (i=0;i<image->height*image->widthInBytes;i++) {
+		if (image->pix[i]>max) max=image->pix[i];
 	}
-	/*
-	image->pal=palette;
-	bits=objectPaletteGetBitRate(image->pal);
-	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));*/
+	printf("max pixel in this image is %d\n",max);
+	image->colorCount=max;
 	image->bits=getCarry(image->type);
 
 	return (void*)image;
