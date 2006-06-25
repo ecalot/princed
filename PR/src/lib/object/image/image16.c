@@ -114,20 +114,13 @@ void* objectImage16Create(tBinary cont, int *error) { /* use get like main.c */
 	image=(tImage*)malloc(sizeof(tImage));
 
 	/* Expand graphic and check results */
-	*error=mExpandGraphic(cont,image); /* TODO: pass tBinary */
-/*	if ((result==COMPRESS_RESULT_WARNING)&&hasFlag(verbose_flag))
-		fprintf(outputStream,PR_TEXT_EXPORT_BMP_WARN);*/
+	*error=mExpandGraphic(cont,image);
 	if (*error==PR_RESULT_COMPRESS_RESULT_FATAL) {
 		free(image);
 		return NULL;
 	}
-/*
-	image->pal=palette;
-	bits=objectPaletteGetBitRate(image->pal);
-	if (bits && bits!=getCarry(image->type)) printf("error, palette mismatch (pal=%d bits=%d)\n",bits,getCarry(image->type));
-	image->bits=getCarry(image->type);*/
 
-	image->colorCount=2;
+	image->colorCount=16;
 
 	return (void*)image;
 }

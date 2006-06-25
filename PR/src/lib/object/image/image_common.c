@@ -214,9 +214,8 @@ int mExpandGraphic(tBinary input, tImage *image) {
 	return result; /* Ok */
 }
 
-/* Compress an image into binary data TODO: send to common image */
 int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes, int w, int h) {
-/*								unsigned char* *data,tImage* image, int* dataSizeInBytes, int ignoreFirstBytes) {*/
+
 	/* Declare variables */
 	unsigned char* compressed     [COMPRESS_WORKING_ALGORITHMS];
 	int            compressedSize [COMPRESS_WORKING_ALGORITHMS];

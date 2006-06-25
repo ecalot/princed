@@ -39,6 +39,12 @@ sound.h: Princed Resources : Common sound objects interfaces
 #include "mid.h"
 #include "wav.h"
 
+typedef enum {
+	magicMidi=0x02,
+	magicPcspeaker=0x00,
+	magicWave=0x01
+} tSoundType;
+
 int objectSoundWaveWrite(void* o, const char* file, int optionflag, const char* backupExtension);
 
 void* objSoundCreate(tBinary c, int *error);
@@ -50,9 +56,10 @@ void* objectSoundWaveRead(const char* file, int *result);
 #define objectSoundMidiRead(a,b) objectOtherBinaryRead(a,b)
 #define objectSoundPcspeakerRead(a,b) objectOtherBinaryRead(a,b)
 
-int objectSoundWaveSet(void* o,tResource* res);
-int objectSoundPcspeakerSet(void* o,tResource* res);
-int objectSoundMidiSet(void* o,tResource* res);
+int objectSoundSet(void* o,tResource* res, tSoundType soundType);
+#define objectSoundWaveSet(a,b) objectSoundSet(a,b,magicWave)
+#define objectSoundPcspeakerSet(a,b) objectSoundSet(a,b,magicPcspeaker)
+#define objectSoundMidiSet(a,b) objectSoundSet(a,b,magicMidi)
 
 #define objectSoundMidiWrite(a,b,c,d) objectBinaryWrite(a,b,c,d)
 #define objectSoundPcspeakerWrite(a,b,c,d) objectBinaryWrite(a,b,c,d)

@@ -43,6 +43,8 @@ sounds.c: Princed Resources : Common sound object implementation
 #include "dat.h"
 #include "types.h"
 
+#include "sound.h"
+
 /***************************************************************\
 |                         Binary Object                         |
 \***************************************************************/
@@ -92,34 +94,13 @@ void* objectSoundWaveRead(const char* file, int *result) {
 	return (void*)o;
 }
 
-/* TODO: factorize */
-int objectSoundWaveSet(void* o,tResource* res) {
-	tBinary* wave=o;
-	res->content.size=wave->size+1;
-	res->content.data=malloc(wave->size+1);
-	res->content.data[0]=0x01; /* TODO: use WAVE_MAGIC */
-	memcpy(res->content.data+1,wave->data,wave->size);
+int objectSoundSet(void* o,tResource* res, tSoundType soundType) {
+	tBinary* sound=o;
+	res->content.size=sound->size+1;
+	res->content.data=malloc(sound->size+1);
+	res->content.data[0]=(unsigned char)soundType;
+	res->content.isCopy=0;
+	memcpy(res->content.data+1,sound->data,sound->size);
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
 }
-
-int objectSoundMidiSet(void* o,tResource* res) {
-	tBinary* midi=o;
-	res->content.size=midi->size+1;
-	res->content.data=malloc(midi->size+1);
-	res->content.data[0]=0x02; /* TODO: use MIDI_MAGIC */
-	memcpy(res->content.data+1,midi->data,midi->size);
-	mWriteFileInDatFile(res);
-	return PR_RESULT_SUCCESS;
-}
-
-int objectSoundPcspeakerSet(void* o,tResource* res) {
-	tBinary* pcspeaker=o;
-	res->content.size=pcspeaker->size+1;
-	res->content.data=malloc(pcspeaker->size+1);
-	res->content.data[0]=0x00; /* TODO: use PCSPEAKER_MAGIC */
-	memcpy(res->content.data+1,pcspeaker->data,pcspeaker->size);
-	mWriteFileInDatFile(res);
-	return PR_RESULT_SUCCESS;
-}
-

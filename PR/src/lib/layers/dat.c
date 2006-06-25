@@ -408,7 +408,7 @@ int dat_readRes(tResource* res, tIndexCursor indexCursor) {
 }
 
 void dat_releaseCursor(tIndexCursor* indexCursor) {
-	if (0&&indexCursor->popVersion==pop2) free(indexCursor->order); /* TODO: check*/
+	if (0&&indexCursor->popVersion==pop2) free(indexCursor->order); /* TODO: check */
 }
 
 /***************************************************************\
