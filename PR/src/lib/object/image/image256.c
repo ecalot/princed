@@ -361,11 +361,11 @@ int objectImage256Write(void* img,const char* file,int optionflag,const char* ba
 
 	if (i->pal.type!=eResTypeNone) {
 		bits=objectPaletteGetBitRate(i->pal);
-		colors=i->colorCount; /*objectGetColorCount(i->pal);*/
+		colors=i->colorCount;
 		colorArray=objectPaletteGetColorArray(i->pal);
 	} else {
-		bits=8; /*getCarry(i->type);*/
-		colors=256; /*1<<bits;*/
+		bits=8;
+		colors=256;
 		colorArray=objPalette_256();
 	}
 
@@ -410,7 +410,8 @@ void* objectImage256Read(const char* file,tObject palette, int *result) {
 	free(colorArray);
 	return (void*)image;
 }
-	/* TODO: generate image->type in objectImageSet */
+
+/* TODO: generate image->type in objectImageSet */
 
 /*int mFormatImportBmp(tResource *res) { --> objectImageSet */
 int objectImage256Set(void* o,tResource* res) {
