@@ -37,27 +37,24 @@ rlev_decompress.c: Princed Resources : Image Compression Library :
 #include <stdlib.h>
 #include "compress.h"
 
-/* Expands RLE algorithm */
-int expandRleV(const unsigned char* input, int inputSize,
-               unsigned char* output, int *outputSize) {
+/* Expands RLEV algorithm */
+int expandRleV(tBinary input, unsigned char* output, int *outputSize) {
 	register unsigned char rep=0;
 	int oCursor=0;
 	int iCursor=0;
-	int done=0;
 
 	/* main loop */
-	while (iCursor<inputSize) {
-		rep=(input[iCursor++]);
-		done=0;
+	while (iCursor<input.size) {
+		rep=(input.data[iCursor++]);
 		if (rep&0x80) { /* repeat */
 			rep&=(~0x80);
 			rep++;
-			while (rep--) (output)[oCursor++]=input[iCursor];
+			while (rep--) (output)[oCursor++]=input.data[iCursor];
 			iCursor++;
 		} else { /* jump */
 			rep++;
-			while ((rep--)&&(iCursor<inputSize)) {
-				(output)[oCursor++]=input[iCursor++];
+			while ((rep--)&&(iCursor<input.size)) {
+				(output)[oCursor++]=input.data[iCursor++];
 			}
 		}
 	}
@@ -65,4 +62,3 @@ int expandRleV(const unsigned char* input, int inputSize,
 	*outputSize=oCursor;
 	return (rep==255)?PR_RESULT_SUCCESS:PR_RESULT_COMPRESS_RESULT_WARNING;
 }
-

@@ -152,7 +152,7 @@ void cmp_antiTransposeImage(tBinary* b, int widthInBytes, int height) {
 /* Expands an array into an image */
 int mExpandGraphic(tBinary input, tImage *image) {
 	/*
-	 * Reads input.data and extracts tImage
+	 * Reads input and extracts tImage
 	 * returns the next image address or -1 in case of error
 	 */
 
@@ -194,21 +194,21 @@ int mExpandGraphic(tBinary input, tImage *image) {
 			result=PR_RESULT_SUCCESS;
 			break;
 		case COMPRESS_RLE_LR: /* RLE Left to Right Compression Algorithm */
-			result=expandRle(input.data,input.size,&(image->pix),&imageSizeInBytes);
+			result=expandRle(input,&(image->pix),&imageSizeInBytes);
 			checkSize;
 			break;
 		case COMPRESS_RLE_UD: /* RLE Up to Down Compression Algorithm */
-			result=expandRle(input.data,input.size,&(image->pix),&imageSizeInBytes);
+			result=expandRle(input,&(image->pix),&imageSizeInBytes);
 			checkResult;
 			checkSize;
 			cmp_transposeImage(image,imageSizeInBytes);
 			break;
 		case COMPRESS_LZG_LR: /* LZ Groody Left to Right Compression Algorithm */
-			result=expandLzg(input/*.data,input.size*/,&(image->pix),&imageSizeInBytes);
+			result=expandLzg(input,&(image->pix),&imageSizeInBytes);
 			checkSize;
 			break;
 		case COMPRESS_LZG_UD: /* LZ Groody Up to Down Compression Algorithm */
-			result=expandLzg(input/*.data,input.size*/,&(image->pix),&imageSizeInBytes);
+			result=expandLzg(input,&(image->pix),&imageSizeInBytes);
 			checkResult;
 			checkSize;
 			cmp_transposeImage(image,imageSizeInBytes);
@@ -231,7 +231,7 @@ int mCompressGraphic(tBinary* input, tBinary* output, int ignoreFirstBytes, int 
 	int            imageSizeInBytes;
 	int            max_alg=1;
 
-	/* Initialize variables */
+	/* Initialise variables */
 	imageSizeInBytes=input->size; /*=image->widthInBytes*image->height;*/
 
 	/*
@@ -408,7 +408,7 @@ void* objectImage16Read(const char* file,tObject palette, int *result) {
 	int colors;
 
 	*result=readBmp(file,&(image->pix),&(image->height),&(image->width),&(image->bits),&colors,&colorArray,&(image->widthInBytes));
-	/* check if image was succesfully read loaded */
+	/* check if image was successfully read loaded */
 	if (*result!=PR_RESULT_SUCCESS) {
 		free(image);
 		return NULL;

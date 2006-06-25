@@ -220,7 +220,7 @@ int pop2decompress(tBinary input, int verify, unsigned char** output,int* output
 	/* First layer: expand the LGZ */
 	tempOutputSize=osCheck+6;
 
-	remaining=expandLzg(input/*.data,input.size*/,&tempOutput,&tempOutputSize);
+	remaining=expandLzg(input,&tempOutput,&tempOutputSize);
 	/*printf("Call:\n return=%d function input.data size=%d\n internal output size=%d result output size=%d\n",
 		remaining,input.size,osCheck,tempOutputSize);*/
 	/*if ((osCheck+6)!=tempOutputSize)
@@ -254,7 +254,7 @@ int pop2decompress(tBinary input, int verify, unsigned char** output,int* output
 
 		/*printf("Remaining tailing data: size=%d first=%02x %02x\n", remaining,start[0],start[1]);*/
 		tempOutputSize=0;
-		expandLzg(tail/*.data,tail.size*/,&tempOutput,&tempOutputSize); /* TODO: check error output */
+		expandLzg(tail,&tempOutput,&tempOutputSize); /* TODO: check error output */
 
 		lineI=tempOutput;
 

@@ -37,8 +37,7 @@ rle_decompress.c: Princed Resources : Image Compression Library
 #include "compress.h"
 
 /* Expands RLE algorithm */
-int expandRle(const unsigned char* input, int inputSize,
-              unsigned char** output, int *outputSize) {
+int expandRle(tBinary input, unsigned char** output, int *outputSize) {
 	register signed char rep=1;
 	int oCursor=0;
 	int iCursor=0;
@@ -47,20 +46,19 @@ int expandRle(const unsigned char* input, int inputSize,
 	if ((*output=malloc(40000))==NULL) return PR_RESULT_COMPRESS_RESULT_FATAL;
 
 	/* main loop */
-	while (iCursor<inputSize) {
-		rep=(signed char)(input[iCursor++]);
+	while (iCursor<input.size) {
+		rep=(signed char)(input.data[iCursor++]);
 		if (rep<0) {
 			/* Negative */
-			while (rep++) (*output)[oCursor++]=input[iCursor];
+			while (rep++) (*output)[oCursor++]=input.data[iCursor];
 			iCursor++;
 		} else {
 			/* Positive */
 			rep=~rep;
-			while ((rep++)&&(iCursor<inputSize)) (*output)[oCursor++]=input[iCursor++];
+			while ((rep++)&&(iCursor<input.size)) (*output)[oCursor++]=input.data[iCursor++];
 		}
 	}
 
 	*outputSize=oCursor;
 	return (rep==1)?PR_RESULT_SUCCESS:PR_RESULT_COMPRESS_RESULT_WARNING;
 }
-

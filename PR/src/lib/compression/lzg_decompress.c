@@ -44,8 +44,7 @@ unsigned char popBit(unsigned char *byte) {
 }
 
 /* Expands LZ Groody algorithm. This is the core of PR */
-int expandLzg(/*const unsigned char* input, int inputSize,*/ tBinary input,
-               unsigned char** output2, int *outputSize) {
+int expandLzg(tBinary input, unsigned char** output2, int *outputSize) {
 
 	int                    oCursor=0, iCursor=0;
 	unsigned char          maskbyte=0;
@@ -99,4 +98,3 @@ int expandLzg(/*const unsigned char* input, int inputSize,*/ tBinary input,
 	return (!maskbyte)-1;
 	/*return rep?COMPRESS_RESULT_WARNING:COMPRESS_RESULT_SUCCESS;*/
 }
-

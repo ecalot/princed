@@ -63,11 +63,11 @@ void compressRle(const unsigned char* input, int inputSize,
                  unsigned char* output, int *outputSize);
 
 /* decompress and allocates output */
-int expandLzg(/*const unsigned char* input, int inputSize*/ tBinary input,
+int expandLzg(tBinary input,
                unsigned char** output, int *outputSize);
-int expandRle(const unsigned char* input, int inputSize,
+int expandRle(/*const unsigned char* input, int inputSize,*/tBinary input,
                unsigned char** output, int *outputSize);
-int expandRleV(const unsigned char* input, int inputSize,
+int expandRleV(/*const unsigned char* input, int inputSize,*/tBinary input,
                unsigned char* output, int *outputSize);
 
 #endif
