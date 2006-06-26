@@ -57,7 +57,7 @@ XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
 COMPRESS = .lzg_compress.o .lzg_decompress.o .rle_compress.o .rle_decompress.o .rlev_decompress.o 
 LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o .auxiliary.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
-OBJECT   = .object.o .pop2_256c.o .pop1_16c.o .image2.o .image16.o .image256.o .binary.o .sounds.o .level.o
+OBJECT   = .object.o .pop2_256c.o .pop1_16c.o .image2.o .image16.o .image256.o .binary.o .sound_common.o .level_common.o .image_common.o
 CONSOLE  = .main.o .filedir.o
 MAIN     = .pr.o
 
@@ -155,13 +155,13 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling resource list module...
 	$(CC) $(OPTIONS) -c lib/layers/reslist.c -o $@
 
-.level.o: lib/object/level/level.c include/binary.h include/common.h include/dat.h include/disk.h include/plv.h include/types.h
-	$(INFO) Compiling level class module...
-	$(CC) $(OPTIONS) -c lib/object/level/level.c -o $@
+.level_common.o: lib/object/level/level_common.c include/binary.h include/common.h include/dat.h include/disk.h include/plv.h include/types.h
+	$(INFO) Compiling level_common.class module...
+	$(CC) $(OPTIONS) -c lib/object/level/level_common.c -o $@
 
-.sounds.o: lib/object/sound/sounds.c include/binary.h include/common.h include/wav.h include/dat.h include/types.h
-	$(INFO) Compiling sound list module...
-	$(CC) $(OPTIONS) -c lib/object/sound/sounds.c -o $@
+.sound_common.o: lib/object/sound/sound_common.c include/binary.h include/common.h include/wav.h include/dat.h include/types.h
+	$(INFO) Compiling common functions for sound type class...
+	$(CC) $(OPTIONS) -c lib/object/sound/sound_common.c -o $@
 
 .pallist.o: lib/layers/pallist.c include/pallist.h include/reslist.h include/object.h
 	$(INFO) Compiling palette list module...
@@ -182,6 +182,10 @@ $(XMLFILE): xml/resources.xml
 .image256.o: lib/object/image/image256.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bitmap.h
 	$(INFO) Compiling 256 colors image type class...
 	$(CC) $(OPTIONS) -c lib/object/image/image256.c -o $@
+
+.image_common.o: lib/object/image/image_common.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bitmap.h
+	$(INFO) Compiling common functions for image type class...
+	$(CC) $(OPTIONS) -c lib/object/image/image_common.c -o $@
 
 .lzg_compress.o: lib/compression/lzg_compress.c include/compress.h
 	$(INFO) Compiling LZG compression module...
