@@ -407,7 +407,6 @@ tBinary mLoadFileArray(const char* vFile) {
 
 	/* declare variables */
 	FILE *fp;
-	int  aux; /* TODO: replace by ret.size */
 	const char* file=repairFolders(vFile);
 	whatIs f;
 	tBinary ret;
@@ -433,14 +432,13 @@ tBinary mLoadFileArray(const char* vFile) {
 	} else {
 		/* get file size */
 		fseek(fp,0,SEEK_END);
-		aux=ftell(fp);
-		if (!aux) {
+		ret.size=ftell(fp);
+		if (!ret.size) {
 			fclose(fp);
-			ret.size=0;
 			ret.data=NULL;
 			return ret;
 		}
-		if ((ret.data=(unsigned char*)malloc(aux+1))==NULL) {
+		if ((ret.data=(unsigned char*)malloc(ret.size+1))==NULL) {
 			fclose(fp);
 			ret.size=PR_RESULT_ERR_MEMORY;
 			ret.data=NULL;
@@ -448,10 +446,9 @@ tBinary mLoadFileArray(const char* vFile) {
 		} else {
 			/* if the file was successfully open */
 			fseek(fp,0,SEEK_SET);
-			aux=fread (ret.data,1,aux,fp);
-			ret.data[aux]=0;
+			ret.size=fread (ret.data,1,ret.size,fp);
+			ret.data[ret.size]=0;
 			fclose(fp);
-			ret.size=aux;
 			return ret;
 		}
 	}

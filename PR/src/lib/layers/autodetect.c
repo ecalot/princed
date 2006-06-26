@@ -89,15 +89,6 @@ int verifyPaletteHeaderPop2(tBinary c) {
 	);
 }
 
-int verifyPaletteHeaderPop2_256(tBinary c) {
-/*	tBinary c2;
-	c2.size=c.size-1;
-	c2.data=c.data+1;*/
-	return 0&&(
-		((c.size==(256*3+1)||c.size==(320*3))&&isA64kPalette(c)) /* TODO: the +1 is for debug purposes, it must be eliminated */
-	);
-}
-
 int verifySpeakerHeader(tBinary c) {
 	/* format: (checksum)+(0x00)+(even number)+3 bytes per note */
 	return
@@ -116,7 +107,7 @@ int verifyMidiHeader(tBinary c) {
 	/* format: (checksum)+(0x02)+"MThd"... */
 	return
 		(c.size>6) &&
-		(c.data[0]==0x02) &&
+		(c.data[0]==0x02) && /* magicMidi */
 		(c.data[1]=='M') &&
 		(c.data[2]=='T') &&
 		(c.data[3]=='h') &&

@@ -63,13 +63,13 @@ void* objectPalettePop2_NColorsCreate(tBinary cont, int *error) {
 	}
 
 	r=(tGenericPalette*)malloc(sizeof(tGenericPalette));
-	r->colorArray=(tColor*)malloc(sizeof(tColor)*((cont.size+2)/3));
-	for (i=0,j=0;i<cont.size;i+=3,j++) {
-		r->colorArray[j].r=to8bits_B(cont.data[i+0]); /* TODO: use increase per line i++ */
-		r->colorArray[j].g=to8bits_B(cont.data[i+1]);
-		r->colorArray[j].b=to8bits_B(cont.data[i+2]);
+	r->colorArray=(tColor*)malloc(sizeof(tColor)*(cont.size/3));
+	for (i=0,j=0;i<(cont.size-2);j++) {
+		r->colorArray[j].r=to8bits_B(cont.data[i++]);
+		r->colorArray[j].g=to8bits_B(cont.data[i++]);
+		r->colorArray[j].b=to8bits_B(cont.data[i++]);
 	}
-	/*if (j!=256 && j!=320) return NULL; *TODO: add free */
+
 	r->size=j;
 printf("created a palette with %d colors. cs=%ld\n",j,cont.size);
 

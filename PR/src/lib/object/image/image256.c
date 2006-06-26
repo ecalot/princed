@@ -85,7 +85,7 @@ int mExpandGraphic256(tBinary input, tImage *image) {
 	imageSizeInBytes=image->widthInBytes*image->height;
 
 	/* special format has a special function */
-	return pop2decompress(binaryCrop(input,6,0),image->width,&(image->pix),&imageSizeInBytes); /* TODO: use tBinary */
+	return pop2decompress(binaryCrop(input,6,0),image->width,&(image->pix),&imageSizeInBytes);
 }
 
 /* Compress an image into binary data */
