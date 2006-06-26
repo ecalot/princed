@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=1
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000001000000000000
+CompilerSettings=0000000001000101000000
 
 [Unit1]
 FileName=..\..\include\autodetect.h
@@ -809,27 +809,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit80]
-FileName=..\..\lib\object\level\level.c
-CompileCpp=0
-Folder=src/lib/object/level
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit81]
-FileName=..\..\lib\object\other\binary.c
-CompileCpp=0
-Folder=src/lib/object/other
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit82]
 FileName=..\..\lib\object\palette\pop1_16c.c
 CompileCpp=0
 Folder=src/lib/object/palette
@@ -839,10 +819,10 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit84]
-FileName=..\..\lib\object\sound\sounds.c
+[Unit82]
+FileName=..\..\lib\object\palette\pop2_256c.c
 CompileCpp=0
-Folder=src/lib/object/sound
+Folder=src/lib/object/palette
 Compile=1
 Link=1
 Priority=1000
@@ -850,26 +830,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit85]
-FileName=..\..\lib\xml\parse.c
-CompileCpp=0
-Folder=src/lib/xml
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit86]
-FileName=..\..\lib\xml\search.c
-CompileCpp=0
-Folder=src/lib/xml
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit87]
 FileName=..\..\lib\xml\translate.c
 CompileCpp=0
 Folder=src/lib/xml
@@ -879,7 +839,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit88]
+[Unit86]
 FileName=..\..\lib\xml\tree.c
 CompileCpp=0
 Folder=src/lib/xml
@@ -889,7 +849,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit89]
+[Unit87]
 FileName=..\..\lib\xml\unknown.c
 CompileCpp=0
 Folder=src/lib/xml
@@ -899,7 +859,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit90]
+[Unit88]
 FileName=..\..\lib\pr.c
 CompileCpp=0
 Folder=src/lib
@@ -909,7 +869,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit91]
+[Unit89]
 FileName=..\..\..\doc\readme.coders.txt
 CompileCpp=0
 Folder=doc
@@ -919,7 +879,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit92]
+[Unit90]
 FileName=..\..\..\doc\readme.txt
 CompileCpp=0
 Folder=doc
@@ -929,11 +889,31 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit91]
+FileName=..\..\..\doc\changelog.txt
+CompileCpp=0
+Folder=doc
+Compile=0
+Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit92]
+FileName=..\..\lib\object\object.c
+CompileCpp=0
+Folder=src/lib/object
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [VersionInfo]
 Major=1
 Minor=3
 Release=0
-Build=87
+Build=91
 LanguageID=2057
 CharsetID=1252
 CompanyName=Princed development team
@@ -948,17 +928,18 @@ ProductVersion=
 AutoIncBuildNr=1
 
 [Unit93]
-FileName=..\..\..\doc\changelog.txt
-Folder=doc
-Compile=0
-Link=0
+FileName=..\..\lib\layers\stringflag.c
+Folder=src/lib/layers
+Compile=1
+Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
 [Unit94]
-FileName=..\..\lib\object\object.c
-Folder=src/lib/object
+FileName=..\..\lib\object\image\image_common.c
+Folder=src/lib/object/image
 Compile=1
 Link=1
 Priority=1000
@@ -967,8 +948,8 @@ BuildCmd=
 CompileCpp=0
 
 [Unit95]
-FileName=..\..\lib\layers\stringflag.c
-Folder=src/lib/layers
+FileName=..\..\lib\object\sound\sound_common.c
+Folder=src/lib/object/sound
 Compile=1
 Link=1
 Priority=1000
@@ -987,9 +968,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit83]
-FileName=..\..\lib\object\palette\pop2_256c.c
+FileName=..\..\lib\xml\parse.c
 CompileCpp=0
-Folder=src/lib/object/palette
+Folder=src/lib/xml
 Compile=1
 Link=1
 Priority=1000
@@ -997,9 +978,29 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit96]
-FileName=..\..\lib\object\image\image_common.c
+FileName=..\..\lib\object\level\level_common.c
 CompileCpp=0
-Folder=src/lib/object/image
+Folder=src/lib/object/level
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit80]
+FileName=..\..\lib\object\other\binary.c
+CompileCpp=0
+Folder=src/lib/object/other
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit84]
+FileName=..\..\lib\xml\search.c
+CompileCpp=0
+Folder=src/lib/xml
 Compile=1
 Link=1
 Priority=1000
