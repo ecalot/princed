@@ -38,14 +38,14 @@ rle_compress.c: Princed Resources : Image Compression Library
 void compressRle(const unsigned char* input, int inputSize,
                  unsigned char* output, int *outputSize) {
 	/* Declare pointers */
-	unsigned char* cursorData        = output;
-	char*          counter;
+	unsigned char*       cursorData  = output;
+	signed char*         counter;
 	const unsigned char* cursorPix   = input;
 	const unsigned char* imgEnd      = input+inputSize;
 
 	while (cursorPix<imgEnd) {
 		/* Step 1: Create counter */
-		counter=(char*)(cursorData++);
+		counter=(signed char*)(cursorData++);
 		*counter=-1;
 
 		/* Step 2: Look and copy the string until more than two repeated bytes are found */
