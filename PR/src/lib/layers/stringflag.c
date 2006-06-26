@@ -31,10 +31,9 @@ stringflag.c: Princed Resources : Flag string parsing feature routines
   DO NOT remove this copyright notice
 */
 
-/*#include "stringflag.h"*/
-
-unsigned long parseflag(const char* stringflag);
-const char* generateflag(unsigned long integerflag);
+#include "stringflag.h"
+#include "stringformat.h" /* sf_* functions */
+#include <stdlib.h> /* NULL */
 
 unsigned long parseflag(const char* stringflag) {
 
@@ -58,12 +57,33 @@ unsigned long parseflag(const char* stringflag) {
 	return result;
 }
 
+const char* generateflag(unsigned long integerflag) {
+	int i=0;
+	static char buffer[87];
+	int number=1;
+	int emitComma=0;
+
+	while (integerflag) {
+		if (integerflag&1) {
+			if (emitComma) sf_emit(',',&i,buffer);
+			sf_emitNumber(number,1,0,&i,buffer);
+			emitComma=1;
+		}
+						
+		number++;
+		integerflag>>=1;				
+	}
+
+	return sf_emit(0,&i,buffer)?buffer:NULL; /* close the string and return it (return NULL in case of error)*/
+}
+
 /*#define DEBUG_STRINGS*/
 
 #ifdef DEBUG_STRINGS
+#include <stdio.h>
 int main(int a,char** b) {
-	printf("%x\n", parseflag(
-		b[1]
+	printf("%s\n", generateflag(
+		0xffffffff
 	));
 	return 0;
 }

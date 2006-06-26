@@ -55,7 +55,7 @@ endif
 ACTIONS  = .import.o .export.o .classify.o
 XML      = .parse.o .search.o .unknown.o .translate.o .tree.o
 COMPRESS = .lzg_compress.o .lzg_decompress.o .rle_compress.o .rle_decompress.o .rlev_decompress.o 
-LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringformat.o .resourcematch.o .auxiliary.o
+LAYERS   = .dat.o .memory.o .list.o .reslist.o .pallist.o .disk.o .idlist.o .autodetect.o .stringflag.o .stringformat.o .resourcematch.o .auxiliary.o
 FORMAT   = .bmp.o .mid.o .pal.o .wav.o .plv.o
 OBJECT   = .object.o .pop2_256c.o .pop1_16c.o .image2.o .image16.o .image256.o .binary.o .sound_common.o .level_common.o .image_common.o
 CONSOLE  = .main.o .filedir.o
@@ -242,6 +242,10 @@ $(XMLFILE): xml/resources.xml
 .stringformat.o: lib/layers/stringformat.c include/translate.h include/stringformat.h
 	$(INFO) Compiling unknown string format parsing feature...
 	$(CC) $(OPTIONS) -c lib/layers/stringformat.c -o $@
+
+.stringflag.o: lib/layers/stringflag.c include/translate.h include/stringflag.h
+	$(INFO) Compiling unknown string flag parsing feature...
+	$(CC) $(OPTIONS) -c lib/layers/stringflag.c -o $@
 
 .pop2_256c.o: lib/object/palette/pop2_256c.c include/palette.h include/memory.h include/dat.h include/disk.h include/auxiliary.h include/pal.h
 	$(INFO) Compiling the POP2 256 colors palette class support...

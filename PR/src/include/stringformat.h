@@ -36,6 +36,12 @@ stringformat.h: Princed Resources : Format string parsing header
 
 #define isNumber(k) ('0'<=(k) && (k)<='9')
 
+/* private functions. only for stringf* files */
+int  sf_emit(char c, int* i, char* buffer);
+void sf_emitString(const char* txt, int size, int zeroflag, int* i, char* buffer);
+void sf_emitNumber(int n, int size, int zeroflag, int* i, char* buffer);
+
+/* public function */
 const char* parseformat(const char* format,long value,const char* index, const char* type, const char* extension, long numberOfThisType, int order, const char* desc,const char* name);
 
 	/* This function parses format in this way:
