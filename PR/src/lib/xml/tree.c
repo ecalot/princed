@@ -40,6 +40,7 @@ tree.c: Princed Resources : Specific XML tree handling routines
 #include "common.h"
 #include "list.h"    /* list primitives needed by the Common Factor routines */
 #include "memory.h"
+#include "stringflag.h" /* to translate flags */
 #include "parse.h"   /* getTagStructure */
 #include "unknown.h" /* typedef tUnknownFile */
 #include <stdio.h>
@@ -419,8 +420,7 @@ void treeStatusItem(int value,const char* index,const char* path,const char* typ
 	item->index=strallocandcopy(index);
 	item->path=strallocandcopy(path);
 	item->type=strallocandcopy(type);
-	sprintf(aux,"0x%lx",flags);
-	item->flags=strallocandcopy(aux);
+	item->flags=strallocandcopy(generateflag(flags));
 	sprintf(aux,"Unknown %s %d",typedesc, count);
 	item->desc=strallocandcopy(aux);
 

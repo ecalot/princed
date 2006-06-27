@@ -42,6 +42,7 @@ search.c: Princed Resources : Specific XML handling functions
 #include "parse.h"
 #include "search.h"
 #include "translate.h" /* to translate indexes */
+#include "stringflag.h" /* to translate flags */
 #include <string.h>
 
 /***************************************************************\
@@ -95,7 +96,6 @@ void search_workTag(const tTag* t,void* pass) {
 	const char* datFile=((tPassWork*)pass)->datFile;
 	tResourceList* rlist=((tPassWork*)pass)->rlist;
 	tResource res;
-	char* end;
 
 /*printf("comienzan las preguntas (t->file,datFile)=(%s,%s)\n",t->file,datFile);
 printf("tv=%s ti=%s tag=%s\n",t->value,t->index,t->tag);*/
@@ -118,18 +118,19 @@ printf("tv=%s ti=%s tag=%s\n",t->value,t->index,t->tag);*/
 				res.type=i;
 		/* If error it returns 0 and the verifyHeader will try to detect the type */
 	}
-	if (res.type==eResTypeImage16) {
+	if (res.type==eResTypeImage16) { /* Transform the default TypeImage16 to the corresponding type */
 		switch (ptoi(t->colors)) {
 		case 2:
 			res.type=eResTypeImage2;
 			break;										
+		case 16:
+		case 0: /* none defaults to 16 */
+			res.type=eResTypeImage16;
+			break;	
+		default: /* other number defaults to 256 */
 		case 256:
 			res.type=eResTypeImage256;
 			break;										
-		case 16:
-		default:
-			res.type=eResTypeImage16;
-			break;	
 		}
 	}
 #endif
@@ -145,8 +146,7 @@ printf("tv=%s ti=%s tag=%s\n",t->value,t->index,t->tag);*/
 	/* Copy number, title, desc and path */
 	search_keepIntAttribute(number,unsigned char); /* Transforms the char* levelnumer/number attribute into a char value, if error, demo level is used */
 	if (t->flags) {
-		res.flags=strtol(t->flags,&end,0);
-		if (*end) return;
+		res.flags=parseflag(t->flags);
 	} else {
 		res.flags=0;
 	}
