@@ -159,7 +159,7 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling level_common.class module...
 	$(CC) $(OPTIONS) -c lib/object/level/level_common.c -o $@
 
-.sound_common.o: lib/object/sound/sound_common.c include/binary.h include/common.h include/wav.h include/dat.h include/types.h
+.sound_common.o: lib/object/sound/sound_common.c include/binary.h include/common.h include/wav.h include/dat.h include/types.h include/sound.h
 	$(INFO) Compiling common functions for sound type class...
 	$(CC) $(OPTIONS) -c lib/object/sound/sound_common.c -o $@
 
@@ -243,7 +243,7 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling unknown string format parsing feature...
 	$(CC) $(OPTIONS) -c lib/layers/stringformat.c -o $@
 
-.stringflag.o: lib/layers/stringflag.c include/translate.h include/stringflag.h
+.stringflag.o: lib/layers/stringflag.c include/stringflag.h include/stringformat.h
 	$(INFO) Compiling unknown string flag parsing feature...
 	$(CC) $(OPTIONS) -c lib/layers/stringflag.c -o $@
 

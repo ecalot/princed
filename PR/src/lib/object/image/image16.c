@@ -34,15 +34,15 @@ image16.c: Princed Resources : Image Compression Library
 
 #include <stdio.h>
 #include <string.h>
-#include "compress.h"
 #include "common.h"
+#include "compress.h"
+#include "dat.h"
+#include "disk.h" /* array2short */
 #include "image.h"
 #include "memory.h"
-#include "disk.h" /* array2short */
-#include "dat.h"
 #include "object.h" /* paletteGet* */
 
-#include "palette.h" /* getColorArrayByColors */
+#include "palette.h" /* SAMPLE_PAL16 */
 
 #include "bitmap.h"
 

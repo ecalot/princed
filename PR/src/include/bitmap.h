@@ -37,12 +37,12 @@ bitmap.h: Princed Resources : BMP/PNG support common headers
 #define _PR_BITMAP_H_
 
 #ifdef _PR_USE_PNG_
-
+/*
 #define mFormatExportBitmap(data,vFileext,size,image,optionflag,backupExtension) \
         mFormatExportPng(data,vFileext,size,image,optionflag,backupExtension)
 #define mFormatImportBitmap(res) \
         mFormatImportPng(res)
-
+*/
 #define mWriteBitmap(file,data,w,h,bits,colors,colorArray,lineWidth,optionflag,backupExtension) \
         mWritePng(file,data,w,h,bits,colors,colorArray,lineWidth,optionflag,backupExtension)
 #define readBitmap(file,data,ph,pw,pbits,pcolors,colorArray,plineWidth) \
@@ -51,12 +51,12 @@ bitmap.h: Princed Resources : BMP/PNG support common headers
 #include "png.h"
 
 #else
-
+/*
 #define mFormatExportBitmap(data,vFileext,size,image,optionflag,backupExtension) \
         mFormatExportBmp(data,vFileext,size,image,optionflag,backupExtension)
 #define mFormatImportBitmap(res) \
         mFormatImportBmp(res)
-
+*/
 #define mWriteBitmap(file,data,w,h,bits,colors,colorArray,lineWidth,optionflag,backupExtension) \
         mWriteBmp(file,data,w,h,bits,colors,colorArray,lineWidth,optionflag,backupExtension)
 #define readBitmap(file,data,ph,pw,pbits,pcolors,colorArray,plineWidth) \

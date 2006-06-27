@@ -34,17 +34,11 @@ image16.c: Princed Resources : Image Compression Library
 
 #include <stdio.h>
 #include <string.h>
-#include "compress.h"
 #include "common.h"
-#include "image.h"
-#include "memory.h"
+#include "compress.h"
 #include "disk.h" /* array2short */
-#include "dat.h"
-#include "object.h" /* paletteGet* */
-
-#include "palette.h" /* getColorArrayByColors */
-
-#include "bitmap.h"
+#include "image.h" /* tImage */
+#include "memory.h"
 
 /* Compression level explanation:
  *

@@ -38,10 +38,12 @@ png.h: Princed Resources : PNG file support headers
 #include "types.h" /* tResource */
 #include "image.h" /* tImage */
 
+/*
 int mFormatExportPng(const unsigned char* data, const char *vFileext,unsigned long int size,tImage image,int optionflag,const char* backupExtension);
 int mFormatImportPng(tResource *res);
+*/
 
-int mWritePng(const char* file,const unsigned char* data, int w, int h, int bits, int colors, tColor* colorArray, int lineWidth, int optionflag, const char* backupExtension);
+int mWritePng(const char* file,const unsigned char* data, int w, int h, int bits, int colors, const tColor* colorArray, int lineWidth, int optionflag, const char* backupExtension);
 int readPng(const char* file, unsigned char** data, int *ph, int *pw,  int *pbits, int *pcolors, tColor** colorArray, int *plineWidth);
 
 #endif
