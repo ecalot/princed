@@ -184,23 +184,26 @@ Versions:
   - Moved tResource* from reslist to types.h
   - Prepared the skeleton abstraction layer for bitmap to support .png files
   - Renamed "uncompress" to "decompress"
+  - Re-tested portability in all platforms
+  x Fixed the importation feature
   x Add a fatal error check when importing from a different palette size and a
     warning when importing from an incorrect palette.
   x Added full POP2 RLEV decompression algorithm
-  x Clean the source
+  - The source has been simplified
   x Common factor in LGZ compression (a .h or compress.h) for win size, etc.
   x Common palette calculation
   x Create a new isDirSep in disk.h and handle all the / and \ as the same char
   x Don't create empty unknown.xml
   x Fix ./pr -ie it -f bug
   x Fix repeated resource name in CPALACE.DAT bug
-  x Fork compress to code images as a new object in a separated file
+  - Forked compress to code images as a new object in a separated file
   - Rename all xbit names with xcolor
   x Transform flags from the hex form to the comma-separated form (010=2; 110=2,3)
  * PR v1.4 (future plans)
   x Added full POP2 RLEV compression algorithm
   x Check for memory leak
   x Code a palette adapting feature
+  x Optimize priority list
   x Finish python interface
   x Fix buffer overflows (in entered filename sizes)
   x Replace .bmp by .png files.
