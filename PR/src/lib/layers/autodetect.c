@@ -74,7 +74,7 @@ int verifyImage256Header(tBinary c) {
 
 int verifyPaletteHeaderPop1(tBinary c) {
 	return (
-		((c.size==101)&&(!c.data[2])&&(!c.data[3])&&(c.data[4]==0x10))
+		((c.size==100)&&(!c.data[1])&&(!c.data[2])&&(c.data[3]==0x10))
 	);
 }
 
