@@ -93,7 +93,7 @@ int readPal(const char* file,tColor* *colorArray,int *colors) {
 	fclose(fd);
 	if (!ok) {
 		free(*colorArray);
-		return -40;
+		return -40; /* TODO: assign code for wrong jasc pal format */
 	}
 	return PR_RESULT_SUCCESS;
 

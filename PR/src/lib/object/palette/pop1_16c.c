@@ -138,6 +138,8 @@ void* objectPalettePop1_16Read(const char* file,int *result) {
 	char aux[260];
 	tBinary raw;
 
+	*result=PR_RESULT_ERR_FILE_NOT_OPEN_NOTFOUND;
+
 	/* Import extra palette information */
 	sprintf(aux,"%s.more",file);
 	raw=mLoadFileArray(aux);

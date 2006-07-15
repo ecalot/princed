@@ -86,8 +86,10 @@ void* objectSoundWaveRead(const char* file, int *result) {
 		if (samplerate!=11025) *result=PR_RESULT_WAV_UNSUPPORTED_SAMPLERATE;
 		if (channels!=1)       *result=PR_RESULT_WAV_UNSUPPORTED_STEREO;
 	}
+
 	if (*result!=PR_RESULT_SUCCESS) {
-		free(o->data);
+		if (!o->isCopy) free(o->data);
+		free(o);
 		return NULL;
 	}
 

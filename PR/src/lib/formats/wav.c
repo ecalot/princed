@@ -76,6 +76,8 @@ int readWav(const char* file, tBinary* snd, int *pchannels, long *psamplerate, l
 	short int BitsPerSample;
 	long int SubChunk2Size=0;
 
+	snd->isCopy=1;
+	
 	fd=fopen(file,"rb");
 	if (!fd) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
 
@@ -110,6 +112,7 @@ int readWav(const char* file, tBinary* snd, int *pchannels, long *psamplerate, l
 	if (ok) {
 		snd->size=SubChunk2Size;
 		snd->data=malloc(SubChunk2Size);
+		snd->isCopy=0;
 		ok=fread(snd->data,SubChunk2Size,1,fd);
 		fclose(fd);
 	} else {

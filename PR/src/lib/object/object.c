@@ -226,9 +226,10 @@ tObject objectRead(const char* file,tResource* res,int *result) {
 	switch (res->type) {
 		case eResTypeLevelPop1:
 			/*o.obj=objectLevelPop1Read(file,res.content,result); TODO */
+			*result=-1; /* TODO: unsupported object */
 			break;
 		case eResTypeImage16:
-			o.obj=objectImage16Read(file,*res->palette,result);
+			o.obj=objectImage16Read(file,*res->palette /*TODO: check because sometimes it is not initialized */,result);
 			break;
 		case eResTypeSoundWave:
 			o.obj=objectSoundWaveRead(file,result);
