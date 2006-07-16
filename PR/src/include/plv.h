@@ -67,7 +67,7 @@ int mFormatExportPlv(const unsigned char* data, const char *vFileext,unsigned lo
 
 
 int writePlv(const char* file, tBinary content, int popversion, const char* datfile, int level, const char* filename, const char* desc, const char* title, const char* vDatAuthor, int optionflag,const char* backupExtension);
-int readPlv(const char* file, tBinary* content, int *number, char** datfile, char** name, char** desc, char** datAuthor);
+int readPlv(const char* file, tBinary* content, int *number, char** datfile, char** name, char** desc, char** datAuthor, int* popversion);
 
 /* Weekdays and months */
 #define DATE_WEEKDAYS "Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat"

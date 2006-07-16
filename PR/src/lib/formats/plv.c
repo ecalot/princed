@@ -172,7 +172,7 @@ int writePlv(const char* file, tBinary content, int popversion, const char* datf
 
 extern FILE* outputStream;
 
-int readPlv(const char* file, tBinary* content, int *number, char** datfile, char** name, char** desc, char** datAuthor) {
+int readPlv(const char* file, tBinary* content, int *number, char** datfile, char** name, char** desc, char** datAuthor, int* ppopversion) {
 
 /*
  * PLV 1 SPECS:
@@ -220,7 +220,7 @@ int readPlv(const char* file, tBinary* content, int *number, char** datfile, cha
 	/* Check data */
 	if (!ok) {
 		fclose(fd);
-		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
+		return PR_RESULT_PLV_WRONG_FILE_FORMAT;
 	}
 
 	/* Read data */
@@ -237,6 +237,7 @@ int readPlv(const char* file, tBinary* content, int *number, char** datfile, cha
 	*name=NULL;
 	*desc=NULL;
 	*datAuthor=NULL;
+	*ppopversion=popVersion;
 	
 	fclose(fd);
 

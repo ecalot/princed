@@ -46,11 +46,15 @@ int objectOtherBinarySet(void* o,tResource* res);
 #define objectLevelPop2Create(a,b,c,d,e,f,g) objectLevelCreate(a,b,c,d,e,f,g)
 #define objectLevelPop1Write(a,b,c,d) objectLevelWrite(a,b,c,d,1)
 #define objectLevelPop2Write(a,b,c,d) objectLevelWrite(a,b,c,d,2)
+#define objectLevelPop1Read(a,b) objectLevelRead(a,b,1);
+#define objectLevelPop2Read(a,b) objectLevelRead(a,b,2);
+#define objectLevelPop1Set(a,b) objectLevelSet(a,b);
+#define objectLevelPop2Set(a,b) objectLevelSet(a,b);
 
 void* objectLevelCreate(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error);
 int objectLevelWrite(void* o, const char* file, int optionflag, const char* backupExtension,int popVersion);
+void* objectLevelRead(const char* file,int *result, int popversion);
 
-void* objectLevelPop1Read(const char* file,int *result);
-int objectLevelPop1Set(void* o,tResource* res);
+int objectLevelSet(void* o,tResource* res);
 
 #endif

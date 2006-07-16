@@ -54,14 +54,14 @@ typedef struct {
 	char* name;
 	char* desc;
 	char* datAuthor;
-}tPop1Level;
+}tPopLevel;
 
 void* objectLevelCreate(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error) {
-	tPop1Level* r;
+	tPopLevel* r;
 	*error=PR_RESULT_SUCCESS;
 	/*TODO: fix the original file name path (lala///lele/demo.plv--> demo.plv) */
 
-	r=(tPop1Level*)malloc(sizeof(tPop1Level));
+	r=(tPopLevel*)malloc(sizeof(tPopLevel));
 	r->content=content;
 	r->number=number;
 	r->datfile=(char*)datfile;
@@ -72,16 +72,18 @@ void* objectLevelCreate(tBinary content,int number,const char* datfile,const cha
 }
 
 int objectLevelWrite(void* o, const char* file, int optionflag, const char* backupExtension,int version) {
-	tPop1Level* b=o;
+	tPopLevel* b=o;
 	return writePlv(file,b->content,version,b->datfile,b->number,getFileNameFromPath(file),b->desc,b->name,b->datAuthor,optionflag,backupExtension);
 }
 
-void* objectLevelPop1Read(const char* file,int *result) { /* TODO: generalize to POP2 */
-	tPop1Level* r;
+/*void* objectLevelPop1Read(const char* file,int *result,int popversion) { * TODO: generalize to POP2 */
+void* objectLevelRead(const char* file,int *result,int popversion) { 
+	tPopLevel* r;
+	int version;
 
-	r=(tPop1Level*)malloc(sizeof(tPop1Level));
+	r=(tPopLevel*)malloc(sizeof(tPopLevel));
 
-	*result=readPlv(file,&r->content,&r->number,&r->datfile,&r->name,&r->desc,&r->datAuthor);
+	*result=readPlv(file,&r->content,&r->number,&r->datfile,&r->name,&r->desc,&r->datAuthor,&version);
 
 	if (*result!=PR_RESULT_SUCCESS) {
 		free(r);
@@ -91,8 +93,8 @@ void* objectLevelPop1Read(const char* file,int *result) { /* TODO: generalize to
 	return (void*)r;
 }
 
-int objectLevelPop1Set(void* o,tResource* res) {
-	tPop1Level* r=o;
+int objectLevelSet(void* o,tResource* res) {
+	tPopLevel* r=o;
 	res->content=r->content;
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
