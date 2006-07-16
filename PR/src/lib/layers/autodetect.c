@@ -43,7 +43,7 @@ autodetect.c: Princed Resources : Automatic detection resource types
 \***************************************************************/
 
 int verifyPop1LevelHeader(tBinary c) {
-	return (((c.size==2306)||(c.size==2305))&&!(c.data[1697]&0x0F)&&!(c.data[1699]&0x0F)&&!(c.data[1701]&0x0F));
+	return (((c.size==2305)||(c.size==2304)));/* &&!(c.data[1697]&0x0F)&&!(c.data[1699]&0x0F)&&!(c.data[1701]&0x0F));*/
 }
 
 int verifyPop2LevelHeader(tBinary c) {

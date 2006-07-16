@@ -105,6 +105,7 @@ int writePlv(const char* file, tBinary content, int popversion, const char* datf
 	unsigned char sizeOfNow;
 	unsigned char version=popversion;
 	unsigned long int block2size;
+	long contentSizeWithChecksum=content.size+1;
 
 	/* Get current time */
 	now=getDate();
@@ -128,7 +129,7 @@ int writePlv(const char* file, tBinary content, int popversion, const char* datf
 	ok=ok&&fwritechar(&version,target); /* PLV version */
 	ok=ok&&fwritechar(&level,target);
 	ok=ok&&fwritelong(&numberOfFieldPairs,target);
-	ok=ok&&fwritelong(&content.size,target);
+	ok=ok&&fwritelong(&contentSizeWithChecksum,target);
 
 	/* Write block 1: checksum and raw data */
 	checksum=getChecksum(content);
@@ -212,6 +213,7 @@ int readPlv(const char* file, tBinary* content, int *number, char** datfile, cha
 	ok=ok&&freadlong(&fieldPair,fd);
 	ok=ok&&freadlong(&block1Size,fd);
 	ok=ok&&freadchar(&checksum,fd);
+	block1Size--; /* drop the ckecksum */
 
 	/* TODO: validate checksum */
 
