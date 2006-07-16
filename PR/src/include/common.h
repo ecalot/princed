@@ -81,7 +81,7 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 
 /* File extensions */
 #define RES_FILE_EXTENSIONS   {"raw","bin","bmp","bmp","bmp","plv","mid","pcs","pal","pal","pal","pal","plv","txt","wav"}
-#define RES_FILE_TYPES        {"autodetect","binary","image","image-mono","image-full","pop1level","mini","pcspeaker","palette-pop1-4bits","palette-pop1-guards","palette-mono","palette-pop2-320cols","pop2level","text","wave"}
+#define RES_FILE_TYPES        {"autodetect","binary","image","image-mono","image-full","pop1level","midi","pcspeaker","palette-pop1-4bits","palette-pop1-guards","palette-mono","palette-pop2-320cols","pop2level","text","wave"}
 #define RES_FILE_TYPES_COUNT  15
 
 typedef enum {

@@ -106,3 +106,4 @@ int objectSoundSet(void* o,tResource* res, tSoundType soundType) {
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
 }
+
