@@ -40,9 +40,11 @@ plv.c: Princed Resources : PLV prince level files support
 */
 
 /* Includes */
-#include "plv.h"
-#include "disk.h"
 #include "dat.h"
+#include "disk.h"
+#include "memory.h" /* freeBinary */
+#include "plv.h"
+#include <stdlib.h> /* malloc */
 #include <string.h>
 #include <time.h>
 
@@ -169,7 +171,84 @@ int writePlv(const char* file, tBinary content, int popversion, const char* datf
 
 extern FILE* outputStream;
 
-int readPlv(tResource *res) {
+int readPlv(const char* file, tBinary* content, int *number, char** datfile, char** name, char** desc, char** datAuthor) {
+
+/*
+ * PLV 1 SPECS:
+ * bytes offset description                     content
+ *     7      0 HAS FILE TAG OF 8 LETTERS       "POP_LVL"
+ *     1      7 POP VERS                        0x01
+ *     1      8 PLV VERS                        0x01
+ *     1      9 LEV NUM
+ *     4     10 FIELD-PAIR ( NAME / CONTENT ) COUNT
+ *     4     14 BLOCK 1: LEVEL SIZE (B1)        2306 (including the checksum)
+ *    B1     18 BLOCK 1: LEVEL CODE
+ *     4  18+B1 BLOCK 2: USER DATA SIZE VALUE IN BYTES (B2)
+ *    B2  22+B1 BLOCK 2: LEVEL CODE NEXT, REST OF FILE
+ *
+ * Total size of file B1+B2+22.
+ * All values are unsigned and in the Intel x86 architecture
+ */
+	
+	char magic[PLV_HEADER_MAGIC_SIZE];
+	unsigned char popVersion, plvVersion, levelNumber,checksum;
+	long fieldPair,block1Size,block2Size;
+	FILE* fd;
+	int ok;
+
+	content->isCopy=1;
+	content->data=NULL;
+	content->size=0;
+	
+	fd=fopen(file,"rb");
+	if (!fd) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
+
+	/* Read headers */
+	ok=fread(magic,PLV_HEADER_MAGIC_SIZE,1,fd);
+	ok=ok&&!strncmp(magic,PLV_HEADER_MAGIC,PLV_HEADER_MAGIC_SIZE);
+	ok=ok&&freadchar(&popVersion,fd);
+	ok=ok&&freadchar(&plvVersion,fd);
+	ok=ok&&freadchar(&levelNumber,fd);
+	ok=ok&&freadlong(&fieldPair,fd);
+	ok=ok&&freadlong(&block1Size,fd);
+	ok=ok&&freadchar(&checksum,fd);
+
+	/* TODO: validate checksum */
+
+	/* Check data */
+	if (!ok) {
+		fclose(fd);
+		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
+	}
+
+	/* Read data */
+	content->isCopy=0;
+	content->size=block1Size;
+	ok=(content->data=malloc(block1Size))?1:0;
+	ok=ok&&fread(content->data,1,block1Size,fd);
+	ok=ok&&freadlong(&block2Size,fd);
+	/* TODO: finish reading this block */
+	/* check: Total size of file B1+B2+22. */
+
+	*number=levelNumber;
+	*datfile=NULL;
+	*name=NULL;
+	*desc=NULL;
+	*datAuthor=NULL;
+	
+	fclose(fd);
+
+	/* Check data */
+	if (!ok) {
+		freeBinary(*content);
+		content->isCopy=1;
+		content->data=NULL;
+		content->size=0;
+		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
+	}
+
+
+#if 0
 	/* declare variables */
 	unsigned char* pos;
 	unsigned char* posAux;
@@ -197,6 +276,8 @@ int readPlv(tResource *res) {
 	res->content.data=pos;
 	mWriteFileInDatFileIgnoreChecksum(res);
 	res->content.data=posAux;
+#endif
 
-	return 1; /* true */
+	return PR_RESULT_SUCCESS;
 }
+

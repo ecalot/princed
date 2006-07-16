@@ -43,7 +43,7 @@ int writeMid(const char* file, tBinary* snd, int optionflag, const char* backupE
 	/* Mid files are saved as raw */
 	return writeData(snd->data,0,file,snd->size,optionflag,backupExtension)?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
 }
-
+#if 0
 int mFormatImportMid(tResource *res) {
 	unsigned char* file;
 
@@ -56,4 +56,5 @@ int mFormatImportMid(tResource *res) {
 	mWriteFileInDatFile(res);
 	return 1; /* true */
 }
+#endif
 

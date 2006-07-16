@@ -194,8 +194,8 @@ tColor* objectPaletteGetColorArray(tObject pal) {
 
 void objectSet(tObject o,int *result,tResource* res) {
 	switch (o.type) {
-		case eResTypeLevelPop1:
-			/*result=objLevelSet(o.obj,res); TODO */
+		case eResTypeLevelPop1: /* TODO: pop2 */
+			*result=objectLevelPop1Set(o.obj,res);
 			break;
 		case eResTypeImage16:
 			*result=objectImage16Set(o.obj,res);
@@ -225,8 +225,8 @@ tObject objectRead(const char* file,tResource* res,int *result) {
 	tObject o;
 	switch (res->type) {
 		case eResTypeLevelPop1:
-			/*o.obj=objectLevelPop1Read(file,res.content,result); TODO */
-			*result=-1; /* TODO: unsupported object */
+			/* TODO: pop2 */
+			o.obj=objectLevelPop1Read(file,result);
 			break;
 		case eResTypeImage16:
 			o.obj=objectImage16Read(file,*res->palette /*TODO: check because sometimes it is not initialized */,result);

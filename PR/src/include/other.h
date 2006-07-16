@@ -50,4 +50,7 @@ int objectOtherBinarySet(void* o,tResource* res);
 void* objectLevelCreate(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error);
 int objectLevelWrite(void* o, const char* file, int optionflag, const char* backupExtension,int popVersion);
 
+void* objectLevelPop1Read(const char* file,int *result);
+int objectLevelPop1Set(void* o,tResource* res);
+
 #endif

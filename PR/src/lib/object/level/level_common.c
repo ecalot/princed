@@ -40,8 +40,8 @@ level.c: Princed Resources : Common POP level object implementation
 #include "dat.h"    /* WriteDat */
 #include "disk.h"   /* getFileNameFromPath */
 #include "plv.h"
-#include <stdlib.h>
 #include "types.h"  /* tResources */
+#include <stdlib.h>
 
 /***************************************************************\
 |                         Level Object                         |
@@ -50,10 +50,10 @@ level.c: Princed Resources : Common POP level object implementation
 typedef struct {
 	tBinary content;
 	int number;
-	const char* datfile;
-	const char* name;
-	const char* desc;
-	const char* datAuthor;
+	char* datfile;
+	char* name;
+	char* desc;
+	char* datAuthor;
 }tPop1Level;
 
 void* objectLevelCreate(tBinary content,int number,const char* datfile,const char* name,const char* desc,const char* datAuthor,int *error) {
@@ -64,10 +64,10 @@ void* objectLevelCreate(tBinary content,int number,const char* datfile,const cha
 	r=(tPop1Level*)malloc(sizeof(tPop1Level));
 	r->content=content;
 	r->number=number;
-	r->datfile=datfile;
-	r->name=name;
-	r->desc=desc;
-	r->datAuthor=datAuthor;
+	r->datfile=(char*)datfile;
+	r->name=(char*)name;
+	r->desc=(char*)desc;
+	r->datAuthor=(char*)datAuthor;
 	return (void*)r;
 }
 
@@ -76,21 +76,25 @@ int objectLevelWrite(void* o, const char* file, int optionflag, const char* back
 	return writePlv(file,b->content,version,b->datfile,b->number,getFileNameFromPath(file),b->desc,b->name,b->datAuthor,optionflag,backupExtension);
 }
 
-/*
-void* objLevelRead(const char* file,int *result) {
-	tBinary o=mLoadFileArray(file);
-	if (o.size<0) {
-		*result=o.size;
+void* objectLevelPop1Read(const char* file,int *result) { /* TODO: generalize to POP2 */
+	tPop1Level* r;
+
+	r=(tPop1Level*)malloc(sizeof(tPop1Level));
+
+	*result=readPlv(file,&r->content,&r->number,&r->datfile,&r->name,&r->desc,&r->datAuthor);
+
+	if (*result!=PR_RESULT_SUCCESS) {
+		free(r);
 		return NULL;
 	}
-	return objectLevelPop1Create(o,result);
+
+	return (void*)r;
 }
 
-int objLevelSet(void* o,tResource* res) {
-	tBinary* bin=o;
-	res->content=*bin;
+int objectLevelPop1Set(void* o,tResource* res) {
+	tPop1Level* r=o;
+	res->content=r->content;
 	mWriteFileInDatFile(res);
 	return PR_RESULT_SUCCESS;
 }
-*/
 
