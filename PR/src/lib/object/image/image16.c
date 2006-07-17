@@ -99,7 +99,7 @@ tColor* objPalette_16() {
 	return c;
 }
 
-void* objectImage16Create(tBinary cont, int *error) { /* use get like main.c */
+void* objectImage16Create(tBinary cont, int *error) {
 
 	/*
 	 * This function will expand the data into an image structure,

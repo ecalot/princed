@@ -101,7 +101,7 @@ tColor* objPalette_pop1_monoGetColors() {
 
 extern FILE* outputStream;
 
-void* objectImage2Create(tBinary cont, int *error) { /* use get like main.c */
+void* objectImage2Create(tBinary cont, int *error) {
 
 	/*
 	 * This function will expand the data into an image structure,
@@ -116,13 +116,16 @@ void* objectImage2Create(tBinary cont, int *error) { /* use get like main.c */
 
 	/* Expand graphic and check results */
 	*error=mExpandGraphic(cont,image);
+printf("w=%d h=%d\n",image->width,image->height);
 
 	if (*error==PR_RESULT_F_COMPRESS_RESULT_FATAL) {
 		free(image);
 		return NULL;
 	}
 
-	if (getCarry(image->type) != 1 ) printf("error, monochrome palette fromat wrong\n");
+	if (getCarry(image->type) != 1 ) printf("error, monochrome palette fromat wrong\n"); /* TODO: add a warning */
+	
+	image->colorCount=2;
 
 	return (void*)image;
 }

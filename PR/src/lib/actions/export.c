@@ -128,6 +128,8 @@ printf("new palette object: o=%p type=%d\n",o.obj,o.type);
 						/* Read the palette and load it into memory */
 						if (resourceListCompareId(res.paletteId,nullPalette)) { /* The palette isn't in the buffer */
 							if (mReadFileInDatFileId(&otherPalette)==PR_RESULT_SUCCESS) {
+								resourceListAddInfo(r,&otherPalette); /* this is nessesary to get the palette type */
+								if (!otherPalette.type) otherPalette.type=verifyHeader(otherPalette.content); /* in case of error, an autodetection will be performed */
 								o=objectCreate(&otherPalette,&ok);
 printf("adding ");
 showobj(o);
