@@ -90,8 +90,8 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 	/* main loop */
 	for (indexNumber=0;ok&&(indexNumber<numberOfItems);indexNumber++) {
 		int ok2=mReadFileInDatFile(&res,indexNumber);
-		if (ok2==PR_RESULT_INDEX_NOT_FOUND) return PR_RESULT_ERR_INVALID_DAT; /* Read error */
-		if (ok2==PR_RESULT_CHECKSUM_ERROR) fprintf(outputStream,"Warning: Checksum error\n"); /* Warning */
+		if (ok2==PR_RESULT_F_INDEX_NOT_FOUND) return PR_RESULT_F_INVALID_DAT; /* Read error */
+		if (ok2==PR_RESULT_W_CHECKSUM_ERROR) fprintf(outputStream,"Warning: Checksum error\n"); /* Warning */
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
 		/* add to res more information from the resource list */
 		resourceListAddInfo(r,&res);
@@ -183,6 +183,6 @@ showobj(pal);
 	/*pl_free(&paletteBuffer);*/
 
 	/* Close unknownXML */
-	return ok?count:PR_RESULT_ERR_EXTRACTION;
+	return ok?count:PR_RESULT_F_EXTRACTION;
 }
 

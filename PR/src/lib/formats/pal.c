@@ -51,7 +51,7 @@ int writePal(const char* file, int colors, const tColor* colorArray, int optionf
 	FILE* fd;
 
 	/* open file */
-	if (!writeOpen(file,&fd,optionflag)) return PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
+	if (!writeOpen(file,&fd,optionflag)) return PR_RESULT_F_FILE_NOT_WRITE_ACCESS;
 
 	fprintf(fd,"JASC-PAL\r\n0100\r\n%d\r\n",colors);
 	for (i=0;i<colors;i++) {
@@ -76,7 +76,7 @@ int readPal(const char* file,tColor* *colorArray,int *colors) {
 	int b;
 
 	fd=fopen(file,"rb");
-	if (!fd) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
+	if (!fd) return PR_RESULT_F_FILE_NOT_READ_ACCESS;
 	/* TODO: do the reading */
 
 	if (fscanf(fd,"JASC-PAL\n0100\n%d\n",colors)!=1)

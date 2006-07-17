@@ -77,7 +77,7 @@ int mExpandGraphic256(tBinary input, tImage *image) {
 	image->height=array2short(input.data);
 	image->width =array2short(input.data+2);
 
-	if (*(input.data+4)!=1) return PR_RESULT_COMPRESS_RESULT_FATAL; /* Verify format */
+	if (*(input.data+4)!=1) return PR_RESULT_F_COMPRESS_RESULT_FATAL; /* Verify format */
 	/* if (*(input.data+5)!=0xb4) return PR_RESULT_COMPRESS_RESULT_FATAL; * Verify format */
 
 	image->type=(unsigned char)(*(input.data+5));
@@ -176,7 +176,7 @@ int pop2decompress(tBinary input, int verify, unsigned char** output,int* output
 		lineI.data+=2;
 		if (lineI.size>tempOutputSize) {
 			/*printf(" error: lineI.size=%d tempOutputSize=%d\n",lineI.size,tempOutputSize);*/
-			return PR_RESULT_COMPRESS_RESULT_WARNING;
+			return PR_RESULT_W_COMPRESS_RESULT_WARNING;
 		}
 		aux2=expandRleV(lineI,lineO,&lineSize);
 		/*if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-lineI.size-2);*/
@@ -205,7 +205,7 @@ int pop2decompress(tBinary input, int verify, unsigned char** output,int* output
 			lineI.data+=2;
 			if (lineI.size>tempOutputSize) {
 				/*printf(" error: lineI.size=%d tempOutputSize=%d\n",lineI.size,tempOutputSize);*/
-				return PR_RESULT_COMPRESS_RESULT_WARNING;
+				return PR_RESULT_W_COMPRESS_RESULT_WARNING;
 			}
 			aux2=expandRleV(lineI,lineO,&lineSize);
 			/*if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-lineI.size-2);*/
@@ -261,7 +261,7 @@ void* objectImage256Create(tBinary cont, int *error) { /* use get like main.c */
 	/* Expand graphic and check results */
 	*error=mExpandGraphic256(cont,image);
 
-	if (*error==PR_RESULT_COMPRESS_RESULT_FATAL) {
+	if (*error==PR_RESULT_F_COMPRESS_RESULT_FATAL) {
 		free(image);
 		return NULL;
 	}
@@ -333,7 +333,7 @@ void* objectImage256Read(const char* file,tObject palette, int *result) {
 	image->pal=palette;
 	bits=objectPaletteGetBitRate(image->pal);
 	if (bits && bits!=image->bits) { /* bits=0 means all palettes allowed or ignore palette check */
-		*result=PR_RESULT_ERR_BMP_BITRATE_DIFFERS;
+		*result=PR_RESULT_F_BMP_BITRATE_DIFFERS;
 		free(image->pix);
 		free(colorArray);
 		free(image);

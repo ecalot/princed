@@ -60,5 +60,5 @@ int expandRleV(tBinary input, unsigned char* output, int *outputSize) {
 	}
 
 	*outputSize=oCursor;
-	return (rep==255)?PR_RESULT_SUCCESS:PR_RESULT_COMPRESS_RESULT_WARNING;
+	return (rep==255)?PR_RESULT_SUCCESS:PR_RESULT_W_COMPRESS_RESULT_WARNING;
 }

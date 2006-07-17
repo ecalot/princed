@@ -414,19 +414,19 @@ tBinary mLoadFileArray(const char* vFile) {
 	/* check type */
 	f=isDir(file);
 	if (f==eDirectory) {
-		ret.size=PR_RESULT_ERR_FILE_NOT_OPEN_WASDIR;
+		ret.size=PR_RESULT_F_FILE_NOT_OPEN_WASDIR;
 		ret.data=NULL;
 		return ret;
 	}
 	if (f==eNotFound) {
-		ret.size=PR_RESULT_ERR_FILE_NOT_OPEN_NOTFOUND;
+		ret.size=PR_RESULT_F_FILE_NOT_OPEN_NOTFOUND;
 		ret.data=NULL;
 		return ret;
 	}
 
 	/* Open the file */
 	if ((fp=fopen(file,"rb"))==NULL) {
-		ret.size=PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
+		ret.size=PR_RESULT_F_FILE_NOT_READ_ACCESS;
 		ret.data=NULL;
 		return ret;
 	} else {
@@ -440,7 +440,7 @@ tBinary mLoadFileArray(const char* vFile) {
 		}
 		if ((ret.data=(unsigned char*)malloc(ret.size+1))==NULL) {
 			fclose(fp);
-			ret.size=PR_RESULT_ERR_MEMORY;
+			ret.size=PR_RESULT_F_MEMORY;
 			ret.data=NULL;
 			return ret; /* this could happen in big files! */
 		} else {

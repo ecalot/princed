@@ -61,7 +61,7 @@ int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits
 	FILE* bitmap;
 
 	/* open file */
-	if (!writeOpen(file,&bitmap,optionflag)) return PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
+	if (!writeOpen(file,&bitmap,optionflag)) return PR_RESULT_F_FILE_NOT_WRITE_ACCESS;
 
 	/* initialize variables */
 /*	width=img.width;
@@ -127,7 +127,7 @@ int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbit
 	unsigned short int width=0;
 
 	bitmap=fopen(file,"rb");
-	if (!bitmap) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
+	if (!bitmap) return PR_RESULT_F_FILE_NOT_READ_ACCESS;
 
 	/* Read headers */
 		/* file header */
@@ -226,7 +226,7 @@ int readBmp(const char* file, unsigned char** data, int *ph, int *pw,  int *pbit
 	if (!ok) {
 		free(*colorArray);
 		free(*data);
-		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
+		return PR_RESULT_F_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
 	}
 
 	*pbits        = bits;

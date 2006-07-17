@@ -43,7 +43,7 @@ int expandRle(tBinary input, unsigned char** output, int *outputSize) {
 	int iCursor=0;
 
 	/* reserve memory */
-	if ((*output=malloc(40000))==NULL) return PR_RESULT_COMPRESS_RESULT_FATAL;
+	if ((*output=malloc(40000))==NULL) return PR_RESULT_F_COMPRESS_RESULT_FATAL;
 
 	/* main loop */
 	while (iCursor<input.size) {
@@ -60,5 +60,5 @@ int expandRle(tBinary input, unsigned char** output, int *outputSize) {
 	}
 
 	*outputSize=oCursor;
-	return (rep==1)?PR_RESULT_SUCCESS:PR_RESULT_COMPRESS_RESULT_WARNING;
+	return (rep==1)?PR_RESULT_SUCCESS:PR_RESULT_W_COMPRESS_RESULT_WARNING;
 }

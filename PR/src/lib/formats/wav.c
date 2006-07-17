@@ -59,7 +59,7 @@ int writeWav(const char* file, tBinary* snd, int optionflag, const char* backupE
 	ok=ok&&fwrite(snd->data,snd->size,1,target);
 	ok=ok&&(!writeCloseOk(target,optionflag,backupExtension));
 
-	return ok?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
+	return ok?PR_RESULT_SUCCESS:PR_RESULT_F_FILE_NOT_WRITE_ACCESS;
 }
 
 int readWav(const char* file, tBinary* snd, int *pchannels, long *psamplerate, long *pbps) {
@@ -79,7 +79,7 @@ int readWav(const char* file, tBinary* snd, int *pchannels, long *psamplerate, l
 	snd->isCopy=1;
 	
 	fd=fopen(file,"rb");
-	if (!fd) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
+	if (!fd) return PR_RESULT_F_FILE_NOT_READ_ACCESS;
 
 	/* Read headers */
 	ok=fread(magic,4,1,fd);
@@ -117,7 +117,7 @@ int readWav(const char* file, tBinary* snd, int *pchannels, long *psamplerate, l
 		fclose(fd);
 	} else {
 		fclose(fd);
-		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
+		return PR_RESULT_F_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
 	}
 	/* TODO: check eof */
 
@@ -137,7 +137,7 @@ int readWav(const char* file, tBinary* snd, int *pchannels, long *psamplerate, l
 
 	if (!ok) {
 		free(snd->data);
-		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
+		return PR_RESULT_F_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
 	}
 
 	*pchannels    = NumChannels;

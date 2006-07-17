@@ -115,7 +115,7 @@ void* objectImage16Create(tBinary cont, int *error) { /* use get like main.c */
 
 	/* Expand graphic and check results */
 	*error=mExpandGraphic(cont,image);
-	if (*error==PR_RESULT_COMPRESS_RESULT_FATAL) {
+	if (*error==PR_RESULT_F_COMPRESS_RESULT_FATAL) {
 		free(image);
 		return NULL;
 	}
@@ -160,7 +160,7 @@ void* objectImage16Read(const char* file,tObject palette, int *result) {
 	image->pal=palette;
 	bits=objectPaletteGetBitRate(image->pal);
 	if (bits && bits!=image->bits) { /* bits=0 means all palettes allowed or ignore palette check */
-		*result=PR_RESULT_ERR_BMP_BITRATE_DIFFERS;
+		*result=PR_RESULT_F_BMP_BITRATE_DIFFERS;
 		free(image->pix);
 		free(colorArray);
 		free(image);

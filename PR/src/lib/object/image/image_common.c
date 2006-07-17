@@ -152,7 +152,7 @@ int mExpandGraphic(tBinary input, tImage *image) {
 	image->width =array2short(input.data);
 	input.data+=2;
 
-	if (*(input.data++)>1) return PR_RESULT_COMPRESS_RESULT_FATAL; /* Verify format */
+	if (*(input.data++)>1) return PR_RESULT_F_COMPRESS_RESULT_FATAL; /* Verify format */
 	image->type=(unsigned char)(*(input.data++));
 	input.size-=6;
 	switch (((image->type>>4)&7)+1) {
@@ -166,17 +166,17 @@ int mExpandGraphic(tBinary input, tImage *image) {
 		image->widthInBytes=(image->width+7)/8;
 		break;
 	default:
-		return PR_RESULT_COMPRESS_RESULT_FATAL;
+		return PR_RESULT_F_COMPRESS_RESULT_FATAL;
 	}
 
 #define checkSize if (imageSizeInBytes!=(image->widthInBytes*image->height))\
-	return PR_RESULT_COMPRESS_RESULT_FATAL
-#define checkResult if (result==PR_RESULT_COMPRESS_RESULT_FATAL)\
-	return PR_RESULT_COMPRESS_RESULT_FATAL
+	return PR_RESULT_F_COMPRESS_RESULT_FATAL
+#define checkResult if (result==PR_RESULT_F_COMPRESS_RESULT_FATAL)\
+	return PR_RESULT_F_COMPRESS_RESULT_FATAL
 
 	switch (getAlgor(image->type)) {
 		case COMPRESS_RAW: /* No Compression Algorithm */
-			if ((image->pix=getMemory(input.size))==NULL) return PR_RESULT_COMPRESS_RESULT_FATAL;
+			if ((image->pix=getMemory(input.size))==NULL) return PR_RESULT_F_COMPRESS_RESULT_FATAL;
 			memcpy(image->pix,input.data,input.size);
 			imageSizeInBytes=image->widthInBytes*image->height;
 			result=PR_RESULT_SUCCESS;
@@ -202,7 +202,7 @@ int mExpandGraphic(tBinary input, tImage *image) {
 			cmp_transposeImage(image,imageSizeInBytes);
 			break;
 		default:
-			result=PR_RESULT_COMPRESS_RESULT_FATAL; /* unknown algorithm */
+			result=PR_RESULT_F_COMPRESS_RESULT_FATAL; /* unknown algorithm */
 			break;
 	}
 	return result; /* Ok */

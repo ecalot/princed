@@ -444,21 +444,21 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	readDatFile=mLoadFileArray(vFiledat);
 	if (readDatFile.size<=0) {
 		switch (readDatFile.size) {
-		case PR_RESULT_ERR_FILE_NOT_READ_ACCESS:
-			return PR_RESULT_ERR_FILE_DAT_NOT_READ_ACCESS;
-		case PR_RESULT_ERR_FILE_NOT_OPEN_WASDIR:
-			return PR_RESULT_ERR_FILE_DAT_NOT_OPEN_WASDIR;
-		case PR_RESULT_ERR_FILE_NOT_OPEN_NOTFOUND:
-			return PR_RESULT_ERR_FILE_DAT_NOT_OPEN_NOTFOUND;
+		case PR_RESULT_F_FILE_NOT_READ_ACCESS:
+			return PR_RESULT_F_FILE_DAT_NOT_READ_ACCESS;
+		case PR_RESULT_F_FILE_NOT_OPEN_WASDIR:
+			return PR_RESULT_F_FILE_DAT_NOT_OPEN_WASDIR;
+		case PR_RESULT_F_FILE_NOT_OPEN_NOTFOUND:
+			return PR_RESULT_F_FILE_DAT_NOT_OPEN_NOTFOUND;
 		case PR_RESULT_SUCCESS:
-			return PR_RESULT_ERR_INVALID_DAT;
+			return PR_RESULT_F_INVALID_DAT;
 		default:
 			return readDatFile.size;
 		}
 	}
 	if (readDatFile.size<=6) {
 		free(readDatFile.data);
-		return PR_RESULT_ERR_INVALID_DAT;
+		return PR_RESULT_F_INVALID_DAT;
 	}
 
 	/* read header  */
@@ -468,26 +468,26 @@ int mReadBeginDatFile(unsigned short int *numberOfItems,const char* vFiledat){
 	/* verify DAT format: the index offset belongs to the file and the file size is the index size plus the index offset */
 	if ((indexOffset>readDatFile.size)&&((indexOffset+indexSize)!=readDatFile.size)) {
 		free(readDatFile.data);
-		return PR_RESULT_ERR_INVALID_DAT; /* this is not a valid prince DAT file */
+		return PR_RESULT_F_INVALID_DAT; /* this is not a valid prince DAT file */
 	}
 
 	/* create cursor */
 	readIndexCursor=dat_createCursor(readDatFile.data+indexOffset,indexSize,numberOfItems);
 
 	/* pop version check */
-	if (!dat_readCursorGetVersion(readIndexCursor)) return PR_RESULT_ERR_INVALID_DAT;
+	if (!dat_readCursorGetVersion(readIndexCursor)) return PR_RESULT_F_INVALID_DAT;
 
 	return PR_RESULT_SUCCESS;
 }
 
 int mReadFileInDatFileId(tResource* res) {
-	if (!dat_cursorMoveId(&readIndexCursor,res->id)) return PR_RESULT_INDEX_NOT_FOUND; /* false means index not found */
-	return dat_readRes(res,readIndexCursor)?PR_RESULT_SUCCESS:PR_RESULT_CHECKSUM_ERROR; /* depending on the checksum */
+	if (!dat_cursorMoveId(&readIndexCursor,res->id)) return PR_RESULT_F_INDEX_NOT_FOUND; /* false means index not found */
+	return dat_readRes(res,readIndexCursor)?PR_RESULT_SUCCESS:PR_RESULT_W_CHECKSUM_ERROR; /* depending on the checksum */
 }
 
 int mReadFileInDatFile(tResource* res, int k) {
-	if (!dat_cursorMove(&readIndexCursor,k)) return PR_RESULT_INDEX_NOT_FOUND; /* false means out of range */
-	return dat_readRes(res,readIndexCursor)?PR_RESULT_SUCCESS:PR_RESULT_CHECKSUM_ERROR; /* depending on the checksum */
+	if (!dat_cursorMove(&readIndexCursor,k)) return PR_RESULT_F_INDEX_NOT_FOUND; /* false means out of range */
+	return dat_readRes(res,readIndexCursor)?PR_RESULT_SUCCESS:PR_RESULT_W_CHECKSUM_ERROR; /* depending on the checksum */
 }
 
 #endif
@@ -507,7 +507,7 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 	 *
 	 * Return Values:
 	 *  PR_RESULT_SUCCESS                       Ok
-	 *  PR_RESULT_ERR_FILE_DAT_NOT_WRITE_ACCESS File couldn't be open
+	 *  PR_RESULT_F_FILE_DAT_NOT_WRITE_ACCESS File couldn't be open
 	 *
 	 */
 	if (writeOpen(vFile,&writeDatFile,optionflag|backup_flag)) {
@@ -518,7 +518,7 @@ int mWriteBeginDatFile(const char* vFile, int optionflag) {
 		fwriteshort(&fill,writeDatFile); /* Fill the file with 6 starting null bytes */
 		return PR_RESULT_SUCCESS;
 	} else {
-		return PR_RESULT_ERR_FILE_DAT_NOT_WRITE_ACCESS;
+		return PR_RESULT_F_FILE_DAT_NOT_WRITE_ACCESS;
 	}
 }
 

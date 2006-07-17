@@ -167,7 +167,7 @@ int writePlv(const char* file, tBinary content, int popversion, const char* datf
 
 	/* Close file and return */
 	ok=ok&&(!writeCloseOk(target,optionflag,backupExtension));
-	return ok?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
+	return ok?PR_RESULT_SUCCESS:PR_RESULT_F_FILE_NOT_WRITE_ACCESS;
 }
 
 extern FILE* outputStream;
@@ -202,7 +202,7 @@ int readPlv(const char* file, tBinary* content, int *number, char** datfile, cha
 	content->size=0;
 	
 	fd=fopen(file,"rb");
-	if (!fd) return PR_RESULT_ERR_FILE_NOT_READ_ACCESS;
+	if (!fd) return PR_RESULT_F_FILE_NOT_READ_ACCESS;
 
 	/* Read headers */
 	ok=fread(magic,PLV_HEADER_MAGIC_SIZE,1,fd);
@@ -220,7 +220,7 @@ int readPlv(const char* file, tBinary* content, int *number, char** datfile, cha
 	/* Check data */
 	if (!ok) {
 		fclose(fd);
-		return PR_RESULT_PLV_WRONG_FILE_FORMAT;
+		return PR_RESULT_F_PLV_WRONG_FILE_FORMAT;
 	}
 
 	/* Read data */
@@ -247,7 +247,7 @@ int readPlv(const char* file, tBinary* content, int *number, char** datfile, cha
 		content->isCopy=1;
 		content->data=NULL;
 		content->size=0;
-		return PR_RESULT_ERR_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
+		return PR_RESULT_F_FILE_NOT_READ_ACCESS; /* TODO: use a bad format code */
 	}
 
 

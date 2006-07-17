@@ -43,7 +43,7 @@ classify.c: Princed Resources : File classify routines
 |                    Get the type of a DAT file                 |
 \***************************************************************/
 
-#define READ_ERROR {mReadCloseDatFile();return PR_RESULT_ERR_INVALID_DAT;}
+#define READ_ERROR {mReadCloseDatFile();return PR_RESULT_F_INVALID_DAT;}
 
 int prClassifyDat(const char* vFiledat) {
 	int                indexNumber;
@@ -62,7 +62,7 @@ int prClassifyDat(const char* vFiledat) {
 	for (indexNumber=0;(indexNumber<numberOfItems)&&(type==eResTypeOtherBinary);indexNumber++) {
 		int ok;
 		ok=mReadFileInDatFile(&res,indexNumber);
-		if (ok==PR_RESULT_INDEX_NOT_FOUND) READ_ERROR; /* Read error */
+		if (ok==PR_RESULT_F_INDEX_NOT_FOUND) READ_ERROR; /* Read error */
 		/*if (ok==PR_RESULT_CHECKSUM_ERROR) fprintf(outputStream,"Warning: Checksum error\n"); Warning TODO: add an output for the checksum warning */
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
 		type=verifyHeader(res.content);

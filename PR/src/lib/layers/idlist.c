@@ -99,7 +99,7 @@ int parseGivenPath(char* path) {
 	int error=0;
 
 	/* Check if the variable wasn't initialized before */
-	if (itemMatchingList.count!=0) return PR_RESULT_ERR_WRONG_PRIMITIVE_CALL;
+	if (itemMatchingList.count!=0) return PR_RESULT_F_WRONG_PRIMITIVE_CALL;
 	itemMatchingList.list=NULL;
 
 	/* Validates the NULL path */
@@ -141,7 +141,7 @@ int parseGivenPath(char* path) {
 	}
 	if (error) {
 		for (i=0;i<j-1;i++) freeRM(itemMatchingList.list+i);
-		return PR_RESULT_ERR_COMMAND_LINE_SYNTAX;
+		return PR_RESULT_F_COMMAND_LINE_SYNTAX;
 	}
 	return PR_RESULT_SUCCESS;
 }

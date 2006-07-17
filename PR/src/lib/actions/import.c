@@ -67,7 +67,7 @@ int import_full(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 	const tResource* res;
 	tResource newRes;
 
-	if (mWriteBeginDatFile(vFiledat,optionflag)) return PR_RESULT_ERR_FILE_DAT_NOT_WRITE_ACCESS; /* File couldn't be open */
+	if (mWriteBeginDatFile(vFiledat,optionflag)) return PR_RESULT_F_FILE_DAT_NOT_WRITE_ACCESS; /* File couldn't be open */
 
 	list_firstCursor(r);
 	while ((res=list_getCursor(r))) {
@@ -136,8 +136,8 @@ int import_partial(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 	for (indexNumber=0;(indexNumber<numberOfItems);indexNumber++) {
 		int readResult;
 		readResult=mReadFileInDatFile(&res,indexNumber);
-		if (readResult==PR_RESULT_INDEX_NOT_FOUND) return PR_RESULT_ERR_INVALID_DAT; /* Read error */
-		if (readResult==PR_RESULT_CHECKSUM_ERROR) fprintf(outputStream,"Warning: Ignoring checksum error\n"); /* Warning */
+		if (readResult==PR_RESULT_F_INDEX_NOT_FOUND) return PR_RESULT_F_INVALID_DAT; /* Read error */
+		if (readResult==PR_RESULT_W_CHECKSUM_ERROR) fprintf(outputStream,"Warning: Ignoring checksum error\n"); /* Warning */
 
 		if (res.id.value==0xFFFF) continue; /* Tammo Jan Bug fix */
 

@@ -98,7 +98,7 @@ int initRM(const char* text, tResourceMatch *r) {
 				result.flag|=nPat;
 			} else {
 				if (status==eVal) {
-					if (t!=text) return PR_RESULT_ERR_COMMAND_LINE_SYNTAX; /* one ! inside the val number */
+					if (t!=text) return PR_RESULT_F_COMMAND_LINE_SYNTAX; /* one ! inside the val number */
 					result.flag|=nVal;
 				} else { /* default action */
 					rm_emit(status,*t);
@@ -120,7 +120,7 @@ int initRM(const char* text, tResourceMatch *r) {
 				status=eInd;
 				if (result.flag&dInd) {
 					freeRM(&result);
-					return PR_RESULT_ERR_COMMAND_LINE_SYNTAX; /* ind flag has been set, duplicated index? */
+					return PR_RESULT_F_COMMAND_LINE_SYNTAX; /* ind flag has been set, duplicated index? */
 				}
 				result.flag|=dInd;
 			} else rm_emit(status,*t);
@@ -134,7 +134,7 @@ int initRM(const char* text, tResourceMatch *r) {
 				status=eOrd;
 				if (result.flag&dOrd) {
 					freeRM(&result);
-					return PR_RESULT_ERR_COMMAND_LINE_SYNTAX; /* ord flag has been set, duplicated order? */
+					return PR_RESULT_F_COMMAND_LINE_SYNTAX; /* ord flag has been set, duplicated order? */
 				}
 				result.flag|=dOrd;
 			} else rm_emit(status,*t);
@@ -152,7 +152,7 @@ int initRM(const char* text, tResourceMatch *r) {
 	*r=result;
 
 	if ( ( !(result.flag&dVal) ) && ( result.flag&nVal ) )
-		return PR_RESULT_ERR_COMMAND_LINE_SYNTAX; /* check for this particular case: @!: */
+		return PR_RESULT_F_COMMAND_LINE_SYNTAX; /* check for this particular case: @!: */
 
 	return PR_RESULT_SUCCESS; /* Ok */
 }

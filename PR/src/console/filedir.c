@@ -232,10 +232,10 @@ int fd_GetFilesImport(tFileDir2* list1,tFileDir2* files,const char* resfile,int 
 
 	if (dirs>1) {
 		while ((file=filedir_pop(&(files->filenames)))) free(file); /* empty list */
-		return PR_RESULT_FD_IMPORT_FROM_MORE_THAN_ONE_DIR;
+		return PR_RESULT_F_FD_IMPORT_FROM_MORE_THAN_ONE_DIR;
 	}
 	if (!fils&&!dirs)
-		return PR_RESULT_FD_NO_FILES_SELECTED; /* no files selected */
+		return PR_RESULT_F_FD_NO_FILES_SELECTED; /* no files selected */
 
 	if (parseError) {
 		while ((file=filedir_pop(&(files->filenames)))) free(file); /* empty list */
@@ -322,7 +322,7 @@ int fileDirGetFiles(tFileDir2* list1,tFileDir2* files,int hasExportFlag,int notH
 			free(filedir_pop(&(list1->options)));
 			free(file);
 		}
-		return PR_RESULT_FD_IMPORT_RECURSIVE; /* import with recursive flag is not allowed */
+		return PR_RESULT_F_FD_IMPORT_RECURSIVE; /* import with recursive flag is not allowed */
 	}
 
 	if (hasExportFlag)

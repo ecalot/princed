@@ -41,7 +41,7 @@ mid.c: Princed Resources : MIDI files support
 
 int writeMid(const char* file, tBinary* snd, int optionflag, const char* backupExtension) {
 	/* Mid files are saved as raw */
-	return writeData(snd->data,0,file,snd->size,optionflag,backupExtension)?PR_RESULT_SUCCESS:PR_RESULT_ERR_FILE_NOT_WRITE_ACCESS;
+	return writeData(snd->data,0,file,snd->size,optionflag,backupExtension)?PR_RESULT_SUCCESS:PR_RESULT_F_FILE_NOT_WRITE_ACCESS;
 }
 #if 0
 int mFormatImportMid(tResource *res) {

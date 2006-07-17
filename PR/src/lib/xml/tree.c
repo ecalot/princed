@@ -493,7 +493,7 @@ void treeXmlGenerate(int n,const tTag* t,FILE* outputStream) {
 
 int xmlGenerateFile(const char* vFile,const tTag* t) {
 	FILE* fd;
-	if (!(fd=fopen(vFile,"wb"))) return PR_RESULT_ERR_XML_NOT_OPEN;
+	if (!(fd=fopen(vFile,"wb"))) return PR_RESULT_F_XML_NOT_OPEN;
 	treeXmlGenerate(0,t,fd);
 	return PR_RESULT_SUCCESS;
 }

@@ -82,9 +82,9 @@ void* objectSoundWaveRead(const char* file, int *result) {
 	*result=readWav(file,o,&channels,&samplerate,&bps);
 
 	if (*result==PR_RESULT_SUCCESS) {
-		if (bps!=8)            *result=PR_RESULT_WAV_UNSUPPORTED_BITRATE;
-		if (samplerate!=11025) *result=PR_RESULT_WAV_UNSUPPORTED_SAMPLERATE;
-		if (channels!=1)       *result=PR_RESULT_WAV_UNSUPPORTED_STEREO;
+		if (bps!=8)            *result=PR_RESULT_F_WAV_UNSUPPORTED_BITRATE;
+		if (samplerate!=11025) *result=PR_RESULT_F_WAV_UNSUPPORTED_SAMPLERATE;
+		if (channels!=1)       *result=PR_RESULT_F_WAV_UNSUPPORTED_STEREO;
 	}
 
 	if (*result!=PR_RESULT_SUCCESS) {

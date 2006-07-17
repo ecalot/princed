@@ -81,7 +81,7 @@ tUnknownFile unknownFile;
 \***************************************************************/
 
 int unknownLogStart (const char* file,int optionflag, const char* backupExtension) {
-	if (unknownFile.fd) return PR_RESULT_ERR_XML_ALREADY_OPEN; /* File already open */
+	if (unknownFile.fd) return PR_RESULT_F_XML_ALREADY_OPEN; /* File already open */
 
 	/* Use default filename if file is NULL */
 	if (!file) file=RES_XML_UNKNOWN_XML;
@@ -110,7 +110,7 @@ int unknownLogStart (const char* file,int optionflag, const char* backupExtensio
 	}
 
 	/* Open the file */
-	if (!writeOpen(file,&unknownFile.fd,optionflag)) return PR_RESULT_ERR_XML_FILE; /* file not open */
+	if (!writeOpen(file,&unknownFile.fd,optionflag)) return PR_RESULT_F_XML_FILE; /* file not open */
 
 	return PR_RESULT_SUCCESS; /* Ok */
 }
@@ -119,7 +119,7 @@ int unknownLogStop () {
 	int i;
 	tTag* t;
 
-	if (!unknownFile.fd) return PR_RESULT_ERR_XML_NOT_OPEN; /* File not open */
+	if (!unknownFile.fd) return PR_RESULT_F_XML_NOT_OPEN; /* File not open */
 
 	/* common factor tree reducing function */
 	if (unknownFile.tree) xmlOptimizeCommonFactor(unknownFile.tree->child);
@@ -158,7 +158,7 @@ int unknownLogStop () {
 }
 
 int unknownLogAppend(const char* vFiledat,tResourceId id,const char* ext,tResourceType type,const char* vDirExt,tResourceId pal,const char* vFiledatWithPath,int optionflag,int count, unsigned long int flags,const char* filename) {
-	if (!unknownFile.fd) return PR_RESULT_ERR_XML_NOT_OPEN; /* File not open, logging is off, just a warning */
+	if (!unknownFile.fd) return PR_RESULT_F_XML_NOT_OPEN; /* File not open, logging is off, just a warning */
 
 	if (!unknownFile.currentDat) { /* this is the beginning of the file */
 		treeStatusFolder(vFiledatWithPath,vFiledat,pal.value,translateInt2Ext(strToLower(pal.index)),&unknownFile.status);

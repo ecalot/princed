@@ -62,8 +62,8 @@ void* objectPalettePop1_16Create(tBinary cont, int *error) {
 	int i;
 	tPalettePop1_16c* pal;
 
-	if (cont.size!=100) {
-		*error=PR_RESULT_XML_AND_DAT_FORMAT_DO_NOT_MATCH;
+	if (cont.size!=100) { /* TODO: use autodetect */
+		*error=PR_RESULT_F_POP1_PALETTE_EXPECTED;
 		return NULL;
 	}
 
@@ -138,7 +138,7 @@ void* objectPalettePop1_16Read(const char* file,int *result) {
 	char aux[260];
 	tBinary raw;
 
-	*result=PR_RESULT_ERR_FILE_NOT_OPEN_NOTFOUND;
+	*result=PR_RESULT_F_FILE_NOT_OPEN_NOTFOUND;
 
 	/* Import extra palette information */
 	sprintf(aux,"%s.more",file);
@@ -150,7 +150,7 @@ void* objectPalettePop1_16Read(const char* file,int *result) {
 	*result=readPal(file,&colorArray,&colors);
 
 	if (*result==PR_RESULT_SUCCESS && colors!=16) {
-		*result=PR_RESULT_PAL_UNSUPPORTED;
+		*result=PR_RESULT_F_PAL_UNSUPPORTED_SIZE;
 		free(colorArray);
 		return NULL;
 	}
