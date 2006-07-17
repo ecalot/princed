@@ -1597,7 +1597,7 @@ resources.xml: Princed Resources : Resource tree
  <!--
       pop2: kid.dat
   -->
- <folder index="shap" name="prince" type="image" path="kid" file="kid.dat" palette="25001" paletteindex="palc" flags="0x400000">
+ <folder index="shap" name="prince" type="image" path="kid" file="pop2.kid.dat" palette="25001" paletteindex="palc" flags="0x400000">
   <item value="25001" index="palc" path="binary001.bin" type="palette-pop1-4bits" flags="0x0">Unknown binary 1</item>
   <item value="25001" index="pals" path="prince.pal" type="palette-pop1-4bits" flags="0x0">The prince palette</item>
   <item value="24824" index="shap" path="image001.bmp" type="image" flags="0x400000">Unknown image 1</item>
@@ -2418,7 +2418,7 @@ resources.xml: Princed Resources : Resource tree
  <!--
       pop2: prince.dat
   -->
- <folder index="shap" name="prince" path="prince.dat" file="prince.dat" palette="750" paletteindex="palc" flags="0x400000">
+ <folder index="shap" name="prince" path="prince.dat" file="pop2.prince.dat" palette="750" paletteindex="palc" flags="0x400000">
   <item value="25" index="" path="binary001.bin" type="binary" flags="0x0">Unknown binary 1</item>
   <item value="26" index="" path="binary002.bin" type="binary" flags="0x0">Unknown binary 2</item>
   <item value="27" index="" path="binary003.bin" type="binary" flags="0x0">Unknown binary 3</item>

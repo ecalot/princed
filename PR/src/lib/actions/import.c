@@ -80,34 +80,33 @@ int import_full(const char* vFiledat, const char* vDirExt, tResourceList* r, int
 
 		if (hasFlag(raw_flag)) newRes.type=0; /* compile from raw */
 		getFileName(vFileext,vDirExt,res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
-		/* TODO: if image read the palette */
+		/* TODO: if image read the palette and check */
 		/* the file is in the archive, so I'll add it to the main DAT body */
 /*		newRes.content=mLoadFileArray(vFileext);*/
 /*		if (newRes.content.size>0) {*/
 			/* TODO: let each format handle the files */
 		o=objectRead(vFileext,&newRes,&result);
-/*			if (!fatal(result)) */
-				if (!result)
+		if (!PR_RESULT_F(result)) { 
 			objectSet(o,&result,&newRes);
 
-/*			if (!fatal(ok)) {
+			if (PR_RESULT_F(result)) { /* TODO: print warnings */ 
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_ERRORS,getFileNameFromPath(vFileext));
 				error++;
 			} else {
 				if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_SUCCESS,getFileNameFromPath(vFileext));
 				ok++;
-			}*/
+			}
 			/*free(newRes.content.data);*/
-/*		} else {
+		} else {
 			if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_NOT_OPEN,getFileNameFromPath(vFileext));
 			error++;
-		}*/
+		}
 
 		list_nextCursor(r);
 	}
 
 	/* Close file. If empty, don't save */
-	mWriteCloseDatFile(ok,optionflag,backupExtension);
+	mWriteCloseDatFile(!ok,optionflag,backupExtension);
 
 	if (hasFlag(verbose_flag)) fprintf(outputStream,PR_TEXT_IMPORT_DONE,ok,error);
 	return error;
@@ -154,7 +153,7 @@ int import_partial(const char* vFiledat, const char* vDirExt, tResourceList* r, 
 			getFileName(vFileext,vDirExt,&res,vFiledat,vDatFileName,optionflag,backupExtension,NULL);
 
 			o=objectRead(repairFolders(vFileext),&newRes,&result);
-/*			if (!fatal(ok)) */
+/*			if (!PR_RESULT_F(result)) */
 			if (!ok)
 				objectSet(o,&result,&newRes);
 
