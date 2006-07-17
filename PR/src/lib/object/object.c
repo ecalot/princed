@@ -188,10 +188,7 @@ tColor* objectPaletteGetColorArray(tObject pal) {
 	}
 }
 
-/***************************************************************\
-|                    Dat compiling primitive                    |
-\***************************************************************/
-
+/* put an object into a dat */
 void objectSet(tObject o,int *result,tResource* res) {
 	switch (o.type) {
 		case eResTypeLevelPop1: /* TODO: pop2 */
@@ -199,6 +196,9 @@ void objectSet(tObject o,int *result,tResource* res) {
 			break;
 		case eResTypeImage16:
 			*result=objectImage16Set(o.obj,res);
+			break;
+		case eResTypeImage2:
+			*result=objectImage2Set(o.obj,res);
 			break;
 		case eResTypeSoundWave:
 			*result=objectSoundWaveSet(o.obj,res);
@@ -230,6 +230,9 @@ tObject objectRead(const char* file,tResource* res,int *result) {
 			break;
 		case eResTypeImage16:
 			o.obj=objectImage16Read(file,*res->palette /*TODO: check because sometimes it is not initialized */,result);
+			break;
+		case eResTypeImage2:
+			o.obj=objectImage2Read(file,result);
 			break;
 		case eResTypeSoundWave:
 			o.obj=objectSoundWaveRead(file,result);

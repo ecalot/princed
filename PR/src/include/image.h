@@ -77,7 +77,7 @@ void* objectImage16Read(const char* file,tObject palette, int *result);
 void* objectImage256Create(tBinary c, int *error);
 void* objectImage256Read(const char* file,tObject palette, int *result);
 void* objectImage2Create(tBinary c, int *error);
-void* objectImage2Read(const char* file,tObject palette, int *result);
+void* objectImage2Read(const char* file, int *result);
 
 #define getCarry(a) ((((a)>>4)&7)+1)
 #define getAlgor(a) a&0x4F

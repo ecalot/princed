@@ -179,6 +179,7 @@ int mExpandGraphic(tBinary input, tImage *image) {
 			if ((image->pix=getMemory(input.size))==NULL) return PR_RESULT_F_COMPRESS_RESULT_FATAL;
 			memcpy(image->pix,input.data,input.size);
 			imageSizeInBytes=image->widthInBytes*image->height;
+			if (imageSizeInBytes>input.size) return PR_RESULT_F_COMPRESS_RESULT_FATAL; /* TODO: check if raw images still work */
 			result=PR_RESULT_SUCCESS;
 			break;
 		case COMPRESS_RLE_LR: /* RLE Left to Right Compression Algorithm */

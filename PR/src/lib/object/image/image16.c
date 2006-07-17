@@ -158,7 +158,7 @@ void* objectImage16Read(const char* file,tObject palette, int *result) {
 	/* check the palette information */
 
 	image->pal=palette;
-	bits=objectPaletteGetBitRate(image->pal);
+	bits=objectPaletteGetBitRate(image->pal); /* TODO: transform this check into a colors==16 */
 	if (bits && bits!=image->bits) { /* bits=0 means all palettes allowed or ignore palette check */
 		*result=PR_RESULT_F_BMP_BITRATE_DIFFERS;
 		free(image->pix);

@@ -116,7 +116,6 @@ void* objectImage2Create(tBinary cont, int *error) {
 
 	/* Expand graphic and check results */
 	*error=mExpandGraphic(cont,image);
-printf("w=%d h=%d\n",image->width,image->height);
 
 	if (*error==PR_RESULT_F_COMPRESS_RESULT_FATAL) {
 		free(image);
@@ -138,8 +137,7 @@ int objectImage2Write(void* img,const char* file,int optionflag,const char* back
 	return mWriteBmp(file,i->pix,i->width,i->height,1,2,colorArray,i->widthInBytes,optionflag,backupExtension);
 }
 
-void* objectImage2Read(const char* file,tObject palette, int *result) {
-	int bits;
+void* objectImage2Read(const char* file, int *result) {
 	tImage* image=(tImage*)malloc(sizeof(tImage));
 	tColor* colorArray;
 	int colors;
@@ -154,10 +152,8 @@ void* objectImage2Read(const char* file,tObject palette, int *result) {
 	free(colorArray);
 
 	/* check the palette information */
-
-	bits=objectPaletteGetBitRate(image->pal);
-	if (image->bits!=1) {
-		*result=PR_RESULT_F_BMP_BITRATE_DIFFERS;
+	if (colors!=2) {
+		*result=PR_RESULT_F_PAL_UNSUPPORTED_SIZE; /* TODO: convert in warning and perform a palette conversion */
 		free(image->pix);
 		free(image);
 		return NULL;
