@@ -171,19 +171,19 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling main item class...
 	$(CC) $(OPTIONS) -c lib/object/object.c -o $@
 
-.image2.o: lib/object/image/image2.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bitmap.h
+.image2.o: lib/object/image/image2.c include/common.h include/compress.h include/dat.h include/disk.h include/image.h include/memory.h include/object.h include/palette.h include/bitmap.h
 	$(INFO) Compiling 2 colors image type class...
 	$(CC) $(OPTIONS) -c lib/object/image/image2.c -o $@
 
-.image16.o: lib/object/image/image16.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bitmap.h
+.image16.o: lib/object/image/image16.c include/common.h include/compress.h include/dat.h include/disk.h include/image.h include/memory.h include/object.h include/palette.h include/bitmap.h
 	$(INFO) Compiling 16 colors image type class...
 	$(CC) $(OPTIONS) -c lib/object/image/image16.c -o $@
 
-.image256.o: lib/object/image/image256.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bitmap.h
+.image256.o: lib/object/image/image256.c include/common.h include/compress.h include/dat.h include/disk.h include/image.h include/memory.h include/object.h include/palette.h include/bitmap.h
 	$(INFO) Compiling 256 colors image type class...
 	$(CC) $(OPTIONS) -c lib/object/image/image256.c -o $@
 
-.image_common.o: lib/object/image/image_common.c include/compress.h include/common.h include/image.h include/memory.h include/disk.h include/dat.h include/object.h include/palette.h include/bitmap.h
+.image_common.o: lib/object/image/image_common.c include/common.h include/compress.h include/disk.h include/image.h include/memory.h
 	$(INFO) Compiling common functions for image type class...
 	$(CC) $(OPTIONS) -c lib/object/image/image_common.c -o $@
 
@@ -223,7 +223,7 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling unknown.xml generating module...
 	$(CC) $(OPTIONS) -c lib/xml/unknown.c -o $@
 
-.tree.o: lib/xml/tree.c include/common.h include/list.h include/memory.h include/parse.h include/unknown.h
+.tree.o: lib/xml/tree.c include/common.h include/list.h include/memory.h include/stringflag.h include/parse.h include/unknown.h
 	$(INFO) Compiling XML tree special handling routines...
 	$(CC) $(OPTIONS) -c lib/xml/tree.c -o $@
 
@@ -231,7 +231,7 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling XML parsing module...
 	$(CC) $(OPTIONS) -c lib/xml/parse.c -o $@
 
-.search.o: lib/xml/search.c include/common.h include/memory.h include/parse.h include/search.h include/translate.h
+.search.o: lib/xml/search.c include/common.h include/memory.h include/parse.h include/search.h include/translate.h include/stringflag.h
 	$(INFO) Compiling XML search features...
 	$(CC) $(OPTIONS) -c lib/xml/search.c -o $@
 
@@ -275,7 +275,7 @@ $(XMLFILE): xml/resources.xml
 	$(INFO) Compiling MIDI audio files support \(mid\)...
 	$(CC) $(OPTIONS) -c lib/formats/mid.c -o $@
 
-.plv.o: lib/formats/plv.c include/plv.h include/disk.h include/dat.h
+.plv.o: lib/formats/plv.c include/dat.h include/disk.h include/memory.h include/plv.h
 	$(INFO) Compiling prince level files support \(plv\)...
 	$(CC) $(OPTIONS) -c lib/formats/plv.c -o $@
 

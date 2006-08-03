@@ -176,13 +176,17 @@ int objectImage2Set(void* o,tResource* res) {
 	/*
 	 * Write header
 	 */
-
+/* TODO: merge with objectImage16Set */
 	/* (16 bits)height (Intel short int format) */
+	short2array(compressed.data,img->height);
+	short2array(compressed.data+2,img->width);
+#if 0
 	compressed.data[0]=img->height; /* TODO: use shorttoarray */
 	compressed.data[1]=img->height>>8;
 	/* (16 bits)width (Intel short int format) */
 	compressed.data[2]=img->width;
 	compressed.data[3]=img->width>>8;
+#endif
 	/* (8 bits)00000000+(4 bits)palette type+(4 bits)algorithm */
 	compressed.data[4]=0;
 	compressed.data[5]=algorithm;
