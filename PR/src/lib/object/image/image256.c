@@ -150,10 +150,11 @@ int pop2decompress(tBinary input, int verify, unsigned char** output,int* output
 	int            aux,aux2,remaining;
 	int            tempOutputSize;
 	int            osCheck;
+	int scase=1;
 
 	*output=malloc(*outputSize);
 	lineO=*output;
-	for (aux=0;aux<*outputSize;aux++) (*output)[aux]=0; /* initialise the array (TODO: only for debug, in fixed images it won't be necessary) */
+	for (aux=0;aux<*outputSize;aux++) (*output)[aux]=99; /* initialise the array (TODO: only for debug, in fixed images it won't be necessary) */
 	*outputSize=0;
 
 	osCheck=array2short(input.data)-6;
@@ -163,40 +164,69 @@ int pop2decompress(tBinary input, int verify, unsigned char** output,int* output
 	tempOutputSize=osCheck+6;
 
 	remaining=expandLzg(input,&tempOutput,&tempOutputSize);
-	/*printf("Call:\n return=%d function input.data size=%d\n internal output size=%d result output size=%d\n",
-		remaining,input.size,osCheck,tempOutputSize);*/
-	/*if ((osCheck+6)!=tempOutputSize)
-		printf(" Special case: more is coming\n");*/
+	printf("Call:\n return=%d function input.data size=%d\n internal output size=%d result output size=%d\n",
+		remaining,input.size,osCheck,tempOutputSize);
+	if ((osCheck+6)!=tempOutputSize)
+		printf(" Special case: more is coming\n");
 
 	/* Second layer expand each rle line */
 	lineI.data=tempOutput;
-	/*printf("RLE loop layer:\n");*/
+	printf("RLE loop layer:\n");
 	do {
 		lineI.size=array2short(lineI.data);
 		lineI.data+=2;
 		if (lineI.size>tempOutputSize) {
-			/*printf(" error: lineI.size=%d tempOutputSize=%d\n",lineI.size,tempOutputSize);*/
-			return PR_RESULT_W_COMPRESS_RESULT_WARNING;
-		}
+			printf(" fatal error: lineI.size=%d tempOutputSize=%d\n",lineI.size,tempOutputSize);
+			/*return -81; *PR_RESULT_W_COMPRESS_RESULT_WARNING;*/
+			/*lineSize=-1;*/
+/*			lineI.data+=2;
+			expandRleV(lineI,lineO,&lineSize);
+		lineO+=lineSize;
+		*outputSize+=lineSize;*/
+		/*	memcpy(lineO,lineI.data,tempOutputSize);
+			*outputSize+=tempOutputSize;*/
+			scase=0;
+		} else {
 		aux2=expandRleV(lineI,lineO,&lineSize);
-		/*if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-lineI.size-2);*/
+		if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-lineI.size-2);
 		lineO+=lineSize;
 		*outputSize+=lineSize;
 		tempOutputSize-=lineI.size;
 		tempOutputSize-=2;
 		lineI.data+=lineI.size;
-	} while (lineSize==verify && tempOutputSize>0);
+		}
+	} while (scase && lineSize==verify && tempOutputSize>0);
 	/*printf(" return: linesize=%d verify=%d tempOutputSize=%d\n", lineSize, verify, tempOutputSize);*/
 	if (remaining) {
-		/*const unsigned char* start=input.data+(input.size+2)-remaining;*/
+		const unsigned char* start=input.data+(input.size+2)-remaining;
 		tBinary tail;
 
 		tail.data=input.data+(input.size+2-remaining);
 		tail.size=remaining;
 
-		/*printf("Remaining tailing data: size=%d first=%02x %02x\n", remaining,start[0],start[1]);*/
+		printf("Remaining tailing data: size=%d first=%02x %02x\n", remaining,start[0],start[1]);
+		if (scase) {
 		tempOutputSize=0;
-		expandLzg(tail,&tempOutput,&tempOutputSize); /* TODO: check error output */
+			printf("lzg=%d\n",expandLzg(tail,&tempOutput,&tempOutputSize)); /* TODO: check error output */
+		} else {
+			/* this is the fatal error, I'll try not to compress */
+			/*tail=binaryCrop(tail,-2,0);
+			printf("lzgi=%d\n",expandLzg(tail,&tempOutput,&tempOutputSize)); * TODO: check error output */
+			/* case 1: memcpy*/
+			tail.data=lineI.data;
+			tail.size=remaining+tempOutputSize;
+			printf("tail.size=%d remaining=%d tempOutputSize=%d\n",tail.size,remaining,tempOutputSize);
+			/*memcpy(lineO,tail.data,tail.size);
+			*outputSize+=tail.size;*/
+			
+			/* case 2: lzg */
+			/*tail=binaryCrop(tail,6,0);
+			printf("lzgi=%d\n",expandLzg(tail,&tempOutput,&tempOutputSize));
+			memcpy(lineO,tempOutput,tempOutputSize);
+			*outputSize+=tempOutputSize;*/
+ 
+			return -81;
+		}
 
 		lineI.data=tempOutput;
 
@@ -204,8 +234,10 @@ int pop2decompress(tBinary input, int verify, unsigned char** output,int* output
 			lineI.size=array2short(lineI.data);
 			lineI.data+=2;
 			if (lineI.size>tempOutputSize) {
-				/*printf(" error: lineI.size=%d tempOutputSize=%d\n",lineI.size,tempOutputSize);*/
-				return PR_RESULT_W_COMPRESS_RESULT_WARNING;
+				printf(" particular error: lineI.size=%d tempOutputSize=%d\n",lineI.size,tempOutputSize);
+printf("worked in particular case: %d\n",lineI.size-tempOutputSize);
+/* TODO: learn what is lineI.size */
+				return PR_RESULT_SUCCESS; /*-80; *PR_RESULT_W_COMPRESS_RESULT_WARNING;*/
 			}
 			aux2=expandRleV(lineI,lineO,&lineSize);
 			/*if (aux2) printf(" error: rle=%d linesize=%d of %d. size=%d r=%d.\n",aux2, lineSize,verify,tempOutputSize,tempOutputSize-lineI.size-2);*/

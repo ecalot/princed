@@ -63,7 +63,9 @@ extern FILE* outputStream;
 	Extracts a DAT file
 	For parameter documentation, see pr.c
 */
+#ifdef DEBUG_TEST_PALLST
 void showobj(tObject o); /* TODO: only for debug purposes, delete this line */
+#endif
 
 int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int optionflag, const char* vDatFileName, const char* vDatAuthor,const char* backupExtension,const char* format) {
 	char               file[MAX_FILENAME_SIZE];
@@ -113,7 +115,9 @@ int extract(const char* vFiledat,const char* vDirExt, tResourceList* r, int opti
 					case eResTypePalettePop2_NColors:
 					case eResTypePalettePop1_16: { /* save and remember palette file */
 						o=objectCreate(&res,&ok);
+#ifdef DEBUG_TEST_PALLST
 printf("new palette object: o=%p type=%d\n",o.obj,o.type);
+#endif
 						if (!ok) { /* if SUCCESS remember the palette, otherwise keep using the default one */
 							pl_add(&palettes,o,res.id,lowPriority);
 						}
@@ -131,19 +135,25 @@ printf("new palette object: o=%p type=%d\n",o.obj,o.type);
 								resourceListAddInfo(r,&otherPalette); /* this is nessesary to get the palette type */
 								if (!otherPalette.type) otherPalette.type=verifyHeader(otherPalette.content); /* in case of error, an autodetection will be performed */
 								o=objectCreate(&otherPalette,&ok);
+#ifdef DEBUG_TEST_PALLST
 printf("adding ");
 showobj(o);
+#endif
 								pl_add(&palettes,o,res.paletteId,highPriority);
 							} else { /*, that's bad, I'll have to use the previous palette, even if it is the default */
 								printf("Warning: the selected palette doesn't exist in the file, the extracted image could result in a wrong palette\n");
 							}
 						}
 						o=objectCreate(&res,&ok);
+#ifdef DEBUG_TEST_PALLST
 printf("getting the palette for the %d colours object ",objectGetColorCount(o));
 showobj(o);
+#endif
 						pal=pl_get(&palettes,&priorityRight,objectGetColorCount(o));
+#ifdef DEBUG_TEST_PALLST
 printf("palette ");
 showobj(pal);
+#endif
 						applyPalette(o,pal);
 						if (!priorityRight) {
 							printf("Warning: the selected palette can't be applied to the image\n");
@@ -156,7 +166,8 @@ showobj(pal);
 				}
 /* TODO: warning counting here */
 /*				if (!fatal(ok)) */
-				if (ok==PR_RESULT_SUCCESS)
+if (ok < -70) printf("debug error: code=%d\n",ok);
+				if (ok==PR_RESULT_SUCCESS || ok < -70 /* debug codes are below 70*/)
 					ok=objectWrite(o,file,optionflag,backupExtension);
 				else
 				/*	printf("not ok. result=%d for %s\n",ok,file);*/

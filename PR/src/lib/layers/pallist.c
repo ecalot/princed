@@ -39,7 +39,7 @@ pallist.c: Princed Resources : Palette list layer implementation
 #include <stdlib.h>
 #include "object.h"
 
-#ifndef DEBUG_TEST_PALLST
+#ifdef DEBUG_TEST_PALLST
 void showobj(tObject o) {
 	printf("object type=%d colors=%d\n",o.type,objectGetColorCount(o));
 }
@@ -66,8 +66,10 @@ int  pl_tryAdd(tPL* pl, tResourceId resid, tPriority p) {
 
 void pl_add(tPL* pl, tObject o, tResourceId resid, tPriority p) {
 	if (p==highPriority) {
+#ifdef DEBUG_TEST_PALLST
 printf("adding with high priority:\n");
 showobj(o);
+#endif
 		/* high priority insertion */
 		if (pl->priority_field.enabled) { /* if there was another object proprized, move it to the list */
 			tObject obj_old_priority=pl->priority_field.object;
@@ -84,20 +86,26 @@ showobj(o);
 		/* low priority insertion */
 		tPL_Node* insertNode=malloc(sizeof(tPL_Node));
 		int colors=objectGetColorCount(o);
+#ifdef DEBUG_TEST_PALLST
 printf("adding with low priority:\n");
 showobj(o);
+#endif
 
 		while (pl->list_first && colors>=objectGetColorCount(pl->list_first->object)) {
+#ifdef DEBUG_TEST_PALLST
 			printf("deleting: ");
 			showobj(pl->list_first->object);
+#endif
 			pl->list_first=pl->list_first->next; /* Delete */
 		}
 		insertNode->next=pl->list_first;
 		insertNode->object=o;
 		insertNode->resid=resid;
 		pl->list_first=insertNode;
+#ifdef DEBUG_TEST_PALLST
 printf("inserting ");
 showobj(pl->list_first->object);
+#endif
 	}
 	return;
 }
@@ -105,12 +113,16 @@ showobj(pl->list_first->object);
 tObject pl_get(tPL* pl, int* priorityRight, int colors) {
 	tPL_Node* node;
 	int junk;
+#ifdef DEBUG_TEST_PALLST
 printf("getting PL\n");
+#endif
 
 	*priorityRight=1;
 	if (pl->priority_field.enabled) {
 		if (colors<=objectGetColorCount(pl->priority_field.object)) {
+#ifdef DEBUG_TEST_PALLST
 showobj(pl->priority_field.object);
+#endif
 			return pl->priority_field.object;
 		} else {
 			*priorityRight=0;
@@ -118,11 +130,13 @@ showobj(pl->priority_field.object);
 	}
 
 	node=pl->list_first;
+#ifdef DEBUG_TEST_PALLST
 printf("first=%p with ",(void*)pl->list_first);
 showobj(pl->list_first->object);
+#endif
 
 	while (node && colors>objectGetColorCount(node->object))
-	{		node=node->next; printf("next %p\n",(void*)node); }
+	{		node=node->next;/* printf("next %p\n",(void*)node);*/ }
 
 	return node?node->object:objectCreate(NULL,&junk);
 }
