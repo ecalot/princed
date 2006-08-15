@@ -932,15 +932,16 @@ Table of Contents
  
  An event is triggered when an activator button (0x22) is pressed. As it is
  specified in the section 5.2.1, the first byte of the attribute mask
- belonging to a button tile points it to a door event that is triggered when
- the button is pressed.
+ belonging to a button tile points it to a door event that is triggered
+ when the button is pressed.
  There is a maximum of 256 events because of the unsigned char of the first
  byte if the attribute mask in the pop2_background block and the 256
  registers in the pop2_door block.
 
  Each event register is of the form "LL SS TT FD FD" which activates the
- normal door (0x04), right exit door (0x11) or shooter (0x24) in location
- LL of the screen SS. TT is 00 for normal activation and FF for exit doors.
+ normal door (0x04), right exit door (0x11) or shooter (0x24) located in
+ the tile LL of the screen SS. TT is 00 for normal activation and FF for
+ exit doors.
 
 5.2.3 Guards
  This section explains how guards are handled and specifies the block
@@ -950,12 +951,12 @@ Table of Contents
  guards.
  
  The pop2_guard block has a size of 3712 divided in 32 sub-blocks of 116
- bytes each. AS there is a correspondance between each sub-block and the
- room with this number, we'll call those sub-blocks a room guard block.
+ bytes each. As there is a correspondance between each sub-block and the
+ room with this number, we'll call them "room guard blocks".
  
- A room guard block has it'a size of 116 divided this way:
+ A room guard block has a size of 116 divided this way:
  - 1 byte for the number of guards present in this room.
-   The value of this byte bay be from 0 to 5.
+   This byte may take values from 0 to 5.
  - 5 block divisions of 23 bytes for each guard.
    The first divisions have the guard information, if the number is less
    than 5, then the latest divisions corresponding to the missing guards
