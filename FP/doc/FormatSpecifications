@@ -696,7 +696,7 @@ Table of Contents
    L = l1 l2 l3 l4 l5
     where ln is the bit n of the binary representation of L
    This number is according to the location format specifications.
-  Trigger-next as T and is a 1 for "on" or a 0 for "off" (1 bit)
+  Trigger-next as T and is a 1 for "off" or a 0 for "on" (1 bit)
    T = t1
 
  Byte I  has the form: t1 s4 s5 l1 l2 l3 l4 l5
