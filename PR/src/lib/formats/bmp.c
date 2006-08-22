@@ -43,7 +43,7 @@ bmp.c: Princed Resources : BMP file support
 #include <stdlib.h>
 #include <string.h>
 
-int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits, int colors, const tColor* colorArray, int lineWidth, int optionflag, const char* backupExtension) {
+int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int b, int colors, const tColor* colorArray, int lineWidth, int optionflag, const char* backupExtension) {
 
 	/* declare variables */
 	int a;
@@ -54,6 +54,7 @@ int mWriteBmp(const char* file,const unsigned char* data, int w, int h, int bits
 	unsigned long int headerSize;
 	unsigned long int height=h;
 	unsigned long int offset;
+	unsigned short int bits=b;
 	unsigned char color;
 	unsigned long int width=w;
 	const unsigned long int zero=0;
