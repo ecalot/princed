@@ -37,15 +37,15 @@ Table of Contents
 5.1.2 The slave indexes ............................................... 813
 5.2. Levels ........................................................... 833
 5.2.1 Room mapping .................................................... 856
-5.2.2 Door events ..................................................... 925
-5.2.3 Guards .......................................................... 946
-6. PLV v1.0 Format Specifications ..................................... 971
-6.1. User data ........................................................ 998
-6.2. Allowed Date format ............................................. 1028
-7. The SAV v1.0 format ............................................... 1042
-8. The HOF v1.0 format ............................................... 1088
-9. Credits ........................................................... 1111
-10. License .......................................................... 1132
+5.2.2 Door events ..................................................... 949
+5.2.3 Guards .......................................................... 970
+6. PLV v1.0 Format Specifications ..................................... 995
+6.1. User data ....................................................... 1022
+6.2. Allowed Date format ............................................. 1052
+7. The SAV v1.0 format ............................................... 1066
+8. The HOF v1.0 format ............................................... 1112
+9. Credits ........................................................... 1135
+10. License .......................................................... 1156
 
 
 1. Preamble
@@ -872,33 +872,57 @@ Table of Contents
                    Table 5.3: Foreground Walls
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  Hex  Binary Group  Description
-  ~~~~ ~~~~~~ ~~~~~  ~~~~~~~~~~~
-  0x00 000000 (?)    Empty
-  0x01 000001 floor  Floor
-  0x02 000010 (?)    Wall with spikes
-  0x03 000011 (?)    One floor pillar
-  0x04 000100 door   Door
-  0x06 000110 (?)    Loose hidden
-  0x07 000111 (?)    Linked loose
-  0x08 001000 (?)    Big pillar base
-  0x09 001001 (?)    Big pillar top
-  0x0A 001010 (?)    Potion 
-  0x0B 001011 (?)    Loose not hidden
-  0x0E 001110 (?)    Debris
-  0x10 010000 (?)    Exit door left
-  0x11 010001 (?)    Exit door right
-  0x12 010010 (?)    Magic tappet (?)
-  0x13 010011 (?)    Torch
-  0x14 010100 (?)    Wall
-  0x17 010111 (?)    Lava (left)
-  0x18 011000 (?)    Lava (right)
-  0x1B 011011 (?)    Special activator (?)
-  0x20 100000 (?)    Debris & torch
-  0x21 100001 floor  Exit door left-top
-  0x22 100010 (?)    Activator (floor shooter or door)
-  0x23 100011 floor  Exit door left-right
-  0x24 100100 door   Floor shooter
+ Dec Hex   Bin     Caverns             Ruins              Temple
+ ~~~ ~~~   ~~~     ~~~~~~~             ~~~~~              ~~~~~~
+           
+ 00  0x00  000000  Empty               Empty              Empty
+ 01  0x01  000001  Floor               Floor              Floor
+ 02  0x02  000010  Spikes              (?)                Spikes
+ 03  0x03  000011  Pillar              Pillar             Pillar
+ 04  0x04  000100  Door                Gate               Gate
+ 05  0x05  000101  (?)                 Raised Button      Raised Button
+ 06  0x06  000110  (?)                 Drop Button        Drop Button
+ 07  0x07  000111  (?)                 Tunnel             (?)
+ 08  0x08  001000  Bottom Big Pillar   Bottom Big Pillar  Bottom Big Pillar
+ 09  0x09  001001  Top Big Pillar      Top Big Pillar     Top Big Pillar
+ 10  0x0A  001010  Potion              Potion             Potion
+ 11  0x0B  001011  Loose Floor         Loose Floor        Loose Floor
+ 12  0x0C  001100  (?)                 Slicer Left Half   Slicer Left Half
+ 13  0x0D  001101  (?)                 Slicer Right Half  Slicer Right Half
+ 14  0x0E  001110  Debris              Debris             Debris
+ 15  0x0F  001111  (?)                 Drop Floor         (?)
+ 16  0x10  010000  Exit Half Left      Exit Half Left     Exit Half Left
+ 17  0x11  010001  Exit Half Right     Exit Half Right    Exit Half Right
+ 18  0x12  010010  Magic Carpet        (?)                (?)
+ 19  0x13  010011  Torch               (?)                Torch
+ 20  0x14  010100  Wall                Wall               Wall
+ 21  0x15  010101  (?)                 Skeleton           (?)
+ 22  0x16  010110  (?)                 Sword              (?)
+ 23  0x17  010111  Lava Pit Left       (?)                (?)
+ 24  0x18  011000  Lava Pit Right      (?)                (?)
+ 25  0x19  011001  (?)                 (?)                Squash Wall
+ 26  0x1A  011010  (?)                 (?)                Flip Tile
+ 27  0x1B  011011  (?)                 (?)                (?)
+ 28  0x1C  011100  (?)                 (?)                (?)
+ 29  0x1D  011101  (?)                 (?)                (?)
+ 30  0x1E  011110  (?)                 (?)                (?)
+ 31  0x1F  011111  (?)                 (?)                (?)
+ 32  0x20  100000  Torch w/Debris      (?)                Torch w/Debris
+ 33  0x21  100001  Exit Door Top Left  (?)                (?)
+ 34  0x22  100010  Pressure Plate      (?)                (?)
+ 35  0x23  100011  Exit Door Top Right (?)                (?)
+ 36  0x24  100100  Dart Gun            (?)                (?)
+ 37  0x25  100101  (?)                 (?)                (?)
+ 38  0x26  100110  (?)                 (?)                (?)
+ 39  0x27  100111  (?)                 (?)                (?)
+ 40  0x28  101000  (?)                 (?)                (?)
+ 41  0x29  101001  (?)                 (?)                (?)
+ 42  0x2A  101010  (?)                 (?)                (?)
+ 43  0x2B  101011  (?)                 (?)                Blue Flame
+ 44  0x2C  101100  Rope Bridge         (?)                (?)
+ 45  0x2D  101101  (?)                 (?)                (?)
+ 46  0x2E  101110  (?)                 (?)                (?)
+ 47  0x2F  101111  (?)                 (?)                (?)
 
  The pop2_background is an expansion if the pop1_background and it is sized
  4 times bigger. For each tile there are 4 additional bytes in the 
