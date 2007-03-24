@@ -38,7 +38,9 @@ Table of Contents
 5.2. Levels ........................................................... 833
 5.2.1 Room mapping .................................................... 856
 5.2.2 Door events ..................................................... 949
-5.2.3 Guards .......................................................... 970
+5.2.3 Guard handling .................................................. 970
+5.2.3.1 Static guards ................................................. 000
+5.2.3.2 Dynamic guards ................................................ 000
 6. PLV v1.0 Format Specifications ..................................... 995
 6.1. User data ....................................................... 1022
 6.2. Allowed Date format ............................................. 1052
@@ -847,8 +849,9 @@ Table of Contents
   32     6208    unknown II
   3      6240    start_position (as explained in section 4.4.5)
   4      6243    unknown III (00 01 00 02) (check pop1)
-  3712   6247    pop2_guards
-  2066   9959    unknown IV   
+  3712   6247    pop2_static_guard
+  1088   9959    pop2_dynamic_guard
+  978    11047   unknown IV
 
 
  All levels have a size of 12025.
@@ -967,16 +970,29 @@ Table of Contents
  the tile LL of the screen SS. TT is 00 for normal activation and FF for
  exit doors.
 
-5.2.3 Guards
- This section explains how guards are handled and specifies the block
- pop2_guards.
+5.2.3 Guard handling
+ This section explains how guards are handled. In POP2 there are two
+ different types of guards. We'll call them static and dynamic guards.
+ Static guards are the normal guards that are waiting in a room like in
+ POP1. In the other hand, dynamic guards are the ones who appear in the
+ room running from one of the sides. Each type of guard is attached to a
+ room and is handled in a different way, so a room can have both types of
+ guards, one or none depending on the specifications. There is a block for
+ each type of guard, pop2_static_guard is the specification of the static
+ guards and pop2_dynamic_guard is the specification of the dynamic ones.
+ Each block has different specifications and sizes as it is mentioned
+ bellow.
  
- For each screen there there is reserved memory space for a maximum of 5
- guards.
+5.2.3.1 Static guards
  
- The pop2_guard block has a size of 3712 divided in 32 sub-blocks of 116
- bytes each. As there is a correspondance between each sub-block and the
- room with this number, we'll call them "room guard blocks".
+ In this item static guards are explained and the pop2_static_guard is
+ specified.
+ 
+ For each screen there is reserved memory space for a maximum of 5 guards.
+ 
+ The pop2_static_guard block has a size of 3712 divided in 32 sub-blocks of
+ 116 bytes each. As there is a correspondence between each sub-block and
+ the room with this number, we'll call them "room guard blocks".
  
  A room guard block has a size of 116 divided this way:
  - 1 byte for the number of guards present in this room.
@@ -986,10 +1002,38 @@ Table of Contents
    than 5, then the latest divisions corresponding to the missing guards
    will be filled with zeros or garbage.
  
- If there is a guard corresponding to this division of 23 bytes, the first
- byte will be the location in this room (same as explained in 4.4.4) of the
- current guard. The following 22 bytes are still unknown, but we are sure
- there is a redundancy with the first byte.
+ If there is a static guard corresponding to this division of 23 bytes:
+ 
+ From 0 to 22 the known bytes are:
+ 
+ Byte 0 is a UC showing the location in this room (same as explained in
+  4.4.4) of the current guard.
+ Bytes 1 and 2 are a SS with an offset in pixels to reallocate the guard in
+  the floor.
+ Byte 3 is the facing direction as specified in 4.4.4.
+ Byte 4 is the skill
+ Byte 9 is the guard colour in levels where it is needed (eg. 1 white+blue,
+  2 white+black, 3 red)
+ Byte 15 is the type (eg. 5 head, 8 snake), doesn't apply in all levels
+ Byte 16 is the hit points if the guard (0 to 8)
+
+ Bytes from 5 to 8 and 17 to 22 are still unknown.
+
+5.2.3.2 Dynamic guards
+ 
+ The dynamic guards are the ones who appear running throw a room's corner
+ and they are defined in the dynamic_guard_block.
+ This block has 34 bytes for each of the 32 rooms, so it is sized 1088
+ bytes. Each room has a specification about those guards.
+ There is only one different type of dynamic guard per room, but it is
+ possible to set the number of guards that will appear running.
+ 
+ The bytes are from 0 to 33:
+ Byte 18 activates dynamic guard. 1 is true and 0 is false.
+ Byte 23 is where the guard is located
+ Byte 24 is the floor the guard will appear on 0 is the upper one and 2 is
+  the lower. Another number will kill the guard playing the sound.
+ Byte 30 is the number of guards that will appear.
 
 
 6. PLV v1.0 Format Specifications
