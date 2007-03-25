@@ -156,7 +156,7 @@ Table of Contents
        Range: 0 to 255
        1 byte
 
- Note: Sizes are allways in bytes unless another unit is specified.
+ Note: Sizes are always in bytes unless another unit is specified.
 
  Index structures:
 
@@ -324,7 +324,7 @@ Table of Contents
  located at http://www.cvs.fp.princed.com.ar in the PR repository module.
 
 4.3. Palettes
- Palettes have 100 bytes allways, after 4 bytes from the beginning the
+ Palettes have 100 bytes always, after 4 bytes from the beginning the
  first 16 records of 3 bytes are the VGA colours stored in the RGB-18 bits
  format (6 bits for each colour). Each colour is a number from 0 to 63.
  Remember to shift the colour bytes by two to get the colour number from 0
@@ -332,7 +332,7 @@ Table of Contents
 
 4.4. Levels
  This table has a summary of the blocks to be used in this section,
- you can referr it from the text below.
+ you can refer it from the text below.
 
                    Table 4.1: DAT 1.0 Level blocks
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -398,7 +398,7 @@ Table of Contents
  from 10 to 19 if in the middle stage and 20 to 29 if in the bottom stage.
  We define this as the location format and will be used also in the start
  position.
- Allways looking from the left to the right.
+ Always looking from the left to the right.
  So there is a wall and pop1_background byte for each tile in the level and
  this is stored this way.
 
@@ -465,7 +465,7 @@ Table of Contents
 
   Group  Code Description
   ~~~~~  ~~~~ ~~~~~~~~~~~
-  none   0x00 This value is used allways for this group
+  none   0x00 This value is used always for this group
   free   0x00 +Nothing -Blue line
   free   0x01 +Spot1   -No blue line
   free   0x02 +Spot2   -Diamond
@@ -495,7 +495,7 @@ Table of Contents
   potion 0x05 Poison
   potion 0x06 Open
   ttop   0x00 -With lattice
-  ttop   0x01 -Alernative design
+  ttop   0x01 -Alternative design
   ttop   0x02 -Normal
   ttop   0x03 -Black
   ttop   0x04 -Black
@@ -518,7 +518,7 @@ Table of Contents
 4.4.2.1 Wall drawing algorithm
  This section doesn't have a direct relation with the format because it
  describes how the walls must be drawn on the room. However, as this
- information should be usefull to recreate a cloned room read from the
+ information should be useful to recreate a cloned room read from the
  format we decided to include this section to the document.
 
  Wall drawing depends on what is in the right panel. If the right panel
@@ -543,28 +543,28 @@ Table of Contents
 
  Modifiers affects the corners of a stone. There are three stone rows per
  wall. If the modifier is activated this corner will appear different
- (seems to be darker). Another modifier is the gray stone.
+ (seems to be darker). Another modifier is the grey stone.
 
                    Table 4.4: Stone modifiers on seed position
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Modifier       Seed Positions
   ~~~~~~~~       ~~~~ ~~~~~~~~~
      (First row modifiers)
-  Gray stone     2, 5, 14, 17, 26, 32, 35, 50
+  Grey stone     2, 5, 14, 17, 26, 32, 35, 50
   Left, bottom   2, 11, 36, 45
   Left, top      37
   Right, bottom  27, 33
   Right, up      4, 10, 31, 37
 
      (second row)
-  Gray stone     none 
+  Grey stone     none 
   Left, bottom   34, 47
   Left, top      9, 10
   Right, bottom  2, 8, 25, 35
   Right, top     6, 12, 23, 29, 39
 
      (third row)
-  Gray stone     none 
+  Grey stone     none 
   Left, bottom   none
   Left, top      16
   Right, bottom  none
@@ -828,7 +828,7 @@ Table of Contents
   - Relative offset 6, size 2, type US: Size of the item
            (not including the checksum byte)
   - Relative offset 8, size 3, type binary: A flags mask
-           (in SHAP indexes it's allways 0x40 0x00 0x00;
+           (in SHAP indexes it's always 0x40 0x00 0x00;
            in others 0x00 0x00 0x00)
 
 
@@ -940,7 +940,7 @@ Table of Contents
  
  The first byte is an unsigned char association to one of the 256 door
  event registers (see section 5.2.2) if the tile is an activator.
- In any other case this byte is an extra attibute information byte.
+ In any other case this byte is an extra attribute information byte.
  For example in wall (0x14) having this byte in 0x04 means the wall is
  curved.
  
@@ -1159,7 +1159,7 @@ Table of Contents
 
  All HOF v1.0 files have a size of 176 bytes. The first 2 bytes belongs to
  the record count. The format is US. The maximum number of records allowed
- is 6, so the second byte is allways 0x00.
+ is 6, so the second byte is always 0x00.
  Following those bytes there is an array of records. This array has a full
  size of 29 bytes distributed according to the following table.
 
