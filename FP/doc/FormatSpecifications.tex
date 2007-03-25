@@ -131,19 +131,6 @@ Table of Contents
  The first 6 bytes are reserved to locate the index and know the file size.
 
  Let's define the numbers as:
-  US - Unsigned Short: Little endian, 16 bits, storing two groups of 8 bits
-       ordered from the less representative to the most representative
-       without sign.
-       i.e. 65534 is FFFE in hex and is stored FE FF (1111 1110  1111 1111)
-       Range: 0 to 65535
-       2 bytes
-  UL - Unsigned long: Little endian, 32 bits, storing four groups of 8 bits
-       each ordered from the less representative to the most representative
-       without sign.
-       i.e. 65538 is 00010002 in hex and is stored 02 00 01 00
-       (0000 0010  0000 0000  0000 0001  0000 0000)
-       Range: 0 to 2^32-1
-       4 bytes
   SC - Signed char: 8 bits, the first bit is for the sign and the 7 last
        for the number. If the first bit is a 0, then the number is
        positive, if not the number is negative, in that case invert all
@@ -155,6 +142,27 @@ Table of Contents
        i.e. 32 is 20 (0010 0000)
        Range: 0 to 255
        1 byte
+  US - Unsigned Short: Little endian, 16 bits, storing two groups of 8 bits
+       ordered from the less representative to the most representative
+       without sign.
+       i.e. 65534 is FFFE in hex and is stored FE FF (1111 1110  1111 1111)
+       Range: 0 to 65535
+       2 bytes
+  SS - Signed Short: Little endian, 16 bits, storing two groups of 8 bits
+       ordered from the less representative to the most representative
+       with sign. If the first byte is 0 then the number is positive, if not
+       the number is negative, in that case invert all bits and add 1 to get
+       the positive number.
+       i.e. -2 is FFFE in hex and is stored FE FF (1111 1110  1111 1111)
+       Range: -32768 to 32767
+       2 bytes
+  UL - Unsigned long: Little endian, 32 bits, storing four groups of 8 bits
+       each ordered from the less representative to the most representative
+       without sign.
+       i.e. 65538 is 00010002 in hex and is stored 02 00 01 00
+       (0000 0010  0000 0000  0000 0001  0000 0000)
+       Range: 0 to 2^32-1
+       4 bytes
 
  Note: Sizes are always in bytes unless another unit is specified.
 
@@ -938,7 +946,7 @@ Table of Contents
  Background masks are stored consecutively each after another until the
  960 tiles are specified.
  
- The first byte is an unsigned char association to one of the 256 door
+ The first byte is an unsigned char (UC) association to one of the 256 door
  event registers (see section 5.2.2) if the tile is an activator.
  In any other case this byte is an extra attribute information byte.
  For example in wall (0x14) having this byte in 0x04 means the wall is
