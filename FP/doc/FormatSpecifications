@@ -854,13 +854,12 @@ Table of Contents
   3840   960     pop2_background
   1280   4800    pop2_doors
   128    6080    links (as explained in section 4.4.3 but having 32 rooms)
-  32     6208    unknown II
+  32     6208    unknown I
   3      6240    start_position (as explained in section 4.4.5)
-  4      6243    unknown III (00 01 00 02) (check pop1)
+  4      6243    unknown II (00 01 00 02) (check pop1)
   3712   6247    pop2_static_guard
   1088   9959    pop2_dynamic_guard
-  978    11047   unknown IV
-
+  978    11047   unknown III
 
  All levels have a size of 12025.
 
@@ -1022,6 +1021,7 @@ Table of Contents
  Byte 4 is the skill
  Byte 9 is the guard colour in levels where it is needed (eg. 1 white+blue,
   2 white+black, 3 red)
+ Byte 10 is the guard number (0 for the first one, 1 for the second, etc)
  Byte 15 is the type (eg. 5 head, 8 snake), doesn't apply in all levels
  Byte 16 is the hit points if the guard (0 to 8)
 
