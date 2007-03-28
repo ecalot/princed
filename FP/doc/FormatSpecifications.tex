@@ -40,14 +40,14 @@ Table of Contents
 5.2.2 Door events ..................................................... 959
 5.2.3 Guard handling .................................................. 980
 5.2.3.1 Static guards ................................................. 993
-5.2.3.2 Dynamic guards ............................................... 1038
-6. PLV v1.0 Format Specifications .................................... 1055
-6.1. User data ....................................................... 1082
-6.2. Allowed Date format ............................................. 1112
-7. The SAV v1.0 format ............................................... 1126
-8. The HOF v1.0 format ............................................... 1172
-9. Credits ........................................................... 1195
-10. License .......................................................... 1216
+5.2.3.2 Dynamic guards ............................................... 1041
+6. PLV v1.0 Format Specifications .................................... 1073
+6.1. User data ....................................................... 1100
+6.2. Allowed Date format ............................................. 1130
+7. The SAV v1.0 format ............................................... 1144
+8. The HOF v1.0 format ............................................... 1190
+9. Credits ........................................................... 1213
+10. License .......................................................... 1234
 
 
 1. Preamble
@@ -1048,9 +1048,11 @@ Table of Contents
  possible to set the number of guards that will appear running.
  
  The bytes are from 0 to 33:
- Bytes 8 and 9 are always 0.
+ Bytes from 8 to 17 may take the value 0x5a and 0. Bytes 8,9,10,15,16 are
+  always 0.
  Byte 18 activates dynamic guard. 1 is true and 0 is false.
  Byte 19 is the skill (0-7, 8 to make it passive)
+ Bytes 20, 21 and 22 are always 0.
  Byte 23 is where the dynamic guard mode: 0 or 1 to make the guard wait 
   until all guards are dead to spawn and 2 to spawn even when the prior
   guard is still alive.
@@ -1061,8 +1063,9 @@ Table of Contents
   middle of the screen, they will magically spawn in a position between 1
   and 8. As they will run to the center of the screen, this byte also sets
   the facing direction up (0 to 5 is right, 6 to 9 is left).
- Byte 26 is the time in ticks the first guard will wait to spawn
- Byte 27 is the time in ticks between guards spawn
+ Byte 26 is the time in ticks the first guard will wait to spawn.
+ Byte 27 is the time in ticks between guards spawn.
+ Bytes 28 and 29 are unknown.
  Byte 30 is the number of guards that will appear, there is a maximum of 5
   per room, including static guards.
  Byte 31 is the lives the guards will have.
