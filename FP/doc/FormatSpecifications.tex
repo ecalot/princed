@@ -1009,9 +1009,8 @@ Table of Contents
    than 5, then the latest divisions corresponding to the missing guards
    will be filled with zeros or garbage.
  
- If there is a static guard corresponding to this division of 23 bytes:
- 
- From 0 to 22 the known bytes are:
+ If there is a static guard corresponding to this division of 23 bytes,
+ the following bytes from 0 to 22 will specify the guard:
  
  Byte 0 is a UC showing the location in this room (same as explained in
   4.4.4) of the current guard.
@@ -1019,18 +1018,27 @@ Table of Contents
   the floor.
  Byte 3 is the facing direction as specified in 4.4.4.
  Byte 4 is the skill
- Byte 9 is the guard colour in levels where it is needed (eg. 1 white+blue,
-  2 white+black, 3 red)
+ Byte 5 is unknown
+ Bytes from 6,7 and 8 are always 0, probably because 5 is a long from 0 to 255
+ Byte 9 is the guard colour in levels where it is needed (0-3)
+  ie. 1 white+blue, 2 white+black, 3 red
  Byte 10 is the guard number (0 for the first one, 1 for the second, etc)
- Byte 15 is the type (eg. 5 head, 8 snake), doesn't apply in all levels
- Byte 16 is the hit points if the guard (0 to 8)
-
- Bytes from 5 to 8 and 17 to 22 are still unknown.
+ Bytes 11,12,13 and 14 are unknown, mostly 0, but in 10 guards it is 0x52756e2d
+ Byte 15 is the type (0-8 and 84), but doesn't apply in all levels
+  ie. 5 head, 8 snake
+ Byte 16 is the hit points of the guard (0 to 8)
+ Bytes 17 and 18 are the activate triggers for skeletons, byte 17 is (0,1,-1)
+  and 18 is (0,-1). Normal value is 0x0000 for a sleeping skeleton. When set
+  to -1 (0xffff) a trigger will be waiting to wake the skeleton up, for example
+  the exit door open. Other possible values are 0x0100 that is the skeleton
+  already awake and 0xff00 that seems to be similar than 0x0000.
+ Bytes 19,20,21 are always 0
+ Byte 22 is unknown (mostly 0, but 1 and 3 where found for some guards)
 
 5.2.3.2 Dynamic guards
  
  The dynamic guards are the ones who appear running throw a room's corner
- and they are defined in the dynamic_guard_block.
+ and they are defined in the pop2_dynamic_guard block.
  This block has 34 bytes for each of the 32 rooms, so it is sized 1088
  bytes. Each room has a specification about those guards.
  There is only one different type of dynamic guard per room, but it is
