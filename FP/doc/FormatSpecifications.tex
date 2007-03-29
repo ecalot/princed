@@ -5,49 +5,45 @@
 
 Table of Contents
 ~~~~~ ~~ ~~~~~~~~
-1. Preamble ............................................................ 53
-2. Introduction ........................................................ 62
-3. Primitives .......................................................... 87
-3.1. DAT reading and writing primitives ................................ 94
-3.2. DAT reading primitives ........................................... 106
-3.3. DAT writing primitives ........................................... 115
-4. DAT v1.0 Format Specifications ..................................... 124
-4.1. General file specs, index and checksums .......................... 127
-4.2. Images ........................................................... 219
-4.2.1 Headers ......................................................... 223
-4.2.2 Algorithms ...................................................... 248
-4.2.2.1 Run length encoding (RLE) ..................................... 264
-4.2.2.2 LZ variant (LZG) .............................................. 276
-4.3. Palettes ......................................................... 334
-4.4. Levels ........................................................... 341
-4.4.1 Unknown blocks .................................................. 372
-4.4.2 Room mapping .................................................... 390
-4.4.2.1 Wall drawing algorithm ........................................ 526
-4.4.3 Room linking .................................................... 594
-4.4.4 Guard handling .................................................. 610
-4.4.5 Starting Position ............................................... 657
-4.4.6 Door events ..................................................... 671
-4.5. Digital Waves .................................................... 715
-4.6. Midi music ....................................................... 732
-4.7. Internal PC Speaker .............................................. 735
-4.8. Binary files ..................................................... 740
-5. DAT v2.0 Format Specifications ..................................... 747
-5.1. General file specs, index and checksums .......................... 750
-5.1.1 The master index ................................................ 777
-5.1.2 The slave indexes ............................................... 823
-5.2. Levels ........................................................... 843
-5.2.1 Room mapping .................................................... 866
-5.2.2 Door events ..................................................... 959
-5.2.3 Guard handling .................................................. 980
-5.2.3.1 Static guards ................................................. 993
-5.2.3.2 Dynamic guards ............................................... 1041
-6. PLV v1.0 Format Specifications .................................... 1073
-6.1. User data ....................................................... 1100
-6.2. Allowed Date format ............................................. 1130
-7. The SAV v1.0 format ............................................... 1144
-8. The HOF v1.0 format ............................................... 1190
-9. Credits ........................................................... 1213
-10. License .......................................................... 1234
+1. Preamble ............................................................ 49
+2. Introduction ........................................................ 58
+3. DAT v1.0 Format Specifications ...................................... 90
+3.1. General file specs, index and checksums ........................... 93
+3.2. Images ........................................................... 185
+3.2.1 Headers ......................................................... 189
+3.2.2 Algorithms ...................................................... 214
+3.2.2.1 Run length encoding (RLE) ..................................... 230
+3.2.2.2 LZ variant (LZG) .............................................. 242
+3.3. Palettes ......................................................... 300
+3.4. Levels ........................................................... 307
+3.4.1 Unknown blocks .................................................. 338
+3.4.2 Room mapping .................................................... 356
+3.4.2.1 Wall drawing algorithm ........................................ 492
+3.4.3 Room linking .................................................... 560
+3.4.4 Guard handling .................................................. 576
+3.4.5 Starting Position ............................................... 624
+3.4.6 Door events ..................................................... 638
+3.5. Digital Waves .................................................... 682
+3.6. Midi music ....................................................... 699
+3.7. Internal PC Speaker .............................................. 702
+3.8. Binary files ..................................................... 707
+4. DAT v2.0 Format Specifications ..................................... 714
+4.1. General file specs, index and checksums .......................... 717
+4.1.1 The master index ................................................ 744
+4.1.2 The slave indexes ............................................... 790
+4.2. Levels ........................................................... 810
+4.2.1 Room mapping .................................................... 833
+4.2.2 Door events ..................................................... 926
+4.2.3 Guard handling .................................................. 947
+4.2.3.1 Static guards ................................................. 960
+4.2.3.2 Dynamic guards ............................................... 1007
+5. PLV v1.0 Format Specifications .................................... 1040
+5.1. User data ....................................................... 1067
+5.2. Allowed Date format ............................................. 1097
+6. The SAV v1.0 format ............................................... 1111
+7. The HOF v1.0 format ............................................... 1157
+8. Credits ........................................................... 1180
+9. License ........................................................... 1201
 
 
 1. Preamble
@@ -83,48 +79,19 @@ Table of Contents
  PLV files use the extension defined to support a format with only one
  level inside.
 
+ Both versions of DAT are supported and may be manipulated by PR. This
+ program works like a file archiver and extracts the files in known formats
+ that may be handled by other programs. For more information about PR
+ check the princed home page at http://www.princed.com.ar.
 
-3. Primitives
-   ~~~~~~~~~~
-
- This section shows how the PR dat handling primitives works, this library
- is useful to access resources without having to worry about the format.
- Here you can find the primitive chart of the dat.h library.
-
-3.1. DAT reading and writing primitives
- Opening a dat file for RW mode
- Syntax:
- int mRWBeginDatFile(
-  const char* vFile, /* the name of the file to be open */
-  unsigned short int *numberOfItems, /* saves the total items count */
-  int optionflag /* see optionflag appendix */
- );
- Return values are:
-
- int mRWCloseDatFile(dontSave);
-
-3.2. DAT reading primitives
- int  mReadBeginDatFile(unsigned short int *numberOfItems,
-      const char* vFile);
- int  mReadFileInDatFile(int indexNumber,unsigned char** data,
-      unsigned long int *size);
- int  mReadInitResource(tResource** res,const unsigned char* data,
-      long size);
- void mReadCloseDatFile();
-
-3.3. DAT writing primitives
- int  mWriteBeginDatFile(const char* vFile, int optionflag);
- void mWriteFileInDatFile(const unsigned char* data, int size);
- void mWriteFileInDatFileIgnoreChecksum(unsigned char* data,int size);
- void mWriteInitResource(tResource** res);
- void mWriteCloseDatFile(tResource* r[],int dontSave,int optionflag, const
-      char* backupExtension);
+ In this document you will also find the SAV and HOF format specifications
+ and the algorithm used by POP1 to draw the dungeon walls.
 
 
-4. DAT v1.0 Format Specifications
+3. DAT v1.0 Format Specifications
    ~~~ ~~~~ ~~~~~~ ~~~~~~~~~~~~~~
 
-4.1. General file specs, index and checksums
+3.1. General file specs, index and checksums
  All DAT files have an index, this index has a number of items count and
  a list of items.
  The index is stored at the very end of the file.
@@ -216,11 +183,11 @@ Table of Contents
  From now on the specification are special for each data type (that means
  we won't include the checksum byte anymore).
 
-4.2. Images
+3.2. Images
  Images are stored compressed and have a header and a compressed data area.
  Each image only one header with 6 bytes in it as follows
 
-4.2.1 Headers
+3.2.1 Headers
  The 6-bytes-image header: 6 bytes
   Relative offset 0, size 2, type US: Height
   Relative offset 2, size 2, type UL: Width
@@ -245,7 +212,7 @@ Table of Contents
  The following data in the resource is the image compressed with the
  algorithm specified by those 4 bits.
 
-4.2.2 Algorithms
+3.2.2 Algorithms
  RAW_LR means that the data wasn't compressed, it is used for small images.
         The format is saved from left to right (LR) serialising a line to
         the next integer byte if necessary. In case the image was 16
@@ -261,7 +228,7 @@ Table of Contents
         After decompressed it may be handled as RAW_LR.
  LZG_UD Uses LZG compression but is drawn from top to bottom as RLE_UD
 
-4.2.2.1 Run length encoding (RLE)
+3.2.2.1 Run length encoding (RLE)
  The first byte is always a control byte, the format is SC. If the control
  byte is negative, then the next byte must be repeated n times as the bit
  inverted control byte says, after the next byte (the one that was
@@ -273,7 +240,7 @@ Table of Contents
  If you reach a control byte but the image size is passed, then you have
  completed the image.
 
-4.2.2.2 LZ variant (LZG)
+3.2.2.2 LZ variant (LZG)
  This is a simplified algorithm explanation:
 
  Definition: "print" means to commit a byte into the current location
@@ -331,18 +298,18 @@ Table of Contents
  the PR source files lzg_uncompress.c and lzg_compress.c that may be
  located at http://www.cvs.fp.princed.com.ar in the PR repository module.
 
-4.3. Palettes
+3.3. Palettes
  Palettes have 100 bytes always, after 4 bytes from the beginning the
  first 16 records of 3 bytes are the VGA colours stored in the RGB-18 bits
  format (6 bits for each colour). Each colour is a number from 0 to 63.
  Remember to shift the colour bytes by two to get the colour number from 0
  to 256.
 
-4.4. Levels
+3.4. Levels
  This table has a summary of the blocks to be used in this section,
  you can refer it from the text below.
 
-                   Table 4.1: DAT 1.0 Level blocks
+                   Table 3.1: DAT 1.0 Level blocks
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Length Offset  Block Name
@@ -369,7 +336,7 @@ Table of Contents
  All levels have a size of 2305, except in the original game, that the
  potion level has a size of 2304 (may be it was wrong trimmed).
 
-4.4.1 Unknown blocks
+3.4.1 Unknown blocks
  Blocks described in this section are: Unknown from I to IV.
 
  Unknown III and IV blocks doesn't affect the level if changed, if you find
@@ -387,7 +354,7 @@ Table of Contents
  how those extensions were defined read the appendix I'll write some day.
  For the moment you may contact us if you need to know that.
 
-4.4.2 Room mapping
+3.4.2 Room mapping
  This section explains how the main walls and objects are stored. The
  blocks involved here are "wall" and "pop1_background"
 
@@ -422,7 +389,7 @@ Table of Contents
  ccccc is the code of the tile tabled below. Tile names are the same as the
  ones used by RoomShaker to keep compatibility.
 
-                   Table 4.2: Foreground Walls
+                   Table 3.2: Foreground Walls
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Hex  Binary Group  Description
@@ -464,11 +431,11 @@ Table of Contents
  wall part of the tile. This works independently of the modifier bit in the
  code. The tile  modifier depends on the group the tile belongs which are
  wall, chomp, event, ttop, potion, tapp, gate, spike and free.
- The group event allows the 256 modifiers and will be described in 4.4.6.
+ The group event allows the 256 modifiers and will be described in 3.4.6.
  Note + means allowed for the dungeon environment, - means allowed for the
  palace environment.
 
-                   Table 4.3: Background modifiers by group
+                   Table 3.3: Background modifiers by group
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Group  Code Description
@@ -523,7 +490,7 @@ Table of Contents
        tile type we didn't discover.
 
 
-4.4.2.1 Wall drawing algorithm
+3.4.2.1 Wall drawing algorithm
  This section doesn't have a direct relation with the format because it
  describes how the walls must be drawn on the room. However, as this
  information should be useful to recreate a cloned room read from the
@@ -545,7 +512,7 @@ Table of Contents
  the base image; seedArray is this array that will be described above as a
  table; roomNumber is the number of the room the wall is (from 1 to 24)
  and wallPosition is the position the wall is (from 0 to 29), using the
- location format specified in section 4.4.2. This means the first value is
+ location format specified in section 3.4.2. This means the first value is
  1 (roomNumber=1 and wallPosition=0) and the last is 53 (roomNumber=24
  and wallPosition=29).
 
@@ -553,7 +520,7 @@ Table of Contents
  wall. If the modifier is activated this corner will appear different
  (seems to be darker). Another modifier is the grey stone.
 
-                   Table 4.4: Stone modifiers on seed position
+                   Table 3.4: Stone modifiers on seed position
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Modifier       Seed Positions
   ~~~~~~~~       ~~~~ ~~~~~~~~~
@@ -591,7 +558,7 @@ Table of Contents
  We'll be adding the next values as soon as we count the pixels ;)
  This information can be found in walls.conf file from FreePrince.
 
-4.4.3 Room linking
+3.4.3 Room linking
  This section describes the links block.
 
  Each room is linked to another by each of the four sides. Each link
@@ -607,7 +574,7 @@ Table of Contents
  Cross links should be made to allow the kid passing from a room to
  another and then coming back to the same room but it's not a must.
 
-4.4.4 Guard handling
+3.4.4 Guard handling
  This section specifies the blocks: guard_location, guard_direction,
  guard_skill and guard_colour.
 
@@ -620,7 +587,7 @@ Table of Contents
  is located, this is a number from 0 to 29 if the guard is in the room or
  30 if there is no guard in this room. Other values are allowed but are
  equivalent to 30. The number from 0 to 29 is in the location format
- specified in section 4.4.2
+ specified in section 3.4.2
 
  The guard_direction part describes where the guard looks at. If the value
  is 0, then the guard looks to the right, if the value is the hex FF (-1 or
@@ -636,7 +603,7 @@ Table of Contents
  The guard_colour is the palette the guard has (see 4.8).
  The default colours are in this table:
 
-                   Table 4.4: Default Guard colours
+                   Table 3.4: Default Guard colours
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Code Pants     Cape
@@ -655,7 +622,7 @@ Table of Contents
  palette resource (see 4.8) avoiding the crash due to this reason.
 
 
-4.4.5 Starting Position
+3.4.5 Starting Position
  This section describes the start_position block.
 
  This block stores where and how the kid starts in the level. Note that all
@@ -664,12 +631,12 @@ Table of Contents
 
  This block has 3 bytes.
  The first byte is the room, allowed values are from 1 to 24.
- The second byte is the location, see the section 4.4.2 for the location
+ The second byte is the location, see the section 3.4.2 for the location
  format specifications.
- The third byte is the direction, see 4.4.4 for the direction format
+ The third byte is the direction, see 3.4.4 for the direction format
  specifications.
 
-4.4.6 Door events
+3.4.6 Door events
  This section explains how the doors are handled and specifies the blocks
  door I and II.
 
@@ -686,7 +653,7 @@ Table of Contents
  Each event line has an ID from 0 to 255. An event has the ID of the first
  event line in it.
 
- In section 4.4.2 it is explained how a door trigger is associated to an
+ In section 3.4.2 it is explained how a door trigger is associated to an
  event ID. Those are the tiles that starts the event depending on what are
  them: closers or openers.
 
@@ -713,10 +680,10 @@ Table of Contents
  Byte I  has the form: t1 s4 s5 l1 l2 l3 l4 l5
  Byte II has the form: s1 s2 s3  0  0  0  0  0
 
-4.5. Digital Waves
+3.5. Digital Waves
  Read them as raw digital wave sound using the following specifications:
 
-                   Table 4.4: Wave Specifications
+                   Table 3.4: Wave Specifications
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Size of Format: 16
   Format:         PCM
@@ -730,25 +697,25 @@ Table of Contents
  As dat headers are very small it is valid to type in a shell console with
  dsp write access: cat digisnd?.dat>/dev/dsp to play the whole wave files.
 
-4.6. Midi music
+3.6. Midi music
  Standard midi files
 
-4.7. Internal PC Speaker
+3.7. Internal PC Speaker
  We are not so sure about it, but we think it is:
   2 unique bytes for headers
   3 bytes per note (2 for frequency and 1 for duration)
 
-4.8. Binary files
+3.8. Binary files
  Some binary files contains relevant information
  The resource number 10 in prince.dat has the VGA guard palettes in it
  saving n records of a 16-colour-palette of 3 bytes in the specified
  palette format.
 
 
-5. DAT v2.0 Format Specifications
+4. DAT v2.0 Format Specifications
    ~~~ ~~~~ ~~~~~~ ~~~~~~~~~~~~~~
 
-5.1. General file specs, index and checksums
+4.1. General file specs, index and checksums
  POP2 DAT files aren't much different from their POP1 predecessors.
  The format is similar in almost each way. The main difference is in the
  index. As DAT v1.0 used an index in the high data, the DAT v2.0 indexes
@@ -775,7 +742,7 @@ Table of Contents
  call this index the «master index» and the sub index the «slave indexes».
  Slave indexes are the real file contents index.
 
-5.1.1 The master index
+4.1.1 The master index
  The master index is made with:
   - Offset HighDataOffset,   size 2, type US: NumberOfSlaveIndexes
            (the number of the high data sections)
@@ -799,7 +766,7 @@ Table of Contents
  example the text SLAP becomes PALS, MARF becomes FRAM, #### becomes empty
  or RCS# becomes SCR. They must be in upper case.
 
-                   Table 5.1: Section ID strings
+                   Table 4.1: Section ID strings
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
    ID   Stored Description
@@ -821,7 +788,7 @@ Table of Contents
    txt4 4TXT   Text
         ####   Levels
 
-5.1.2 The slave indexes
+4.1.2 The slave indexes
  All encapsulated sections are indexes.
  The slave index is made with:
   - Offset SlaveIndexOffset,   size 2, type US: NumberOfItems
@@ -841,12 +808,12 @@ Table of Contents
            in others 0x00 0x00 0x00)
 
 
-5.2. Levels
+4.2. Levels
 
  This table has a summary of the blocks to be used in this section,
  you can refer it from the text below.
 
-                   Table 5.2: DAT 2.0 Level blocks
+                   Table 4.2: DAT 2.0 Level blocks
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Length Offset  Block Name
@@ -854,9 +821,9 @@ Table of Contents
   960    0       wall
   3840   960     pop2_background
   1280   4800    pop2_doors
-  128    6080    links (as explained in section 4.4.3 but having 32 rooms)
+  128    6080    links (as explained in section 3.4.3 but having 32 rooms)
   32     6208    unknown I
-  3      6240    start_position (as explained in section 4.4.5)
+  3      6240    start_position (as explained in section 3.4.5)
   4      6243    unknown II (00 01 00 02) (check pop1)
   3712   6247    pop2_static_guard
   1088   9959    pop2_dynamic_guard
@@ -864,8 +831,8 @@ Table of Contents
 
  All levels have a size of 12025.
 
-5.2.1 Room mapping
- You should read section 4.4.2 before reading this one.
+4.2.1 Room mapping
+ You should read section 3.4.2 before reading this one.
  A POP2 level can store a maximum of 32 rooms of 30 tiles each, having 
  three stages of 10 tiles each. Rooms are numbered from 1 to 32 (not 0 to 
  31) because the 0 is be reserved to the null-room.
@@ -876,11 +843,11 @@ Table of Contents
  additional attributes to this tile also.
  
  To locate the 7th tile in the bottom floor of the room 27 you have to do
- the same calculation as in 4.4.2:
+ the same calculation as in 3.4.2:
   tile=(room-1)*30+tileOffset=(27-1)*30+2*10+7=807
  
 
-                   Table 5.3: Foreground Walls
+                   Table 4.3: Foreground Walls
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Dec Hex   Bin     Caverns             Ruins              Temple
@@ -947,7 +914,7 @@ Table of Contents
  960 tiles are specified.
  
  The first byte is an unsigned char (UC) association to one of the 256 door
- event registers (see section 5.2.2) if the tile is an activator.
+ event registers (see section 4.2.2) if the tile is an activator.
  In any other case this byte is an extra attribute information byte.
  For example in wall (0x14) having this byte in 0x04 means the wall is
  curved.
@@ -957,7 +924,7 @@ Table of Contents
  
  We believe the special images uses the 3rd or 4th byte.
 
-5.2.2 Door events
+4.2.2 Door events
  This section explains how doors are handled and specifies the block
  pop2_door.
 
@@ -966,7 +933,7 @@ Table of Contents
  and activate them. In POP2 events can also activate a floor shooter.
  
  An event is triggered when an activator button (0x22) is pressed. As it is
- specified in the section 5.2.1, the first byte of the attribute mask
+ specified in the section 4.2.1, the first byte of the attribute mask
  belonging to a button tile points it to a door event that is triggered
  when the button is pressed.
  There is a maximum of 256 events because of the unsigned char of the first
@@ -978,7 +945,7 @@ Table of Contents
  the tile LL of the screen SS. TT is 00 for normal activation and FF for
  exit doors.
 
-5.2.3 Guard handling
+4.2.3 Guard handling
  This section explains how guards are handled. In POP2 there are two
  different types of guards. We'll call them static and dynamic guards.
  Static guards are the normal guards that are waiting in a room like in
@@ -991,7 +958,7 @@ Table of Contents
  Each block has different specifications and sizes as it is mentioned
  bellow.
  
-5.2.3.1 Static guards
+4.2.3.1 Static guards
  
  In this item static guards are explained and the pop2_static_guard is
  specified.
@@ -1014,10 +981,10 @@ Table of Contents
  the following bytes from 0 to 22 will specify the guard:
  
  Byte 0 is a UC showing the location in this room (same as explained in
-  4.4.4) of the current guard.
+  3.4.4) of the current guard.
  Bytes 1 and 2 are a SS with an offset in pixels to reallocate the guard in
   the floor.
- Byte 3 is the facing direction as specified in 4.4.4.
+ Byte 3 is the facing direction as specified in 3.4.4.
  Byte 4 is the skill
  Byte 5 is unknown
  Bytes 6,7 and 8 are always 0, probably because 5 is a long from 0 to 255.
@@ -1038,7 +1005,7 @@ Table of Contents
  Bytes 19,20,21 are always 0.
  Byte 22 is unknown (mostly 0, but 1 and 3 where found for some guards).
 
-5.2.3.2 Dynamic guards
+4.2.3.2 Dynamic guards
  
  The dynamic guards are the ones who appear running throw a room's corner
  and they are defined in the pop2_dynamic_guard block.
@@ -1053,10 +1020,10 @@ Table of Contents
  Byte 18 activates dynamic guard. 1 is true and 0 is false.
  Byte 19 is the skill (0-7, 8 to make it passive)
  Bytes 20, 21 and 22 are always 0.
- Byte 23 is where the dynamic guard mode: 0 or 1 to make the guard wait 
-  until all guards are dead to spawn and 2 to spawn even when the prior
-  guard is still alive.
- Byte 24 is the floor the guard will appear on 0 is the upper one and 2 is
+ Byte 23 is the dynamic guard mode: 0 or 1 to make the guard wait until all
+  guards are dead to spawn and 2 to spawn even when the prior guard is
+  still alive.
+ Byte 24 is the floor the guard will appear on. 0 is the upper one and 2 is
   the lower. Another number will kill the guard playing the sound.
  Byte 25 is the initial location of the guard. ie. 0 is the left side of
   the screen, 9 is the right side, it is possible to locate them in the
@@ -1071,12 +1038,12 @@ Table of Contents
  Byte 31 is the hit points the guards will have.
 
 
-6. PLV v1.0 Format Specifications
+5. PLV v1.0 Format Specifications
    ~~~ ~~~~ ~~~~~~ ~~~~~~~~~~~~~~
 
  PLV v1.0 files are defined in this table:
 
-                   Table 6.1: PLV blocks
+                   Table 5.1: PLV blocks
                    ~~~~~~~~~~~~~~~~~~~~~
 
    Size Offset Description                  Type   Content
@@ -1098,7 +1065,7 @@ Table of Contents
  PLV version is 1 for PLV v1.0.
  Only one level may be saved in a PLV, the level number is saved inside.
 
-6.1. User data
+5.1. User data
 
  User data is a block of extensible information, Number of fields is the
  count of each field/value information pair. A pair is saved in the
@@ -1109,7 +1076,7 @@ Table of Contents
  There are mandatory pairs that must be included in all PLV files.
  Those are:
 
-                   Table 6.2: Mandatory Fields
+                   Table 5.2: Mandatory Fields
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Field name              Description
@@ -1128,7 +1095,7 @@ Table of Contents
  The content values may be empty. There is no need to keep an order within
  the fields.
 
-6.2. Allowed Date format
+5.2. Allowed Date format
  To make easy time parsing the time format must be very strict.
  There are only two allowed formats: with seconds and without.
  With seconds the format is "YYYY-MM-DD HH:II:SS"
@@ -1142,7 +1109,7 @@ Table of Contents
  i.e. 2002-11-26 22:16:39
 
 
-7. The SAV v1.0 format
+6. The SAV v1.0 format
    ~~~ ~~~ ~~~~ ~~~~~~
 
  SAV v1.0 saves kid level, hit points and remaining time information in
@@ -1150,7 +1117,7 @@ Table of Contents
 
  SAV files are 8 bytes length in the following format:
 
-                   Table 7.1: SAV blocks
+                   Table 6.1: SAV blocks
                    ~~~~~~~~~~~~~~~~~~~~~
 
    Size Offset Description                  Type
@@ -1188,7 +1155,7 @@ Table of Contents
    1 to 65535 hit points
 
 
-8. The HOF v1.0 format
+7. The HOF v1.0 format
    ~~~ ~~~ ~~~~ ~~~~~~
  HOF files are used to save the Hall of Fame information.
 
@@ -1198,7 +1165,7 @@ Table of Contents
  Following those bytes there is an array of records. This array has a full
  size of 29 bytes distributed according to the following table.
 
-                   Table 8.1: HOF blocks
+                   Table 7.1: HOF blocks
                    ~~~~~~~~~~~~~~~~~~~~~
 
    Size Offset Description                  Type
@@ -1211,7 +1178,7 @@ Table of Contents
  in order to complete the whole file and give it the size of 2+29*6 = 176.
 
 
-9. Credits
+8. Credits
    ~~~~~~~
 
  This document:
@@ -1232,8 +1199,8 @@ Table of Contents
   Definition . . . . . . . . . . . . . . . . . . . . . . .  Brendon James
                                                             Enrique Calot
 
-10. License
-    ~~~~~~~
+9. License
+   ~~~~~~~
 
       Copyright (c)  2004, 2005, 2006 The Princed Project Team
       Permission is granted to copy, distribute and/or modify this document
