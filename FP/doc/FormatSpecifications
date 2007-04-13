@@ -752,66 +752,82 @@ Table of Contents
 
  The 6-bytes-length index record (one per item): Size = 6 bytes
   - Relative offset 0, size 4, type sting: 4 ASCII bytes string denoting
-           the section ID. The character order is inverted.
+           the Slave Index ID. The character order is inverted.
   - Relative offset 4, size 2, type US: SlaveIndexOffset
            (slave index offset relative to HighDataOffset)
 
- From the end of the DAT High Data index to the end of the file there is
- the High Data section contents (where the HighDataOffset relative offsets
- points to).
+ From the end of the DAT High Data Master Index to the end of the file
+ we will find the High Data section contents (where the HighDataOffset
+ relative offsets points to). This content has a set of second indexes
+ each called Slave Index. So, to find a Slave Index offset you have to
+ add the file HighDataOffset to the SlaveIndexOffset for the desired
+ index.
 
- There are different 4 bytes ASCII strings section IDs. When the string is
- less than 4 bytes, they are ended in hex 0x00 is used. We will denote it
- with the cardinal # symbol. The character order is inverted, so for
- example the text SLAP becomes PALS, MARF becomes FRAM, #### becomes empty
- or RCS# becomes SCR. They must be in upper case.
+ There are different 4-byte-length ASCII strings called Slave Index IDs.
+ When the string is less than 4 bytes, a tailing byte 0x00 is used. We will
+ denote it with the cardinal # symbol. The character order is inverted, so
+ for example the text SLAP becomes PALS, MARF becomes FRAM, #### becomes
+ empty or RCS# becomes SCR. They must be in upper case.
 
-                   Table 4.1: Section ID strings
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                   Table 4.1: Slave Index ID strings
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-   ID   Stored Description
-   ~~   ~~~~~~ ~~~~~~~~~~~
-   cust TSUC   Custom 
-   font TNOF   Fonts
-   fram MARF   Frames
-   palc CLAP   CGA Palette
-   pals SLAP   SVGA Palette
-   palt TLAP   TGA Palette
-   piec CEIP   Pieces  
-   psl  LSP#   ? 
-   scr  RCS#   Screens (images that have the full room)
-   shap PAHS   Shapes (normal graphics)
-   shpl LPHS   Shape palettes
-   strl LRTS   Text
-   snd  DNS#   Sound
-   seqs SQES   Midi sequences
-   txt4 4TXT   Text
-        ####   Levels
+   ID     Stored Description
+   ~~     ~~~~~~ ~~~~~~~~~~~
+   "cust" TSUC   Custom 
+   "font" TNOF   Fonts
+   "fram" MARF   Frames
+   "palc" CLAP   CGA Palette
+   "pals" SLAP   SVGA Palette
+   "palt" TLAP   TGA Palette
+   "piec" CEIP   Pieces  
+   "psl"  LSP#   ? 
+   "scr"  RCS#   Screens (images that have the full room)
+   "shap" PAHS   Shapes (normal graphics)
+   "shpl" LPHS   Shape palettes
+   "strl" LRTS   Text
+   "snd"  DNS#   Sound
+   "seqs" SQES   Midi sequences
+   "txt4" 4TXT   Text
+   ""     ####   Levels
 
 4.1.2 The slave indexes
- All encapsulated sections are indexes.
- The slave index is made with:
+ All encapsulated sections pointed by the Master Index are Slave Indexes.
+ The slave index is specified with:
   - Offset SlaveIndexOffset,   size 2, type US: NumberOfItems
            (the number of the records referring to the file data)
   - Offset SlaveIndexOffset+2, size NumberOfItems*11: The slave index
-           record (a list of NumberOfItems blocks of 11-bytes-length index
+           record (a list of NumberOfItems blocks of 11-byte-length index
            record each corresponding to one slave index)
 
- The 11-bytes-length slave index record (one per item): Size = 11 bytes
+ The 11-byte-length slave index record (one per item): Size = 11 bytes
   - Relative offset 0, size 2, type US: Item ID
   - Relative offset 2, size 4, type UL: Resource start
            (absolute offset in file)
   - Relative offset 6, size 2, type US: Size of the item
            (not including the checksum byte)
   - Relative offset 8, size 3, type binary: A flags mask
-           (in SHAP indexes it's always 0x40 0x00 0x00;
+           (in "shap" indexes it's always 0x40 0x00 0x00;
            in others 0x00 0x00 0x00)
 
+ Finally, we can locate whatever item we want if we have the
+  - Slave Index ID
+  - Item ID
+ this is not a unique key, unfortunately we have found repeated pairs of
+ IDs for different items, so we have to use the "order" as a third key.
+
+ So, the way to find an item is: first read the High Data Offset, go there,
+ read the number of slave items, iterate the master index to find the
+ desired slave item comparing it with the Slave Index ID. Then go to the
+ found Slave Index offset (remember to add the High Data Offset) and read
+ the number of items for this index. Finally iterate the slave index to
+ find the desired item comparing the Item ID and read the offset and size.
+ Now you will have the offset of the desired item's checksum, increasing
+ the offset by one will give you the beginning of the item content.
 
 4.2. Levels
 
- This table has a summary of the blocks to be used in this section,
- you can refer it from the text below.
+ This table has a summary of the blocks to be used in this section.
 
                    Table 4.2: DAT 2.0 Level blocks
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1139,7 +1155,7 @@ Table of Contents
 
   Range values:
    0.000 to 59.916 seconds
-                   (rounded by units of 83 milliseconds or 1/12 seconds)
+                   (rounded by units of ~83 milliseconds or 1/12 seconds)
    0     to 719    ticks
 
  Level (iii)
