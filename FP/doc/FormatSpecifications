@@ -314,8 +314,8 @@ Table of Contents
 
   Length Offset  Block Name
   ~~~~~~ ~~~~~~  ~~~~~~~~~~
-  720    0       wall
-  720    720     pop1_background
+  720    0       pop1_foretable
+  720    720     pop1_backtable
   256    1440    door I
   256    1696    door II
   96     1952    links
@@ -356,41 +356,41 @@ Table of Contents
 
 3.4.2 Room mapping
  This section explains how the main walls and objects are stored. The
- blocks involved here are "wall" and "pop1_background"
+ blocks involved here are "pop1_foretable" and "pop1_backtable"
 
  In a level you can store a maximum of 24 rooms (also called screens) of 30
  tiles each, having three stages of 10 tiles each. Screens are numbered
  from 1 to 24 (not 0 to 23) because the 0 was reserved for special cases.
 
- The wall and pop1_background blocks have 24 sub-blocks inside. Those
- sub-blocks have a size of 30 bytes each and has a room associated. So, for
- example, the sub-block staring in 0 corresponds to the room 1 and the
- sub-block starting in 690 corresponds to the room 24.
- It is reserved 1 byte from the wall block and one from the pop1_background
- block for each tile. To locate the appropriate tile you have to do the
- following calculation: tile=(room-1)*30+tileOffset where tileOffset is a
- number from 0 to 29 that means a tile from 0 to 9 if in the upper stage,
- from 10 to 19 if in the middle stage and 20 to 29 if in the bottom stage.
- We define this as the location format and will be used also in the start
- position.
+ The pop1_foretable and pop1_backtable blocks have 24 sub-blocks inside.
+ Those sub-blocks have a size of 30 bytes each and has a room associated.
+ So, for example, the sub-block staring in 0 corresponds to the room 1 and
+ the sub-block starting in 690 corresponds to the room 24.
+ It is reserved 1 byte from the pop1_foretable block and one from the
+ pop1_backtable block for each tile. To locate the appropriate tile you
+ have to do the following calculation: tile=(room-1)*30+tileOffset where
+ tileOffset is a number from 0 to 29 that means a tile from 0 to 9 if in
+ the upper stage, from 10 to 19 if in the middle stage and 20 to 29 if in
+ the bottom stage. We define this as the location format and will be used
+ also in the start position.
  Always looking from the left to the right.
- So there is a wall and pop1_background byte for each tile in the level and
- this is stored this way.
+ So there is a pop1_foretable and pop1_backtable byte for each tile in the
+ level and this is stored this way.
 
- The wall part of the tile stores the main tile form according to the table
- below. Note that those are just a limited number of tiles, each code has a
- tile in the game. The tiles listed are all the ones needed to make a level
- so the missing tiles have an equivalent in this list.
+ The pop1_foretable part of the tile stores the main tile form according to
+ the table below. Note that those are just a limited number of tiles, each
+ code has a tile in the game. The tiles listed are all the ones needed to
+ make a level so the missing tiles have an equivalent in this list.
 
  Each tile has a code id, as some codes are repeated this is how you have
- to calculate the codes. A tile in the wall part has 8 bits in this format
- rrmccccc, where rr are random bits and can be ignored. m is a modifier of
- the tile. For example modified loose floors do not fall down. The rest
- ccccc is the code of the tile tabled below. Tile names are the same as the
- ones used by RoomShaker to keep compatibility.
+ to calculate the codes. A tile in the pop1_foretable part has 8 bits in
+ this format rrmccccc, where rr are random bits and can be ignored. m is a
+ modifier of the tile. For example modified loose floors do not fall down.
+ The rest ccccc is the code of the tile tabled below. Tile names are the
+ same as the ones used by RoomShaker to keep compatibility.
 
-                   Table 3.2: Foreground Walls
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                   Table 3.2: POP1 Foretable codes
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Hex  Binary Group  Description
   ~~~~ ~~~~~~ ~~~~~  ~~~~~~~~~~~
@@ -427,10 +427,10 @@ Table of Contents
   0x1E 11110  none   Torch with Debris
   0x1F 11111  none   Null
 
- The pop1_background part of the tile stores a modifier or attribute of the
- wall part of the tile. This works independently of the modifier bit in the
- code. The tile  modifier depends on the group the tile belongs which are
- wall, chomp, event, ttop, potion, tapp, gate, spike and free.
+ The pop1_backtable part of the tile stores a modifier or attribute of the
+ pop1_foretable part of the tile. This works independently of the modifier
+ bit in the code. The tile modifier depends on the group the tile belongs
+ which are wall, chomp, event, ttop, potion, tapp, gate, spike and free.
  The group event allows the 256 modifiers and will be described in 3.4.6.
  Note + means allowed for the dungeon environment, - means allowed for the
  palace environment.
@@ -834,8 +834,8 @@ Table of Contents
 
   Length Offset  Block Name
   ~~~~~~ ~~~~~~  ~~~~~~~~~~
-  960    0       wall
-  3840   960     pop2_background
+  960    0       pop2_foretable
+  3840   960     pop2_backtable
   1280   4800    pop2_doors
   128    6080    links (as explained in section 3.4.3 but having 32 rooms)
   32     6208    unknown I
@@ -853,18 +853,18 @@ Table of Contents
  three stages of 10 tiles each. Rooms are numbered from 1 to 32 (not 0 to 
  31) because the 0 is be reserved to the null-room.
 
- The wall block has 32 sub-blocks inside. Each sub-block has a size of 30
- bytes and has a room associated. For each byte in this room there is a
- tile in the game. Each byte has a code to represent a tile. There are
- additional attributes to this tile also.
+ The pop2_foretable block has 32 sub-blocks inside. Each sub-block has a
+ size of 30 bytes and has a room associated. For each byte in this room
+ there is a tile in the game. Each byte has a code to represent a tile.
+ There are additional attributes to this tile also.
  
  To locate the 7th tile in the bottom floor of the room 27 you have to do
  the same calculation as in 3.4.2:
   tile=(room-1)*30+tileOffset=(27-1)*30+2*10+7=807
  
 
-                   Table 4.3: Foreground Walls
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                   Table 4.3: POP2 Foretable Codes
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  Dec Hex   Bin     Caverns             Ruins              Temple
  ~~~ ~~~   ~~~     ~~~~~~~             ~~~~~              ~~~~~~
@@ -918,9 +918,9 @@ Table of Contents
  46  0x2E  101110  (?)                 (?)                (?)
  47  0x2F  101111  (?)                 (?)                (?)
 
- The pop2_background is an expansion if the pop1_background and it is sized
+ The pop2_backtable is an expansion if the pop1_backtable and it is sized
  4 times bigger. For each tile there are 4 additional bytes in the 
- pop2_background block to specify further actions or attributes. This block
+ pop2_backtable block to specify further actions or attributes. This block
  is sized 4 bytes/tile * 10 tiles/floor * 3 floors/room * 32 rooms that is
  3840 bytes.
  We call background mask to each block of 4 bytes associated to a tile. To
@@ -953,7 +953,7 @@ Table of Contents
  belonging to a button tile points it to a door event that is triggered
  when the button is pressed.
  There is a maximum of 256 events because of the unsigned char of the first
- byte if the attribute mask in the pop2_background block and the 256
+ byte if the attribute mask in the pop2_backtable block and the 256
  registers in the pop2_door block.
 
  Each event register is of the form "LL SS TT FD FD" which activates the
