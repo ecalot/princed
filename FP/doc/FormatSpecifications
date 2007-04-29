@@ -299,17 +299,89 @@ Table of Contents
  located at http://www.cvs.fp.princed.com.ar in the PR repository module.
 
 3.3. Palettes
- Palettes have 100 bytes always, after 4 bytes from the beginning the
- first 16 records of 3 bytes are the VGA colours stored in the RGB-18 bits
- format (6 bits for each colour). Each colour is a number from 0 to 63.
- Remember to shift the colour bytes by two to get the colour number from 0
- to 256.
+ Palette resources store a palette for the VGA and patterns for the CGA and
+ EGA. Each palette resource is sized 100 bytes distributed in this way:
+
+                   Table 3.1: DAT 1.0 Palette blocks
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Length Offset  Block Name
+  ~~~~~~ ~~~~~~  ~~~~~~~~~~
+  4      0       unknown (TGA?)
+  48     4       vga_palette
+  16     52      cga_patterns
+  32     68      ega_patterns
+
+ The vga_palette block stores 16 records of three bytes each that is the
+ palette in the RGB-18-bits format (6 bits for each colour). Each colour is
+ a number from 0 to 63. Remember to shift the colour bytes by two to get
+ the colour number from 0 to 256. The format is 00rrrrrr 00gggggg 00bbbbbb
+ where rrrrrr is the 6 bit red, gggggg the 6 bits green and bbbbbb the 6
+ bits blue.
+ 
+ In the case of EGA and CGA, palettes are not stores, and the palettes used
+ are the ones defined by the adapter as the following:
+ 
+                   Table 3.2: EGA and CGA palettes
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  EGA  CGA1  CGA2   Color name       HTML      rgbRGB
+  ~~~  ~~~~  ~~~~   ~~~~~ ~~~~       ~~~~      ~~~~~~
+  0    0     0      black            #000000   000000
+  1    -     -      blue             #0000aa   000001
+  2    -     1      green            #00aa00   000010
+  3    1     -      cyan             #00aaaa   000011
+  4    -     2      red              #aa0000   000100
+  5    2     -      magenta          #aa00aa   000101
+  6    -     3      brown            #aa5500   010100
+  7    3     -      light gray       #aaaaaa   000111
+  8    -     -      dark gray        #555555   111000
+  9    -     -      bright blue      #5555ff   111001
+  10   -     -      bright green     #55ff55   111010
+  11   -     -      bright cyan      #55ffff   111011
+  12   -     -      bright red       #ff5555   111100
+  13   -     -      bright magenta   #ff55ff   111101
+  14   -     -      bright yellow    #ffff55   111110
+  15   -     -      bright white     #ffffff   111111
+
+ Where EGA is the only one palette used in EGA mode of the game and CGA1
+ and CGA2 are the two palettes used in the CGA mode.
+ As the palettes are always the same, but the graphics are in 16 colours,
+ some patterns are used instead of colours.
+ Remember EGA has 16 colours, so is represented in 4 bits and CGA has 4
+ simultaneous colours represented in 2 bits.
+
+ The cga_patterns block stores 16 records of one byte each, sparated in
+ four parts, so the format is aabbccdd where aa is a two bit colour in one
+ of the two CGA palettes (palette 1 is normally used in the dungeon
+ environment and 2 in the palace environment).
+ 
+ The pattern is arranged in a 2x2 box and each pixel is denoted:
+  aa bb
+  cc dd
+ 
+ So for example if the entry 1 is 00101000 (0x28) in mode CGA2, the pattern
+ will be a checkerboard of black and green like the following:
+  00 01  -  black  green
+  01 00  -  green  black
+
+ The ega_patterns block stores 16 records of two bytes each, this time
+ separated in two parts. So we have again, four parts per record in the
+ format aaaabbbb ccccdddd.
+ 
+ Now, using the EGA entries 0-15 (the four bits are represented) the same
+ patterns as the CGA may be used.
+ 
+ For example, with 00101111 11110010 (0x2ff2) you can create the following
+ pattern:
+  0010 1111  -  brown  white
+  1111 0010  -  white  brown
 
 3.4. Levels
  This table has a summary of the blocks to be used in this section,
  you can refer it from the text below.
 
-                   Table 3.1: DAT 1.0 Level blocks
+                   Table 3.3: DAT 1.0 Level blocks
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Length Offset  Block Name
@@ -389,7 +461,7 @@ Table of Contents
  The rest ccccc is the code of the tile tabled below. Tile names are the
  same as the ones used by RoomShaker to keep compatibility.
 
-                   Table 3.2: POP1 Foretable codes
+                   Table 3.4: POP1 Foretable codes
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Hex  Binary Group  Description
@@ -435,7 +507,7 @@ Table of Contents
  Note + means allowed for the dungeon environment, - means allowed for the
  palace environment.
 
-                   Table 3.3: Background modifiers by group
+                   Table 3.5: Background modifiers by group
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Group  Code Description
@@ -520,7 +592,7 @@ Table of Contents
  wall. If the modifier is activated this corner will appear different
  (seems to be darker). Another modifier is the grey stone.
 
-                   Table 3.4: Stone modifiers on seed position
+                   Table 3.6: Stone modifiers on seed position
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Modifier       Seed Positions
   ~~~~~~~~       ~~~~ ~~~~~~~~~
@@ -603,7 +675,7 @@ Table of Contents
  The guard_colour is the palette the guard has (see 4.8).
  The default colours are in this table:
 
-                   Table 3.4: Default Guard colours
+                   Table 3.7: Default Guard colours
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Code Pants     Cape
@@ -619,7 +691,7 @@ Table of Contents
  Other codes may generate random colours because the game is reading
  the palette from trashed memory. This may also cause a game crash.
  It should (never tested) be possible to add new colours in the guard
- palette resource (see 4.8) avoiding the crash due to this reason.
+ palette resource (see 3.8) avoiding the crash due to this reason.
 
 
 3.4.5 Starting Position
@@ -683,7 +755,7 @@ Table of Contents
 3.5. Digital Waves
  Read them as raw digital wave sound using the following specifications:
 
-                   Table 3.4: Wave Specifications
+                   Table 3.8: Wave Specifications
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Size of Format: 16
   Format:         PCM
