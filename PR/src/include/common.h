@@ -64,9 +64,9 @@ common.h: Princed Resources : Defines and prototypes common to all PR code
 |                     PR Specific Defines                       |
 \***************************************************************/
 
-#define PR_URL                    "http://www.princed.com.ar"
-#define PR_VERSION                "v1.3-dev2"
-#define PR_COPY                   "(c) Copyright 2003-2006 Princed Development Team"
+#define PR_URL                    "http://www.princed.org"
+#define PR_VERSION                "v1.3-dev3"
+#define PR_COPY                   "(c) Copyright 2003-2007 Princed Development Team"
 
 /***************************************************************\
 |                         Other defines                         |

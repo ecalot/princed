@@ -51,7 +51,7 @@ tree.c: Princed Resources : Specific XML tree handling routines
 \***************************************************************/
 
 #define XML_HEADER \
-	"<!DOCTYPE resources SYSTEM \"http://www.princed.com.ar/standards/xml/resources/std1.dtd\">\n"\
+	"<!DOCTYPE resources SYSTEM \"http://www.princed.org/standards/xml/resources/std1.dtd\">\n"\
 	"<?xml version=\"1.0\" ?>\n"
 
 /***************************************************************\
