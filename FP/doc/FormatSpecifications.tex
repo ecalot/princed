@@ -14,37 +14,37 @@ Table of Contents
 3.2.2 Algorithms ...................................................... 216
 3.2.2.1 Run length encoding (RLE) ..................................... 232
 3.2.2.2 LZ variant (LZG) .............................................. 244
-3.3. Palettes ......................................................... 302
-3.4. Levels ........................................................... 385
-3.4.1 Unknown blocks .................................................. 416
-3.4.2 Room mapping .................................................... 434
-3.4.2.1 Wall drawing algorithm ........................................ 570
-3.4.3 Room linking .................................................... 638
-3.4.4 Guard handling .................................................. 654
-3.4.5 Starting Position ............................................... 702
-3.4.6 Door events ..................................................... 716
-3.5. Digital Waves .................................................... 760
-3.6. Midi music ....................................................... 777
-3.7. Internal PC Speaker .............................................. 780
-3.8. Binary files ..................................................... 785
-3.9. Levels in POP1 for Mac ........................................... 791
-4. DAT v2.0 Format Specifications ..................................... 826
-4.1. General file specs, index and checksums .......................... 829
-4.1.1 The master index ................................................ 856
-4.1.2 The slave indexes ............................................... 905
-4.2. Levels ........................................................... 939
-4.2.1 Room mapping .................................................... 961
-4.2.2 Door events .................................................... 1054
-4.2.3 Guard handling ................................................. 1075
-4.2.3.1 Static guards ................................................ 1088
-4.2.3.2 Dynamic guards ............................................... 1135
-5. PLV v1.0 Format Specifications .................................... 1168
-5.1. User data ....................................................... 1195
-5.2. Allowed Date format ............................................. 1225
-6. The SAV v1.0 format ............................................... 1239
-7. The HOF v1.0 format ............................................... 1285
-8. Credits ........................................................... 1308
-9. License ........................................................... 1330
+3.3. Palettes ......................................................... 304
+3.4. Levels ........................................................... 387
+3.4.1 Unknown blocks .................................................. 418
+3.4.2 Room mapping .................................................... 436
+3.4.2.1 Wall drawing algorithm ........................................ 572
+3.4.3 Room linking .................................................... 640
+3.4.4 Guard handling .................................................. 656
+3.4.5 Starting Position ............................................... 704
+3.4.6 Door events ..................................................... 718
+3.5. Digital Waves .................................................... 762
+3.6. Midi music ....................................................... 779
+3.7. Internal PC Speaker .............................................. 782
+3.8. Binary files ..................................................... 787
+3.9. Levels in POP1 for Mac ........................................... 793
+4. DAT v2.0 Format Specifications ..................................... 828
+4.1. General file specs, index and checksums .......................... 831
+4.1.1 The master index ................................................ 858
+4.1.2 The slave indexes ............................................... 907
+4.2. Levels ........................................................... 941
+4.2.1 Room mapping .................................................... 963
+4.2.2 Door events .................................................... 1056
+4.2.3 Guard handling ................................................. 1077
+4.2.3.1 Static guards ................................................ 1090
+4.2.3.2 Dynamic guards ............................................... 1137
+5. PLV v1.0 Format Specifications .................................... 1170
+5.1. User data ....................................................... 1197
+5.2. Allowed Date format ............................................. 1227
+6. The SAV v1.0 format ............................................... 1241
+7. The HOF v1.0 format ............................................... 1287
+8. Credits ........................................................... 1310
+9. License ........................................................... 1332
 
 
 1. Preamble
@@ -83,7 +83,7 @@ Table of Contents
  Both versions of DAT are supported and may be manipulated by PR. This
  program works like a file archiver and extracts the files in known formats
  that may be handled by other programs. For more information about PR
- check the princed home page at http://www.princed.org.
+ check the Princed home page at http://www.princed.org.
 
  In this document you will also find the SAV and HOF format specifications
  and the algorithm used by POP1 to draw the dungeon walls.
@@ -214,7 +214,7 @@ Table of Contents
  algorithm specified by those 4 bits.
 
 3.2.2 Algorithms
- RAW_LR means that the data wasn't compressed, it is used for small images.
+ RAW_LR means that the data was not compressed, it is used for small images.
         The format is saved from left to right (LR) serialising a line to
         the next integer byte if necessary. In case the image was 16
         colours, two pixels per byte (4bpp) will be used. In case the image
@@ -354,7 +354,7 @@ Table of Contents
  Remember EGA has 16 colours, so is represented in 4 bits and CGA has 4
  simultaneous colours represented in 2 bits.
 
- The cga_patterns block stores 16 records of one byte each, sparated in
+ The cga_patterns block stores 16 records of one byte each, separated in
  four parts, so the format is aabbccdd where aa is a two bit colour in one
  of the two CGA palettes (palette 1 is normally used in the dungeon
  environment and 2 in the palace environment).
@@ -418,19 +418,19 @@ Table of Contents
 3.4.1 Unknown blocks
  Blocks described in this section are: Unknown from I to IV.
 
- Unknown III and IV blocks doesn't affect the level if changed, if you find
- out what they are used to we will welcome your specification text.
+ Unknown III and IV blocks does not affect the level if changed, if you
+ find out what they are used to we will welcome your specification text.
 
  Unknown I may corrupt the level if edited.
 
  We believe unknown II has something to do with the start position, but we
- don't know about it.
+ do not know about it.
 
  As unknown II were all zeros for each level in the original set, it was a
  team decision to use those bytes for format extension. If one of them is
  not the default 00 00 00 hex then the level was extended by the team.
  Those extensions are only supported by RoomShaker at this  moment. To see
- how those extensions were defined read the appendix I'll write some day.
+ how those extensions were defined read the appendix I will write some day.
  For the moment you may contact us if you need to know that.
 
 3.4.2 Room mapping
@@ -566,11 +566,11 @@ Table of Contents
   wall   0x01 +Normal  -No Blue line
 
  Note: Some modifiers have not been tested, there may be any other unknown
-       tile type we didn't discover.
+       tile type we have not still discover.
 
 
 3.4.2.1 Wall drawing algorithm
- This section doesn't have a direct relation with the format because it
+ This section does not have a direct relation with the format because it
  describes how the walls must be drawn on the room. However, as this
  information should be useful to recreate a cloned room read from the
  format we decided to include this section to the document.
@@ -629,12 +629,12 @@ Table of Contents
  size the stone separation offset is saved in the seed.
  For the first row, the stones are all the same size and the seed is not
  needed.
- For the second row we've got the first 20 values, ordered from 1 to 20. 
+ For the second row we have got the first 20 values, ordered from 1 to 20. 
  position        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
  offsets:        5,4,3,3,1,5,4,2,1, 1, 5, 3, 2, 1, 5, 4, 3, 2, 5, 4
  separator size: 0,1,1,0,0,0,1,1,0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0
 
- We'll be adding the next values as soon as we count the pixels ;)
+ We will be adding the next values as soon as we count the pixels ;)
  This information can be found in walls.conf file from FreePrince.
 
 3.4.3 Room linking
@@ -651,7 +651,7 @@ Table of Contents
  byte per each side in the order left (0), right (1), up (2), down (3).
  The number 0 is used when there is no room there.
  Cross links should be made to allow the kid passing from a room to
- another and then coming back to the same room but it's not a must.
+ another and then coming back to the same room but it is not a must.
 
 3.4.4 Guard handling
  This section specifies the blocks: guard_location, guard_direction,
@@ -740,7 +740,7 @@ Table of Contents
  Each door block has 256 bytes, one per event line. Each event line is
  located in an offset that is the event line ID, so event line 30 is
  located in the byte 30 of each block.
- There is a door I part of an event line and a door II part of it. We'll
+ There is a door I part of an event line and a door II part of it. We will
  define them as byte I and byte II.
  You can find there: the door room, the door location, and the
  trigger-next flag. The format is the following:
@@ -829,7 +829,7 @@ Table of Contents
    ~~~ ~~~~ ~~~~~~ ~~~~~~~~~~~~~~
 
 4.1. General file specs, index and checksums
- POP2 DAT files aren't much different from their POP1 predecessors.
+ POP2 DAT files are not much different from their POP1 predecessors.
  The format is similar in almost each way. The main difference is in the
  index. As DAT v1.0 used an index in the high data, the DAT v2.0 indexes
  are two level encapsulated inside a high data. So there is an index of
@@ -920,7 +920,7 @@ Table of Contents
   - Relative offset 6, size 2, type US: Size of the item
            (not including the checksum byte)
   - Relative offset 8, size 3, type binary: A flags mask
-           (in "shap" indexes it's always 0x40 0x00 0x00;
+           (in "shap" indexes it is always 0x40 0x00 0x00;
            in others 0x00 0x00 0x00)
 
  Finally, we can locate whatever item we want if we have the
@@ -1076,7 +1076,7 @@ Table of Contents
 
 4.2.3 Guard handling
  This section explains how guards are handled. In POP2 there are two
- different types of guards. We'll call them static and dynamic guards.
+ different types of guards. We will call them static and dynamic guards.
  Static guards are the normal guards that are waiting in a room like in
  POP1. In the other hand, dynamic guards are the ones who appear in the
  room running from one of the sides. Each type of guard is attached to a
@@ -1096,7 +1096,7 @@ Table of Contents
  
  The pop2_static_guard block has a size of 3712 divided in 32 sub-blocks of
  116 bytes each. As there is a correspondence between each sub-block and
- the room with this number, we'll call them "room guard blocks".
+ the room with this number, we will call them "room guard blocks".
  
  A room guard block has a size of 116 divided this way:
  - 1 byte for the number of guards present in this room.
@@ -1122,7 +1122,7 @@ Table of Contents
  Byte 10 is the guard number (0 for the first one, 1 for the second, etc).
  Bytes 11,12,13 and 14 are unknown, mostly 0, but in 10 guards it is
   0x52756e2d.
- Byte 15 is the type (0-8 and 84), but doesn't apply in all levels,
+ Byte 15 is the type (0-8 and 84), but does not apply in all levels,
   ie. 5 head, 8 snake.
  Byte 16 is the hit points of the guard (0 to 8).
  Bytes 17 and 18 are the activate triggers for skeletons, byte 17 is
@@ -1332,7 +1332,7 @@ Table of Contents
 9. License
    ~~~~~~~
 
-      Copyright (c)  2004, 2005, 2006 The Princed Project Team
+      Copyright (c)  2004, 2005, 2006,2007 The Princed Project Team
       Permission is granted to copy, distribute and/or modify this document
       under the terms of the GNU Free Documentation License, Version 1.2
       or any later version published by the Free Software Foundation;
