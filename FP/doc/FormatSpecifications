@@ -214,7 +214,8 @@ Table of Contents
  algorithm specified by those 4 bits.
 
 3.2.2 Algorithms
- RAW_LR means that the data was not compressed, it is used for small images.
+ RAW_LR means that the data has not been compressed in any way, it is used
+        for small images.
         The format is saved from left to right (LR) serialising a line to
         the next integer byte if necessary. In case the image was 16
         colours, two pixels per byte (4bpp) will be used. In case the image
@@ -780,9 +781,17 @@ Table of Contents
  Standard midi files
 
 3.7. Internal PC Speaker
- We are not so sure about it, but we think it is:
-  2 unique bytes for headers
-  3 bytes per note (2 for frequency and 1 for duration)
+ Header: 3 bytes
+  First byte: 0x00 (or 0x80 sometimes).
+  Next 2 bytes: how many beats per 2 seconds.
+
+ Body: numberOfNotes*3
+  Then, 3 bytes for each note:
+   - 2 bytes: US for frequency in hertz (0 if no sound, 1 or 2 if marker).
+   - 1 byte:  UC for length in beats.
+
+ Footer: 2 bytes
+  Last 2 bytes: 0x12 0x00.
 
 3.8. Binary files
  Some binary files contains relevant information
@@ -1313,6 +1322,7 @@ Table of Contents
  This document:
   Writing . . . . . . . . . . . . . . . . . . . . . . . . . Enrique Calot
   Corrections . . . . . . . . . . . . . . . . . . . . .  Patrik Jakobsson
+                                                              Hubai Tamas
 
  Reverse Engineering:
   Indexes . . . . . . . . . . . . . . . . . . . . . . . . . Enrique Calot
@@ -1324,6 +1334,7 @@ Table of Contents
   LZG Compression . . . . . . . . . . . . . . . . . . . . . Anke Balderer
                                                              Diego Essaya
   Sounds . . . . . . . . . . . . . . . . . . . . . . . Christian Lundheim
+  Palettes and Speaker Sounds . . . . . . . . . . . . . . . . . . . David
 
  PLV v1.0:
   Definition . . . . . . . . . . . . . . . . . . . . . . .  Brendon James
@@ -1332,7 +1343,7 @@ Table of Contents
 9. License
    ~~~~~~~
 
-      Copyright (c)  2004, 2005, 2006,2007 The Princed Project Team
+      Copyright (c)  2004, 2005, 2006, 2007 The Princed Project Team
       Permission is granted to copy, distribute and/or modify this document
       under the terms of the GNU Free Documentation License, Version 1.2
       or any later version published by the Free Software Foundation;
