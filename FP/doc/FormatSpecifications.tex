@@ -7,44 +7,44 @@ Table of Contents
 ~~~~~ ~~ ~~~~~~~~
 1. Preamble ............................................................ 50
 2. Introduction ........................................................ 59
-3. DAT v1.0 Format Specifications ...................................... 92
-3.1. General file specs, index and checksums ........................... 95
-3.2. Images ........................................................... 187
-3.2.1 Headers ......................................................... 191
-3.2.2 Algorithms ...................................................... 216
-3.2.2.1 Run length encoding (RLE) ..................................... 232
-3.2.2.2 LZ variant (LZG) .............................................. 244
-3.3. Palettes ......................................................... 304
-3.4. Levels ........................................................... 387
-3.4.1 Unknown blocks .................................................. 418
-3.4.2 Room mapping .................................................... 436
-3.4.2.1 Wall drawing algorithm ........................................ 572
-3.4.3 Room linking .................................................... 640
-3.4.4 Guard handling .................................................. 656
-3.4.5 Starting Position ............................................... 704
-3.4.6 Door events ..................................................... 718
-3.5. Digital Waves .................................................... 762
-3.6. Midi music ....................................................... 779
-3.7. Internal PC Speaker .............................................. 782
-3.8. Binary files ..................................................... 787
-3.9. Levels in POP1 for Mac ........................................... 793
-4. DAT v2.0 Format Specifications ..................................... 828
-4.1. General file specs, index and checksums .......................... 831
-4.1.1 The master index ................................................ 858
-4.1.2 The slave indexes ............................................... 907
-4.2. Levels ........................................................... 941
-4.2.1 Room mapping .................................................... 963
-4.2.2 Door events .................................................... 1056
-4.2.3 Guard handling ................................................. 1077
-4.2.3.1 Static guards ................................................ 1090
-4.2.3.2 Dynamic guards ............................................... 1137
-5. PLV v1.0 Format Specifications .................................... 1170
-5.1. User data ....................................................... 1197
-5.2. Allowed Date format ............................................. 1227
-6. The SAV v1.0 format ............................................... 1241
-7. The HOF v1.0 format ............................................... 1287
-8. Credits ........................................................... 1310
-9. License ........................................................... 1332
+3. DAT v1.0 Format Specifications ...................................... 93
+3.1. General file specs, index and checksums ........................... 96
+3.2. Images ........................................................... 188
+3.2.1 Headers ......................................................... 192
+3.2.2 Algorithms ...................................................... 217
+3.2.2.1 Run length encoding (RLE) ..................................... 234
+3.2.2.2 LZ variant (LZG) .............................................. 246
+3.3. Palettes ......................................................... 306
+3.4. Levels ........................................................... 389
+3.4.1 Unknown blocks .................................................. 420
+3.4.2 Room mapping .................................................... 438
+3.4.2.1 Wall drawing algorithm ........................................ 574
+3.4.3 Room linking .................................................... 642
+3.4.4 Guard handling .................................................. 658
+3.4.5 Starting Position ............................................... 706
+3.4.6 Door events ..................................................... 720
+3.5. Digital Waves .................................................... 764
+3.6. Midi music ....................................................... 781
+3.7. Internal PC Speaker .............................................. 786
+3.8. Binary files ..................................................... 799
+3.9. Levels in POP1 for Mac ........................................... 805
+4. DAT v2.0 Format Specifications ..................................... 840
+4.1. General file specs, index and checksums .......................... 843
+4.1.1 The master index ................................................ 870
+4.1.2 The slave indexes ............................................... 919
+4.2. Levels ........................................................... 953
+4.2.1 Room mapping .................................................... 975
+4.2.2 Door events .................................................... 1068
+4.2.3 Guard handling ................................................. 1089
+4.2.3.1 Static guards ................................................ 1102
+4.2.3.2 Dynamic guards ............................................... 1149
+5. PLV v1.0 Format Specifications .................................... 1182
+5.1. User data ....................................................... 1209
+5.2. Allowed Date format ............................................. 1239
+6. The SAV v1.0 format ............................................... 1253
+7. The HOF v1.0 format ............................................... 1299
+8. Credits ........................................................... 1322
+9. License ........................................................... 1346
 
 
 1. Preamble
@@ -81,9 +81,10 @@ Table of Contents
  level inside.
 
  Both versions of DAT are supported and may be manipulated by PR. This
- program works like a file archiver and extracts the files in known formats
- that may be handled by other programs. For more information about PR
- check the Princed home page at http://www.princed.org.
+ program works like an archive manager (i.e. pkzip) and extracts the files
+ in known formats that may be handled by other programs. For more
+ information about PR check the Princed home page at
+ http://www.princed.org
 
  In this document you will also find the SAV and HOF format specifications
  and the algorithm used by POP1 to draw the dungeon walls.
@@ -774,11 +775,13 @@ Table of Contents
   Block Align:    1
 
  GNU/Linux users can play the raw waves just dropping them inside /dev/dsp
- As dat headers are very small it is valid to type in a shell console with
+ As DAT headers are very small it is valid to type in a shell console with
  dsp write access: cat digisnd?.dat>/dev/dsp to play the whole wave files.
 
 3.6. Midi music
- Standard midi files
+ Standard MIDI files. There have been reports that some versions of MIDI
+ did not work, but we believe this can bi fixed saving in other MIDI
+ format variant (like type 0).
 
 3.7. Internal PC Speaker
  Header: 3 bytes
