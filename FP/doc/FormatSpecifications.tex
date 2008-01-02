@@ -2,9 +2,12 @@
 \usepackage[dvips]{graphicx}
 \usepackage{makeidx}
 \makeindex
+
 \author{Princed Development Team}
 \title{Prince~of~Persia\\ Specifications of\\ File Formats}
+
 \begin{document}
+
 \maketitle
 \tableofcontents
 \newpage
@@ -19,7 +22,7 @@
 
 \section{Introduction}
 
- There are two versions of the DAT file format: DAT v1.0 used in POP 1.x
+ There are two versions of the \index{DAT} DAT file format: DAT v1.0 used in POP 1.x
  and DAT v2.0 used in POP 2. In this document we will specify DAT v1.0.
 
  DAT files were made to store levels, images, palettes, wave, midi and
@@ -40,14 +43,14 @@
  PLV files use the extension defined to support a format with only one
  level inside.
 
- Both versions of DAT are supported and may be manipulated by PR. This
+ Both versions of DAT are supported and may be manipulated by \index{PR} PR. This
  program works like an archive manager (i.e. pkzip) and extracts the files
  in known formats that may be handled by other programs. For more
  information about PR check the Princed home page at
  {\it http://www.princed.org}.
 
- In this document you will also find the SAV and HOF format specifications
- and the algorithm used by POP1 to draw the dungeon walls.
+ In this document you will also find the \index{SAV} SAV and \index{HOF} HOF format specifications
+ and the algorithm used by POP1 to draw the \index{dungeon!walls} dungeon walls.
 
 
 \section{DAT v1.0 Format Specifications}
@@ -75,7 +78,7 @@
        i.e. 32 is 20 (0010 0000)\\
        Range: 0 to 255\\
        1 byte}
-\item[US]{Unsigned Short: Little endian, 16 bits, storing two groups of 8 bits
+\item[US]{Unsigned Short: \index{Little endian} Little endian, 16 bits, storing two groups of 8 bits
        ordered from the less representative to the most representative
        without sign.\\
        i.e. 65534 is FFFE in hex and is stored FE FF (1111 1110  1111 1111)\\
@@ -103,7 +106,7 @@
 
 \subsubsection{Index structures}
 
- The DAT header: Size = 6 bytes
+ The \index{DAT} DAT header: Size = 6 bytes
   - Offset 0, size 4, type UL: IndexOffset
            (the location where the index begins)
   - Offset 4, size 2, type US: IndexSize
@@ -135,7 +138,7 @@
 
 \subsubsection{Checksums byte}
 
- There is a checksum byte for each item (resource), this is the first byte
+ There is a \index{checksum} checksum byte for each item (resource), this is the first byte
  of the item, the rest of the bytes are the item data. The item type is not
  stored and may only be determined by reading the data and applying some
  filters, unfortunately this method may fail. When you extract an item you
@@ -253,14 +256,13 @@
 %           |--------------------------------|
 %                    window size=1023
 \begin{figure}[h]
-\centerline{\includegraphics[width=10cm]{lzg.eps}}
-\vspace*{8pt}
+\centerline{\includegraphics{lzg.eps}}
 \caption{Distribution of the sindow size.}
 \end{figure}
 
-
- The algorithm works as follows:
-
+\pagebreak[2]
+ The algorithm works as follows:\\
+\begin{verbatim}
  While there is unread input data:
      Create a maskbyte.
      For each bit in the maskbyte (and there is still unread input data):
@@ -277,6 +279,8 @@
              Copy the current input byte in the next output byte.
              Advance output pointer by 1.
              Advance input pointer by 1.
+\end{verbatim}
+\pagebreak[2]
 
  For a better understanding of the algorithm we strongly recommend to read
  the PR source files lzg\_uncompress.c and lzg\_compress.c that may be
@@ -284,8 +288,8 @@
  in the PR repository module.
 
 \subsection{Palettes}
- Palette resources store a palette for the VGA and patterns for the CGA and
- EGA. Each palette resource is sized 100 bytes distributed as explained in Table~\ref{palettes table}:
+ Palette resources store a palette for the \index{VGA} VGA and patterns for the \index{CGA} CGA and
+ \index{EGA} EGA. Each palette resource is sized 100 bytes distributed as explained in Table~\ref{palettes table}:
 
 \begin{table}
 \begin{tabular}{ccl}
@@ -340,8 +344,8 @@
 \end{table}
 
 
- Where EGA is the only one palette used in EGA mode of the game and CGA1
- and CGA2 are the two palettes used in the CGA mode.
+ Where \index{EGA} EGA is the only one palette used in EGA mode of the game and CGA1
+ and CGA2 are the two palettes used in the \index{CGA} CGA mode.
  As the palettes are always the same, but the graphics are in 16 colours,
  some patterns are used instead of colours.
  Remember EGA has 16 colours, so is represented in 4 bits and CGA has 4
@@ -349,7 +353,7 @@
 
  The cga\_patterns block stores 16 records of one byte each, separated in
  four parts, so the format is aabbccdd where aa is a two bit colour in one
- of the two CGA palettes (palette 1 is normally used in the dungeon
+ of the two CGA palettes (palette 1 is normally used in the \index{dungeon!environment} dungeon
  environment and 2 in the palace environment).
  
  The pattern is arranged in a 2x2 box and each pixel is denoted:
@@ -377,7 +381,7 @@
   0010 1111  -  2  15  -  brown  white
   1111 0010  -  15 2   -  white  brown
 
-\subsection{Levels}
+\subsection{Levels \label{level blocks}}
  This table has a summary of the blocks to be used in this section,
  you can refer it from the text below.
 
@@ -388,6 +392,8 @@
 \hline
   720   & 0      & pop1\_foretable \\
   720   & 720    & pop1\_backtable \\
+\index{foretable}
+\index{backtable}
   256   & 1440   & door I \\
   256   & 1696   & door II \\
   96    & 1952   & links \\
@@ -658,7 +664,7 @@
  We will be adding the next values as soon as we count the pixels ;)
  This information can be found in walls.conf file from FreePrince.
 
-\subsubsection{Room linking} %3.4.3
+\subsubsection{Room linking \label{room linking}} %3.4.3
  This section describes the links block.
 
  Each room is linked to another by each of the four sides. Each link
@@ -700,7 +706,7 @@
 
 % TODO: add a skill table
 
- The guard\_colour is the palette the guard has (see 4.8).
+ The guard\_colour is the palette the guard has (see Section~\ref{binary files}).
  The default colours are in this table:
 
 \begin{table}
@@ -724,10 +730,10 @@ Code & Pants    & Cape \\
  Other codes may generate random colours because the game is reading
  the palette from trashed memory. This may also cause a game crash.
  It should (never tested) be possible to add new colours in the guard
- palette resource (see 3.8) avoiding the crash due to this reason.
+ palette resource (see Section~\ref{binary files}) avoiding the crash due to this reason.
 
 
-\subsubsection{Starting Position} %3.4.5
+\subsubsection{Start Position \label{start position}} %3.4.5
  This section describes the start\_position block.
 
  This block stores where and how the kid starts in the level. Note that all
@@ -735,10 +741,10 @@ Code & Pants    & Cape \\
  the level starts.
 
  This block has 3 bytes.
- The first byte is the room, allowed values are from 1 to 24.
- The second byte is the location, see the section \ref{room mapping} for the location
+ The first byte is the \index{room} room, allowed values are from 1 to 24.
+ The second byte is the \index{location} location, see the section \ref{room mapping} for the location
  format specifications.
- The third byte is the direction, see \ref{guard handling} for the direction format
+ The third byte is the \index{direction} direction, see \ref{guard handling} for the direction format
  specifications.
 
 \subsubsection{Door events\label{door events}} %3.4.6
@@ -749,7 +755,7 @@ Code & Pants    & Cape \\
  event line is a link to a door that will be activated. If the event was
  triggered with the action close, then the event will close the door, if
  the action was open then the event will open the door. An event line has
- also a flag to trigger the next event line or not.
+ also a flag to \index{trigger} trigger the next event line or not.
  An event is defined as a list of event lines, from the first to the last.
  The last must have the trigger-next-event-line flag off. This is like a
  list of doors that performs an action.
@@ -828,7 +834,7 @@ Code & Pants    & Cape \\
  Footer: 2 bytes
   Last 2 bytes: 0x12 0x00.
 
-\subsection{Binary files}
+\subsection{Binary files \label{binary files}}
  Some binary files contains relevant information
  The resource number 10 in prince.dat has the VGA guard palettes in it
  saving n records of a 16-colour-palette of 3 bytes in the specified
@@ -875,7 +881,6 @@ Code & Pants    & Cape \\
 
 
 \section{DAT v2.0 Format Specifications}
-   ~~~ ~~~~ ~~~~~~ ~~~~~~~~~~~~~~
 
 \subsection{General file specs, index and checksums}
  POP2 DAT files are not much different from their POP1 predecessors.
@@ -901,24 +906,24 @@ Code & Pants    & Cape \\
 
  The high data part of the file contains multiple encapsulated indexes.
  Each of those index is indexed in a high data index of indexes. We will
- call this index the «master index» and the sub index the «slave indexes».
+ call this index the \index{Index!Master} {\it master index} and the sub index the \index{Index!Slave} {\it slave indexes}.
  Slave indexes are the real file contents index.
 
 \subsubsection{The master index} %4.1.1
  The master index is made with:
-  - Offset HighDataOffset,   size 2, type US: NumberOfSlaveIndexes
+  - Offset $HighDataOffset$,   size 2, type US: NumberOfSlaveIndexes
            (the number of the high data sections)
-  - Offset HighDataOffset+2, size NumberOfSlaveIndexes*6: The master index
+  - Offset $HighDataOffset+2$, size $NumberOfSlaveIndexes*6$: The master index
            record (a list of NumberOfSlaveIndexes blocks of 6-bytes-length
            index record each corresponding to one slave index)
 
  The 6-bytes-length index record (one per item): Size = 6 bytes
   - Relative offset 0, size 4, type sting: 4 ASCII bytes string denoting
            the Slave Index ID. The character order is inverted.
-  - Relative offset 4, size 2, type US: SlaveIndexOffset
+  - Relative offset 4, size 2, type US: $SlaveIndexOffset$
            (slave index offset relative to HighDataOffset)
 
- From the end of the DAT High Data Master Index to the end of the file
+ From the end of the \index{Index!Master} DAT High Data Master Index to the end of the file
  we will find the High Data section contents (where the HighDataOffset
  relative offsets points to). This content has a set of second indexes
  each called Slave Index. So, to find a Slave Index offset you have to
@@ -927,9 +932,9 @@ Code & Pants    & Cape \\
 
  There are different 4-byte-length ASCII strings called Slave Index IDs.
  When the string is less than 4 bytes, a tailing byte 0x00 is used. We will
- denote it with the cardinal \# symbol. The character order is inverted, so
- for example the text SLAP becomes PALS, MARF becomes FRAM, \#\#\#\# becomes
- empty or RCS\# becomes SCR. They must be in upper case.
+ denote it with the null-space symbol ``\textvisiblespace''. The character order is inverted, so
+ for example the text SLAP becomes PALS, MARF becomes FRAM, \textvisiblespace\textvisiblespace\textvisiblespace\textvisiblespace
+ \ becomes empty or RCS\textvisiblespace \ becomes SCR. They must be in upper case.
 
 \begin{table}
 \begin{tabular}{ccl}
@@ -940,25 +945,25 @@ Code & Pants    & Cape \\
  ``font''& TNOF  & Fonts \\
  ``fram''& MARF  & Frames \\
  ``palc''& CLAP  & CGA Palette \\
- ``pals''& SLAP  & SVGA Palette \\
+ ``pals''& SLAP  & SVGA Palette \index{palette} \\
  ``palt''& TLAP  & TGA Palette \\
  ``piec''& CEIP  & Pieces   \\
- ``psl'' & LSP\#  & ?  \\
- ``scr'' & RCS\#  & Screens (images that have the full room) \\
+ ``psl'' & LSP\textvisiblespace  & ?  \\
+ ``scr'' & RCS\textvisiblespace  & Screens (images that have the full room) \\
  ``shap''& PAHS  & Shapes (normal graphics) \\
  ``shpl''& LPHS  & Shape palettes \\
  ``strl''& LRTS  & Text \\
- ``snd'' & DNS\#  & Sound \\
+ ``snd'' & DNS\textvisiblespace  & Sound \\
  ``seqs''& SQES  & Midi sequences \\
  ``txt4''& 4TXT  & Text \\
- ``''    & \#\#\#\#  & Levels \\
+ ``''    & \textvisiblespace\textvisiblespace\textvisiblespace\textvisiblespace  & Levels \\
 \hline
 \end{tabular}
 \caption{Slave Index ID strings}
 \label{slave indexes}
 \end{table}
 
-\subsubsection{The slave indexes} %4.1.2
+\subsubsection{The slave indexes \label{slave indexes}} %4.1.2
  All encapsulated sections pointed by the Master Index are Slave Indexes.
  The slave index is specified with:
   - Offset SlaveIndexOffset,   size 2, type US: NumberOfItems
@@ -1004,9 +1009,9 @@ Code & Pants    & Cape \\
  960   & 0      & pop2\_foretable \\
  3840  & 960    & pop2\_backtable \\
  1280  & 4800   & pop2\_doors \\
- 128   & 6080   & links (as explained in section 3.4.3 but having 32 rooms) \\
+ 128   & 6080   & links (as explained in Section~\ref{room linking} but having 32 rooms) \\
  32    & 6208   & unknown I \\
- 3     & 6240   & start\_position (as explained in section 3.4.5) \\
+ 3     & 6240   & start\_position (as explained in Section~\ref{start position}) \\
  4     & 6243   & unknown II (00 01 00 02) (check pop1) \\
  3712  & 6247   & pop2\_static\_guard \\
  1088  & 9959   & pop2\_dynamic\_guard \\
@@ -1019,7 +1024,7 @@ Code & Pants    & Cape \\
 
  All levels have a size of 12025.
 
-\subsubsection{Room mapping} %4.2.1
+\subsubsection{Room mapping \label{dat2 room mapping}} %4.2.1
  You should read section \ref{room mapping} before reading this one.
  A POP2 level can store a maximum of 32 rooms of 30 tiles each, having 
  three stages of 10 tiles each. Rooms are numbered from 1 to 32 (not 0 to 
@@ -1106,7 +1111,7 @@ Code & Pants    & Cape \\
  960 tiles are specified.
  
  The first byte is an unsigned char (UC) association to one of the 256 door
- event registers (see section 4.2.2) if the tile is an activator.
+ event registers (see Section~\ref{door events}) if the tile is an activator.
  In any other case this byte is an extra attribute information byte.
  For example in wall (0x14) having this byte in 0x04 means the wall is
  curved.
@@ -1116,7 +1121,7 @@ Code & Pants    & Cape \\
  
  We believe the special images uses the 3rd or 4th byte.
 
-\subsubsection{Door events} %4.2.2
+\subsubsection{Door events \label{door events}} %4.2.2
  This section explains how doors are handled and specifies the block
  pop2\_door.
 
@@ -1125,7 +1130,7 @@ Code & Pants    & Cape \\
  and activate them. In POP2 events can also activate a floor shooter.
  
  An event is triggered when an activator button (0x22) is pressed. As it is
- specified in the section 4.2.1, the first byte of the attribute mask
+ specified in the Section~\ref{dat2 room mapping}, the first byte of the attribute mask
  belonging to a button tile points it to a door event that is triggered
  when the button is pressed.
  There is a maximum of 256 events because of the unsigned char of the first
@@ -1244,18 +1249,18 @@ Code & Pants    & Cape \\
       1     & 8& PLV version                 & UC    & 0x01 \\
       1     & 9& Level Number                & UC \\
       4    & 10& Number of fields            & UL \\
-      4    & 14& Block 1: Level size (B1)    & UL    & 2306/2305 \\
-     B1    & 18& Block 1: Level code         & - \\
-      4 & 18+B1& Block 2: User data size (B2)& UL \\
-     B2 & 22+B1& Block 2: User data          & - \\
+      4    & 14& Block 1: Level size ($B_1$)    & UL    & 2306/2305 \\
+     $B_1$    & 18& Block 1: Level code         & - \\
+      4 & $18+B_1$& Block 2: User data size ($B_2$)& UL \\
+     $B_2$ & $22+B_1$& Block 2: User data          & - \\
 \hline
 \end{tabular}
 \caption{PLV blocks}
 \label{palettes table}
 \end{table}
 
- Level code is the exact level as described in 4.4 including the checksum
- byte. Note that Level size (B1)  also includes the checksum byte in the
+ Level code is the exact level as described in Section~\ref{level blocks} including the checksum
+ byte. Note that Level size ($B_1$) also includes the checksum byte in the
  count.
  POP version is 1 for POP1 and 2 for POP2.
  PLV version is 1 for PLV v1.0.
@@ -1266,8 +1271,10 @@ Code & Pants    & Cape \\
  User data is a block of extensible information, Number of fields is the
  count of each field/value information pair. A pair is saved in the
  following format:
+\begin{verbatim}
   field\_name\\0value\\0
- where \\0 is the null byte (0x00) and field\_name and value are strings.
+\end{verbatim}
+ where \textbackslash0 is the null byte (0x00) and field\_name and value are strings.
 
  There are mandatory pairs that must be included in all PLV files.
  Those are:
@@ -1385,33 +1392,40 @@ Code & Pants    & Cape \\
  In case there is no record, the 29 bytes spaces must be filled with zeros
  in order to complete the whole file and give it the size of $2+29*6 = 176$.
 
-
+\pagebreak[3]
 \section{Credits}
+\begin{center}
+\parbox{11.6cm}{
+\raggedright {\it This document} \\
+  Writing                     \dotfill Enrique Calot \\
+  Corrections                 \dotfill Patrik Jakobsson \\
+                           \raggedleft Hubai Tamas \\ 
+\bigskip
+\pagebreak[2]
+\raggedright {\it Reverse Engineering} \\
+  Indexes                     \dotfill Enrique Calot \\
+  Levels                      \dotfill Enrique Calot \\
+                           \raggedleft Brendon James \\
+  MAC Levels                  \dotfill Dongsoo Lim \\
+  Images                      \dotfill Tammo Jan Dijkema \\
+  RLE Compression             \dotfill Tammo Jan Dijkema \\
+  LZG Compression             \dotfill Anke Balderer \\
+                           \raggedleft Diego Essaya \\
+  Sounds                      \dotfill Christian Lundheim \\
+  Palettes and Speaker Sounds \dotfill David \\
+\bigskip
+\pagebreak[2]
+\raggedright {\it PLV v1.0} \\
+  Definition                  \dotfill Brendon James \\
+                           \raggedleft Enrique Calot \\
+}
+\end{center}
 
- This document: \\
-  Writing . . . . . . . . . . . . . . . . . . . . . . . . . Enrique Calot \\
-  Corrections . . . . . . . . . . . . . . . . . . . . .  Patrik Jakobsson \\
-                                                              Hubai Tamas \\
- \\
- Reverse Engineering: \\
-  Indexes . . . . . . . . . . . . . . . . . . . . . . . . . Enrique Calot \\
-  Levels . . . . . . . . . . . . . . . . . . . . . . . . .  Enrique Calot \\
-                                                            Brendon James \\
-  MAC Levels . . . . . . . . . . . . . . . . . . . . . . . .  Dongsoo Lim \\
-  Images . . . . . . . . . . . . . . . . . . . . . . .  Tammo Jan Dijkema \\
-  RLE Compression . . . . . . . . . . . . . . . . . . . Tammo Jan Dijkema \\
-  LZG Compression . . . . . . . . . . . . . . . . . . . . . Anke Balderer \\
-                                                             Diego Essaya \\
-  Sounds . . . . . . . . . . . . . . . . . . . . . . . Christian Lundheim \\
-  Palettes and Speaker Sounds . . . . . . . . . . . . . . . . . . . David \\
- \\
- PLV v1.0: \\
-  Definition . . . . . . . . . . . . . . . . . . . . . . .  Brendon James \\
-                                                            Enrique Calot
-
+\pagebreak[3]
 \section{License}
 
-      Copyright (c)  2004 -- 2008 The Princed Project Team
+      Copyright \copyright \ 2004 -- 2008 The Princed Project Team
+\bigskip
       Permission is granted to copy, distribute and/or modify this document
       under the terms of the GNU Free Documentation License, Version 1.2
       or any later version published by the Free Software Foundation;
@@ -1419,8 +1433,9 @@ Code & Pants    & Cape \\
       Texts.  A copy of the license is included in the section entitled
       "GNU Free Documentation License".
 
-\section*{Appendix A}
+\section*{Indexes}
 \listoftables
 \listoffigures
 \printindex
 \end{document}
+
