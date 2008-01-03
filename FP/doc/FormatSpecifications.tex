@@ -56,14 +56,12 @@
 \section{DAT v1.0 Format Specifications}
 
 \subsection{General file specifications}
+ All DAT files have an index, this index has one entry per item with information on each one.
+
+ The index is stored at the very end of the file. But may be located reading the first 6 bytes (as headers) of the file,
+ that are reserved to locate the index and know it's size. The sum of the location and the index size should be the size of the file.
+ 
 \subsubsection{Some definitions}
-
- All DAT files have an index, this index has a number of items count and
- a list of items.
-
- The index is stored at the very end of the file.
-
- The first 6 bytes are reserved to locate the index and know the file size.
 
  Let's define the numbers as:
 \begin{description}
@@ -106,26 +104,61 @@
 
 \subsubsection{Index structures}
 
- The \index{DAT} DAT header: Size = 6 bytes
-  - Offset 0, size 4, type UL: IndexOffset
-           (the location where the index begins)
-  - Offset 4, size 2, type US: IndexSize
-           (the number of bytes the index has)
-           Note that $IndexSize$ is $8*numberOfItems+2$
-           Note that $IndexOffset+IndexSize=file size$
+\begin{center}
+\begin{table}
+\begin{tabular}{cccp{5cm}>{\small}}
+\hline
+Offset & Size & Type & Name & Description \\
+\hline
+0 & 6 & -  & $Header: /home/rodrigo/src/repo-FP/cvsroot/freeprince/FP/doc/FormatSpecifications.tex,v 1.82 2008-01-03 12:12:17 ecalot Exp $ & DAT File header \\ %todo try to find a nice symbol to replace -
+\hline
+0 & 4 & UL & $IndexOffset$ & The location where the index begins \\
+4 & 2 & US & $IndexSize$   & The number of bytes the index has \\
+\hline
+\hline
+$IndexOffset=\alpha$ & $IndexSize$ & - & $Footer$ & The DAT index \\
+\hline
+$\alpha$ & 2 & US & $NumberOfItems$ & Resources count \\
+$\alpha+2=\beta$ & $NumberOfItems*8$ & - & $Index$ & A list of NumberOfItems blocks of 8-bytes-length index record called Entry \\
+\hline
+\hline
+$\beta+8i=\gamma$ & 8 & - & The 8-bytes-length index record (one per item)
+\hline
+$\gamma+ 0$ & 2 & US & $Id(i)$ & Item ID \\
+$\gamma+ 2$ & 4 & UL & $Offset(i)$ & Absolute offset where the resource start \\
+$\gamma+ 6$ & 2 & US & $Size(i)$ & Size of the item not including the checksum byte \\
+\hline
+\end{tabular}
+\caption{DAT file blocks}
+\label{file blocks}
+\end{table}
+\end{center}
+           Note that $IndexSize$ is $8*numberOfItems+2$ \\
+           Note that $IndexOffset+IndexSize=file size$ \\
+           Note that $0 \le i < numberOfItems$ \\
 
- The DAT index: Size = IndexSize bytes
-  - Offset $IndexOffset$,   size 2, type US: NumberOfItems
-           (resources count)
-  - Offset $IndexOffset+2$, size $NumberOfItems*8$: The index
-           (a list of NumberOfItems blocks of 8-bytes-length index record)
+%todo cross reference in table
 
- The 8-bytes-length index record (one per item): Size = 8 bytes
-  - Relative offset 0, size 2, type US: Item ID
-  - Relative offset 2, size 4, type UL: Resource start
-           (absolute offset in file)
-  - Relative offset 6, size 2, type US: Size of the item
-           (not including the checksum byte)
+% The \index{DAT} DAT header: Size = 6 bytes
+%  - Offset 0, size 4, type UL: IndexOffset
+%           (the location where the index begins)
+%  - Offset 4, size 2, type US: IndexSize
+%           (the number of bytes the index has)
+%           Note that $IndexSize$ is $8*numberOfItems+2$
+%           Note that $IndexOffset+IndexSize=file size$
+%
+% The DAT index: Size = IndexSize bytes
+%  - Offset $IndexOffset$,   size 2, type US: NumberOfItems
+%           (resources count)
+%  - Offset $IndexOffset+2$, size $NumberOfItems*8$: The index
+%           (a list of NumberOfItems blocks of 8-bytes-length index record)
+%
+% The 8-bytes-length index record (one per item): Size = 8 bytes
+%  - Relative offset 0, size 2, type US: Item ID
+%  - Relative offset 2, size 4, type UL: Resource start
+%           (absolute offset in file)
+%  - Relative offset 6, size 2, type US: Size of the item
+%           (not including the checksum byte)
 
  Note:
   POP1 doesn't validate a DAT file checking:
@@ -171,15 +204,26 @@
    if it is 1011 (B in hex) then the image has 16 colours
    if it is 0000 (0 in hex) then the image has 2 colours
    so to calculate the bits per pixel there are in the image, just take the
-   last 2 bits and add 1. e. g. 11 is 4 ($2^4=16$ colours) and
-  00 is 1 ($2^1=2$ colours).
-  the last 4 bits are the 5 compression types:
-   from 0 to 4:
-   0 RAW\_LR (0000)
-   1 RLE\_LR (0001)
-   2 RLE\_UD (0010)
-   3 LZG\_LR (0011)
-   4 LZG\_UD (0100)
+   last 2 bits and add 1. e. g. 11 is 4 ($2^4=16$ colours) and 00 is 1 ($2^1=2$ colours).
+  the last 4 bits are the 5 compression types (from 0 to 4) as specified in Table~\ref{algorithm codes}.
+
+\begin{center}
+\begin{table}
+\begin{tabular}{ccl}
+\hline
+Dec & Bin & Algorithm \\
+\hline
+0 & 0000 & RAW\_LR \\
+1 & 0001 & RLE\_LR \\
+2 & 0010 & RLE\_UD \\
+3 & 0011 & LZG\_LR \\
+4 & 0100 & LZG\_UD \\
+\hline
+\end{tabular}
+\caption{Algorithm codes}
+\label{algorithm codes}
+\end{table}
+\end{center}
 
  The following data in the resource is the image compressed with the
  algorithm specified by those 4 bits.
@@ -195,14 +239,14 @@
         colours, two pixels per byte (4bpp) will be used. In case the image
         was 2 colours, 8 pixels per byte (1bpp) will be used.
 }
-\item[RLE\_LR]{has a Run length encoding (RLE) algorithm, after uncompressed the
+\item[RLE\_LR]{has a \index{Run length encoding|see{RLE}} Run length encoding \index{RLE} (RLE) algorithm, after uncompressed the
         image can be read as a RAW\_LR.}
 
 \item[RLE\_UD]{is the same as RLE\_LR except that after uncompressed the bytes in
         the image must be drawn from up to down and then from left to right.}
 
 \item[LZG\_LR]{ has some kind of variant of the LZ77 algorithm (the sliding windows
-        algorithm), here we named it LZG in honour of Lance Groody, the
+        algorithm), here we named it \index{LZG} LZG in honour of Lance Groody, the
         original coder.
         After decompressed it may be handled as RAW\_LR.}
 \item[LZG\_UD]{Uses LZG compression but is drawn from top to bottom as RLE\_UD.}
@@ -213,11 +257,10 @@
  The first byte is always a control byte, the format is SC. If the control
  byte is negative, then the next byte must be repeated n times as the bit
  inverted control byte says, after the next byte (the one that was
- repeated)
- another control byte is stored.
- If the control byte is positive or zero just copy textual the next n bytes
- where n is the control byte plus one. After that, the next byte is the
- following control byte.
+ repeated) another control byte is stored.\\
+ If the control byte is positive or zero just copy textual the next $n$ bytes
+ where $n$ is the control byte plus one. After that, the next byte is the
+ following control byte.\\
  If you reach a control byte but the image size is passed, then you have
  completed the image.
 
@@ -225,8 +268,9 @@
  This is a simplified algorithm explanation:
 
  Definition: ``print'' means to commit a byte into the current location
-             of the output stream.
+             of the output stream.\\
 
+%{\tt
  The output stream is a slide window initialised with zeros.
  The first byte of the input stream is a maskbyte.
  For each of the 8 bits in the maskbyte the next actions must be performed:
@@ -283,14 +327,15 @@
 \pagebreak[2]
 
  For a better understanding of the algorithm we strongly recommend to read
- the PR source files lzg\_uncompress.c and lzg\_compress.c that may be
- located at https://gforge.lug.fi.uba.ar/plugins/scmcvs/cvsweb.php/PR/src/lib/compression/?cvsroot=freeprince
+ the \index{PR} \index{LZG} PR source files {\it lzg\_uncompress.c} and {\it lzg\_compress.c} that may be
+ located at {\it https://gforge.lug.fi.uba.ar/plugins/scmcvs/cvsweb.php/PR/src/lib/compression/?cvsroot=freeprince}
  in the PR repository module.
 
 \subsection{Palettes}
  Palette resources store a palette for the \index{VGA} VGA and patterns for the \index{CGA} CGA and
  \index{EGA} EGA. Each palette resource is sized 100 bytes distributed as explained in Table~\ref{palettes table}:
 
+\begin{center}
 \begin{table}
 \begin{tabular}{ccl}
 \hline
@@ -305,6 +350,7 @@
 \caption{DAT 1.0 Palette blocks}
 \label{palettes table}
 \end{table}
+\end{center}
 
  The vga\_palette block stores 16 records of three bytes each that is the
  palette in the RGB-18-bits format (6 bits for each colour). Each colour is
@@ -522,6 +568,9 @@
  The group event allows the 256 modifiers and will be described in Section~\ref{door events}.
 % Note + means allowed for the dungeon environment, - means allowed for the
 % palace environment.
+ 
+ In the original game all elements are allowed in all levels, but it is possible to set it up
+Hex-editing the uncompressed version. To do that, read the Hex editing documentation.
 
 \begin{table}
 \begin{tabular}{ccl}
@@ -531,7 +580,6 @@
  none  & 0x00 & This value is used always for this group \\
  free  & 0x00 & Nothing\footnote[1]{Dungeon environment \label{id:de}}, Blue line\footnote[2]{Dungeon environment \label{id:pe}} \\
  free  & 0x01 & Spot1\footnotemark[1], No blue line\footnotemark[2] \\
-% free  & 0x02 & Spot2\footnotemark{\value{fnnumber}}, Diamond\footnotemark[{\ref{id:pe}}] \\
  free  & 0x03 & Window \\
  free  & 0xFF & Spot3\footnotemark[1], Blue line?\footnotemark[2] \\
  spike & 0x00 & Normal (allows animation) \\
@@ -546,10 +594,10 @@
  spike & 0x09 & Disabled \\
  gate  & 0x00 & Closed \\
  gate  & 0x01 & Open \\
- tapest & 0x00 & -With Lattice \\
- tapest & 0x01 & -Alternative Design \\
- tapest & 0x02 & -Normal \\
- tapest & 0x03 & -Black \\
+ tapest & 0x00 & With Lattice\footnotemark[2] \\
+ tapest & 0x01 & Alternative Design\footnotemark[2] \\
+ tapest & 0x02 & Normal\footnotemark[2] \\
+ tapest & 0x03 & Black\footnotemark[2] \\
  potion & 0x00 & Empty \\
  potion & 0x01 & Health point \\
  potion & 0x02 & Life \\
@@ -557,22 +605,22 @@
  potion & 0x04 & Invert \\
  potion & 0x05 & Poison \\
  potion & 0x06 & Open \\
- ttop  & 0x00 & -With lattice \\
- ttop  & 0x01 & -Alternative design \\
- ttop  & 0x02 & -Normal \\
- ttop  & 0x03 & -Black \\
- ttop  & 0x04 & -Black \\
- ttop  & 0x05 & -With alternative design and bottom \\
- ttop  & 0x06 & -With bottom \\
- ttop  & 0x07 & -With window \\
+ ttop  & 0x00 & With lattice\footnotemark[2] \\
+ ttop  & 0x01 & Alternative design\footnotemark[2] \\
+ ttop  & 0x02 & Normal\footnotemark[2] \\
+ ttop  & 0x03 & Black\footnotemark[2] \\
+ ttop  & 0x04 & Black\footnotemark[2] \\
+ ttop  & 0x05 & With alternative design and bottom\footnotemark[2] \\
+ ttop  & 0x06 & With bottom\footnotemark[2] \\
+ ttop  & 0x07 & With window\footnotemark[2] \\
  chomp & 0x00 & Normal \\
  chomp & 0x01 & Half Open \\
  chomp & 0x02 & Closed \\
  chomp & 0x03 & Partially Open \\
  chomp & 0x04 & Extra Open \\
  chomp & 0x05 & Stuck Open \\
- wall  & 0x00 & +Normal  -Blue line \\
- wall  & 0x01 & +Normal  -No Blue line \\
+ wall  & 0x00 & Normal\footnotemark[1], Blue line\footnotemark[2] \\
+ wall  & 0x01 & Normal\footnotemark[1], No Blue line\footnotemark[2] \\
 \hline
 \end{tabular}
 \caption{Background modifiers by group}
@@ -618,7 +666,7 @@
 \hline
  Modifier      & Seed Positions \\
 \hline
- (First row) \\
+ \multicolumn{2}{c}{{\it (First row)}} \\
 \hline
  Grey stone    & 2, 5, 14, 17, 26, 32, 35, 50 \\
  Left, bottom  & 2, 11, 36, 45 \\
