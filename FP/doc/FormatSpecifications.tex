@@ -1,6 +1,8 @@
 \documentclass{article}
 \usepackage[dvips]{graphicx}
 \usepackage{makeidx}
+\usepackage{rotating}
+\usepackage{longtable}
 \makeindex
 
 \author{Princed Development Team}
@@ -100,42 +102,78 @@
 
 \end{description}
 
- Note: Sizes are always in bytes unless another unit is specified.\\
+ Sizes will always be expressed in bytes unless another unit is specified.\\
 
 \subsubsection{Index structures}
 
-\begin{center}
-\begin{table}
-\begin{tabular}{cccp{5cm}>{\small}}
+\newcommand{\tableline}[5]{ {\tiny $#1$} & {\tiny $#2$ } & {\tiny #3} & {\tiny $#4$} & {\small #5} \\}
+\newcommand{\tablenote}[1]{
+ \multicolumn{5}{p{11.7cm}}{ #1 } \\
+ \endlastfoot
+}
+\newcommand{\offsettable}[4]{
+ \renewcommand{\tabcolsep}{0.3em}
+ \begin{longtable}{ccccp{4cm}}
+  \hline
+  Offset & Size & Type & Name & Description \\
+  \hline
+ \endfirsthead
+  #1
+  \hline
+  Offset & Size & Type & Name & Description \\
+  \hline
+ \endhead
+  \hline
+  #2
+  \hline
+ \caption{#3}
+ \label{#4}
+ \end{longtable}
+}
+
+\newcommand{\offsettablee}[4]{
+ \renewcommand{\tabcolsep}{1em}
+ \begin{longtable}{ccl}
+  \hline
+  Length& Offset & Block Name \\
+  \hline
+ \endfirsthead
+  #1
+  \hline
+  Length& Offset & Block Name \\
+  \hline
+ \endhead
+  \hline
+  #2
+  \hline
+ \caption{#3}
+ \label{#4}
+ \end{longtable}
+}
+
+%offset table
+
+\offsettable{
+ \tablenote{
+  Note: POP1 doesn't validate the DAT file checking $IndexOffset+IndexSize=FileSize$, this means you can append data at the end of the file.
+ }
+}{
+\tableline{0}{4}{UL}{IndexOffset}{The location where the index begins }
+\tableline{4}{2}{US}{IndexSize\footnote[1]{$IndexOffset+IndexSize=file size$} }{The number of bytes the index has }
 \hline
-Offset & Size & Type & Name & Description \\
 \hline
-0 & 6 & -  & $Header: /home/rodrigo/src/repo-FP/cvsroot/freeprince/FP/doc/FormatSpecifications.tex,v 1.82 2008-01-03 12:12:17 ecalot Exp $ & DAT File header \\ %todo try to find a nice symbol to replace -
+\tableline{IndexOffset=\alpha}{IndexSize}{$\downarrow$}{Footer}{The DAT index}
 \hline
-0 & 4 & UL & $IndexOffset$ & The location where the index begins \\
-4 & 2 & US & $IndexSize$   & The number of bytes the index has \\
-\hline
-\hline
-$IndexOffset=\alpha$ & $IndexSize$ & - & $Footer$ & The DAT index \\
-\hline
-$\alpha$ & 2 & US & $NumberOfItems$ & Resources count \\
-$\alpha+2=\beta$ & $NumberOfItems*8$ & - & $Index$ & A list of NumberOfItems blocks of 8-bytes-length index record called Entry \\
+\tableline{\alpha}{2}{US}{NumberOfItems}{Resources count}
+\tableline{\alpha+2=\beta\footnote[2]{so $IndexSize=8*numberOfItems+2$}}{NumberOfItems*8}{-}{Index}{A list of NumberOfItems blocks of 8-bytes-length index record called Entry}
 \hline
 \hline
-$\beta+8i=\gamma$ & 8 & - & The 8-bytes-length index record (one per item)
+\tableline{\beta+8i=\gamma}{8}{$\downarrow$}{Entry}{The 8-bytes-length index record (one per item)}
 \hline
-$\gamma+ 0$ & 2 & US & $Id(i)$ & Item ID \\
-$\gamma+ 2$ & 4 & UL & $Offset(i)$ & Absolute offset where the resource start \\
-$\gamma+ 6$ & 2 & US & $Size(i)$ & Size of the item not including the checksum byte \\
-\hline
-\end{tabular}
-\caption{DAT file blocks}
-\label{file blocks}
-\end{table}
-\end{center}
-           Note that $IndexSize$ is $8*numberOfItems+2$ \\
-           Note that $IndexOffset+IndexSize=file size$ \\
-           Note that $0 \le i < numberOfItems$ \\
+\tableline{\gamma+0}{2}{US}{Id(i)\footnote[3]{with $0 \le i < numberOfItems$}    }{Item ID}
+\tableline{\gamma+2}{4}{UL}{Offset(i)\footnotemark[3]}{Absolute offset where the resource start}
+\tableline{\gamma+6}{2}{US}{Size(i)\footnotemark[3]  }{Size of the item not including the checksum byte}
+}{DAT file blocks}{file blocks}
 
 %todo cross reference in table
 
@@ -159,11 +197,6 @@ $\gamma+ 6$ & 2 & US & $Size(i)$ & Size of the item not including the checksum b
 %           (absolute offset in file)
 %  - Relative offset 6, size 2, type US: Size of the item
 %           (not including the checksum byte)
-
- Note:
-  POP1 doesn't validate a DAT file checking:
-  $IndexOffset+IndexSize=FileSize$
-  this means you can append data at the end of the file.
 
   PR validates that $IndexOffset+IndexSize \le FileSize$.
  It also compares IndexSize with $8*numberOfItems+2$ to determine if a file
@@ -193,37 +226,46 @@ $\gamma+ 6$ & 2 & US & $Size(i)$ & Size of the item not including the checksum b
  Each image only one header with 6 bytes in it as follows
 
 \subsubsection{Headers} %3.2.1
- The 6-bytes-image header: 6 bytes
-  Relative offset 0, size 2, type US: Height
-  Relative offset 2, size 2, type UL: Width
-  Relative offset 4, size 2: Information
 
- Information is a set of bits where:
-  the first 8 are zeros
-  the next 4 are the resolution:
-   if it is 1011 (B in hex) then the image has 16 colours
-   if it is 0000 (0 in hex) then the image has 2 colours
-   so to calculate the bits per pixel there are in the image, just take the
+\offsettable{}{
+\tableline{0}{6}{$\downarrow$}{ImageHeader}{The header of an image}
+\hline
+\tableline{0}{2}{US}{Height}{The height of the image in pixels}
+\tableline{2}{2}{US}{Width}{The width of the image in pixels}
+\tableline{4}{2}{-}{ImageMask}{Information on the compression algorithm and bitrate}
+\hline
+}{Image headers}{image header blocks}
+
+% The 6-bytes-image header: 6 bytes
+%  Relative offset 0, size 2, type US: Height
+%  Relative offset 2, size 2, type UL: Width
+%  Relative offset 4, size 2: Information
+
+ ImageMask is a set of bits where:
+\begin{itemize}
+\item  the first 8 are zeros
+\item  the next 4 are the resolution\\
+   so if it is 1011 (B in hex) then the image has 16 colours;
+   and if it is 0000 (0 in hex) then the image has 2 colours.
+   To calculate the bits per pixel there are in the image, just take the
    last 2 bits and add 1. e. g. 11 is 4 ($2^4=16$ colours) and 00 is 1 ($2^1=2$ colours).
-  the last 4 bits are the 5 compression types (from 0 to 4) as specified in Table~\ref{algorithm codes}.
+\item  the last 4 bits are the 5 compression types (from 0 to 4) as specified in Table~\ref{algorithm codes}.
+\end{itemize}
 
-\begin{center}
-\begin{table}
-\begin{tabular}{ccl}
-\hline
-Dec & Bin & Algorithm \\
-\hline
-0 & 0000 & RAW\_LR \\
-1 & 0001 & RLE\_LR \\
-2 & 0010 & RLE\_UD \\
-3 & 0011 & LZG\_LR \\
-4 & 0100 & LZG\_UD \\
-\hline
-\end{tabular}
-\caption{Algorithm codes}
-\label{algorithm codes}
-\end{table}
-\end{center}
+\renewcommand{\tabcolsep}{1em}
+\begin{longtable}{ccl}
+ \hline
+  Dec & Bin & Algorithm \\
+ \hline
+  0 & 0000 & RAW\_LR \\
+  1 & 0001 & RLE\_LR \\
+  2 & 0010 & RLE\_UD \\
+  3 & 0011 & LZG\_LR \\
+  4 & 0100 & LZG\_UD \\
+ \hline
+ \caption{Algorithm codes}
+ \label{algorithm codes}
+\end{longtable}
 
  The following data in the resource is the image compressed with the
  algorithm specified by those 4 bits.
@@ -277,12 +319,14 @@ Dec & Bin & Algorithm \\
   If the bit is 1 print the next unread byte to the slide window
   If the bit is a zero read the next two bytes as control bytes with the
   following format (RRRRRRSS SSSSSSSS):
-   - 6  bits for the copy size number (R). Add 3 to this number.
+\begin{itemize}
+\item 6  bits for the copy size number ($R$). Add 3 to this number.\\
         Range: $2$ to $2^6+2=66$
-   - 10 bits for the slide position (S). Add 66 to this number.
+\item 10 bits for the slide position ($S$). Add 66 to this number.\\
         Range: $2^6+2=66$ to $2^6+2+2^{10}=1090$
-   Then print in the slide window the next R bytes that are the same slide
-   window starting with the S'th byte.
+\end{itemize}
+   Then print in the slide window the next $R$ bytes that are the same slide
+   window starting with the $S^{th}$ byte.
 
  After all the maskbyte is read and processed, the following input byte is
  another maskbyte. Use the same procedure to finish decompressing the file.
@@ -306,6 +350,7 @@ Dec & Bin & Algorithm \\
 
 \pagebreak[2]
  The algorithm works as follows:\\
+{\small
 \begin{verbatim}
  While there is unread input data:
      Create a maskbyte.
@@ -324,71 +369,71 @@ Dec & Bin & Algorithm \\
              Advance output pointer by 1.
              Advance input pointer by 1.
 \end{verbatim}
+}
 \pagebreak[2]
 
  For a better understanding of the algorithm we strongly recommend to read
  the \index{PR} \index{LZG} PR source files {\it lzg\_uncompress.c} and {\it lzg\_compress.c} that may be
- located at {\it https://gforge.lug.fi.uba.ar/plugins/scmcvs/cvsweb.php/PR/src/lib/compression/?cvsroot=freeprince}
+ located at
+ {\fontsize{6}{6}\selectfont {\it https://gforge.lug.fi.uba.ar/plugins/scmcvs/cvsweb.php/PR/src/lib/compression/?cvsroot=freeprince}}
  in the PR repository module.
 
+\pagebreak[3]
 \subsection{Palettes}
  Palette resources store a palette for the \index{VGA} VGA and patterns for the \index{CGA} CGA and
  \index{EGA} EGA. Each palette resource is sized 100 bytes distributed as explained in Table~\ref{palettes table}:
 
-\begin{center}
-\begin{table}
-\begin{tabular}{ccl}
-\hline
+\renewcommand{\tabcolsep}{1em}
+\begin{longtable}{ccl}
+ \hline
   Length & Offset & Block Name \\
-\hline
+ \hline
   4     & 0      & unknown (TGA?) \\
   48    & 4      & vga\_palette \\
   16    & 52     & cga\_patterns \\
   32    & 68     & ega\_patterns \\
-\hline
-\end{tabular}
-\caption{DAT 1.0 Palette blocks}
-\label{palettes table}
-\end{table}
-\end{center}
+ \hline
+ \caption{DAT 1.0 Palette blocks}
+ \label{palettes table}
+\end{longtable}
 
+\pagebreak[2]
  The vga\_palette block stores 16 records of three bytes each that is the
  palette in the RGB-18-bits format (6 bits for each colour). Each colour is
  a number from 0 to 63. Remember to shift the colour bytes by two to get
  the colour number from 0 to 256. The format is 00rrrrrr 00gggggg 00bbbbbb
  where rrrrrr is the 6 bit red, gggggg the 6 bits green and bbbbbb the 6
  bits blue.
- 
- In the case of EGA and CGA, palettes are not stores, and the palettes used
- are the ones defined by the adapter as the following:
- 
-\begin{table}
 
-\begin{tabular}{ccclll}
-\hline
+\pagebreak[2]
+ In the case of EGA and CGA, palettes are not stored. The palettes are the standard ones
+ defined by the adapter. In Table~\ref{egacga pals} the standard palettes are shown. 
+ 
+\renewcommand{\tabcolsep}{0.5em}
+\begin{longtable}{ccclcc}
+ \hline
   EGA & CGA1 & CGA2  & Color name      &  HTML     & rgbRGB \\
-\hline
-  0   & 0    & 0     & black           & \#000000  & 000000 \\
-  1   & -    & -     & blue            & \#0000aa  & 000001 \\
-  2   & -    & 1     & green           & \#00aa00  & 000010 \\
-  3   & 1    & -     & cyan            & \#00aaaa  & 000011 \\
-  4   & -    & 2     & red             & \#aa0000  & 000100 \\
-  5   & 2    & -     & magenta         & \#aa00aa  & 000101 \\
-  6   & -    & 3     & brown           & \#aa5500  & 010100 \\
-  7   & 3    & -     & light gray      & \#aaaaaa  & 000111 \\
-  8   & -    & -     & dark gray       & \#555555  & 111000 \\
-  9   & -    & -     & bright blue     & \#5555ff  & 111001 \\
-  10  & -    & -     & bright green    & \#55ff55  & 111010 \\
-  11  & -    & -     & bright cyan     & \#55ffff  & 111011 \\
-  12  & -    & -     & bright red      & \#ff5555  & 111100 \\
-  13  & -    & -     & bright magenta  & \#ff55ff  & 111101 \\
-  14  & -    & -     & bright yellow   & \#ffff55  & 111110 \\
-  15  & -    & -     & bright white    & \#ffffff  & 111111 \\
-\hline
-\end{tabular}
-\caption{EGA and CGA palettes}
-\end{table}
-
+ \hline
+  0   & 0    & 0     & black           & \verb!#000000!  & 000000 \\
+  1   & -    & -     & blue            & \verb!#0000aa!  & 000001 \\
+  2   & -    & 1     & green           & \verb!#00aa00!  & 000010 \\
+  3   & 1    & -     & cyan            & \verb!#00aaaa!  & 000011 \\
+  4   & -    & 2     & red             & \verb!#aa0000!  & 000100 \\
+  5   & 2    & -     & magenta         & \verb!#aa00aa!  & 000101 \\
+  6   & -    & 3     & brown           & \verb!#aa5500!  & 010100 \\
+  7   & 3    & -     & light gray      & \verb!#aaaaaa!  & 000111 \\
+  8   & -    & -     & dark gray       & \verb!#555555!  & 111000 \\
+  9   & -    & -     & bright blue     & \verb!#5555ff!  & 111001 \\
+  10  & -    & -     & bright green    & \verb!#55ff55!  & 111010 \\
+  11  & -    & -     & bright cyan     & \verb!#55ffff!  & 111011 \\
+  12  & -    & -     & bright red      & \verb!#ff5555!  & 111100 \\
+  13  & -    & -     & bright magenta  & \verb!#ff55ff!  & 111101 \\
+  14  & -    & -     & bright yellow   & \verb!#ffff55!  & 111110 \\
+  15  & -    & -     & bright white    & \verb!#ffffff!  & 111111 \\
+ \hline
+ \caption{EGA and CGA palettes}
+ \label{egacga pals}
+\end{longtable}
 
  Where \index{EGA} EGA is the only one palette used in EGA mode of the game and CGA1
  and CGA2 are the two palettes used in the \index{CGA} CGA mode.
@@ -397,6 +442,7 @@ Dec & Bin & Algorithm \\
  Remember EGA has 16 colours, so is represented in 4 bits and CGA has 4
  simultaneous colours represented in 2 bits.
 
+\pagebreak[2]
  The cga\_patterns block stores 16 records of one byte each, separated in
  four parts, so the format is aabbccdd where aa is a two bit colour in one
  of the two CGA palettes (palette 1 is normally used in the \index{dungeon!environment} dungeon
@@ -409,9 +455,14 @@ Dec & Bin & Algorithm \\
  So for example if the entry 1 is 00101000 (0x28) in mode CGA2, the pattern
  will be a checkerboard of black and green like the following:
 
-  Bin       Dec     Colour
-  00 01  -  0 1  -  black  green
-  01 00  -  1 0  -  green  black
+\begin{center}
+\begin{tabular}{cc|cc|cc}
+  \multicolumn{2}{c}{Bin} & \multicolumn{2}{c}{Dec} & \multicolumn{2}{c}{Colour} \\
+ \hline
+  00& 01&    0& 1&    black&  green \\
+  01& 00&    1& 0&    green&  black \\
+\end{tabular}
+\end{center}
 
  The ega\_patterns block stores 16 records of two bytes each, this time
  separated in two parts. So we have again, four parts per record in the
@@ -423,19 +474,21 @@ Dec & Bin & Algorithm \\
  For example, with 00101111 11110010 (0x2ff2) you can create the following
  pattern:
 
-  Bin           Dec       Colour
-  0010 1111  -  2  15  -  brown  white
-  1111 0010  -  15 2   -  white  brown
+\begin{center}
+\begin{tabular}{cc|cc|cc|cc}
+  \multicolumn{2}{c}{Bin} & \multicolumn{2}{c}{Dec} & \multicolumn{2}{c}{Hex} & \multicolumn{2}{c}{Colour} \\
+ \hline
+  0010& 1111  &  2 & 15  &2&f&  brown&  white\\
+  1111& 0010  &  15& 2   &f&2&  white&  brown\\
+\end{tabular}
+\end{center}
 
 \subsection{Levels \label{level blocks}}
  This table has a summary of the blocks to be used in this section,
  you can refer it from the text below.
 
-\begin{table}
-\begin{tabular}{ccc}
-\hline
-  Length& Offset & Block Name \\
-\hline
+\pagebreak[3]
+\offsettablee{}{
   720   & 0      & pop1\_foretable \\
   720   & 720    & pop1\_backtable \\
 \index{foretable}
@@ -456,11 +509,8 @@ Dec & Bin & Algorithm \\
   24    & 2263   & guard\_colour \\
   16    & 2287   & unknown IV (d) \\
   2     & 2303   & 0F 09 (2319) \\
-\hline
-\end{tabular}
-\caption{DAT 1.0 Level blocks}
-\label{dat1 level}
-\end{table}
+}{DAT 1.0 Level blocks}{dat1 level}
+\pagebreak[3]
 
  All levels have a size of 2305, except in the original game, that the
  potion level has a size of 2304 (may be it was wrong trimmed).
@@ -518,11 +568,15 @@ Dec & Bin & Algorithm \\
  The rest ccccc is the code of the tile tabled below. Tile names are the
  same as the ones used by RoomShaker to keep compatibility.
 
-\begin{table}
-\begin{tabular}{cccl}
+\begin{longtable}{cccl}
 \hline
  Hex & Binary& Group & Description \\
 \hline
+\endfirsthead
+\hline
+ Hex & Binary& Group & Description \\
+\hline
+\endhead
 0x00 & 00000 & free  & Empty \\
 0x01 & 00001 & free  & Floor \\
 0x02 & 00010 & spike & Spikes \\
@@ -556,10 +610,9 @@ Dec & Bin & Algorithm \\
 0x1E & 11110 & none  & Torch with Debris \\
 0x1F & 11111 & none  & Null \\
 \hline
-\end{tabular}
 \caption{POP1 Foretable codes}
 \label{palettes table}
-\end{table}
+\end{longtable}
 
  The pop1\_backtable part of the tile stores a modifier or attribute of the
  pop1\_foretable part of the tile. This works independently of the modifier
@@ -572,11 +625,23 @@ Dec & Bin & Algorithm \\
  In the original game all elements are allowed in all levels, but it is possible to set it up
 Hex-editing the uncompressed version. To do that, read the Hex editing documentation.
 
-\begin{table}
-\begin{tabular}{ccl}
+\begin{longtable}{ccl}
+
 \hline
  Group & Code & Description \\
 \hline
+\endfirsthead
+\hline
+ Group & Code & Description \\
+\hline
+\endhead
+\multicolumn{3}{p{8cm}}{
+ Note: Some modifiers have not been tested, there may be any other unknown
+       tile type we have not still discover.
+
+} \\
+\endlastfoot
+
  none  & 0x00 & This value is used always for this group \\
  free  & 0x00 & Nothing\footnote[1]{Dungeon environment \label{id:de}}, Blue line\footnote[2]{Dungeon environment \label{id:pe}} \\
  free  & 0x01 & Spot1\footnotemark[1], No blue line\footnotemark[2] \\
@@ -619,17 +684,13 @@ Hex-editing the uncompressed version. To do that, read the Hex editing documenta
  chomp & 0x03 & Partially Open \\
  chomp & 0x04 & Extra Open \\
  chomp & 0x05 & Stuck Open \\
- wall  & 0x00 & Normal\footnotemark[1], Blue line\footnotemark[2] \\
- wall  & 0x01 & Normal\footnotemark[1], No Blue line\footnotemark[2] \\
+% wall  & 0x00 & Normal\footnotemark[1], Blue line\footnotemark[2] \\
+% wall  & 0x01 & Normal\footnotemark[1], No Blue line\footnotemark[2] \\
 \hline
-\end{tabular}
+
 \caption{Background modifiers by group}
 \label{background modifiers}
-\end{table}
-
- Note: Some modifiers have not been tested, there may be any other unknown
-       tile type we have not still discover.
-
+\end{longtable}
 
 \subsubsection{Wall drawing algorithm} %\ref{room mapping}.1
  This section does not have a direct relation with the format because it
@@ -661,11 +722,16 @@ Hex-editing the uncompressed version. To do that, read the Hex editing documenta
  wall. If the modifier is activated this corner will appear different
  (seems to be darker). Another modifier is the grey stone.
 
-\begin{table}
-\begin{tabular}{ll}
-\hline
+\renewcommand{\tabcolsep}{1em}
+\begin{longtable}{ll}
+  \hline
  Modifier      & Seed Positions \\
-\hline
+  \hline
+ \endfirsthead
+  \hline
+ Modifier      & Seed Positions \\
+  \hline
+ \endhead
  \multicolumn{2}{c}{{\it (First row)}} \\
 \hline
  Grey stone    & 2, 5, 14, 17, 26, 32, 35, 50 \\
@@ -675,7 +741,7 @@ Hex-editing the uncompressed version. To do that, read the Hex editing documenta
  Right, up     & 4, 10, 31, 37 \\
  \\
 \hline
- (second row) \\
+ \multicolumn{2}{c}{{\it (Second row)}} \\
 \hline
  Grey stone    & none  \\
  Left, bottom  & 34, 47 \\
@@ -684,7 +750,7 @@ Hex-editing the uncompressed version. To do that, read the Hex editing documenta
  Right, top    & 6, 12, 23, 29, 39 \\
  \\
 \hline
- (third row) \\
+ \multicolumn{2}{c}{{\it (Third row)}} \\
 \hline
  Grey stone    & none  \\
  Left, bottom  & none \\
@@ -692,10 +758,9 @@ Hex-editing the uncompressed version. To do that, read the Hex editing documenta
  Right, bottom & none \\
  Right, top    & none \\
 \hline
-\end{tabular}
 \caption{Stone modifiers on seed position}
 \label{seeds}
-\end{table}
+\end{longtable}
 
  Another modifiers are saved in the seed too. Those modifiers are not
  boolean values, they are offsets and sizes. As each stone has a different
@@ -705,9 +770,19 @@ Hex-editing the uncompressed version. To do that, read the Hex editing documenta
  needed.
 
  For the second row we have got the first 20 values, ordered from 1 to 20. \\ 
- position        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 \\
- offsets:        5,4,3,3,1,5,4,2,1, 1, 5, 3, 2, 1, 5, 4, 3, 2, 5, 4 \\
- separator size: 0,1,1,0,0,0,1,1,0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0 \\
+\renewcommand{\tabcolsep}{0.1em}
+\begin{longtable}{r@{\hspace{1cm}}cccccccccccccccccccc}
+  \hline
+ Field      & \multicolumn{20}{c}{Values} \\
+  \hline
+ \endfirsthead
+ position&        1&2&3&4&5&6&7&8&9&10&11&12&13&14&15&16&17&18&19&20 \\
+ offsets&        5&4&3&3&1&5&4&2&1& 1& 5& 3& 2& 1& 5& 4& 3& 2& 5& 4 \\
+ separator size& 0&1&1&0&0&0&1&1&0& 0& 1& 1& 1& 0& 0& 1& 1& 1& 0& 0 \\
+\hline
+\caption{First 20 seed values of the second row separator}
+\label{seedss}
+\end{longtable}
 
  We will be adding the next values as soon as we count the pixels ;)
  This information can be found in walls.conf file from FreePrince.
@@ -757,8 +832,8 @@ Hex-editing the uncompressed version. To do that, read the Hex editing documenta
  The guard\_colour is the palette the guard has (see Section~\ref{binary files}).
  The default colours are in this table:
 
-\begin{table}
-\begin{tabular}{ccc}
+\renewcommand{\tabcolsep}{1em}
+\begin{longtable}{ccc}
 \hline
 Code & Pants    & Cape \\
 \hline
@@ -770,16 +845,14 @@ Code & Pants    & Cape \\
 0x05 & Purple   & Beige \\
 0x06 & Yellow   & Orange \\
 \hline
-\end{tabular}
 \caption{Default Guard colours}
 \label{palettes table}
-\end{table}
+\end{longtable}
 
  Other codes may generate random colours because the game is reading
  the palette from trashed memory. This may also cause a game crash.
- It should (never tested) be possible to add new colours in the guard
- palette resource (see Section~\ref{binary files}) avoiding the crash due to this reason.
-
+ It is possible to add new colours in the guard
+ palette resource (see Section~\ref{binary files}) avoiding the crash.
 
 \subsubsection{Start Position \label{start position}} %3.4.5
  This section describes the start\_position block.
@@ -825,28 +898,27 @@ Code & Pants    & Cape \\
  You can find there: the door room, the door location, and the
  trigger-next flag. The format is the following:
 
- Let's define:
-  Screen as S and it is a number from 1 to 24 (5 bits)
-   $S = s_1 s_2 s_3 s_4 s_5$
-    where sn is the bit n of the binary representation of S
-  Location as L and is a number from 0 to 29 (5 bits)
-   $L = l_1 l_2 l_3 l_4 l_5$
-    where ln is the bit n of the binary representation of L
-   This number is according to the location format specifications.
-  Trigger-next as T and is a 1 for ``off'' or a 0 for ``on'' (1 bit)
-   $T = t_1$
+ Let's define
+  Screen $S = s_1 s_2 s_3 s_4 s_5$ as a 5-bit-number from 1 to 24 (5 bits) where $s_n$ is the bit $n$ of the binary representation and whose value represents the screen \index{room|see{screen}} \index{screen} number;
+  Location $L = l_1 l_2 l_3 l_4 l_5$ as another 5-bit-number from 0 to 29 where $l_n$ is the bit $n$ of the binary representation whose value is according to the location format specifications (See Section~\ref{guard handling}) \index{location};
+  Trigger-next $T = t_1$ as one bit having 1 for ``off'' or a 0 for ``on''.\\
 
- Byte I  has the form: $t_1 s_4 s_5 l_1 l_2 l_3 l_4 l_5$
- Byte II has the form: $s_1 s_2 s_3  0  0  0  0  0$
+ Byte I  has the form: $t_1 s_4 s_5 l_1 l_2 l_3 l_4 l_5$ \\
+ Byte II has the form: $s_1 s_2 s_3  0  0  0  0  0$ \\
 
 \subsection{Digital Waves}
  Read them as raw digital wave sound using the following specifications:
 
-\begin{table}
-\begin{tabular}{cc}
-\hline
+\renewcommand{\tabcolsep}{0.5em}
+\begin{longtable}{rl}
+  \hline
   Field&Value\\
-\hline
+  \hline
+ \endfirsthead
+  \hline
+  Field&Value\\
+  \hline
+ \endhead
   Size of Format& 16 \\
   Format&         PCM \\
   Attributes&     8 bit, mono, unsigned \\
@@ -855,14 +927,13 @@ Code & Pants    & Cape \\
   Bytes/Second&   11025 \\
   Block Align&    1 \\
 \hline
-\end{tabular}
 \caption{Wave Specifications}
 \label{wave specs}
-\end{table}
+\end{longtable}
 
  GNU/Linux users can play the raw waves just dropping them inside /dev/dsp
  As DAT headers are very small it is valid to type in a shell console with
- dsp write access: cat digisnd?.dat>/dev/dsp to play the whole wave files.
+ dsp write access: \verb!cat digisnd?.dat>/dev/dsp! to play the whole wave files.
 
 \subsection{Midi music}
  Standard MIDI files. There have been reports that some versions of MIDI
@@ -870,21 +941,39 @@ Code & Pants    & Cape \\
  format variant (like type 0).
 
 \subsection{Internal PC Speaker}
- Header: 3 bytes
-  First byte: 0x00 (or 0x80 sometimes).
-  Next 2 bytes: how many beats per 2 seconds.
 
- Body: numberOfNotes*3
-  Then, 3 bytes for each note:
-   - 2 bytes: US for frequency in hertz (0 if no sound, 1 or 2 if marker).
-   - 1 byte:  UC for length in beats.
+\offsettable{}{
+0 & 3 & $\downarrow$ & $Header: /home/rodrigo/src/repo-FP/cvsroot/freeprince/FP/doc/FormatSpecifications.tex,v 1.83 2008-01-05 00:26:45 ecalot Exp $ & The file header \\
+\hline
+0 & 2 & UC & $Junk$ & 0x00 (or 0x80 sometimes) \\
+2 & 1 & US & $bps$ & Beats per two seconds \\
+\hline
+0 & $3 numberOfNotes$ & $\downarrow$ & $Body$ & The file body \\
+\hline
+$3i$ & 2 & US & $Freq$ & frequency in hertz (0 if no sound, 1 or 2 if marker) \\
+$3i+2$ & 1 & US & $length$ & length in beats \\
+\hline
+0 & 2 & $\downarrow$ & $Footer$ & The file footer \\
+\hline
+0 & 2 & - &  $Junk$  & 0x12 0x00 \\
+}{DAT file blocks}{file blocks}
 
- Footer: 2 bytes
-  Last 2 bytes: 0x12 0x00.
+
+% Header: 3 bytes
+%  First byte: 0x00 (or 0x80 sometimes).
+%  Next 2 bytes: how many beats per 2 seconds.
+
+% Body: numberOfNotes*3
+%  Then, 3 bytes for each note:
+%   - 2 bytes: US for frequency in hertz (0 if no sound, 1 or 2 if marker).
+%   - 1 byte:  UC for length in beats.
+
+% Footer: 2 bytes
+%  Last 2 bytes: 0x12 0x00.
 
 \subsection{Binary files \label{binary files}}
  Some binary files contains relevant information
- The resource number 10 in prince.dat has the VGA guard palettes in it
+ The resource number 10 in prince.dat has the \index{VGA} VGA guard palettes in it
  saving n records of a 16-colour-palette of 3 bytes in the specified
  palette format.
 
@@ -894,12 +983,9 @@ Code & Pants    & Cape \\
  graphics, icons and sounds. Level blocks are very similar to PC but
  not exactly identical. Following table has a summary of the blocks of
  DAT 1.0 for Mac.
+\pagebreak[3]
  
-\begin{table}
-\begin{tabular}{ccc}
-\hline
- Length& Offset & Block Name \\
-\hline
+\offsettablee{}{
  720   & 0      & pop1\_foretable \\
  720   & 720    & pop1\_backtable \\
  256   & 1440   & door I \\
@@ -916,21 +1002,17 @@ Code & Pants    & Cape \\
  24    & 2256   & unknown IV (c) \\
  24    & 2280   & guard\_colour \\
  4     & 2304   & unknown IV (d) \\
-\hline
-\end{tabular}
-\caption{DAT 1.0 Level blocks for Mac}
-\label{palettes table}
-\end{table}
+}{DAT 1.0 Level blocks for Mac}{mac level blocks}
 
   All levels have a size of 2308. Also there are two different things 
-  in comparison with DAT 1.0 for PC. DAT 1.0 for Mac does not have 
+  in comparison with DAT 1.0 for PC. DAT 1.0 for \index{Mac} Mac does not have 
   any index and checksums. 16 levels including demo and potion level
-  are only chained in sequence. See 3.4 for reference on each block.
+  are only chained in sequence. See~\ref{level blocks} for reference on each block.
 
-
+\pagebreak[3]
 \section{DAT v2.0 Format Specifications}
 
-\subsection{General file specs, index and checksums}
+\subsection{General file specifications}
  POP2 DAT files are not much different from their POP1 predecessors.
  The format is similar in almost each way. The main difference is in the
  index. As DAT v1.0 used an index in the high data, the DAT v2.0 indexes
@@ -984,11 +1066,16 @@ Code & Pants    & Cape \\
  for example the text SLAP becomes PALS, MARF becomes FRAM, \textvisiblespace\textvisiblespace\textvisiblespace\textvisiblespace
  \ becomes empty or RCS\textvisiblespace \ becomes SCR. They must be in upper case.
 
-\begin{table}
-\begin{tabular}{ccl}
-\hline
+\renewcommand{\tabcolsep}{0.5em}
+\begin{longtable}{ccl}
+ \hline
  ID    & Stored& Description \\
-\hline
+ \hline
+ \endfirsthead
+ \hline
+ ID    & Stored& Description \\
+ \hline
+ \endhead
  ``cust''& TSUC  & Custom  \\
  ``font''& TNOF  & Fonts \\
  ``fram''& MARF  & Frames \\
@@ -1006,10 +1093,9 @@ Code & Pants    & Cape \\
  ``txt4''& 4TXT  & Text \\
  ``''    & \textvisiblespace\textvisiblespace\textvisiblespace\textvisiblespace  & Levels \\
 \hline
-\end{tabular}
 \caption{Slave Index ID strings}
 \label{slave indexes}
-\end{table}
+\end{longtable}
 
 \subsubsection{The slave indexes \label{slave indexes}} %4.1.2
  All encapsulated sections pointed by the Master Index are Slave Indexes.
@@ -1049,11 +1135,8 @@ Code & Pants    & Cape \\
 
  This table has a summary of the blocks to be used in this section.
 
-\begin{table}
-\begin{tabular}{ccc}
-\hline
- Length& Offset & Block Name \\
-\hline
+
+\offsettablee{}{
  960   & 0      & pop2\_foretable \\
  3840  & 960    & pop2\_backtable \\
  1280  & 4800   & pop2\_doors \\
@@ -1064,11 +1147,7 @@ Code & Pants    & Cape \\
  3712  & 6247   & pop2\_static\_guard \\
  1088  & 9959   & pop2\_dynamic\_guard \\
  978   & 11047  & unknown III \\
-\hline
-\end{tabular}
-\caption{DAT 2.0 Level blocks}
-\label{dat2 level blocks}
-\end{table}
+}{DAT 2.0 Level blocks}{dat2 level blocks}
 
  All levels have a size of 12025.
 
@@ -1088,11 +1167,16 @@ Code & Pants    & Cape \\
   $tile=(room-1)*30+tileOffset=(27-1)*30+2*10+7=807$
  
 
-\begin{table}
-\begin{tabular}{llllll}
-\hline
+\renewcommand{\tabcolsep}{0.2em}
+\begin{longtable}{llllll}
+  \hline
  Dec& Hex  & Bin    & Caverns            & Ruins             & Temple \\
-\hline
+  \hline
+ \endfirsthead
+  \hline
+ Dec& Hex  & Bin    & Caverns            & Ruins             & Temple \\
+  \hline
+ \endhead
  00 & 0x00 & 000000 & Empty              & Empty             & Empty \\
  01 & 0x01 & 000001 & Floor              & Floor             & Floor \\
  02 & 0x02 & 000010 & Spikes             & (?)               & Spikes \\
@@ -1142,10 +1226,9 @@ Code & Pants    & Cape \\
  46 & 0x2E & 101110 & (?)                & (?)               & (?) \\
  47 & 0x2F & 101111 & (?)                & (?)               & (?) \\
 \hline
-\end{tabular}
 \caption{POP2 Foretable Codes}
 \label{dat2 foretable}
-\end{table}
+\end{longtable}
 
  The pop2\_backtable is an expansion if the pop1\_backtable and it is sized
  4 times bigger. For each tile there are 4 additional bytes in the 
@@ -1174,7 +1257,7 @@ Code & Pants    & Cape \\
  pop2\_door.
 
  The pop2\_door block has 1280 bytes. It is divided in 256 registers of
- 5 bytes called door events. Like pop1 events have associations to doors
+ 5 bytes called door events. Like POP1 events have associations to doors
  and activate them. In POP2 events can also activate a floor shooter.
  
  An event is triggered when an activator button (0x22) is pressed. As it is
@@ -1215,13 +1298,15 @@ Code & Pants    & Cape \\
  the room with this number, we will call them ``room guard blocks''.
  
  A room guard block has a size of 116 divided this way:
- - 1 byte for the number of guards present in this room.
+\begin{itemize}
+\item 1 byte for the number of guards present in this room.
    This byte may take values from 0 to 5.
- - 5 block divisions of 23 bytes for each guard.
+\item 5 block divisions of 23 bytes for each guard.
    The first divisions have the guard information, if the number is less
    than 5, then the latest divisions corresponding to the missing guards
    will be filled with zeros or garbage.
- 
+\end{itemize} 
+
  If there is a static guard corresponding to this division of 23 bytes,
  the following bytes from 0 to 22 will specify the guard:
  
@@ -1282,15 +1367,20 @@ Code & Pants    & Cape \\
   per room, including static guards.
  Byte 31 is the hit points the guards will have.
 
-
+\pagebreak[3]
 \section{PLV v1.0 Format Specifications}
 
  PLV v1.0 files are defined in this table:
 
-\begin{table}
-\begin{tabular}{cclcc}
+\begin{longtable}{cclcc}
 \hline
    Size&Offset&Description                 & Type  & Content \\
+\hline
+\endfirsthead
+\hline
+   Size&Offset&Description                 & Type  & Content \\
+\hline
+\endhead
 \hline
       7     & 0& Magic identifier            & text  & ``POP\_LVL'' \\
       1     & 7& POP version                 & UC    & 0x01 \\
@@ -1302,10 +1392,9 @@ Code & Pants    & Cape \\
       4 & $18+B_1$& Block 2: User data size ($B_2$)& UL \\
      $B_2$ & $22+B_1$& Block 2: User data          & - \\
 \hline
-\end{tabular}
 \caption{PLV blocks}
 \label{palettes table}
-\end{table}
+\end{longtable}
 
  Level code is the exact level as described in Section~\ref{level blocks} including the checksum
  byte. Note that Level size ($B_1$) also includes the checksum byte in the
@@ -1327,10 +1416,15 @@ Code & Pants    & Cape \\
  There are mandatory pairs that must be included in all PLV files.
  Those are:
 
-\begin{table}
-\begin{tabular}{lp{7cm}}
+\begin{longtable}{lp{7cm}}
 \hline
  Field name             & Description \\
+\hline
+\endfirsthead
+\hline
+ Field name             & Description \\
+\hline
+\endhead
 \hline
  Editor Name            & The name of the editor used to save the file \\
  Editor Version         & The version of the editor used to save the file \\
@@ -1342,10 +1436,9 @@ Code & Pants    & Cape \\
  Original Filename      & The name of the original file name (levels.dat) \\
  Original Level Number  & Optional. The level number it has when it was first exported \\
 \hline
-\end{tabular}
 \caption{PLV Mandatory Fields}
 \label{plv mandatory fields}
-\end{table}
+\end{longtable}
  
  The content values may be empty. There is no need to keep an order within
  the fields.
@@ -1363,7 +1456,7 @@ Code & Pants    & Cape \\
  must be completed with 0.
  i.e. 2002-11-26 22:16:39
 
-
+\pagebreak[3]
 \section{SAV v1.0 Format Specifications}
 
  SAV v1.0 saves kid level, hit points and remaining time information in
@@ -1371,20 +1464,12 @@ Code & Pants    & Cape \\
 
  SAV files are 8 bytes length in the following format:
 
-\begin{table}
-\begin{tabular}{cclcc}
-\hline
-   Size& Offset& Description                 & Type \\
-\hline
-      2     & 0& Remaining minutes           & US  & (i) \\
-      2     & 2& Remaining ticks             & US  & (ii) \\
-      2     & 4& Current level               & US  & (iii) \\
-      2     & 6& Current hit points          & US  & (iv) \\
-\hline
-\end{tabular}
-\caption{SAV blocks}
-\label{palettes table}
-\end{table}
+\offsettable{}{
+ 0&      2     & US  &i& Remaining minutes            \\
+ 2&      2     & US  &ii& Remaining ticks              \\
+ 4&      2     & US  &iii& Current level                \\
+ 6&      2     & US  &iv& Current hit points           \\
+}{SAV blocks}{palettes table}
 
  Remaining minutes (i)
   Range values:
@@ -1424,18 +1509,11 @@ Code & Pants    & Cape \\
  Following those bytes there is an array of records. This array has a full
  size of 29 bytes distributed according to the following table.
 
-\begin{table}
-\begin{tabular}{cclc}
-\hline
-   Size& Offset & Description                 & Type \\
-     25     & 0 & Player name                 & text \\
-      2    & 25 & Remaining minutes           & US (similar to SAV format) \\
-      2    & 27 & Remaining ticks             & US (similar to SAV format) \\
-\hline
-\end{tabular}
-\caption{HOF blocks}
-\label{palettes table}
-\end{table}
+\offsettable{}{
+ 0 &     25     & text & & Player name                  \\
+ 25 &      2    & US \footnote[1]{similar to SAV format} & & Remaining minutes            \\
+ 27 &      2    & US \footnotemark[1] & & Remaining ticks              \\
+}{HOF blocks}{palettes table}
 
  In case there is no record, the 29 bytes spaces must be filled with zeros
  in order to complete the whole file and give it the size of $2+29*6 = 176$.
@@ -1485,5 +1563,8 @@ Code & Pants    & Cape \\
 \listoftables
 \listoffigures
 \printindex
+
+%todo apendix with code
+
 \end{document}
 
