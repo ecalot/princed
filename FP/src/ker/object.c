@@ -151,6 +151,8 @@ int objectMove(tObject* object,tKey key,tRoom* room) {
 			if (flags&STATES_FLAG_D) {
 				if (!kidDrinkPotion(object,tile)) /* drink the potion */
 					flags=STATE_EXIT_CODE_SPLASH;
+			}
+			if (flags&STATES_FLAG_O) {
 				/* Change the map */
 				room->level->fore[(room->id-1)*30+x+y*10]=TILE_FLOOR;
 				room->level->back[(room->id-1)*30+x+y*10]=0;
