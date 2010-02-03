@@ -70,7 +70,6 @@ int kidTakeHitPoint(tObject *kid) {
 }				
 
 void kidKillHim(tObject *kid) {
-	/* Returns 0 if death or the number of remaining hit points if not */
 	kid->hitPoints=0;
 }				
 
